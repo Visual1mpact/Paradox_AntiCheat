@@ -1,6 +1,7 @@
 <div align="center">
-  <b>Paradox AntiCheat - A utility to fight against malicious hackers on Bedrock Edition.</b>
-
+<img src="https://i.imgur.com/ZS38i7c.png" border="0">
+<div align="center">
+  
   Paradox is based on Scythe AntiCheat and can be found [here.](https://github.com/MrDiamond64/Scythe-AntiCheat "here.")</div>
   
 **Paradox exists due to some differences within Scythe so under the GPLv3 License
@@ -9,15 +10,16 @@ history pertaining to Scythe still exists within this project and is free to rev
 
 **Given the uproar between Scythe and UAC I found the name Paradox to be fitting for the cause.**
 
-**paradox:** something (such as a situation) that is made up of two opposite things and that seems impossible but is actually true or possible.
-
-# Notes
+**Paradox:** A statement or situation that contradicts itself, opposed to common sense and yet perhaps true.
+<div align="left">
+  
+# <img src="https://i.imgur.com/5W2YXCD.png" border="0" width="150">
 When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly
 
-# How To Setup
+# <img src="https://i.imgur.com/AXWmBA3.png" border="0" width="150">
 To install this anticheat to your realm/world you need to install the .mcpack, apply it to your world and enable GameTest Framework, once you have done this the anticheat should be fully up and running.
 
-# List of hacks detected by Paradox AntiCheat
+# <img src="https://i.imgur.com/a5pxx97.png" border="0" width="370">
 
   AutoClicker -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Max CPS check.
@@ -72,8 +74,9 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
 
   Killaura -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for attacking while using an item.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B) => Checks for swinging hand while dead.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B) => Checks for swinging hand while dead. <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(C) => Checks for no swing. Instantly detects toolbox killaura.
+  
 
   NameSpoof -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks if a player's name is longer then 16 characters. (Requires GameTest FrameWork)<br />
@@ -97,8 +100,7 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
   Xray -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Alerts staff if a player finds a diamond or ancient debris.
 
-
-# Extra Commands
+# <img src="https://i.imgur.com/ONwNwQC.png" border="0" width="400">
 To receive anti-cheat alerts use:
 ```/function notify``` or ```!notify```
 
@@ -122,7 +124,7 @@ To clear someones ender chest use:
 
 Additionally, there are custom features you can enable like anti-gamemode change to further enhance your realm security, these options can be used by /function settings/<name>
 
-# FAQ
+# <img src="https://i.imgur.com/wxqdSFv.png" border="0" width="100">
 
 Q1: Does the AntiCheat auto-ban?<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A1: No.
