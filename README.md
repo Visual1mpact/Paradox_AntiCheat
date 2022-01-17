@@ -1,7 +1,7 @@
 <div align="center">
   <b>Paradox AntiCheat - A utility to fight against malicious hackers on Bedrock Edition.</b>
 
-  Paradox is based on Scythe AntiCheat and can be found [here.](https://github.com/MrDiamond64/Scythe-AntiCheat "here.")
+  Paradox is based on Scythe AntiCheat and can be found [here.](https://github.com/MrDiamond64/Scythe-AntiCheat "here.")</div>
   
 **Paradox exists due to some differences within Scythe so under the GPLv3 License
 I have forked the project and rebranded it to fix those differences. All original commit
