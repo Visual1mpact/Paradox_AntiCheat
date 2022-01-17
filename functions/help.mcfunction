@@ -34,9 +34,9 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!modules§r - View 
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgma§r - Enables/disables gamemode 2(Adventure) to be used."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgmc§r - Enables/disables gamemode 1(Creative) to be used."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgms§r - Enables/disables gamemode 0(Survival) to be used."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!removecommandblocks§r - Enables/disables clearing nearby command blocks."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!removecb§r - Enables/disables clearing nearby command blocks."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!bedrockvalidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!overidecommandblocksenabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!overridecbe§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!nofrostwalker§r - Enables/disables preventing frost walker. High levels of frost walker can crash realms."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!npc§r - Enables/disables Killing all NPC's."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder§r - Enables/disables the world border and its size."}]}
