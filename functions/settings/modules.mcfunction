@@ -1,6 +1,6 @@
 # Shows all optional features enabled
 
-tellraw @s[scores={gma=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §4DISABLED"}]}
+tellraw @s[scores={gma=..0}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Anti-GMA is currently §4DISABLED"}]}
 tellraw @s[scores={gms=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §4DISABLED"}]}
 tellraw @s[scores={gmc=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §4DISABLED"}]}
 tellraw @s[scores={gma=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}
