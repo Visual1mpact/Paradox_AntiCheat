@@ -74,6 +74,11 @@
 					"/scoreboard objectives add reachvl dummy",
 					"/scoreboard objectives add disablervl dummy",
 					"/scoreboard objectives add last_attack dummy",
+					"/scoreboard objectives add armorvl dummy"
+					"/scoreboard objectives add ench_helmet dummy"
+					"/scoreboard objectives add ench_chest dummy"
+					"/scoreboard objectives add ench_legs dummy"
+					"/scoreboard objectives add ench_boots dummy"
 					// If enabled from previous login then activate
 					"/event entity @s[tag=vanish] vanish",
 					"/ability @s[tag=flying] mayfly true"
