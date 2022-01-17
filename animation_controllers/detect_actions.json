@@ -236,6 +236,142 @@
 				}
 			}
 		},
+		"controller.animation.enchanth": {
+			"states": {
+				"default": {
+					"transitions": [
+						{
+							"unenchanth": "!variable.helmet_ench && !variable.helmet_enchleather"
+						},
+						{
+							"enchanth": "variable.helmet_ench || variable.helmet_enchleather"
+						}
+					]
+				},
+				"unenchanth": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_helmet 0"
+					]
+				},
+				"enchanth": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_helmet 1"
+					]
+				}
+			}
+		},
+		"controller.animation.enchantc": {
+			"states": {
+				"default": {
+					"transitions": [
+						{
+							"unenchantc": "!variable.chest_ench && !variable.chest_enchleather"
+						},
+						{
+							"enchantc": "variable.chest_ench || variable.chest_enchleather"
+						}
+					]
+				},
+				"unenchantc": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_chest 0"
+					]
+				},
+				"enchantc": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_chest 1"
+					]
+				}
+			}
+		},
+		"controller.animation.enchantl": {
+			"states": {
+				"default": {
+					"transitions": [
+						{
+							"unenchantl": "!variable.legs_ench && !variable.legs_enchleather"
+						},
+						{
+							"enchantl": "variable.legs_ench || variable.legs_enchleather"
+						}
+					]
+				},
+				"unenchantl": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_legs 0"
+					]
+				},
+				"enchantl": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_legs 1"
+					]
+				}
+			}
+		},
+		"controller.animation.enchantb": {
+			"states": {
+				"default": {
+					"transitions": [
+						{
+							"unenchantb": "!variable.boots_ench && !variable.boots_enchleather"
+						},
+						{
+							"enchantb": "variable.boots_ench || variable.boots_enchleather"
+						}
+					]
+				},
+				"unenchantb": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_boots 0"
+					]
+				},
+				"enchantb": {
+					"transitions": [
+						{
+							"default": "(1.0)"
+						}
+					],
+					"on_entry": [
+						"/scoreboard players set @s ench_boots 1"
+					]
+				}
+			}
+		},
 		"controller.animation.swim": {
 			"states": {
 				"default": {
