@@ -27,10 +27,10 @@
 					"sprint",
 					"noswing",
 					"invmove",
-					"swim"
-					"enchanth"
-					"enchantc"
-					"enchantl"
+					"swim",
+					"enchanth",
+					"enchantc",
+					"enchantl",
 					"enchantb"
 				]
 			},
@@ -58,7 +58,7 @@
 				"enchanth": "controller.animation.enchanth",
 				"enchantc": "controller.animation.enchantc",
 				"enchantl": "controller.animation.enchantl",
-				"enchantb": "controller.animation.enchantb",
+				"enchantb": "controller.animation.enchantb"
 			}
 		},
 		"component_groups": {
