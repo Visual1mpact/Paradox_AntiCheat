@@ -6,7 +6,7 @@
 			"states": {
 				"default": {
 					"on_entry": [
-						"/execute @p ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§6[§aParadox§6]§r \"},{\"selector\":\"@s\"},{\"text\":\" §1has attempted to use §7(Exploit) §4Command Block Exploit! §7(command_block_minecart)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}}]}",
+						"/execute @p ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §1has attempted to use §7(Exploit) §4Command Block Exploit! §7(command_block_minecart)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}}]}",
 						"/scoreboard players add @p cbevl 1",
 						"/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 air 0 replace bee_nest -1",
 						"/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 air 0 replace beehive -1",
@@ -22,7 +22,7 @@
 					"on_entry": [
 						"/scoreboard players add paradox:config npc 0",
 						"/scoreboard players operation @a npc = paradox:config npc",
-						"/execute @p[scores={npc=1..}] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§6[§aParadox§6]§r \"},{\"selector\":\"@s\"},{\"text\":\" §1has attempted to use §7(Exploit) §4Command Block Exploit! §7(npc)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}}]}",
+						"/execute @p[scores={npc=1..}] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §1has attempted to use §7(Exploit) §4Command Block Exploit! §7(npc)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}}]}",
 						"/scoreboard players add @p[scores={npc=1..}] cbevl 1",
 						"/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 air 0 replace bee_nest -1",
 						"/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 air 0 replace beehive -1",

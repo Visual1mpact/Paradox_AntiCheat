@@ -23,13 +23,13 @@ export function op(message, args) {
     try {
         Commands.run(`testfor @a[name="${player.nameTag}",tag=op]`, World.getDimension("overworld"));
     } catch (error) {
-        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
+        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
     }
     
     // try to find the player requested
     if (args.length) for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl;
     
-    if (!member) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"Couldnt find that player!"}]}`, World.getDimension("overworld"));
+    if (!member) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`, World.getDimension("overworld"));
 
     return Commands.run(`execute "${member.nameTag}" ~~~ function op`, World.getDimension("overworld"));
 }

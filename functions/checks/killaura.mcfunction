@@ -14,7 +14,7 @@ scoreboard players add @s[tag=killaura2] aura_timer 1
 
 execute @e[type=paradox:killaura] ~~~ tag @a[tag=killaura2] add noaura
 scoreboard players add @s[tag=killaura2,tag=!noaura,tag=!gliding,tag=!dead,y=1,dy=256,scores={leftclick=1..,aura_timer=10..}] killauravl 1
-execute @s[tag=killaura2,tag=!noaura,tag=!gliding,tag=!dead,y=1,dy=256,scores={leftclick=1..,aura_timer=10..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"selector":"@s"},{"text":" §1has failed §7(Combat) §4KillAura/A. VL= "},{"score":{"name":"@s","objective":"killauravl"}}]}
+execute @s[tag=killaura2,tag=!noaura,tag=!gliding,tag=!dead,y=1,dy=256,scores={leftclick=1..,aura_timer=10..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Combat) §4KillAura/A. VL= "},{"score":{"name":"@s","objective":"killauravl"}}]}
 
 execute @s[tag=speedtest2,scores={timer=10..}] ~~~ event entity @e[type=paradox:speedtest] paradox:despawn
 tag @s[tag=killaura2,scores={aura_timer=..10}] remove killaura

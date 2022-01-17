@@ -24,7 +24,7 @@ export function tag(message, args) {
     try {
         Commands.run(`execute @a[name="${player.nameTag}",tag=op] ~~~ list`, World.getDimension("overworld"));
     } catch (error) {
-        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
+        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
     }
 
     // check if array contains the string 'reset'
@@ -33,7 +33,7 @@ export function tag(message, args) {
     // reset user nametag
     if (argcheck === true) {
         player.nameTag = player.name;
-        return Commands.run(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"${player.name} has reset their nametag"}]}`, World.getDimension("overworld"));
+        return Commands.run(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has reset their nametag"}]}`, World.getDimension("overworld"));
     }
 
     let nametag = `§8[§r${args.join(" ")}§8]§r ${player.name}`;
@@ -41,9 +41,9 @@ export function tag(message, args) {
     // input sanitization
     nametag = nametag.replace("\\", "").replace("\"", "");
 
-    if (!args.length) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"You need to provide a tag!"}]}`, World.getDimension("overworld"));
+    if (!args.length) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a tag!"}]}`, World.getDimension("overworld"));
 
     player.nameTag = nametag;
 
-    return Commands.run(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`, World.getDimension("overworld"));
+    return Commands.run(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`, World.getDimension("overworld"));
 }
