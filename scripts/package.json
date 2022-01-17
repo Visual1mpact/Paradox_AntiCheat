@@ -1,11 +1,11 @@
 {
-  "name": "scythe-anticheat",
+  "name": "paradox-anticheat",
   "version": "2.0.0",
   "description": "anticheat",
-  "main": "main.js",
+  "main": "paradox.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "MrDiamond64",
-  "license": "ISC"
+  "authors": ["MrDiamond64", "Visual1mpact"],
+  "license": "GPLv3"
 }

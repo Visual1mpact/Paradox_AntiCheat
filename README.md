@@ -1,23 +1,23 @@
 <div align="center">
-  <b>Scythe AntiCheat - The best anticheat designed for Minecraft Bedrock realms/worlds/servers.</b>
+  <b>Paradox AntiCheat - A utility to fight against malicious hackers on Bedrock Edition.</b>
+
+  Paradox is based on Scythe AntiCheat and can be found [here.](https://github.com/MrDiamond64/Scythe-AntiCheat "here.")
   
-  <img src="https://raw.githubusercontent.com/MrDiamond64/image-assets/main/scythe%20pog%20anticheat.png" width="600" alt="Scythe AntiCheat"/>
-</div>
-<div align="center">
-  <img src="https://img.shields.io/github/downloads/MrDiamond64/Scythe-AntiCheat/total?style=for-the-badge" alt="Downloads"/>
-  <img src="https://img.shields.io/github/issues/MrDiamond64/Scythe-AntiCheat?label=ISSUES%20OPEN&style=for-the-badge" alt="Issues Open"/>
-  <img src="https://img.shields.io/github/commit-activity/m/MrDiamond64/Scythe-AntiCheat?style=for-the-badge" alt="Commits Per Week"/>
-  <img src="https://img.shields.io/github/last-commit/MrDiamond64/Scythe-AntiCheat?style=for-the-badge" alt="Last Commit"/>
-</div>
+**Paradox exists due to some differences within Scythe so under the GPLv3 License
+I have forked the project and rebranded it to fix those differences. All original commit
+history pertaining to Scythe still exists within this project and is free to review.**
+
+**Given the uproar between Scythe and UAC I found the name Paradox to be fitting for the cause.**
+
+**paradox:** something (such as a situation) that is made up of two opposite things and that seems impossible but is actually true or possible.
+
+# Notes
+When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly
 
 # How To Setup
 To install this anticheat to your realm/world you need to install the .mcpack, apply it to your world and enable GameTest Framework, once you have done this the anticheat should be fully up and running.
 
-To receive anti-cheat alerts use this command: ```/function notify```
-
-If your world contains NPC's, make sure to use the ```/function setting/npc``` command or they will be insta-killed
-
-# List of hacks detected by Scythe AntiCheat
+# List of hacks detected by Paradox AntiCheat
 
   AutoClicker -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Max CPS check.
@@ -99,19 +99,26 @@ If your world contains NPC's, make sure to use the ```/function setting/npc``` c
 
 
 # Extra Commands
-To receive anti-cheat alerts use: ```/function notify```
+To receive anti-cheat alerts use:
+```/function notify``` or ```!notify```
 
-To ban a player use: ```/execute <playername> ~~~ function ban```
+To ban a player use:
+```/execute <playername> ~~~ function ban``` or ```!ban <username>```
 
-To freeze a player use: ```/execute <playername> ~~~ function tools/freeze```
+To freeze a player use:
+```/execute <playername> ~~~ function tools/freeze``` or ```!freeze <username>```
 
-To enter vanish use: ```/function tools/vanish```
+To enter vanish use:
+```/function tools/vanish``` or ```!vanish```
 
-To be able to fly in survival mode use: ```/function tools/fly```
+To be able to fly in survival mode use:
+```/function tools/fly``` or ```!fly```
 
-To view a players anticheat logs use: ```/execute <playername> ~~~ function tools/stats```
+To view a players anticheat logs use:
+```/execute <playername> ~~~ function tools/stats``` or ```!stats <username>```
 
-To clear someones ender chest use: ```/execute <playername> ~~~ function tools/ecwipe```
+To clear someones ender chest use:
+```/execute <playername> ~~~ function tools/ecwipe``` or ```!ecwipe <username>```
 
 Additionally, there are custom features you can enable like anti-gamemode change to further enhance your realm security, these options can be used by /function settings/<name>
 
@@ -121,7 +128,4 @@ Q1: Does the AntiCheat auto-ban?<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A1: No.
 
 Q2: Is it customizable?<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A2: Yes using /function settings/<name> or by modifying the .mcfunction files
-
-# Notes
-When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A2: Yes using /function settings/<name> or by modifying the files

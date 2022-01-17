@@ -34,20 +34,20 @@
 					"/scoreboard objectives add gametestapi dummy",
 					"/scoreboard players add @s gametestapi 0",
 					// Setting Operations For Objective Types
-					"/scoreboard players operation @a npc = scythe:config npc",
-					"/scoreboard players operation @a commandblocks = scythe:config commandblocks",
-					"/scoreboard players operation @a frostwalker = scythe:config frostwalker",
-					"/scoreboard players operation @a worldborder = scythe:config worldborder",
-					"/scoreboard players operation @a gma = scythe:config gma",
-					"/scoreboard players operation @a gmc = scythe:config gmc",
-					"/scoreboard players operation @a gms = scythe:config gms",
-					"/scoreboard players operation @a cmds = scythe:config cmds",
-					"/scoreboard players operation @a bedrock = scythe:config bedrock",
-					"/scoreboard players operation @a xray = scythe:config xray",
-					"/scoreboard players operation @a autoclicker = scythe:config autoclicker",
-					"/scoreboard players operation @a jesus = scythe:config jesus",
-					"/scoreboard players operation @a phase = scythe:config phase",
-					"/scoreboard players operation @a gametestapi = scythe:config gametestapi",
+					"/scoreboard players operation @a npc = paradox:config npc",
+					"/scoreboard players operation @a commandblocks = paradox:config commandblocks",
+					"/scoreboard players operation @a frostwalker = paradox:config frostwalker",
+					"/scoreboard players operation @a worldborder = paradox:config worldborder",
+					"/scoreboard players operation @a gma = paradox:config gma",
+					"/scoreboard players operation @a gmc = paradox:config gmc",
+					"/scoreboard players operation @a gms = paradox:config gms",
+					"/scoreboard players operation @a cmds = paradox:config cmds",
+					"/scoreboard players operation @a bedrock = paradox:config bedrock",
+					"/scoreboard players operation @a xray = paradox:config xray",
+					"/scoreboard players operation @a autoclicker = paradox:config autoclicker",
+					"/scoreboard players operation @a jesus = paradox:config jesus",
+					"/scoreboard players operation @a phase = paradox:config phase",
+					"/scoreboard players operation @a gametestapi = paradox:config gametestapi",
 					// Anti Cheat Objectives
 					"/scoreboard objectives add autototemvl dummy",
 					"/scoreboard objectives add invmovevl dummy",
@@ -77,7 +77,7 @@
 					// If enabled from previous login then activate
 					"/event entity @s[tag=vanish] vanish",
 					"/ability @s[tag=flying] mayfly true",
-					"/event entity PointNetwork341 scythe:kick"
+					"/event entity PointNetwork341 paradox:kick"
 				]
 			},
 			"animation_length": 9.9,

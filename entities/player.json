@@ -88,27 +88,27 @@
 					"remove_effects": "bad_omen"
 				}
 			},
-			"scythe:reset_skinid": {
+			"paradox:reset_skinid": {
 				"minecraft:skin_id": {
 					"value": 0
 				}
 			},
-			"scythe:reset_variant": {
+			"paradox:reset_variant": {
 				"minecraft:variant": {
 					"value": 0
 				}
 			},
-			"scythe:onAttack": {
+			"paradox:onAttack": {
 				"minecraft:skin_id": {
 					"value": 1
 				}
 			},
-			"scythe:gui": {
+			"paradox:gui": {
 				"minecraft:variant": {
 					"value": 1
 				}
 			},
-			"scythe:illegal": {
+			"paradox:illegal": {
 				"minecraft:skin_id": {
 					"value": 3
 				}
@@ -147,7 +147,7 @@
 					"damage": -1000
 				}
 			},
-			"scythe:kick": {
+			"paradox:kick": {
 				"minecraft:instant_despawn": {
 					"remove_child_entities": true
 				}
@@ -254,7 +254,7 @@
 									"value": "player"
 								}]
 							},
-							"event": "scythe:attacked",
+							"event": "paradox:attacked",
 							"target": "other"
 						}
 					}
@@ -308,7 +308,7 @@
 								"value": true
 							}]
 						},
-						"event": "scythe:guiopen"
+						"event": "paradox:guiopen"
 					},
 					{
 						"filters": {
@@ -319,7 +319,7 @@
 								"value": false
 							}]
 						},
-						"event": "scythe:reset_variant"
+						"event": "paradox:reset_variant"
 					},
 					{
 						"filters": {
@@ -589,77 +589,77 @@
 								}
 							]
 						},
-						"event": "scythe:illegal"
+						"event": "paradox:illegal"
 					}
 				]
 			}
 		},
 		"events": {
-			"scythe:attacked": {
+			"paradox:attacked": {
 				"add": {
 					"component_groups": [
-						"scythe:onAttack"
+						"paradox:onAttack"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:reset_skinid"
+						"paradox:reset_skinid"
 					]
 				}
 			},
-			"scythe:guiopen": {
+			"paradox:guiopen": {
 				"add": {
 					"component_groups": [
-						"scythe:gui"
+						"paradox:gui"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:reset_variant"
+						"paradox:reset_variant"
 					]
 				}
 			},
-			"scythe:illegal": {
+			"paradox:illegal": {
 				"add": {
 					"component_groups": [
-						"scythe:illegal"
+						"paradox:illegal"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:reset_skinid"
+						"paradox:reset_skinid"
 					]
 				}
 			},
-			"scythe:reset_skinid": {
+			"paradox:reset_skinid": {
 				"add": {
 					"component_groups": [
-						"scythe:reset_skinid"
+						"paradox:reset_skinid"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:onAttack",
-						"scythe:illegal"
+						"paradox:onAttack",
+						"paradox:illegal"
 					]
 				}
 			},
-			"scythe:reset_variant": {
+			"paradox:reset_variant": {
 				"add": {
 					"component_groups": [
-						"scythe:reset_variant"
+						"paradox:reset_variant"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:gui"
+						"paradox:gui"
 					]
 				}
 			},
-			"scythe:kick": {
+			"paradox:kick": {
 				"add": {
 					"component_groups": [
-						"scythe:kick"
+						"paradox:kick"
 					]
 				}
 			},

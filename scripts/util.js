@@ -37,8 +37,8 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     Commands.run(`scoreboard players add "${player.nameTag}" ${check.toLowerCase()}vl 1`, World.getDimension("overworld"));
 
     try {
-        if(debug) Commands.run(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`, World.getDimension("overworld"));
-            else Commands.run(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`, World.getDimension("overworld"));
+        if(debug) Commands.run(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`, World.getDimension("overworld"));
+            else Commands.run(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`, World.getDimension("overworld"));
     } catch(error) {}
 
     if (slot >= 0) {
@@ -49,10 +49,10 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     }
 
     try {
-        if (check === "Namespoof") Commands.run(`kick "${player.nameTag}" §r§6[§aScythe§6]§r Invalid username`, World.getDimension("overworld"));
+        if (check === "Namespoof") Commands.run(`kick "${player.nameTag}" §r§6[§aParadox§6]§r Invalid username`, World.getDimension("overworld"));
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
-        player.triggerEvent("scythe:kick");
+        player.triggerEvent("paradox:kick");
     }
 }
 

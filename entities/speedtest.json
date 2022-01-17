@@ -2,13 +2,13 @@
 	"format_version": "1.13.0",
 	"minecraft:entity": {
 		"description": {
-			"identifier": "scythe:speedtest",
+			"identifier": "paradox:speedtest",
 			"is_spawnable": false,
 			"is_summonable": true,
 			"is_experimental": false
 		},
 		"component_groups": {
-			"scythe:despawn": {
+			"paradox:despawn": {
 				"minecraft:instant_despawn": {
 					"remove_child_entities": true
 				}
@@ -62,10 +62,10 @@
 			}			
 		},
 		"events": {
-			"scythe:despawn": {
+			"paradox:despawn": {
 				"add": {
 					"component_groups": [
-						"scythe:despawn"
+						"paradox:despawn"
 					]
 				}
 			}

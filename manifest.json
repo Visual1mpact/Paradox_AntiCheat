@@ -1,19 +1,18 @@
 {
 	"format_version": 2,
 	"header": {
-		"name": "Scythe AntiCheat",
-		"description": "The best minecraft bedrock anticheat, designed for realms and servers.",
-		"uuid": "c68ba0c1-b9e4-46ad-b6c8-88bbd28f1fa5",
+		"name": "Paradox AntiCheat",
+		"description": "A utility to fight against malicious hackers on Bedrock Edition.",
+		"uuid": "54edfea5-ab51-47ca-b992-724e255b5560",
 		"version": [2, 0, 9],
 		"min_engine_version": [1, 16, 210]
 	},
 	"metadata": {
-		"authors": ["MrDiamond64"],
-		"url": "https://github.com/MrDiamond64/Scythe-AntiCheat"
+		"authors": ["MrDiamond64, Visual1mpact"]
 	},
 	"modules": [{
 			"type": "data",
-			"uuid": "d059cc96-9272-4a33-90c8-f572bcc7fa56",
+			"uuid": "d8395127-6923-4fb7-93d2-977cecd463e0",
 			"version": [
 				1,
 				0,
@@ -21,11 +20,11 @@
 			]
 		},
 		{
-			"description": "Scythe AntiCheat Gametest Features",
+			"description": "Paradox AntiCheat Gametest Features",
 			"type": "javascript",
-			"uuid": "ab31620b-f498-4355-9bea-498922f5940e",
+			"uuid": "1326c87b-37f3-4543-9f0f-0d03893134e1",
 			"version": [0, 0, 1],
-			"entry": "scripts/main.js"
+			"entry": "scripts/paradox.js"
 		}
 	],
 	"dependencies": [{

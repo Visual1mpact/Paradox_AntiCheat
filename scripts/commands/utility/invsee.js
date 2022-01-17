@@ -23,21 +23,21 @@ export function invsee(message, args) {
     try {
         Commands.run(`testfor @a[name="${player.nameTag}",tag=op]`, World.getDimension("overworld"));
     } catch (error) {
-        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"text":"You need to be Scythe-Opped to use this command."}]}`, World.getDimension("overworld"));
+        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
     }
 
-    if (!args.length) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"text":"You need to provide whos inventory to view!"}]}`, World.getDimension("overworld"));
+    if (!args.length) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"You need to provide whos inventory to view!"}]}`, World.getDimension("overworld"));
     
     // try to find the player requested
     for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl;
     
-    if (!member) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"text":"Couldnt find that player!"}]}`, World.getDimension("overworld"));
+    if (!member) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"Couldnt find that player!"}]}`, World.getDimension("overworld"));
 
     let container = member.getComponent('inventory').container;
     
-    Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"text":"${member.nameTag}'s inventory:\n\n"}]}`, World.getDimension("overworld"));
+    Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"${member.nameTag}'s inventory:\n\n"}]}`, World.getDimension("overworld"));
     for (let i = 0; i < container.size; i++) if (container.getItem(i)) {
         let o = container.getItem(i);
-        Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aScythe§6]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`, World.getDimension("overworld"));
+        Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§6[§aParadox§6]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`, World.getDimension("overworld"));
     }
 }

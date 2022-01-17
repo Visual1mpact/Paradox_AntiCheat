@@ -1,4 +1,4 @@
-tellraw @s {"rawtext":[{"text":"\n§l§aScythe AntiCheat Command Help"}]}
+tellraw @s {"rawtext":[{"text":"\n§l§aParadox AntiCheat Command Help"}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"\n§l§4Gametest Is Disabled In World!"}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"\n§l§4Please Enable Gametest, Cheats, and Education Edition!"}]}
 
@@ -12,7 +12,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!mute <username> <r
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!unmute <username> <reason>§r - Unmute the specified user."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!notify§r - Enables/Disables cheat notifications."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!credits§r - Shows credits, thats it."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!op <username>§r - Op's player in Scythe AntiCheat features."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!op <username>§r - Op's player in Paradox AntiCheat features."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc.)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§3!phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
@@ -22,7 +22,7 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/function help§r -
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/execute <username> ~~~ function ban§r - Ban the specified user."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/function notify§r - Enables/Disables cheat notifications."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/function credits§r - Shows credits, thats it."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/execute <username> ~~~ op§r - Op's player in Scythe AntiCheat features."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/execute <username> ~~~ op§r - Op's player in Paradox AntiCheat features."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/function settings/autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/function settings/jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc.)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§3/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
