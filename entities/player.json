@@ -28,6 +28,10 @@
 					"noswing",
 					"invmove",
 					"swim"
+					"enchanth"
+					"enchantc"
+					"enchantl"
+					"enchantb"
 				]
 			},
 			"animations": {
@@ -51,6 +55,10 @@
 				"noswing": "controller.animation.noswing",
 				"invmove": "controller.animation.invmove",
 				"swim": "controller.animation.swim"
+				"enchanth": "controller.animation.enchanth",
+				"enchantc": "controller.animation.enchantc",
+				"enchantl": "controller.animation.enchantl",
+				"enchantb": "controller.animation.enchantb",
 			}
 		},
 		"component_groups": {
