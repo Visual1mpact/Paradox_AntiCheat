@@ -26,14 +26,14 @@ execute @s[scores={reachvl=1..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":
 execute @s[scores={invmovevl=1..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has "},{"score":{"name":"@s","objective":"invmovevl"}},{"text":" InventoryMods Violations"}]}
 execute @s[scores={noslowvl=1..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has "},{"score":{"name":"@s","objective":"noslowvl"}},{"text":" NoSlow Violations"}]}
 execute @s[scores={invalidsprintvl=1..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has "},{"score":{"name":"@s","objective":"invalidsprintvl"}},{"text":" InvalidSprint Violations"}]}
-execute @s[scores={ench_helmet=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Helmet: §cUnenchanted"}]}
-execute @s[scores={ench_helmet=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Helmet: §2Enchanted"}]}
-execute @s[scores={ench_chest=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Chestplate: §cUnenchanted"}]}
-execute @s[scores={ench_chest=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Chestplate: §2Enchanted"}]}
-execute @s[scores={ench_legs=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Leggings: §cUnenchanted"}]}
-execute @s[scores={ench_legs=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Leggings: §2Enchanted"}]}
-execute @s[scores={ench_boots=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Boots: §cUnenchanted"}]}
-execute @s[scores={ench_boots=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"Boots: §2Enchanted"}]}
+execute @s[scores={ench_helmet=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Helmet: §4Unenchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_helmet=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Helmet: §aEnchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_chest=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Chestplate: §4Unenchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_chest=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Chestplate: §aEnchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_legs=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Leggings: §4Unenchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_legs=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Leggings: §aEnchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_boots=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Boots: §4Unenchanted§r: "},{"selector":"@s"}]}
+execute @s[scores={ench_boots=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Boots: §aEnchanted§r: "},{"selector":"@s"}]}
 
 
 execute @s[tag=freeze] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is currently frozen by a staff member"}]}
