@@ -1,0 +1,4 @@
+execute @s[tag=attack,tag=combatlogOn] ~ ~ ~ kill @s
+execute @s[tag=attack,tag=combatlogOn] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has just joined after combat logging."}]}
+execute @s[tag=attack,tag=combatlogOn] ~ ~ ~ tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r You left while in combat. Please don't do this again."}]}
+execute @s[tag=attack,tag=combatlogOn] ~ ~ ~ tag @s remove attack
