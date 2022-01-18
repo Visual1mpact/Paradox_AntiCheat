@@ -36,7 +36,7 @@ export function tag(message, args) {
         return Commands.run(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has reset their nametag"}]}`, World.getDimension("overworld"));
     }
 
-    let nametag = `§4[§6${args.join(" ")}§4]§r ${player.name}`;
+    let nametag = `§4[§6${args.join(" ")}§4]§r <${player.name}>`;
     
     // input sanitization
     nametag = nametag.replace("\\", "").replace("\"", "");
