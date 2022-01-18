@@ -13,6 +13,15 @@ history pertaining to Scythe still exists within this project and is free to rev
 **Paradox:** A statement or situation that contradicts itself, opposed to common sense and yet perhaps true.
 <div align="left">
   
+<div align="center">
+  <img src="https://img.shields.io/github/downloads/Visual1mpact/Paradox_AntiCheat/total?style=plastic&logo=appveyor" alt="Downloads"/>
+  <img src="https://img.shields.io/github/issues/Visual1mpact/Paradox_AntiCheat?label=ISSUES%20OPEN&style=plastic&logo=appveyor" alt="Issues Open"/>
+  <img src="https://img.shields.io/github/commit-activity/m/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Commits Per Week"/>
+  <img src="https://img.shields.io/github/last-commit/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Last Commit"/>
+  <img src="https://img.shields.io/github/issues-pr/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Pull Requests"/>
+  <img src="https://img.shields.io/github/license/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="License"/>
+</div>
+  
 # <img src="https://i.imgur.com/5W2YXCD.png" border="0" width="150">
 When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly
 
