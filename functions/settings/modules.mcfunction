@@ -32,3 +32,5 @@ tellraw @s[scores={jesus=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Jes
 tellraw @s[scores={jesus=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Jesus is currently §4DISABLED"}]}
 tellraw @s[scores={phase=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Phase is currently §aENABLED"}]}
 tellraw @s[scores={phase=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Phase is currently §4DISABLED"}]}
+tellraw @s[scores={encharmor=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Enchanted Armor is currently §aENABLED"}]}
+tellraw @s[scores={encharmor=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Enchanted Armor is currently §4DISABLED"}]}

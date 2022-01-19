@@ -32,11 +32,10 @@ execute @s[scores={boots=4,ench_boots=1}] ~ ~ ~ replaceitem entity @s slot.armor
 execute @s[scores={boots=5,ench_boots=1}] ~ ~ ~ replaceitem entity @s slot.armor.feet 0 diamond_boots 1 0
 execute @s[scores={boots=6,ench_boots=1}] ~ ~ ~ replaceitem entity @s slot.armor.feet 0 netherite_boots 1 0
  
-scoreboard players add @s armorvl 1
-tag @s[scores={armorviolations=4..}] add nbtFlag
+scoreboard players add @s[type=player] armorvl 1
  
 #Notify Staff
-execute @s[scores={armorvl=1..}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" used enchanted armor. Violations: "},{"score":{"name": "@s","objective": "armorvl"}}]}
+execute @s[type=player] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Enchantment) §4Armor/A. VL= "},{"score":{"name":"@s","objective":"armorvl"}}]}
 
 #Notify Offender
-tellraw @s[scores={armorvl =1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r You used enchanted armor. Violations: "},{"score":{"name": "@s","objective": "armorvl"}}]}
+tellraw @s[type=player] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r You used enchanted armor. Violations: "},{"score":{"name": "@s","objective": "armorvl"}}]}
