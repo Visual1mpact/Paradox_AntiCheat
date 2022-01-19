@@ -44,6 +44,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!xray§r - Enables/
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!enchantedarmor§r - Enables/disables enchanted armor for all players."}]}
 
 # Gametest disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/modules§r - View all enabled or disabled modules."}]}
@@ -60,6 +61,7 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/enchantedArmor§r - Enables/disables enchanted armor for all players."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 

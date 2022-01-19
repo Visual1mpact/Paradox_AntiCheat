@@ -33,6 +33,8 @@
 					"/scoreboard players add @s phase 0",
 					"/scoreboard objectives add gametestapi dummy",
 					"/scoreboard players add @s gametestapi 0",
+					"/scoreboard objectives add encharmor dummy",
+					"/scoreboard players add @s encharmor 0",
 					// Setting Operations For Objective Types
 					"/scoreboard players operation @a npc = paradox:config npc",
 					"/scoreboard players operation @a commandblocks = paradox:config commandblocks",
@@ -48,6 +50,7 @@
 					"/scoreboard players operation @a jesus = paradox:config jesus",
 					"/scoreboard players operation @a phase = paradox:config phase",
 					"/scoreboard players operation @a gametestapi = paradox:config gametestapi",
+					"/scoreboard players operation @a encharmor = paradox:config encharmor",
 					// Anti Cheat Objectives
 					"/scoreboard objectives add autototemvl dummy",
 					"/scoreboard objectives add invmovevl dummy",
@@ -79,6 +82,10 @@
 					"/scoreboard objectives add ench_chest dummy",
 					"/scoreboard objectives add ench_legs dummy",
 					"/scoreboard objectives add ench_boots dummy",
+					"/scoreboard objectives add helmet dummy",
+					"/scoreboard objectives add chest dummy",
+					"/scoreboard objectives add leggings dummy",
+					"/scoreboard objectives add boots dummy",
 					// If enabled from previous login then activate
 					"/event entity @s[tag=vanish] vanish",
 					"/ability @s[tag=flying] mayfly true"

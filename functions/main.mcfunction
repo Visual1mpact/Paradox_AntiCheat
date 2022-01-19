@@ -22,3 +22,9 @@ execute @s[scores={commandblocks=1..}] ~~~ function checks/optional/nocommandblo
 execute @s[scores={cmds=1..}] ~~~ function checks/optional/overridecommandblocksenabled
 replaceitem entity @s[type=player,tag=!op,scores={frostwalker=1..}] slot.armor.feet 0 leather_boots 1 0 {"item_lock": {"mode": "lock_in_slot"},"keep_on_death":{}}
 execute @s[type=player,scores={worldborder=1..}] ~~~ function checks/optional/worldborder
+
+#Armor system
+execute @a[scores={ench_helmet=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
+execute @a[scores={ench_chest=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
+execute @a[scores={ench_legs=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
+execute @a[scores={ench_boots=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT

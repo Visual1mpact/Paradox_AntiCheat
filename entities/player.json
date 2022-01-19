@@ -31,7 +31,11 @@
 					"enchanth",
 					"enchantc",
 					"enchantl",
-					"enchantb"
+					"enchantb",
+					"helmet",
+					"chest",
+					"leggings",
+					"boots"
 				]
 			},
 			"animations": {
@@ -58,7 +62,11 @@
 				"enchanth": "controller.animation.enchanth",
 				"enchantc": "controller.animation.enchantc",
 				"enchantl": "controller.animation.enchantl",
-				"enchantb": "controller.animation.enchantb"
+				"enchantb": "controller.animation.enchantb",
+				"helmet": "controller.animation.helmet",
+				"chest": "controller.animation.chest",
+				"leggings": "controller.animation.leggings",
+				"boots": "controller.animation.boots"
 			}
 		},
 		"component_groups": {
