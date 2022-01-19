@@ -33,7 +33,8 @@ export default
         "invsee": true,
         "notify": true,
         "tag": true,
-        "vanish": true
+        "vanish": true,
+        "enchantedarmor":true
     },
     "modules": {
         "badpackets2": {

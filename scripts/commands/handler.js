@@ -27,6 +27,7 @@ import { xray } from "./settings/xray.js";
 import { autoclicker } from "./settings/autoclicker.js";
 import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
+import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
 import { freeze } from "./utility/freeze.js";
@@ -91,6 +92,7 @@ export function commandHandler(player, message) {
         else if (config.customcommands.autoclicker && commandName === "autoclicker") autoclicker(message, args);
         else if (config.customcommands.jesus && commandName === "jesus") jesus(message, args);
         else if (config.customcommands.phase && commandName === "phase") phase(message, args);
+        else if (config.customcommands.enchantedarmor && commandName === "enchantedarmor") enchantedarmor(message);
         else return;
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
