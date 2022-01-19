@@ -1,6 +1,6 @@
 # make sure they are allowed to use this command
 tellraw @s[type=player,tag=!op] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4§lHey! §rYou must be Paradox-Opped to use this function!"}]}
-execute @a[tag=!op] ~~~ tellraw @a[tag=op] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has tried to toggle Gamemode 2 without perms!"}]}
+execute @s[tag=!op] ~~~ tellraw @a[tag=op] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has tried to toggle Gamemode 2 without perms!"}]}
 
 # allow
 execute @s[type=player,tag=op,scores={gma=..0}] ~~~ scoreboard players set paradox:config gma 1
