@@ -37,5 +37,5 @@ scoreboard players add @s[type=player] armorvl 1
 #Notify Staff
 execute @s[type=player] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Enchantment) §4Armor/A. VL= "},{"score":{"name":"@s","objective":"armorvl"}}]}
 
-#Notify Offender
-tellraw @s[type=player] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r You used enchanted armor. Violations: "},{"score":{"name": "@s","objective": "armorvl"}}]}
+#Notify Offenders who are not staff
+tellraw @s[type=player,tag=!op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r You used enchanted armor. Violations: "},{"score":{"name": "@s","objective": "armorvl"}}]}
