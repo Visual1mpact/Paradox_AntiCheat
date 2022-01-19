@@ -66,6 +66,7 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B) => Clears dropped items.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(C) => Checks for items that are stacked over 64. (Requires GameTest FrameWork)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(D) => Additional item clearing check. (Requires GameTest FrameWork)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(D) => Checks for players wearing enchanted armor while its disabled. Default not disabled.<br />
     
   InvalidSprint -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for sprinting while having the blindness effect. (Requires GameTest FrameWork)<br />
@@ -135,8 +136,8 @@ Additionally, there are custom features you can enable like anti-gamemode change
 
 # <img src="https://i.imgur.com/wxqdSFv.png" border="0" width="100">
 
-Q1: Does the AntiCheat auto-ban?<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A1: No.
+Q: Does the AntiCheat auto-ban?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: No.
 
-Q2: Is it customizable?<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A2: Yes using /function settings/<name> or by modifying the files
+Q: Is it customizable?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: Yes using /function settings/<name> or by modifying the files
