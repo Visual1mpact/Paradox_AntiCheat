@@ -34,6 +34,36 @@ execute @s[scores={ench_legs=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text
 execute @s[scores={ench_legs=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Leggings: §aEnchanted§r"}]}
 execute @s[scores={ench_boots=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Boots: §4Unenchanted§r"}]}
 execute @s[scores={ench_boots=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Boots: §aEnchanted§r"}]}
+execute @s[scores={detect_helmet=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §cNone"}]}
+execute @s[scores={detect_helmet=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §7Leather"}]}
+execute @s[scores={detect_helmet=2}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §fChain"}]}
+execute @s[scores={detect_helmet=3}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §fIron"}]}
+execute @s[scores={detect_helmet=4}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §6Gold"}]}
+execute @s[scores={detect_helmet=5}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §bDiamond"}]}
+execute @s[scores={detect_helmet=6}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §8Netherite"}]}
+execute @s[scores={detect_helmet=7}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Helmet: §2Turtle Shell"}]}
+execute @s[scores={detect_chest=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §cNone"}]}
+execute @s[scores={detect_chest=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §7Leather"}]}
+execute @s[scores={detect_chest=2}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §fChain"}]}
+execute @s[scores={detect_chest=3}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §fIron"}]}
+execute @s[scores={detect_chest=4}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §6Gold"}]}
+execute @s[scores={detect_chest=5}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §bDiamond"}]}
+execute @s[scores={detect_chest=6}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §8Netherite"}]}
+execute @s[scores={detect_chest=7}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chestplate: §7Elytra"}]}
+execute @s[scores={detect_leggings=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §cNone"}]}
+execute @s[scores={detect_leggings=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §7Leather"}]}
+execute @s[scores={detect_leggings=2}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §fChain"}]}
+execute @s[scores={detect_leggings=3}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §fIron"}]}
+execute @s[scores={detect_leggings=4}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §6Gold"}]}
+execute @s[scores={detect_leggings=5}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §bDiamond"}]}
+execute @s[scores={detect_leggings=6}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Leggings: §8Netherite"}]}
+execute @s[scores={detect_boots=0}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §cNone"}]}
+execute @s[scores={detect_boots=1}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §7Leather"}]}
+execute @s[scores={detect_boots=2}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §fChain"}]}
+execute @s[scores={detect_boots=3}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §fIron"}]}
+execute @s[scores={detect_boots=4}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §6Gold"}]}
+execute @s[scores={detect_boots=5}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §bDiamond"}]}
+execute @s[scores={detect_boots=6}] ~ ~ ~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Boots: §8Netherite"}]}
 
 
 execute @s[tag=freeze] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is currently frozen by a staff member"}]}
