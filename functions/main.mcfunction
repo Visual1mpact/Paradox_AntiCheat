@@ -24,7 +24,7 @@ replaceitem entity @s[type=player,tag=!op,scores={frostwalker=1..}] slot.armor.f
 execute @s[type=player,scores={worldborder=1..}] ~~~ function checks/optional/worldborder
 
 #Armor system
-execute @s[scores={ench_helmet=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
-execute @s[scores={ench_chest=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
-execute @s[scores={ench_legs=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
-execute @s[scores={ench_boots=1,encharmor=1..}] ~ ~ ~ function checks/optional/armorNBT
+execute @s[scores={ench_helmet=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
+execute @s[scores={ench_chest=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
+execute @s[scores={ench_legs=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
+execute @s[scores={ench_boots=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
