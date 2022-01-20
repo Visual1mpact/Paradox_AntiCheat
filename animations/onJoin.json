@@ -90,10 +90,6 @@
 					"/scoreboard objectives add ench_chest dummy",
 					"/scoreboard objectives add ench_legs dummy",
 					"/scoreboard objectives add ench_boots dummy",
-					"/scoreboard objectives add helmet dummy",
-					"/scoreboard objectives add chest dummy",
-					"/scoreboard objectives add leggings dummy",
-					"/scoreboard objectives add boots dummy",
 					// If enabled from previous login then activate
 					"/event entity @s[tag=vanish] vanish",
 					"/ability @s[tag=flying] mayfly true"
