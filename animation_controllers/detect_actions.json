@@ -427,7 +427,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 0"
+						"/scoreboard players set @s detect_helmet 0"
 					]
 				},
 				"leatherh": {
@@ -455,7 +455,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 1"
+						"/scoreboard players set @s detect_helmet 1"
 					]
 				},
 				"chainh": {
@@ -483,7 +483,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 2"
+						"/scoreboard players set @s detect_helmet 2"
 					]
 				},
 				"ironh": {
@@ -511,7 +511,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 3"
+						"/scoreboard players set @s detect_helmet 3"
 					]
 				},
 				"diamondh": {
@@ -539,7 +539,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 5"
+						"/scoreboard players set @s detect_helmet 5"
 					]
 				},
 				"goldh": {
@@ -567,7 +567,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 4"
+						"/scoreboard players set @s detect_helmet 4"
 					]
 				},
 				"netheriteh": {
@@ -595,7 +595,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 6"
+						"/scoreboard players set @s detect_helmet 6"
 					]
 				},
 				"turtleh": {
@@ -623,7 +623,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s helmet 7"
+						"/scoreboard players set @s detect_helmet 7"
 					]
 				}
 			}
@@ -683,7 +683,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 0"
+						"/scoreboard players set @s detect_chest 0"
 					]
 				},
 				"leatherc": {
@@ -711,7 +711,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 1"
+						"/scoreboard players set @s detect_chest 1"
 					]
 				},
 				"chainc": {
@@ -739,7 +739,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 2"
+						"/scoreboard players set @s detect_chest 2"
 					]
 				},
 				"ironc": {
@@ -767,7 +767,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 3"
+						"/scoreboard players set @s detect_chest 3"
 					]
 				},
 				"diamondc": {
@@ -795,7 +795,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 5"
+						"/scoreboard players set @s detect_chest 5"
 					]
 				},
 				"goldc": {
@@ -823,7 +823,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 4"
+						"/scoreboard players set @s detect_chest 4"
 					]
 				},
 				"netheritec": {
@@ -851,7 +851,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 6"
+						"/scoreboard players set @s detect_chest 6"
 					]
 				},
 				"elytrac": {
@@ -879,7 +879,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s chest 7"
+						"/scoreboard players set @s detect_chest 7"
 					]
 				}
 			}
@@ -933,7 +933,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 0"
+						"/scoreboard players set @s detect_leggings 0"
 					]
 				},
 				"leatherl": {
@@ -958,7 +958,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 1"
+						"/scoreboard players set @s detect_leggings 1"
 					]
 				},
 				"chainl": {
@@ -983,7 +983,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 2"
+						"/scoreboard players set @s detect_leggings 2"
 					]
 				},
 				"ironl": {
@@ -1008,7 +1008,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 3"
+						"/scoreboard players set @s detect_leggings 3"
 					]
 				},
 				"diamondl": {
@@ -1033,7 +1033,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 5"
+						"/scoreboard players set @s detect_leggings 5"
 					]
 				},
 				"goldl": {
@@ -1058,7 +1058,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 4"
+						"/scoreboard players set @s detect_leggings 4"
 					]
 				},
 				"netheritel": {
@@ -1083,7 +1083,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s leggings 6"
+						"/scoreboard players set @s detect_leggings 6"
 					]
 				}
 			}
@@ -1137,7 +1137,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 0"
+						"/scoreboard players set @s detect_boots 0"
 					]
 				},
 				"leatherb": {
@@ -1162,7 +1162,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 1"
+						"/scoreboard players set @s detect_boots 1"
 					]
 				},
 				"chainb": {
@@ -1187,7 +1187,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 2"
+						"/scoreboard players set @s detect_boots 2"
 					]
 				},
 				"ironb": {
@@ -1212,7 +1212,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 3"
+						"/scoreboard players set @s detect_boots 3"
 					]
 				},
 				"diamondb": {
@@ -1237,7 +1237,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 5"
+						"/scoreboard players set @s detect_boots 5"
 					]
 				},
 				"goldb": {
@@ -1262,7 +1262,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 4"
+						"/scoreboard players set @s detect_boots 4"
 					]
 				},
 				"netheriteb": {
@@ -1287,7 +1287,7 @@
 						}
 					],
 					"on_entry": [
-						"/scoreboard players set @s boots 6"
+						"/scoreboard players set @s detect_boots 6"
 					]
 				}
 			}
