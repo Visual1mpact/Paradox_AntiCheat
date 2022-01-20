@@ -1079,7 +1079,7 @@
 							"diamondl": "query.armor_texture_slot(2) == 3"
 						},
 						{
-							"goldel": "query.armor_texture_slot(2) == 4"
+							"goldl": "query.armor_texture_slot(2) == 4"
 						}
 					],
 					"on_entry": [
