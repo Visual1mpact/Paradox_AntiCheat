@@ -3,6 +3,7 @@ import { flag, banMessage, getTags } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { banplayer } from "./data/globalban.js";
 import config from "./data/config.js";
+import { setTickInterval } from "./timer/scheduling.js";
 
 const World = Minecraft.World;
 const Commands = Minecraft.Commands;
@@ -66,8 +67,8 @@ World.events.beforeChat.subscribe(msg => {
     }
 });
 
-World.events.tick.subscribe(() => {
-    // Credits go out to mrpatches123#0348 for giving guidance to use tick events
+setTickInterval(() => {
+     // Credits go out to mrpatches123#0348 for giving guidance to use tick events
     // to check when loaded in the world and to execute code afterwards
     try {
         if (!loaded) {
@@ -169,7 +170,8 @@ World.events.tick.subscribe(() => {
         }
 
         // if (config.debug) console.warn(`${new Date()} | ${player.name}'s vertical velocity: ${Math.abs(player.velocity.y).toFixed(4)}`);
-        // if (config.debug) console.warn(`${new Date()} | ${player.name}'s speed: ${Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(4)}`);
+        // if (config.debug) console.warn(`${new Date()} | ${player.name}'s speed: ${Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3)}`);
+        // if (config.debug) console.warn(`${new Date()} | ${playerTags}`);
 
         // reach/a
         if (config.modules.reachA.enabled && playerTags.includes('attack')) {
@@ -194,10 +196,10 @@ World.events.tick.subscribe(() => {
 
         // NoSlow/A = speed limit check
         if(config.modules.noslowA.enabled && Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3) >= config.modules.noslowA.speed) {
-            if (!player.getEffect(Minecraft.MinecraftEffectTypes.speed) && playerTags.includes('right') && playerTags.includes('ground') && !playerTags.includes('jump') && !playerTags.includes('gliding') && !playerTags.includes('swimming')) {
+            if (!player.getEffect(Minecraft.MinecraftEffectTypes.speed) && playerTags.includes('ground') && playerTags.includes('sprint') && !playerTags.includes('jump') && !playerTags.includes('gliding') && !playerTags.includes('swimming')) {
                 try {
-                    Commands.run(`testfor @a[name="${player.nameTag}",tag=right,tag=ground,tag=!jump,tag=!gliding,tag=!swimming]`, World.getDimension("overworld"));
-                    flag(player, "NoSlow", "A", "Movement", "speed", Math.sqrt(Math.abs(player.velocity.x **2 + player.velocity.z **2)).toFixed(3), true, false);
+                	Commands.run(`testfor @a[name="${player.nameTag}",tag=ground,tag=sprint,tag=!jump,tag=!gliding,tag=!swimming]`, World.getDimension("overworld"));
+                    flag(player, "NoSlow", "A", "Movement", "speed", Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3), true, false);
                 } catch(error) {}
             }
         }
@@ -234,4 +236,5 @@ World.events.tick.subscribe(() => {
             }
         }
     }
-});
+}, 40); //Executes every 2 seconds
+every 2 seconds

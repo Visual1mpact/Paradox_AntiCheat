@@ -14,7 +14,7 @@
 				},
 				"jump": {
 					"transitions": [{
-						"default": "!query.is_jumping"
+						"default": "!query.is_jumping && query.is_on_ground"
 					}],
 					"on_entry": [
 						"/tag @s add jump",
