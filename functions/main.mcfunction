@@ -7,6 +7,7 @@ function checks/cbe
 function checks/illegalitems
 function checks/others
 function checks/fly
+function checks/killaura
 
 # Specific criteria checks
 execute @s[type=player,scores={attacks=1..,autoclicker=..0}] ~~~ function checks/autoclicker
