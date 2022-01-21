@@ -11,4 +11,3 @@ execute @s[m=!c,tag=levitating] ~ ~ ~ scoreboard players set @s fly_timer 0
 execute @s[m=!c,tag=gliding] ~ ~ ~ scoreboard players set @s fly_timer 0
 execute @s[m=!c,tag=ground] ~ ~ ~ scoreboard players set @s fly_timer 0
 execute @s[m=!c,tag=riding] ~ ~ ~ scoreboard players set @s fly_timer 0
-execute @s[scores={flyvl=1..}] ~ ~ ~ tag @s add flyFlag
