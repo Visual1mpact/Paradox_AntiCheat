@@ -6,7 +6,7 @@ function checks/angle
 function checks/cbe
 function checks/illegalitems
 function checks/others
-function checks/fly
+execute @s[tag=!flying] ~ ~ ~ function checks/fly
 function checks/killaura
 
 # Specific criteria checks
