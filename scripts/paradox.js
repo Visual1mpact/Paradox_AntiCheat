@@ -237,4 +237,3 @@ setTickInterval(() => {
         }
     }
 }, 40); //Executes every 2 seconds
-every 2 seconds
