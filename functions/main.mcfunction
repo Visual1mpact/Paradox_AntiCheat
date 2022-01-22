@@ -22,7 +22,7 @@ execute @s[type=player,tag=!op,m=c,scores={gmc=1..}] ~~~ function checks/optiona
 execute @s[type=player,tag=!op,m=s,scores={gmc=1..}] ~~~ function checks/optional/gamemodeS
 execute @s[scores={commandblocks=1..}] ~~~ function checks/optional/nocommandblocks
 execute @s[scores={cmds=1..}] ~~~ function checks/optional/overridecommandblocksenabled
-execute @s[type=player,tag=!op,scores={frostwalker=1..}] ~~~ function checks/optional/frostwalkerNBT
+execute @s[type=player,tag=!op,scores={ench_boots=1,frostwalker=1..}] ~~~ function checks/optional/frostwalkerNBT
 execute @s[type=player,scores={worldborder=1..}] ~~~ function checks/optional/worldborder
 
 #Armor system
