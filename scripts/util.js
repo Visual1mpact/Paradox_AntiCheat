@@ -72,8 +72,8 @@ export function banMessage(player) {
 
     // this removes old ban stuff
     tags.forEach(t => {
-        if(t.startsWith(" by:")) by = t.slice(4);
-        if(t.startsWith(" reason:")) reason = t.slice(8);
+        if(t.startsWith(" By:")) by = t.slice(4);
+        if(t.startsWith(" Reason:")) reason = t.slice(8);
     });
 
     Commands.run(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`, World.getDimension("overworld"));

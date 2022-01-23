@@ -102,9 +102,9 @@ setTickInterval(() => {
             try {
                 // test if they have the tag first or global ban will fail if we attempt to tag with an existing tag
                 // if they are not tagged then we do that here before we ban
-                Commands.run(`testfor @a[name="${player.nameTag}",tag=!"by:Paradox Anticheat"]`, World.getDimension("overworld"));
-                Commands.run(`tag "${player.nameTag}" add "by:Paradox Anticheat"`, World.getDimension("overworld"));
-                Commands.run(`tag "${player.nameTag}" add "reason:You are Paradox Anticheat global banned!"`, World.getDimension("overworld"));
+                Commands.run(`testfor @a[name="${player.nameTag}",tag=!"By:Paradox Anticheat"]`, World.getDimension("overworld"));
+                Commands.run(`tag "${player.nameTag}" add "By:Paradox Anticheat"`, World.getDimension("overworld"));
+                Commands.run(`tag "${player.nameTag}" add "Reason:You are Paradox Anticheat global banned!"`, World.getDimension("overworld"));
             } catch (error) {}
             banMessage(player);
         }
