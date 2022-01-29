@@ -88,10 +88,10 @@ export function commandHandler(player, message) {
         else if (config.customcommands.help && commandName === "help") help(message);
         else if (config.customcommands.credits && commandName === "credits") credits(message);
         else if (config.customcommands.op && commandName === "op") op(message, args);
-        else if (config.customcommands.clearchat && commandName === "clearchat") clearchat(message, args);
-        else if (config.customcommands.autoclicker && commandName === "autoclicker") autoclicker(message, args);
-        else if (config.customcommands.jesus && commandName === "jesus") jesus(message, args);
-        else if (config.customcommands.phase && commandName === "phase") phase(message, args);
+        else if (config.customcommands.clearchat && commandName === "clearchat") clearchat(message);
+        else if (config.customcommands.autoclicker && commandName === "autoclicker") autoclicker(message);
+        else if (config.customcommands.jesus && commandName === "jesus") jesus(message);
+        else if (config.customcommands.phase && commandName === "phase") phase(message);
         else if (config.customcommands.enchantedarmor && commandName === "enchantedarmor") enchantedarmor(message);
         else return;
     } catch (error) {
