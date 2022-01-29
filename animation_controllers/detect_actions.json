@@ -241,10 +241,10 @@
 				"default": {
 					"transitions": [
 						{
-							"unenchanth": "!variable.helmet_ench && !variable.helmet_enchleather"
+							"unenchanth": "query.armor_material_slot(0) == 0 || query.armor_material_slot(0) == 2"
 						},
 						{
-							"enchanth": "variable.helmet_ench || variable.helmet_enchleather"
+							"enchanth": "query.armor_material_slot(0) == 1 || query.armor_material_slot(0) == 3"
 						}
 					]
 				},
@@ -275,10 +275,10 @@
 				"default": {
 					"transitions": [
 						{
-							"unenchantc": "!variable.chest_ench && !variable.chest_enchleather"
+							"unenchantc": "query.armor_material_slot(1) == 0 || query.armor_material_slot(1) == 2"
 						},
 						{
-							"enchantc": "variable.chest_ench || variable.chest_enchleather"
+							"enchantc": "query.armor_material_slot(1) == 1 || query.armor_material_slot(1) == 3"
 						}
 					]
 				},
@@ -309,10 +309,10 @@
 				"default": {
 					"transitions": [
 						{
-							"unenchantl": "!variable.legs_ench && !variable.legs_enchleather"
+							"unenchantl": "query.armor_material_slot(2) == 0 || query.armor_material_slot(2) == 2"
 						},
 						{
-							"enchantl": "variable.legs_ench || variable.legs_enchleather"
+							"enchantl": "query.armor_material_slot(2) == 1 || query.armor_material_slot(2) == 3"
 						}
 					]
 				},
@@ -343,10 +343,10 @@
 				"default": {
 					"transitions": [
 						{
-							"unenchantb": "!variable.boots_ench && !variable.boots_enchleather"
+							"unenchantb": "query.armor_material_slot(3) == 0 || query.armor_material_slot(3) == 2"
 						},
 						{
-							"enchantb": "variable.boots_ench || variable.boots_enchleather"
+							"enchantb": "query.armor_material_slot(3) == 1 || query.armor_material_slot(3) == 3"
 						}
 					]
 				},
