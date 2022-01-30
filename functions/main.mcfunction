@@ -7,7 +7,7 @@ function checks/cbe
 function checks/illegalitems
 function checks/others
 execute @s[tag=!flying] ~~~ function checks/fly
-function checks/killaura
+execute @s[scores={autoaura=1..}] ~~~ function checks/killaura
 
 # Specific criteria checks
 execute @s[type=player,scores={attacks=1..,autoclicker=1..}] ~~~ function checks/autoclicker
