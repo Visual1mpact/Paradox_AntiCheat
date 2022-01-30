@@ -66,6 +66,7 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 
 # Gametest enabled
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!auracheck <username>§r - Manual test for killaura."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!ecwipe <username>§r - Clears a players ender chest."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!fly <username>§r - Enables/disables fly mode in survival."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!freeze <username>§r - Freeze a player and make it so they cant move."}]}
@@ -76,6 +77,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!tag <tag>§r - Add
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!clearchat§r - Clears chat."}]}
 
 # Gametest disabled
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/auracheck§r - Manual test for killaura."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/ecwipe§r - Clears a players ender chest."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/fly§r - Enables/disables fly mode in survival."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/freeze§r - Freeze a player and make it so they cant move."}]}

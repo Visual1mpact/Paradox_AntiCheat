@@ -1,1 +1,0 @@
-summon paradox:killaura ^ ^ ^3

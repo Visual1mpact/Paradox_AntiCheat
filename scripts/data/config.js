@@ -34,7 +34,8 @@ export default
         "notify": true,
         "tag": true,
         "vanish": true,
-        "enchantedarmor":true
+        "enchantedarmor":true,
+        "auracheck":true
     },
     "modules": {
         "badpackets2": {
