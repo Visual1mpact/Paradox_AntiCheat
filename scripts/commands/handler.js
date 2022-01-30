@@ -94,6 +94,7 @@ export function commandHandler(player, message) {
         else if (config.customcommands.phase && commandName === "phase") phase(message);
         else if (config.customcommands.enchantedarmor && commandName === "enchantedarmor") enchantedarmor(message);
         else if (config.customcommands.enchantedarmor && commandName === "auracheck") auracheck(message, args);
+        else if (config.customcommands.enchantedarmor && commandName === "autoaura") autoaura(message);
         else return;
     } catch (error) {
         console.warn(`${new Date()} | ` + error);

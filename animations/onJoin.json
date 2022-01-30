@@ -43,6 +43,8 @@
 					"/scoreboard players add @a detect_leggings 0",
 					"/scoreboard objectives add detect_boots dummy",
 					"/scoreboard players add @a detect_boots 0",
+					"/scoreboard objectives add autoaura dummy",
+					"/scoreboard players add @a autoaura 0",
 					// Setting Operations For Objective Types
 					"/scoreboard players operation @a npc = paradox:config npc",
 					"/scoreboard players operation @a commandblocks = paradox:config commandblocks",
@@ -59,6 +61,7 @@
 					"/scoreboard players operation @a phase = paradox:config phase",
 					"/scoreboard players operation @a gametestapi = paradox:config gametestapi",
 					"/scoreboard players operation @a encharmor = paradox:config encharmor",
+					"/scoreboard players operation @a autoaura = paradox:config autoaura",
 					// Anti Cheat Objectives
 					"/scoreboard objectives add autototemvl dummy",
 					"/scoreboard objectives add invmovevl dummy",

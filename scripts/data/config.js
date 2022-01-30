@@ -35,7 +35,8 @@ export default
         "tag": true,
         "vanish": true,
         "enchantedarmor":true,
-        "auracheck":true
+        "auracheck":true,
+        "autoaura":true
     },
     "modules": {
         "badpackets2": {
