@@ -35,7 +35,8 @@
 					"helmet",
 					"chest",
 					"leggings",
-					"boots"
+					"boots",
+					"attacked"
 				]
 			},
 			"animations": {
@@ -66,17 +67,20 @@
 				"helmet": "controller.animation.helmet",
 				"chest": "controller.animation.chest",
 				"leggings": "controller.animation.leggings",
-				"boots": "controller.animation.boots"
+				"boots": "controller.animation.boots",
+				"attacked": "controller.animation.attacked"
 			}
 		},
 		"component_groups": {
 			"minecraft:add_bad_omen": {
 				"minecraft:spell_effects": {
-					"add_effects": [{
-						"effect": "bad_omen",
-						"duration": 6000,
-						"display_on_screen_animation": true
-					}]
+					"add_effects": [
+						{
+							"effect": "bad_omen",
+							"duration": 6000,
+							"display_on_screen_animation": true
+						}
+					]
 				},
 				"minecraft:timer": {
 					"time": [
@@ -114,9 +118,25 @@
 					"value": 0
 				}
 			},
+			"paradox:reset_mark_variant": {
+				"minecraft:mark_variant": {
+					"value": 0
+				},
+				"minecraft:scale": {
+					"value": 1
+				}
+			},
 			"paradox:onAttack": {
 				"minecraft:skin_id": {
 					"value": 1
+				}
+			},
+			"paradox:attacked": {
+				"minecraft:mark_variant": {
+					"value": 1
+				},
+				"minecraft:scale": {
+					"value": 0.5
 				}
 			},
 			"paradox:gui": {
@@ -191,16 +211,18 @@
 				"value": 0.1
 			},
 			"minecraft:hurt_on_condition": {
-				"damage_conditions": [{
-					"filters": {
-						"test": "in_lava",
-						"subject": "self",
-						"operator": "==",
-						"value": true
-					},
-					"cause": "lava",
-					"damage_per_tick": 4
-				}]
+				"damage_conditions": [
+					{
+						"filters": {
+							"test": "in_lava",
+							"subject": "self",
+							"operator": "==",
+							"value": true
+						},
+						"cause": "lava",
+						"damage_per_tick": 4
+					}
+				]
 			},
 			"minecraft:attack": {
 				"damage": 1
@@ -239,11 +261,13 @@
 				"days_until_insomnia": 3
 			},
 			"minecraft:damage_sensor": {
-				"triggers": [{
+				"triggers": [
+					{
 						"cause": "all",
 						"on_damage": {
 							"filters": {
-								"any_of": [{
+								"any_of": [
+									{
 										"test": "has_tag",
 										"operator": "==",
 										"subject": "self",
@@ -264,14 +288,23 @@
 						"cause": "entity_attack",
 						"on_damage": {
 							"filters": {
-								"any_of": [{
-									"test": "is_family",
-									"subject": "other",
-									"value": "player"
-								}]
+								"any_of": [
+									{
+										"test": "is_family",
+										"subject": "other",
+										"value": "player"
+									}
+								]
 							},
 							"event": "paradox:attacked",
 							"target": "other"
+						}
+					},
+					{
+						"cause": "entity_attack",
+						"on_damage": {
+							"target": "self",
+							"event": "paradox:damagedbp"
 						}
 					}
 				]
@@ -282,14 +315,23 @@
 					"parrot_tame"
 				],
 				"pull_in_entities": true,
-				"seats": [{
-						"position": [0.4, -0.2, -0.1],
+				"seats": [
+					{
+						"position": [
+							0.4,
+							-0.2,
+							-0.1
+						],
 						"min_rider_count": 0,
 						"max_rider_count": 0,
 						"lock_rider_rotation": 0
 					},
 					{
-						"position": [-0.4, -0.2, -0.1],
+						"position": [
+							-0.4,
+							-0.2,
+							-0.1
+						],
 						"min_rider_count": 1,
 						"max_rider_count": 2,
 						"lock_rider_rotation": 0
@@ -298,9 +340,11 @@
 			},
 			"minecraft:scaffolding_climber": {},
 			"minecraft:environment_sensor": {
-				"triggers": [{
+				"triggers": [
+					{
 						"filters": {
-							"all_of": [{
+							"all_of": [
+								{
 									"test": "has_mob_effect",
 									"subject": "self",
 									"value": "bad_omen"
@@ -309,7 +353,6 @@
 									"test": "is_in_village",
 									"subject": "self",
 									"value": true
-
 								}
 							]
 						},
@@ -317,29 +360,34 @@
 					},
 					{
 						"filters": {
-							"all_of": [{
-								"test": "has_container_open",
-								"operator": "==",
-								"subject": "self",
-								"value": true
-							}]
+							"all_of": [
+								{
+									"test": "has_container_open",
+									"operator": "==",
+									"subject": "self",
+									"value": true
+								}
+							]
 						},
 						"event": "paradox:guiopen"
 					},
 					{
 						"filters": {
-							"all_of": [{
-								"test": "has_container_open",
-								"operator": "==",
-								"subject": "self",
-								"value": false
-							}]
+							"all_of": [
+								{
+									"test": "has_container_open",
+									"operator": "==",
+									"subject": "self",
+									"value": false
+								}
+							]
 						},
 						"event": "paradox:reset_variant"
 					},
 					{
 						"filters": {
-							"any_of": [{
+							"any_of": [
+								{
 									"test": "has_equipment",
 									"domain": "any",
 									"operator": "==",
@@ -623,6 +671,18 @@
 					]
 				}
 			},
+			"paradox:damagedbp": {
+				"add": {
+					"component_groups": [
+						"paradox:attacked"
+					]
+				},
+				"remove": {
+					"component_groups": [
+						"paradox:reset_mark_variant"
+					]
+				}
+			},
 			"paradox:guiopen": {
 				"add": {
 					"component_groups": [
@@ -669,6 +729,18 @@
 				"remove": {
 					"component_groups": [
 						"paradox:gui"
+					]
+				}
+			},
+			"paradox:reset_mark_variant": {
+				"add": {
+					"component_groups": [
+						"paradox:reset_mark_variant"
+					]
+				},
+				"remove": {
+					"component_groups": [
+						"paradox:attacked"
 					]
 				}
 			},

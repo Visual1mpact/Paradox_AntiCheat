@@ -244,5 +244,14 @@ World.events.tick.subscribe(() => {
                 } catch(error) {}
             }
         }
+
+        if(config.modules.flyA.enabled && (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= -0.078) {
+            if(playerTags.includes('attacked') && !playerTags.includes('dead') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('flying')) {
+                try {
+                    flag(player, "Anti-KB", "A", "Movement", "yVelocity", Math.abs(player.velocity.y).toFixed(4), true, false);
+	    Commands.run(`scoreboard players add @a[name="${player.nameTag}"] velocityvl 1`, World.getDimension("overworld"));
+                } catch(error) {}
+            }
+        }
     }
 });
