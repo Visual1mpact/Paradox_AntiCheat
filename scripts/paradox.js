@@ -60,9 +60,13 @@ World.events.beforeChat.subscribe(msg => {
 
     commandHandler(player, msg);
 
-    // add's user custom tags to their messages
+    // add's user custom tags to their messages if it exists or we fall back
+    // also filter for non ASCII characters and remove them
     if (player.name && player.name !== player.nameTag && !msg.cancel) {
-        Commands.run(`tellraw @a {"rawtext":[{"text":"${player.nameTag} ${msg.message}"}]}`, World.getDimension("overworld"));
+        Commands.run(`tellraw @a {"rawtext":[{"text":"${player.nameTag.replace(/[^\x00-\x7F]/g, "")} ${msg.message.replace(/[^\x00-\x7F]/g, "")}"}]}`, World.getDimension("overworld"));
+        msg.cancel = true;
+    } else {
+        Commands.run(`tellraw @a {"rawtext":[{"text":"<${player.nameTag.replace(/[^\x00-\x7F]/g, "")}> ${msg.message.replace(/[^\x00-\x7F]/g, "")}"}]}`, World.getDimension("overworld"));
         msg.cancel = true;
     }
 });
