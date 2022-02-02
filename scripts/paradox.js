@@ -3,6 +3,7 @@ import { flag, banMessage, getTags } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { banplayer } from "./data/globalban.js";
 import config from "./data/config.js";
+import { setTickInterval } from "./timer/scheduling.js";
 
 const World = Minecraft.World;
 const Commands = Minecraft.Commands;
