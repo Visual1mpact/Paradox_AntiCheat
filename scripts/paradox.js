@@ -66,7 +66,7 @@ World.events.beforeChat.subscribe(msg => {
     }
 });
 
-World.events.tick.subscribe(() => {
+setTickInterval(() => {
      // Credits go out to mrpatches123#0348 for giving guidance to use tick events
     // to check when loaded in the world and to execute code afterwards
     try {
@@ -256,4 +256,4 @@ World.events.tick.subscribe(() => {
             }
         }
     }
-});
+}, 40); //Executes every 2 seconds
