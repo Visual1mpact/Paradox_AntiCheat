@@ -112,6 +112,9 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
   Enchanted Armor -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for players wearing enchanted armor.
 
+  Anti Knockback -><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for knockback resistance and prevents it. (Requires GameTest FrameWork)
+
 # <img src="https://i.imgur.com/ONwNwQC.png" border="0" width="400">
 To receive anti-cheat alerts use:
 ```/function notify``` or ```!notify```

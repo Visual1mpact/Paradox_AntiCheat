@@ -36,7 +36,8 @@ export default
         "vanish": true,
         "enchantedarmor":true,
         "auracheck":true,
-        "autoaura":true
+        "autoaura":true,
+        "antikb":true
     },
     "modules": {
         "badpackets2": {
@@ -101,6 +102,10 @@ export default
             "illegalItems": [
                 "minecraft:movingblock"
             ]
+        },
+        "antikbA": {
+            "enabled": true,
+            "magnitude": -0.078
         }
     }
 };

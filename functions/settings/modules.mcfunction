@@ -36,3 +36,5 @@ tellraw @s[scores={encharmor=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r
 tellraw @s[scores={encharmor=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Enchanted Armor is currently §4DISABLED"}]}
 tellraw @s[scores={autoaura=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoaura is currently §aENABLED"}]}
 tellraw @s[scores={autoaura=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoaura is currently §4DISABLED"}]}
+tellraw @s[scores={antikb=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Knockback is currently §aENABLED"}]}
+tellraw @s[scores={antikb=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Knockback is currently §4DISABLED"}]}

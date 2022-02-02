@@ -45,6 +45,8 @@
 					"/scoreboard players add @a detect_boots 0",
 					"/scoreboard objectives add autoaura dummy",
 					"/scoreboard players add @a autoaura 0",
+					"/scoreboard objectives add antikb dummy",
+					"/scoreboard players add @a antikb 0",
 					// Setting Operations For Objective Types
 					"/scoreboard players operation @a npc = paradox:config npc",
 					"/scoreboard players operation @a commandblocks = paradox:config commandblocks",
@@ -62,6 +64,7 @@
 					"/scoreboard players operation @a gametestapi = paradox:config gametestapi",
 					"/scoreboard players operation @a encharmor = paradox:config encharmor",
 					"/scoreboard players operation @a autoaura = paradox:config autoaura",
+					"/scoreboard players operation @a antikb = paradox:config antikb",
 					// Anti Cheat Objectives
 					"/scoreboard objectives add autototemvl dummy",
 					"/scoreboard objectives add invmovevl dummy",

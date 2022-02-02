@@ -28,6 +28,7 @@ import { autoclicker } from "./settings/autoclicker.js";
 import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
+import { antikb } from "./settings/antikb.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
 import { freeze } from "./utility/freeze.js";
@@ -93,8 +94,9 @@ export function commandHandler(player, message) {
         else if (config.customcommands.jesus && commandName === "jesus") jesus(message);
         else if (config.customcommands.phase && commandName === "phase") phase(message);
         else if (config.customcommands.enchantedarmor && commandName === "enchantedarmor") enchantedarmor(message);
-        else if (config.customcommands.enchantedarmor && commandName === "auracheck") auracheck(message, args);
-        else if (config.customcommands.enchantedarmor && commandName === "autoaura") autoaura(message);
+        else if (config.customcommands.auracheck && commandName === "auracheck") auracheck(message, args);
+        else if (config.customcommands.autoaura && commandName === "autoaura") autoaura(message);
+        else if (config.customcommands.antikb && commandName === "antikb") antikb(message);
         else return;
     } catch (error) {
         console.warn(`${new Date()} | ` + error);

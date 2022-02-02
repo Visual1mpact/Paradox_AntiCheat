@@ -13,9 +13,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!unmute <username> 
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!notify§r - Enables/Disables cheat notifications."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!credits§r - Shows credits, thats it."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!op <username>§r - Op's player in Paradox AntiCheat features."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoclicker§r - Enables/disables Anti Autoclicker."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc.)."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!modules§r - View all enabled or disabled modules."}]}
 
 # Gametest Disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function help§r - Shows this help page."}]}
@@ -23,14 +21,11 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username>
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function notify§r - Enables/Disables cheat notifications."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function credits§r - Shows credits, thats it."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ op§r - Op's player in Paradox AntiCheat features."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoclicker§r - Enables/disables Anti Autoclicker."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc.)."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/modules§r - View all enabled or disabled modules."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Optional Features"}]}
 
 # Gametest enabled
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!modules§r - View all enabled or disabled modules."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgma§r - Enables/disables gamemode 2(Adventure) to be used."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgmc§r - Enables/disables gamemode 1(Creative) to be used."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgms§r - Enables/disables gamemode 0(Survival) to be used."}]}
@@ -46,9 +41,9 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!enchantedarmor§r - Enables/disables enchanted armor for all players."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoaura§r - Enables/disables auto killaura checks for all players."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enables/disables anti knockback for all players."}]}
 
 # Gametest disabled
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/modules§r - View all enabled or disabled modules."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMA§r - Enables/disables gamemode 2(Adventure) to be used."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMC§r - Enables/disables gamemode 1(Creative) to be used."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMS§r - Enables/disables gamemode 0(Survival) to be used."}]}
