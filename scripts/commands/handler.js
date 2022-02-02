@@ -29,6 +29,7 @@ import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antikb } from "./settings/antikb.js";
+import { autoaura } from "./settings/autoaura.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
 import { freeze } from "./utility/freeze.js";
@@ -38,6 +39,7 @@ import { vanish } from "./utility/vanish.js";
 import { fly } from "./utility/fly.js";
 import { invsee } from "./utility/invsee.js";
 import { clearchat } from "./utility/clearchat.js";
+import { auracheck } from "./utility/auracheck.js";
 
 /**
  * @name commandHandler
