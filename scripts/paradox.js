@@ -249,9 +249,9 @@ World.events.tick.subscribe(() => {
             if(playerTags.includes('attacked') && !playerTags.includes('dead') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('flying')) {
                 try {
                     // Make sure Anti Knockback is turned on
-	                Commands.run(`testfor @a[name="${player.nameTag}",scores={antikb=1..}]`, World.getDimension("overworld"));
+	            Commands.run(`testfor @a[name="${player.nameTag}",scores={antikb=1..}]`, World.getDimension("overworld"));
                     flag(player, "AntiKB", "A", "Movement", "yVelocity", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, false);
-	                Commands.run(`scoreboard players add @a[name="${player.nameTag}"] velocityvl 1`, World.getDimension("overworld"));
+	            Commands.run(`scoreboard players add @a[name="${player.nameTag}"] velocityvl 1`, World.getDimension("overworld"));
                 } catch(error) {}
             }
         }
