@@ -23,7 +23,7 @@ history pertaining to Scythe still exists within this project and is free to rev
 </div>
   
 # <img src="https://i.imgur.com/5W2YXCD.png" border="0" width="150">
-When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly
+When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly. The versioning system for Paradox goes as follows. The first number denotes the pack version. This will rarely change unless there has been major changes to the code. The second number denotes the major revision of the pack version. These particular changes mostly involve around features being added or removed. The third number indicates the minor revision of the Pack. This evolves around bug fixes. By knowing this structure it should help understand what kind of changes have been made by knowing the version.
 
 # <img src="https://i.imgur.com/AXWmBA3.png" border="0" width="150">
 To install this anticheat to your realm/world you need to install the .mcpack, apply it to your world and enable GameTest Framework, once you have done this the anticheat should be fully up and running.
