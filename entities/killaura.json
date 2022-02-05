@@ -59,7 +59,7 @@
 							"filters": {
 								"test": "has_damage",
 								"subject": "self",
-								"value": "entity_attack"
+								"value": "attack"
 							}
 						},
 						"cause": "entity_attack"
