@@ -76,7 +76,12 @@ export function banMessage(player) {
         if(t.startsWith(" Reason:")) reason = t.slice(8);
     });
 
-    Commands.run(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`, World.getDimension("overworld"));
+    try {
+        Commands.run(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`, World.getDimension("overworld"));
+    } catch(error) {
+        // if we cant kick them with /kick then we instant despawn them
+        player.triggerEvent("paradox:kick");
+    }
 }
 
 /**
