@@ -3,7 +3,6 @@ import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = Minecraft.World;
-const Commands = Minecraft.Commands;
 
 const BadPackets2 = () => {
     World.events.beforeChat.subscribe(msg => {

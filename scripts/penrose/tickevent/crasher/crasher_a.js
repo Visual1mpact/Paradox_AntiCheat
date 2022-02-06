@@ -4,7 +4,6 @@ import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.World;
-const Commands = Minecraft.Commands;
 
 const CrasherA = () => {
     setTickInterval(() => {
