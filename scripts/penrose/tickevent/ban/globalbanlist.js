@@ -1,5 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import { banplayer } from "../../../data/globalban.js";
+import { banMessage } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.World;
