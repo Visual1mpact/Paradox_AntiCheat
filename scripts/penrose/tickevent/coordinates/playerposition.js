@@ -19,7 +19,7 @@ const PlayerPosition = () => {
                 Commands.run(`scoreboard players set "${player.nameTag}" zPos ${Math.floor(player.location.z)}`, World.getDimension("overworld"));
             } catch(e) {}
         }
-    }, 40) //Executes every 2 seconds
+    }, 20) //Executes every 1 seconds
 }
 
 export { PlayerPosition }
