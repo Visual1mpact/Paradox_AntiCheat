@@ -1,4 +1,4 @@
-export const illegals = [
+export const illegalitems = [
   'minecraft:acacia_standing_sign',
   'minecraft:acacia_wall_sign',
   'minecraft:agent_spawn_egg',
