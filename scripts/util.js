@@ -1,8 +1,7 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 /**
  * @name flag
@@ -25,31 +24,31 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
 
     // make sure the vl objective exists
     try {
-        Commands.run(`scoreboard objectives add ${check.toLowerCase()}vl dummy`, World.getDimension("overworld"));
+        World.getDimension("overworld").runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
     } catch(error) {}
 
     // cancel the message
     if (message) message.cancel = true;
 
-    if(shouldTP && check !== "Crasher") Commands.run(`tp "${player.nameTag}" "${player.nameTag}"`, World.getDimension("overworld"));
-        else if(shouldTP && check === "Crasher") Commands.run(`tp "${player.nameTag}" 30000000 30000000 30000000`, World.getDimension("overworld"));
+    if(shouldTP && check !== "Crasher") World.getDimension("overworld").runCommand(`tp "${player.nameTag}" "${player.nameTag}"`);
+        else if(shouldTP && check === "Crasher") World.getDimension("overworld").runCommand(`tp "${player.nameTag}" 30000000 30000000 30000000`);
 
-    Commands.run(`scoreboard players add "${player.nameTag}" ${check.toLowerCase()}vl 1`, World.getDimension("overworld"));
+    World.getDimension("overworld").runCommand(`scoreboard players add "${player.nameTag}" ${check.toLowerCase()}vl 1`);
 
     try {
-        if(debug) Commands.run(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`, World.getDimension("overworld"));
-            else Commands.run(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`, World.getDimension("overworld"));
+        if(debug) World.getDimension("overworld").runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            else World.getDimension("overworld").runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
     } catch(error) {}
 
     if (slot >= 0) {
         try {
-            if(slot <= 8) Commands.run(`replaceitem entity "${player.nameTag}" slot.hotbar ${slot} air 1`, World.getDimension("overworld"));
-                else Commands.run(`replaceitem entity "${player.nameTag}" slot.inventory ${slot - 9} air 1`, World.getDimension("overworld"));
+            if(slot <= 8) World.getDimension("overworld").runCommand(`replaceitem entity "${player.nameTag}" slot.hotbar ${slot} air 1`);
+                else World.getDimension("overworld").runCommand(`replaceitem entity "${player.nameTag}" slot.inventory ${slot - 9} air 1`);
         } catch(error) {console.warn(`${new Date()} | ` + error);}
     }
 
     try {
-        if (check === "Namespoof") Commands.run(`kick "${player.nameTag}" §r§4[§6Paradox§4]§r Invalid username`, World.getDimension("overworld"));
+        if (check === "Namespoof") World.getDimension("overworld").runCommand(`kick "${player.nameTag}" §r§4[§6Paradox§4]§r Invalid username`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -64,7 +63,7 @@ export function banMessage(player) {
     // validate that required params are defined
     if (!player) return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:68)");
 
-    let tags = Commands.run(`tag "${player.nameTag}" list`, World.getDimension('overworld')).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
+    let tags = player.getTags();
     if (tags) tags = String(tags).split(/[,]/);
 
     var reason;
@@ -77,7 +76,7 @@ export function banMessage(player) {
     });
 
     try {
-        Commands.run(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`, World.getDimension("overworld"));
+        World.getDimension("overworld").runCommand(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -92,7 +91,7 @@ export function getTags(player) {
     // validate that required params are defined
     if (!player) return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:91)");
 
-    let tags = Commands.run(`tag "${player.nameTag}" list`, World.getDimension('overworld')).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
+    let tags = player.getTags();
 
     return String(tags);
 }

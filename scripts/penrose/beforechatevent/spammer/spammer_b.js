@@ -1,8 +1,7 @@
 import * as Minecraft from "mojang-minecraft";
 import { flag, getTags } from "../../../util.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 const SpammerB = () => {
     World.events.beforeChat.subscribe(msg => {
@@ -15,7 +14,7 @@ const SpammerB = () => {
         // Spammer/B = checks if someone sends a message while swinging their hand
         if (playerTags.includes('left')) {
             try {
-                Commands.run(`testfor @a[name="${player.nameTag}",tag=left]`, World.getDimension("overworld"));
+                World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=left]`);
                 flag(player, "Spammer", "B", "Combat", false, false, false, msg);
             } catch (error) {}
         }

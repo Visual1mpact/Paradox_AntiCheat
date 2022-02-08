@@ -3,8 +3,7 @@ import { banplayer } from "../../../data/globalban.js";
 import { banMessage } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 const GlobalBanList = () => {
     setTickInterval(() => {
@@ -19,14 +18,14 @@ const GlobalBanList = () => {
                 try {
                     // test if they have the tag first or global ban will fail if we attempt to tag with an existing tag
                     // if they are not tagged then we do that here before we ban
-                    Commands.run(`testfor @a[name="${player.nameTag}",tag=!"By:Paradox Anticheat"]`, World.getDimension("overworld"));
-                    Commands.run(`tag "${player.nameTag}" add "By:Paradox Anticheat"`, World.getDimension("overworld"));
+                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=!"By:Paradox Anticheat"]`);
+                    World.getDimension("overworld").runCommand(`tag "${player.nameTag}" add "By:Paradox Anticheat"`);
                 } catch (error) {}
                 try {
                     // test if they have the tag first or global ban will fail if we attempt to tag with an existing tag
                     // if they are not tagged then we do that here before we ban
-                    Commands.run(`testfor @a[name="${player.nameTag}",tag=!"Reason:You are Paradox Anticheat global banned!"]`, World.getDimension("overworld"));
-                    Commands.run(`tag "${player.nameTag}" add "Reason:You are Paradox Anticheat global banned!"`, World.getDimension("overworld"));
+                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=!"Reason:You are Paradox Anticheat global banned!"]`);
+                    World.getDimension("overworld").runCommand(`tag "${player.nameTag}" add "Reason:You are Paradox Anticheat global banned!"`);
                 } catch (error2) {}
                 banMessage(player);
             }

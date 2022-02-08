@@ -1,8 +1,7 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 // found the inventory viewing scipt in the bedrock addons discord, unsure of the original owner (not my code)
 /**
@@ -21,23 +20,23 @@ export function invsee(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        Commands.run(`testfor @a[name="${player.nameTag}",tag=op]`, World.getDimension("overworld"));
+        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
+        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos inventory to view!"}]}`, World.getDimension("overworld"));
+    if (!args.length) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos inventory to view!"}]}`);
     
     // try to find the player requested
     for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl;
     
-    if (!member) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`, World.getDimension("overworld"));
+    if (!member) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
 
     let container = member.getComponent('inventory').container;
     
-    Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${member.nameTag}'s inventory:\n\n"}]}`, World.getDimension("overworld"));
+    World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${member.nameTag}'s inventory:\n\n"}]}`);
     for (let i = 0; i < container.size; i++) if (container.getItem(i)) {
         let o = container.getItem(i);
-        Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`, World.getDimension("overworld"));
+        World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`);
     }
 }

@@ -2,8 +2,7 @@ import * as Minecraft from "mojang-minecraft";
 import { flag, getTags } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 const FlyA = () => {
     setTickInterval(() => {
@@ -20,7 +19,7 @@ const FlyA = () => {
             if(Math.abs(player.velocity.y).toFixed(4) == 0.2250) {
                 if(playerTags.includes('moving') && !playerTags.includes('ground') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('flying')) {
                     try {
-                        Commands.run(`testfor @a[name="${player.nameTag}",tag=moving,tag=!ground,tag=!gliding,tag=!levitating,m=!c,tag=!flying]`, World.getDimension("overworld"));
+                        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=moving,tag=!ground,tag=!gliding,tag=!levitating,m=!c,tag=!flying]`);
                         flag(player, "Fly", "A", "Movement", "yVelocity", Math.abs(player.velocity.y).toFixed(4), true, false);
                     } catch(error) {}
                 }

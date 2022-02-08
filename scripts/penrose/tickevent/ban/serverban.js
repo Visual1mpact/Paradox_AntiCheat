@@ -2,8 +2,7 @@ import * as Minecraft from "mojang-minecraft";
 import { banMessage } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 const ServerBan = () => {
     setTickInterval(() => {
@@ -15,7 +14,7 @@ const ServerBan = () => {
 
             // Ban message
             try {
-                Commands.run(`testfor @a[name="${player.nameTag}",tag=isBanned]`, World.getDimension("overworld"));
+                World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);
                 banMessage(player);
             } catch(error) {}
         }

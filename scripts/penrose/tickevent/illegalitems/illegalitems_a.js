@@ -3,12 +3,12 @@ import { illegalitems } from "../../../data/itemban.js"
 import { getTags } from "../../../util.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 const IllegalItemsA = () => {
     World.events.tick.subscribe(() => {
-        World.getPlayers().forEach(player => {
+        var players = World.getPlayers()
+        for (const player of players) {
             
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
@@ -30,13 +30,13 @@ const IllegalItemsA = () => {
             inventory_items.forEach(item => {
                 if (illegalitems.includes(item) && !playerTags.includes('op') || item > config.modules.illegalitemsA.maxStack && !playerTags.includes('op')) {
                     try {
-                        Commands.run(`clear "${player.nameTag}"`, World.getDimension('overworld'))
-                        Commands.run(`tag "${player.nameTag}" add "isBanned"`, World.getDimension('overworld'))
+                        World.getDimension('overworld').runCommand(`clear "${player.nameTag}"`)
+                        World.getDimension('overworld').runCommand(`tag "${player.nameTag}" add "isBanned"`)
                     } catch (error) {}
                     player.triggerEvent('paradox:kick')
                 }
             })
-        })
+        }
     })
 }
 

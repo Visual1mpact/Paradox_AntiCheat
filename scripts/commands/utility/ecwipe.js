@@ -1,8 +1,7 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 /**
  * @name ecwipe
@@ -20,17 +19,17 @@ export function ecwipe(message, args) {
     
     // make sure the user has permissions to run the command
     try {
-        Commands.run(`testfor @a[name="${player.nameTag}",tag=op]`, World.getDimension("overworld"));
+        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`, World.getDimension("overworld"));
+        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos ender chest inventory to wipe!"}]}`, World.getDimension("overworld"));
+    if (!args.length) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos ender chest inventory to wipe!"}]}`);
     
     // try to find the player requested
     for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl;
     
-    if (!member) return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`, World.getDimension("overworld"));
+    if (!member) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
 
-    return Commands.run(`execute "${member.nameTag}" ~~~ function tools/ecwipe`, World.getDimension("overworld"));
+    return World.getDimension("overworld").runCommand(`execute "${member.nameTag}" ~~~ function tools/ecwipe`);
 }

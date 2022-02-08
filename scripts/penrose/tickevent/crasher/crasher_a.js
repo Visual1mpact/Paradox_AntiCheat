@@ -2,7 +2,7 @@ import * as Minecraft from "mojang-minecraft";
 import { flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.World;
+const World = Minecraft.world;
 
 const CrasherA = () => {
     setTickInterval(() => {

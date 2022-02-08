@@ -1,8 +1,7 @@
 import * as Minecraft from "mojang-minecraft";
 import config from "../data/config.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 // import all our commands
 import { kick } from "./moderation/kick.js";
@@ -104,6 +103,6 @@ export function commandHandler(player, message) {
         else return;
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
-        return Commands.run(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`, World.getDimension("overworld"));
+        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
     }
 }

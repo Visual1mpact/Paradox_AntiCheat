@@ -3,7 +3,7 @@ import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.World;
+const World = Minecraft.world;
 
 const NamespoofA = () => {
     setTickInterval(() => {

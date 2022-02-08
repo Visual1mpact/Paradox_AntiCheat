@@ -2,8 +2,7 @@ import * as Minecraft from "mojang-minecraft";
 import { flag, getTags } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.World;
-const Commands = Minecraft.Commands;
+const World = Minecraft.world;
 
 const InvalidSprintA = () => {
     setTickInterval(() => {
@@ -19,7 +18,7 @@ const InvalidSprintA = () => {
             // invalidsprint/a = checks for sprinting with the blindness effect
             if (player.getEffect(Minecraft.MinecraftEffectTypes.blindness) && playerTags.includes('sprint')) {
                 try {
-                    Commands.run(`testfor @a[name=${player.nameTag},tag=sprint]`, World.getDimension("overworld"));
+                    World.getDimension("overworld").runCommand(`testfor @a[name=${player.nameTag},tag=sprint]`);
                     flag(player, "InvalidSprint", "A", "Movement", false, false, true, false);
                 } catch(error) {}
             }

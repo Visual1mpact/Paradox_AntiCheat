@@ -2,7 +2,7 @@ import * as Minecraft from "mojang-minecraft";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.World;
+const World = Minecraft.world;
 
 const BadPackets2 = () => {
     World.events.beforeChat.subscribe(msg => {
