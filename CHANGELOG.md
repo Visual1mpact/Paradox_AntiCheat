@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.2.12](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.2.12) (2022-02-08)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.1.11...v2.2.12)
+
+**Closed issues:**
+
+- test [\#13](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/13)
+- test [\#12](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/12)
+
 ## [v2.1.11](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.1.11) (2022-02-05)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.1.10...v2.1.11)
