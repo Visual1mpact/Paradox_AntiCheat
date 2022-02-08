@@ -87,21 +87,15 @@ export default
             "enabled": true,
             "speed": 0.300
         },
-        "illegalitemsC": {
-            "enabled": true,
-            "maxStack": 64
-        },
         "invalidsprintA": {
             "enabled": true
         },
         "flyA": {
             "enabled": true
         },
-        "illegalitemsD": {
+        "illegalitemsA": {
             "enabled": true,
-            "illegalItems": [
-                "minecraft:movingblock"
-            ]
+            "maxStack": 64
         },
         "antikbA": {
             "enabled": true,

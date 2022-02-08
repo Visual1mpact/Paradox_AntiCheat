@@ -18,10 +18,11 @@ import { BedrockValidate } from "./penrose/tickevent/bedrock/bedrockvalidate.js"
 import { ReachA } from "./penrose/tickevent/reach/reach_a.js";
 import { JesusB } from "./penrose/tickevent/jesus/jesus_b.js";
 import { NoSlowA } from "./penrose/tickevent/noslow/noslow_a.js";
-import { IllegalItemsCD } from "./penrose/tickevent/illegalitems/illegalitems_c_d.js";
+import { IllegalItemsA } from "./penrose/tickevent/illegalitems/illegalitems_a.js";
 import { InvalidSprintA } from "./penrose/tickevent/invalidsprint/invalidsprint_a.js";
 import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
+import config from "./data/config.js";
 
 // BeforeChat Events
 BadPackets2();
@@ -44,7 +45,9 @@ BedrockValidate();
 ReachA();
 JesusB();
 NoSlowA();
-IllegalItemsCD();
+if (config.modules.illegalitemsA.enabled) {
+    IllegalItemsA();
+}
 InvalidSprintA();
 FlyA();
 AntiKnockbackA();
