@@ -25,7 +25,7 @@ const IllegalItemsA = () => {
             // If player has an illegal item we clear their entire inventory then kick them
             // If we cannot kick them then we despawn them (no mercy)
             inventory_items.forEach(item => {
-                if (illegalitems.includes(item)) {
+                if (illegalitems.includes(item) || item > config.modules.illegalitemsA.maxStack) {
                     try {
                         Commands.run(`clear "${player.nameTag}"`, World.getDimension('overworld'))
                         Commands.run(`tag "${player.nameTag}" add "isBanned"`, World.getDimension('overworld'))
