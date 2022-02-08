@@ -25,11 +25,26 @@ import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import config from "./data/config.js";
 
 // BeforeChat Events
-BadPackets2();
-SpammerA();
-SpammerB();
-SpammerC();
-SpammerD();
+if (config.modules.badpackets2.enabled) {
+    BadPackets2();
+}
+
+if (config.modules.spammerA.enabled) {
+    SpammerA();
+}
+
+if (config.modules.spammerB.enabled) {
+    SpammerB();
+}
+
+if (config.modules.spammerC.enabled) {
+    SpammerC();
+}
+
+if (config.modules.spammerD.enabled) {
+    SpammerD();
+}
+
 PrefixCommand();
 ChatFilter();
 

@@ -14,7 +14,7 @@ const SpammerC = () => {
         let playerTags = getTags(player);
 
         // Spammer/C = checks if someone sends a message while using an item
-        if (config.modules.spammerC.enabled && playerTags.includes('right')) {
+        if (playerTags.includes('right')) {
             try {
                 Commands.run(`testfor @a[name="${player.nameTag}",tag=right]`, World.getDimension("overworld"));
                 flag(player, "Spammer", "C", "Misc", false, false, false, msg);

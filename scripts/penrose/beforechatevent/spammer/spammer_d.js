@@ -14,7 +14,7 @@ const SpammerD = () => {
         let playerTags = getTags(player);
 
         // Spammer/D = checks if someone sends a message while having a GUI open
-        if (config.modules.spammerD.enabled && playerTags.includes('hasGUIopen')) {
+        if (playerTags.includes('hasGUIopen')) {
             try {
                 Commands.run(`testfor @a[name="${player.nameTag}",tag=hasGUIopen]`, World.getDimension("overworld"));
                 flag(player, "Spammer", "D", "Misc", false, false, false, msg);

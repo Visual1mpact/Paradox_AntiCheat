@@ -14,7 +14,7 @@ const SpammerB = () => {
         let playerTags = getTags(player);
 
         // Spammer/B = checks if someone sends a message while swinging their hand
-        if (config.modules.spammerB.enabled && playerTags.includes('left')) {
+        if (playerTags.includes('left')) {
             try {
                 Commands.run(`testfor @a[name="${player.nameTag}",tag=left]`, World.getDimension("overworld"));
                 flag(player, "Spammer", "B", "Combat", false, false, false, msg);

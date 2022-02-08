@@ -11,7 +11,7 @@ const BadPackets2 = () => {
         const message = msg.message.toLowerCase();
 
         // BadPackets/2 = chat message length check
-        if (config.modules.badpackets2.enabled && message.length > config.modules.badpackets2.maxlength || message.length < config.modules.badpackets2.minLength) {
+        if (message.length > config.modules.badpackets2.maxlength || message.length < config.modules.badpackets2.minLength) {
             flag(player, "BadPackets", "2", "messageLength", message.length, false, msg);
         }
     })
