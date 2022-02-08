@@ -11,3 +11,6 @@ execute @s[type=player,tag=op,scores={frostwalker=1..}] ~~~ scoreboard players s
 execute @s[type=player,tag=op,scores={frostwalker=1..}] ~~~ tellraw @a[tag=op] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4No Frost Walker!"}]}
 
 scoreboard players operation @a frostwalker = paradox:config frostwalker
+
+# If disabling Frostwalker then unlock items
+execute @s[type=player,tag=op,scores={frostwalker=..0}] ~~~ function checks/optional/frostwalkerNBT
