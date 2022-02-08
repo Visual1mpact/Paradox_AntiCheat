@@ -9,6 +9,7 @@ import { kick } from "./moderation/kick.js";
 import { help } from "./moderation/help.js";
 import { notify } from "./moderation/notify.js";
 import { op } from "./moderation/op.js";
+import { deop } from "./moderation/deop.js";
 import { ban } from "./moderation/ban.js";
 import { mute } from "./moderation/mute.js";
 import { unmute } from "./moderation/unmute.js";
@@ -91,6 +92,7 @@ export function commandHandler(player, message) {
         else if (config.customcommands.help && commandName === "help") help(message);
         else if (config.customcommands.credits && commandName === "credits") credits(message);
         else if (config.customcommands.op && commandName === "op") op(message, args);
+        else if (config.customcommands.op && commandName === "deop") deop(message, args);
         else if (config.customcommands.clearchat && commandName === "clearchat") clearchat(message);
         else if (config.customcommands.autoclicker && commandName === "autoclicker") autoclicker(message);
         else if (config.customcommands.jesus && commandName === "jesus") jesus(message);

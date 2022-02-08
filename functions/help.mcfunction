@@ -13,6 +13,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!unmute <username> 
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!notify§r - Enables/Disables cheat notifications."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!credits§r - Shows credits, thats it."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!op <username>§r - Op's player in Paradox AntiCheat features."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!deop <username>§r - Revokes Op player in Paradox AntiCheat features."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!modules§r - View all enabled or disabled modules."}]}
 
 # Gametest Disabled
@@ -21,6 +22,7 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username>
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function notify§r - Enables/Disables cheat notifications."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function credits§r - Shows credits, thats it."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ op§r - Op's player in Paradox AntiCheat features."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ deop§r - Revokes Op player in Paradox AntiCheat features."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/modules§r - View all enabled or disabled modules."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Optional Features"}]}

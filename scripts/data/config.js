@@ -7,6 +7,7 @@ export default
         "clearchat": true,
         "help": true,
         "op": true,
+        "deop": true,
         "credits": true,
         "allowgma": true,
         "allowgmc": true,
