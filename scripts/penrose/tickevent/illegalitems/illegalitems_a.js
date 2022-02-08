@@ -26,7 +26,7 @@ const IllegalItemsA = () => {
                     }
                     
                     // Items stacked over 64
-                    if (inventory_i.amount > config.modules.illegalitems.maxStack) {
+                    if (inventory_i.amount > config.modules.illegalitemsA.maxStack) {
                         flag(player, "IllegalItems", "B", "Exploit", "stack", inventory_i.amount, false, false, i);
                     }
                     
