@@ -1,6 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
 import { flag, getTags } from "../../../util.js";
-import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.World;
@@ -18,7 +17,7 @@ const FlyA = () => {
             let playerTags = getTags(player);
 
             // fly/a = checks for creative fly while in survival
-            if(config.modules.flyA.enabled && Math.abs(player.velocity.y).toFixed(4) == 0.2250) {
+            if(Math.abs(player.velocity.y).toFixed(4) == 0.2250) {
                 if(playerTags.includes('moving') && !playerTags.includes('ground') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('flying')) {
                     try {
                         Commands.run(`testfor @a[name="${player.nameTag}",tag=moving,tag=!ground,tag=!gliding,tag=!levitating,m=!c,tag=!flying]`, World.getDimension("overworld"));

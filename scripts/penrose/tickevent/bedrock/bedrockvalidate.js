@@ -14,7 +14,7 @@ const BedrockValidate = () => {
             player.nameTag = player.nameTag.replace("\\", "");
 
             // bedrock validation
-            if (config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.overworld) {
+            if (config.modules.bedrockValidate.overworld) {
                 try {
                     // only run the rest of the commands if the player is in the overworld
                     Commands.run(`testfor @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}]`, World.getDimension("overworld"));
@@ -28,7 +28,7 @@ const BedrockValidate = () => {
                 } catch (error) {}
             }
 
-            if (config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.nether) {
+            if (config.modules.bedrockValidate.nether) {
                 try {
                     // only run the rest of the commands if the player is in the nether
                     Commands.run(`testfor @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}]`, World.getDimension("nether"));

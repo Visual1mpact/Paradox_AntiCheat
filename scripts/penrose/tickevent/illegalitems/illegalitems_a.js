@@ -1,6 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js"
-import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = Minecraft.World;

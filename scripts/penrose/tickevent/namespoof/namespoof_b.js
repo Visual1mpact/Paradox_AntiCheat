@@ -15,7 +15,7 @@ const NamespoofB = () => {
 
             // Namespoof/B = regex check
             try {
-                if (config.modules.namespoofB.enabled && config.modules.namespoofB.regex.test(player.name)) {
+                if (config.modules.namespoofB.regex.test(player.name)) {
                     flag(player, "Namespoof", "B", "Exploit", false, false, false, false);
                 }
             } catch(error) {}

@@ -19,7 +19,7 @@ const JesusB = () => {
 
             // jesus/b = motion check
             try {
-                if (config.modules.jesusB.enabled && Math.abs(player.velocity.y).toFixed(4) <= config.modules.jesusB.maxMotion && Math.abs(player.velocity.y).toFixed(4) >= config.modules.jesusB.minMotion && !player.getEffect(Minecraft.MinecraftEffectTypes.slowFalling)) {
+                if (Math.abs(player.velocity.y).toFixed(4) <= config.modules.jesusB.maxMotion && Math.abs(player.velocity.y).toFixed(4) >= config.modules.jesusB.minMotion && !player.getEffect(Minecraft.MinecraftEffectTypes.slowFalling)) {
                     try {
 	                    // Make sure Anti Jesus is turned on
 	                    Commands.run(`testfor @a[name="${player.nameTag}",scores={jesus=1..}]`, World.getDimension("overworld"));

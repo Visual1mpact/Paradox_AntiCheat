@@ -37,17 +37,48 @@ ChatFilter();
 GametestCheck();
 GlobalBanList();
 ServerBan();
-CrasherA();
-NamespoofA();
-NamespoofB();
 PlayerPosition();
-BedrockValidate();
-ReachA();
-JesusB();
-NoSlowA();
+
+if (config.modules.crasherA.enabled) {
+    CrasherA();
+}
+
+if (config.modules.namespoofA.enabled) {
+    NamespoofA();
+}
+
+if (config.modules.namespoofB.enabled) {
+    NamespoofB();
+}
+
+if (config.modules.bedrockValidate.enabled) {
+    BedrockValidate();
+}
+
+if (config.modules.reachA.enabled) {
+    ReachA();
+}
+
+if (config.modules.jesusB.enabled) {
+    JesusB();
+}
+
+if (config.modules.noslowA.enabled) {
+    NoSlowA();
+}
+
 if (config.modules.illegalitemsA.enabled) {
     IllegalItemsA();
 }
-InvalidSprintA();
-FlyA();
-AntiKnockbackA();
+
+if (config.modules.invalidsprintA.enabled) {
+    InvalidSprintA();
+}
+
+if (config.modules.flyA.enabled) {
+    FlyA();
+}
+
+if(config.modules.antikbA.enabled) {
+    AntiKnockbackA();
+}

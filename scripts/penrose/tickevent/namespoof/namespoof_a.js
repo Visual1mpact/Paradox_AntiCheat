@@ -15,7 +15,7 @@ const NamespoofA = () => {
 
             // Namespoof/A = username length check.
             try {
-                if (config.modules.namespoofA.enabled && player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength) {
+                if (player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength) {
                     flag(player, "Namespoof", "A", "Exploit", "nameLength", player.name.length, false, false);
                 }
             } catch(error) {}

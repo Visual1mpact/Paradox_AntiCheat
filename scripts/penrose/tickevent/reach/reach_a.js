@@ -18,7 +18,7 @@ const ReachA = () => {
             let playerTags = getTags(player);
 
             // reach/a
-            if (config.modules.reachA.enabled && playerTags.includes('attack')) {
+            if (playerTags.includes('attack')) {
                 try {                                                                   // we could use r=4 but that wont account for lag
                     Commands.run(`execute @a[name="${player.nameTag}",tag=attack,m=!c] ~~~ testfor @p[name=!"${player.nameTag}",r=${config.modules.reachA.reach}]`, World.getDimension("overworld"));
                 } catch (error) {
