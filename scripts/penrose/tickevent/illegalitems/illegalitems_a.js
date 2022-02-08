@@ -18,20 +18,8 @@ const IllegalItemsA = () => {
             let inventory_items = []
             for (let i = 0; i < inventory.size; i++) {
                 try {
-                    let inventory_i = inventory.getItem(i);
-
-                    // Unauthorized items
-                    if (illegalitems.includes(inventory_i)) {
-                        flag(player, "IllegalItems", "A", "Exploit", "item", inventory_i.id, false, false, i);
-                    }
-                    
-                    // Items stacked over 64
-                    if (inventory_i.amount > config.modules.illegalitemsA.maxStack) {
-                        flag(player, "IllegalItems", "B", "Exploit", "stack", inventory_i.amount, false, false, i);
-                    }
-                    
-                    inventory_items.push(inventory_i.id);
-                    
+                    let inventory_i = inventory.getItem(i)
+                    inventory_items.push(inventory_i.id)
                 } catch (error) {}
             }
             // If player has an illegal item we clear their entire inventory then kick them
@@ -40,6 +28,7 @@ const IllegalItemsA = () => {
                 if (illegalitems.includes(item)) {
                     try {
                         Commands.run(`clear "${player.nameTag}"`, World.getDimension('overworld'))
+                        Commands.run(`tag "${player.nameTag}" add "isBanned"`, World.getDimension('overworld'))
                     } catch (error) {}
                     player.triggerEvent('paradox:kick')
                 }
