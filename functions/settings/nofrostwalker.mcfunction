@@ -13,4 +13,4 @@ execute @s[type=player,tag=op,scores={frostwalker=1..}] ~~~ tellraw @a[tag=op] {
 scoreboard players operation @a frostwalker = paradox:config frostwalker
 
 # If disabling Frostwalker then unlock items
-execute @a[type=player,scores={frostwalker=..0}] ~~~ function checks/optional/frostwalkerNBT
+execute @e[type=player,scores={frostwalker=..0}] ~~~ function checks/optional/frostwalkerNBT
