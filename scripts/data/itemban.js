@@ -30,7 +30,7 @@ export const illegals = [
   'minecraft:command_block',
   'minecraft:command_block_minecart',
   'minecraft:compound',
-  'minecraft:crimson_double_slab,
+  'minecraft:crimson_double_slab',
   'minecraft:crimson_standing_sign',
   'minecraft:crimson_wall_sign',
   'minecraft:darkoak_standing_sign',
