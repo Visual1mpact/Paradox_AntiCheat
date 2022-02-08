@@ -1,6 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
 import { flag, getTags } from "../../../util.js";
-import config from "../../../data/config.js";
 
 const World = Minecraft.World;
 const Commands = Minecraft.Commands;
