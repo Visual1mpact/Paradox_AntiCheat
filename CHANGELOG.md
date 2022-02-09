@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.2.15](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.2.15) (2022-02-09)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.2.14...v2.2.15)
+
+**Closed issues:**
+
+- Minecraft 1.18.10 is released and Gametest is broken in Paradox [\#14](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/14)
+
 ## [v2.2.14](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.2.14) (2022-02-08)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.2.13...v2.2.14)
