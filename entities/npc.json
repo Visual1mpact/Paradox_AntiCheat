@@ -3,8 +3,8 @@
 	"minecraft:entity": {
 		"description": {
 			"identifier": "minecraft:npc",
-			"is_spawnable": false,
-			"is_summonable": false,
+			"is_spawnable": true,
+			"is_summonable": true,
 			"is_experimental": false,
 			"scripts": {
 				"animate": [
@@ -24,9 +24,12 @@
 				}
 			},
 			"minecraft:type_family": {
-				"family": ["npc", "mob"]
+				"family": [ "npc", "mob" ]
 			},
 			"minecraft:fire_immune": true,
+			"minecraft:movement": {
+				"value": 0.5
+			},
 			"minecraft:loot": {
 				"table": "loot_tables/empty.json"
 			},
@@ -39,7 +42,8 @@
 				"look_distance": 6.0,
 				"probability": 0.02
 			},
-			"minecraft:persistent": {},
+			"minecraft:persistent": {
+			},
 			"minecraft:npc": {
 				"npc_data": {
 					"portrait_offsets": {

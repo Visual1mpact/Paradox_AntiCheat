@@ -1,5 +1,5 @@
 {
-	"format_version": "1.13.0",
+	"format_version": "1.18.10",
 	"minecraft:entity": {
 		"description": {
 			"identifier": "minecraft:player",
@@ -74,6 +74,7 @@
 						{
 							"effect": "bad_omen",
 							"duration": 6000,
+							"visible": false,
 							"display_on_screen_animation": true
 						}
 					]
@@ -335,6 +336,9 @@
 				]
 			},
 			"minecraft:scaffolding_climber": {},
+			"minecraft:block_climber": {},
+			"minecraft:conditional_bandwidth_optimization": {
+			},
 			"minecraft:environment_sensor": {
 				"triggers": [
 					{
