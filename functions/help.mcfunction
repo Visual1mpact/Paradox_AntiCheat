@@ -74,6 +74,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!fullreport§r - Vi
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!vanish§r - Enables/disables vanish (Used for spying on suspects)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!tag <tag>§r - Adds tag to username in chat window."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!clearchat§r - Clears chat."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!invsee <username>§r - Lists all the items in the usernames inventory."}]}
 
 # Gametest disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/auracheck§r - Manual test for killaura."}]}
