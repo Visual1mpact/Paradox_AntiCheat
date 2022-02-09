@@ -11,7 +11,7 @@ const GametestCheck = () => {
         // to check when loaded in the world and to execute code afterwards
         try {
             if (!loaded) {
-                const players = World.getPlayers().map(player => player.nameTag);
+                const players = [...World.getPlayers()].map(player => player.nameTag);
                 World.getDimension("overworld").runCommand(`testfor @a[name="${players[0]}"]`);
                 try {
                     // (1..) gametest already enabled so set loaded to true and do nothing

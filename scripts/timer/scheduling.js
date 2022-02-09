@@ -54,9 +54,7 @@ function clearTickInterval(handle) {
     tickIntervalMap.delete(handle);
 };
 
-let totalTick = 0;
-World.events.tick.subscribe(() => {
-    totalTick++;
+World.events.tick.subscribe((data) => {
     for(const [ID, tickTimeout] of tickTimeoutMap) {
         tickTimeout.tick--;
         if(tickTimeout.tick <= 0) {
@@ -65,7 +63,7 @@ World.events.tick.subscribe(() => {
         };
     };
     for(const [, tickInterval] of tickIntervalMap) {
-        if(totalTick % tickInterval.tick === 0) tickInterval.callback(...tickInterval.args);
+        if(data.currentTick % tickInterval.tick === 0) tickInterval.callback(...tickInterval.args);
     };
 });
 
