@@ -335,7 +335,6 @@
 					}
 				]
 			},
-			"minecraft:scaffolding_climber": {},
 			"minecraft:block_climber": {},
 			"minecraft:conditional_bandwidth_optimization": {
 			},
