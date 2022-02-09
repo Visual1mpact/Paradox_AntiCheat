@@ -7,8 +7,7 @@ const World = Minecraft.world;
 
 const IllegalItemsA = () => {
     World.events.tick.subscribe(() => {
-        var players = World.getPlayers()
-        for (const player of players) {
+        [...World.getPlayers()].forEach(player => {
             
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
@@ -36,7 +35,7 @@ const IllegalItemsA = () => {
                     player.triggerEvent('paradox:kick')
                 }
             })
-        }
+        })
     })
 }
 
