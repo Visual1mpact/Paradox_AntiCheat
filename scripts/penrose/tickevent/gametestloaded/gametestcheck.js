@@ -12,15 +12,15 @@ const GametestCheck = () => {
         try {
             if (!loaded) {
                 const players = [...World.getPlayers()].map(player => player.nameTag);
-                World.getDimension("overworld").runCommand(`testfor @a[name="${players[0]}"]`);
+                player.dimension.runCommand(`testfor @a[name="${players[0]}"]`);
                 try {
                     // (1..) gametest already enabled so set loaded to true and do nothing
-                    World.getDimension("overworld").runCommand(`testfor @a[scores={gametestapi=1..}]`);
+                    player.dimension.runCommand(`testfor @a[scores={gametestapi=1..}]`);
                     loaded = true;
                 } catch {
                     // (..0) gametest needs to be enabled (1..) then set loaded to true
-                    World.getDimension("overworld").runCommand(`testfor @a[scores={gametestapi=..0}]`);
-                    World.getDimension("overworld").runCommand(`execute "${players[0]}" ~~~ function checks/gametestapi`);
+                    player.dimension.runCommand(`testfor @a[scores={gametestapi=..0}]`);
+                    player.dimension.runCommand(`execute "${players[0]}" ~~~ function checks/gametestapi`);
                     loaded = true;
                     return;
                 }

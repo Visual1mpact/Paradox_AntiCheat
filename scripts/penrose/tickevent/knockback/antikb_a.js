@@ -21,9 +21,9 @@ const AntiKnockbackA = () => {
                 if(playerTags.includes('attacked') && !playerTags.includes('dead') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('flying')) {
                     try {
                         // Make sure Anti Knockback is turned on
-	                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",scores={antikb=1..}]`);
+	                    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",scores={antikb=1..}]`);
                         flag(player, "AntiKB", "A", "Movement", "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, false);
-	                    World.getDimension("overworld").runCommand(`scoreboard players add @a[name="${player.nameTag}"] velocityvl 1`);
+	                    player.dimension.runCommand(`scoreboard players add @a[name="${player.nameTag}"] velocityvl 1`);
                     } catch(error) {}
                 }
             }

@@ -13,9 +13,9 @@ const PlayerPosition = () => {
 
             // player position
             try {
-                World.getDimension("overworld").runCommand(`scoreboard players set "${player.nameTag}" xPos ${Math.floor(player.location.x)}`);
-                World.getDimension("overworld").runCommand(`scoreboard players set "${player.nameTag}" yPos ${Math.floor(player.location.y)}`);
-                World.getDimension("overworld").runCommand(`scoreboard players set "${player.nameTag}" zPos ${Math.floor(player.location.z)}`);
+                player.dimension.runCommand(`scoreboard players set "${player.nameTag}" xPos ${Math.floor(player.location.x)}`);
+                player.dimension.runCommand(`scoreboard players set "${player.nameTag}" yPos ${Math.floor(player.location.y)}`);
+                player.dimension.runCommand(`scoreboard players set "${player.nameTag}" zPos ${Math.floor(player.location.z)}`);
             } catch(e) {}
         }
     }, 20) //Executes every 1 seconds

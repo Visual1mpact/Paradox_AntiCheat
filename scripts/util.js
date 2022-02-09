@@ -24,31 +24,31 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
 
     // make sure the vl objective exists
     try {
-        World.getDimension("overworld").runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
+        player.dimension.runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
     } catch(error) {}
 
     // cancel the message
     if (message) message.cancel = true;
 
-    if(shouldTP && check !== "Crasher") World.getDimension("overworld").runCommand(`tp "${player.nameTag}" "${player.nameTag}"`);
-        else if(shouldTP && check === "Crasher") World.getDimension("overworld").runCommand(`tp "${player.nameTag}" 30000000 30000000 30000000`);
+    if(shouldTP && check !== "Crasher") player.dimension.runCommand(`tp "${player.nameTag}" "${player.nameTag}"`);
+        else if(shouldTP && check === "Crasher") player.dimension.runCommand(`tp "${player.nameTag}" 30000000 30000000 30000000`);
 
-    World.getDimension("overworld").runCommand(`scoreboard players add "${player.nameTag}" ${check.toLowerCase()}vl 1`);
+    player.dimension.runCommand(`scoreboard players add "${player.nameTag}" ${check.toLowerCase()}vl 1`);
 
     try {
-        if(debug) World.getDimension("overworld").runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
-            else World.getDimension("overworld").runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+        if(debug) player.dimension.runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            else player.dimension.runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
     } catch(error) {}
 
     if (slot >= 0) {
         try {
-            if(slot <= 8) World.getDimension("overworld").runCommand(`replaceitem entity "${player.nameTag}" slot.hotbar ${slot} air 1`);
-                else World.getDimension("overworld").runCommand(`replaceitem entity "${player.nameTag}" slot.inventory ${slot - 9} air 1`);
+            if(slot <= 8) player.dimension.runCommand(`replaceitem entity "${player.nameTag}" slot.hotbar ${slot} air 1`);
+                else player.dimension.runCommand(`replaceitem entity "${player.nameTag}" slot.inventory ${slot - 9} air 1`);
         } catch(error) {console.warn(`${new Date()} | ` + error);}
     }
 
     try {
-        if (check === "Namespoof") World.getDimension("overworld").runCommand(`kick "${player.nameTag}" §r§4[§6Paradox§4]§r Invalid username`);
+        if (check === "Namespoof") player.dimension.runCommand(`kick "${player.nameTag}" §r§4[§6Paradox§4]§r Invalid username`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -76,7 +76,7 @@ export function banMessage(player) {
     });
 
     try {
-        World.getDimension("overworld").runCommand(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.dimension.runCommand(`kick "${player.nameTag}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");

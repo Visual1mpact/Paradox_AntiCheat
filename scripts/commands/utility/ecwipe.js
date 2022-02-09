@@ -19,17 +19,17 @@ export function ecwipe(message, args) {
     
     // make sure the user has permissions to run the command
     try {
-        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos ender chest inventory to wipe!"}]}`);
+    if (!args.length) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos ender chest inventory to wipe!"}]}`);
     
     // try to find the player requested
     for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl;
     
-    if (!member) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    if (!member) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
 
-    return World.getDimension("overworld").runCommand(`execute "${member.nameTag}" ~~~ function tools/ecwipe`);
+    return player.dimension.runCommand(`execute "${member.nameTag}" ~~~ function tools/ecwipe`);
 }

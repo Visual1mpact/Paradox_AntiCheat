@@ -14,7 +14,7 @@ const SpammerB = () => {
         // Spammer/B = checks if someone sends a message while swinging their hand
         if (playerTags.includes('left')) {
             try {
-                World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=left]`);
+                player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=left]`);
                 flag(player, "Spammer", "B", "Combat", false, false, false, msg);
             } catch (error) {}
         }

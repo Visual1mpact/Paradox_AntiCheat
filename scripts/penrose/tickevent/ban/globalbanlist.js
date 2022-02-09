@@ -18,14 +18,14 @@ const GlobalBanList = () => {
                 try {
                     // test if they have the tag first or global ban will fail if we attempt to tag with an existing tag
                     // if they are not tagged then we do that here before we ban
-                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=!"By:Paradox Anticheat"]`);
-                    World.getDimension("overworld").runCommand(`tag "${player.nameTag}" add "By:Paradox Anticheat"`);
+                    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=!"By:Paradox Anticheat"]`);
+                    player.dimension.runCommand(`tag "${player.nameTag}" add "By:Paradox Anticheat"`);
                 } catch (error) {}
                 try {
                     // test if they have the tag first or global ban will fail if we attempt to tag with an existing tag
                     // if they are not tagged then we do that here before we ban
-                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=!"Reason:You are Paradox Anticheat global banned!"]`);
-                    World.getDimension("overworld").runCommand(`tag "${player.nameTag}" add "Reason:You are Paradox Anticheat global banned!"`);
+                    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=!"Reason:You are Paradox Anticheat global banned!"]`);
+                    player.dimension.runCommand(`tag "${player.nameTag}" add "Reason:You are Paradox Anticheat global banned!"`);
                 } catch (error2) {}
                 banMessage(player);
             }

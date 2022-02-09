@@ -17,10 +17,10 @@ export function fullreport(message) {
     
     // make sure the user has permissions to run the command
     try {
-        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return World.getDimension("overworld").runCommand(`execute @a ~~~ function tools/stats`);
+    return player.dimension.runCommand(`execute @a ~~~ function tools/stats`);
 }

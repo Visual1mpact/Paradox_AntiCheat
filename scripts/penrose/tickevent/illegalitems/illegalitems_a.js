@@ -29,8 +29,8 @@ const IllegalItemsA = () => {
             inventory_items.forEach(item => {
                 if (illegalitems.includes(item) && !playerTags.includes('op') || item > config.modules.illegalitemsA.maxStack && !playerTags.includes('op')) {
                     try {
-                        World.getDimension('overworld').runCommand(`clear "${player.nameTag}"`)
-                        World.getDimension('overworld').runCommand(`tag "${player.nameTag}" add "isBanned"`)
+                        player.dimension.runCommand(`clear "${player.nameTag}"`)
+                        player.dimension.runCommand(`tag "${player.nameTag}" add "isBanned"`)
                     } catch (error) {}
                     player.triggerEvent('paradox:kick')
                 }

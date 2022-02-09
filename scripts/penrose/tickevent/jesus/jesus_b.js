@@ -21,9 +21,9 @@ const JesusB = () => {
                 if (Math.abs(player.velocity.y).toFixed(4) <= config.modules.jesusB.maxMotion && Math.abs(player.velocity.y).toFixed(4) >= config.modules.jesusB.minMotion && !player.getEffect(Minecraft.MinecraftEffectTypes.slowFalling)) {
                     try {
 	                    // Make sure Anti Jesus is turned on
-	                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",scores={jesus=1..}]`);
+	                    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",scores={jesus=1..}]`);
 	                    if (!playerTags.includes('flying') && !playerTags.includes('jump') && !playerTags.includes('ground') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('vanish') && !playerTags.includes('swimming') ) {
-	                        World.getDimension("overworld").runCommand(`execute @a[name="${player.nameTag}",tag=!flying,m=!c,tag=!jump,tag=!ground,tag=!gliding,tag=!levitating,tag=!vanish,tag=!swimming] ~~~ detect ~~-1~ water 0 list`);
+	                        player.dimension.runCommand(`execute @a[name="${player.nameTag}",tag=!flying,m=!c,tag=!jump,tag=!ground,tag=!gliding,tag=!levitating,tag=!vanish,tag=!swimming] ~~~ detect ~~-1~ water 0 list`);
 	                        flag(player, "Jesus", "B", "Movement", "yMotion", Math.abs(player.velocity.y).toFixed(4), true, false);
 				        }
                     } catch (error2) {}

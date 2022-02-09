@@ -19,9 +19,9 @@ export function fly(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
     
     // try to find the player requested
@@ -29,23 +29,23 @@ export function fly(message, args) {
     
     if (!member) var member = player.nameTag;
 
-    World.getDimension("overworld").runCommand(`execute "${member}" ~~~ function tools/fly`);
+    player.dimension.runCommand(`execute "${member}" ~~~ function tools/fly`);
     
     // I find try/catch to be completely unorthodox for this lol
     try {
-        World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=flying]`);
+        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=flying]`);
         if (player.nameTag === member) {
-            return World.getDimension("overworld").runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for themselves."}]}`);
+            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for themselves."}]}`);
         } else if (player.nameTag != member) {
-            return World.getDimension("overworld").runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
+            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
         } else {
             return
         }
     } catch {
         if (player.nameTag === member) {
-            return World.getDimension("overworld").runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for themselves."}]}`);
+            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for themselves."}]}`);
         } else if (player.nameTag != member) {
-            return World.getDimension("overworld").runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
+            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
         } else {
             return
         }

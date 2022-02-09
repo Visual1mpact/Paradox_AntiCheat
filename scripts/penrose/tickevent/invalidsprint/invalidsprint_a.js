@@ -18,7 +18,7 @@ const InvalidSprintA = () => {
             // invalidsprint/a = checks for sprinting with the blindness effect
             if (player.getEffect(Minecraft.MinecraftEffectTypes.blindness) && playerTags.includes('sprint')) {
                 try {
-                    World.getDimension("overworld").runCommand(`testfor @a[name=${player.nameTag},tag=sprint]`);
+                    player.dimension.runCommand(`testfor @a[name=${player.nameTag},tag=sprint]`);
                     flag(player, "InvalidSprint", "A", "Movement", false, false, true, false);
                 } catch(error) {}
             }

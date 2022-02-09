@@ -20,7 +20,7 @@ const NoSlowA = () => {
             if(Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3) >= config.modules.noslowA.speed) {
                 if (!player.getEffect(Minecraft.MinecraftEffectTypes.speed) && playerTags.includes('ground') && playerTags.includes('sprint') && !playerTags.includes('jump') && !playerTags.includes('gliding') && !playerTags.includes('swimming')) {
                     try {
-                	    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=ground,tag=sprint,tag=!jump,tag=!gliding,tag=!swimming]`);
+                	    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=ground,tag=sprint,tag=!jump,tag=!gliding,tag=!swimming]`);
                         flag(player, "NoSlow", "A", "Movement", "speed", Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3), true, false);
                     } catch(error) {}
                 }

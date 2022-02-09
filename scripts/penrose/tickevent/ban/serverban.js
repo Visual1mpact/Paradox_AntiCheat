@@ -14,7 +14,7 @@ const ServerBan = () => {
 
             // Ban message
             try {
-                World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);
+                player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);
                 banMessage(player);
             } catch(error) {}
         }

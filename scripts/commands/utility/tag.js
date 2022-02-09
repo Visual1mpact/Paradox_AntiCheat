@@ -21,9 +21,9 @@ export function tag(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        World.getDimension("overworld").runCommand(`execute @a[name="${player.nameTag}",tag=op] ~~~ list`);
+        player.dimension.runCommand(`execute @a[name="${player.nameTag}",tag=op] ~~~ list`);
     } catch (error) {
-        return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     // check if array contains the string 'reset'
@@ -32,7 +32,7 @@ export function tag(message, args) {
     // reset user nametag
     if (argcheck === true) {
         player.nameTag = player.name;
-        return World.getDimension("overworld").runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has reset their nametag"}]}`);
+        return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has reset their nametag"}]}`);
     }
 
     let nametag = `§4[§6${args.join(" ")}§4]§r <${player.name}>`;
@@ -40,9 +40,9 @@ export function tag(message, args) {
     // input sanitization
     nametag = nametag.replace("\\", "").replace("\"", "");
 
-    if (!args.length) return World.getDimension("overworld").runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a tag!"}]}`);
+    if (!args.length) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a tag!"}]}`);
 
     player.nameTag = nametag;
 
-    return World.getDimension("overworld").runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`);
+    return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`);
 }
