@@ -25,9 +25,9 @@ import { InvalidSprintA } from "./penrose/tickevent/invalidsprint/invalidsprint_
 import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import { PlaceflagsA } from "./penrose/tickevent/placeflags/placeflags_a.js";
-import { NukerA } from "./penrose/tickevent/nuker/nuker_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray_a.js";
+import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 // Import JoinPlayer Events
 import { playerloaded } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
 // Import BlockPlace Events
@@ -39,6 +39,7 @@ const World = Minecraft.world;
 // Event Callbacks
 const playerJoinEventCallback = World.events.playerJoin;
 const blockPlaceCallback = World.events.blockPlace;
+const blockBreakCallback = World.events.blockBreak;
 
 
 // BeforeChat Events
@@ -118,13 +119,13 @@ if  (config.modules.anticbeC.enabled) {
     PlaceflagsA();
 }
 
-if  (config.modules.antinukerA.enabled) {
-    NukerA();
-}
-
 // BlockBreak Events
 if  (config.modules.xrayA.enabled) {
     XrayA();
+}
+
+if  (config.modules.antinukerA.enabled) {
+    blockBreakCallback.subscribe(NukerA);
 }
 
 // JoinPlayer Events
