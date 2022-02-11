@@ -101,6 +101,8 @@
 					"/scoreboard objectives add flyvl dummy",
 					"/scoreboard objectives add velocityvl dummy",
 					"/scoreboard objectives add atcd dummy",
+					"/scoreboard objectives add bbps dummy",
+					"/scoreboard objectives add bpps dummy",
 					"/scoreboard players add @s atcd 0",
 					// If enabled from previous login then activate
 					"/event entity @s[tag=vanish] vanish",

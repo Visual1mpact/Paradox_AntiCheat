@@ -101,6 +101,15 @@ export default
         "antikbA": {
             "enabled": true,
             "magnitude": -0.078
+        },
+        "antiscaffoldA": {
+            "enabled": true,
+        },
+        "antinukerA": {
+            "enabled": true,
+        },
+        "anticbeC": {
+            "enabled": true,
         }
     }
 };

@@ -133,3 +133,18 @@ export const illegalitems = [
   'minecraft:warped_standing_sign',
   'minecraft:warped_wall_sign'
 ]
+
+export const illegalblocks = [
+  "minecraft:beehive",
+  "minecraft:bee_nest",
+  "minecraft:unknown",
+  'minecraft:info_update',
+  'minecraft:info_update2',
+  'minecraft:info_update2',
+  'minecraft:reserved3',
+  'minecraft:reserved4',
+  'minecraft:reserved6',
+  "minecraft:movingblock",
+  "minecraft:movingBlock",
+  "minecraft:invisiblebedrock"
+]
