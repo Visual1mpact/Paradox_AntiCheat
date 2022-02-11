@@ -3,7 +3,7 @@ import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
-const ScaffoldA = () => {
+const NukerA = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
@@ -25,4 +25,4 @@ const ScaffoldA = () => {
 })
 }
 
-export { ScaffoldA }
+export { NukerA }
