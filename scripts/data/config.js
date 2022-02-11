@@ -110,6 +110,9 @@ export default
         },
         "anticbeC": {
             "enabled": true
+        },
+        "xrayA": {
+            "enabled": true
         }
     }
 };

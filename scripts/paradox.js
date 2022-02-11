@@ -1,3 +1,5 @@
+// Import Customs
+import config from "./data/config.js";
 // Import BeforeChat Events
 import { BadPackets2 } from "./penrose/beforechatevent/spammer/badpackets_2.js";
 import { SpammerA } from "./penrose/beforechatevent/spammer/spammer_a.js";
@@ -25,7 +27,8 @@ import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import { ScaffoldA } from "./penrose/tickevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/tickevent/placeflags/placeflags_a.js";
 import { NukerA } from "./penrose/tickevent/nuker/nuker_a.js";
-import config from "./data/config.js";
+// Import BlockBreak Events
+import { XrayA } from "./penrose/blockbreakevent/xray_a.js";
 
 // BeforeChat Events
 if (config.modules.badpackets2.enabled) {
@@ -97,18 +100,23 @@ if (config.modules.flyA.enabled) {
     FlyA();
 }
 
-if(config.modules.antikbA.enabled) {
+if  (config.modules.antikbA.enabled) {
     AntiKnockbackA();
 }
 
-if(config.modules.antiscaffoldA.enabled) {
+if  (config.modules.antiscaffoldA.enabled) {
     ScaffoldA();
 }
 
-if(config.modules.anticbeC.enabled) {
+if  (config.modules.anticbeC.enabled) {
     PlaceflagsA();
 }
 
-if(config.modules.antinukerA.enabled) {
+if  (config.modules.antinukerA.enabled) {
     NukerA();
+}
+
+// BlockBreak Events
+if  (config.modules.xrayA.enabled) {
+    XrayA();
 }
