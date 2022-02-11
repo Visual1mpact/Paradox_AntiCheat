@@ -26,7 +26,7 @@ import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import { PlaceflagsA } from "./penrose/tickevent/placeflags/placeflags_a.js";
 // Import BlockBreak Events
-import { XrayA } from "./penrose/blockbreakevent/xray_a.js";
+import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 // Import JoinPlayer Events
 import { playerloaded } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
