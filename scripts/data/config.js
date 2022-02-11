@@ -19,7 +19,6 @@ export default
         "overidecommandblocksenabled": true,
         "removecommandblocks": true,
         "worldborder": true,
-        "xray": true,
         "autoclicker": true,
         "jesus": true,
         "phase": true,

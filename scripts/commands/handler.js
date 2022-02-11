@@ -23,7 +23,6 @@ import { npc } from "./settings/npc.js";
 import { overidecommandblocksenabled } from "./settings/overidecommandblocksenabled.js";
 import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborder } from "./settings/worldborder.js";
-import { xray } from "./settings/xray.js";
 import { autoclicker } from "./settings/autoclicker.js";
 import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
@@ -87,7 +86,6 @@ export function commandHandler(player, message) {
         else if (config.customcommands.overidecommandblocksenabled && commandName === "overridecbe") overidecommandblocksenabled(message);
         else if (config.customcommands.removecommandblocks && commandName === "removecb") removecommandblocks(message);
         else if (config.customcommands.worldborder && commandName === "worldborder" || commandName === "wb") worldborder(message);
-        else if (config.customcommands.xray && commandName === "xray") xray(message);
         else if (config.customcommands.help && commandName === "help") help(message);
         else if (config.customcommands.credits && commandName === "credits") credits(message);
         else if (config.customcommands.op && commandName === "op") op(message, args);

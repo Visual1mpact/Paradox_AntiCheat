@@ -24,8 +24,6 @@ tellraw @s[scores={worldborder=6..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]�
 tellraw @s[scores={worldborder=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §4DISABLED"}]}
 tellraw @s[scores={frostwalker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frost Walker is currently §aENABLED"}]}
 tellraw @s[scores={frostwalker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frost Walker is currently §4DISABLED"}]}
-tellraw @s[scores={xray=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Xray is currently §aENABLED"}]}
-tellraw @s[scores={xray=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Xray is currently §4DISABLED"}]}
 tellraw @s[scores={autoclicker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoclicker is currently §aENABLED"}]}
 tellraw @s[scores={autoclicker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoclicker is currently §4DISABLED"}]}
 tellraw @s[scores={jesus=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Jesus is currently §aENABLED"}]}
