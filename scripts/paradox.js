@@ -32,6 +32,7 @@ import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
 // Import JoinPlayer Events
 import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
+import { onJoin } from "./penrose/playerjoinevent/onjoin/onjoin.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
@@ -149,6 +150,7 @@ if (config.modules.reachB.enabled) {
 
 // JoinPlayer Events
 GametestCheck();
+onJoin();
 
 // BlockPlace Events
 if  (config.modules.antiscaffoldA.enabled) {
