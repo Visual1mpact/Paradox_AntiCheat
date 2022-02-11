@@ -16,13 +16,13 @@ const BedrockValidate = () => {
             if (config.modules.bedrockValidate.overworld) {
                 try {
                     // only run the rest of the commands if the player is in the overworld
-                    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}]`);
+                    World.getDimension("overworld").runCommand(`testfor @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}]`);
                     try {
-                        player.dimension.runCommand(`execute @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}] ~~~ fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
+                        World.getDimension("overworld").runCommand(`execute @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}] ~~~ fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
                     } catch (error) {}
 
                     try {
-                        player.dimension.runCommand(`execute @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}] ~~~ fill ~-4 -59 ~-4 ~4 319 ~4 air 0 replace bedrock`);
+                        World.getDimension("overworld").runCommand(`execute @a[name="${player.nameTag}",rm=0,scores={bedrock=1..}] ~~~ fill ~-4 -59 ~-4 ~4 319 ~4 air 0 replace bedrock`);
                     } catch (error) {}
                 } catch (error) {}
             }
