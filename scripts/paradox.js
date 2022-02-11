@@ -24,7 +24,6 @@ import { IllegalItemsA } from "./penrose/tickevent/illegalitems/illegalitems_a.j
 import { InvalidSprintA } from "./penrose/tickevent/invalidsprint/invalidsprint_a.js";
 import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
-import { PlaceflagsA } from "./penrose/tickevent/placeflags/placeflags_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -32,6 +31,7 @@ import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 import { playerloaded } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
+import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
 
 // Self explanatory
 const World = Minecraft.world;
@@ -115,10 +115,6 @@ if  (config.modules.antikbA.enabled) {
     AntiKnockbackA();
 }
 
-if  (config.modules.anticbeC.enabled) {
-    PlaceflagsA();
-}
-
 // BlockBreak Events
 if  (config.modules.xrayA.enabled) {
     XrayA();
@@ -134,4 +130,8 @@ playerJoinEventCallback.subscribe(playerloaded); // gametestcheck.js
 // BlockPlace Events
 if  (config.modules.antiscaffoldA.enabled) {
     blockPlaceCallback.subscribe(ScaffoldA);
+}
+
+if  (config.modules.anticbeC.enabled) {
+    PlaceflagsA();
 }
