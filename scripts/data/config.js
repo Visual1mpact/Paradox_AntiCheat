@@ -103,13 +103,13 @@ export default
             "magnitude": -0.078
         },
         "antiscaffoldA": {
-            "enabled": true,
+            "enabled": true
         },
         "antinukerA": {
-            "enabled": true,
+            "enabled": true
         },
         "anticbeC": {
-            "enabled": true,
+            "enabled": true
         }
     }
 };
