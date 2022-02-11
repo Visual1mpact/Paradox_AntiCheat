@@ -1,4 +1,5 @@
 // Import Customs
+import * as Minecraft from "mojang-minecraft";
 import config from "./data/config.js";
 // Import BeforeChat Events
 import { BadPackets2 } from "./penrose/beforechatevent/spammer/badpackets_2.js";
@@ -9,7 +10,6 @@ import { SpammerD } from "./penrose/beforechatevent/spammer/spammer_d.js";
 import { PrefixCommand } from "./penrose/beforechatevent/chat/prefixcommand.js";
 import { ChatFilter } from "./penrose/beforechatevent/chat/chatfilter.js";
 // Import Tick Events
-import { GametestCheck } from "./penrose/tickevent/gametestloaded/gametestcheck.js";
 import { GlobalBanList } from "./penrose/tickevent/ban/globalbanlist.js";
 import { ServerBan } from "./penrose/tickevent/ban/serverban.js";
 import { CrasherA } from "./penrose/tickevent/crasher/crasher_a.js";
@@ -29,6 +29,15 @@ import { PlaceflagsA } from "./penrose/tickevent/placeflags/placeflags_a.js";
 import { NukerA } from "./penrose/tickevent/nuker/nuker_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray_a.js";
+// Import JoinPlayer Events
+import { playerloaded } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
+
+// Self explanatory
+const World = Minecraft.world;
+
+// Event Callbacks
+const playerJoinEventCallback = World.events.playerJoin;
+
 
 // BeforeChat Events
 if (config.modules.badpackets2.enabled) {
@@ -55,7 +64,6 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
-GametestCheck();
 GlobalBanList();
 ServerBan();
 PlayerPosition();
@@ -120,3 +128,6 @@ if  (config.modules.antinukerA.enabled) {
 if  (config.modules.xrayA.enabled) {
     XrayA();
 }
+
+// JoinPlayer Events
+playerJoinEventCallback.subscribe(playerloaded); // gametestcheck.js
