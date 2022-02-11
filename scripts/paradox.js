@@ -28,7 +28,7 @@ import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 // Import JoinPlayer Events
-import { playerloaded } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
+import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
@@ -125,7 +125,7 @@ if  (config.modules.antinukerA.enabled) {
 }
 
 // JoinPlayer Events
-playerJoinEventCallback.subscribe(playerloaded); // gametestcheck.js
+playerJoinEventCallback.subscribe(GametestCheck);
 
 // BlockPlace Events
 if  (config.modules.antiscaffoldA.enabled) {

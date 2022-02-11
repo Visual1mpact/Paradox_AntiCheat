@@ -36,7 +36,7 @@ function time() {
 }
 
 // This function will be called when playerJoin event is triggered
-function playerloaded(loaded) {
+function GametestCheck(loaded) {
     if (isChecked === false) {
         // Get the name of the player who is joining
         player = loaded.player;
@@ -45,4 +45,4 @@ function playerloaded(loaded) {
     }
 }
 
-export { playerloaded }
+export { GametestCheck }
