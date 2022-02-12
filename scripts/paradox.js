@@ -30,8 +30,6 @@ import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 // Import JoinPlayer Events
 import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
 import { onJoin } from "./penrose/playerjoinevent/onjoin/onjoin.js";
-import { onJoin2 } from "./penrose/playerjoinevent/onjoin/onjoin2.js";
-import { onJoin3 } from "./penrose/playerjoinevent/onjoin/onjoin3.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
@@ -130,8 +128,6 @@ if  (config.modules.antinukerA.enabled) {
 // JoinPlayer Events
 playerJoinEventCallback.subscribe(GametestCheck);
 playerJoinEventCallback.subscribe(onJoin);
-playerJoinEventCallback.subscribe(onJoin2);
-playerJoinEventCallback.subscribe(onJoin3);
 
 // BlockPlace Events
 if  (config.modules.antiscaffoldA.enabled) {

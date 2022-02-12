@@ -18,7 +18,7 @@ function time() {
         try {
             // We execute each command in the list
             onJoinData.forEach(list => {
-                player.runCommand(`${list}`);
+                player.runCommand(`${list.toString()}`);
             })
             tickEventCallback.unsubscribe(time)
         } catch (error) {}
