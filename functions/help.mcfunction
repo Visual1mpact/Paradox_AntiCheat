@@ -1,8 +1,8 @@
 tellraw @s {"rawtext":[{"text":"\n§l§4Paradox AntiCheat Command Help"}]}
-tellraw @s[tag=!gametestapicheck] {"rawtext":[{"text":"\n§l§4Gametest Framework Is Disabled In Your World!"}]}
-tellraw @s[tag=!gametestapicheck] {"rawtext":[{"text":"§l§4Please Enable Gametest, Cheats, and Education Edition!"}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"\n§l§4Gametest Is Disabled In World!"}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"\n§l§4Please Enable Gametest, Cheats, and Education Edition!"}]}
 
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"\n§l§4Moderation Commands"}]}
+tellraw @s {"rawtext":[{"text":"\n§l§4Moderation Commands"}]}
 
 # Gametest enabled
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!help§r - Shows this help page."}]}
@@ -16,7 +16,16 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!op <username>§r -
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!deop <username>§r - Revokes Op player in Paradox AntiCheat features."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!modules§r - View all enabled or disabled modules."}]}
 
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"\n§l§4Optional Features"}]}
+# Gametest Disabled
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function help§r - Shows this help page."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function ban§r - Ban the specified user."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function notify§r - Enables/Disables cheat notifications."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function credits§r - Shows credits, thats it."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ op§r - Op's player in Paradox AntiCheat features."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ deop§r - Revokes Op player in Paradox AntiCheat features."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/modules§r - View all enabled or disabled modules."}]}
+
+tellraw @s {"rawtext":[{"text":"\n§l§4Optional Features"}]}
 
 # Gametest enabled
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgma§r - Enables/disables Gamemode 2(Adventure) to be used."}]}
@@ -35,7 +44,23 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!enchantedarmor§r 
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoaura§r - Enables/disables Auto KillAura checks for all players."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enables/disables Anti Knockback for all players."}]}
 
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
+# Gametest disabled
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMA§r - Enables/disables Gamemode 2(Adventure) to be used."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMC§r - Enables/disables Gamemode 1(Creative) to be used."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMS§r - Enables/disables Gamemode 0(Survival) to be used."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/removeCommandBlocks§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/bedrockValidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCommandBlocksEnabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/npc§r - Enables/disables Anti NPC's (Kills all NPC's when enabled)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoclicker§r - Enables/disables Anti Autoclicker."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/enchantedArmor§r - Enables/disables Anti Enchanted Armor for all players."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoaura§r - Enables/disables Auto KillAura checks for all players."}]}
+
+tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 
 # Gametest enabled
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!auracheck <username>§r - Manual test for KillAura."}]}
@@ -48,5 +73,15 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!vanish§r - Enable
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!tag <tag>§r - Adds tag to username in chat window."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!clearchat§r - Clears chat."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!invsee <username>§r - Lists all the items in the usernames inventory."}]}
+
+# Gametest disabled
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/auracheck§r - Manual test for killaura."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/ecwipe§r - Clears a players ender chest."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/fly§r - Enables/disables fly mode in survival."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/freeze§r - Freeze a player and make it so they cant move."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/stats§r - View a specific players anticheat logs."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute @a ~~~ function tools/stats§r - View everyones anticheat logs."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/vanish§r - Enables/disables vanish (Used for spying on suspects)."}]}
+tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function tools/clearchat§r - Clears chat."}]}
 
 tellraw @s {"rawtext":[{"text":"\n"}]}

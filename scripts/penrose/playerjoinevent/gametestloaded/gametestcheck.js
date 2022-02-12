@@ -1,5 +1,4 @@
 import * as Minecraft from "mojang-minecraft";
-import { getTags } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -8,9 +7,8 @@ const tickEventCallback = World.events.tick;
 // This is to allow passing between functions
 let player;
 let isChecked = false;
-let playerTags;
 
-// This function will be called when tick event is triggered from the GametestCheck function
+// This function will be called when tick event is triggered from the playerloaded function
 function time() {
     try {
         // We loop testfor until it returns true so we know the
@@ -20,14 +18,12 @@ function time() {
         try {
             // (1..) gametest already enabled so set loaded to true and do nothing
             player.runCommand(`testfor @a[scores={gametestapi=1..}]`);
-            player.runCommand(`tag "${player.name}" add gametestcheckapi`);
             isChecked = true;
             tickEventCallback.unsubscribe(time)
         } catch {
             // (..0) gametest needs to be enabled (1..) then set loaded to true
             player.runCommand(`testfor @a[scores={gametestapi=..0}]`);
             player.runCommand(`execute "${player.name}" ~~~ function checks/gametestapi`);
-            player.runCommand(`tag "${player.name}" add gametestcheckapi`);
             isChecked = true;
             // We unsubscribe to the tick event from the time function
             tickEventCallback.unsubscribe(time)
@@ -41,11 +37,12 @@ function time() {
 
 // This function will be called when playerJoin event is triggered
 function GametestCheck(loaded) {
-    // Get the name of the player who is joining
-    player = loaded.player;
-
-    // Subscribe tick event to the time function
-    tickEventCallback.subscribe(time)
+    if (isChecked === false) {
+        // Get the name of the player who is joining
+        player = loaded.player;
+        // Subscribe tick event to the time function
+        tickEventCallback.subscribe(time)
+    }
 }
 
 export { GametestCheck }
