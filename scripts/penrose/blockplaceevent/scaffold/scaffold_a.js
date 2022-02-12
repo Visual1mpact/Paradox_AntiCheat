@@ -1,4 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
+import { setTickTimeout } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
@@ -12,10 +13,7 @@ function time() {
     // fix a disabler method
     player.nameTag = player.nameTag.replace("\"", "");
     player.nameTag = player.nameTag.replace("\\", "");
-    player.runCommand(`scoreboard players set "${player.nameTag}" bpps 0`);
-        
-    // Unsubscribe tick event to the time function
-    tickEventCallback.unsubscribe(time)   
+    player.runCommand(`scoreboard players set "${player.nameTag}" bpps 0`); 
 }
 
 function ScaffoldA(block) {
@@ -30,7 +28,8 @@ function ScaffoldA(block) {
     } catch (error) {}
 
     // Subscribe tick event to the time function
-    tickEventCallback.subscribe(time)
+    // Delay the function by 1 second
+    setTickTimeout(time, 20)
 }
 
 export { ScaffoldA }
