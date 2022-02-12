@@ -1,5 +1,4 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag, getTags } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
@@ -9,24 +8,14 @@ const NoSlowA = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
-
-            // get all tags of the player
-            let playerTags = getTags(player);
-
-            // NoSlow/A = speed limit check
-            if(Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3) >= config.modules.noslowA.speed) {
-                if (!player.getEffect(Minecraft.MinecraftEffectTypes.speed) && playerTags.includes('ground') && playerTags.includes('sprint') && !playerTags.includes('jump') && !playerTags.includes('gliding') && !playerTags.includes('swimming')) {
-                    try {
-                	    player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=ground,tag=sprint,tag=!jump,tag=!gliding,tag=!swimming]`);
-                        flag(player, "NoSlow", "A", "Movement", "speed", Math.sqrt(Math.abs(player.velocity.x**2 + player.velocity.z**2)).toFixed(3), true, false);
-                    } catch(error) {}
-                }
+            const speedcheck = player.getComponent('minecraft:movement');
+            // Check the players current speed and see if it exceeds the value we have hardcoded
+            // If they do not have the effect for speed then we reset their speed to the default value.
+            if (speedcheck.current > config.modules.noslowA.speed && !player.getEffect(Minecraft.MinecraftEffectTypes.speed)) {
+                speedcheck.setCurrent(speedcheck.value);
             }
         }
-    }, 40) //Executes every 2 seconds
+    }, 20) //Executes every 1 seconds
 }
 
 export { NoSlowA }

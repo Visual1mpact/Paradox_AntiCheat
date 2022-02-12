@@ -85,7 +85,7 @@ export default
         },
         "noslowA": {
             "enabled": true,
-            "speed": 0.300
+            "speed": 0.20800000429153442
         },
         "invalidsprintA": {
             "enabled": true
