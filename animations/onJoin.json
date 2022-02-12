@@ -3,7 +3,7 @@
 	"animations": {
 		"animation.onJoin": {
 			"timeline": {
-				"14.0": [
+				"11.0": [
 					// Setting Objectives
 					"/scoreboard objectives add cmds dummy",
 					"/scoreboard players add @s cmds 0",
@@ -106,7 +106,7 @@
 					"/ability @s[tag=flying] mayfly true"
 				]
 			},
-			"animation_length": 14.0,
+			"animation_length": 11.0,
 			"loop": false
 		}
 	}
