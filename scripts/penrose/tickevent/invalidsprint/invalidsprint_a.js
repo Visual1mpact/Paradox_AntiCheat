@@ -1,6 +1,7 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag, getTags } from "../../../util.js";
+import { flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
+import config from "../../../data/config.js";
 
 const World = Minecraft.world;
 
@@ -8,22 +9,16 @@ const InvalidSprintA = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
-            
-            // get all tags of the player
-            let playerTags = getTags(player);
-
-            // invalidsprint/a = checks for sprinting with the blindness effect
-            if (player.getEffect(Minecraft.MinecraftEffectTypes.blindness) && playerTags.includes('sprint')) {
-                try {
-                    player.dimension.runCommand(`testfor @a[name=${player.nameTag},tag=sprint]`);
-                    flag(player, "InvalidSprint", "A", "Movement", false, false, true, false);
-                } catch(error) {}
+            const speedcheck = player.getComponent('minecraft:movement');
+            // Check the players current speed and see if it is equal or more than the value we have hardcoded
+            // If they do have the effect for blindness and they are sprinting then we flag and reset their speed.
+            if (speedcheck.current >= config.modules.invalidsprintA.speed && player.getEffect(Minecraft.MinecraftEffectTypes.blindness)) {
+                let speedrecord = speedcheck.current
+                flag(player, "InvalidSprint", "A", "Movement", "BlindSprint", (speedrecord).toFixed(3), true, false);
+                speedcheck.setCurrent(speedcheck.value);
             }
         }
-    }, 40) //Executes every 2 seconds
+    }, 20) //Executes every 1 second
 }
 
 export { InvalidSprintA }

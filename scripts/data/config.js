@@ -88,7 +88,8 @@ export default
             "speed": 0.20800000429153442
         },
         "invalidsprintA": {
-            "enabled": true
+            "enabled": true,
+            "speed": 0.20800000429153442
         },
         "flyA": {
             "enabled": true
