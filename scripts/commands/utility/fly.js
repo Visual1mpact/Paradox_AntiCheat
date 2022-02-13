@@ -53,7 +53,7 @@ export function fly(message, args) {
         } else if (player.name !== member) {
             return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
         } else {
-            return
+            return;
         }
     } catch {
         if (player.name === member) {
@@ -61,7 +61,7 @@ export function fly(message, args) {
         } else if (player.name !== member) {
             return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
         } else {
-            return
+            return;
         }
     }
 }
