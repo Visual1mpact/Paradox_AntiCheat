@@ -85,7 +85,6 @@
 					"/scoreboard objectives add jesusvl dummy",
 					"/scoreboard objectives add phasevl dummy",
 					"/scoreboard objectives add reachvl dummy",
-					"/scoreboard objectives add disablervl dummy",
 					"/scoreboard objectives add last_attack dummy",
 					"/scoreboard objectives add armorvl dummy",
 					"/scoreboard objectives add ench_helmet dummy",
