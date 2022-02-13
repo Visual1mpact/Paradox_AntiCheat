@@ -24,6 +24,7 @@ import { IllegalItemsA } from "./penrose/tickevent/illegalitems/illegalitems_a.j
 import { InvalidSprintA } from "./penrose/tickevent/invalidsprint/invalidsprint_a.js";
 import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
 import { FlyB } from "./penrose/tickevent/fly/fly_b.js";
+import { time } from "./penrose/tickevent/fly/fly_b.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
@@ -41,6 +42,7 @@ const World = Minecraft.world;
 const playerJoinEventCallback = World.events.playerJoin;
 const blockPlaceCallback = World.events.blockPlace;
 const blockBreakCallback = World.events.blockBreak;
+const tickEventCallback = World.events.tick;
 
 
 // BeforeChat Events
@@ -110,6 +112,7 @@ if (config.modules.invalidsprintA.enabled) {
 
 if (config.modules.flyA.enabled) {
     FlyA();
+    tickEventCallback.subscribe(time);
 }
 
 if (config.modules.flyB.enabled) {

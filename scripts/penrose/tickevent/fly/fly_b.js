@@ -5,6 +5,12 @@ import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
+function time() {
+    try {
+        player.dimension.runCommand(`execute @a[name="${player.nameTag}",scores={fly_timer=6..}] ~~~ detect ~~-1~ air 0 tp @s ~ ~-1 ~ true`)
+    } catch (error) {}
+}
+
 const FlyB = () => {
     setTickInterval(() => {
         // run as each player
@@ -36,4 +42,4 @@ const FlyB = () => {
     }, 40) //Executes every 2 seconds
 }
 
-export { FlyB }
+export { FlyB, time }
