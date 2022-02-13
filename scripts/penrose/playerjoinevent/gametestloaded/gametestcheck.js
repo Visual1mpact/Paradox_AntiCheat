@@ -16,22 +16,12 @@ function time() {
         // too quickly while player is in loading screen
         player.runCommand(`testfor @a[name="${player.nameTag}"]`);
         try {
-            // (1..) gametest already enabled so set loaded to true and do nothing
-            player.runCommand(`testfor @a[scores={gametestapi=1..}]`);
+            // (1..) Set gametestapi to 1
+            player.runCommand(`scoreboard players set paradox:config gametestapi 1`);
+            player.runCommand(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
             tickEventCallback.unsubscribe(time)
-        } catch {
-            // (..0) gametest needs to be enabled (1..) then set loaded to true
-            player.runCommand(`testfor @a[scores={gametestapi=..0}]`);
-            player.runCommand(`execute "${player.nameTag}" ~~~ function checks/gametestapi`);
-            isChecked = true;
-            // We unsubscribe to the tick event from the time function
-            tickEventCallback.unsubscribe(time)
-            // I do not think this is needed since we unsubscribed
-            // but it's here for now until I feel like verifying
-            return;
-        }
-
+        } catch (error) {}
     } catch (error) {}
 }
 
