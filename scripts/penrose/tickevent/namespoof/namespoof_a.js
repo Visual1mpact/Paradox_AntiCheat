@@ -12,7 +12,7 @@ const NamespoofA = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
+            
             // Namespoof/A = username length check.
             try {
                 if (player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength) {

@@ -4,7 +4,7 @@ const World = Minecraft.world;
 
 const XrayA = () => {
     World.events.blockBreak.subscribe(datablock => {
-        let player = datablock.player.name;
+        let player = datablock.player.nameTag;
         let blocks = datablock.brokenBlockPermutation.type.id;
         let posx = datablock.player.location.x;
         let posy = datablock.player.location.y;

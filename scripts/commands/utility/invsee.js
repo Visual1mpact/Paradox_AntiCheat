@@ -11,8 +11,12 @@ const World = Minecraft.world;
  */
 export function invsee(message, args) {
     // validate that required params are defined
-    if (!message) return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/invsee.js:10)");
-    if (!args) return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/utility/invsee.js:1)");
+    if (!message) {
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/invsee.js:9)");
+    }
+    if (!args) {
+        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/utility/invsee.js:10)");
+    }
 
     message.cancel = true;
 
@@ -25,18 +29,28 @@ export function invsee(message, args) {
         return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos inventory to view!"}]}`);
+    if (!args.length) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos inventory to view!"}]}`);
+    }
     
     // try to find the player requested
-    for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl;
+    for (let pl of World.getPlayers()) {
+        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
+            var member = pl;
+        }
+    }
     
-    if (!member) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    if (!member) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    }
 
     let container = member.getComponent('inventory').container;
     
     player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${member.nameTag}'s inventory:\n\n"}]}`);
-    for (let i = 0; i < container.size; i++) if (container.getItem(i)) {
-        let o = container.getItem(i);
-        player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`);
+    for (let i = 0; i < container.size; i++) {
+        if (container.getItem(i)) {
+            let o = container.getItem(i);
+            player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`);
+        }
     }
 }

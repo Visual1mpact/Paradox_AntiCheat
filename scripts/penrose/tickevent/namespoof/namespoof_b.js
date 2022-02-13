@@ -12,7 +12,7 @@ const NamespoofB = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
+            
             // Namespoof/B = regex check
             try {
                 if (config.modules.namespoofB.regex.test(player.name)) {

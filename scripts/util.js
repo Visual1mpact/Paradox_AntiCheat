@@ -17,10 +17,18 @@ const World = Minecraft.world;
  */
 export function flag(player, check, checkType, hackType, debugName, debug, shouldTP, message, slot) {
     // validate that required params are defined
-    if (!player) return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:8)");
-    if (!check) return console.warn(`${new Date()} | ` + "Error: ${check} isnt defined. Did you forget to pass it? (./util.js:9)");
-    if (!check) return console.warn(`${new Date()} | ` + "Error: ${checkType} isnt defined. Did you forget to pass it? (./util.js:10)");
-    if (!hackType) return console.warn(`${new Date()} | ` + "Error: ${hackType} isnt defined. Did you forget to pass it? (./util.js:11)");
+    if (!player) {
+        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:8)");
+    }
+    if (!check) {
+        return console.warn(`${new Date()} | ` + "Error: ${check} isnt defined. Did you forget to pass it? (./util.js:9)");
+    }
+    if (!check) {
+        return console.warn(`${new Date()} | ` + "Error: ${checkType} isnt defined. Did you forget to pass it? (./util.js:10)");
+    }
+    if (!hackType) {
+        return console.warn(`${new Date()} | ` + "Error: ${hackType} isnt defined. Did you forget to pass it? (./util.js:11)");
+    }
 
     // make sure the vl objective exists
     try {
@@ -28,16 +36,24 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     } catch(error) {}
 
     // cancel the message
-    if (message) message.cancel = true;
+    if (message) {
+        message.cancel = true;
+    }
 
-    if(shouldTP && check !== "Crasher") player.dimension.runCommand(`tp "${player.nameTag}" "${player.nameTag}"`);
-        else if(shouldTP && check === "Crasher") player.dimension.runCommand(`tp "${player.nameTag}" 30000000 30000000 30000000`);
+    if (shouldTP && check !== "Crasher") {
+        player.dimension.runCommand(`tp "${player.nameTag}" "${player.nameTag}"`);
+    } else if (shouldTP && check === "Crasher") {
+        player.dimension.runCommand(`tp "${player.nameTag}" 30000000 30000000 30000000`);
+    }
 
     player.dimension.runCommand(`scoreboard players add "${player.nameTag}" ${check.toLowerCase()}vl 1`);
 
     try {
-        if(debug) player.dimension.runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
-            else player.dimension.runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+        if(debug) {
+            player.dimension.runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+        } else {
+            player.dimension.runCommand(`execute "${player.nameTag}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+        }
     } catch(error) {}
 
     if (slot >= 0) {
@@ -48,7 +64,9 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     }
 
     try {
-        if (check === "Namespoof") player.dimension.runCommand(`kick "${player.nameTag}" §r§4[§6Paradox§4]§r Invalid username`);
+        if (check === "Namespoof") {
+            player.dimension.runCommand(`kick "${player.nameTag}" §r§4[§6Paradox§4]§r Invalid username`);
+        }
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -61,10 +79,14 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
  */
 export function banMessage(player) {
     // validate that required params are defined
-    if (!player) return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:68)");
+    if (!player) {
+        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:78)");
+    }
 
     let tags = player.getTags();
-    if (tags) tags = String(tags).split(/[,]/);
+    if (tags) {
+        tags = String(tags).split(/[,]/);
+    }
 
     var reason;
     var by;
@@ -89,7 +111,9 @@ export function banMessage(player) {
  */
 export function getTags(player) {
     // validate that required params are defined
-    if (!player) return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:91)");
+    if (!player) {
+        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:110)");
+    }
 
     let tags = player.getTags();
 

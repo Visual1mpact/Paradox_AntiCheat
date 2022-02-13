@@ -3,6 +3,8 @@ import * as Minecraft from "mojang-minecraft";
 
 const World = Minecraft.world;
 
+let isSilent;
+
 /**
  * @name kick
  * @param {object} message - Message object
@@ -10,13 +12,20 @@ const World = Minecraft.world;
  */
 export function kick(message, args) {
     // validate that required params are defined
-    if (!message) return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/kick.js:9)");
-    if (!args) return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/kick.js:10)");
+    if (!message) {
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/kick.js:10)");
+    }
+    if (!args) {
+        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/kick.js:11)");
+    }
 
     message.cancel = true;
 
-    if (args[1] === "-s") var isSilent = true;
-        else isSilent = false;
+    if (args[1] === "-s") {
+        isSilent = true;
+    } else {
+        isSilent = false;
+    }
 
     let player = message.sender;
     let reason = args.slice(1).join(" ").replace("-s", "") || "No reason specified";
@@ -28,19 +37,32 @@ export function kick(message, args) {
         return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to kick!"}]}`);
+    if (!args.length) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to kick!"}]}`);
+    }
     
     // try to find the player requested
-    for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl.nameTag;
+    for (let pl of World.getPlayers()) {
+        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
+            var member = pl.name;
+        }
+    }
 
-    if (!member) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    if (!member) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    }
 
     // make sure they dont kick themselves
-    if (member === player.nameTag) return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
+    if (member === player.name) {
+        return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
+    }
 
     try {
-        if (!isSilent) player.dimension.runCommand(`kick "${member}" ${reason}`);
-            else player.dimension.runCommand(`event entity "${member}" paradox:kick`);
+        if (!isSilent) {
+            player.dimension.runCommand(`kick "${member}" ${reason}`);
+        } else {
+            player.dimension.runCommand(`event entity "${member}" paradox:kick`);
+        }
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);

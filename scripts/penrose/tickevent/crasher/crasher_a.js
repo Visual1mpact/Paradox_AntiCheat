@@ -11,7 +11,6 @@ const CrasherA = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
             // Crasher/A = invalid pos check
             if (Math.abs(player.location.x) > 30000000 || Math.abs(player.location.y) > 30000000 || Math.abs(player.location.z) > 30000000) {
                 flag(player, "Crasher", "A", "Exploit", false, false, true, false);

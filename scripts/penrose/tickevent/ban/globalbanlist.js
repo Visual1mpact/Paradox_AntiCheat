@@ -12,7 +12,6 @@ const GlobalBanList = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
             // Check global ban list and if the player who is joining is on the server then kick them out
             if (banplayer.some(code => JSON.stringify(code) === JSON.stringify({ name: player.nameTag }))) {
                 try {

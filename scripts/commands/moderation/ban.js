@@ -10,8 +10,12 @@ const World = Minecraft.world;
  */
 export function ban(message, args) {
     // validate that required params are defined
-    if (!message) return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/ban.js:9)");
-    if (!args) return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/ban.js:10)");
+    if (!message) {
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/ban.js:8)");
+    }
+    if (!args) {
+        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/ban.js:9)");
+    }
 
     message.cancel = true;
 
@@ -25,23 +29,39 @@ export function ban(message, args) {
         return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to ban!"}]}`);
+    if (!args.length) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to ban!"}]}`);
+    }
     
     // try to find the player requested
-    for (let pl of World.getPlayers()) if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) var member = pl.nameTag; 
+    for (let pl of World.getPlayers()) {
+        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
+            var member = pl.nameTag;
+        }
+    }
 
-    if (!member) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    if (!member) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+    }
 
     // make sure they dont ban themselves
-    if (member === player.nameTag) return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
+    if (member === player.nameTag) {
+        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
+    }
 
-    let tags = player.dimension.runCommand(`tag "${member}" list`, player.dimension).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
-    if (tags) tags = String(tags).split(/[,]/);
+    let tags = player.dimension.runCommand(`tag "${member}" list`).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
+    if (tags) {
+        tags = String(tags).split(/[,]/);
+    }
 
     // this removes old ban stuff
     tags.forEach(t => {
-        if(t.startsWith(" reason:")) player.dimension.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
-        if(t.startsWith(" by:")) player.dimension.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+        if(t.startsWith(" reason:")) {
+            player.dimension.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+        }
+        if(t.startsWith(" by:")) {
+            player.dimension.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+        }
     });
 
     try {

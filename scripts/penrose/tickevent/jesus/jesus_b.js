@@ -12,7 +12,7 @@ const JesusB = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
+            
             // get all tags of the player
             let playerTags = getTags(player);
 

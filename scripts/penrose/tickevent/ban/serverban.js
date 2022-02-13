@@ -11,7 +11,6 @@ const ServerBan = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
             // Ban message
             try {
                 player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);

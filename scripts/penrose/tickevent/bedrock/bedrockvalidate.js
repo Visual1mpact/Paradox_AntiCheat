@@ -11,7 +11,6 @@ const BedrockValidate = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
             // bedrock validation
             if (config.modules.bedrockValidate.overworld) {
                 try {

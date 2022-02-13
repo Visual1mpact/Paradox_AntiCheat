@@ -45,21 +45,32 @@ import { auracheck } from "./utility/auracheck.js";
  * @param {object} player - The player that has sent the message
  * @param {object} message - Message data
  */
+
 export function commandHandler(player, message) {
     // validate that required params are defined
-    if (!player) return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./commands/handler.js:13)");
-    if (!message) return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/handler.js:14)");
+    if (!player) {
+        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./commands/handler.js:45)");
+    }
+    if (!message) {
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/handler.js:46)");
+    }
 
-    if (config.debug) console.warn(`${new Date()} | ` + "did run command handler");
+    if (config.debug) {
+        console.warn(`${new Date()} | ` + "did run command handler");
+    }
 
     // checks if the message starts with our prefix, if not exit
-    if (!message.message.startsWith(config.customcommands.prefix)) return;
+    if (!message.message.startsWith(config.customcommands.prefix)) {
+        return;
+    }
 
     let args = message.message.slice(config.customcommands.prefix.length).split(/ +/);
 
     const commandName = args.shift().toLowerCase();
 
-    if (config.debug) console.warn(`${new Date()} | ${player.name} used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
+    if (config.debug) {
+        console.warn(`${new Date()} | ${player.nameTag} used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
+    }
 
     // we could much easily get rid of the if/else chain only if we have npm support...
     try {
@@ -100,7 +111,7 @@ export function commandHandler(player, message) {
         else if (config.customcommands.antikb && commandName === "antikb") antikb(message);
         else return;
     } catch (error) {
-        console.warn(`${new Date()} | ` + error);
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
+        console.warn(`${new Date()} | Handler.js: ` + error);
+        return player.dimension.runCommand(`tellraw "${player.name}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
     }
 }

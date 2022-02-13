@@ -8,7 +8,9 @@ const World = Minecraft.world;
  */
 export function removecommandblocks(message) {
     // validate that required params are defined
-    if (!message) return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/removeCommandBlocks.js:12)");
+    if (!message) {
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/removeCommandBlocks.js:7)");
+    }
 
     message.cancel = true;
 

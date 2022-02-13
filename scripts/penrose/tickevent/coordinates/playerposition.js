@@ -10,7 +10,6 @@ const PlayerPosition = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-
             // player position
             try {
                 player.dimension.runCommand(`scoreboard players set "${player.nameTag}" xPos ${Math.floor(player.location.x)}`);

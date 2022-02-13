@@ -14,7 +14,7 @@ function time() {
         // We loop testfor until it returns true so we know the
         // player is in the world because playerJoin triggers
         // too quickly while player is in loading screen
-        player.runCommand(`testfor @a[name="${player.name}"]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}"]`);
         try {
             // (1..) gametest already enabled so set loaded to true and do nothing
             player.runCommand(`testfor @a[scores={gametestapi=1..}]`);
@@ -23,7 +23,7 @@ function time() {
         } catch {
             // (..0) gametest needs to be enabled (1..) then set loaded to true
             player.runCommand(`testfor @a[scores={gametestapi=..0}]`);
-            player.runCommand(`execute "${player.name}" ~~~ function checks/gametestapi`);
+            player.runCommand(`execute "${player.nameTag}" ~~~ function checks/gametestapi`);
             isChecked = true;
             // We unsubscribe to the tick event from the time function
             tickEventCallback.unsubscribe(time)
