@@ -78,7 +78,6 @@
 					"/scoreboard objectives add xPos dummy",
 					"/scoreboard objectives add yPos dummy",
 					"/scoreboard objectives add zPos dummy",
-					"/scoreboard objectives add speedvl dummy",
 					"/scoreboard objectives add timer dummy",
 					"/scoreboard objectives add anglevl dummy",
 					"/scoreboard objectives add interactusevl dummy",
