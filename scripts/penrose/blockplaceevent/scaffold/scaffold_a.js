@@ -9,7 +9,7 @@ function time() {
     player.nameTag = player.nameTag.replace("\"", "");
     player.nameTag = player.nameTag.replace("\\", "");
     player.runCommand(`scoreboard players set "${player.nameTag}" bpps 0`); 
-};
+}
 
 function ScaffoldA(block) {
     // Get the name of the player who is joining
@@ -25,6 +25,6 @@ function ScaffoldA(block) {
     // Subscribe tick event to the time function
     // Delay the function by 1 second
     setTickTimeout(time, 20);
-};
+}
 
 export { ScaffoldA };
