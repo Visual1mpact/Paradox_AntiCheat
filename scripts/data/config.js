@@ -94,6 +94,9 @@ export default
         "flyA": {
             "enabled": true
         },
+        "flyB": {
+            "enabled": true
+        },
         "illegalitemsA": {
             "enabled": true,
             "maxStack": 64

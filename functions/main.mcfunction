@@ -4,7 +4,6 @@ gamerule randomtickspeed 1
 # Run all the checks
 function checks/angle
 function checks/others
-execute @s[tag=!flying] ~~~ function checks/fly
 execute @s[scores={autoaura=1..}] ~~~ function checks/killaura
 
 # Specific criteria checks

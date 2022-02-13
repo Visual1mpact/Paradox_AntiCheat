@@ -23,6 +23,11 @@ const IllegalItemsA = () => {
                     inventory_items.push(inventory_i.id);
                 } catch (error) {}
             }
+
+            //Hopefully optimizing on lag by putting the fly check ticking command in here instead of fly
+            //Just ignore this
+            player.dimension.runCommand(`execute @a[name="${player.nameTag}",scores={fly_timer=6..}] ~~~ detect ~~-1~ air 0 tp @s ~ ~-1 ~ true`)
+
             // If player has an illegal item we clear their entire inventory then kick them
             // If we cannot kick them then we despawn them (no mercy)
             inventory_items.forEach(item => {
