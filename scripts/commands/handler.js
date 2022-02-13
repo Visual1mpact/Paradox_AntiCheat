@@ -1,7 +1,4 @@
-import * as Minecraft from "mojang-minecraft";
 import config from "../data/config.js";
-
-const World = Minecraft.world;
 
 // import all our commands
 import { kick } from "./moderation/kick.js";

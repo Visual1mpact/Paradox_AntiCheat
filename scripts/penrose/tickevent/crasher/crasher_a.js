@@ -16,7 +16,7 @@ const CrasherA = () => {
                 flag(player, "Crasher", "A", "Exploit", false, false, true, false);
             }
         }
-    }, 40) //Executes every 2 seconds
-}
+    }, 40); // Executes every 2 seconds
+};
 
-export { CrasherA }
+export { CrasherA };

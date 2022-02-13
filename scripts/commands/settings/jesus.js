@@ -1,7 +1,3 @@
-import * as Minecraft from "mojang-minecraft";
-
-const World = Minecraft.world;
-
 /**
  * @name jesus
  * @param {object} message - Message object

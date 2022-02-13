@@ -17,7 +17,7 @@ const PlayerPosition = () => {
                 player.dimension.runCommand(`scoreboard players set "${player.nameTag}" zPos ${Math.floor(player.location.z)}`);
             } catch(e) {}
         }
-    }, 20) //Executes every 1 seconds
-}
+    }, 20); // Executes every 1 seconds
+};
 
-export { PlayerPosition }
+export { PlayerPosition };

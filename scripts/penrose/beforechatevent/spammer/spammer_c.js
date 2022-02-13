@@ -18,7 +18,7 @@ const SpammerC = () => {
                 flag(player, "Spammer", "C", "Misc", false, false, false, msg);
             } catch (error) {}
         }
-    })
-}
+    });
+};
 
-export { SpammerC }
+export { SpammerC };

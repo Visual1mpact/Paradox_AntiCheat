@@ -132,7 +132,7 @@ export const illegalitems = [
   'minecraft:warped_double_slab',
   'minecraft:warped_standing_sign',
   'minecraft:warped_wall_sign'
-]
+];
 
 export const illegalblocks = [
   "minecraft:beehive",
@@ -147,4 +147,4 @@ export const illegalblocks = [
   "minecraft:movingblock",
   "minecraft:movingBlock",
   "minecraft:invisiblebedrock"
-]
+];

@@ -20,7 +20,7 @@ function time() {
             player.runCommand(`scoreboard players set paradox:config gametestapi 1`);
             player.runCommand(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
-            tickEventCallback.unsubscribe(time)
+            tickEventCallback.unsubscribe(time);
         } catch (error) {}
     } catch (error) {}
 }
@@ -31,8 +31,8 @@ function GametestCheck(loaded) {
         // Get the name of the player who is joining
         player = loaded.player;
         // Subscribe tick event to the time function
-        tickEventCallback.subscribe(time)
+        tickEventCallback.subscribe(time);
     }
 }
 
-export { GametestCheck }
+export { GametestCheck };

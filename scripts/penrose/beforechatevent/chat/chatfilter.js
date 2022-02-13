@@ -18,9 +18,9 @@ const ChatFilter = () => {
         } else if (player.name && player.name === player.nameTag) {
             // We can modify the message without using tellraw
             // This will be used if player.nameTag is not modified
-            msg.message = `${msg.message.replace(/[^\x00-\xFF]/g, "")}`
+            msg.message = `${msg.message.replace(/[^\x00-\xFF]/g, "")}`;
         }
-    })
-}
+    });
+};
 
-export { ChatFilter }
+export { ChatFilter };

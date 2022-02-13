@@ -14,7 +14,7 @@ const BadPackets2 = () => {
         if (message.length > config.modules.badpackets2.maxlength || message.length < config.modules.badpackets2.minLength) {
             flag(player, "BadPackets", "2", "messageLength", message.length, false, msg);
         }
-    })
-}
+    });
+};
 
-export { BadPackets2 }
+export { BadPackets2 };

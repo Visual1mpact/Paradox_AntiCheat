@@ -13,12 +13,12 @@ const NoSlowA = () => {
             // Check the players current speed and see if it exceeds the value we have hardcoded
             // If they do not have the effect for speed then we flag and reset their speed to the default value.
             if (speedcheck.current >= config.modules.noslowA.speed && !player.getEffect(Minecraft.MinecraftEffectTypes.speed)) {
-                let speedrecord = speedcheck.current
+                let speedrecord = speedcheck.current;
                 flag(player, "NoSlow", "A", "Movement", "IllegalSpeed", (speedrecord).toFixed(3), true, false);
                 speedcheck.setCurrent(speedcheck.value);
             }
         }
-    }, 20) //Executes every 1 second
-}
+    }, 20); // Executes every 1 second
+};
 
-export { NoSlowA }
+export { NoSlowA };

@@ -22,7 +22,7 @@ function setTickTimeout(handler, timeout, ...args) {
     tickTimeoutID++;
     tickTimeoutMap.set(tickTimeoutID, tickTimeout);
     return tickTimeoutID;
-};
+}
 /**
  * Delay executing a function, REPEATEDLY
  * @typedef
@@ -36,7 +36,7 @@ function setTickInterval(handler, timeout, ...args) {
     tickIntervalID++;
     tickIntervalMap.set(tickIntervalID, tickInterval);
     return tickIntervalID;
-};
+}
 /**
  * Delete a clearTickTimeout
  * @typedef
@@ -44,7 +44,7 @@ function setTickInterval(handler, timeout, ...args) {
  */
 function clearTickTimeout(handle) {
     tickTimeoutMap.delete(handle);
-};
+}
 /**
  * Delete a clearTickInterval
  * @typedef
@@ -52,7 +52,7 @@ function clearTickTimeout(handle) {
  */
 function clearTickInterval(handle) {
     tickIntervalMap.delete(handle);
-};
+}
 
 World.events.tick.subscribe((data) => {
     for(const [ID, tickTimeout] of tickTimeoutMap) {
@@ -60,11 +60,11 @@ World.events.tick.subscribe((data) => {
         if(tickTimeout.tick <= 0) {
             tickTimeout.callback(...tickTimeout.args);
             tickTimeoutMap.delete(ID);
-        };
-    };
+        }
+    }
     for(const [, tickInterval] of tickIntervalMap) {
         if(data.currentTick % tickInterval.tick === 0) tickInterval.callback(...tickInterval.args);
-    };
+    }
 });
 
 export { setTickTimeout, setTickInterval, clearTickTimeout, clearTickInterval };

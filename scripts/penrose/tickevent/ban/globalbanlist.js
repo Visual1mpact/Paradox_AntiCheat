@@ -29,7 +29,7 @@ const GlobalBanList = () => {
                 banMessage(player);
             }
         }
-    }, 40) //Executes every 2 seconds
-}
+    }, 40); // Executes every 2 seconds
+};
 
-export { GlobalBanList }
+export { GlobalBanList };

@@ -9,7 +9,7 @@ const PrefixCommand = () => {
         const player = msg.sender;
 
         commandHandler(player, msg);
-    })
-}
+    });
+};
 
-export { PrefixCommand }
+export { PrefixCommand };

@@ -20,7 +20,7 @@ const NamespoofB = () => {
                 }
             } catch(error) {}
         }
-    }, 40) //Executes every 2 seconds
-}
+    }, 40); // Executes every 2 seconds
+};
 
-export { NamespoofB }
+export { NamespoofB };

@@ -27,7 +27,7 @@ const ReachA = () => {
                 }
             }
         }
-    }, 40) //Executes every 2 seconds
-}
+    }, 40); // Executes every 2 seconds
+};
 
-export { ReachA }
+export { ReachA };
