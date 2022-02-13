@@ -69,46 +69,113 @@ export function commandHandler(player, message) {
         console.warn(`${new Date()} | ${player.nameTag} used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
     }
 
-    // we could much easily get rid of the if/else chain only if we have npm support...
-    try {
-        if (config.customcommands.kick && commandName === "kick") kick(message, args);
-        else if (config.customcommands.tag && commandName === "tag" || commandName === "nametag") tag(message, args);
-        else if (config.customcommands.ban && commandName === "ban") ban(message, args);
-        else if (config.customcommands.notify && commandName === "notify") notify(message);
-        else if (config.customcommands.vanish && commandName === "vanish" || commandName === "v") vanish(message);
-        else if (config.customcommands.fly && commandName === "fly" || commandName === "birdmode") fly(message, args);
-        else if (config.customcommands.mute && commandName === "mute") mute(message, args);
-        else if (config.customcommands.unmute && commandName === "unmute") unmute(message, args);
-        else if (config.customcommands.invsee && commandName === "invsee") invsee(message, args);
-        else if (config.customcommands.ecwipe && commandName === "ecwipe") ecwipe(message, args);
-        else if (config.customcommands.freeze && commandName === "freeze") freeze(message, args);
-        else if (config.customcommands.stats && commandName === "stats") stats(message, args);
-        else if (config.customcommands.fullreport && commandName === "fullreport") fullreport(message);
-        else if (config.customcommands.allowgma && commandName === "allowgma") allowgma(message);
-        else if (config.customcommands.allowgmc && commandName === "allowgmc") allowgmc(message);
-        else if (config.customcommands.allowgms && commandName === "allowgms") allowgms(message);
-        else if (config.customcommands.bedrockvalidate && commandName === "bedrockvalidate") bedrockvalidate(message);
-        else if (config.customcommands.modules && commandName === "modules") modules(message);
-        else if (config.customcommands.nofrostwalker && commandName === "nofrostwalker") nofrostwalker(message);
-        else if (config.customcommands.npc && commandName === "npc") npc(message);
-        else if (config.customcommands.overidecommandblocksenabled && commandName === "overridecbe") overidecommandblocksenabled(message);
-        else if (config.customcommands.removecommandblocks && commandName === "removecb") removecommandblocks(message);
-        else if (config.customcommands.worldborder && commandName === "worldborder" || commandName === "wb") worldborder(message);
-        else if (config.customcommands.help && commandName === "help") help(message);
-        else if (config.customcommands.credits && commandName === "credits") credits(message);
-        else if (config.customcommands.op && commandName === "op") op(message, args);
-        else if (config.customcommands.op && commandName === "deop") deop(message, args);
-        else if (config.customcommands.clearchat && commandName === "clearchat") clearchat(message);
-        else if (config.customcommands.autoclicker && commandName === "autoclicker") autoclicker(message);
-        else if (config.customcommands.jesus && commandName === "jesus") jesus(message);
-        else if (config.customcommands.phase && commandName === "phase") phase(message);
-        else if (config.customcommands.enchantedarmor && commandName === "enchantedarmor") enchantedarmor(message);
-        else if (config.customcommands.auracheck && commandName === "auracheck") auracheck(message, args);
-        else if (config.customcommands.autoaura && commandName === "autoaura") autoaura(message);
-        else if (config.customcommands.antikb && commandName === "antikb") antikb(message);
-        else return;
-    } catch (error) {
-        console.warn(`${new Date()} | Handler.js: ` + error);
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
+    switch (true) {
+        case (config.customcommands.kick && commandName === "kick"):
+            kick(message, args);
+            break;
+        case (config.customcommands.tag && commandName === "tag"):
+            tag(message, args);
+            break;
+        case (config.customcommands.ban && commandName === "ban"):
+            ban(message, args);
+            break;
+        case (config.customcommands.notify && commandName === "notify"):
+            notify(message);
+            break;
+        case (config.customcommands.vanish && commandName === "vanish"):
+            vanish(message);
+            break;
+        case (config.customcommands.fly && commandName === "fly"):
+            fly(message, args);
+            break;
+        case (config.customcommands.mute && commandName === "mute"):
+            mute(message, args);
+            break;
+        case (config.customcommands.unmute && commandName === "unmute"):
+            unmute(message, args);
+            break;
+        case (config.customcommands.invsee && commandName === "invsee"):
+            invsee(message, args);
+            break;
+        case (config.customcommands.ecwipe && commandName === "ecwipe"):
+            ecwipe(message, args);
+            break;
+        case (config.customcommands.freeze && commandName === "freeze"):
+            freeze(message, args);
+            break;
+        case (config.customcommands.stats && commandName === "stats"):
+            stats(message, args);
+            break;
+        case (config.customcommands.fullreport && commandName === "fullreport"):
+            fullreport(message);
+            break;
+        case (config.customcommands.allowgma && commandName === "allowgma"):
+            allowgma(message);
+            break;
+        case (config.customcommands.allowgmc && commandName === "allowgmc"):
+            allowgmc(message);
+            break;
+        case (config.customcommands.allowgms && commandName === "allowgms"):
+            allowgms(message);
+            break;
+        case (config.customcommands.bedrockvalidate && commandName === "bedrockvalidate"):
+            bedrockvalidate(message);
+            break;
+        case (config.customcommands.modules && commandName === "modules"):
+            modules(message);
+            break;
+        case (config.customcommands.nofrostwalker && commandName === "nofrostwalker"):
+            nofrostwalker(message);
+            break;
+        case (config.customcommands.npc && commandName === "npc"):
+            npc(message);
+            break;
+        case (config.customcommands.overidecommandblocksenabled && commandName === "overridecbe"):
+            overidecommandblocksenabled(message);
+            break;
+        case (config.customcommands.removecommandblocks && commandName === "removecb"):
+            removecommandblocks(message);
+            break;
+        case (config.customcommands.worldborder && commandName === "worldborder"):
+            worldborder(message);
+            break;
+        case (config.customcommands.help && commandName === "help"):
+            help(message);
+            break;
+        case (config.customcommands.credits && commandName === "credits"):
+            credits(message);
+            break;
+        case (config.customcommands.op && commandName === "op"):
+            op(message, args);
+            break;
+        case (config.customcommands.op && commandName === "deop"):
+            deop(message, args);
+            break;
+        case (config.customcommands.clearchat && commandName === "clearchat"):
+            clearchat(message);
+            break;
+        case (config.customcommands.autoclicker && commandName === "autoclicker"):
+            autoclicker(message);
+            break;
+        case (config.customcommands.jesus && commandName === "jesus"):
+            jesus(message);
+            break;
+        case (config.customcommands.phase && commandName === "phase"):
+            phase(message);
+            break;
+        case (config.customcommands.enchantedarmor && commandName === "enchantedarmor"):
+            enchantedarmor(message);
+            break;
+        case (config.customcommands.auracheck && commandName === "auracheck"):
+            auracheck(message, args);
+            break;
+        case (config.customcommands.autoaura && commandName === "autoaura"):
+            autoaura(message);
+            break;
+        case (config.customcommands.antikb && commandName === "antikb"):
+            antikb(message);
+            break;
+        default:
+            return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
     }
 }
