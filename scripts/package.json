@@ -1,6 +1,6 @@
 {
   "name": "paradox-anticheat",
-  "version": "2.2.15",
+  "version": "2.3.16",
   "description": "anticheat",
   "main": "paradox.js",
   "scripts": {
