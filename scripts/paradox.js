@@ -23,7 +23,7 @@ import { NoSlowA } from "./penrose/tickevent/noslow/noslow_a.js";
 import { IllegalItemsA } from "./penrose/tickevent/illegalitems/illegalitems_a.js";
 import { InvalidSprintA } from "./penrose/tickevent/invalidsprint/invalidsprint_a.js";
 import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
-import { FlyB, time } from "./penrose/tickevent/fly/fly_b.js";
+import { FlyB } from "./penrose/tickevent/fly/fly_b.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
@@ -111,11 +111,10 @@ if (config.modules.invalidsprintA.enabled) {
 
 if (config.modules.flyA.enabled) {
     FlyA();
-    tickEventCallback.subscribe(time);
 }
 
 if (config.modules.flyB.enabled) {
-    FlyB();
+    tickEventCallback.subscribe(FlyB);
 }
 
 if  (config.modules.antikbA.enabled) {
