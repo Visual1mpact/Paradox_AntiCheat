@@ -44,6 +44,6 @@ function FlyB() {
             }
         }
     }
-};
+}
 
 export { FlyB };
