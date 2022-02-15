@@ -13,7 +13,7 @@ const ChatFilter = () => {
         if (player.name && player.name !== player.nameTag && !msg.cancel) {
             // We can't modify the name of the messenger. Might be hardcoded. So we use tellraw.
             // This will be used if player.nameTag is modified
-            player.dimension.runCommand(`tellraw @a {"rawtext":[{"text":"${player.nameTag} ${msg.message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
+            player.runCommand(`tellraw @a {"rawtext":[{"text":"${player.nameTag} ${msg.message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
             msg.cancel = true;
         } else if (player.name && player.name === player.nameTag) {
             // We can modify the message without using tellraw

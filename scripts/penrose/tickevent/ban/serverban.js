@@ -13,7 +13,7 @@ const ServerBan = () => {
             player.nameTag = player.nameTag.replace("\\", "");
             // Ban message
             try {
-                player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);
+                player.runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);
                 banMessage(player);
             } catch(error) {}
         }

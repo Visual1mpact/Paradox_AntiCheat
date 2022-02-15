@@ -19,10 +19,10 @@ const ReachA = () => {
             // reach/a
             if (playerTags.includes('attack')) {
                 try {                                                                   // we could use r=4 but that wont account for lag
-                    player.dimension.runCommand(`execute @a[name="${player.nameTag}",tag=attack,m=!c] ~~~ testfor @p[name=!"${player.nameTag}",r=${config.modules.reachA.reach}]`);
+                    player.runCommand(`execute @a[name="${player.nameTag}",tag=attack,m=!c] ~~~ testfor @p[name=!"${player.nameTag}",r=${config.modules.reachA.reach}]`);
                 } catch (error) {
                     try {
-                        player.dimension.runCommand(`execute @a[name="${player.nameTag}",tag=attack,m=!c] ~~~ function checks/alerts/reach`);
+                        player.runCommand(`execute @a[name="${player.nameTag}",tag=attack,m=!c] ~~~ function checks/alerts/reach`);
                     } catch (error2) {}
                 }
             }

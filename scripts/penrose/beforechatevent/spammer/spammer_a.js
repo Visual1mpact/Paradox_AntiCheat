@@ -14,7 +14,7 @@ const SpammerA = () => {
         // Spammer/A = checks if someone sends a message while moving and on ground
         if (playerTags.includes('moving') && playerTags.includes('ground') && !playerTags.includes('jump')) {
             try {
-                player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=moving,tag=ground,tag=!jump]`);
+                player.runCommand(`testfor @a[name="${player.nameTag}",tag=moving,tag=ground,tag=!jump]`);
                 flag(player, "Spammer", "A", "Movement", false, false, true, msg);
             } catch (error) {}
         }

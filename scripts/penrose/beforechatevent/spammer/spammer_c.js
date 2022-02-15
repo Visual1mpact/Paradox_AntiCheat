@@ -14,7 +14,7 @@ const SpammerC = () => {
         // Spammer/C = checks if someone sends a message while using an item
         if (playerTags.includes('right')) {
             try {
-                player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=right]`);
+                player.runCommand(`testfor @a[name="${player.nameTag}",tag=right]`);
                 flag(player, "Spammer", "C", "Misc", false, false, false, msg);
             } catch (error) {}
         }

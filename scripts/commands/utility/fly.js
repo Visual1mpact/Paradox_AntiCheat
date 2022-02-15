@@ -25,9 +25,9 @@ export function fly(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
     
     // try to find the player requested
@@ -43,23 +43,23 @@ export function fly(message, args) {
         var member = player.nameTag;
     }
 
-    player.dimension.runCommand(`execute "${member}" ~~~ function tools/fly`);
+    player.runCommand(`execute "${member}" ~~~ function tools/fly`);
     
     // I find try/catch to be completely unorthodox for this lol
     try {
-        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=flying]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}",tag=flying]`);
         if (player.name === member) {
-            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for themselves."}]}`);
+            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for themselves."}]}`);
         } else if (player.name !== member) {
-            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
+            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
         } else {
             return;
         }
     } catch {
         if (player.name === member) {
-            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for themselves."}]}`);
+            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for themselves."}]}`);
         } else if (player.name !== member) {
-            return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
+            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
         } else {
             return;
         }

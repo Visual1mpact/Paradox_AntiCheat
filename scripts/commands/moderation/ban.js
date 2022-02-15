@@ -24,13 +24,13 @@ export function ban(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.dimension.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
     } catch (error) {
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     if (!args.length) {
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to ban!"}]}`);
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to ban!"}]}`);
     }
     
     // try to find the player requested
@@ -41,15 +41,15 @@ export function ban(message, args) {
     }
 
     if (!member) {
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
     // make sure they dont ban themselves
     if (member === player.nameTag) {
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
     }
 
-    let tags = player.dimension.runCommand(`tag "${member}" list`).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
+    let tags = player.runCommand(`tag "${member}" list`).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
     if (tags) {
         tags = String(tags).split(/[,]/);
     }
@@ -57,20 +57,20 @@ export function ban(message, args) {
     // this removes old ban stuff
     tags.forEach(t => {
         if(t.startsWith(" reason:")) {
-            player.dimension.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+            player.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
         }
         if(t.startsWith(" by:")) {
-            player.dimension.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+            player.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
         }
     });
 
     try {
-        player.dimension.runCommand(`tag "${member}" add "reason:${reason}"`);
-        player.dimension.runCommand(`tag "${member}" add "by:${player.nameTag}"`);
-        player.dimension.runCommand(`tag "${member}" add isBanned`);
+        player.runCommand(`tag "${member}" add "reason:${reason}"`);
+        player.runCommand(`tag "${member}" add "by:${player.nameTag}"`);
+        player.runCommand(`tag "${member}" add isBanned`);
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
-        return player.dimension.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.dimension.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member}. Reason: ${reason}"}]}`);
 }
