@@ -16,7 +16,6 @@ import { allowgms } from "./settings/allowgms.js";
 import { bedrockvalidate } from "./settings/bedrockvalidate.js";
 import { modules } from "./settings/modules.js";
 import { nofrostwalker } from "./settings/nofrostwalker.js";
-import { npc } from "./settings/npc.js";
 import { overidecommandblocksenabled } from "./settings/overidecommandblocksenabled.js";
 import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborder } from "./settings/worldborder.js";
@@ -126,9 +125,6 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.nofrostwalker && commandName === "nofrostwalker"):
             nofrostwalker(message);
-            break;
-        case (config.customcommands.npc && commandName === "npc"):
-            npc(message);
             break;
         case (config.customcommands.overidecommandblocksenabled && commandName === "overridecbe"):
             overidecommandblocksenabled(message);

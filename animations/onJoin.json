@@ -21,8 +21,6 @@
 					"/scoreboard players add @s worldborder 0",
 					"/scoreboard objectives add frostwalker dummy",
 					"/scoreboard players add @s frostwalker 0",
-					"/scoreboard objectives add npc dummy",
-					"/scoreboard players add @s npc 0",
 					"/scoreboard objectives add autoclicker dummy",
 					"/scoreboard players add @s autoclicker 0",
 					"/scoreboard objectives add jesus dummy",
@@ -46,7 +44,6 @@
 					"/scoreboard objectives add antikb dummy",
 					"/scoreboard players add @s antikb 0",
 					// Setting Operations For Objective Types
-					"/scoreboard players operation @a npc = paradox:config npc",
 					"/scoreboard players operation @a commandblocks = paradox:config commandblocks",
 					"/scoreboard players operation @a frostwalker = paradox:config frostwalker",
 					"/scoreboard players operation @a worldborder = paradox:config worldborder",

@@ -35,7 +35,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!removecb§r - Enab
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!bedrockvalidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!overridecbe§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!npc§r - Enables/disables Anti NPC's (Kills all NPC's when enabled)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder§r - Enables/disables the World Border and its size."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc)."}]}
@@ -52,7 +51,6 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/bedrockValidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCommandBlocksEnabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/npc§r - Enables/disables Anti NPC's (Kills all NPC's when enabled)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava, etc)."}]}

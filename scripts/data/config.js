@@ -15,7 +15,6 @@ export default
         "bedrockvalidate": true,
         "modules": true,
         "nofrostwalker": true,
-        "npc": true,
         "overidecommandblocksenabled": true,
         "removecommandblocks": true,
         "worldborder": true,
