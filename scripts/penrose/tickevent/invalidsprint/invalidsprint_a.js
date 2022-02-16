@@ -18,7 +18,7 @@ const InvalidSprintA = () => {
                 speedcheck.setCurrent(speedcheck.value);
             }
         }
-    }, 20); // Executes every 1 second
+    }, 40); // Executes every 2 seconds
 };
 
 export { InvalidSprintA };
