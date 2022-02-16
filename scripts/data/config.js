@@ -39,6 +39,9 @@ export default
         "antikb":true
     },
     "modules": {
+        "chatFilter": {
+            "enabled": true
+        },
         "badpackets2": {
             "enabled": true,
             "minLength": 1,

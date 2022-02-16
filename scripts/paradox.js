@@ -66,8 +66,9 @@ if (config.modules.spammerD.enabled) {
 }
 
 PrefixCommand();
-ChatFilter();
-
+if (config.modules.chatFilter.enabled) {
+    ChatFilter();
+}
 // Tick Events
 GlobalBanList();
 ServerBan();
