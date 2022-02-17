@@ -66,7 +66,7 @@ export default
         },
         "namespoofB": {
             "enabled": true,
-            "regex": /[^A-Za-z0-9_ ]/
+            "regex": /[^\x00-\xFF]/
         },
         "bedrockValidate": {
             "enabled": true,
