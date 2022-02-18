@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag, getTags } from "../../../util.js";
+import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
@@ -12,9 +12,6 @@ const JesusB = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-            
-            // get all tags of the player
-            let playerTags = getTags(player);
 
             // jesus/b = motion check
             try {
@@ -22,7 +19,7 @@ const JesusB = () => {
                     try {
                         // Make sure Anti Jesus is turned on
                         player.runCommand(`testfor @a[name="${player.nameTag}",scores={jesus=1..}]`);
-                        if (!playerTags.includes('flying') && !playerTags.includes('jump') && !playerTags.includes('ground') && !playerTags.includes('gliding') && !playerTags.includes('levitating') && !playerTags.includes('vanish') && !playerTags.includes('swimming') ) {
+                        if (!player.hasTag('flying') && !player.hasTag('jump') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('vanish') && !player.hasTag('swimming') ) {
                             player.runCommand(`execute @a[name="${player.nameTag}",tag=!flying,m=!c,tag=!jump,tag=!ground,tag=!gliding,tag=!levitating,tag=!vanish,tag=!swimming] ~~~ detect ~~-1~ water 0 list`);
                             flag(player, "Jesus", "B", "Movement", "yMotion", Math.abs(player.velocity.y).toFixed(4), true, false);
                         }

@@ -80,11 +80,6 @@ export function banMessage(player) {
         return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:78)");
     }
 
-    let tags = player.getTags();
-    if (tags) {
-        tags = String(tags).split(/[,]/);
-    }
-
     var reason;
     var by;
 
@@ -100,19 +95,4 @@ export function banMessage(player) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
     }
-}
-
-/**
- * @name getTags
- * @param {object} player - The player object
- */
-export function getTags(player) {
-    // validate that required params are defined
-    if (!player) {
-        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:110)");
-    }
-
-    let tags = player.getTags();
-
-    return String(tags);
 }

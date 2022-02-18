@@ -1,6 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
-import { getTags } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = Minecraft.world;
@@ -11,9 +10,6 @@ const IllegalItemsA = () => {
             // fix a disabler method
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
-            
-            // get all tags of the player
-            let playerTags = getTags(player);
 
             let inventory = player.getComponent('minecraft:inventory').container;
             let inventory_items = [];
@@ -27,7 +23,7 @@ const IllegalItemsA = () => {
             // If player has an illegal item we clear their entire inventory then kick them
             // If we cannot kick them then we despawn them (no mercy)
             inventory_items.forEach(item => {
-                if (illegalitems.includes(item) && !playerTags.includes('op') || item > config.modules.illegalitemsA.maxStack && !playerTags.includes('op')) {
+                if (illegalitems.includes(item) && !player.hasTag('op') || item > config.modules.illegalitemsA.maxStack && !player.hasTag('op')) {
                     try {
                         player.runCommand(`clear "${player.nameTag}"`);
                         player.runCommand(`tag "${player.nameTag}" add "isBanned"`);

@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag, getTags } from "../../../util.js";
+import { flag } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -8,11 +8,8 @@ const SpammerB = () => {
 
         const player = msg.sender;
 
-        // get all tags of the player
-        let playerTags = getTags(player);
-
         // Spammer/B = checks if someone sends a message while swinging their hand
-        if (playerTags.includes('left')) {
+        if (player.hasTag('left')) {
             try {
                 player.runCommand(`testfor @a[name="${player.nameTag}",tag=left]`);
                 flag(player, "Spammer", "B", "Combat", false, false, false, msg);

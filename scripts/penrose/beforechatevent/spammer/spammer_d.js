@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag, getTags } from "../../../util.js";
+import { flag } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -8,11 +8,8 @@ const SpammerD = () => {
 
         const player = msg.sender;
 
-        // get all tags of the player
-        let playerTags = getTags(player);
-
         // Spammer/D = checks if someone sends a message while having a GUI open
-        if (playerTags.includes('hasGUIopen')) {
+        if (player.hasTag('hasGUIopen')) {
             try {
                 player.runCommand(`testfor @a[name="${player.nameTag}",tag=hasGUIopen]`);
                 flag(player, "Spammer", "D", "Misc", false, false, false, msg);
