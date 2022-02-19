@@ -47,5 +47,5 @@ export const illegalitems = [
   'minecraft:netherreactor',
   'minecraft:mob_spawner',
   'minecraft:border_block',
-  'minecraft:bubble_column',
+  'minecraft:bubble_column'
 ];
