@@ -3,7 +3,6 @@ import * as Minecraft from "mojang-minecraft";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
 
 const World = Minecraft.world;
-const tickEventCallback = World.events.tick;
 
 /**
  * @name freeze
@@ -52,7 +51,7 @@ export function freeze(message, args) {
         member.runCommand(`tag "${member.nameTag}" remove freeze`);
     }
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`effect "${member.nameTag}" clear`)
+        member.runCommand(`effect "${member.nameTag}" clear`);
         member.runCommand(`tellraw "${member.nameTag}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
         member.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${member.nameTag} is no longer frozen."}]}`);
     }

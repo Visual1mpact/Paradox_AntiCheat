@@ -135,7 +135,7 @@ setTickInterval(() => {
         } catch (error) {}
         if (hastag) {
             TickFreeze(player);
-            hastag = null
+            hastag = null;
         }
     }
 }, 60); // Executes every 3 seconds

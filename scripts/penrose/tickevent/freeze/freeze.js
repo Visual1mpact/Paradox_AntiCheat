@@ -48,13 +48,13 @@ function Freeze() {
         // realm 0 = overworld, realm 1 = nether, realm 2 = the end
         let o = World.getDimension('overworld'),
             n = World.getDimension('nether'),
-            e = World.getDimension('the end')
-        let {x, y, z} = player.location
+            e = World.getDimension('the end');
+        let {x, y, z} = player.location;
         let pos = new Minecraft.BlockLocation(
             Math.floor(x),
             Math.floor(y),
             Math.floor(z)
-        )
+        );
         if (o.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == player.nameTag)) {
             player.runCommand(`scoreboard players set "${player.nameTag}" realm 0`);
         } else if (n.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == player.nameTag)) {
@@ -64,7 +64,7 @@ function Freeze() {
         } else {
             player.removeTag('freezeactive');
             player.removeTag('freeze');
-            player.runCommand(`effect "${member.nameTag}" clear`)
+            player.runCommand(`effect "${player.nameTag}" clear`);
             player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine ${player.nameTag} dimension."}]}`);
             playerLeaveEventCallback.unsubscribe(StopTickFreeze);
             tickEventCallback.unsubscribe(Freeze);

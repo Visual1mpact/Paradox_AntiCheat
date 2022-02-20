@@ -80,6 +80,8 @@ export function banMessage(player) {
         return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:78)");
     }
 
+    let tags = player.getTags();
+
     var reason;
     var by;
 
