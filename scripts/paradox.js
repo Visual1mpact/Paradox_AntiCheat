@@ -19,7 +19,6 @@ import { NamespoofA } from "./penrose/tickevent/namespoof/namespoof_a.js";
 import { NamespoofB } from "./penrose/tickevent/namespoof/namespoof_b.js";
 import { PlayerPosition } from "./penrose/tickevent/coordinates/playerposition.js";
 import { BedrockValidate } from "./penrose/tickevent/bedrock/bedrockvalidate.js";
-import { ReachA } from "./penrose/tickevent/reach/reach_a.js";
 import { JesusB } from "./penrose/tickevent/jesus/jesus_b.js";
 import { NoSlowA } from "./penrose/tickevent/noslow/noslow_a.js";
 import { IllegalItemsA } from "./penrose/tickevent/illegalitems/illegalitems_a.js";
@@ -30,11 +29,13 @@ import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
+import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
 // Import JoinPlayer Events
 import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
+import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 
 // Self explanatory
 const World = Minecraft.world;
@@ -94,10 +95,6 @@ if (config.modules.bedrockValidate.enabled) {
     BedrockValidate();
 }
 
-if (config.modules.reachA.enabled) {
-    ReachA();
-}
-
 if (config.modules.jesusB.enabled) {
     JesusB();
 }
@@ -149,6 +146,10 @@ if  (config.modules.antinukerA.enabled) {
     blockBreakCallback.subscribe(NukerA);
 }
 
+if (config.modules.reachB.enabled) {
+    blockBreakCallback.subscribe(ReachB);
+}
+
 // JoinPlayer Events
 playerJoinEventCallback.subscribe(GametestCheck);
 
@@ -159,4 +160,8 @@ if  (config.modules.antiscaffoldA.enabled) {
 
 if  (config.modules.anticbeC.enabled) {
     PlaceflagsA();
+}
+
+if (config.modules.reachA.enabled) {
+    blockPlaceCallback.subscribe(ReachA);
 }

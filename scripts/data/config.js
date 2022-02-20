@@ -75,7 +75,11 @@ export default
         },
         "reachA": {
             "enabled": true,
-            "reach": 5
+            "reach": 7
+        },
+        "reachB": {
+            "enabled": true,
+            "reach": 7
         },
         "jesusB": {
             "enabled": true,
