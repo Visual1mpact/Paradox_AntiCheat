@@ -98,9 +98,6 @@ function Freeze() {
         player.runCommand(`scoreboard players set "${player.nameTag}" yPos1 ${Math.floor(posy1)}`);
         player.runCommand(`scoreboard players set "${player.nameTag}" zPos1 ${Math.floor(posz1)}`);
         player.addTag('freezeactive');
-        player.addTag('objective:xPosFreeze');
-        player.addTag('objective:yPosFreeze');
-        player.addTag('objective:zPosFreeze');
     }
     // We use this in case they log off and return later
     posx1 = getScore(
@@ -161,9 +158,6 @@ function Freeze() {
         // Return them back to original coordinates
         player.teleport(new Minecraft.Location(backx, backy, backz), World.getDimension(realmID), 0, player.bodyRotation);
         player.removeTag('freezeactive');
-        player.removeTag('objective:xPosFreeze');
-        player.removeTag('objective:yPosFreeze');
-        player.removeTag('objective:zPosFreeze');
         playerLeaveEventCallback.unsubscribe(StopTickFreeze);
         tickEventCallback.unsubscribe(Freeze);
     }
