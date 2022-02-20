@@ -1,6 +1,8 @@
 // Import Customs
 import * as Minecraft from "mojang-minecraft";
 import config from "./data/config.js";
+import { setTickInterval } from "./timer/scheduling.js";
+import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
 // Import BeforeChat Events
 import { BadPackets2 } from "./penrose/beforechatevent/spammer/badpackets_2.js";
 import { SpammerA } from "./penrose/beforechatevent/spammer/spammer_a.js";
@@ -42,6 +44,9 @@ const playerJoinEventCallback = World.events.playerJoin;
 const blockPlaceCallback = World.events.blockPlace;
 const blockBreakCallback = World.events.blockBreak;
 const tickEventCallback = World.events.tick;
+
+// Define globally within script
+let hastag;
 
 
 // BeforeChat Events
@@ -120,6 +125,20 @@ if (config.modules.flyB.enabled) {
 if  (config.modules.antikbA.enabled) {
     AntiKnockbackA();
 }
+
+// Freeze Check
+setTickInterval(() => {
+    // run as each player
+    for (let player of World.getPlayers()) {
+        try {
+            hastag = player.hasTag('freeze');
+        } catch (error) {}
+        if (hastag) {
+            TickFreeze(player);
+            hastag = null
+        }
+    }
+}, 60); // Executes every 3 seconds
 
 // BlockBreak Events
 if  (config.modules.xrayA.enabled) {

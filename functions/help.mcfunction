@@ -76,7 +76,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!invsee <username>�
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/auracheck§r - Manual test for killaura."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function tools/ecwipe§r - Clears a players ender chest."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/fly§r - Enables/disables fly mode in survival."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/freeze§r - Freeze a player and make it so they cant move."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/stats§r - View a specific players anticheat logs."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute @a ~~~ function tools/stats§r - View everyones anticheat logs."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/vanish§r - Enables/disables vanish (Used for spying on suspects)."}]}

@@ -1,7 +1,9 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
+import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
 
 const World = Minecraft.world;
+const tickEventCallback = World.events.tick;
 
 /**
  * @name freeze
@@ -43,5 +45,37 @@ export function freeze(message, args) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    return player.runCommand(`execute "${member.nameTag}" ~~~ function tools/freeze`);
+    if (member.hasTag('freeze')) {
+        member.runCommand(`tag "${member.nameTag}" add nofreeze`);
+    }
+    if (member.hasTag('nofreeze')) {
+        member.runCommand(`tag "${member.nameTag}" remove freeze`);
+    }
+    if (member.hasTag('nofreeze')) {
+        member.runCommand(`effect "${member.nameTag}" clear`)
+        member.runCommand(`tellraw "${member.nameTag}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
+        member.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${member.nameTag} is no longer frozen."}]}`);
+    }
+
+    if (!member.hasTag('nofreeze')) {
+        // Blindness
+        member.addEffect(Minecraft.MinecraftEffectTypes.blindness, 1000000, 255);
+        // Mining Fatigue
+        member.addEffect(Minecraft.MinecraftEffectTypes.miningFatigue, 1000000, 255);
+        // Weakness
+        member.addEffect(Minecraft.MinecraftEffectTypes.weakness, 1000000, 255);
+        // Slowness
+        member.addEffect(Minecraft.MinecraftEffectTypes.slowness, 1000000, 255);
+    }
+
+    if (!member.hasTag('nofreeze')) {
+        member.runCommand(`tag "${member.nameTag}" add freeze`);
+        member.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${member.nameTag} has been frozen"}]}`);
+        return TickFreeze(member);
+    }
+
+    if (member.hasTag('nofreeze')) {
+        member.runCommand(`tag "${member.nameTag}" remove nofreeze`);
+        return TickFreeze(member);
+    }
 }
