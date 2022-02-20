@@ -12,7 +12,7 @@ const InvalidSprintA = () => {
             const speedcheck = player.getComponent('minecraft:movement');
             // Check the players current speed and see if it is equal or more than the value we have hardcoded
             // If they do have the effect for blindness and they are sprinting then we flag and reset their speed.
-            if (speedcheck.current >= config.modules.invalidsprintA.speed && player.getEffect(Minecraft.MinecraftEffectTypes.blindness)) {
+            if (speedcheck.current >= config.modules.invalidsprintA.speed && player.getEffect(Minecraft.MinecraftEffectTypes.blindness) && !player.hasTag('op')) {
                 let speedrecord = speedcheck.current;
                 flag(player, "InvalidSprint", "A", "Movement", "BlindSprint", (speedrecord).toFixed(3), true, false);
                 speedcheck.setCurrent(speedcheck.value);

@@ -9,7 +9,7 @@ const SpammerC = () => {
         const player = msg.sender;
 
         // Spammer/C = checks if someone sends a message while using an item
-        if (player.hasTag('right')) {
+        if (player.hasTag('right') && !player.hasTag('op')) {
             try {
                 player.runCommand(`testfor @a[name="${player.nameTag}",tag=right]`);
                 flag(player, "Spammer", "C", "Misc", false, false, false, msg);

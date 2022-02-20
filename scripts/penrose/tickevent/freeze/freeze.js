@@ -171,10 +171,12 @@ function StopTickFreeze() {
 // Where the magic begins
 function TickFreeze(data) {
     player = data;
-    try {
-        tickEventCallback.subscribe(Freeze);
-    } catch (error) {}
-    playerLeaveEventCallback.subscribe(StopTickFreeze);
+    if (!player.hasTag('op')) {
+        try {
+            tickEventCallback.subscribe(Freeze);
+        } catch (error) {}
+        playerLeaveEventCallback.subscribe(StopTickFreeze);
+    }
 }
 
 export { TickFreeze };

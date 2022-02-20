@@ -9,7 +9,7 @@ const SpammerA = () => {
         const player = msg.sender;
 
         // Spammer/A = checks if someone sends a message while moving and on ground
-        if (player.hasTag('moving') && player.hasTag('ground') && !player.hasTag('jump')) {
+        if (player.hasTag('moving') && player.hasTag('ground') && !player.hasTag('jump') && !player.hasTag('op')) {
             try {
                 player.runCommand(`testfor @a[name="${player.nameTag}",tag=moving,tag=ground,tag=!jump]`);
                 flag(player, "Spammer", "A", "Movement", false, false, true, msg);

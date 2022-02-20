@@ -14,7 +14,7 @@ const AntiKnockbackA = () => {
             player.nameTag = player.nameTag.replace("\\", "");
 
             // antikb/a = checks for anti knockback and flags it
-            if((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= config.modules.antikbA.magnitude) {
+            if((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= config.modules.antikbA.magnitude && !player.hasTag('op')) {
                 if(player.hasTag('attacked') && !player.hasTag('dead') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
                     try {
                         // Make sure Anti Knockback is turned on

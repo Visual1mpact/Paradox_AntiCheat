@@ -5,7 +5,7 @@ const World = Minecraft.world;
 
 const PlaceflagsA = () => {
     World.events.blockPlace.subscribe(block => {
-        if(illegalitems.includes(block.block.id)) {
+        if(illegalitems.includes(block.block.id) && !player.hasTag('op')) {
             try {
                 block.player.runCommand(`scoreboard players add @s[tag=!op] cbevl 1`);
             } catch (error) {}

@@ -44,6 +44,10 @@ export function freeze(message, args) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
+    if (member.hasTag('op')) {
+        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot freeze Staff Members!"}]}`);
+    }
+
     if (member.hasTag('freeze')) {
         member.runCommand(`tag "${member.nameTag}" add nofreeze`);
     }
