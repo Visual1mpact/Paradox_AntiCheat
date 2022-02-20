@@ -102,7 +102,7 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B) => Check if player breaks blocks over 7 blocks from their position. (Requires GameTest FrameWork)<br />
 
   Xray -><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Alerts staff if a player finds a diamond or ancient debris. (Requires GameTest FrameWork)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Alerts staff if a player finds rare ores. (Requires GameTest FrameWork)
   
   Enchanted Armor -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for players wearing enchanted armor.
