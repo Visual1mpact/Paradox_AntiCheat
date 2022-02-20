@@ -1,5 +1,4 @@
 import * as Minecraft from "mojang-minecraft";
-import { setTickTimeout } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
@@ -13,9 +12,8 @@ function time() {
 }
 
 function FlyB() {
-    // Subscribe tick event to the time function
-    // Delay the function by 1 second
-    setTickTimeout(time, 20);
+    // Check the player's status
+    time();
 
     // run as each player
     for (player of World.getPlayers()) {

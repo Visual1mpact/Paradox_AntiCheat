@@ -116,7 +116,7 @@ if (config.modules.flyA.enabled) {
 }
 
 if (config.modules.flyB.enabled) {
-    tickEventCallback.subscribe(FlyB);
+    setTickInterval(FlyB, 20);
 }
 
 if  (config.modules.antikbA.enabled) {
