@@ -44,7 +44,6 @@ const World = Minecraft.world;
 const playerJoinEventCallback = World.events.playerJoin;
 const blockPlaceCallback = World.events.blockPlace;
 const blockBreakCallback = World.events.blockBreak;
-const tickEventCallback = World.events.tick;
 
 // Define globally within script
 let hastag;
