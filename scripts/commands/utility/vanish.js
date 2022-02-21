@@ -19,5 +19,32 @@ export function vanish(message) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${player.nameTag}" ~~~ function tools/vanish`);
+    if (player.hasTag('vanish')) {
+        player.addTag('novanish');
+    }
+
+    if (player.hasTag('novanish')) {
+        player.removeTag('vanish');
+    }
+
+    if (player.hasTag('novanish')) {
+        player.runCommand(`event entity "${player.nameTag}" unvanish`);
+        player.runCommand(`effect "${player.nameTag}" clear`);
+        player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n§4[§6Paradox§4] §rYou are no longer in vanish!"}]}`);
+        player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is no longer vanished."}]}`);
+    }
+
+    if (!player.hasTag('novanish')) {
+        player.addTag('vanish');
+    }
+
+    if (player.hasTag('vanish') && !player.hasTag('novanish')) {
+        player.runCommand(`event entity "${player.nameTag}" vanish`);
+        player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n§4[§6Paradox§4] §rYou are now in vanish!"}]}`);
+        player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is now vanished."}]}`);
+    }
+
+    if (player.hasTag('novanish')) {
+        player.removeTag('novanish');
+    }
 }
