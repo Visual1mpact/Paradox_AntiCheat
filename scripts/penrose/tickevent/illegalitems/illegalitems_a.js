@@ -26,7 +26,7 @@ const IllegalItemsA = () => {
                 if (illegalitems.includes(item) && !player.hasTag('op') || item > config.modules.illegalitemsA.maxStack && !player.hasTag('op')) {
                     try {
                         player.runCommand(`clear "${player.nameTag}"`);
-                        player.runCommand(`tag "${player.nameTag}" add "isBanned"`);
+                        player.runCommand(`tag "${player.nameTag}" add isBanned`);
                     } catch (error) {}
                     player.triggerEvent('paradox:kick');
                 }
