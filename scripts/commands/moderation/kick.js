@@ -44,7 +44,7 @@ export function kick(message, args) {
     // try to find the player requested
     for (let pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
-            var member = pl.name;
+            var member = pl;
         }
     }
 
@@ -53,19 +53,19 @@ export function kick(message, args) {
     }
 
     // make sure they dont kick themselves
-    if (member === player.name) {
+    if (member.name === player.name) {
         return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
     }
 
     try {
         if (!isSilent) {
-            player.runCommand(`kick "${member}" ${reason}`);
+            player.runCommand(`kick "${member.nameTag}" ${reason}`);
         } else {
-            player.runCommand(`event entity "${member}" paradox:kick`);
+            member.triggerEvent('paradox:kick');
         }
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has kicked ${member} (Silent:${isSilent}). Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has kicked ${member.nameTag} (Silent:${isSilent}). Reason: ${reason}"}]}`);
 }
