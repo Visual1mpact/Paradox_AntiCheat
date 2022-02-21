@@ -42,6 +42,4 @@ export function notify(message) {
     if (player.hasTag('nonotify')) {
         player.removeTag('nonotify');
     }
-
-    // return player.runCommand(`execute "${player.nameTag}" ~~~ function notify`);
 }
