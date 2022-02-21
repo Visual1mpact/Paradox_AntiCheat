@@ -19,5 +19,29 @@ export function notify(message) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${player.nameTag}" ~~~ function notify`);
+    if (player.hasTag('notify')) {
+        player.addTag('nonotify');
+    }
+
+    if (player.hasTag('nonotify')) {
+        player.removeTag('notify');
+    }
+
+    if (player.hasTag('nonotify')) {
+        player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You have disabled cheat notifications."}]}`);
+    }
+
+    if (!player.hasTag('nonotify')) {
+        player.addTag('notify');
+    }
+
+    if (player.hasTag('notify') && !player.hasTag('nonotify')) {
+        player.runCommand('tellraw @s {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You have enabled cheat notifications."}]}');
+    }
+
+    if (player.hasTag('nonotify')) {
+        player.removeTag('nonotify');
+    }
+
+    // return player.runCommand(`execute "${player.nameTag}" ~~~ function notify`);
 }
