@@ -32,6 +32,12 @@ const NukerA = () => {
                 config.modules.reachB.enabled = true;
                 block.player.check = 0;
             }
+            try {
+                block.player.runCommand(`clear "${block.player.nameTag}"`);
+                block.player.addTag('isBanned')
+            } catch (error) {
+                block.player.triggerEvent('paradox:kick');
+            }
         }
     });
 };
