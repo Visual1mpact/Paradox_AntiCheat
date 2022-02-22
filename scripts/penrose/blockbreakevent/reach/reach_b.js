@@ -6,7 +6,7 @@ const World = Minecraft.world;
 
 const ReachB = () => {
     World.events.blockBreak.subscribe(block => {
-        // Get the name of the block being destroyed
+        // Get the properties of the block being destroyed
         let blockID = block.brokenBlockPermutation.clone();
 
         // Calculate the distance between the player and the block being destroyed
