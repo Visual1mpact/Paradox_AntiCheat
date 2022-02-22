@@ -112,7 +112,8 @@ export default
             "enabled": true
         },
         "antinukerA": {
-            "enabled": true
+            "enabled": true,
+            "max": 2
         },
         "anticbeC": {
             "enabled": true

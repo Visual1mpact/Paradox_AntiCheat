@@ -1,32 +1,39 @@
-import { setTickTimeout } from "../../../timer/scheduling.js";
+import * as Minecraft from "mojang-minecraft";
+import config from "../../../data/config.js";
+import { flag } from "../../../util.js";
 
-// This is to allow passing between functions
-let player;
+const World = Minecraft.world;
 
-// This function will be called when tick event is triggered from the NukerA function
-function time() {
-    // fix a disabler method
-    player.nameTag = player.nameTag.replace("\"", "");
-    player.nameTag = player.nameTag.replace("\\", "");
-    player.runCommand(`scoreboard players set "${player.nameTag}" bbps 0`);   
-}
+const NukerA = () => {
+    World.events.blockBreak.subscribe(block => {
+        // Get the properties of the blocks being destroyed
+        let blockID = block.brokenBlockPermutation.clone();
 
-function NukerA(block) {
-    // Get the name of the player who is joining
-    player = block.player;
+        // Count how many blocks are broken simultaneously
+        // countblocks is a custom property
+        if (!block.player.countblocks) {
+            block.player.countblocks = 0;
+        }
+        block.player.countblocks++;
 
-    if (!player.hasTag('op')) {
-        player.runCommand(`scoreboard players add @s bbps 1`);  
-        try {
-            player.runCommand(`execute @s[tag=op,scores={bbps=16..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${block.block.id}) §4Nuker. VL= "},{"score":{"name":"@s","objective":"cbevl"}}]}`);
-            player.runCommand(`tag @a[tag=!op,scores={bbps=16..}] add isBanned`);  
-            player.runCommand(`tellraw @a[tag=packetlogger] {"rawtext":[{"text":"§߈§r§4[§6Paradox§4]§r §bRecieved §6BLOCK BREAK§r packet (${block.block.x} ${block.block.y} ${block.block.z}) from: "},{"selector":"@s"},{" §7(type=${block.block.id})"}]}`); 
-        } catch (error) {}
-
-        // Subscribe tick event to the time function
-        // Delay the function by 1 second
-        setTickTimeout(time, 20);
-    }
-}
+        // Flag and salvage broken blocks to their original forms
+        if (block.player.countblocks >= config.modules.antinukerA.max) {
+            // Reach/B is triggered too but we don't want both spamming
+            // So if Reach/B is enabled then temporarily disable
+            if (config.modules.reachB.enabled === true) {
+                config.modules.reachB.enabled = false;
+                block.player.check = 1;
+            }
+            flag(block.player, "Nuker", "A", "Break", "Nuke", block.player.countblocks, false, false);
+            block.block.setPermutation(blockID);
+            block.player.countblocks = 0;
+            // Restore setting for Reach/B if previously disabled
+            if (block.player.check === 1) {
+                config.modules.reachB.enabled = true;
+                block.player.check = 0;
+            }
+        }
+    });
+};
 
 export { NukerA };
