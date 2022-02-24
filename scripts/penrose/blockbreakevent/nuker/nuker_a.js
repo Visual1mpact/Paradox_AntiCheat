@@ -41,9 +41,9 @@ const NukerA = () => {
             }
             try {
                 block.player.runCommand(`clear "${block.player.nameTag}"`);
-                //block.player.addTag('isBanned');
+                block.player.addTag('isBanned');
             } catch (error) {
-                //block.player.triggerEvent('paradox:kick');
+                block.player.triggerEvent('paradox:kick');
             }
         }
         setTickTimeout(() => onBeginTick(), 5)
