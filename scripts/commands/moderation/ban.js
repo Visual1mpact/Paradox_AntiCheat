@@ -55,11 +55,9 @@ export function ban(message, args) {
     // this removes old ban stuff
     tags.forEach(t => {
         if(t.startsWith("Reason:")) {
-            //player.runCommand(`tag "${member.nameTag}" remove "${t.slice(1)}"`);
-            member.removeTag(t.slice(1))
+            member.removeTag(t.slice(1));
         }
         if(t.startsWith("By:")) {
-            //player.runCommand(`tag "${member.nameTag}" remove "${t.slice(1)}"`);
             member.removeTag(t.slice(1));
         }
     });
