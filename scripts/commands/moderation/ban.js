@@ -1,5 +1,6 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
+import { banMessage } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -36,7 +37,7 @@ export function ban(message, args) {
     // try to find the player requested
     for (let pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
-            var member = pl.nameTag;
+            var member = pl;
         }
     }
 
@@ -45,32 +46,31 @@ export function ban(message, args) {
     }
 
     // make sure they dont ban themselves
-    if (member === player.nameTag) {
+    if (member.nameTag === player.nameTag) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
     }
 
-    let tags = player.runCommand(`tag "${member}" list`).statusMessage.replace(/§./g, '').match(/(?<=: ).*$/g);
-    if (tags) {
-        tags = String(tags).split(/[,]/);
-    }
+    let tags = player.getTags();
 
     // this removes old ban stuff
     tags.forEach(t => {
-        if(t.startsWith(" reason:")) {
-            player.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+        if(t.startsWith("Reason:")) {
+            //player.runCommand(`tag "${member.nameTag}" remove "${t.slice(1)}"`);
+            member.removeTag(t.slice(1))
         }
-        if(t.startsWith(" by:")) {
-            player.runCommand(`tag "${member}" remove "${t.slice(1)}"`);
+        if(t.startsWith("By:")) {
+            //player.runCommand(`tag "${member.nameTag}" remove "${t.slice(1)}"`);
+            member.removeTag(t.slice(1));
         }
     });
 
     try {
-        player.runCommand(`tag "${member}" add "reason:${reason}"`);
-        player.runCommand(`tag "${member}" add "by:${player.nameTag}"`);
-        player.runCommand(`tag "${member}" add isBanned`);
+        player.runCommand(`tag "${member.nameTag}" add "Reason:${reason}"`);
+        player.runCommand(`tag "${member.nameTag}" add "By:${player.nameTag}"`);
+        banMessage(member);
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member.nameTag}. Reason: ${reason}"}]}`);
 }

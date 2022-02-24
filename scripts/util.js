@@ -87,8 +87,8 @@ export function banMessage(player) {
 
     // this removes old ban stuff
     tags.forEach(t => {
-        if(t.startsWith(" By:")) by = t.slice(4);
-        if(t.startsWith(" Reason:")) reason = t.slice(8);
+        if(t.startsWith("By:")) by = t.slice(3);
+        if(t.startsWith("Reason:")) reason = t.slice(7);
     });
 
     try {
