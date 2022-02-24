@@ -8,7 +8,7 @@ const World = Minecraft.world;
 // Custom object and property
 const _player = {
     countblocks: 0,
-};
+}
 
 function onBeginTick() {
     _player.countblocks = 0;
@@ -26,7 +26,7 @@ const NukerA = () => {
         _player.countblocks++;
 
         // Flag and salvage broken blocks to their original forms
-        if (_player.countblocks >= config.modules.antinukerA.max) {
+        if (_player.countblocks >= config.modules.antinukerA.max && !block.player.hasTag('op')) {
             // Reach/B is triggered too but we don't want both spamming
             // So if Reach/B is enabled then temporarily disable
             if (config.modules.reachB.enabled === true) {
@@ -46,7 +46,7 @@ const NukerA = () => {
                 block.player.triggerEvent('paradox:kick');
             }
         }
-        setTickTimeout(() => onBeginTick(), 5)
+        setTickTimeout(() => onBeginTick(), 5);
     });
 };
 
