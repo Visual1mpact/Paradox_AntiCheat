@@ -142,7 +142,7 @@ if  (config.modules.xrayA.enabled) {
 }
 
 if  (config.modules.antinukerA.enabled) {
-    blockBreakCallback.subscribe(NukerA);
+    NukerA();
 }
 
 if (config.modules.reachB.enabled) {
