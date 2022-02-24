@@ -28,9 +28,9 @@ const ScaffoldA = () => {
             block.player.runCommand(`setblock ${block.block.x} ${block.block.y} ${block.block.z} air 0 destroy`);
             try {
                 block.player.runCommand(`clear "${block.player.nameTag}"`);
-                //block.player.addTag('isBanned');
+                block.player.addTag('isBanned');
             } catch (error) {
-                //block.player.triggerEvent('paradox:kick');
+                block.player.triggerEvent('paradox:kick');
             }
         }
         // Delay the function by 1 second

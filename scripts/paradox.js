@@ -40,11 +40,6 @@ import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 // Self explanatory
 const World = Minecraft.world;
 
-// Event Callbacks
-const playerJoinEventCallback = World.events.playerJoin;
-const blockPlaceCallback = World.events.blockPlace;
-const blockBreakCallback = World.events.blockBreak;
-
 // Define globally within script
 let hastag;
 
