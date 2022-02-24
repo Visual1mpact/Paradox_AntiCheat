@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.3.21](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.21) (2022-02-24)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.3.20...v2.3.21)
+
+**Closed issues:**
+
+- meme [\#17](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/17)
+- Make chat filter optional [\#16](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/16)
+
 ## [v2.3.20](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.20) (2022-02-20)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.3.19...v2.3.20)
