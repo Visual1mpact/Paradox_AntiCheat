@@ -18,7 +18,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!modules§r - View 
 
 # Gametest Disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function help§r - Shows this help page."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ function ban§r - Ban the specified user."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function credits§r - Shows credits, thats it."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ op§r - Op's player in Paradox AntiCheat features."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ deop§r - Revokes Op player in Paradox AntiCheat features."}]}
