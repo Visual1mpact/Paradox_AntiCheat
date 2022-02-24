@@ -26,13 +26,15 @@ function time() {
 }
 
 // This function will be called when playerJoin event is triggered
-function GametestCheck(loaded) {
-    if (isChecked === false) {
-        // Get the name of the player who is joining
-        player = loaded.player;
-        // Subscribe tick event to the time function
-        tickEventCallback.subscribe(time);
-    }
-}
+const GametestCheck = () => {
+    World.events.playerJoin.subscribe(loaded => {
+        if (isChecked === false) {
+            // Get the name of the player who is joining
+            player = loaded.player;
+            // Subscribe tick event to the time function
+            tickEventCallback.subscribe(time);
+        }
+    });
+};
 
 export { GametestCheck };

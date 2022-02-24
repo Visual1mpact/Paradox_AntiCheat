@@ -146,15 +146,15 @@ if  (config.modules.antinukerA.enabled) {
 }
 
 if (config.modules.reachB.enabled) {
-    blockBreakCallback.subscribe(ReachB);
+    ReachB();
 }
 
 // JoinPlayer Events
-playerJoinEventCallback.subscribe(GametestCheck);
+GametestCheck();
 
 // BlockPlace Events
 if  (config.modules.antiscaffoldA.enabled) {
-    blockPlaceCallback.subscribe(ScaffoldA);
+    ScaffoldA();
 }
 
 if  (config.modules.anticbeC.enabled) {
@@ -162,5 +162,5 @@ if  (config.modules.anticbeC.enabled) {
 }
 
 if (config.modules.reachA.enabled) {
-    blockPlaceCallback.subscribe(ReachA);
+    ReachA();
 }
