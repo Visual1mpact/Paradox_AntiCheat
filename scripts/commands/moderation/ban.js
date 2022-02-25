@@ -1,6 +1,5 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
-import { banMessage } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -65,7 +64,7 @@ export function ban(message, args) {
     try {
         player.runCommand(`tag "${member.nameTag}" add "Reason:${reason}"`);
         player.runCommand(`tag "${member.nameTag}" add "By:${player.nameTag}"`);
-        banMessage(member);
+        member.addTag('isBanned');
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
