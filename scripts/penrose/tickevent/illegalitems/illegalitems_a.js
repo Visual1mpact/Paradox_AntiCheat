@@ -23,7 +23,7 @@ const IllegalItemsA = () => {
             // If player has an illegal item we clear their entire inventory then kick them
             // If we cannot kick them then we despawn them (no mercy)
             inventory_items.forEach(item => {
-                if (illegalitems.includes(item) && !player.hasTag('op') || item > config.modules.illegalitemsA.maxStack && !player.hasTag('op')) {
+                if (illegalitems.includes(item) && !player.hasTag('paradoxOpped') || item > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
                     try {
                         player.runCommand(`clear "${player.nameTag}"`);
                         player.runCommand(`tag "${player.nameTag}" add isBanned`);

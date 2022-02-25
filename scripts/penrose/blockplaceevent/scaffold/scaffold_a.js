@@ -23,7 +23,7 @@ const ScaffoldA = () => {
         }
         _player.countblocks++;
 
-        if (_player.countblocks >= config.modules.antiscaffoldA.max && !block.player.hasTag('op')) {
+        if (_player.countblocks >= config.modules.antiscaffoldA.max && !block.player.hasTag('paradoxOpped')) {
             flag(block.player, "Scaffold", "A", "Placement", "Spam", false, false, false);
             block.player.runCommand(`setblock ${block.block.x} ${block.block.y} ${block.block.z} air 0 destroy`);
             try {

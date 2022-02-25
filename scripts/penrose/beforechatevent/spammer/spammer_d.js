@@ -9,7 +9,7 @@ const SpammerD = () => {
         const player = msg.sender;
 
         // Spammer/D = checks if someone sends a message while having a GUI open
-        if (player.hasTag('hasGUIopen') && !player.hasTag('op')) {
+        if (player.hasTag('hasGUIopen') && !player.hasTag('paradoxOpped')) {
             try {
                 player.runCommand(`testfor @a[name="${player.nameTag}",tag=hasGUIopen]`);
                 flag(player, "Spammer", "D", "Misc", false, false, false, msg);

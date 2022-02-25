@@ -26,7 +26,7 @@ const NukerA = () => {
         _player.countblocks++;
 
         // Flag and salvage broken blocks to their original forms
-        if (_player.countblocks >= config.modules.antinukerA.max && !block.player.hasTag('op')) {
+        if (_player.countblocks >= config.modules.antinukerA.max && !block.player.hasTag('paradoxOpped')) {
             // Reach/B is triggered too but we don't want both spamming
             // So if Reach/B is enabled then temporarily disable
             if (config.modules.reachB.enabled === true) {

@@ -25,7 +25,7 @@ export function ban(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
     } catch (error) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
@@ -70,5 +70,5 @@ export function ban(message, args) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member.nameTag}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member.nameTag}. Reason: ${reason}"}]}`);
 }

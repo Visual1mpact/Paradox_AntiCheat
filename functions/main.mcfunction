@@ -13,12 +13,12 @@ execute @s[type=player,tag=moving,tag=!flying,m=!c,tag=!jump,tag=!riding,tag=!gl
 execute @s[type=player,tag=moving,tag=!gliding,tag=!riding,tag=!vanish,scores={phase=1..}] ~~~ function checks/phase
 
 # Optional checks
-execute @s[type=player,tag=!op,m=a,scores={gma=1..}] ~~~ function checks/optional/gamemodeA
-execute @s[type=player,tag=!op,m=c,scores={gmc=1..}] ~~~ function checks/optional/gamemodeC
-execute @s[type=player,tag=!op,m=s,scores={gmc=1..}] ~~~ function checks/optional/gamemodeS
+execute @s[type=player,tag=!paradoxOpped,m=a,scores={gma=1..}] ~~~ function checks/optional/gamemodeA
+execute @s[type=player,tag=!paradoxOpped,m=c,scores={gmc=1..}] ~~~ function checks/optional/gamemodeC
+execute @s[type=player,tag=!paradoxOpped,m=s,scores={gmc=1..}] ~~~ function checks/optional/gamemodeS
 execute @s[scores={commandblocks=1..}] ~~~ function checks/optional/nocommandblocks
 execute @s[scores={cmds=1..}] ~~~ function checks/optional/overridecommandblocksenabled
-execute @s[type=player,tag=!op,scores={ench_boots=1,frostwalker=1..}] ~~~ function checks/optional/frostwalkerNBT
+execute @s[type=player,tag=!paradoxOpped,scores={ench_boots=1,frostwalker=1..}] ~~~ function checks/optional/frostwalkerNBT
 execute @s[type=player,scores={worldborder=1..}] ~~~ function checks/optional/worldborder
 
 # Armor system

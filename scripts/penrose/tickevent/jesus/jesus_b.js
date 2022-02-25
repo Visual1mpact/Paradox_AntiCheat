@@ -15,7 +15,7 @@ const JesusB = () => {
 
             // jesus/b = motion check
             try {
-                if (Math.abs(player.velocity.y).toFixed(4) <= config.modules.jesusB.maxMotion && Math.abs(player.velocity.y).toFixed(4) >= config.modules.jesusB.minMotion && !player.getEffect(Minecraft.MinecraftEffectTypes.slowFalling) && !player.hasTag('op')) {
+                if (Math.abs(player.velocity.y).toFixed(4) <= config.modules.jesusB.maxMotion && Math.abs(player.velocity.y).toFixed(4) >= config.modules.jesusB.minMotion && !player.getEffect(Minecraft.MinecraftEffectTypes.slowFalling) && !player.hasTag('paradoxOpped')) {
                     try {
                         // Make sure Anti Jesus is turned on
                         player.runCommand(`testfor @a[name="${player.nameTag}",scores={jesus=1..}]`);

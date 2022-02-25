@@ -24,7 +24,7 @@ export function freeze(message, args) {
     
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
     } catch (error) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
@@ -44,7 +44,7 @@ export function freeze(message, args) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    if (member.hasTag('op')) {
+    if (member.hasTag('paradoxOpped')) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot freeze Staff Members!"}]}`);
     }
 
@@ -57,7 +57,7 @@ export function freeze(message, args) {
     if (member.hasTag('nofreeze')) {
         member.runCommand(`effect "${member.nameTag}" clear`);
         member.runCommand(`tellraw "${member.nameTag}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
-        member.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${member.nameTag} is no longer frozen."}]}`);
+        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${member.nameTag} is no longer frozen."}]}`);
     }
 
     if (!member.hasTag('nofreeze')) {
@@ -73,7 +73,7 @@ export function freeze(message, args) {
 
     if (!member.hasTag('nofreeze')) {
         member.runCommand(`tag "${member.nameTag}" add freeze`);
-        member.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${member.nameTag} has been frozen"}]}`);
+        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${member.nameTag} has been frozen"}]}`);
         return TickFreeze(member);
     }
 

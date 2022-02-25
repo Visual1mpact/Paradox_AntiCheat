@@ -25,7 +25,7 @@ export function fly(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=op]`);
+        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
     } catch (error) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
@@ -49,17 +49,17 @@ export function fly(message, args) {
     try {
         player.runCommand(`testfor @a[name="${player.nameTag}",tag=flying]`);
         if (player.name === member) {
-            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for themselves."}]}`);
+            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for themselves."}]}`);
         } else if (player.name !== member) {
-            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
+            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has enabled fly mode for ${member}."}]}`);
         } else {
             return;
         }
     } catch {
         if (player.name === member) {
-            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for themselves."}]}`);
+            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for themselves."}]}`);
         } else if (player.name !== member) {
-            return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
+            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has disabled fly mode for ${member}."}]}`);
         } else {
             return;
         }

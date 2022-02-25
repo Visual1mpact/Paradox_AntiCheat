@@ -65,7 +65,7 @@ function Freeze() {
             player.removeTag('freezeactive');
             player.removeTag('freeze');
             player.runCommand(`effect "${player.nameTag}" clear`);
-            player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine ${player.nameTag} dimension."}]}`);
+            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine ${player.nameTag} dimension."}]}`);
             playerLeaveEventCallback.unsubscribe(StopTickFreeze);
             tickEventCallback.unsubscribe(Freeze);
             return;
@@ -171,7 +171,7 @@ function StopTickFreeze() {
 // Where the magic begins
 function TickFreeze(data) {
     player = data;
-    if (!player.hasTag('op')) {
+    if (!player.hasTag('paradoxOpped')) {
         try {
             tickEventCallback.subscribe(Freeze);
         } catch (error) {}

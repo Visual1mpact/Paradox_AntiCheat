@@ -25,7 +25,7 @@ function FlyB() {
         // It works because hacks add y vel to the player to stay in the air, and it stays between 1-3 whereas mayfly will have a steady score of 0
         // Will still false flag sometimes, but that's why we have !fly
         if(Math.abs(player.velocity.y).toFixed(4) != 0.0000) { 
-            if(!player.hasTag('op') && !player.hasTag('riding') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
+            if(!player.hasTag('paradoxOpped') && !player.hasTag('riding') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
                 try {
                     player.runCommand(`execute @a[name="${player.nameTag}"] ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s fly_timer 1`);
                 } catch (error) {}

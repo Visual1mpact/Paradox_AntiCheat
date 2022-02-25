@@ -21,7 +21,7 @@ export function tag(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`execute @a[name="${player.nameTag}",tag=op] ~~~ list`);
+        player.runCommand(`execute @a[name="${player.nameTag}",tag=paradoxOpped] ~~~ list`);
     } catch (error) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
@@ -32,7 +32,7 @@ export function tag(message, args) {
     // reset user nametag
     if (argcheck === true) {
         player.nameTag = player.name;
-        return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has reset their nametag"}]}`);
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has reset their nametag"}]}`);
     }
     
     let nametag = `§4[§6${args.join(" ")}§4]§r <${player.name}>`;
@@ -46,5 +46,5 @@ export function tag(message, args) {
 
     player.nameTag = nametag;
 
-    return player.runCommand(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`);
 }
