@@ -19,5 +19,25 @@ export function credits(message) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${player.nameTag}" ~~~ function credits`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n§l§6                    Based on Scythe AntiCheat"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§lGithub:§r https://https://github.com/MrDiamond64/Scythe-AntiCheat"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§lDeveloped and maintained by MrDiamond64"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§l§6                 Major Contributers For Scythe"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"Visual1mpact#1435 - Porting function-based commands to GameTest commands and finding many bugs"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n"}]}`);
+
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n§l§6                        Paradox AntiCheat"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§lGithub:§r https://github.com/Visual1mpact/Paradox_AntiCheat"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§lParadox AntiCheat§r - a utility to fight against malicious hackers on Bedrock Edition."}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§lDeveloped and maintained by Visual1mpact"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§l§6                 Major Contributers For Paradox"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"Glitch#8024 - Implementing features and bug fixes"}]}`);
+    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"\n"}]}`);
+    return;
 }
