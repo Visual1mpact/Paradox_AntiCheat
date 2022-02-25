@@ -42,5 +42,10 @@ export function deop(message, args) {
         return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    return player.runCommand(`execute "${member.nameTag}" ~~~ function deop`);
+    player.runCommand(`tellraw "${member.nameTag}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §7Your OP status has been revoked!"}]}`);
+    let tags = member.getTags('paradoxOpped');
+    if (tags) {
+        member.removeTags('paradoxOpped');
+    }
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is no longer Paradox-Opped."}]}`);
 }
