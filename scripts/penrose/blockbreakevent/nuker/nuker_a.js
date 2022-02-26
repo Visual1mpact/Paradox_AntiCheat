@@ -52,6 +52,8 @@ const NukerA = () => {
             });
             try {
                 block.player.runCommand(`clear "${block.player.nameTag}"`);
+            } catch (error) {}
+            try {
                 block.player.runCommand(`tag "${block.player.nameTag}" add "Reason:Illegal Nuke"`);
                 block.player.runCommand(`tag "${block.player.nameTag}" add "By:Paradox"`);
                 block.player.addTag('isBanned');
@@ -59,7 +61,7 @@ const NukerA = () => {
                 block.player.triggerEvent('paradox:kick');
             }
         }
-        setTickTimeout(() => onBeginTick(), 1);
+        setTickTimeout(() => onBeginTick(), 0.1);
     });
 };
 

@@ -37,6 +37,8 @@ const IllegalItemsA = () => {
                     });
                     try {
                         player.runCommand(`clear "${player.nameTag}"`);
+                    } catch (error) {}
+                    try {
                         player.runCommand(`tag "${player.nameTag}" add "Reason:Illegal Item"`);
                         player.runCommand(`tag "${player.nameTag}" add "By:Paradox"`);
                         player.addTag('isBanned');

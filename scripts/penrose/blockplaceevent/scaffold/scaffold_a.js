@@ -39,6 +39,8 @@ const ScaffoldA = () => {
             });
             try {
                 block.player.runCommand(`clear "${block.player.nameTag}"`);
+            } catch (error) {}
+            try {
                 block.player.runCommand(`tag "${block.player.nameTag}" add "Reason:Illegal Scaffolding"`);
                 block.player.runCommand(`tag "${block.player.nameTag}" add "By:Paradox"`);
                 block.player.addTag('isBanned');
