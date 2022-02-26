@@ -7,7 +7,7 @@ const World = Minecraft.world;
 
 // Custom object and property
 const _player = {
-    countblocks: 0,
+    countblocks: 0
 };
 
 function onBeginTick() {
