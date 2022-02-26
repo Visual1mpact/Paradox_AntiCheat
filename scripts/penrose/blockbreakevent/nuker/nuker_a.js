@@ -46,7 +46,7 @@ const NukerA = () => {
                 block.player.triggerEvent('paradox:kick');
             }
         }
-        setTickTimeout(() => onBeginTick(), 5);
+        setTickTimeout(() => onBeginTick(), 1);
     });
 };
 
