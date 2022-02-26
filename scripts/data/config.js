@@ -73,9 +73,9 @@ export default
             "regex": /[^\x00-\xFF]/
         },
         "bedrockValidate": {
-            "enabled": false,
-            "overworld": false,
-            "nether": false
+            "enabled": true,
+            "overworld": true,
+            "nether": true
         },
         "reachA": {
             "enabled": true,

@@ -91,7 +91,7 @@ if (config.modules.namespoofB.enabled) {
     NamespoofB();
 }
 
-if (config.modules.bedrockValidate.enabled) {
+if (config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.overworld || config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.nether) {
     BedrockValidate();
 }
 
