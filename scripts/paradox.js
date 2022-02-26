@@ -11,6 +11,7 @@ import { SpammerC } from "./penrose/beforechatevent/spammer/spammer_c.js";
 import { SpammerD } from "./penrose/beforechatevent/spammer/spammer_d.js";
 import { PrefixCommand } from "./penrose/beforechatevent/chat/prefixcommand.js";
 import { ChatFilter } from "./penrose/beforechatevent/chat/chatfilter.js";
+import { AntiSpam, timer } from "./penrose/beforechatevent/chat/antispam.js";
 // Import Tick Events
 import { GlobalBanList } from "./penrose/tickevent/ban/globalbanlist.js";
 import { ServerBan } from "./penrose/tickevent/ban/serverban.js";
@@ -63,6 +64,11 @@ if (config.modules.spammerC.enabled) {
 
 if (config.modules.spammerD.enabled) {
     SpammerD();
+}
+
+if (config.modules.antispam.enabled) {
+    AntiSpam();
+    setTickInterval(timer, config.modules.antispam.cooldown);
 }
 
 PrefixCommand();

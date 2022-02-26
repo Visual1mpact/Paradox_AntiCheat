@@ -56,6 +56,10 @@ export default
         "spammerD": {
             "enabled": true
         },
+        "antispam": {
+            "enabled": true,
+            "cooldown": 40
+        },
         "crasherA": {
             "enabled": true
         },
