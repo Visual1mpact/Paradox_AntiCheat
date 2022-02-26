@@ -24,11 +24,25 @@ const IllegalItemsA = () => {
             // If we cannot kick them then we despawn them (no mercy)
             inventory_items.forEach(item => {
                 if (illegalitems.includes(item) && !player.hasTag('paradoxOpped') || item > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
+                    let tags = player.getTags();
+
+                    // This removes old ban tags
+                    tags.forEach(t => {
+                        if(t.startsWith("Reason:")) {
+                            player.removeTag(t.slice(1));
+                        }
+                        if(t.startsWith("By:")) {
+                            player.removeTag(t.slice(1));
+                        }
+                    });
                     try {
                         player.runCommand(`clear "${player.nameTag}"`);
-                        player.runCommand(`tag "${player.nameTag}" add isBanned`);
-                    } catch (error) {}
-                    player.triggerEvent('paradox:kick');
+                        player.runCommand(`tag "${player.nameTag}" add "Reason:Illegal Item"`);
+                        player.runCommand(`tag "${player.nameTag}" add "By:Paradox"`);
+                        player.addTag('isBanned');
+                    } catch (error) {
+                        player.triggerEvent('paradox:kick');
+                    }
                 }
             });
         });

@@ -39,8 +39,21 @@ const NukerA = () => {
             if (block.player.check === 1) {
                 config.modules.reachB.enabled = true;
             }
+            let tags = block.player.getTags();
+
+            // This removes old ban tags
+            tags.forEach(t => {
+                if(t.startsWith("Reason:")) {
+                    block.player.removeTag(t.slice(1));
+                }
+                if(t.startsWith("By:")) {
+                    block.player.removeTag(t.slice(1));
+                }
+            });
             try {
                 block.player.runCommand(`clear "${block.player.nameTag}"`);
+                block.player.runCommand(`tag "${block.player.nameTag}" add "Reason:Illegal Nuke"`);
+                block.player.runCommand(`tag "${block.player.nameTag}" add "By:Paradox"`);
                 block.player.addTag('isBanned');
             } catch (error) {
                 block.player.triggerEvent('paradox:kick');
