@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.4.22](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.4.22) (2022-02-26)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.3.21...v2.4.22)
+
+**Closed issues:**
+
+- killaura check b flags [\#18](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/18)
+
 ## [v2.3.21](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.21) (2022-02-24)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.3.20...v2.3.21)
