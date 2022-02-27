@@ -23,7 +23,7 @@ const AntiSpam = () => {
 
         let tag = player.hasTag('paradoxOpped');
 
-        if (tag) {
+        if (!tag) {
             // Increment
             _player.count++;
 
