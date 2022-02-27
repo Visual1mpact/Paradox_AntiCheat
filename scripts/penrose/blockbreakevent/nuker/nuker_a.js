@@ -36,7 +36,7 @@ const NukerA = () => {
             flag(block.player, "Nuker", "A", "Break", "Nuke", false, false, false);
             block.block.setPermutation(blockID);
             // Restore setting for Reach/B if previously disabled
-            if (block.player.check === 1) {
+            if (_player.check === 1) {
                 config.modules.reachB.enabled = true;
             }
             /* let tags = block.player.getTags();
