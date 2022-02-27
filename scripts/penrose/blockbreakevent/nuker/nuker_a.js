@@ -27,18 +27,9 @@ const NukerA = () => {
 
         // Flag and salvage broken blocks to their original forms
         if (_player.countblocks >= config.modules.antinukerA.max && !block.player.hasTag('paradoxOpped')) {
-            // Reach/B is triggered too but we don't want both spamming
-            // So if Reach/B is enabled then temporarily disable
-            if (config.modules.reachB.enabled === true) {
-                config.modules.reachB.enabled = false;
-                _player.check = 1;
-            }
             flag(block.player, "Nuker", "A", "Break", "Nuke", false, false, false);
             block.block.setPermutation(blockID);
-            // Restore setting for Reach/B if previously disabled
-            if (_player.check === 1) {
-                config.modules.reachB.enabled = true;
-            }
+
             /* let tags = block.player.getTags();
 
             // This removes old ban tags
