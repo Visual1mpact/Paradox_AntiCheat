@@ -57,8 +57,9 @@ function FlyA() {
         // Will still false flag sometimes, but that's why we have !fly
         let xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
         let zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
+        player.runCommand(`say x=${xyVelocity} y=${zyVelocity}`)
         
-        if(xyVelocity != 0.0000 || zyVelocity != 0.0000) { 
+        if(xyVelocity != 0.0784 || zyVelocity != 0.0784) {
             if(!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying')) {
                 try {
                     player.runCommand(`execute @a[name="${player.nameTag}"] ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s fly_timer 1`);
