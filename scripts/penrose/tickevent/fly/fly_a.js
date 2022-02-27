@@ -1,28 +1,84 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag } from "../../../util.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
-const FlyA = () => {
-    setTickInterval(() => {
-        // run as each player
-        for (let player of World.getPlayers()) {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
+const playersOldCoordinates = new Map();
 
-            // fly/a = checks for creative fly while in survival
-            if(Math.abs(player.velocity.y).toFixed(4) == 0.2250) {
-                if(!player.hasTag('paradoxOpped') && player.hasTag('moving') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
-                    try {
-                        player.runCommand(`testfor @a[name="${player.nameTag}",tag=moving,tag=!ground,tag=!gliding,tag=!levitating,m=!c,tag=!flying]`);
-                        flag(player, "Fly", "A", "Movement", "yVelocity", Math.abs(player.velocity.y).toFixed(4), true, false);
-                    } catch(error) {}
-                }
+// This is to allow passing between functions
+let oldX;
+let oldY;
+let oldZ;
+let check;
+
+function getScore(objective, player, { minimum, maximum } = {}) {
+    const data = player.runCommand(
+      `scoreboard players test "${player.nameTag}" ${objective} ${
+        minimum ? minimum : "*"
+      } ${maximum ? maximum : "*"}`
+    );
+    if (!data.statusMessage) return;
+    return parseInt(data.statusMessage.match(/-?\d+/));
+}
+
+function time(player, x, y, z) {
+    let test = getScore(
+        "fly_timer",
+        player
+        );
+    let dimension = player.dimension
+    if (test >= 6 && check === 1) {
+        player.teleport(new Minecraft.Location(x, y, z), dimension, 0, player.bodyRotation);
+    }
+    
+}
+
+function FlyA() {
+    // Set .gameMode to survival
+    let gm = new Minecraft.EntityQueryOptions();
+    gm.gameMode = 0;
+    // run as each player who are in survival
+    for (let player of World.getPlayers(gm)) {
+        // fix a disabler method
+        player.nameTag = player.nameTag.replace("\"", "");
+        player.nameTag = player.nameTag.replace("\\", "");
+
+        if (check != 1) {
+            const playerX = Math.trunc(player.location.x);
+            const playerY = Math.trunc(player.location.y);
+            const playerZ = Math.trunc(player.location.z);
+            playersOldCoordinates.set(player.nameTag, { x: playerX, y: playerY, z: playerZ });
+            const playerCoords = playersOldCoordinates.get(player.nameTag);
+            oldX = playerCoords.x, oldY = playerCoords.y, oldZ = playerCoords.z;
+            check = 1;
+        }
+
+        // Fun trick here so that we don't false flag /ability @s mayfly true users
+        // It works because hacks add y vel to the player to stay in the air, and it stays between 1-3 whereas mayfly will have a steady score of 0
+        // Will still false flag sometimes, but that's why we have !fly
+        let xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
+        let zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
+        
+        if(xyVelocity != 0.0000 || zyVelocity != 0.0000) { 
+            if(!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying')) {
+                try {
+                    player.runCommand(`execute @a[name="${player.nameTag}"] ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s fly_timer 1`);
+                } catch (error) {}
+                try {
+                    player.runCommand(`execute @a[name="${player.nameTag}",scores={fly_timer=6..}] ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s flyvl 1`);
+                } catch (error) {}
+                try {
+                    player.runCommand(`execute @a[name="${player.nameTag}",scores={fly_timer=6..}] ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Movement) §4Fly/A. VL= "},{"score":{"name":"@s","objective":"flyvl"}}]}`);
+                } catch(error) {}
+            } else {
+                try {
+                    player.runCommand(`scoreboard players set @a[name="${player.nameTag}"] fly_timer 0`);
+                } catch(error) {}
+                check = 0;
             }
         }
-    }, 40); // Executes every 2 seconds
-};
+        // Check the player's status
+        time(player, oldX, oldY, oldZ);
+    }
+}
 
 export { FlyA };
