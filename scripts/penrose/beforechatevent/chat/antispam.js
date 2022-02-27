@@ -22,7 +22,7 @@ const AntiSpam = () => {
         let message = msg.message;
 
         // Increment
-        _player.count++
+        _player.count++;
 
         // Specific to Horion
         if (message.includes("the best minecraft bedrock utility mod")) {
@@ -32,7 +32,7 @@ const AntiSpam = () => {
         if (!spamCheck.get(player.nameTag)) {
             spamCheck.set(player.nameTag, message);
         } else {
-            let oldChat = spamCheck.get(player.nameTag)
+            let oldChat = spamCheck.get(player.nameTag);
             if (oldChat === message) {
                 _player.spam++;
                 try {
@@ -72,7 +72,7 @@ const AntiSpam = () => {
         }
 
         if (_player.count >= 2) {
-            msg.cancel = true
+            msg.cancel = true;
             try {
                 player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You are sending too many messages! Please slow down!"}]}`);
             } catch (error) {}

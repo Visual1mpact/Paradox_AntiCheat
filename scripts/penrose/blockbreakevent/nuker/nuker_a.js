@@ -39,7 +39,7 @@ const NukerA = () => {
             if (block.player.check === 1) {
                 config.modules.reachB.enabled = true;
             }
-            /*let tags = block.player.getTags();
+            /* let tags = block.player.getTags();
 
             // This removes old ban tags
             tags.forEach(t => {
@@ -59,7 +59,7 @@ const NukerA = () => {
                 block.player.addTag('isBanned');
             } catch (error) {
                 block.player.triggerEvent('paradox:kick');
-            }*/
+            } */
         }
         setTickTimeout(() => onBeginTick(), 0.1);
     });

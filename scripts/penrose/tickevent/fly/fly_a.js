@@ -25,7 +25,7 @@ function time(player, x, y, z) {
         "fly_timer",
         player
         );
-    let dimension = player.dimension
+    let dimension = player.dimension;
     if (test >= 6 && check === 1) {
         player.teleport(new Minecraft.Location(x, y, z), dimension, 0, player.bodyRotation);
     }
