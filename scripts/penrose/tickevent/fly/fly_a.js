@@ -57,7 +57,6 @@ function FlyA() {
         // Will still false flag sometimes, but that's why we have !fly
         let xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
         let zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
-        player.runCommand(`say x=${xyVelocity} y=${zyVelocity}`)
         
         if(xyVelocity != 0.0784 || zyVelocity != 0.0784) {
             if(!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying')) {
