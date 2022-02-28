@@ -56,6 +56,10 @@ const JesusA = () => {
                         timer(player, dimension, x, y, z);
                     }
                 }
+                // Reset count
+                if (player.hasTag('ground')) {
+                    _player.count = 0;
+                }
             }
         }
     }, 20); // Executes every 2 seconds
