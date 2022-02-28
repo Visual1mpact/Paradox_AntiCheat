@@ -20,7 +20,7 @@ import { NamespoofA } from "./penrose/tickevent/namespoof/namespoof_a.js";
 import { NamespoofB } from "./penrose/tickevent/namespoof/namespoof_b.js";
 import { PlayerPosition } from "./penrose/tickevent/coordinates/playerposition.js";
 import { BedrockValidate } from "./penrose/tickevent/bedrock/bedrockvalidate.js";
-import { JesusB } from "./penrose/tickevent/jesus/jesus_b.js";
+import { JesusA } from "./penrose/tickevent/jesus/jesus_a.js";
 import { NoSlowA } from "./penrose/tickevent/noslow/noslow_a.js";
 import { IllegalItemsA } from "./penrose/tickevent/illegalitems/illegalitems_a.js";
 import { InvalidSprintA } from "./penrose/tickevent/invalidsprint/invalidsprint_a.js";
@@ -94,8 +94,8 @@ if (config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.ove
     BedrockValidate();
 }
 
-if (config.modules.jesusB.enabled) {
-    JesusB();
+if (config.modules.jesusA.enabled) {
+    JesusA();
 }
 
 if (config.modules.noslowA.enabled) {

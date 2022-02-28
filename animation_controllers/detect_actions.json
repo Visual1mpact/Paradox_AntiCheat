@@ -1295,7 +1295,7 @@
 			"states": {
 				"default": {
 					"transitions": [{
-						"swim": "query.is_swimming"
+						"swim": "query.is_swimming || query.is_in_water"
 					}],
 					"on_entry": [
 						"/tag @s remove swimming",
@@ -1304,7 +1304,7 @@
 				},
 				"swim": {
 					"transitions": [{
-						"default": "!query.is_swimming"
+						"default": "!query.is_swimming && !query.is_in_water"
 					}],
 					"on_entry": [
 						"/tag @s add swimming",

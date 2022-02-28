@@ -85,10 +85,8 @@ export default
             "enabled": true,
             "reach": 7
         },
-        "jesusB": {
-            "enabled": true,
-            "minMotion": 0.0247,
-            "maxMotion": 0.0269
+        "jesusA": {
+            "enabled": true
         },
         "noslowA": {
             "enabled": true,
