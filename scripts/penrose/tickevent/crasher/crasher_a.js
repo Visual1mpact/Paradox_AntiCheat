@@ -1,11 +1,10 @@
 import * as Minecraft from "mojang-minecraft";
 import { flag } from "../../../util.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
 const CrasherA = () => {
-    setTickInterval(() => {
+    World.events.tick.subscribe(() => {
         // run as each player
         for (let player of World.getPlayers()) {
             // fix a disabler method
@@ -16,7 +15,7 @@ const CrasherA = () => {
                 flag(player, "Crasher", "A", "Exploit", false, false, true, false);
             }
         }
-    }, 40); // Executes every 2 seconds
+    });
 };
 
 export { CrasherA };

@@ -4,6 +4,10 @@ import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
+let BlockAtPlayer1;
+let BlockAtPlayer2;
+let BlockAtPlayer3;
+
 function getScore(objective, player, { minimum, maximum } = {}) {
     const data = player.runCommand(
       `scoreboard players test "${player.nameTag}" ${objective} ${
@@ -43,11 +47,13 @@ const JesusA = () => {
                 const z = Math.floor(player.location.z);
                 const dimension = player.dimension;
                 // Below player
-                let BlockAtPlayer1 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y, z));
-                // Mid player
-                let BlockAtPlayer2 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 1, z));
-                // Above player
-                let BlockAtPlayer3 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 2, z));
+                try {
+                    BlockAtPlayer1 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y, z));
+                    // Mid player
+                    BlockAtPlayer2 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 1, z));
+                    // Above player
+                    BlockAtPlayer3 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 2, z));
+                } catch (error) {}
 
                 if (!player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer3.type.id != "minecraft:water" && BlockAtPlayer2.type.id != "minecraft:water" || !player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer3.type.id != "minecraft:lava" && BlockAtPlayer2.type.id != "minecraft:lava") {
                     _player.count++;
