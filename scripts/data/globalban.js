@@ -214,5 +214,6 @@ export const banplayer = [
     {name: 'BLADE FEAR6'},
     {name: 'UniformKap8104'},
     {name: 'NevadaKlient71'},
-    {name: 'CheeseWobba'}
+    {name: 'CheeseWobba'},
+    {name: 'Yoboypizza5288'}
 ];
