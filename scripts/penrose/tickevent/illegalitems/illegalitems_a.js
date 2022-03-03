@@ -1,15 +1,13 @@
 import * as Minecraft from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
+import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
 const IllegalItemsA = () => {
     World.events.tick.subscribe(() => {
         [...World.getPlayers()].forEach(player => {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
 
             let inventory = player.getComponent('minecraft:inventory').container;
             let inventory_items = [];
@@ -36,11 +34,11 @@ const IllegalItemsA = () => {
                         }
                     });
                     try {
-                        player.runCommand(`clear "${player.nameTag}"`);
+                        player.runCommand(`clear "${disabler(player.nameTag)}"`);
                     } catch (error) {}
                     try {
-                        player.runCommand(`tag "${player.nameTag}" add "Reason:Illegal Item"`);
-                        player.runCommand(`tag "${player.nameTag}" add "By:Paradox"`);
+                        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item"`);
+                        player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
                         player.addTag('isBanned');
                     } catch (error) {
                         player.triggerEvent('paradox:kick');

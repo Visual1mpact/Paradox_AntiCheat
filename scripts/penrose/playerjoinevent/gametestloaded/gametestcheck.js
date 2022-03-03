@@ -1,4 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
+import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -14,7 +15,7 @@ function time() {
         // We loop testfor until it returns true so we know the
         // player is in the world because playerJoin triggers
         // too quickly while player is in loading screen
-        player.runCommand(`testfor @a[name="${player.nameTag}"]`);
+        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}"]`);
         try {
             // (1..) Set gametestapi to 1
             player.runCommand(`scoreboard players set paradox:config gametestapi 1`);

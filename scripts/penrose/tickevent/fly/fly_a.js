@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { getScore } from "../../../util.js";
+import { getScore, disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -26,9 +26,6 @@ function FlyA() {
     gm.gameMode = 0;
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
-        // fix a disabler method
-        player.nameTag = player.nameTag.replace("\"", "");
-        player.nameTag = player.nameTag.replace("\\", "");
 
         let test = getScore("fly_timer", player);
 
@@ -36,8 +33,8 @@ function FlyA() {
             const playerX = Math.trunc(player.location.x);
             const playerY = Math.trunc(player.location.y);
             const playerZ = Math.trunc(player.location.z);
-            playersOldCoordinates.set(player.nameTag, { x: playerX, y: playerY, z: playerZ });
-            const playerCoords = playersOldCoordinates.get(player.nameTag);
+            playersOldCoordinates.set(disabler(player.nameTag), { x: playerX, y: playerY, z: playerZ });
+            const playerCoords = playersOldCoordinates.get(disabler(player.nameTag));
             oldX = playerCoords.x, oldY = playerCoords.y, oldZ = playerCoords.z;
             check = 1;
         }
@@ -63,7 +60,7 @@ function FlyA() {
                 }
             } else {
                 try {
-                    player.runCommand(`scoreboard players set "${player.nameTag}" fly_timer 0`);
+                    player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" fly_timer 0`);
                 } catch(error) {}
                 check = 0;
             }

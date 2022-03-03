@@ -9,9 +9,6 @@ const NamespoofA = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
             
             // Namespoof/A = username length check.
             try {

@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { banMessage } from "../../../util.js";
+import { banMessage, disabler } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
@@ -8,12 +8,9 @@ const ServerBan = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
             // Ban message
             try {
-                player.runCommand(`testfor @a[name="${player.nameTag}",tag=isBanned]`);
+                player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=isBanned]`);
                 banMessage(player);
             } catch(error) {}
         }

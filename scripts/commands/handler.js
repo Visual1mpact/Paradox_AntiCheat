@@ -1,4 +1,5 @@
 import config from "../data/config.js";
+import { disabler } from "../util.js";
 
 // import all our commands
 import { kick } from "./moderation/kick.js";
@@ -65,7 +66,7 @@ export function commandHandler(player, message) {
     const commandName = args.shift().toLowerCase();
 
     if (config.debug) {
-        console.warn(`${new Date()} | ${player.nameTag} used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
+        console.warn(`${new Date()} | ${disabler(player.nameTag)} used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
     }
 
     switch (true) {
@@ -172,6 +173,6 @@ export function commandHandler(player, message) {
             antikb(message);
             break;
         default:
-            return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
+            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
     }
 }

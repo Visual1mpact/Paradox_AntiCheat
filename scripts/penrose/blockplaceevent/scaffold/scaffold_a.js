@@ -1,7 +1,7 @@
 import * as Minecraft from "mojang-minecraft";
 import { setTickTimeout } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+import { flag, disabler } from "../../../util.js";
 
 let World = Minecraft.world;
 
@@ -38,11 +38,11 @@ const ScaffoldA = () => {
                 }
             });
             try {
-                block.player.runCommand(`clear "${block.player.nameTag}"`);
+                block.player.runCommand(`clear "${block.disabler(player.nameTag)}"`);
             } catch (error) {}
             try {
-                block.player.runCommand(`tag "${block.player.nameTag}" add "Reason:Illegal Scaffolding"`);
-                block.player.runCommand(`tag "${block.player.nameTag}" add "By:Paradox"`);
+                block.player.runCommand(`tag "${block.disabler(player.nameTag)}" add "Reason:Illegal Scaffolding"`);
+                block.player.runCommand(`tag "${block.disabler(player.nameTag)}" add "By:Paradox"`);
                 block.player.addTag('isBanned');
             } catch (error) {
                 block.player.triggerEvent('paradox:kick');

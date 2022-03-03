@@ -1,5 +1,6 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
+import { disabler } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -23,13 +24,13 @@ export function auracheck(message, args) {
     
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
+        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
     } catch (error) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     if (!args.length) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide which target to check killaura!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide which target to check killaura!"}]}`);
     }
     
     // try to find the player requested
@@ -40,8 +41,8 @@ export function auracheck(message, args) {
     }
     
     if (!member) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    return player.runCommand(`execute "${member.nameTag}" ~~~ function tools/auracheck`);
+    return player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function tools/auracheck`);
 }

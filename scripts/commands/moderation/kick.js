@@ -1,5 +1,6 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
+import { disabler } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -32,13 +33,13 @@ export function kick(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
+        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
     } catch (error) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     if (!args.length) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to kick!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to kick!"}]}`);
     }
     
     // try to find the player requested
@@ -49,23 +50,23 @@ export function kick(message, args) {
     }
 
     if (!member) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
     // make sure they dont kick themselves
-    if (member.name === player.name) {
+    if (disabler(member.nameTag) === disabler(player.nameTag)) {
         return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
     }
 
     try {
         if (!isSilent) {
-            player.runCommand(`kick "${member.nameTag}" ${reason}`);
+            player.runCommand(`kick "${disabler(member.nameTag)}" ${reason}`);
         } else {
             member.triggerEvent('paradox:kick');
         }
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has kicked ${member.nameTag} (Silent:${isSilent}). Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has kicked ${disabler(member.nameTag)} (Silent:${isSilent}). Reason: ${reason}"}]}`);
 }

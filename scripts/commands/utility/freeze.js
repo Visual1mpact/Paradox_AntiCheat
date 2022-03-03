@@ -1,6 +1,7 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
+import { disabler } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -24,13 +25,13 @@ export function freeze(message, args) {
     
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
+        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
     } catch (error) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     if (!args.length) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide which target to freeze!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide which target to freeze!"}]}`);
     }
     
     // try to find the player requested
@@ -41,23 +42,23 @@ export function freeze(message, args) {
     }
     
     if (!member) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
     if (member.hasTag('paradoxOpped')) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot freeze Staff Members!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot freeze Staff Members!"}]}`);
     }
 
     if (member.hasTag('freeze')) {
-        member.runCommand(`tag "${member.nameTag}" add nofreeze`);
+        member.runCommand(`tag "${disabler(member.nameTag)}" add nofreeze`);
     }
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${member.nameTag}" remove freeze`);
+        member.runCommand(`tag "${disabler(member.nameTag)}" remove freeze`);
     }
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`effect "${member.nameTag}" clear`);
-        member.runCommand(`tellraw "${member.nameTag}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${member.nameTag} is no longer frozen."}]}`);
+        member.runCommand(`effect "${disabler(member.nameTag)}" clear`);
+        member.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
+        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer frozen."}]}`);
     }
 
     if (!member.hasTag('nofreeze')) {
@@ -72,13 +73,13 @@ export function freeze(message, args) {
     }
 
     if (!member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${member.nameTag}" add freeze`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${member.nameTag} has been frozen"}]}`);
+        member.runCommand(`tag "${disabler(member.nameTag)}" add freeze`);
+        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
         return TickFreeze(member);
     }
 
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${member.nameTag}" remove nofreeze`);
+        member.runCommand(`tag "${disabler(member.nameTag)}" remove nofreeze`);
         return TickFreeze(member);
     }
 }

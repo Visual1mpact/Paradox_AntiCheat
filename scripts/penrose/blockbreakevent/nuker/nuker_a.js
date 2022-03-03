@@ -42,11 +42,11 @@ const NukerA = () => {
                 }
             });
             try {
-                block.player.runCommand(`clear "${block.player.nameTag}"`);
+                block.player.runCommand(`clear "${block.disabler(player.nameTag)}"`);
             } catch (error) {}
             try {
-                block.player.runCommand(`tag "${block.player.nameTag}" add "Reason:Illegal Nuke"`);
-                block.player.runCommand(`tag "${block.player.nameTag}" add "By:Paradox"`);
+                block.player.runCommand(`tag "${block.disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
+                block.player.runCommand(`tag "${block.disabler(player.nameTag)}" add "By:Paradox"`);
                 block.player.addTag('isBanned');
             } catch (error) {
                 block.player.triggerEvent('paradox:kick');

@@ -22,9 +22,6 @@ const JesusA = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
-            // fix a disabler method
-            player.nameTag = player.nameTag.replace("\"", "");
-            player.nameTag = player.nameTag.replace("\\", "");
 
             let test = getScore("jesus", player);
 

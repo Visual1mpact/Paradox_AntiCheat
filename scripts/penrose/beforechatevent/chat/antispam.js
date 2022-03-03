@@ -1,4 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
+import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -32,14 +33,14 @@ const AntiSpam = () => {
                 _player.check++;
             }
 
-            if (!spamCheck.get(player.nameTag)) {
-                spamCheck.set(player.nameTag, message);
+            if (!spamCheck.get(disabler(player.nameTag))) {
+                spamCheck.set(disabler(player.nameTag), message);
             } else {
-                let oldChat = spamCheck.get(player.nameTag);
+                let oldChat = spamCheck.get(disabler(player.nameTag));
                 if (oldChat === message) {
                     _player.spam++;
                     try {
-                        player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Do not spam chat!"}]}`);
+                        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Do not spam chat!"}]}`);
                     } catch (error) {}
                     msg.cancel = true;
                 } else if (_player.check >= 2) {
@@ -61,23 +62,23 @@ const AntiSpam = () => {
                         }
                     });
                     try {
-                        player.runCommand(`clear "${player.nameTag}"`);
+                        player.runCommand(`clear "${disabler(player.nameTag)}"`);
                     } catch (error) {}
                     try {
-                        player.runCommand(`tag "${player.nameTag}" add "Reason:Spamming"`);
-                        player.runCommand(`tag "${player.nameTag}" add "By:Paradox"`);
+                        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Spamming"`);
+                        player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
                         player.addTag('isBanned');
                     } catch (error) {
                         player.triggerEvent('paradox:kick');
                     }
                 }
-                spamCheck.set(player.nameTag, message);
+                spamCheck.set(disabler(player.nameTag), message);
             }
 
             if (_player.count >= 2) {
                 msg.cancel = true;
                 try {
-                    player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You are sending too many messages! Please slow down!"}]}`);
+                    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You are sending too many messages! Please slow down!"}]}`);
                 } catch (error) {}
                 return;
             }

@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag } from "../../../util.js";
+import { flag, disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -11,7 +11,7 @@ const SpammerD = () => {
         // Spammer/D = checks if someone sends a message while having a GUI open
         if (player.hasTag('hasGUIopen') && !player.hasTag('paradoxOpped')) {
             try {
-                player.runCommand(`testfor @a[name="${player.nameTag}",tag=hasGUIopen]`);
+                player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=hasGUIopen]`);
                 flag(player, "Spammer", "D", "Misc", false, false, false, msg);
             } catch (error) {}
         }

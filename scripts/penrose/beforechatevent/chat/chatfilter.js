@@ -1,4 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
+import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -10,14 +11,14 @@ const ChatFilter = () => {
         // Modify the message before broadcasting
         // Add custom tags to their messages if it exists or we fall back
         // Filter for non ASCII characters and remove them in messages
-        if (player.name && player.name !== player.nameTag && !msg.cancel) {
+        if (player.name && player.name !== disabler(player.nameTag) && !msg.cancel) {
             // We can't modify the name of the messenger. Might be hardcoded. So we use tellraw.
-            // This will be used if player.nameTag is modified
-            player.runCommand(`tellraw @a {"rawtext":[{"text":"${player.nameTag} ${msg.message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
+            // This will be used if disabler(player.nameTag) is modified
+            player.runCommand(`tellraw @a {"rawtext":[{"text":"${disabler(player.nameTag)} ${msg.message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
             msg.cancel = true;
-        } else if (player.name && player.name === player.nameTag) {
+        } else if (player.name && player.name === disabler(player.nameTag)) {
             // We can modify the message without using tellraw
-            // This will be used if player.nameTag is not modified
+            // This will be used if disabler(player.nameTag) is not modified
             msg.message = `${msg.message.replace(/[^\x00-\xFF]/g, "")}`;
         }
     });

@@ -1,5 +1,6 @@
 /* eslint no-var: "off"*/
 import * as Minecraft from "mojang-minecraft";
+import { disabler } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -24,13 +25,13 @@ export function ban(message, args) {
 
     // make sure the user has permissions to run the command
     try {
-        player.runCommand(`testfor @a[name="${player.nameTag}",tag=paradoxOpped]`);
+        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
     } catch (error) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     if (!args.length) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to ban!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to ban!"}]}`);
     }
     
     // try to find the player requested
@@ -41,12 +42,12 @@ export function ban(message, args) {
     }
 
     if (!member) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
     // make sure they dont ban themselves
-    if (member.nameTag === player.nameTag) {
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
+    if (disabler(member.nameTag) === disabler(player.nameTag)) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban yourself."}]}`);
     }
 
     let tags = player.getTags();
@@ -62,12 +63,12 @@ export function ban(message, args) {
     });
 
     try {
-        player.runCommand(`tag "${member.nameTag}" add "Reason:${reason}"`);
-        player.runCommand(`tag "${member.nameTag}" add "By:${player.nameTag}"`);
+        player.runCommand(`tag "${disabler(member.nameTag)}" add "Reason:${reason}"`);
+        player.runCommand(`tag "${disabler(member.nameTag)}" add "By:${disabler(player.nameTag)}"`);
         member.addTag('isBanned');
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
-        return player.runCommand(`tellraw "${player.nameTag}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.nameTag} has banned ${member.nameTag}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has banned ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
 }
