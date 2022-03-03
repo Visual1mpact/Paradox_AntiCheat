@@ -1,4 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
+import { getScore } from "../../../util.js";
 
 const World = Minecraft.world;
 const tickEventCallback = World.events.tick;
@@ -17,18 +18,6 @@ let backy;
 let backz;
 let player;
 let hastag;
-
-// Since they could log off while frozen we store their coords and dimension as a score
-// Then we use this to insure we know their last location when we unfreeze
-function getScore(objective, player, { minimum, maximum } = {}) {
-    const data = player.runCommand(
-      `scoreboard players test "${player.nameTag}" ${objective} ${
-        minimum ? minimum : "*"
-      } ${maximum ? maximum : "*"}`
-    );
-    if (!data.statusMessage) return;
-    return parseInt(data.statusMessage.match(/-?\d+/));
-  }
 
 function Freeze() {
     // Record their location
@@ -99,19 +88,11 @@ function Freeze() {
         player.runCommand(`scoreboard players set "${player.nameTag}" zPos1 ${Math.floor(posz1)}`);
         player.addTag('freezeactive');
     }
-    // We use this in case they log off and return later
-    posx1 = getScore(
-        "xPos1",
-        player
-        );
-    posy1 = getScore(
-        "yPos1",
-        player
-        );
-    posz1 = getScore(
-        "zPos1",
-        player
-        );
+    // Since they could log off while frozen we store their coords and dimension as a score
+    // Then we use this to insure we know their last location when we unfreeze
+    posx1 = getScore("xPos1", player);
+    posy1 = getScore("yPos1", player);
+    posz1 = getScore("zPos1", player);
     // Verify if player moved from the prison
     if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
         // If they move then tp them back
@@ -127,22 +108,10 @@ function Freeze() {
     // Check if they no longer have the tag freeze
     if (!hastag) {
         // We use this in case they log off and return later
-        backx = getScore(
-            "xPosFreeze",
-            player
-            );
-        backy = getScore(
-            "yPosFreeze",
-            player
-            );
-        backz = getScore(
-            "zPosFreeze",
-            player
-            );
-        realmID = getScore(
-            "realm",
-            player
-            );
+        backx = getScore("xPosFreeze", player);
+        backy = getScore("yPosFreeze", player);
+        backz = getScore("zPosFreeze", player);
+        realmID = getScore("realm", player);
         // Convert dimension score to realm dimension
         if (realmID === 0) {
             realmID = "overworld";

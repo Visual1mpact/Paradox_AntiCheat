@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag } from "../../../util.js";
+import { flag, getScore } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
@@ -7,16 +7,6 @@ const World = Minecraft.world;
 let BlockAtPlayer1;
 let BlockAtPlayer2;
 let BlockAtPlayer3;
-
-function getScore(objective, player, { minimum, maximum } = {}) {
-    const data = player.runCommand(
-      `scoreboard players test "${player.nameTag}" ${objective} ${
-        minimum ? minimum : "*"
-      } ${maximum ? maximum : "*"}`
-    );
-    if (!data.statusMessage) return;
-    return parseInt(data.statusMessage.match(/-?\d+/));
-}
 
 const _player = {
     count: 0
@@ -36,10 +26,7 @@ const JesusA = () => {
             player.nameTag = player.nameTag.replace("\"", "");
             player.nameTag = player.nameTag.replace("\\", "");
 
-            let test = getScore(
-                "jesus",
-                player
-                );
+            let test = getScore("jesus", player);
 
             if (test === 1) {
                 const x = Math.floor(player.location.x);

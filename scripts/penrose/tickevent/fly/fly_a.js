@@ -1,4 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
+import { getScore } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -10,21 +11,8 @@ let oldY;
 let oldZ;
 let check;
 
-function getScore(objective, player, { minimum, maximum } = {}) {
-    const data = player.runCommand(
-      `scoreboard players test "${player.nameTag}" ${objective} ${
-        minimum ? minimum : "*"
-      } ${maximum ? maximum : "*"}`
-    );
-    if (!data.statusMessage) return;
-    return parseInt(data.statusMessage.match(/-?\d+/));
-}
-
 function time(player, x, y, z) {
-    let test = getScore(
-        "fly_timer",
-        player
-        );
+    let test = getScore("fly_timer", player);
     let dimension = player.dimension;
     if (test >= 6 && check === 1) {
         player.teleport(new Minecraft.Location(x, y, z), dimension, 0, player.bodyRotation);
@@ -42,10 +30,7 @@ function FlyA() {
         player.nameTag = player.nameTag.replace("\"", "");
         player.nameTag = player.nameTag.replace("\\", "");
 
-        let test = getScore(
-            "fly_timer",
-            player
-            );
+        let test = getScore("fly_timer", player);
 
         if (check != 1) {
             const playerX = Math.trunc(player.location.x);

@@ -98,3 +98,19 @@ export function banMessage(player) {
         player.triggerEvent("paradox:kick");
     }
 }
+
+/**
+ * @name getScore
+ * @param {string} objective - Scoreboard objective
+ * @param {object} player - The player object
+ * @param {number} minimum - Minimum score
+ * @param {number} maximum - Maximum score
+ */
+export function getScore(objective, player, { minimum, maximum } = {}) {
+    try {
+        const data = player.runCommand(`scoreboard players test "${player.nameTag}" ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
+        return parseInt(data.statusMessage.match(/-?\d+/));
+    } catch (error) {
+        return;
+    }
+}
