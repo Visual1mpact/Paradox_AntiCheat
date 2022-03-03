@@ -41,7 +41,7 @@ export function fly(message, args) {
     }
     
     if (!member) {
-        var member = player
+        var member = player;
     }
 
     player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function tools/fly`);

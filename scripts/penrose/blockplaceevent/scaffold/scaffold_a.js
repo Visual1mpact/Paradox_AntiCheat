@@ -38,11 +38,11 @@ const ScaffoldA = () => {
                 }
             });
             try {
-                block.player.runCommand(`clear "${block.disabler(player.nameTag)}"`);
+                block.player.runCommand(`clear "${disabler(block.player.nameTag)}"`);
             } catch (error) {}
             try {
-                block.player.runCommand(`tag "${block.disabler(player.nameTag)}" add "Reason:Illegal Scaffolding"`);
-                block.player.runCommand(`tag "${block.disabler(player.nameTag)}" add "By:Paradox"`);
+                block.player.runCommand(`tag "${disabler(block.player.nameTag)}" add "Reason:Illegal Scaffolding"`);
+                block.player.runCommand(`tag "${disabler(block.player.nameTag)}" add "By:Paradox"`);
                 block.player.addTag('isBanned');
             } catch (error) {
                 block.player.triggerEvent('paradox:kick');
