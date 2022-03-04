@@ -1,6 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
-import { illegalitems } from "../../data/itemban.js";
-import { disabler } from "../../util.js";
+import { illegalitems } from "../../../data/itemban.js";
+import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 

@@ -37,7 +37,7 @@ import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 // Import BeforeItemUseOn Events
-import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems_b.js";
+import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 
 // Self explanatory
 const World = Minecraft.world;
