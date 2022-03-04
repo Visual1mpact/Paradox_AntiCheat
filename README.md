@@ -57,7 +57,7 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
 
   Illegal Items -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Clears illegal items from everybody's inventories. Stacks over 64 included. (Requires Gametest Framework)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B) => Clears dropped items.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B) => Clears illegal items if used in the world. (Requires Gametest Framework)<br />
     
   InvalidSprint -><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for sprinting while having the blindness effect. (Requires GameTest FrameWork)<br />

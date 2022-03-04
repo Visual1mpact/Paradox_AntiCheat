@@ -36,6 +36,8 @@ import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametest
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
+// Import BeforeItemUseOn Events
+import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems_b.js";
 
 // Self explanatory
 const World = Minecraft.world;
@@ -159,4 +161,9 @@ if  (config.modules.anticbeC.enabled) {
 
 if (config.modules.reachA.enabled) {
     ReachA();
+}
+
+// BeforeItemUseOn Events
+if (config.modules.illegalitemsB.enabled) {
+    IllegalItemsB();
 }

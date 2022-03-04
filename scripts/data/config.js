@@ -103,6 +103,9 @@ export default
             "enabled": true,
             "maxStack": 64
         },
+        "illegalitemsB": {
+            "enabled": true
+        },
         "antikbA": {
             "enabled": true,
             "magnitude": -0.078
