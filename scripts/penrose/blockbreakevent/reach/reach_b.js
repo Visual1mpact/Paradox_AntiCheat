@@ -13,7 +13,7 @@ const ReachB = () => {
         let reach = Math.sqrt((block.block.location.x - block.player.location.x)**2 + (block.block.location.y - block.player.location.y)**2 + (block.block.location.z - block.player.location.z)**2);
 
         if(reach > config.modules.reachB.reach && !block.player.hasTag('paradoxOpped')) {
-            flag(block.player, "Reach", "B", "Break", "reach", reach.toFixed(3), false, false);
+            // flag(block.player, "Reach", "B", "Break", "reach", reach.toFixed(3), false, false);
             block.block.setPermutation(blockID);
         }
     });
