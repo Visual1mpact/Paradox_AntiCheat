@@ -54,7 +54,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!clearchat§r - Cle
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!invsee <username>§r - Lists all the items in the usernames inventory."}]}
 
 # Gametest disabled
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/fly§r - Enables/disables fly mode in survival."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/stats§r - View a specific players anticheat logs."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute @a ~~~ function tools/stats§r - View everyones anticheat logs."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function tools/clearchat§r - Clears chat."}]}

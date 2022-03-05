@@ -5,6 +5,22 @@ import { disabler } from "../../util.js";
 
 const World = Minecraft.world;
 
+function mayflydisable(player, member) {
+    if (disabler(player.nameTag) === disabler(member.nameTag)) {
+        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
+    } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
+        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
+    }
+}
+
+function mayflyenable(player, member) {
+    if (disabler(player.nameTag) === disabler(member.nameTag)) {
+        return member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
+    } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
+        return member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
+    }
+}
+
 /**
  * @name fly
  * @param {object} message - Message object
@@ -23,11 +39,10 @@ export function fly(message, args) {
     message.cancel = true;
 
     let player = message.sender;
+    let playertag = player.getTags();
 
     // make sure the user has permissions to run the command
-    try {
-        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
-    } catch (error) {
+    if (!playertag.includes('paradoxOpped')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
     
@@ -41,28 +56,27 @@ export function fly(message, args) {
     }
     
     if (!member) {
-        var member = player;
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function tools/fly`);
-    
-    // I find try/catch to be completely unorthodox for this lol
-    try {
-        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=flying]`);
-        if (disabler(player.nameTag) === disabler(member.nameTag)) {
-            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
-        } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
-        } else {
-            return;
-        }
-    } catch {
-        if (disabler(player.nameTag) === disabler(member.nameTag)) {
-            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
-        } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
-        } else {
-            return;
-        }
+    let membertag = member.getTags();
+
+    if (!membertag.includes('noflying') && !membertag.includes('flying')) {
+        member.runCommand(`ability "${disabler(member.nameTag)}" mayfly true`);
+        member.addTag('flying');
+        mayflyenable(player, member);
+        return;
+    }
+
+    if (membertag.includes('flying')) {
+        member.addTag('noflying');
+    }
+
+    if (member.hasTag('noflying')) {
+        member.removeTag('flying');
+        member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
+        mayflydisable(player, member);
+        member.removeTag('noflying');
+        return;
     }
 }
