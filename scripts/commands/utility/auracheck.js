@@ -44,5 +44,5 @@ export function auracheck(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function tools/auracheck`);
+    return member.runCommand(`summon paradox:killaura ^ ^ ^-3`);
 }

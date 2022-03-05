@@ -1,1 +1,0 @@
-execute @s ~~~ summon paradox:killaura ^ ^ ^-3
