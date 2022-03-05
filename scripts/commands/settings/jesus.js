@@ -1,10 +1,10 @@
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 /**
  * @name jesus
  * @param {object} message - Message object
  */
-export function jesus(message) {
+export function jesuswalk(message) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/jesus.js:7)");
@@ -21,5 +21,16 @@ export function jesus(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/jesus`);
+    let jesusscore = getScore(jesus, player);
+
+    if (jesusscore <= 0) {
+        // Allow
+        player.runCommand(`scoreboard players set paradox:config jesus 1`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Jesus!"}]}`);
+    } else if (jesusscore >= 1) {
+        // Deny
+        player.runCommand(`scoreboard players set paradox:config jesus 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Jesus!"}]}`);
+    }
+    return player.runCommand(`scoreboard players operation @a jesus = paradox:config jesus`);
 }

@@ -21,7 +21,7 @@ import { overidecommandblocksenabled } from "./settings/overidecommandblocksenab
 import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborder } from "./settings/worldborder.js";
 import { autoclick } from "./settings/autoclicker.js";
-import { jesus } from "./settings/jesus.js";
+import { jesuswalk } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
@@ -155,7 +155,7 @@ export function commandHandler(player, message) {
             autoclick(message);
             break;
         case (config.customcommands.jesus && commandName === "jesus"):
-            jesus(message);
+            jesuswalk(message);
             break;
         case (config.customcommands.phase && commandName === "phase"):
             phase(message);
