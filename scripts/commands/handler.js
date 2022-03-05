@@ -22,7 +22,7 @@ import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborder } from "./settings/worldborder.js";
 import { autoclick } from "./settings/autoclicker.js";
 import { jesuswalk } from "./settings/jesus.js";
-import { phase } from "./settings/phase.js";
+import { phasing } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
 import { autokillaura } from "./settings/autoaura.js";
@@ -158,7 +158,7 @@ export function commandHandler(player, message) {
             jesuswalk(message);
             break;
         case (config.customcommands.phase && commandName === "phase"):
-            phase(message);
+            phasing(message);
             break;
         case (config.customcommands.enchantedarmor && commandName === "enchantedarmor"):
             enchantedarmor(message);
