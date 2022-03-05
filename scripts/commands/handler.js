@@ -25,7 +25,7 @@ import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
-import { autoaura } from "./settings/autoaura.js";
+import { autokillaura } from "./settings/autoaura.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
 import { freeze } from "./utility/freeze.js";
@@ -167,7 +167,7 @@ export function commandHandler(player, message) {
             auracheck(message, args);
             break;
         case (config.customcommands.autoaura && commandName === "autoaura"):
-            autoaura(message);
+            autokillaura(message);
             break;
         case (config.customcommands.antikb && commandName === "antikb"):
             antiknockback(message);

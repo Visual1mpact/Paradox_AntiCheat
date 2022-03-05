@@ -48,7 +48,6 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/enchantedArmor§r - Enables/disables Anti Enchanted Armor for all players."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/autoaura§r - Enables/disables Auto KillAura checks for all players."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 
