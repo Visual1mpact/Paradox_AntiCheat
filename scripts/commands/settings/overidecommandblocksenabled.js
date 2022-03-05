@@ -1,4 +1,4 @@
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 /**
  * @name overidecommandblocksenabled
@@ -21,5 +21,20 @@ export function overidecommandblocksenabled(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/overideCommandBlocksEnabled`);
+    let cmdsscore = getScore(cmds, player);
+
+    if (cmdsscore <= 0) {
+        // Allow
+        player.runCommand(`scoreboard players set paradox:config cmds 1`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled §6as enabled!"}]}`);
+    } else if (cmdsscore === 1) {
+        // Deny
+        player.runCommand(`scoreboard players set paradox:config cmds 2`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled §4as disabled!"}]}`);
+    } else if (cmdsscore >= 2) {
+        // Force
+        player.runCommand(`scoreboard players set paradox:config cmds 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has §etoggled§r Force-CommandBlocksEnabled!"}]}`);
+    }
+    return player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

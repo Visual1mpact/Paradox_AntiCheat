@@ -41,7 +41,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enable
 
 # Gametest disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/removeCommandBlocks§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCommandBlocksEnabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
 
