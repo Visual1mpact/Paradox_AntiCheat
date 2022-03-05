@@ -19,7 +19,7 @@ import { modules } from "./settings/modules.js";
 import { nofrostwalker } from "./settings/nofrostwalker.js";
 import { overidecommandblocksenabled } from "./settings/overidecommandblocksenabled.js";
 import { removecommandblocks } from "./settings/removecommandblocks.js";
-import { worldborder } from "./settings/worldborder.js";
+import { worldborders } from "./settings/worldborder.js";
 import { autoclick } from "./settings/autoclicker.js";
 import { jesuswalk } from "./settings/jesus.js";
 import { phasing } from "./settings/phase.js";
@@ -134,7 +134,7 @@ export function commandHandler(player, message) {
             removecommandblocks(message);
             break;
         case (config.customcommands.worldborder && commandName === "worldborder"):
-            worldborder(message);
+            worldborders(message, args);
             break;
         case (config.customcommands.help && commandName === "help"):
             help(message);

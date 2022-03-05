@@ -31,16 +31,13 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!removecb§r - Enab
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!bedrockvalidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!overridecbe§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!nofrostwalker§r - Enables/disables Anti Frostwalker. High levels of Frostwalker can crash realms."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder§r - Enables/disables the World Border and its size."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder <option>§r - Enables/disables the World Border. Option: [1k, 5k, 10k, 25k, 50k, 100k, disable]"}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!enchantedarmor§r - Enables/disables Anti Enchanted Armor for all players."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoaura§r - Enables/disables Auto KillAura checks for all players."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enables/disables Anti Knockback for all players."}]}
-
-# Gametest disabled
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 
