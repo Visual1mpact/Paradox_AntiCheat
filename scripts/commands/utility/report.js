@@ -23,6 +23,7 @@ export function report(message, args) {
     let reason = args.slice(1).join(" ") || "No reason specified";
 
     if (!args.length) {
+        player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§3!report <player> <reason>§r"}]}`)
         return player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to report!"}]}`);
     }
     
@@ -34,6 +35,7 @@ export function report(message, args) {
     }
 
     if (!member) {
+        player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§3!report <player> <reason>§r"}]}`)
         return player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
