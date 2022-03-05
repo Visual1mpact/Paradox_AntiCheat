@@ -40,7 +40,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoaura§r - Enab
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enables/disables Anti Knockback for all players."}]}
 
 # Gametest disabled
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/removeCommandBlocks§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
