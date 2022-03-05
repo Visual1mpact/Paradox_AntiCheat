@@ -1,4 +1,4 @@
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 /**
  * @name allowgma
@@ -21,5 +21,16 @@ export function allowgma(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/allowGMA`);
+    let gmascore = getScore(gma, player);
+
+    if (gmascore <= 0) {
+        // Allow
+        player.runCommand(`scoreboard players set paradox:config gma 1`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 2 (Adventure)§r to be used!"}]}`);
+    } else if (gmascore >= 1) {
+        // Deny
+        player.runCommand(`scoreboard players set paradox:config gma 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has allowed §6Gamemode 2 (Adventure)§r to be used!"}]}`);
+    }
+    return player.runCommand(`scoreboard players operation @a gma = paradox:config gma`);
 }

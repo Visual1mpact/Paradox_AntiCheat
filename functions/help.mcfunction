@@ -40,9 +40,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoaura§r - Enab
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enables/disables Anti Knockback for all players."}]}
 
 # Gametest disabled
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMA§r - Enables/disables Gamemode 2(Adventure) to be used."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMC§r - Enables/disables Gamemode 1(Creative) to be used."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/allowGMS§r - Enables/disables Gamemode 0(Survival) to be used."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/removeCommandBlocks§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/bedrockValidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCommandBlocksEnabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
