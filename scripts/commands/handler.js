@@ -24,7 +24,7 @@ import { autoclicker } from "./settings/autoclicker.js";
 import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
-import { antikb } from "./settings/antikb.js";
+import { antiknockback } from "./settings/antikb.js";
 import { autoaura } from "./settings/autoaura.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
@@ -170,7 +170,7 @@ export function commandHandler(player, message) {
             autoaura(message);
             break;
         case (config.customcommands.antikb && commandName === "antikb"):
-            antikb(message);
+            antiknockback(message);
             break;
         default:
             return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
