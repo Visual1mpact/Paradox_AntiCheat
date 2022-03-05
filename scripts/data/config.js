@@ -36,7 +36,8 @@ export default
         "enchantedarmor":true,
         "auracheck":true,
         "autoaura":true,
-        "antikb":true
+        "antikb":true,
+        "report":true
     },
     "modules": {
         "badpackets2": {

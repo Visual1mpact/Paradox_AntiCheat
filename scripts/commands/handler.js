@@ -36,6 +36,7 @@ import { fly } from "./utility/fly.js";
 import { invsee } from "./utility/invsee.js";
 import { clearchat } from "./utility/clearchat.js";
 import { auracheck } from "./utility/auracheck.js";
+import { report } from "./utility/report.js";
 
 /**
  * @name commandHandler
@@ -171,6 +172,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.antikb && commandName === "antikb"):
             antiknockback(message);
+            break;
+        case (config.customcommands.report && commandName === "report"):
+            report(message, args);
             break;
         default:
             return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
