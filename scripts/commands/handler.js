@@ -20,7 +20,7 @@ import { nofrostwalker } from "./settings/nofrostwalker.js";
 import { overidecommandblocksenabled } from "./settings/overidecommandblocksenabled.js";
 import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborder } from "./settings/worldborder.js";
-import { autoclicker } from "./settings/autoclicker.js";
+import { autoclick } from "./settings/autoclicker.js";
 import { jesus } from "./settings/jesus.js";
 import { phase } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
@@ -152,7 +152,7 @@ export function commandHandler(player, message) {
             clearchat(message);
             break;
         case (config.customcommands.autoclicker && commandName === "autoclicker"):
-            autoclicker(message);
+            autoclick(message);
             break;
         case (config.customcommands.jesus && commandName === "jesus"):
             jesus(message);

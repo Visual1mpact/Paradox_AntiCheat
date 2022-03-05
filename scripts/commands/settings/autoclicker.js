@@ -1,10 +1,10 @@
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 /**
  * @name autoclicker
  * @param {object} message - Message object
  */
-export function autoclicker(message) {
+export function autoclick(message) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/autoclicker.js:7)");
@@ -21,5 +21,16 @@ export function autoclicker(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/autoclicker`);
+    let autoclickerscore = getScore(autoclicker, player);
+
+    if (autoclickerscore <= 0) {
+        // Allow
+        player.runCommand(`scoreboard players set paradox:config autoclicker 1`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Autoclicker!"}]}`);
+    } else if (autoclickerscore >= 1) {
+        // Deny
+        player.runCommand(`scoreboard players set paradox:config autoclicker 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Autoclicker!"}]}`);
+    }
+    return player.runCommand(`scoreboard players operation @a autoclicker = paradox:config autoclicker`);
 }
