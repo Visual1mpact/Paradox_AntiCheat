@@ -41,7 +41,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enable
 
 # Gametest disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/removeCommandBlocks§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/bedrockValidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCommandBlocksEnabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}

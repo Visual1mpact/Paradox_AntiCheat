@@ -1,4 +1,4 @@
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 /**
  * @name bedrockvalidate
@@ -12,14 +12,16 @@ export function bedrockvalidate(message) {
 
     message.cancel = true;
 
-    let player = message.sender;
-    
-    // make sure the user has permissions to run the command
-    try {
-        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
-    } catch (error) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
+    let bedrockscore = getScore(bedrock, player);
 
-    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/bedrockValidate`);
+    if (bedrockscore <= 0) {
+        // Allow
+        player.runCommand(`scoreboard players set paradox:config bedrock 1`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6BedrockValidate!"}]}`);
+    } else if (bedrockscore >= 1) {
+        // Deny
+        player.runCommand(`scoreboard players set paradox:config bedrock 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BedrockValidate!"}]}`);
+    }
+    return player.runCommand(`scoreboard players operation @a bedrock = paradox:config bedrock`);
 }
