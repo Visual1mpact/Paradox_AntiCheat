@@ -27,7 +27,7 @@ export function worldborders(message, args) {
 
     const options = ['1k', '5k', '10k', '25k', '50k', '100k', 'disable'];
 
-    for (var i = 0; i < args.length; i++) {
+    for (var i = 0; i < options.length; i++) {
         var verify = args[i];
 
         if (verify === "1k") {
