@@ -1,4 +1,4 @@
-import { disabler, getScore } from "../../util.js";
+import { getScore } from "../../util.js";
 
 /**
  * @name bedrockvalidate
@@ -9,6 +9,8 @@ export function bedrockvalidate(message) {
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/bedrockValidate.js:7)");
     }
+
+    let player = message.sender;
 
     message.cancel = true;
 

@@ -1,6 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+// import { flag } from "../../../util.js";
 
 const World = Minecraft.world;
 
