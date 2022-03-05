@@ -44,5 +44,34 @@ export function ecwipe(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function tools/ecwipe`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 0 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 1 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 2 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 3 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 4 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 5 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 6 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 7 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 8 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 9 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 10 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 11 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 12 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 13 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 14 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 15 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 16 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 17 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 18 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 19 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 20 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 21 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 22 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 23 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 24 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 25 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 26 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 27 air`);
+    player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 28 air`);
+    return player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 29 air`);
 }
