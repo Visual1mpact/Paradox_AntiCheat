@@ -1,4 +1,4 @@
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 /**
  * @name nofrostwalker
@@ -21,5 +21,16 @@ export function nofrostwalker(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/nofrostwalker`);
+    let frostwalkerscore = getScore(frostwalker, player);
+
+    if (frostwalkerscore <= 0) {
+        // Allow
+        player.runCommand(`scoreboard players set paradox:config frostwalker 1`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Frostwalker!"}]}`);
+    } else if (frostwalkerscore >= 1) {
+        // Deny
+        player.runCommand(`scoreboard players set paradox:config frostwalker 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Frostwalker!"}]}`);
+    }
+    return player.runCommand(`scoreboard players operation @a frostwalker = paradox:config frostwalker`);
 }

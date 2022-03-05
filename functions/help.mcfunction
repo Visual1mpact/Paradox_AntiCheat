@@ -30,7 +30,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgms§r - Enab
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!removecb§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!bedrockvalidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!overridecbe§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!nofrostwalker§r - Enables/disables Anti Frostwalker. High levels of Frostwalker can crash realms."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder§r - Enables/disables the World Border and its size."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoclicker§r - Enables/disables Anti Autoclicker."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava)."}]}
@@ -42,7 +42,6 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enable
 # Gametest disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/removeCommandBlocks§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCommandBlocksEnabled§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
 

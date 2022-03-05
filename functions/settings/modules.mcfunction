@@ -20,8 +20,8 @@ tellraw @s[scores={worldborder=4}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r
 tellraw @s[scores={worldborder=5}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World border is set to §a50k"}]}
 tellraw @s[scores={worldborder=6..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World border is set to §a100k"}]}
 tellraw @s[scores={worldborder=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §4DISABLED"}]}
-tellraw @s[scores={frostwalker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frost Walker is currently §aENABLED"}]}
-tellraw @s[scores={frostwalker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frost Walker is currently §4DISABLED"}]}
+tellraw @s[scores={frostwalker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frostwalker is currently §aENABLED"}]}
+tellraw @s[scores={frostwalker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frostwalker is currently §4DISABLED"}]}
 tellraw @s[scores={autoclicker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoclicker is currently §aENABLED"}]}
 tellraw @s[scores={autoclicker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoclicker is currently §4DISABLED"}]}
 tellraw @s[scores={jesus=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Jesus is currently §aENABLED"}]}
