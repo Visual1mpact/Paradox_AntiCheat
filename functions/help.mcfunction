@@ -45,7 +45,6 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function overideCo
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/nofrostwalker§r - Enables/disables Anti Frost Walker. High levels of Frost Walker can crash realms."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/worldborder§r - Enables/disables the world border and its size."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/enchantedArmor§r - Enables/disables Anti Enchanted Armor for all players."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 
