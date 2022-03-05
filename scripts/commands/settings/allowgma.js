@@ -21,7 +21,7 @@ export function allowgma(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let gmascore = getScore(gma, player);
+    let gmascore = getScore("gma", player);
 
     if (gmascore <= 0) {
         // Allow

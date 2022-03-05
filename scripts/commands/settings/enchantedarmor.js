@@ -21,7 +21,7 @@ export function enchantedarmor(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let encharmorscore = getScore(encharmor, player);
+    let encharmorscore = getScore("encharmor", player);
 
     if (encharmorscore <= 0) {
         // Allow

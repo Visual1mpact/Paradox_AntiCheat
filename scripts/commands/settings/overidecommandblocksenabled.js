@@ -21,7 +21,7 @@ export function overidecommandblocksenabled(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let cmdsscore = getScore(cmds, player);
+    let cmdsscore = getScore("cmds", player);
 
     if (cmdsscore <= 0) {
         // Allow

@@ -21,7 +21,7 @@ export function autokillaura(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let autoaurascore = getScore(autoaura, player);
+    let autoaurascore = getScore("autoaura", player);
 
     if (autoaurascore <= 0) {
         // Allow

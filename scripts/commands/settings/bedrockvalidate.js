@@ -12,7 +12,7 @@ export function bedrockvalidate(message) {
 
     message.cancel = true;
 
-    let bedrockscore = getScore(bedrock, player);
+    let bedrockscore = getScore("bedrock", player);
 
     if (bedrockscore <= 0) {
         // Allow

@@ -21,7 +21,7 @@ export function removecommandblocks(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let commandblocksscore = getScore(commandblocks, player);
+    let commandblocksscore = getScore("commandblocks", player);
 
     if (commandblocksscore <= 0) {
         // Allow
