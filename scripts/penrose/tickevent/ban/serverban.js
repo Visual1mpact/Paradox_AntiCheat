@@ -9,10 +9,9 @@ const ServerBan = () => {
         // run as each player
         for (let player of World.getPlayers()) {
             // Ban message
-            try {
-                player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=isBanned]`);
+            if (player.hasTag('isBanned')) {
                 banMessage(player);
-            } catch(error) {}
+            }
         }
     }, 40); // Executes every 2 seconds
 };
