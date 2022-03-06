@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.5.24](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.5.24) (2022-03-06)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.4.23...v2.5.24)
+
+**Closed issues:**
+
+- Flag Report \(broken\) // Commands Not Working [\#21](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/21)
+- you should lower the aura check [\#20](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/20)
+
 ## [v2.4.23](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.4.23) (2022-02-27)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.4.22...v2.4.23)
