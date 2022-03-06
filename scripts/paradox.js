@@ -155,7 +155,7 @@ if  (config.modules.antiscaffoldA.enabled) {
     ScaffoldA();
 }
 
-if  (config.modules.anticbeC.enabled) {
+if  (config.modules.placeflagsA.enabled) {
     PlaceflagsA();
 }
 

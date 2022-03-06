@@ -28,16 +28,35 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgma§r - Enab
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgmc§r - Enables/disables Gamemode 1(Creative) to be used."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!allowgms§r - Enables/disables Gamemode 0(Survival) to be used."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!removecb§r - Enables/disables Anti Command Blocks (Clears all when enabled)."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!bedrockvalidate§r - Enables/disables validation of bedrock (Such as in the nether roof or at y=0)."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!bedrockvalidate§r - Checks validation of bedrock."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!overridecbe§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!nofrostwalker§r - Enables/disables Anti Frostwalker. High levels of Frostwalker can crash realms."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder <option>§r - Enables/disables the World Border. Option: [1k, 5k, 10k, 25k, 50k, 100k, disable]"}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!worldborder <option>§r - Sets the World Border. Option: [1k, 5k, 10k, 25k, 50k, 100k, disable]"}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoclicker§r - Enables/disables Anti Autoclicker."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesus§r - Enables/disables Anti Jesus (Walking on Water and Lava)."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!jesusa§r - Checks if player's are walking on water and lava)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!enchantedarmor§r - Enables/disables Anti Enchanted Armor for all players."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!autoaura§r - Enables/disables Auto KillAura checks for all players."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antikb§r - Enables/disables Anti Knockback for all players."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!badpackets2§r - Checks message length for each broadcast."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!spammera§r - Checks if message is sent while moving."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!spammerb§r - Checks if message is sent while swinging."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!spammerc§r - Checks if message is sent while using items."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!spammerd§r - Checks if message is sent while GUI is open."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antispam§r - Checks for spamming in chat with 2 second cooldown."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!crashera§r - Prevents Horion crasher."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!namespoofa§r - Checks if player's name exceeds character limitations."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!namespoofb§r - Checks if player's name has Non ASCII characters."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!reacha§r - Checks if player's place blocks beyond reach."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!reachb§r - Checks if player's break blocks beyond reach."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!noslowa§r - Checks if player's are speed hacking."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!flya§r - Checks if player's are flying in survival."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsa§r - Checks if player's have illegal items in inventory."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsb§r - Checks if player's place illegal items."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antiscaffolda§r - Checks player's for illegal scaffolding."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antinukera§r - Checks player's for nuking blocks."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!xraya§r - Notify's staff when and where player's mine specific ores."}]}
+
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}
 

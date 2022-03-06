@@ -19,7 +19,7 @@ export default
         "removecommandblocks": true,
         "worldborder": true,
         "autoclicker": true,
-        "jesus": true,
+        "jesusa": true,
         "phase": true,
         "ecwipe": true,
         "freeze": true,
@@ -37,7 +37,27 @@ export default
         "auracheck":true,
         "autoaura":true,
         "antikb":true,
-        "report":true
+        "report":true,
+        "badpackets2":true,
+        "spammera": true,
+        "spammerb": true,
+        "spammerc": true,
+        "spammerd": true,
+        "antispam": true,
+        "crashera": true,
+        "namespoofa": true,
+        "namespoofb": true,
+        "reacha": true,
+        "reachb": true,
+        "noslowa": true,
+        "invalidsprinta": true,
+        "flya": true,
+        "illegalitemsa": true,
+        "illegalitemsb": true,
+        "antiscaffolda": true,
+        "antinukera": true,
+        "placeflagsa": true,
+        "xraya": true
     },
     "modules": {
         "badpackets2": {
@@ -119,7 +139,7 @@ export default
             "enabled": true,
             "max": 2
         },
-        "anticbeC": {
+        "placeflagsA": {
             "enabled": true
         },
         "xrayA": {

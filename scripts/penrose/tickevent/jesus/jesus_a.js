@@ -1,6 +1,7 @@
 import * as Minecraft from "mojang-minecraft";
-import { flag, getScore } from "../../../util.js";
+import { flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
+import config from "../../../data/config.js";
 
 const World = Minecraft.world;
 
@@ -22,34 +23,29 @@ const JesusA = () => {
     setTickInterval(() => {
         // run as each player
         for (let player of World.getPlayers()) {
-
-            let test = getScore("jesus", player);
-
-            if (test === 1) {
-                const x = Math.floor(player.location.x);
-                const y = Math.floor(player.location.y);
-                const z = Math.floor(player.location.z);
-                const dimension = player.dimension;
+            const x = Math.floor(player.location.x);
+            const y = Math.floor(player.location.y);
+            const z = Math.floor(player.location.z);
+            const dimension = player.dimension;
+            try {
                 // Below player
-                try {
-                    BlockAtPlayer1 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y, z));
-                    // Mid player
-                    BlockAtPlayer2 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 1, z));
-                    // Above player
-                    BlockAtPlayer3 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 2, z));
-                } catch (error) {}
+                BlockAtPlayer1 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y, z));
+                // Mid player
+                BlockAtPlayer2 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 1, z));
+                // Above player
+                BlockAtPlayer3 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 2, z));
+            } catch (error) {}
 
-                if (!player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer3.type.id != "minecraft:water" && BlockAtPlayer2.type.id != "minecraft:water" || !player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer3.type.id != "minecraft:lava" && BlockAtPlayer2.type.id != "minecraft:lava") {
-                    _player.count++;
-                    // Flag them after 4 seconds of activity
-                    if (_player.count === 2) {
-                        timer(player, dimension, x, y, z);
-                    }
+            if (!player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer3.type.id != "minecraft:water" && BlockAtPlayer2.type.id != "minecraft:water" || !player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer3.type.id != "minecraft:lava" && BlockAtPlayer2.type.id != "minecraft:lava") {
+                _player.count++;
+                // Flag them after 4 seconds of activity
+                if (_player.count === 2) {
+                    timer(player, dimension, x, y, z);
                 }
-                // Reset count
-                if (player.hasTag('ground')) {
-                    _player.count = 0;
-                }
+            }
+            // Reset count
+            if (player.hasTag('ground')) {
+                _player.count = 0;
             }
         }
     }, 20); // Executes every 2 seconds

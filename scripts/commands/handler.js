@@ -21,7 +21,7 @@ import { overidecommandblocksenabled } from "./settings/overidecommandblocksenab
 import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborders } from "./settings/worldborder.js";
 import { autoclick } from "./settings/autoclicker.js";
-import { jesuswalk } from "./settings/jesus.js";
+import { jesusA } from "./settings/jesusa.js";
 import { phasing } from "./settings/phase.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
@@ -37,6 +37,26 @@ import { invsee } from "./utility/invsee.js";
 import { clearchat } from "./utility/clearchat.js";
 import { auracheck } from "./utility/auracheck.js";
 import { report } from "./utility/report.js";
+import { badpackets2 } from "./settings/badpackets2.js";
+import { spammerA } from "./settings/spammera.js";
+import { spammerB } from "./settings/spammerb.js";
+import { spammerC } from "./settings/spammerc.js";
+import { spammerD } from "./settings/spammerd.js";
+import { antispam } from "./settings/antispam.js";
+import { crasherA } from "./settings/crashera.js";
+import { namespoofA } from "./settings/namespoofa.js";
+import { namespoofB } from "./settings/namespoofb.js";
+import { reachA } from "./settings/reacha.js";
+import { reachB } from "./settings/reachb.js";
+import { noslowA } from "./settings/noslowa.js";
+import { invalidsprintA } from "./settings/invalidsprinta.js";
+import { flyA } from "./settings/flya.js";
+import { illegalitemsA } from "./settings/illegalitemsa.js";
+import { illegalitemsB } from "./settings/illegalitemsb.js";
+import { antiscaffoldA } from "./settings/antiscaffolda.js";
+import { antinukerA } from "./settings/antinukera.js";
+import { placeflagsA } from "./settings/placeflagsa.js";
+import { xrayA } from "./settings/xraya.js";
 
 /**
  * @name commandHandler
@@ -155,8 +175,8 @@ export function commandHandler(player, message) {
         case (config.customcommands.autoclicker && commandName === "autoclicker"):
             autoclick(message);
             break;
-        case (config.customcommands.jesus && commandName === "jesus"):
-            jesuswalk(message);
+        case (config.customcommands.jesus && commandName === "jesusa"):
+            jesusA(message);
             break;
         case (config.customcommands.phase && commandName === "phase"):
             phasing(message);
@@ -175,6 +195,66 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.report && commandName === "report"):
             report(message, args);
+            break;
+        case (config.customcommands.badpackets2 && commandName === "badpackets2"):
+            badpackets2(message);
+            break;
+        case (config.customcommands.spammera && commandName === "spammera"):
+            spammerA(message);
+            break;
+        case (config.customcommands.spammerb && commandName === "spammerb"):
+            spammerB(message);
+            break;
+        case (config.customcommands.spammerc && commandName === "spammerc"):
+            spammerC(message);
+            break;
+        case (config.customcommands.spammerd && commandName === "spammerd"):
+            spammerD(message);
+            break;
+        case (config.customcommands.antispam && commandName === "antispam"):
+            antispam(message);
+            break;
+        case (config.customcommands.crashera && commandName === "crashera"):
+            crasherA(message);
+            break;
+        case (config.customcommands.namespoofa && commandName === "namespoofa"):
+            namespoofA(message);
+            break;
+        case (config.customcommands.namespoofb && commandName === "namespoofb"):
+            namespoofB(message);
+            break;
+        case (config.customcommands.reacha && commandName === "reacha"):
+            reachA(message);
+            break;
+        case (config.customcommands.reachb && commandName === "reachb"):
+            reachB(message);
+            break;
+        case (config.customcommands.noslowa && commandName === "noslowa"):
+            noslowA(message);
+            break;
+        case (config.customcommands.invalidsprinta && commandName === "invalidsprinta"):
+            invalidsprintA(message);
+            break;
+        case (config.customcommands.flya && commandName === "flya"):
+            flyA(message);
+            break;
+        case (config.customcommands.illegalitemsa && commandName === "illegalitemsa"):
+            illegalitemsA(message);
+            break;
+        case (config.customcommands.illegalitemsb && commandName === "illegalitemsb"):
+            illegalitemsB(message);
+            break;
+        case (config.customcommands.antiscaffolda && commandName === "antiscaffolda"):
+            antiscaffoldA(message);
+            break;
+        case (config.customcommands.antinukera && commandName === "antinukera"):
+            antinukerA(message);
+            break;
+        case (config.customcommands.placeflagsa && commandName === "placeflagsa"):
+            placeflagsA(message);
+            break;
+        case (config.customcommands.xraya && commandName === "xraya"):
+            xrayA(message);
             break;
         default:
             return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
