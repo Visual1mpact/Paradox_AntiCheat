@@ -15,9 +15,7 @@ export function clearchat(message) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    try {
-        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}",tag=paradoxOpped]`);
-    } catch (error) {
+    if (!player.hasTag('paradoxOpped')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
