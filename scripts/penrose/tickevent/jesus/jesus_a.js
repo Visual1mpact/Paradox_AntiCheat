@@ -1,7 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import { flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
-import config from "../../../data/config.js";
 
 const World = Minecraft.world;
 
