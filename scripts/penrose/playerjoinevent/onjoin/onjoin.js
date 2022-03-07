@@ -1,5 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import { onJoinData } from "../../../data/onjoindata.js";
+import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
