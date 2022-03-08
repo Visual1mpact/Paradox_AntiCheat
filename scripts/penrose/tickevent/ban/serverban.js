@@ -1,17 +1,17 @@
 import * as Minecraft from "mojang-minecraft";
-import { banMessage, disabler } from "../../../util.js";
+import { banMessage } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
 const World = Minecraft.world;
 
 const ServerBan = () => {
     setTickInterval(() => {
+        let tag = new Minecraft.EntityQueryOptions();
+        tag.tags = ['isBanned'];
         // run as each player
-        for (let player of World.getPlayers()) {
+        for (let player of World.getPlayers(tag)) {
             // Ban message
-            if (player.hasTag('isBanned')) {
-                banMessage(player);
-            }
+            banMessage(player);
         }
     }, 40); // Executes every 2 seconds
 };
