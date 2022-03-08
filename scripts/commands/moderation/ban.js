@@ -53,10 +53,10 @@ export function ban(message, args) {
     // this removes old ban stuff
     tags.forEach(t => {
         if(t.startsWith("Reason:")) {
-            member.removeTag(t.slice(1));
+            member.removeTag(t);
         }
         if(t.startsWith("By:")) {
-            member.removeTag(t.slice(1));
+            member.removeTag(t);
         }
     });
 

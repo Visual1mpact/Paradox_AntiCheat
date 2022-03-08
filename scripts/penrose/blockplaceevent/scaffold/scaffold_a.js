@@ -35,10 +35,10 @@ function scaffolda(block) {
         // This removes old ban tags
         tags.forEach(t => {
             if(t.startsWith("Reason:")) {
-                block.player.removeTag(t.slice(1));
+                block.player.removeTag(t);
             }
             if(t.startsWith("By:")) {
-                block.player.removeTag(t.slice(1));
+                block.player.removeTag(t);
             }
         });
         try {

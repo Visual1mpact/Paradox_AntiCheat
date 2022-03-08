@@ -20,10 +20,10 @@ function illegalitemsb(item) {
         // This removes old ban tags
         tags.forEach(t => {
             if(t.startsWith("Reason:")) {
-                item.source.removeTag(t.slice(1));
+                item.source.removeTag(t);
             }
             if(t.startsWith("By:")) {
-                item.source.removeTag(t.slice(1));
+                item.source.removeTag(t);
             }
         });
         try {

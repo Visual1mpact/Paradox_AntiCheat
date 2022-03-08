@@ -60,10 +60,10 @@ function antispam(msg) {
                 // This removes old ban tags
                 tags.forEach(t => {
                     if(t.startsWith("Reason:")) {
-                        player.removeTag(t.slice(1));
+                        player.removeTag(t);
                     }
                     if(t.startsWith("By:")) {
-                        player.removeTag(t.slice(1));
+                        player.removeTag(t);
                     }
                 });
                 try {
