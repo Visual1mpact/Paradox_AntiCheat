@@ -56,6 +56,7 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsb§r -
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antiscaffolda§r - Checks player's for illegal scaffolding."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antinukera§r - Checks player's for nuking blocks."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!xraya§r - Notify's staff when and where player's mine specific ores."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!banwindow§r - Disables server ban to allow banned players to join (Does not include global ban)."}]}
 
 
 tellraw @s {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}

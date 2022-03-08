@@ -57,6 +57,7 @@ import { antiscaffoldA } from "./settings/antiscaffolda.js";
 import { antinukerA } from "./settings/antinukera.js";
 import { placeflagsA } from "./settings/placeflagsa.js";
 import { xrayA } from "./settings/xraya.js";
+import { banwindow } from "./settings/banwindow.js";
 
 /**
  * @name commandHandler
@@ -255,6 +256,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.xraya && commandName === "xraya"):
             xrayA(message);
+            break;
+        case (config.customcommands.banwindow && commandName === "banwindow"):
+            banwindow(message);
             break;
         default:
             return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);

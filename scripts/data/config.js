@@ -57,7 +57,8 @@ export default
         "antiscaffolda": true,
         "antinukera": true,
         "placeflagsa": true,
-        "xraya": true
+        "xraya": true,
+        "banwindow": true
     },
     "modules": {
         "badpackets2": {
@@ -144,6 +145,9 @@ export default
         },
         "xrayA": {
             "enabled": true
+        },
+        "banWindow": {
+            "enabled": false
         }
     }
 };

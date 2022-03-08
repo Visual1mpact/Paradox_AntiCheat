@@ -77,8 +77,11 @@ ChatFilter();
 
 // Tick Events
 GlobalBanList();
-ServerBan();
 PlayerPosition();
+
+if (!config.modules.banWindow.enabled) {
+    ServerBan();
+}
 
 if (config.modules.crasherA.enabled) {
     CrasherA();
