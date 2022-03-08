@@ -46,7 +46,6 @@ const World = Minecraft.world;
 // Define globally within script
 let hastag;
 
-
 // BeforeChat Events
 if (config.modules.badpackets2.enabled) {
     BadPackets2();
@@ -114,7 +113,7 @@ if (config.modules.invalidsprintA.enabled) {
 }
 
 if (config.modules.flyA.enabled) {
-    setTickInterval(FlyA, 20);
+    FlyA();
 }
 
 if  (config.modules.antikbA.enabled) {

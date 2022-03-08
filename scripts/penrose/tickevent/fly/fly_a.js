@@ -1,5 +1,7 @@
 import * as Minecraft from "mojang-minecraft";
 import { getScore, disabler } from "../../../util.js";
+import { setTickInterval } from "../../../timer/scheduling.js";
+import config from "../../../data/config.js";
 
 const World = Minecraft.world;
 
@@ -20,7 +22,12 @@ function time(player, x, y, z) {
     
 }
 
-function FlyA() {
+function flya() {
+    // Unsubscribe if disabled in-game
+    if (config.modules.flyA.enabled === false) {
+        World.events.tick.unsubscribe(flya);
+        return;
+    }
     // Set .gameMode to survival
     let gm = new Minecraft.EntityQueryOptions();
     gm.gameMode = 0;
@@ -68,6 +75,11 @@ function FlyA() {
         // Check the player's status
         time(player, oldX, oldY, oldZ);
     }
+}
+
+const FlyA = () => {
+    // Executes every 1 second
+    setTickInterval(() => flya(),20);
 }
 
 export { FlyA };
