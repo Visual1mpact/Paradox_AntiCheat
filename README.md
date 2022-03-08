@@ -11,7 +11,7 @@ history pertaining to Scythe still exists within this project and is free to rev
 **Given the uproar between Scythe and UAC I found the name Paradox to be fitting for the cause.**
 
 **Paradox:** A statement or situation that contradicts itself, opposed to common sense and yet perhaps true.
-Check the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki)!
+Check the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki) and swing by [discord](https://discord.gg/e8hSc6BA) for reporting and feedback.
 <div align="left">
   
 <div align="center">
@@ -113,33 +113,33 @@ To install this anticheat to your realm/world you need to install the .mcpack, a
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A) => Checks for nuker by detecting block breaks per second. (Requires GameTest FrameWork)
 
 # <img src="https://i.imgur.com/ONwNwQC.png" border="0" width="400">
-To receive anti-cheat alerts use:
-```/function notify``` or ```!notify```
+To receive anti-cheat alerts use:<br />
+```!notify```
 
-To ban a player use:
-```/execute <playername> ~~~ function ban``` or ```!ban <username>```
+To ban a player use:<br />
+```!ban <username>```
 
-To freeze a player use:
-```/execute <playername> ~~~ function tools/freeze``` or ```!freeze <username>```
+To freeze a player use:<br />
+```!freeze <username>```
 
-To enter vanish use:
-```/function tools/vanish``` or ```!vanish```
+To enter vanish use:<br />
+```!vanish```
 
-To be able to fly in survival mode use:
-```/function tools/fly``` or ```!fly```
+To be able to fly in survival mode use:<br />
+```!fly <username>```
 
-To view a players anticheat logs use:
-```/execute <playername> ~~~ function tools/stats``` or ```!stats <username>```
+To view a players anticheat logs use:<br />
+```!stats <username>```
 
-To clear someones ender chest use:
-```/execute <playername> ~~~ function tools/ecwipe``` or ```!ecwipe <username>```
+To clear someones ender chest use:<br />
+```!ecwipe <username>```
 
-Additionally, there are custom features you can enable like anti-gamemode change to further enhance your realm security, these options can be used by /function settings/<name> read the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki) to find out more.
+Additionally, there are custom features you can enable like anti-gamemode change to further enhance your realm security, these options can be used by prefix commands so read the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki) to find out more.
 
 # <img src="https://i.imgur.com/wxqdSFv.png" border="0" width="100">
 
 Q: Does the AntiCheat auto-ban?<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: No.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: Yes and no. Certain triggers will warrant a hack while other triggers will flag and leave the decision to ban at the discretion of a Staff Member.
 
 Q: Is it customizable?<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: Yes using /function settings/<name> or by modifying the files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: Yes by modifying the files.
