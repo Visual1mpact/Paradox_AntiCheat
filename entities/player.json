@@ -9,7 +9,6 @@
 			"scripts": {
 				"animate": [
 					"onTick",
-					"onJoin",
 					"glide",
 					"levitate",
 					"ground",
@@ -38,7 +37,6 @@
 			},
 			"animations": {
 				"onTick": "animation.onTick",
-				"onJoin": "animation.onJoin",
 				"glide": "controller.animation.glide",
 				"levitate": "controller.animation.levitate",
 				"ground": "controller.animation.ground",
