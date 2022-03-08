@@ -30,7 +30,7 @@ export function banwindow(message) {
     } else if (config.modules.banWindow.enabled === true) {
         // Deny
         config.modules.banWindow.enabled = false;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BanWindow2§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BanWindow§r!"}]}`);
         return;
     }
 }
