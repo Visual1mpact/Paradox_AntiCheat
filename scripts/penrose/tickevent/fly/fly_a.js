@@ -80,6 +80,6 @@ function flya() {
 const FlyA = () => {
     // Executes every 1 second
     setTickInterval(() => flya(),20);
-}
+};
 
 export { FlyA };

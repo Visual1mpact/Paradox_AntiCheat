@@ -32,8 +32,8 @@ const onJoin = () => {
         // Get the name of the player who is joining
         player = loaded.player;
         // Subscribe tick event to the time function
-        tickEventCallback.subscribe(onJoinTime)
+        tickEventCallback.subscribe(onJoinTime);
     });
 };
 
-export { onJoin }
+export { onJoin };

@@ -88,4 +88,4 @@ export const onJoinData = [
     "scoreboard players add @s atcd 0",
     "event entity @s[tag=vanish] vanish",
     "ability @s[tag=flying] mayfly true"
-]
+];
