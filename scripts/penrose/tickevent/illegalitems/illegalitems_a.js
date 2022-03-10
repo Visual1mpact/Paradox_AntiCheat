@@ -11,21 +11,20 @@ function illegalitemsa() {
         World.events.tick.unsubscribe(illegalitemsa);
         return;
     }
-    [...World.getPlayers()].forEach(player => {
 
+    for (let player of World.getPlayers()) {
         let inventory = player.getComponent('minecraft:inventory').container;
-        let inventory_items = [];
         for (let i = 0; i < inventory.size; i++) {
-            try {
-                let inventory_i = inventory.getItem(i);
-                inventory_items.push(inventory_i.id);
-            } catch (error) {}
-        }
-
-        // If player has an illegal item we clear their entire inventory then kick them
-        // If we cannot kick them then we despawn them (no mercy)
-        inventory_items.forEach(item => {
-            if (illegalitems.includes(item) && !player.hasTag('paradoxOpped') || item > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
+            let inventory_item = inventory.getItem(i);
+            if (!inventory_item) {
+                continue;
+            }
+            // If player has an illegal item or stacks over 64 then we clear the item and kick them
+            // If we cannot kick them then we despawn them (no mercy)
+            if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.id > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
+                try {
+                    inventory.setItem(i, new Minecraft.ItemStack(Minecraft.MinecraftItemTypes.air));
+                } catch {}
                 let tags = player.getTags();
 
                 // This removes old ban tags
@@ -37,19 +36,18 @@ function illegalitemsa() {
                         player.removeTag(t);
                     }
                 });
-                try {
-                    player.runCommand(`clear "${disabler(player.nameTag)}"`);
-                } catch (error) {}
+                // Tag with reason and by who
                 try {
                     player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item"`);
                     player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
                     player.addTag('isBanned');
+                // Despawn if we cannot kick the player
                 } catch (error) {
                     player.triggerEvent('paradox:kick');
                 }
             }
-        });
-    });
+        }
+    }
 }
 
 const IllegalItemsA = () => {
