@@ -27,9 +27,6 @@ function illegalitemsb(item) {
             }
         });
         try {
-            item.source.runCommand(`clear "${disabler(item.source.nameTag)}"`);
-        } catch (error) {}
-        try {
             item.source.runCommand(`tag "${disabler(item.source.nameTag)}" add "Reason:Illegal Item"`);
             item.source.runCommand(`tag "${disabler(item.source.nameTag)}" add "By:Paradox"`);
             item.source.addTag('isBanned');
