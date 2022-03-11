@@ -261,6 +261,6 @@ export function commandHandler(player, message) {
             banwindow(message);
             break;
         default:
-            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"There was an error while trying to run this command. Please read console output"}]}`);
+            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command ${commandName} does not exist! Try again!"}]}`);
     }
 }
