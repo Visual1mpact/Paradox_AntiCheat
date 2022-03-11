@@ -176,7 +176,7 @@ export function commandHandler(player, message) {
         case (config.customcommands.autoclicker && commandName === "autoclicker"):
             autoclick(message);
             break;
-        case (config.customcommands.jesus && commandName === "jesusa"):
+        case (config.customcommands.jesusa && commandName === "jesusa"):
             jesusA(message);
             break;
         case (config.customcommands.phase && commandName === "phase"):
@@ -261,6 +261,6 @@ export function commandHandler(player, message) {
             banwindow(message);
             break;
         default:
-            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command ${commandName} does not exist! Try again!"}]}`);
+            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
     }
 }
