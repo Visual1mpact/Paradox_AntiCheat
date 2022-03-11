@@ -26,9 +26,6 @@ function crashera() {
                 }
             });
             try {
-                player.runCommand(`clear "${disabler(player.nameTag)}"`);
-            } catch (error) {}
-            try {
                 player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Crasher"`);
                 player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
                 player.addTag('isBanned');

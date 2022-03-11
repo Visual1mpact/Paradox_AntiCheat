@@ -42,9 +42,6 @@ function scaffolda(block) {
             }
         });
         try {
-            block.player.runCommand(`clear "${disabler(block.player.nameTag)}"`);
-        } catch (error) {}
-        try {
             block.player.runCommand(`tag "${disabler(block.player.nameTag)}" add "Reason:Illegal Scaffolding"`);
             block.player.runCommand(`tag "${disabler(block.player.nameTag)}" add "By:Paradox"`);
             block.player.addTag('isBanned');
