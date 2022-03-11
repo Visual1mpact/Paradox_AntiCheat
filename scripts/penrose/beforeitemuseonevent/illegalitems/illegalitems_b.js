@@ -1,6 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
-import { disabler } from "../../../util.js";
+import { disabler, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = Minecraft.world;
@@ -13,6 +13,7 @@ function illegalitemsb(item) {
     }
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.item.id) && !item.source.hasTag('paradoxOpped')) {
+        flag(item.source, "IllegalItems", "B", "Exploit", false, false, false, false);
         item.cancel = true;
         item.source.runCommand(`clear "${disabler(item.source.nameTag)}" "${item.item.id}"`);
         let tags = item.source.getTags();
