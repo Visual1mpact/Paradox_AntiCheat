@@ -54,9 +54,9 @@ export default
         "flya": true,
         "illegalitemsa": true,
         "illegalitemsb": true,
+        "illegalitemsc": true,
         "antiscaffolda": true,
         "antinukera": true,
-        "placeflagsa": true,
         "xraya": true,
         "banwindow": true
     },
@@ -128,6 +128,9 @@ export default
         "illegalitemsB": {
             "enabled": true
         },
+        "illegalitemsC": {
+            "enabled": true
+        },
         "antikbA": {
             "enabled": true,
             "magnitude": -0.078
@@ -139,9 +142,6 @@ export default
         "antinukerA": {
             "enabled": true,
             "max": 2
-        },
-        "placeflagsA": {
-            "enabled": true
         },
         "xrayA": {
             "enabled": true

@@ -52,7 +52,8 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!reachb§r - Checks
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!noslowa§r - Checks if player's are speed hacking."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!flya§r - Checks if player's are flying in survival."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsa§r - Checks if player's have illegal items in inventory."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsb§r - Checks if player's place illegal items."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsb§r - Checks if player's use illegal items."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!illegalitemsc§r - Checks if player's place illegal items."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antiscaffolda§r - Checks player's for illegal scaffolding."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!antinukera§r - Checks player's for nuking blocks."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!xraya§r - Notify's staff when and where player's mine specific ores."}]}

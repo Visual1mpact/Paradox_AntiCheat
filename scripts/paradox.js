@@ -35,7 +35,7 @@ import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametest
 import { onJoin } from "./penrose/playerjoinevent/onjoin/onjoin.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
-import { PlaceflagsA } from "./penrose/blockplaceevent/placeflags/placeflags_a.js";
+import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 // Import BeforeItemUseOn Events
 import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
@@ -159,8 +159,8 @@ if  (config.modules.antiscaffoldA.enabled) {
     ScaffoldA();
 }
 
-if  (config.modules.placeflagsA.enabled) {
-    PlaceflagsA();
+if  (config.modules.illegalitemsC.enabled) {
+    IllegalItemsC();
 }
 
 if (config.modules.reachA.enabled) {

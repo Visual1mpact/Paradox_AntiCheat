@@ -55,7 +55,7 @@ import { illegalitemsA } from "./settings/illegalitemsa.js";
 import { illegalitemsB } from "./settings/illegalitemsb.js";
 import { antiscaffoldA } from "./settings/antiscaffolda.js";
 import { antinukerA } from "./settings/antinukera.js";
-import { placeflagsA } from "./settings/placeflagsa.js";
+import { illegalitemsC } from "./settings/illegalitemsc.js";
 import { xrayA } from "./settings/xraya.js";
 import { banwindow } from "./settings/banwindow.js";
 
@@ -251,8 +251,8 @@ export function commandHandler(player, message) {
         case (config.customcommands.antinukera && commandName === "antinukera"):
             antinukerA(message);
             break;
-        case (config.customcommands.placeflagsa && commandName === "placeflagsa"):
-            placeflagsA(message);
+        case (config.customcommands.illegalitemsc && commandName === "illegalitemsc"):
+            illegalitemsC(message);
             break;
         case (config.customcommands.xraya && commandName === "xraya"):
             xrayA(message);
