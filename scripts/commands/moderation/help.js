@@ -15,8 +15,10 @@ export function help(message) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
+    // if not then show them non staff commands
     if (!player.hasTag('paradoxOpped')) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§4Non-Staff Commands"}]}`)
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6!report <username>§r - Report suspicious players to staff."}]}`);
     }
 
     return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function help`);
