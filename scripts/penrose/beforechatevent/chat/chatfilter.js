@@ -6,20 +6,23 @@ const World = Minecraft.world;
 const ChatFilter = () => {
     World.events.beforeChat.subscribe(msg => {
 
-        const player = msg.sender;
+        let message = msg.message
+        let player = msg.sender
 
-        // Modify the message before broadcasting
-        // Add custom tags to their messages if it exists or we fall back
-        // Filter for non ASCII characters and remove them in messages
-        if (player.name && player.name !== disabler(player.nameTag) && !msg.cancel) {
-            // We can't modify the name of the messenger. Might be hardcoded. So we use tellraw.
-            // This will be used if disabler(player.nameTag) is modified
-            player.runCommand(`tellraw @a {"rawtext":[{"text":"${disabler(player.nameTag)} ${msg.message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
+        let tags = player.getTags();
+        let rank;
+        for (const tag of tags) {
+            if (tag.startsWith('Rank:')) {
+                rank = tag.replace('Rank:', '');
+                rank = rank.replaceAll('--', '§4]§r§4[§6');
+            }
+        }
+        if (!rank) {
+            rank = "Member";
+        }
+        if (!msg.cancel) {
+            player.runCommand(`tellraw @a {"rawtext":[{"text":"§4[§6${rank}§4]§r §7${disabler(player.nameTag)}:§r ${message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
             msg.cancel = true;
-        } else if (player.name && player.name === disabler(player.nameTag)) {
-            // We can modify the message without using tellraw
-            // This will be used if disabler(player.nameTag) is not modified
-            msg.message = `${msg.message.replace(/[^\x00-\xFF]/g, "")}`;
         }
     });
 };

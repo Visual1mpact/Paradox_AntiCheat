@@ -70,7 +70,8 @@ tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!freeze <username>�
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!stats <username>§r - View a specific players anticheat logs."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!fullreport§r - View everyones anticheat logs."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!vanish§r - Enables/disables vanish (Used for spying on suspects)."}]}
-tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!tag <tag>§r - Adds tag to username in chat window."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!tag <username> Rank:rank§r - Add tags to username in chat window."}]}
+tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!tag <username> reset§r - Remove tags to username in chat window."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!clearchat§r - Clears chat."}]}
 tellraw @s[scores={gametestapi=1..}] {"rawtext":[{"text":"§6!invsee <username>§r - Lists all the items in the usernames inventory."}]}
 

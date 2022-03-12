@@ -1,4 +1,17 @@
+import * as Minecraft from "mojang-minecraft";
 import { disabler } from "../../util.js";
+
+const World = Minecraft.world;
+
+function resetTag(player, member) {
+    let sanitize = member.getTags();
+    for (let tag of sanitize) {
+        if (tag.startsWith('Rank:')) {
+            member.removeTag(tag);
+        }
+    }
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+}
 
 /**
  * @name tag
@@ -18,35 +31,46 @@ export function tag(message, args) {
 
     let player = message.sender;
 
-    // fixes a bug with this command not working if the nametag had invalid characters
-    player.nameTag = player.name;
-
     // make sure the user has permissions to run the command
-    try {
-        player.runCommand(`execute @a[name="${disabler(player.nameTag)}",tag=paradoxOpped] ~~~ list`);
-    } catch (error) {
+    if (!player.hasTag('paradoxOpped')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // try to find the player requested
+    for (let pl of World.getPlayers()) {
+        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
+            var member = pl; 
+        }
+    }
+
+    if (!member) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
     // check if array contains the string 'reset'
     let argcheck = args.includes('reset');
 
-    // reset user nametag
+    // reset rank
     if (argcheck === true) {
-        player.nameTag = player.name;
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has reset their nametag"}]}`);
-    }
-    
-    let nametag = `§4[§6${args.join(" ")}§4]§r <${player.name}>`;
-    
-    // input sanitization
-    nametag = nametag.replace("\\", "").replace("\"", "");
-
-    if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a tag!"}]}`);
+        resetTag(player, member);
     }
 
-    player.nameTag = nametag;
+    if (args[0] === disabler(member.nameTag) && args[1]) {
+        if (args[1].startsWith('Rank:')) {
+            resetTag(player, member);
+            player.runCommand(`tag ${disabler(member.nameTag)} add ${args[1]}`);
+        } else {
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
+            return player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"!tag ${disabler(member.nameTag)} Rank:Admin--VIP--Helper"}]}`);
+        }
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
+        return player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"!tag ${disabler(member.nameTag)} Rank:Admin--VIP--Helper"}]}`);
+    }
 
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${player.name} has changed their nametag to ${nametag}"}]}`);
+    if (disabler(player.nameTag) === disabler(member.nameTag)) {
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed their rank!"}]}`);
+    }
+
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed the rank of ${disabler(member.nameTag)}!"}]}`);
 }
