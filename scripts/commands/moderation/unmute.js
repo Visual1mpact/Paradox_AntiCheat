@@ -31,9 +31,10 @@ export function unmute(message, args) {
     if (!args.length) return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide who to mute!"}]}`);
     
     // try to find the player requested
+    let member;
     for (let pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
-            var member = pl;
+            member = pl;
         }
     }
     
