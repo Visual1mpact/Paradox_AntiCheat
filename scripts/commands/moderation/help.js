@@ -17,13 +17,13 @@ export function help(message) {
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
     if (!player.hasTag('paradoxOpped')) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§4Non-Staff Commands"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Non-Staff Commands§6]§r"}]}`);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6!report <username>§r - Report suspicious players to staff."}]}`);
     }
 
-    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§4Paradox AntiCheat Command Help"}]}`);
+    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§6[§4Paradox AntiCheat Command Help§6]§r"}]}`);
 
-    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§4Moderation Commands"}]}`);
+    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§6[§4Moderation Commands§6]§r"}]}`);
 
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!help§r - Shows this help page."}]}`);
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!ban <username> <reason>§r - Ban the specified user."}]}`);
@@ -36,7 +36,7 @@ export function help(message) {
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!deop <username>§r - Revokes Op player in Paradox AntiCheat features."}]}`);
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!modules§r - View all enabled or disabled modules."}]}`);
 
-    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§4Optional Features"}]}`);
+    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§6[§4Optional Features§6]§r"}]}`);
 
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!allowgma§r - Enables/disables Gamemode 2(Adventure) to be used."}]}`);
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!allowgmc§r - Enables/disables Gamemode 1(Creative) to be used."}]}`);
@@ -73,7 +73,7 @@ export function help(message) {
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!xraya§r - Notify's staff when and where player's mine specific ores."}]}`);
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!banwindow§r - Disables server ban to allow banned players to join (Does not include global ban)."}]}`);
 
-    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§4Tools and Utilites"}]}`);
+    player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"\n§l§6[§4Tools and Utilites§6]§r"}]}`);
 
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!auracheck <username>§r - Manual test for KillAura."}]}`);
     player.runCommand(`tellraw ${disabler(player.nameTag)} {"rawtext":[{"text":"§6!ecwipe <username>§r - Clears a players ender chest."}]}`);
