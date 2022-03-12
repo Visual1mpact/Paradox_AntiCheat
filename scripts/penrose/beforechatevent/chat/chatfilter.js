@@ -6,8 +6,8 @@ const World = Minecraft.world;
 const ChatFilter = () => {
     World.events.beforeChat.subscribe(msg => {
 
-        let message = msg.message
-        let player = msg.sender
+        let message = msg.message;
+        let player = msg.sender;
 
         let tags = player.getTags();
         let rank;
@@ -20,8 +20,10 @@ const ChatFilter = () => {
         if (!rank) {
             rank = "Member";
         }
+        let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
+        player.nameTag = nametag;
         if (!msg.cancel) {
-            player.runCommand(`tellraw @a {"rawtext":[{"text":"§4[§6${rank}§4]§r §7${disabler(player.nameTag)}:§r ${message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
+            player.runCommand(`tellraw @a {"rawtext":[{"text":"§4[§6${rank}§4]§r §7${player.name}:§r ${message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
             msg.cancel = true;
         }
     });

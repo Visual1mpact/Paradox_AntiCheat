@@ -31,6 +31,9 @@ export function tag(message, args) {
 
     let player = message.sender;
 
+    // fixes a bug that kills !tag when using custom names
+    player.nameTag = player.name;
+
     // make sure the user has permissions to run the command
     if (!player.hasTag('paradoxOpped')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
@@ -54,6 +57,7 @@ export function tag(message, args) {
     // reset rank
     if (argcheck === true) {
         resetTag(player, member);
+        return;
     }
 
     if (args[0] === disabler(member.nameTag) && args[1]) {
