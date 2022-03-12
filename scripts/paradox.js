@@ -13,7 +13,6 @@ import { PrefixCommand } from "./penrose/beforechatevent/chat/prefixcommand.js";
 import { ChatFilter } from "./penrose/beforechatevent/chat/chatfilter.js";
 import { AntiSpam, timer } from "./penrose/beforechatevent/chat/antispam.js";
 // Import Tick Events
-import { GlobalBanList } from "./penrose/tickevent/ban/globalbanlist.js";
 import { ServerBan } from "./penrose/tickevent/ban/serverban.js";
 import { CrasherA } from "./penrose/tickevent/crasher/crasher_a.js";
 import { NamespoofA } from "./penrose/tickevent/namespoof/namespoof_a.js";
@@ -33,6 +32,7 @@ import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
 // Import JoinPlayer Events
 import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
 import { onJoin } from "./penrose/playerjoinevent/onjoin/onjoin.js";
+import { GlobalBanList } from "./penrose/playerjoinevent/ban/globalbanlist.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
@@ -76,7 +76,6 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
-GlobalBanList();
 PlayerPosition();
 
 if (!config.modules.banWindow.enabled) {
@@ -153,6 +152,7 @@ if (config.modules.reachB.enabled) {
 // JoinPlayer Events
 GametestCheck();
 onJoin();
+GlobalBanList();
 
 // BlockPlace Events
 if  (config.modules.antiscaffoldA.enabled) {
