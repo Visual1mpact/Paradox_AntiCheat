@@ -1,37 +1,52 @@
 import * as Minecraft from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { setTickTimeout } from "../../../timer/scheduling.js";
 import { flag } from "../../../util.js";
 
 const World = Minecraft.world;
 
-// Custom object and property
-const _player = {
-    countblocks: 0
-};
-
-function onBeginTick() {
-    _player.countblocks = 0;
-}
+let blockTimer = new Map();
 
 function nukera(block) {
     if (config.modules.antinukerA.enabled === false) {
         World.events.blockBreak.unsubscribe(block => nukera(block));
         return;
     }
+
+    let timer;
+    if (blockTimer.has(block.player.nameTag)) {
+        timer = blockTimer.get(block.player.nameTag);
+    } else {
+        timer = [];
+    }
+
+    timer.push(new Date());
+
+    let tiktok = timer.filter(time => time.getTime() > new Date().getTime() - 100);
+    blockTimer.set(block.player.nameTag, tiktok);
+
     // Get the properties of the blocks being destroyed
     let blockID = block.brokenBlockPermutation.clone();
-
-    // Count how many blocks are broken simultaneously
-    if (!_player.countblocks) {
-        _player.countblocks = 0;
+    let { x, y, z } = block.block;
+    let dimension = block.dimension;
+    let blockLoc;
+    if (dimension === World.getDimension("overworld")) {
+        blockLoc = World.getDimension("overworld").getBlock(new Minecraft.BlockLocation(x, y, z));
     }
-    _player.countblocks++;
+    if (dimension === World.getDimension("nether")) {
+        blockLoc = World.getDimension("nether").getBlock(new Minecraft.BlockLocation(x, y, z));
+    }
+    if (dimension === World.getDimension("the end")) {
+        blockLoc = World.getDimension("the end").getBlock(new Minecraft.BlockLocation(x, y, z));
+    }
 
     // Flag and salvage broken blocks to their original forms
-    if (_player.countblocks >= config.modules.antinukerA.max && !block.player.hasTag('paradoxOpped')) {
-        flag(block.player, "Nuker", "A", "Break", "Nuke", false, false, false);
-        block.block.setPermutation(blockID);
+    if (tiktok.length >= config.modules.antinukerA.max && !block.player.hasTag('paradoxOpped')) {
+        flag(block.player, "Nuker", "A", "Break", false, false, false, false);
+        blockLoc.setPermutation(blockID);
+        try {
+            // Remove dropped items after nuking because it will leave a mess of entities in the world
+            block.player.runCommand(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
+        } catch (error) {}
 
         /* let tags = block.player.getTags();
 
@@ -52,7 +67,6 @@ function nukera(block) {
             block.player.triggerEvent('paradox:kick');
         } */
     }
-    setTickTimeout(() => onBeginTick(), 0.1);
 }
 
 const NukerA = () => {
