@@ -1,5 +1,4 @@
 import * as Minecraft from "mojang-minecraft";
-import { disabler } from "../../../util.js";
 
 const World = Minecraft.world;
 
