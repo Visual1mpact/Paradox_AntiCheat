@@ -58,6 +58,7 @@ import { antinukerA } from "./settings/antinukera.js";
 import { illegalitemsC } from "./settings/illegalitemsc.js";
 import { xrayA } from "./settings/xraya.js";
 import { banwindow } from "./settings/banwindow.js";
+import { prefix } from "./moderation/prefix.js";
 
 /**
  * @name commandHandler
@@ -259,6 +260,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.banwindow && commandName === "banwindow"):
             banwindow(message);
+            break;
+        case (commandName === "prefix"):
+            prefix(message, args);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

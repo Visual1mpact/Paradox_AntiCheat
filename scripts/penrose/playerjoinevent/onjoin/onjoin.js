@@ -1,6 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import { onJoinData } from "../../../data/onjoindata.js";
-import { disabler } from "../../../util.js";
+import { disabler, getPrefix } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -19,6 +19,7 @@ function onJoinTime() {
                 player.runCommand(`${onJoinData[i]}`);
             } catch (error) {}
         }
+        getPrefix(player);
         player.check = true;
     } catch (error) {}
     if (player.check) {

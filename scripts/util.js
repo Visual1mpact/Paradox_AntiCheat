@@ -1,4 +1,5 @@
 /* eslint no-var: "off"*/
+import config from "./data/config.js";
 
 /**
  * @name flag
@@ -115,8 +116,30 @@ export function getScore(objective, player, { minimum, maximum } = {}) {
     }
 }
 
+/**
+ * @name disabler
+ * @param {object} player - The player object
+ */
 export function disabler(player) {
     // fix a disabler method
     player = player.replace("\"", "");
     return player = player.replace("\\", "");
+}
+
+/**
+ * @name getPrefix
+ * @param {object} player - The player object
+ */
+ export function getPrefix(player) {
+    let customprefix;
+    let sanitize = player.getTags();
+    for (let tag of sanitize) {
+        if (tag.startsWith('Prefix:')) {
+            customprefix = tag.replace('Prefix:', '');
+            return config.customcommands.prefix = customprefix;
+        }
+    }
+    if (!customprefix) {
+        return config.customcommands.prefix = "!";
+    }
 }
