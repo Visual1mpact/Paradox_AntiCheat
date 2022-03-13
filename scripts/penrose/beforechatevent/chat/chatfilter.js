@@ -22,7 +22,7 @@ const ChatFilter = () => {
         let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
         player.nameTag = nametag;
         if (!msg.cancel) {
-            player.runCommand(`tellraw @a {"rawtext":[{"text":"§4[§6${rank}§4]§r §7${player.name}:§r ${message.replace(/[^\x00-\xFF]/g, "")}"}]}`);
+            player.runCommand(`tellraw @a {"rawtext":[{"text":"§4[§6${rank}§4]§r §7${player.name}:§r ${message}"}]}`);
             msg.cancel = true;
         }
     });
