@@ -60,11 +60,8 @@ export function tag(message, args) {
         return;
     }
 
-    // we don't want non ascii characters
-    let regex = /[^\x00-\xFF]/;
-
     if (args[0] === disabler(member.nameTag) && args[1]) {
-        if (args[1].startsWith('Rank:') && !regex.test(args[1])) {
+        if (args[1].startsWith('Rank:')) {
             resetTag(player, member);
             player.runCommand(`tag ${disabler(member.nameTag)} add ${args[1]}`);
         } else {
