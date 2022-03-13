@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.6.26](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.6.26) (2022-03-13)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.5.25...v2.6.26)
+
+**Closed issues:**
+
+- anti xray toggle [\#19](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/19)
+
 ## [v2.5.25](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.5.25) (2022-03-08)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.5.24...v2.5.25)
