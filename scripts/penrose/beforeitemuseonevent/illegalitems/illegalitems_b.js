@@ -11,11 +11,15 @@ function illegalitemsb(item) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
         return;
     }
+    // Only fire if entity is a Player
+    if (!(item.source instanceof Minecraft.Player)) {
+        return;
+    }
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.item.id) && !item.source.hasTag('paradoxOpped')) {
         flag(item.source, "IllegalItems", "B", "Exploit", false, false, false, false);
         item.cancel = true;
-        item.source.runCommand(`clear "${disabler(item.source.nameTag)}" "${item.item.id}"`);
+        item.source.runCommand(`clear "${disabler(item.source.nameTag)}" ${item.item.id}`);
         let tags = item.source.getTags();
 
         // This removes old ban tags
