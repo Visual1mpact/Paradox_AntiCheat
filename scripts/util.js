@@ -1,4 +1,5 @@
 /* eslint no-var: "off"*/
+import { Location, world } from "mojang-minecraft";
 import config from "./data/config.js";
 
 /**
@@ -142,4 +143,27 @@ export function disabler(player) {
     if (!customprefix) {
         return config.customcommands.prefix = "!";
     }
+}
+
+/**
+ * @name tagRank
+ * @param {object} player - The player object
+ */
+export function tagRank(player) {
+    let tags = player.getTags();
+    let rank;
+    for (const tag of tags) {
+        if (tag.startsWith('Rank:')) {
+            rank = tag.replace('Rank:', '');
+            rank = rank.replaceAll('--', '§4]§r§4[§6');
+        }
+    }
+    if (!rank) {
+        rank = "Member";
+    }
+    let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
+    player.nameTag = nametag;
+    const dimension = player.dimension;
+    // This refreshes the nameTag in the World
+    player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, player.bodyRotation);
 }

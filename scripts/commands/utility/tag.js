@@ -1,5 +1,5 @@
 import * as Minecraft from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import { disabler, tagRank } from "../../util.js";
 
 const World = Minecraft.world;
 
@@ -57,25 +57,27 @@ export function tag(message, args) {
     // reset rank
     if (argcheck === true) {
         resetTag(player, member);
+        tagRank(member);
         return;
     }
 
-    if (args[0] === disabler(member.nameTag) && args[1]) {
+    if (args[0] === member.name && args[1]) {
         if (args[1].startsWith('Rank:')) {
             resetTag(player, member);
-            player.runCommand(`tag ${disabler(member.nameTag)} add ${args[1]}`);
+            player.runCommand(`tag "${disabler(member.nameTag)}" add ${args[1]}`);
+            tagRank(member);
         } else {
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
-            return player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"!tag ${disabler(member.nameTag)} Rank:Admin--VIP--Helper"}]}`);
+            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"!tag ${member.name} Rank:Admin--VIP--Helper"}]}`);
         }
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
-        return player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"!tag ${disabler(member.nameTag)} Rank:Admin--VIP--Helper"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"!tag ${member.name} Rank:Admin--VIP--Helper"}]}`);
     }
 
     if (disabler(player.nameTag) === disabler(member.nameTag)) {
         return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed their rank!"}]}`);
     }
 
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed the rank of ${disabler(member.nameTag)}!"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed the rank of ${member.name}!"}]}`);
 }

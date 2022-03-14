@@ -1,6 +1,6 @@
 import * as Minecraft from "mojang-minecraft";
 import { onJoinData } from "../../../data/onjoindata.js";
-import { disabler, getPrefix } from "../../../util.js";
+import { disabler, getPrefix, tagRank } from "../../../util.js";
 
 const World = Minecraft.world;
 
@@ -19,6 +19,9 @@ function onJoinTime() {
                 player.runCommand(`${onJoinData[i]}`);
             } catch (error) {}
         }
+        // Set up custom tag
+        tagRank(player);
+        // Set up custom prefix
         getPrefix(player);
         player.check = true;
     } catch (error) {}
