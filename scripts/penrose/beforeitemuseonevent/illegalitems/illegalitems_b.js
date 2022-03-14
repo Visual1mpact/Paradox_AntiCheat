@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { world, Player } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import { disabler, flag } from "../../../util.js";
 import config from "../../../data/config.js";
@@ -12,7 +12,7 @@ function illegalitemsb(item) {
         return;
     }
     // Only fire if entity is a Player
-    if (!(item.source instanceof Minecraft.Player)) {
+    if (!(item.source instanceof Player)) {
         return;
     }
     // If somehow they bypass illegalitems/A then snag them when they use the item
