@@ -1,7 +1,7 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { commandHandler } from "../../../commands/handler.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function prefixcommand(msg) {
     const player = msg.sender;

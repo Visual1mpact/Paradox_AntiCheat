@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
 // import { flag } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function reachb(block) {
     // Unsubscribe if disabled in-game

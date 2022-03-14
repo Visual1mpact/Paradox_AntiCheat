@@ -1,7 +1,7 @@
-import * as Minecraft from "mojang-minecraft";
+import { world, BlockLocation, Location } from "mojang-minecraft";
 import { getScore, disabler } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 const tickEventCallback = World.events.tick;
 const playerLeaveEventCallback = World.events.playerLeave;
 
@@ -39,7 +39,7 @@ function Freeze() {
             n = World.getDimension('nether'),
             e = World.getDimension('the end');
         let {x, y, z} = player.location;
-        let pos = new Minecraft.BlockLocation(
+        let pos = new BlockLocation(
             Math.floor(x),
             Math.floor(y),
             Math.floor(z)
@@ -73,7 +73,7 @@ function Freeze() {
         posy = Math.floor(245);
         posz = Math.floor(posz);
         // TP them at the new location in the overworld
-        player.teleport(new Minecraft.Location(posx, posy, posz), World.getDimension('overworld'), 0, player.bodyRotation);
+        player.teleport(new Location(posx, posy, posz), World.getDimension('overworld'), 0, player.bodyRotation);
         // Create prison around player
         try {
             player.runCommand(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier 0 hollow`);
@@ -97,7 +97,7 @@ function Freeze() {
     if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
         // If they move then tp them back
         try {
-            player.teleport(new Minecraft.Location(posx1, posy1, posz1), World.getDimension('overworld'), 0, player.bodyRotation);
+            player.teleport(new Location(posx1, posy1, posz1), World.getDimension('overworld'), 0, player.bodyRotation);
         } catch (error) {}
     }
 
@@ -125,7 +125,7 @@ function Freeze() {
         // Release from prison
         player.runCommand(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air 0 hollow`);
         // Return them back to original coordinates
-        player.teleport(new Minecraft.Location(backx, backy, backz), World.getDimension(realmID), 0, player.bodyRotation);
+        player.teleport(new Location(backx, backy, backz), World.getDimension(realmID), 0, player.bodyRotation);
         player.removeTag('freezeactive');
         playerLeaveEventCallback.unsubscribe(StopTickFreeze);
         tickEventCallback.unsubscribe(Freeze);

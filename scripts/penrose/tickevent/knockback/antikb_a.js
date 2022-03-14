@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { flag, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function antiknockbacka() {
     // Unsubscribe if disabled in-game

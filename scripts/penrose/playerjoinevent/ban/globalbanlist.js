@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { banplayer } from "../../../data/globalban.js";
 import { banMessage, disabler } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 const tickEventCallback = World.events.tick;
 

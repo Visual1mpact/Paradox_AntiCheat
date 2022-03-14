@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.world;
+const World = world;
 
 const spamCheck = new Map();
 

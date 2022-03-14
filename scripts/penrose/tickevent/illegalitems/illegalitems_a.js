@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { disabler, flag } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function illegalitemsa() {
     // Unsubscribe if disabled in-game
@@ -24,7 +24,7 @@ function illegalitemsa() {
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.id > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "A", "Exploit", false, false, false, false);
                 try {
-                    inventory.setItem(i, new Minecraft.ItemStack(Minecraft.MinecraftItemTypes.air));
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
                 } catch {}
                 let tags = player.getTags();
 

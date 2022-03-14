@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world, EntityQueryOptions } from "mojang-minecraft";
 import { banMessage } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function serverban() {
     // Unsubscribe if disabled in-game
@@ -11,7 +11,7 @@ function serverban() {
         World.events.tick.unsubscribe(serverban);
         return;
     }
-    let tag = new Minecraft.EntityQueryOptions();
+    let tag = new EntityQueryOptions();
     tag.tags = ['isBanned'];
     // run as each player
     for (let player of World.getPlayers(tag)) {

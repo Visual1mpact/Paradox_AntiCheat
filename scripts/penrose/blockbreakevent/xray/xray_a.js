@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { xrayblocks } from "../../../data/xray.js";
 import { disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function xraya(datablock) {
     // Unsubscribe if disabled in-game

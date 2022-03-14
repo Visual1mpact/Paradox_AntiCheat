@@ -1,9 +1,9 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { disabler } from "../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function mayflydisable(player, member) {
     if (disabler(player.nameTag) === disabler(member.nameTag)) {

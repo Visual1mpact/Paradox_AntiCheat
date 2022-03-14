@@ -1,6 +1,6 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 
-const World = Minecraft.world;
+const World = world;
 
 const ChatFilter = () => {
     World.events.beforeChat.subscribe(msg => {

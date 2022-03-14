@@ -1,9 +1,9 @@
 /* eslint no-var: "off"*/
-import * as Minecraft from "mojang-minecraft";
+import { world, MinecraftEffectTypes } from "mojang-minecraft";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
 import { disabler } from "../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 /**
  * @name freeze
@@ -62,13 +62,13 @@ export function freeze(message, args) {
 
     if (!member.hasTag('nofreeze')) {
         // Blindness
-        member.addEffect(Minecraft.MinecraftEffectTypes.blindness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.blindness, 1000000, 255);
         // Mining Fatigue
-        member.addEffect(Minecraft.MinecraftEffectTypes.miningFatigue, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.miningFatigue, 1000000, 255);
         // Weakness
-        member.addEffect(Minecraft.MinecraftEffectTypes.weakness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.weakness, 1000000, 255);
         // Slowness
-        member.addEffect(Minecraft.MinecraftEffectTypes.slowness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.slowness, 1000000, 255);
     }
 
     if (!member.hasTag('nofreeze')) {

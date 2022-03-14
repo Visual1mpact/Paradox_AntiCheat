@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world, Location, BlockLocation } from "mojang-minecraft";
 import { flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.world;
+const World = world;
 
 let BlockAtPlayer1;
 let BlockAtPlayer2;
@@ -14,7 +14,7 @@ const _player = {
 };
 
 function timer(player, dimension, x, y, z) {
-    player.teleport(new Minecraft.Location(x, y - 2, z), dimension, 0, player.bodyRotation);
+    player.teleport(new Location(x, y - 2, z), dimension, 0, player.bodyRotation);
     flag(player, "Jesus", "A", "Movement", false, false, false, false);
     _player.count = 0;
 }
@@ -33,11 +33,11 @@ function jesusa(){
         const dimension = player.dimension;
         try {
             // Below player
-            BlockAtPlayer1 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y, z));
+            BlockAtPlayer1 = player.dimension.getBlock(new BlockLocation(x, y, z));
             // Mid player
-            BlockAtPlayer2 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 1, z));
+            BlockAtPlayer2 = player.dimension.getBlock(new BlockLocation(x, y + 1, z));
             // Above player
-            BlockAtPlayer3 = player.dimension.getBlock(new Minecraft.BlockLocation(x, y + 2, z));
+            BlockAtPlayer3 = player.dimension.getBlock(new BlockLocation(x, y + 2, z));
         } catch (error) {}
 
         if (!player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer3.type.id != "minecraft:water" && BlockAtPlayer2.type.id != "minecraft:water" || !player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer3.type.id != "minecraft:lava" && BlockAtPlayer2.type.id != "minecraft:lava") {

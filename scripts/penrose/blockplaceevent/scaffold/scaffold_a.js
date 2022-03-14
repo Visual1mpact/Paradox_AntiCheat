@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { setTickTimeout } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 import { flag, disabler } from "../../../util.js";
 
-let World = Minecraft.world;
+let World = world;
 
 // Custom object and property
 const _player = {

@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import { disabler } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 const PlayerPosition = () => {
     setTickInterval(() => {

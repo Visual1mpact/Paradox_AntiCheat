@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world, BlockLocation } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 let blockTimer = new Map();
 
@@ -30,13 +30,13 @@ function nukera(block) {
     let dimension = block.dimension;
     let blockLoc;
     if (dimension === World.getDimension("overworld")) {
-        blockLoc = World.getDimension("overworld").getBlock(new Minecraft.BlockLocation(x, y, z));
+        blockLoc = World.getDimension("overworld").getBlock(new BlockLocation(x, y, z));
     }
     if (dimension === World.getDimension("nether")) {
-        blockLoc = World.getDimension("nether").getBlock(new Minecraft.BlockLocation(x, y, z));
+        blockLoc = World.getDimension("nether").getBlock(new BlockLocation(x, y, z));
     }
     if (dimension === World.getDimension("the end")) {
-        blockLoc = World.getDimension("the end").getBlock(new Minecraft.BlockLocation(x, y, z));
+        blockLoc = World.getDimension("the end").getBlock(new BlockLocation(x, y, z));
     }
 
     // Flag and salvage broken blocks to their original forms

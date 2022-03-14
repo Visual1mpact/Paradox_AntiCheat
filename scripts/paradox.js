@@ -1,5 +1,5 @@
 // Import Customs
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import config from "./data/config.js";
 import { setTickInterval } from "./timer/scheduling.js";
 import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
@@ -41,7 +41,7 @@ import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 
 // Self explanatory
-const World = Minecraft.world;
+const World = world;
 
 // Define globally within script
 let hastag;

@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function bedrockvalidate() {
     // Unsubscribe if disabled in-game

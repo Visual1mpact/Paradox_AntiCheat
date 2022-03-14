@@ -1,7 +1,7 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { disabler } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 const tickEventCallback = World.events.tick;
 

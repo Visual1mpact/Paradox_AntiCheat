@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function illegalitemsc(block) {
     // Unsubscribe if disabled in-game

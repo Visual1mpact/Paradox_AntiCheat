@@ -1,7 +1,7 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { disabler, tagRank } from "../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 function resetTag(player, member) {
     let sanitize = member.getTags();

@@ -1,9 +1,9 @@
-import * as Minecraft from "mojang-minecraft";
+import { world, EntityQueryOptions, Location} from "mojang-minecraft";
 import { getScore, disabler } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
-const World = Minecraft.world;
+const World = world;
 
 const playersOldCoordinates = new Map();
 
@@ -17,7 +17,7 @@ function time(player, x, y, z) {
     let test = getScore("fly_timer", player);
     let dimension = player.dimension;
     if (test >= 6 && check === 1) {
-        player.teleport(new Minecraft.Location(x, y, z), dimension, 0, player.bodyRotation);
+        player.teleport(new Location(x, y, z), dimension, 0, player.bodyRotation);
     }
     
 }
@@ -29,7 +29,7 @@ function flya() {
         return;
     }
     // Set .gameMode to survival
-    let gm = new Minecraft.EntityQueryOptions();
+    let gm = new EntityQueryOptions();
     gm.gameMode = 0;
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {

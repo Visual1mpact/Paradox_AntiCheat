@@ -1,9 +1,9 @@
 /**
  * Imported from https://github.com/notbeer/Gametest-API-Wrapper/blob/main/src/library/utils/scheduling.ts
  */
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 
-const World = Minecraft.world;
+const World = world;
 
 const tickTimeoutMap = new Map();
 const tickIntervalMap = new Map();

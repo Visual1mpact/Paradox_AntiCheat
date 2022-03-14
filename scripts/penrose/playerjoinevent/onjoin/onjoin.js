@@ -1,8 +1,8 @@
-import * as Minecraft from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { disabler, getPrefix, tagRank } from "../../../util.js";
 
-const World = Minecraft.world;
+const World = world;
 
 const tickEventCallback = World.events.tick;
 
