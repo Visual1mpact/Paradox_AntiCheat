@@ -59,6 +59,7 @@ import { illegalitemsC } from "./settings/illegalitemsc.js";
 import { xrayA } from "./settings/xraya.js";
 import { banwindow } from "./settings/banwindow.js";
 import { prefix } from "./moderation/prefix.js";
+import { chatranks } from "./settings/chat.js";
 
 /**
  * @name commandHandler
@@ -96,7 +97,7 @@ export function commandHandler(player, message) {
         case (config.customcommands.kick && commandName === "kick"):
             kick(message, args);
             break;
-        case (config.customcommands.tag && commandName === "tag"):
+        case (config.modules.chatranks.enabled === true && config.customcommands.tag && commandName === "tag"):
             tag(message, args);
             break;
         case (config.customcommands.ban && commandName === "ban"):
@@ -263,6 +264,9 @@ export function commandHandler(player, message) {
             break;
         case (commandName === "prefix"):
             prefix(message, args);
+            break;
+        case (config.customcommands.chatranks && commandName === "chatranks"):
+            chatranks(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

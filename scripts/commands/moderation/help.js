@@ -1,3 +1,4 @@
+import config from "../../data/config.js";
 import { disabler, getPrefix } from "../../util.js";
 
 /**
@@ -77,6 +78,7 @@ export function help(message) {
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}antinukera§r - Checks player's for nuking blocks."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}xraya§r - Notify's staff when and where player's mine specific ores."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}banwindow§r - Disables server ban to allow banned players to join (Does not include global ban)."}]}`);
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}chatranks§r - Enables/Disables chat ranks."}]}`);
 
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Tools and Utilites§6]§r"}]}`);
 
@@ -87,8 +89,10 @@ export function help(message) {
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}stats <username>§r - View a specific players anticheat logs."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}fullreport§r - View everyones anticheat logs."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}vanish§r - Enables/disables vanish (Used for spying on suspects)."}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}tag <username> Rank:rank§r - Add tags to username in chat window."}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}tag <username> reset§r - Remove tags to username in chat window."}]}`);
+    if (config.modules.chatranks.enabled === true) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}tag <username> Rank:rank§r - Add ranks to username."}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}tag <username> reset§r - Remove rank to username."}]}`);
+    }
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}clearchat§r - Clears chat."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}invsee <username>§r - Lists all the items in the usernames inventory."}]}`);
 

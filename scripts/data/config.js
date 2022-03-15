@@ -58,7 +58,8 @@ export default
         "antiscaffolda": true,
         "antinukera": true,
         "xraya": true,
-        "banwindow": true
+        "banwindow": true,
+        "chatranks": true
     },
     "modules": {
         "badpackets2": {
@@ -148,6 +149,9 @@ export default
         },
         "banWindow": {
             "enabled": false
+        },
+        "chatranks": {
+            "enabled": true
         }
     }
 };
