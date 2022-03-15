@@ -1,60 +1,61 @@
-import { world } from "mojang-minecraft";
-import { setTickTimeout } from "../../../timer/scheduling.js";
+import { world, BlockLocation, MinecraftBlockTypes } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { flag, disabler } from "../../../util.js";
+import { flag } from "../../../util.js";
 
 let World = world;
 
-// Custom object and property
-const _player = {
-    countblocks: 0,
-};
+let blockTimer = new Map();
 
-// This function will be called when tick event is triggered from the ScaffoldA function
-function time() {
-    _player.countblocks = 0;
-}
-
-function scaffolda(block) {
+function scaffolda(object) {
     // Unsubscribe if disabled in-game
     if (config.modules.antiscaffoldA.enabled === false) {
         World.events.blockPlace.unsubscribe(scaffolda);
         return;
     }
-    // Count how many blocks are placed simultaneously
-    if (!_player.countblocks) {
-        _player.countblocks = 0;
-    }
-    _player.countblocks++;
 
-    if (_player.countblocks >= config.modules.antiscaffoldA.max && !block.player.hasTag('paradoxOpped')) {
-        flag(block.player, "Scaffold", "A", "Placement", "Spam", false, false, false);
-        block.player.runCommand(`setblock ${block.block.x} ${block.block.y} ${block.block.z} air 0 destroy`);
-        let tags = block.player.getTags();
+    // Properties from class
+    let { block, player, dimension } = object;
+    // Block coordinates
+    let { x, y, z } = block.location;
+
+    let timer;
+    if (blockTimer.has(player.nameTag)) {
+        timer = blockTimer.get(player.nameTag);
+    } else {
+        timer = [];
+    }
+
+    timer.push(new Date());
+
+    let tiktok = timer.filter(time => time.getTime() > new Date().getTime() - 100);
+    blockTimer.set(player.nameTag, tiktok);
+
+    if (tiktok.length >= config.modules.antiscaffoldA.max && !player.hasTag('paradoxOpped')) {
+        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
+        flag(player, "Scaffold", "A", "Placement", false, false, false, false);
+        /*let tags = player.getTags();
 
         // This removes old ban tags
         tags.forEach(t => {
             if(t.startsWith("Reason:")) {
-                block.player.removeTag(t);
+                player.removeTag(t);
             }
             if(t.startsWith("By:")) {
-                block.player.removeTag(t);
+                player.removeTag(t);
             }
         });
         try {
-            block.player.runCommand(`tag "${disabler(block.player.nameTag)}" add "Reason:Illegal Scaffolding"`);
-            block.player.runCommand(`tag "${disabler(block.player.nameTag)}" add "By:Paradox"`);
-            block.player.addTag('isBanned');
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Scaffolding"`);
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('isBanned');
         } catch (error) {
-            block.player.triggerEvent('paradox:kick');
-        }
+            player.triggerEvent('paradox:kick');
+        }*/
     }
-    // Delay the function by 1 second
-    setTickTimeout(() => time(), 20);
 }
 
 const ScaffoldA = () => {
-    World.events.blockPlace.subscribe(block => scaffolda(block));
+    World.events.blockPlace.subscribe(object => scaffolda(object));
 };
 
 export { ScaffoldA };

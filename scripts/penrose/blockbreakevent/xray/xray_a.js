@@ -5,27 +5,27 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function xraya(datablock) {
+function xraya(object) {
     // Unsubscribe if disabled in-game
     if (config.modules.xrayA.enabled === false) {
         World.events.blockBreak.unsubscribe(xraya);
         return;
     }
-    let player = datablock.player;
-    let blocks = datablock.brokenBlockPermutation.type.id;
-    let posx = datablock.player.location.x;
-    let posy = datablock.player.location.y;
-    let posz = datablock.player.location.z;
 
-    if (xrayblocks.includes(blocks) && !player.hasTag('paradoxOpped')) {
+    // Properties from class
+    let { player, brokenBlockPermutation } = object;
+    // Player coordinates
+    let { x, y, z } = player.location;
+
+    if (xrayblocks.includes(brokenBlockPermutation.type.id) && !player.hasTag('paradoxOpped')) {
         try{
-            datablock.player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r §4[Xray]§r ${disabler(player.nameTag).replace("\"", "").replace("\\", "")}§6 has found §r1x ${blocks.replace("minecraft:", "")}§6 at X= §r${posx.toFixed(0)}§6 Y= §r${posy.toFixed(0)}§6 Z= §r${posz.toFixed(0)}."}]}`);
+            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r §4[Xray]§r ${disabler(player.nameTag).replace("\"", "").replace("\\", "")}§6 has found §r1x ${brokenBlockPermutation.type.id.replace("minecraft:", "")}§6 at X=§r${x.toFixed(0)}§6 Y=§r${y.toFixed(0)}§6 Z=§r${z.toFixed(0)}."}]}`);
         } catch(error) {}
     }
 }
 
 const XrayA = () => {
-    World.events.blockBreak.subscribe(datablock => xraya(datablock));
+    World.events.blockBreak.subscribe(object => xraya(object));
 };
 
 export { XrayA };
