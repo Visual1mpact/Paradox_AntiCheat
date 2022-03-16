@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, EntityHealableComponent } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes } from "mojang-minecraft";
 import { fishbuckets, illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { disabler, flag } from "../../../util.js";
