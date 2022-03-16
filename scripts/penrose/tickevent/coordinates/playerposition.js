@@ -10,9 +10,9 @@ const PlayerPosition = () => {
         for (let player of World.getPlayers()) {
             // player position
             try {
-                player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" xPos ${Math.floor(player.location.x)}`);
-                player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" yPos ${Math.floor(player.location.y)}`);
-                player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" zPos ${Math.floor(player.location.z)}`);
+                player.runCommand(`scoreboard players set ${disabler(player.nameTag)} xPos ${Math.floor(player.location.x)}`);
+                player.runCommand(`scoreboard players set ${disabler(player.nameTag)} yPos ${Math.floor(player.location.y)}`);
+                player.runCommand(`scoreboard players set ${disabler(player.nameTag)} zPos ${Math.floor(player.location.z)}`);
             } catch(e) {}
         }
     }, 20); // Executes every 1 seconds

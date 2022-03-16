@@ -45,8 +45,8 @@ function scaffolda(object) {
             }
         });
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Scaffolding"`);
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.runCommand(`tag ${disabler(player.nameTag)} add "Reason:Illegal Scaffolding"`);
+            player.runCommand(`tag ${disabler(player.nameTag)} add "By:Paradox"`);
             player.addTag('isBanned');
         } catch (error) {
             player.triggerEvent('paradox:kick');

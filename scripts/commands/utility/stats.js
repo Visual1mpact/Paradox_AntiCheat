@@ -28,7 +28,7 @@ export function stats(message, args) {
     }
 
     if (!args.length) {
-        return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function tools/stats`);
+        return player.runCommand(`execute ${disabler(player.nameTag)} ~~~ function tools/stats`);
     }
     
     // try to find the player requested

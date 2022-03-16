@@ -26,8 +26,8 @@ function crashera() {
                 }
             });
             try {
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Crasher"`);
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+                player.runCommand(`tag ${disabler(player.nameTag)} add "Reason:Crasher"`);
+                player.runCommand(`tag ${disabler(player.nameTag)} add "By:Paradox"`);
                 player.addTag('isBanned');
             } catch (error) {
                 player.triggerEvent('paradox:kick');

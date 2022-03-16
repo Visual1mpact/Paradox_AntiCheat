@@ -9,16 +9,16 @@ const tickEventCallback = World.events.tick;
 function banHammerTime(player) {
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}"]`);
+        player.runCommand(`testfor @a[name=${disabler(player.nameTag)}]`);
         // Check global ban list and if the player who is joining is on the server then kick them out
         if (banplayer.some(code => JSON.stringify(code) === JSON.stringify({ name: player.nameTag }))) {
             if (!player.hasTag('By:Paradox Anticheat')) {
                 // if they are not tagged then we do that here before we ban
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox Anticheat"`);
+                player.runCommand(`tag ${disabler(player.nameTag)} add "By:Paradox Anticheat"`);
             }
             if (!player.hasTag('Reason:You are Paradox Anticheat global banned!')) {
                 // if they are not tagged then we do that here before we ban
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:You are Paradox Anticheat global banned!"`);
+                player.runCommand(`tag ${disabler(player.nameTag)} add "Reason:You are Paradox Anticheat global banned!"`);
             }
             banMessage(player);
         }

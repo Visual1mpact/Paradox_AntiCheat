@@ -12,7 +12,7 @@ let player;
 function onJoinTime() {
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor @a[name="${disabler(player.nameTag)}"]`);
+        player.runCommand(`testfor @a[name=${disabler(player.nameTag)}]`);
         // We execute each command in the list
         for (let i=0; i < onJoinData.length; i++) {
             try {
