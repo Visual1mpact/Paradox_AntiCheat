@@ -1,6 +1,6 @@
 import { disabler } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
+import { world, Location } from "mojang-minecraft";
 
 /**
  * @name chatranks
@@ -27,6 +27,7 @@ export function chatranks(message) {
         // Allow
         config.modules.chatranks.enabled = true;
         for (let pl of world.getPlayers()) {
+            const dimension = pl.dimension;
             // This refreshes the nameTag in the World for everyone online
             pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }
@@ -36,6 +37,7 @@ export function chatranks(message) {
         // Deny
         config.modules.chatranks.enabled = false;
         for (let pl of world.getPlayers()) {
+            const dimension = pl.dimension;
             // This refreshes the nameTag in the World for everyone online
             pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }

@@ -59,7 +59,7 @@ import { illegalitemsC } from "./settings/illegalitemsc.js";
 import { xrayA } from "./settings/xraya.js";
 import { banwindow } from "./settings/banwindow.js";
 import { prefix } from "./moderation/prefix.js";
-import { chatranks } from "./settings/chat.js";
+import { chatranks } from "./settings/chatranks.js";
 
 /**
  * @name commandHandler
