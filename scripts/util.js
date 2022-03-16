@@ -167,3 +167,18 @@ export function tagRank(player) {
     // This refreshes the nameTag in the World
     player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, player.bodyRotation);
 }
+
+/**
+ * @name resetTag
+ * @param {object} player - The player object
+ * @param {object} member - The other player object
+ */
+export function resetTag(player, member) {
+    let sanitize = member.getTags();
+    for (let tag of sanitize) {
+        if (tag.startsWith('Rank:')) {
+            member.removeTag(tag);
+        }
+    }
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+}

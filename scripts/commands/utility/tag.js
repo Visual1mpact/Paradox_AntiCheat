@@ -1,17 +1,7 @@
 import { world } from "mojang-minecraft";
-import { disabler, tagRank } from "../../util.js";
+import { disabler, tagRank, resetTag } from "../../util.js";
 
 const World = world;
-
-function resetTag(player, member) {
-    let sanitize = member.getTags();
-    for (let tag of sanitize) {
-        if (tag.startsWith('Rank:')) {
-            member.removeTag(tag);
-        }
-    }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
-}
 
 /**
  * @name tag
