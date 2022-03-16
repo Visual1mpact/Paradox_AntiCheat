@@ -70,6 +70,21 @@ function illegalitemsa() {
                         inventory.setItem(i, new ItemStack(MinecraftItemTypes.tropicalFishBucket));
                     } catch {}
                 }
+                if (inventory_item.id === 'minecraft:powder_snow_bucket') {
+                    try {
+                        inventory.setItem(i, new ItemStack(MinecraftItemTypes.powderSnowBucket));
+                    } catch {}
+                }
+                if (inventory_item.id === 'minecraft:pufferfish_bucket') {
+                    try {
+                        inventory.setItem(i, new ItemStack(MinecraftItemTypes.pufferfishBucket));
+                    } catch {}
+                }
+                if (inventory_item.id === 'minecraft:tadpole_bucket') {
+                    try {
+                        inventory.setItem(i, new ItemStack(MinecraftItemTypes.tadpoleBucket));
+                    } catch {}
+                }
             }
         }
     }

@@ -55,5 +55,8 @@ export const fishbuckets = [
   'minecraft:axolotl_bucket',
   'minecraft:cod_bucket',
   'minecraft:salmon_bucket',
-  'minecraft:tropical_fish_bucket'
+  'minecraft:tropical_fish_bucket',
+  'minecraft:powder_snow_bucket',
+  'minecraft:pufferfish_bucket',
+  'minecraft:tadpole_bucket'
 ];
