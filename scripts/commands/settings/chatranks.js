@@ -1,4 +1,4 @@
-import { disabler } from "../../util.js";
+import { disabler, tagRank } from "../../util.js";
 import config from "../../data/config.js";
 import { world, Location } from "mojang-minecraft";
 
@@ -28,6 +28,8 @@ export function chatranks(message) {
         config.modules.chatranks.enabled = true;
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
+            // Restore their custom nametag
+            tagRank(pl);
             // This refreshes the nameTag in the World for everyone online
             pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }
@@ -38,6 +40,8 @@ export function chatranks(message) {
         config.modules.chatranks.enabled = false;
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
+            // Reset their nametag to its original name
+            pl.nameTag = pl.name;
             // This refreshes the nameTag in the World for everyone online
             pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }

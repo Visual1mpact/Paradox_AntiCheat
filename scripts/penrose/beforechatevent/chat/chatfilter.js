@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
+import { disabler } from "../../../util.js";
 
 const World = world;
 
@@ -26,6 +27,12 @@ const ChatFilter = () => {
                 player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]})}`);
                 msg.cancel = true;
             }
+        } else if (!msg.cancel) {
+            let message = msg.message;
+            let player = msg.sender;
+
+            player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]})}`);
+            msg.cancel = true;
         }
     });
 };
