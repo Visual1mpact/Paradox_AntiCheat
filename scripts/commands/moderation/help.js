@@ -14,6 +14,9 @@ export function help(message) {
     message.cancel = true;
 
     let player = message.sender;
+
+    // Check for custom prefix
+    let prefix = getPrefix(player);
     
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
@@ -21,9 +24,6 @@ export function help(message) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Non-Staff Commands§6]§r"}]}`);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}report <username>§r - Report suspicious players to staff."}]}`);
     }
-
-    // Check for custom prefix
-    let prefix = getPrefix(player);
 
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Paradox AntiCheat Command Help§6]§r"}]}`);
 
