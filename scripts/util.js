@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { Location, world } from "mojang-minecraft";
+import { Location } from "mojang-minecraft";
 import config from "./data/config.js";
 
 /**

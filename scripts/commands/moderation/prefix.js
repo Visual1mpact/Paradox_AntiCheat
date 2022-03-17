@@ -1,10 +1,7 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world } from "mojang-minecraft";
 import { disabler } from "../../util.js";
 import config from "../../data/config.js";
-
-const World = world;
 
 function resetPrefix(player) {
     let sanitize = player.getTags();
