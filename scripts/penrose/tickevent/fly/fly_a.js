@@ -67,7 +67,7 @@ function flya() {
                 }
             } else {
                 try {
-                    player.runCommand(`scoreboard players set ${disabler(player.nameTag)} fly_timer 0`);
+                    player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" fly_timer 0`);
                 } catch(error) {}
                 check = 0;
             }

@@ -24,14 +24,14 @@ const ChatFilter = () => {
             let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
             player.nameTag = nametag;
             if (!msg.cancel) {
-                player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]})}`);
+                player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]}).replace(/\\"/g, '"')}`);
                 msg.cancel = true;
             }
         } else if (!msg.cancel) {
             let message = msg.message;
             let player = msg.sender;
 
-            player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]})}`);
+            player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
             msg.cancel = true;
         }
     });

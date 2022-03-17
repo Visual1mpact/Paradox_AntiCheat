@@ -90,7 +90,7 @@ export function commandHandler(player, message) {
     const commandName = args.shift().toLowerCase();
 
     if (config.debug) {
-        console.warn(`${new Date()} | ${disabler(player.nameTag)} used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
+        console.warn(`${new Date()} | "${disabler(player.nameTag)}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
     }
 
     switch (true) {

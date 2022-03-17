@@ -19,5 +19,5 @@ export function modules(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    return player.runCommand(`execute ${disabler(player.nameTag)} ~~~ function settings/modules`);
+    return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function settings/modules`);
 }

@@ -40,18 +40,18 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     }
 
     if (shouldTP && check !== "Crasher") {
-        player.runCommand(`tp ${disabler(player.nameTag)} ${disabler(player.nameTag)}`);
+        player.runCommand(`tp "${disabler(player.nameTag)}" "${disabler(player.nameTag)}"`);
     } else if (shouldTP && check === "Crasher") {
-        player.runCommand(`tp ${disabler(player.nameTag)} 30000000 30000000 30000000`);
+        player.runCommand(`tp "${disabler(player.nameTag)}" 30000000 30000000 30000000`);
     }
 
-    player.runCommand(`scoreboard players add ${disabler(player.nameTag)} ${check.toLowerCase()}vl 1`);
+    player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" ${check.toLowerCase()}vl 1`);
 
     try {
         if(debug) {
-            player.runCommand(`execute ${disabler(player.nameTag)} ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         } else {
-            player.runCommand(`execute ${disabler(player.nameTag)} ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         }
     } catch(error) {}
 
@@ -64,7 +64,7 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick ${disabler(player.nameTag)} §r§4[§6Paradox§4]§r Invalid username`);
+            player.runCommand(`kick "${disabler(player.nameTag)}" §r§4[§6Paradox§4]§r Invalid username`);
         }
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -94,7 +94,7 @@ export function banMessage(player) {
     });
 
     try {
-        player.runCommand(`kick ${disabler(player.nameTag)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.runCommand(`kick "${disabler(player.nameTag)}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -110,7 +110,7 @@ export function banMessage(player) {
  */
 export function getScore(objective, player, { minimum, maximum } = {}) {
     try {
-        const data = player.runCommand(`scoreboard players test ${disabler(player.nameTag)} ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
+        const data = player.runCommand(`scoreboard players test "${disabler(player.nameTag)}" ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
         return parseInt(data.statusMessage.match(/-?\d+/));
     } catch (error) {
         return;
