@@ -57,8 +57,8 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
 
     if (slot >= 0) {
         try {
-            if(slot <= 8) player.runCommand(`replaceitem entity ${disabler(player.nameTag)} slot.hotbar ${slot} air 1`);
-                else player.runCommand(`replaceitem entity ${disabler(player.nameTag)} slot.inventory ${slot - 9} air 1`);
+            if(slot <= 8) player.runCommand(`replaceitem entity "${disabler(player.nameTag)}" slot.hotbar ${slot} air 1`);
+                else player.runCommand(`replaceitem entity "${disabler(player.nameTag)}" slot.inventory ${slot - 9} air 1`);
         } catch(error) {console.warn(`${new Date()} | ` + error);}
     }
 
