@@ -46,7 +46,7 @@ export function prefix(message, args) {
         return;
     }
 
-    let regex = /[\/]/;
+    let regex = /\//g;
     if (regex.test(args[0])) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Using prefix / is not allowed!"}]}`);
     }
