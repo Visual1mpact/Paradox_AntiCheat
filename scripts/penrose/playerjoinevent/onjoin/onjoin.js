@@ -20,7 +20,7 @@ function onJoinTime() {
             } catch (error) {}
         }
         // Set up custom tag
-        tagRank(player);
+        // tagRank(player);
         // Set up custom prefix
         getPrefix(player);
         player.check = true;

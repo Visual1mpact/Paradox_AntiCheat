@@ -52,7 +52,7 @@ export function tag(message, args) {
     // reset rank
     if (argcheck === true) {
         resetTag(player, member);
-        tagRank(member);
+        // tagRank(member);
         return;
     }
 
@@ -60,7 +60,7 @@ export function tag(message, args) {
         if (args[1].startsWith('Rank:')) {
             resetTag(player, member);
             player.runCommand(`tag "${disabler(member.nameTag)}" add ${args[1]}`);
-            tagRank(member);
+            // tagRank(member);
         } else {
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
             return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: !tag ${member.name} Rank:Admin--VIP--Helper"}]}`);

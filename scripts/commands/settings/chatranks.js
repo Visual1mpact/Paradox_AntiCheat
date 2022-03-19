@@ -29,9 +29,9 @@ export function chatranks(message) {
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
             // Restore their custom nametag
-            tagRank(pl);
+            // tagRank(pl);
             // This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            // pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ChatRanks§r!"}]}`);
         return;
@@ -41,9 +41,9 @@ export function chatranks(message) {
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
             // Reset their nametag to its original name
-            pl.nameTag = pl.name;
+            // pl.nameTag = pl.name;
             // This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            // pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ChatRanks§r!"}]}`);
         return;
