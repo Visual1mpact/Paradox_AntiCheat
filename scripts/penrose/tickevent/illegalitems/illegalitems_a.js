@@ -1,5 +1,5 @@
-import { world, ItemStack, MinecraftItemTypes } from "mojang-minecraft";
-import { illegalitems } from "../../../data/itemban.js";
+import { world, ItemStack, MinecraftItemTypes, Items } from "mojang-minecraft";
+import { illegalitems, salvageable } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { disabler, flag } from "../../../util.js";
 
@@ -46,6 +46,10 @@ function illegalitemsa() {
                 } catch (error) {
                     player.triggerEvent('paradox:kick');
                 }
+            } else if (salvageable.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
+                try {
+                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                } catch (error) {}
             }
         }
     }

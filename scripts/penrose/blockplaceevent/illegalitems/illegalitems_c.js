@@ -1,4 +1,4 @@
-import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack } from "mojang-minecraft";
+import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items } from "mojang-minecraft";
 import { illegalitems, salvageable } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
@@ -72,7 +72,7 @@ function illegalitemsc(object) {
                 // We don't need to ban these items
                 // We replace them instead to delete the NBT so we can still use them safely
                 try {
-                    inventory.setItem(i, new ItemStack(inventory_item.id));
+                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
                 } catch {}
             }
         }
