@@ -1,5 +1,5 @@
 import { world, ItemStack, MinecraftItemTypes } from "mojang-minecraft";
-import { fishbuckets, illegalitems } from "../../../data/itemban.js";
+import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { disabler, flag } from "../../../util.js";
 
@@ -46,13 +46,6 @@ function illegalitemsa() {
                 } catch (error) {
                     player.triggerEvent('paradox:kick');
                 }
-            // There is a new hack which crashes server/realms using fish buckets
-            // We don't need to ban these items
-            // We replace them instead to delete the NBT so we can still use them safely
-            } else if (fishbuckets.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
-                try {
-                    inventory.setItem(i, new ItemStack(inventory_item.id));
-                } catch {}
             }
         }
     }

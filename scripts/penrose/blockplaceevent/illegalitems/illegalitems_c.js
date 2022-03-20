@@ -1,5 +1,5 @@
 import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack } from "mojang-minecraft";
-import { illegalitems, fishbuckets } from "../../../data/itemban.js";
+import { illegalitems, salvageable } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
@@ -51,21 +51,26 @@ function illegalitemsc(object) {
     try {
         inventory = block.getComponent('inventory').container;
     } catch (error) {}
-    if (inventory) {
+    if (inventory && !player.hasTag('paradoxOpped')) {
         for (let i = 0; i < inventory.size; i++) {
             let inventory_item = inventory.getItem(i);
             if (!inventory_item) {
                 continue;
+            } else if (block.id !== "minecraft:shulker_box" || block.id !== "minecraft:undyed_shulker_box" || block.id !== "minecraft:ender_chest") {
+                // Most items with a container should be empty when placing down
+                // If we detect items in the container when being placed then it is a hack
+                flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
+                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
+                rip(player);
             }
             // Check if item found inside the container exceeds max allowed stack or is illegal
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
                 rip(player);
-            // There is a new hack which crashes server/realms using fish buckets
-            // We don't need to ban these items
-            // We replace them instead to delete the NBT so we can still use them safely
-            } else if (fishbuckets.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
+            } else if (salvageable.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
+                // We don't need to ban these items
+                // We replace them instead to delete the NBT so we can still use them safely
                 try {
                     inventory.setItem(i, new ItemStack(inventory_item.id));
                 } catch {}
