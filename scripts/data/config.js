@@ -130,7 +130,8 @@ export default
             "enabled": true
         },
         "illegalitemsC": {
-            "enabled": true
+            "enabled": true,
+            "maxStack": 64
         },
         "antikbA": {
             "enabled": true,
