@@ -108,5 +108,6 @@ export const salvageable = [
   'minecraft:red_wall_banner',
   'minecraft:black_wall_banner',
   'minecraft:armor_stand',
-  'minecraft:splash_potion'
+  'minecraft:splash_potion',
+  'minecraft:writable_book'
 ];

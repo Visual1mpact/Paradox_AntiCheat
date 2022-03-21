@@ -49,7 +49,7 @@ function illegalitemsa() {
             } else if (salvageable.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
                 // There are only 43 splash potions from 0 to 42
                 // If data exceeds this then it is a hack so replace with data 0
-                if (inventory_item.id === "minecraft:splash_potion" && inventory_item.data > 42) {
+                if (inventory_item.id === "minecraft:splash_potion" && inventory_item.data > 42 || inventory_item.id === "minecraft:writable_book" && inventory_item.data > 0) {
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
                     } catch (error) {}
