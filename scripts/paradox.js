@@ -37,8 +37,8 @@ import { GlobalBanList } from "./penrose/playerjoinevent/ban/globalbanlist.js";
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
-// Import BeforeItemUseOn Events
-import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
+// Import BeforeItemUse Events
+import { IllegalItemsB } from "./penrose/beforeitemuseevent/illegalitems/illegalitems_b.js";
 
 // Self explanatory
 const World = world;
@@ -167,7 +167,7 @@ if (config.modules.reachA.enabled) {
     ReachA();
 }
 
-// BeforeItemUseOn Events
+// BeforeItemUse Events
 if (config.modules.illegalitemsB.enabled) {
     IllegalItemsB();
 }

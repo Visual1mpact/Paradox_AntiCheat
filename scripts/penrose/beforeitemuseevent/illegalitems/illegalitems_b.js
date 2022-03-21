@@ -9,7 +9,7 @@ const World = world;
 function illegalitemsb(object) {
     // Unsubscribe if disabled in-game
     if (config.modules.illegalitemsB.enabled === false) {
-        World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
+        World.events.beforeItemUse.unsubscribe(illegalitemsb);
         return;
     }
 
