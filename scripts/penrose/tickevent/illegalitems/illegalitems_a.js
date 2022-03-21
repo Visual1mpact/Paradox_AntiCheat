@@ -47,9 +47,17 @@ function illegalitemsa() {
                     player.triggerEvent('paradox:kick');
                 }
             } else if (salvageable.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                } catch (error) {}
+                // There are only 43 splash potions from 0 to 42
+                // If data exceeds this then it is a hack so replace with data 0
+                if (inventory_item.id === "minecraft:splash_potion" && inventory_item.data > 42) {
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                    } catch (error) {}
+                } else {
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                    } catch (error) {}
+                }
             }
         }
     }

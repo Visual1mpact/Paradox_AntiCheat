@@ -72,7 +72,7 @@ function illegalitemsc(object) {
                 // We don't need to ban these items
                 // We replace them instead to delete the NBT so we can still use them safely
                 try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
                 } catch {}
             }
         }
