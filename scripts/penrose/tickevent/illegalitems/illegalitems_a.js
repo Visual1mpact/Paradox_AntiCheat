@@ -1,5 +1,6 @@
 import { world, ItemStack, MinecraftItemTypes, Items } from "mojang-minecraft";
-import { illegalitems, salvageable } from "../../../data/itemban.js";
+import { illegalitems } from "../../../data/itemban.js";
+import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
 import { disabler, flag } from "../../../util.js";
 
@@ -46,14 +47,20 @@ function illegalitemsa() {
                 } catch (error) {
                     player.triggerEvent('paradox:kick');
                 }
-            } else if (salvageable.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
-                // There are only 43 splash potions from 0 to 42
-                // If data exceeds this then it is a hack so replace with data 0
-                if (inventory_item.id === "minecraft:splash_potion" && inventory_item.data > 42 || inventory_item.id === "minecraft:writable_book" && inventory_item.data > 0) {
+            } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
+                // Check if data exceeds vanilla data
+                if (salvageable[inventory_item.id] === "minecraft:splash_potion" && salvageable[inventory_item.id].data < inventory_item.data) {
+                    // Reset item to data type of 0
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
                     } catch (error) {}
+                } else if (salvageable[inventory_item.id].data != inventory_item.data) {
+                    // Reset item to data type of equal data if they do not match
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                    } catch (error) {}
                 } else {
+                    // Reset item to data type of equal data because we take no chances
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
                     } catch (error) {}

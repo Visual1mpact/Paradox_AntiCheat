@@ -1,5 +1,6 @@
 import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items } from "mojang-minecraft";
-import { illegalitems, salvageable } from "../../../data/itemban.js";
+import { illegalitems } from "../../../data/itemban.js";
+import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
 import { flag, disabler } from "../../../util.js";
 
@@ -68,12 +69,24 @@ function illegalitemsc(object) {
                 flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
                 rip(player);
-            } else if (salvageable.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
-                // We don't need to ban these items
-                // We replace them instead to delete the NBT so we can still use them safely
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                } catch {}
+            } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
+                // Check if data exceeds vanilla data
+                if (salvageable[inventory_item.id] === "minecraft:splash_potion" && salvageable[inventory_item.id].data < inventory_item.data) {
+                    // Reset item to data type of 0
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                    } catch (error) {}
+                } else if (salvageable[inventory_item.id].data != inventory_item.data) {
+                    // Reset item to data type of equal data if they do not match
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                    } catch (error) {}
+                } else {
+                    // Reset item to data type of equal data because we take no chances
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                    } catch (error) {}
+                }
             }
         }
     }
