@@ -1,5 +1,6 @@
-import { world, Player } from "mojang-minecraft";
+import { world, Player, ItemStack, Items } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
+import salvageable from "../../../data/salvageable.js";
 import { disabler, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
@@ -19,6 +20,8 @@ function illegalitemsb(object) {
     if (!(source instanceof Player)) {
         return;
     }
+
+    let hand = source.selectedSlot
 
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id) && !source.hasTag('paradoxOpped')) {
@@ -42,6 +45,25 @@ function illegalitemsb(object) {
             source.addTag('isBanned');
         } catch (error) {
             source.triggerEvent('paradox:kick');
+        }
+    } else if (salvageable[item.id] && !source.hasTag('paradoxOpped')) {
+        cancel = true;
+        // Check if data exceeds vanilla data
+        if (salvageable[item.id].name === "minecraft:splash_potion" && salvageable[item.id].data < item.data) {
+            // Reset item to data type of 0
+            try {
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
+            } catch (error) {}
+        } else if (salvageable[item.id].data !== item.data && salvageable[item.id].name !== "minecraft:splash_potion") {
+            // Reset item to data type of equal data if they do not match
+            try {
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
+            } catch (error) {}
+        } else {
+            // Reset item to data type of equal data because we take no chances
+            try {
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data));
+            } catch (error) {}
         }
     }
 }

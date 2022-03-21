@@ -69,7 +69,7 @@ function illegalitemsc(object) {
                 flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
                 rip(player);
-            } else if (salvageable[inventory_item.id].name && !player.hasTag('paradoxOpped')) {
+            } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
                 // Check if data exceeds vanilla data
                 if (salvageable[inventory_item.id].name === "minecraft:splash_potion" && salvageable[inventory_item.id].data < inventory_item.data) {
                     // Reset item to data type of 0
