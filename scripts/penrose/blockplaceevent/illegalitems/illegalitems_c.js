@@ -1,7 +1,7 @@
 import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items } from "mojang-minecraft";
 import { illegalitems, salvageable } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+import { flag, disabler } from "../../../util.js";
 
 const World = world;
 
