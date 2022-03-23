@@ -22,7 +22,6 @@ function illegalitemsb(object) {
     }
 
     let hand = source.selectedSlot
-
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id) && !source.hasTag('paradoxOpped')) {
         flag(source, "IllegalItems", "B", "Exploit", false, false, false, false);
@@ -48,13 +47,14 @@ function illegalitemsb(object) {
         }
     } else if (salvageable[item.id] && !source.hasTag('paradoxOpped')) {
         cancel = true;
+        let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
         // Check if data exceeds vanilla data
-        if (salvageable[item.id].name === "minecraft:splash_potion" && salvageable[item.id].data < item.data) {
+        if (potions.indexOf(salvageable[item.id].name) && salvageable[item.id].data < item.data) {
             // Reset item to data type of 0
             try {
                 source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
             } catch (error) {}
-        } else if (salvageable[item.id].data !== item.data && salvageable[item.id].name !== "minecraft:splash_potion") {
+        } else if (salvageable[item.id].data !== item.data && !potions.indexOf(salvageable[item.id].name)) {
             // Reset item to data type of equal data if they do not match
             try {
                 source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));

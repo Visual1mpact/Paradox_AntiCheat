@@ -70,13 +70,14 @@ function illegalitemsc(object) {
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
                 rip(player);
             } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
+                let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
                 // Check if data exceeds vanilla data
-                if (salvageable[inventory_item.id].name === "minecraft:splash_potion" && salvageable[inventory_item.id].data < inventory_item.data) {
+                if (potions.indexOf(salvageable[inventory_item.id].name) && salvageable[inventory_item.id].data < inventory_item.data) {
                     // Reset item to data type of 0
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
                     } catch (error) {}
-                } else if (salvageable[inventory_item.id].data !== inventory_item.data && salvageable[inventory_item.id].name !== "minecraft:splash_potion") {
+                } else if (salvageable[inventory_item.id].data !== inventory_item.data && potions.indexOf(salvageable[inventory_item.id].name)) {
                     // Reset item to data type of equal data if they do not match
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));

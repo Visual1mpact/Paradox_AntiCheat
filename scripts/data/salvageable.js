@@ -140,6 +140,14 @@ export default
         name: 'minecraft:splash_potion',
         data: 42
     },
+    'minecraft:potion': {
+        name: 'minecraft:potion',
+        data: 42
+    },
+    'minecraft:lingering_potion': {
+        name: 'minecraft:lingering_potion',
+        data: 42
+    },
     'minecraft:writable_book': {
         name: 'minecraft:writable_book',
         data: 0
