@@ -58,7 +58,7 @@ export default
         "antiscaffolda": true,
         "antinukera": true,
         "xraya": true,
-        "banwindow": true,
+        "unbanwindow": true,
         "chatranks": true
     },
     "modules": {
@@ -148,7 +148,7 @@ export default
         "xrayA": {
             "enabled": true
         },
-        "banWindow": {
+        "unbanWindow": {
             "enabled": false
         },
         "chatranks": {
