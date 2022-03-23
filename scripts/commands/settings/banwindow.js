@@ -2,13 +2,13 @@ import { disabler } from "../../util.js";
 import config from "../../data/config.js";
 
 /**
- * @name banwindow
+ * @name unbanwindow
  * @param {object} message - Message object
  */
-export function banwindow(message) {
+export function unbanwindow(message) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/banwindow.js:5)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/unbanwindow.js:5)");
     }
 
     message.cancel = true;
@@ -22,14 +22,14 @@ export function banwindow(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (config.modules.banWindow.enabled === false) {
+    if (config.modules.unbanWindow.enabled === false) {
         // Allow
-        config.modules.banWindow.enabled = true;
+        config.modules.unbanWindow.enabled = true;
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6BanWindow§r!"}]}`);
         return;
-    } else if (config.modules.banWindow.enabled === true) {
+    } else if (config.modules.unbanWindow.enabled === true) {
         // Deny
-        config.modules.banWindow.enabled = false;
+        config.modules.unbanWindow.enabled = false;
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BanWindow§r!"}]}`);
         return;
     }

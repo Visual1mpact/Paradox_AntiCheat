@@ -7,7 +7,7 @@ const World = world;
 
 function serverban() {
     // Unsubscribe if disabled in-game
-    if (config.modules.banWindow.enabled === true) {
+    if (config.modules.unbanWindow.enabled === true) {
         World.events.tick.unsubscribe(serverban);
         return;
     }

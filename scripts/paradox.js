@@ -78,7 +78,7 @@ ChatFilter();
 // Tick Events
 PlayerPosition();
 
-if (!config.modules.banWindow.enabled) {
+if (!config.modules.unbanWindow.enabled) {
     ServerBan();
 }
 

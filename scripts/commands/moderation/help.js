@@ -76,7 +76,7 @@ export function help(message) {
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}antiscaffolda§r - Checks player's for illegal scaffolding."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}antinukera§r - Checks player's for nuking blocks."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}xraya§r - Notify's staff when and where player's mine specific ores."}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}banwindow§r - Disables server ban to allow banned players to join (Does not include global ban)."}]}`);
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}unbanwindow§r - Disables server ban to allow banned players to join (Does not include global ban)."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}chatranks§r - Enables/Disables chat ranks."}]}`);
 
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Tools and Utilites§6]§r"}]}`);
