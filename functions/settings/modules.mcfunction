@@ -22,8 +22,6 @@ tellraw @s[scores={frostwalker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]�
 tellraw @s[scores={frostwalker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frostwalker is currently §4DISABLED"}]}
 tellraw @s[scores={autoclicker=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoclicker is currently §aENABLED"}]}
 tellraw @s[scores={autoclicker=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoclicker is currently §4DISABLED"}]}
-tellraw @s[scores={phase=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Phase is currently §aENABLED"}]}
-tellraw @s[scores={phase=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Phase is currently §4DISABLED"}]}
 tellraw @s[scores={encharmor=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Enchanted Armor is currently §aENABLED"}]}
 tellraw @s[scores={encharmor=..0}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Enchanted Armor is currently §4DISABLED"}]}
 tellraw @s[scores={autoaura=1..}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Autoaura is currently §aENABLED"}]}

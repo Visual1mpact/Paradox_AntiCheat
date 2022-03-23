@@ -8,7 +8,6 @@ execute @s[scores={autoaura=1..}] ~~~ function checks/killaura
 
 # Specific criteria checks
 execute @s[type=player,scores={attacks=1..,autoclicker=1..}] ~~~ function checks/autoclicker
-execute @s[type=player,tag=moving,tag=!gliding,tag=!riding,tag=!vanish,scores={phase=1..}] ~~~ function checks/phase
 
 # Optional checks
 execute @s[type=player,tag=!paradoxOpped,m=a,scores={gma=1..}] ~~~ function checks/optional/gamemodeA

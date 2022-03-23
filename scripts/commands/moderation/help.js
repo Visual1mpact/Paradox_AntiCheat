@@ -54,7 +54,6 @@ export function help(message) {
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}worldborder <option>§r - Sets the World Border. Option: [1k, 5k, 10k, 25k, 50k, 100k, disable]"}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}autoclicker§r - Enables/disables Anti Autoclicker."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}jesusa§r - Checks if player's are walking on water and lava)."}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}phase§r - Enables/disables Anti Phase (Moving through blocks)."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}enchantedarmor§r - Enables/disables Anti Enchanted Armor for all players."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}autoaura§r - Enables/disables Auto KillAura checks for all players."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}antikb§r - Enables/disables Anti Knockback for all players."}]}`);
