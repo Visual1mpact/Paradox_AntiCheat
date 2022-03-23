@@ -151,5 +151,9 @@ export default
     'minecraft:writable_book': {
         name: 'minecraft:writable_book',
         data: 0
+    },
+    'minecraft:furnace': {
+        name: 'minecraft:furnace',
+        data: 0
     }
 };
