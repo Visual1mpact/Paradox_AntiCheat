@@ -49,12 +49,12 @@ function illegalitemsb(object) {
         cancel = true;
         let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
         // Check if data exceeds vanilla data
-        if (potions.indexOf(salvageable[item.id].name) && salvageable[item.id].data < item.data) {
+        if (potions.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
             // Reset item to data type of 0
             try {
                 source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
             } catch (error) {}
-        } else if (salvageable[item.id].data !== item.data && !potions.indexOf(salvageable[item.id].name)) {
+        } else if (salvageable[item.id].data !== item.data && potions.indexOf(salvageable[item.id].name) === -1) {
             // Reset item to data type of equal data if they do not match
             try {
                 source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
