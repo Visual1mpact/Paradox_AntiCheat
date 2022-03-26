@@ -10,7 +10,7 @@ const playersOldCoordinates = new Map();
 // Global
 let check;
 let oldX, oldY, oldZ;
-let Block1, Block2, Block3;
+let Block1, Block2;
 
 function time(player, x, y, z, check) {
     let test = getScore("fly_timer", player);
