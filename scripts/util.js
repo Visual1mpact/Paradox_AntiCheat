@@ -40,9 +40,9 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     }
 
     if (shouldTP && check !== "Crasher") {
-        player.runCommand(`tp "${disabler(player.nameTag)}" "${disabler(player.nameTag)}"`);
+        player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, player.bodyRotation);
     } else if (shouldTP && check === "Crasher") {
-        player.runCommand(`tp "${disabler(player.nameTag)}" 30000000 30000000 30000000`);
+        player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, player.bodyRotation);
     }
 
     player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" ${check.toLowerCase()}vl 1`);
