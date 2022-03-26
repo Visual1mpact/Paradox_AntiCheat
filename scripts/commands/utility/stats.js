@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import { disabler, getScore } from "../../util.js";
 
 const World = world;
 
@@ -25,6 +25,12 @@ export function stats(message, args) {
     // make sure the user has permissions to run the command
     if (!player.hasTag('paradoxOpped')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    let verify = getScore(player, 'notify');
+
+    if (verify <= 0) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable cheat notifications."}]}`);
     }
 
     if (!args.length) {
