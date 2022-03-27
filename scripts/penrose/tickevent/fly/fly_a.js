@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, Location, BlockLocation} from "mojang-minecraft";
-import { getScore, disabler } from "../../../util.js";
+import { getScore, disabler, flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -65,9 +65,7 @@ function flya() {
                     try {
                         player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" flyvl 1`);
                     } catch (error) {}
-                    try {
-                        player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Movement) §4Fly/A. VL= "},{"score":{"name":"@s","objective":"flyvl"}}]}`);
-                    } catch (error) {}
+                    flag(player, "Fly", "A", "Exploit", false, false, false, false);
                 }
             } else if (player.hasTag('ground')) {
                 try {
