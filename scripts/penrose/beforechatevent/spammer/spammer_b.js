@@ -14,7 +14,7 @@ function spammerb(msg) {
 
     // Spammer/B = checks if someone sends a message while swinging their hand
     if (player.hasTag('left') && !player.hasTag('paradoxOpped')) {
-        flag(player, "Spammer", "B", "Combat", false, false, false, msg);
+        flag(player, "Spammer", "B", "Combat", false, false, false, false, false, msg);
     }
 }
 

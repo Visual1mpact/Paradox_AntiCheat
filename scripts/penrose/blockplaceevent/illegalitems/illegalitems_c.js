@@ -44,8 +44,8 @@ function illegalitemsc(object) {
     // Check if place item is illegal
     if(illegalitems.includes(block.id) && !player.hasTag('paradoxOpped')) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
-        flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
-        rip(player);
+        flag(player, "IllegalItems", "C", "Exploit", false, false, false, false, false, false);
+        return rip(player);
     }
     // Check if placed item has a inventory container
     let inventory;
@@ -60,15 +60,15 @@ function illegalitemsc(object) {
             } else if (block.id !== "minecraft:shulker_box" || block.id !== "minecraft:undyed_shulker_box" || block.id !== "minecraft:ender_chest") {
                 // Most items with a container should be empty when placing down
                 // If we detect items in the container when being placed then it is a hack
-                flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
-                rip(player);
+                return rip(player);
             }
             // Check if item found inside the container exceeds max allowed stack or is illegal
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
-                flag(player, "IllegalItems", "C", "Exploit", false, false, false, false);
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
-                rip(player);
+                return rip(player);
             } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
                 let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
                 // Check if data exceeds vanilla data

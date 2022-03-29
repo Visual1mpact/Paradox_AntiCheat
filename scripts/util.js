@@ -8,13 +8,15 @@ import config from "./data/config.js";
  * @param {string} check - What check ran the function.
  * @param {string} checktype - What sub-check ran the function (ex. a, b ,c).
  * @param {string} hacktype - What the hack is considered as (ex. movement, combat, exploit).
+ * @param {object} item - Item object.
+ * @param {object} stack - Item object stack.
  * @param {string} debugName - Name for the debug value.
  * @param {string} debug - Debug info.
  * @param {boolean} shouldTP - Whever to tp the player to itself.
  * @param {object} message - The message object, used to cancel the message.
  * @param {number} slot - Slot to clear an item out.
  */
-export function flag(player, check, checkType, hackType, debugName, debug, shouldTP, message, slot) {
+export function flag(player, check, checkType, hackType, item, stack, debugName, debug, shouldTP, message) {
     // validate that required params are defined
     if (!player) {
         return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:8)");
@@ -50,17 +52,12 @@ export function flag(player, check, checkType, hackType, debugName, debug, shoul
     try {
         if(debug) {
             player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+        } else if (item && stack) {
+            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         } else {
             player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         }
     } catch(error) {}
-
-    if (slot >= 0) {
-        try {
-            if(slot <= 8) player.runCommand(`replaceitem entity "${disabler(player.nameTag)}" slot.hotbar ${slot} air 1`);
-                else player.runCommand(`replaceitem entity "${disabler(player.nameTag)}" slot.inventory ${slot - 9} air 1`);
-        } catch(error) {console.warn(`${new Date()} | ` + error);}
-    }
 
     try {
         if (check === "Namespoof") {

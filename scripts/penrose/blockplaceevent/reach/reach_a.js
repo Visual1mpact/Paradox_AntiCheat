@@ -23,7 +23,7 @@ function reacha(object) {
 
     if(reach > config.modules.reachA.reach && !block.player.hasTag('paradoxOpped')) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
-        // flag(player, "Reach", "A", "Placement", "reach", reach.toFixed(3), false, false);
+        // flag(player, "Reach", "A", "Placement", false, false "reach", reach.toFixed(3), false, false);
     }
 }
 

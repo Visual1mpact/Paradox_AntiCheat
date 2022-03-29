@@ -65,7 +65,7 @@ function flya() {
                     try {
                         player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" flyvl 1`);
                     } catch (error) {}
-                    flag(player, "Fly", "A", "Exploit", false, false, false, false);
+                    flag(player, "Fly", "A", "Exploit", false, false, false, false, false, false);
                 }
             } else if (player.hasTag('ground')) {
                 try {

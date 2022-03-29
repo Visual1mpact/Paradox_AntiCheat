@@ -18,7 +18,7 @@ function noslowa() {
         // If they do not have the effect for speed then we flag and reset their speed to the default value.
         if (speedcheck.current >= config.modules.noslowA.speed && !player.getEffect(MinecraftEffectTypes.speed) && !player.hasTag('paradoxOpped')) {
             let speedrecord = speedcheck.current;
-            flag(player, "NoSlow", "A", "Movement", "IllegalSpeed", (speedrecord).toFixed(3), true, false);
+            flag(player, "NoSlow", "A", "Movement", false, false, "IllegalSpeed", (speedrecord).toFixed(3), true, false);
             speedcheck.setCurrent(speedcheck.value);
         }
     }

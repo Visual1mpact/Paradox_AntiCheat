@@ -15,7 +15,7 @@ function badpackets2(msg) {
 
     // BadPackets/2 = chat message length check
     if (message.length > config.modules.badpackets2.maxlength && !player.hasTag('paradoxOpped') || message.length < config.modules.badpackets2.minLength && !player.hasTag('paradoxOpped')) {
-        flag(player, "BadPackets", "2", "messageLength", message.length, false, msg);
+        flag(player, "BadPackets", "2", "messageLength", false, false, "Characters", message.length, false, msg);
     }
 }
 

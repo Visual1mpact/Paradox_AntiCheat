@@ -26,7 +26,7 @@ function reachb(object) {
 
     if(reach > config.modules.reachB.reach && !player.hasTag('paradoxOpped')) {
         block.setPermutation(blockID);
-        // flag(player, "Reach", "B", "Break", "reach", reach.toFixed(3), false, false);
+        // flag(player, "Reach", "B", "Break", false, false, "reach", reach.toFixed(3), false, false);
     }
 }
 

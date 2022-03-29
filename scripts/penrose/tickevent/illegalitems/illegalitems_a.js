@@ -23,7 +23,7 @@ function illegalitemsa() {
             // If player has an illegal item or stacks over 64 then we clear the item and kick them
             // If we cannot kick them then we despawn them (no mercy)
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.amount > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
-                flag(player, "IllegalItems", "A", "Exploit", false, false, false, false);
+                flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
                 } catch {}

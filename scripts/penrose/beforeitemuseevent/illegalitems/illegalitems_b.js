@@ -24,7 +24,7 @@ function illegalitemsb(object) {
     let hand = source.selectedSlot
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id) && !source.hasTag('paradoxOpped')) {
-        flag(source, "IllegalItems", "B", "Exploit", false, false, false, false);
+        flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
         cancel = true;
         source.runCommand(`clear "${disabler(source.nameTag)}" ${item.id}`);
         let tags = source.getTags();

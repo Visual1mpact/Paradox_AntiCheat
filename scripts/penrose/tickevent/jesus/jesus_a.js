@@ -15,7 +15,7 @@ const _player = {
 
 function timer(player, dimension, x, y, z) {
     player.teleport(new Location(x, y - 2, z), dimension, 0, player.bodyRotation);
-    flag(player, "Jesus", "A", "Movement", false, false, false, false);
+    flag(player, "Jesus", "A", "Movement", false, false, false, false, false ,false);
     _player.count = 0;
 }
 

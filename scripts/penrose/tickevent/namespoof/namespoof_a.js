@@ -16,7 +16,7 @@ function namespoofa() {
         // Namespoof/A = username length check.
         try {
             if (player.name.length < config.modules.namespoofA.minNameLength && !player.hasTag('paradoxOpped') || player.name.length > config.modules.namespoofA.maxNameLength && !player.hasTag('paradoxOpped')) {
-                flag(player, "Namespoof", "A", "Exploit", "nameLength", player.name.length, false, false);
+                flag(player, "Namespoof", "A", "Exploit", false, false, "nameLength", player.name.length, false, false);
             }
         } catch(error) {}
     }

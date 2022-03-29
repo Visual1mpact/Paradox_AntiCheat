@@ -14,7 +14,7 @@ function spammerd(msg) {
 
     // Spammer/D = checks if someone sends a message while having a GUI open
     if (player.hasTag('hasGUIopen') && !player.hasTag('paradoxOpped')) {
-        flag(player, "Spammer", "D", "Misc", false, false, false, msg);
+        flag(player, "Spammer", "D", "Misc", false, false, false, false, false, msg);
     }
 }
 

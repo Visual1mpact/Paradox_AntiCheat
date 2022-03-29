@@ -20,7 +20,7 @@ function antiknockbacka() {
                 try {
                     // Make sure Anti Knockback is turned on
                     player.runCommand(`testfor @a[name=${disabler(player.nameTag)},scores={antikb=1..}]`);
-                    flag(player, "AntiKB", "A", "Movement", "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, false);
+                    flag(player, "AntiKB", "A", "Movement", false ,false, "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, false);
                     player.runCommand(`scoreboard players add @a[name=${disabler(player.nameTag)}] velocityvl 1`);
                 } catch(error) {}
             }

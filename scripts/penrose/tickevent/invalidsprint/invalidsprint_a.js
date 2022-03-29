@@ -18,7 +18,7 @@ function invalidsprinta() {
         // If they do have the effect for blindness and they are sprinting then we flag and reset their speed.
         if (speedcheck.current >= config.modules.invalidsprintA.speed && player.getEffect(MinecraftEffectTypes.blindness) && !player.hasTag('paradoxOpped')) {
             let speedrecord = speedcheck.current;
-            flag(player, "InvalidSprint", "A", "Movement", "BlindSprint", (speedrecord).toFixed(3), true, false);
+            flag(player, "InvalidSprint", "A", "Movement", false, false, "BlindSprint", (speedrecord).toFixed(3), true, false);
             speedcheck.setCurrent(speedcheck.value);
         }
     }

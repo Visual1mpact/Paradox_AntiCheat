@@ -95,7 +95,7 @@ function nukera(object) {
 
     // Flag and salvage broken blocks to their original forms
     if (tiktok.length >= config.modules.antinukerA.max && vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && !player.hasTag('paradoxOpped')) {
-        flag(player, "Nuker", "A", "Break", false, false, false, false);
+        flag(player, "Nuker", "A", "Break", false, false, false, false, false, false);
         blockLoc.setPermutation(blockID);
         try {
             // Remove dropped items after nuking because it will leave a mess of entities in the world

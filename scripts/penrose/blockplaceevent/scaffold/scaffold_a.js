@@ -32,7 +32,7 @@ function scaffolda(object) {
 
     if (tiktok.length >= config.modules.antiscaffoldA.max && !player.hasTag('paradoxOpped')) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
-        flag(player, "Scaffold", "A", "Placement", false, false, false, false);
+        flag(player, "Scaffold", "A", "Placement", false, false, false, false, false, false);
         /*let tags = player.getTags();
 
         // This removes old ban tags
