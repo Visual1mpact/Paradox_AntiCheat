@@ -32,7 +32,7 @@ execute @s[scores={detect_boots=6,ench_boots=1,frostwalker=..0}] ~~~ replaceitem
 scoreboard players add @s[type=player] armorvl 1
  
 #Notify Staff
-execute @s[type=player] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Enchantment) §4Armor/A. VL= "},{"score":{"name":"@s","objective":"armorvl"}}]}
+execute @s[type=player] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(Enchantment) §4Armor/A. VL= "},{"score":{"name":"@s","objective":"armorvl"}}]}
 
 #Notify Offenders who are not staff
 tellraw @s[type=player,tag=!paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r You used enchanted armor. Violations: "},{"score":{"name": "@s","objective": "armorvl"}}]}

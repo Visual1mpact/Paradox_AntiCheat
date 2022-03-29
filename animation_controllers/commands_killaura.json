@@ -18,7 +18,7 @@
 					],
 					"on_entry": [
 						"/scoreboard players add @p killauravl 1",
-						"/tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@p\"},{\"text\":\" §1has failed §7(Combat) §4KillAura/A. VL= \"},{\"score\":{\"name\":\"@p\",\"objective\":\"killauravl\"}}]}",
+						"/tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@p\"},{\"text\":\" §6has failed §7(Combat) §4KillAura/A. VL= \"},{\"score\":{\"name\":\"@p\",\"objective\":\"killauravl\"}}]}",
 						"@s remove_command_id_1"
 					]
 				}
