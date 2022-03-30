@@ -44,7 +44,7 @@ export function ecwipe(message, args) {
     }
 
     // There are 30 slots ranging from 0 to 29
-    for (let slot = 0; slot < 30; slot++ ) {
+    for (let slot = 0; slot < 30; slot++) {
         try {
             player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest ${slot} air`);
         } catch (error) {}
