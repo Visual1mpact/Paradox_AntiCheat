@@ -42,96 +42,12 @@ export function ecwipe(message, args) {
     if (!member) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 0 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 1 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 2 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 3 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 4 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 5 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 6 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 7 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 8 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 9 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 10 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 11 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 12 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 13 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 14 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 15 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 16 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 17 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 18 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 19 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 20 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 21 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 22 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 23 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 24 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 25 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 26 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 27 air`);
-    } catch (error) {}
-    try {
-        player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 28 air`);
-    } catch (error) {}
-    try {
-        return player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest 29 air`);
-    } catch (error) {
-        return;
+
+    // There are 30 slots ranging from 0 to 29
+    for (let slot = 0; slot < 30; slot++ ) {
+        try {
+            player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest ${slot} air`);
+        } catch (error) {}
     }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Enderchest for ${disabler(member.nameTag)} has been wiped!"}]}`);
 }
