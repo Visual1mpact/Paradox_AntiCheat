@@ -217,5 +217,11 @@ export const banplayer = [
     {name: 'CheeseWobba'},
     {name: 'Yoboypizza5288'},
     {name: 'Adgods'},
-    {name: 'Dedr7667'}
+    {name: 'Agods'},
+    {name: 'Dedr7667'},
+    {name: 'Allthenations98'},
+    {name: 'Adminless'},
+    {name: 'epicfailsgaming'},
+    {name: 'nations99sucks'},
+    {name: 'Herobrine483616'}
 ];
