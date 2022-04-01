@@ -7,5 +7,3 @@ execute @s[tag=vanish] ~~~ function checks/assets/vanish
 
 # If the player is under y=-104 this teleports them back to y=-104
 tp @s[y=-105,dy=-205] ~ -104 ~
-
-tag @e[type=!player,tag=paradoxOpped] remove paradoxOpped
