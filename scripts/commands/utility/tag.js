@@ -56,10 +56,10 @@ export function tag(message, args) {
         return;
     }
 
-    if (args[0] === member.name && args[1]) {
+    if (args[0].replace(/@/g, "") === member.name && args[1]) {
         if (args[1].startsWith('Rank:')) {
             resetTag(player, member);
-            player.runCommand(`tag "${disabler(member.nameTag)}" add ${args[1]}`);
+            member.addTag(`${args[1]}`);
             // tagRank(member);
         } else {
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
