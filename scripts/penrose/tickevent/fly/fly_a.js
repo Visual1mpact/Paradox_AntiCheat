@@ -57,7 +57,7 @@ function flya() {
         } catch (error) {}
         
         if (xyVelocity != 0.0784 || zyVelocity != 0.0784) {
-            if (!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
+            if (!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && !player.hasTag('swimming') && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
                 try {
                     player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" fly_timer 1`);
                 } catch (error) {}
