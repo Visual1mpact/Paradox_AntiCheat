@@ -35,7 +35,7 @@ export function mute(message, args) {
     // try to find the player requested
     let member;
     for (let pl of World.getPlayers()) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace("@", "").replace("\"", ""))) {
+        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }
     }
