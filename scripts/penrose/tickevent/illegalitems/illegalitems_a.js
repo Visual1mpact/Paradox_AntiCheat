@@ -20,12 +20,20 @@ function illegalitemsa() {
             if (!inventory_item) {
                 continue;
             }
+            // If shulker boxes are not allowed in the server then we handle this here
+            // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
+            if (config.modules.antishulker.enabled && inventory_item.id === "minecraft:shulker_box" && !player.hasTag('paradoxOpped') || config.modules.antishulker.enabled && inventory_item.id === "minecraft:undyed_shulker_box" && !player.hasTag('paradoxOpped')) {
+                try {
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
+                } catch {}
+                continue;
+            }
             // If player has an illegal item or stacks over 64 then we clear the item and kick them
             // If we cannot kick them then we despawn them (no mercy)
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.amount > config.modules.illegalitemsA.maxStack && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 try {
-                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air));
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
                 } catch {}
                 let tags = player.getTags();
 

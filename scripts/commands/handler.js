@@ -25,6 +25,7 @@ import { jesusA } from "./settings/jesusa.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
 import { autokillaura } from "./settings/autoaura.js";
+import { antishulker } from "./settings/antishulker.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
 import { freeze } from "./utility/freeze.js";
@@ -263,6 +264,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.chatranks && commandName === "chatranks"):
             chatranks(message);
+            break;
+        case (config.customcommands.antishulker && commandName === "antishulker"):
+            antishulker(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

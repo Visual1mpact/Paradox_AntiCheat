@@ -59,7 +59,8 @@ export default
         "antinukera": true,
         "xraya": true,
         "unbanwindow": true,
-        "chatranks": true
+        "chatranks": true,
+        "antishulker": true
     },
     "modules": {
         "badpackets2": {
@@ -153,6 +154,9 @@ export default
         },
         "chatranks": {
             "enabled": true
+        },
+        "antishulker": {
+            "enabled": false
         }
     }
 };
