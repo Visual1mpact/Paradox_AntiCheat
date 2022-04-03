@@ -37,7 +37,7 @@ import { invsee } from "./utility/invsee.js";
 import { clearchat } from "./utility/clearchat.js";
 import { auracheck } from "./utility/auracheck.js";
 import { report } from "./utility/report.js";
-import { badpackets2 } from "./settings/badpackets2.js";
+import { badpackets1 } from "./settings/badpackets1.js";
 import { spammerA } from "./settings/spammera.js";
 import { spammerB } from "./settings/spammerb.js";
 import { spammerC } from "./settings/spammerc.js";
@@ -196,8 +196,8 @@ export function commandHandler(player, message) {
         case (config.customcommands.report && commandName === "report"):
             report(message, args);
             break;
-        case (config.customcommands.badpackets2 && commandName === "badpackets2"):
-            badpackets2(message);
+        case (config.customcommands.badpackets1 && commandName === "badpackets1"):
+            badpackets1(message);
             break;
         case (config.customcommands.spammera && commandName === "spammera"):
             spammerA(message);

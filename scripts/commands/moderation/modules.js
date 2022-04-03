@@ -111,7 +111,7 @@ import { getScore, disabler } from "../../util.js";
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Knockback is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.badpackets2.enabled) {
+    if (config.modules.badpackets1.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 2 is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 2 is currently §4DISABLED"}]}`);

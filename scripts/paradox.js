@@ -4,7 +4,7 @@ import config from "./data/config.js";
 import { setTickInterval } from "./timer/scheduling.js";
 import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
 // Import BeforeChat Events
-import { BadPackets2 } from "./penrose/beforechatevent/spammer/badpackets_2.js";
+import { BadPackets1 } from "./penrose/beforechatevent/spammer/badpackets_1.js";
 import { SpammerA } from "./penrose/beforechatevent/spammer/spammer_a.js";
 import { SpammerB } from "./penrose/beforechatevent/spammer/spammer_b.js";
 import { SpammerC } from "./penrose/beforechatevent/spammer/spammer_c.js";
@@ -48,8 +48,8 @@ const World = world;
 let hastag;
 
 // BeforeChat Events
-if (config.modules.badpackets2.enabled) {
-    BadPackets2();
+if (config.modules.badpackets1.enabled) {
+    BadPackets1();
 }
 
 if (config.modules.spammerA.enabled) {

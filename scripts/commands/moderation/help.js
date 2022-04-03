@@ -57,7 +57,7 @@ export function help(message) {
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}enchantedarmor§r - Enables/disables Anti Enchanted Armor for all players."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}autoaura§r - Enables/disables Auto KillAura checks for all players."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}antikb§r - Enables/disables Anti Knockback for all players."}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}badpackets2§r - Checks message length for each broadcast."}]}`);
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}badpackets1§r - Checks message length for each broadcast."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}spammera§r - Checks if message is sent while moving."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}spammerb§r - Checks if message is sent while swinging."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}spammerc§r - Checks if message is sent while using items."}]}`);

@@ -4,23 +4,23 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function badpackets2(msg) {
+function badpackets1(msg) {
     // Unsubscribe if disabled in-game
-    if (config.modules.badpackets2.enabled === false) {
-        World.events.beforeChat.unsubscribe(badpackets2);
+    if (config.modules.badpackets1.enabled === false) {
+        World.events.beforeChat.unsubscribe(badpackets1);
         return;
     }
     const player = msg.sender;
     const message = msg.message.toLowerCase();
 
     // BadPackets/2 = chat message length check
-    if (message.length > config.modules.badpackets2.maxlength && !player.hasTag('paradoxOpped') || message.length < config.modules.badpackets2.minLength && !player.hasTag('paradoxOpped')) {
+    if (message.length > config.modules.badpackets1.maxlength && !player.hasTag('paradoxOpped') || message.length < config.modules.badpackets1.minLength && !player.hasTag('paradoxOpped')) {
         flag(player, "BadPackets", "2", "messageLength", false, false, "Characters", message.length, false, msg);
     }
 }
 
-const BadPackets2 = () => {
-    World.events.beforeChat.subscribe(msg => badpackets2(msg));
+const BadPackets1 = () => {
+    World.events.beforeChat.subscribe(msg => badpackets1(msg));
 };
 
-export { BadPackets2 };
+export { BadPackets1 };

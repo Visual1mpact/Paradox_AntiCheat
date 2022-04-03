@@ -38,7 +38,7 @@ export default
         "autoaura":true,
         "antikb":true,
         "report":true,
-        "badpackets2":true,
+        "badpackets1":true,
         "spammera": true,
         "spammerb": true,
         "spammerc": true,
@@ -63,7 +63,7 @@ export default
         "antishulker": true
     },
     "modules": {
-        "badpackets2": {
+        "badpackets1": {
             "enabled": true,
             "minLength": 1,
             "maxlength": 512
