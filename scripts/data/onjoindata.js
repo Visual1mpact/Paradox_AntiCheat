@@ -65,7 +65,6 @@ export const onJoinData = [
     "scoreboard objectives add zPos1 dummy",
     "scoreboard objectives add realm dummy",
     "scoreboard objectives add timer dummy",
-    "scoreboard objectives add anglevl dummy",
     "scoreboard objectives add interactusevl dummy",
     "scoreboard objectives add invalidsprintvl dummy",
     "scoreboard objectives add jesusvl dummy",

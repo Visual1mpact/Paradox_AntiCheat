@@ -2,7 +2,6 @@
 gamerule randomtickspeed 1
 
 # Run all the checks
-function checks/angle
 function checks/others
 execute @s[scores={autoaura=1..}] ~~~ function checks/killaura
 
