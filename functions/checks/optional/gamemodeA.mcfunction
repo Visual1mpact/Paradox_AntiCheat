@@ -1,6 +1,6 @@
 # adventure mode check
 scoreboard players add @s[tag=!paradoxOpped,m=a,scores={gma=1..}] gamemodevl 1
-execute @s[tag=!paradoxOpped,m=a,scores={gma=1..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has tried to §4change their gamemode §7(Gamemode_A)§4 . VL= "},{"score":{"name":"@s","objective":"gamemodevl"}}]}
+execute @s[tag=!paradoxOpped,m=a,scores={gma=1..}] ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has tried to §4change their gamemode §7(Gamemode_A)§4 . VL= "},{"score":{"name":"@s","objective":"gamemodevl"}}]}
 gamemode 1 @s[tag=!paradoxOpped,m=a,scores={gmc=..0,gma=1..}]
 gamemode 0 @s[tag=!paradoxOpped,m=a,scores={gms=..0,gma=1..}]
 
