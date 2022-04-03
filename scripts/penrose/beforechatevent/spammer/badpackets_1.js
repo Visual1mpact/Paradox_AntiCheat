@@ -13,9 +13,9 @@ function badpackets1(msg) {
     const player = msg.sender;
     const message = msg.message.toLowerCase();
 
-    // BadPackets/2 = chat message length check
+    // BadPackets/1 = chat message length check
     if (message.length > config.modules.badpackets1.maxlength && !player.hasTag('paradoxOpped') || message.length < config.modules.badpackets1.minLength && !player.hasTag('paradoxOpped')) {
-        flag(player, "BadPackets", "2", "messageLength", false, false, "Characters", message.length, false, msg);
+        flag(player, "BadPackets", "1", "messageLength", false, false, "Characters", message.length, false, msg);
     }
 }
 
