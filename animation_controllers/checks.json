@@ -6,7 +6,7 @@
 				"autototem": {
 					"transitions": [
 						{
-							"totem": "query.is_item_name_any('slot.weapon.offhand',0,'minecraft:arrow')"
+							"totem": "query.is_item_name_any('slot.weapon.mainhand',0,'minecraft:bow','minecraft:crossbow','minecraft:arrows','minecraft:totem')"
 						}
 					]
 				},
@@ -21,7 +21,7 @@
 					],
 					"transitions": [
 						{
-							"autototem": "!query.is_item_name_any('slot.weapon.offhand',0,'minecraft:arrow')"
+							"autototem": "!query.is_item_name_any('slot.weapon.mainhand',0,'minecraft:bow','minecraft:crossbow','minecraft:arrows','minecraft:totem')"
 						}
 					]
 				}
