@@ -21,17 +21,17 @@ import { getScore, disabler } from "../../util.js";
     }
 
     // scores
-    let gma = getScore(player, 'gma');
-    let gms = getScore(player, 'gms');
-    let gmc = getScore(player, 'gmc');
-    let commandblocks = getScore(player, 'commandblocks');
-    let cmds = getScore(player, 'cmds');
-    let worldborder = getScore(player, 'worldborder');
-    let frostwalker = getScore(player, 'frostwalker');
-    let autoclicker = getScore(player, 'autoclicker');
-    let encharmor = getScore(player, 'encharmor');
-    let autoaura = getScore(player, 'autoaura');
-    let antikb = getScore(player, 'antikb');
+    let gma = getScore('gma', player);
+    let gms = getScore('gms', player);
+    let gmc = getScore('gmc', player);
+    let commandblocks = getScore('commandblocks', player);
+    let cmds = getScore('cmds', player);
+    let worldborder = getScore('worldborder', player);
+    let frostwalker = getScore('frostwalker', player);
+    let autoclicker = getScore('autoclicker', player);
+    let encharmor = getScore('encharmor', player);
+    let autoaura = getScore('autoaura', player);
+    let antikb = getScore('antikb', player);
 
     if (gma >= 1) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
