@@ -56,15 +56,16 @@ export function tag(message, args) {
         return;
     }
 
-    if (args[0].replace(/@/g, "") === member.name && args[1]) {
-        if (args[1].startsWith('Rank:')) {
-            resetTag(player, member);
-            member.addTag(`${args[1]}`);
-            // tagRank(member);
-        } else {
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
-            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: !tag ${member.name} Rank:Admin--VIP--Helper"}]}`);
+    let custom;
+    args.forEach(t => {
+        if(t.startsWith('Rank:')) {
+            custom = t;
         }
+    })
+    if (custom.startsWith('Rank:')) {
+        resetTag(player, member);
+        member.addTag(`${custom}`);
+        // tagRank(member);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: !tag ${member.name} Rank:Admin--VIP--Helper"}]}`);
