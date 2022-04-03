@@ -6,7 +6,7 @@
 				"autototem": {
 					"transitions": [
 						{
-							"totem": "query.get_equipped_item_name('off_hand') == 'totem_of_undying'"
+							"totem": "query.is_item_name_any('slot.weapon.offhand',0,'minecraft:arrow')"
 						}
 					]
 				},
@@ -21,7 +21,7 @@
 					],
 					"transitions": [
 						{
-							"autototem": "query.get_equipped_item_name('off_hand') != 'totem_of_undying'"
+							"autototem": "!query.is_item_name_any('slot.weapon.offhand',0,'minecraft:arrow')"
 						}
 					]
 				}
