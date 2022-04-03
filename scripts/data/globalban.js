@@ -224,5 +224,6 @@ export const banplayer = [
     {name: 'epicfailsgaming'},
     {name: 'nations99sucks'},
     {name: 'Herobrine483616'},
-    {name: 'Xx_Floppy_xX'}
+    {name: 'Xx_Floppy_xX'},
+    {name: 'Danny5502'}
 ];
