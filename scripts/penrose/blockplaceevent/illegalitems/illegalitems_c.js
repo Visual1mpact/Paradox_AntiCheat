@@ -72,6 +72,7 @@ function illegalitemsc(object) {
                 // If we detect items in the container when being placed then it is a hack
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
                 pl.verify = 1;
+                continue;
             }
             // Check if item found inside the container exceeds max allowed stack or is illegal
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
