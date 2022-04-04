@@ -194,6 +194,96 @@ export default
         name: 'minecraft:furnace',
         data: 0,
         nametag: 'furnace'
+    },
+    'minecraft:armor_stand': {
+        name: 'minecraft:armor_stand',
+        data: 0,
+        nametag: 'armor_stand'
+    },
+    'minecraft:barrel': {
+        name: 'minecraft:barrel',
+        data: 0,
+        nametag: 'barrel'
+    },
+    'minecraft:blast_furnace': {
+        name: 'minecraft:blast_furnace',
+        data: 0,
+        nametag: 'blast_furnace'
+    },
+    'minecraft:brewing_stand': {
+        name: 'minecraft:brewing_stand',
+        data: 0,
+        nametag: 'brewing_stand'
+    },
+    'minecraft:campfire': {
+        name: 'minecraft:campfire',
+        data: 0,
+        nametag: 'campfire'
+    },
+    'minecraft:cauldron': {
+        name: 'minecraft:cauldron',
+        data: 0,
+        nametag: 'cauldron'
+    },
+    'minecraft:chest': {
+        name: 'minecraft:chest',
+        data: 0,
+        nametag: 'chest'
+    },
+    'minecraft:dispenser': {
+        name: 'minecraft:dispenser',
+        data: 0,
+        nametag: 'dispenser'
+    },
+    'minecraft:dropper': {
+        name: 'minecraft:dropper',
+        data: 0,
+        nametag: 'dropper'
+    },
+    'minecraft:jukebox': {
+        name: 'minecraft:jukebox',
+        data: 0,
+        nametag: 'jukebox'
+    },
+    'minecraft:hopper': {
+        name: 'minecraft:hopper',
+        data: 0,
+        nametag: 'hopper'
+    },
+    'minecraft:frame': {
+        name: 'minecraft:frame',
+        data: 0,
+        nametag: 'frame'
+    },
+    'minecraft:glow_frame': {
+        name: 'minecraft:glow_frame',
+        data: 0,
+        nametag: 'glow_frame'
+    },
+    'minecraft:lectern': {
+        name: 'minecraft:lectern',
+        data: 0,
+        nametag: 'lectern'
+    },
+    'minecraft:chest_minecart': {
+        name: 'minecraft:chest_minecart',
+        data: 0,
+        nametag: 'chest_minecart'
+    },
+    'minecraft:hopper_minecart': {
+        name: 'minecraft:hopper_minecart',
+        data: 0,
+        nametag: 'hopper_minecart'
+    },
+    'minecraft:trapped_chest': {
+        name: 'minecraft:trapped_chest',
+        data: 0,
+        nametag: 'trapped_chest'
+    },
+    'minecraft:smoker': {
+        name: 'minecraft:smoker',
+        data: 0,
+        nametag: 'smoker'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
