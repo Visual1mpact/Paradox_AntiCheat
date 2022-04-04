@@ -75,7 +75,7 @@ function illegalitemsc(object) {
                 pl.verify = 1;
                 continue;
             }
-            // Check if item found inside the container exceeds max allowed stack or is illegal
+            // Check if item found inside the container is illegal
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
