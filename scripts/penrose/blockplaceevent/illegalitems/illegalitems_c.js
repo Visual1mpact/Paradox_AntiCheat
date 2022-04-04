@@ -8,7 +8,8 @@ const World = world;
 
 // Custom property
 let pl = {
-    verify: 0
+    verify: 0,
+    verify2: 0
 }
 
 function rip(player) {
@@ -75,7 +76,7 @@ function illegalitemsc(object) {
                 continue;
             }
             // Check if item found inside the container exceeds max allowed stack or is illegal
-            if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped') || inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
+            if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
                 return rip(player);
@@ -98,7 +99,19 @@ function illegalitemsc(object) {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
                     } catch (error) {}
                 }
+            } else if (inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
+                // Item stacks over 64 we remove
+                try {
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
+                } catch (error) {}
+                pl.verify2 = 1;
             }
+        }
+        // Handles stacked items
+        if (pl.verify === 1) {
+            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
+            pl.verify2 = 0;
         }
         // Handles containers
         if (pl.verify === 1) {
