@@ -12,7 +12,7 @@ let pl = {
     verify2: 0
 }
 
-function rip(player) {
+function rip(player, inventory_item) {
     // Get all tags
     let tags = player.getTags();
 
@@ -27,7 +27,7 @@ function rip(player) {
     });
     // Tag with reason and by who
     try {
-        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item"`);
+        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item (${inventory_item.id.replace("minecraft:", "")})"`);
         player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
         player.addTag('isBanned');
     // Despawn if we cannot kick the player
@@ -79,7 +79,7 @@ function illegalitemsc(object) {
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
-                return rip(player);
+                return rip(player, inventory_item);
             } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
                 let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
                 // Check if data exceeds vanilla data
