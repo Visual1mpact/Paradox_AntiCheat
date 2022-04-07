@@ -60,6 +60,7 @@ import { xrayA } from "./settings/xraya.js";
 import { unbanwindow } from "./settings/unbanwindow.js";
 import { prefix } from "./moderation/prefix.js";
 import { chatranks } from "./settings/chatranks.js";
+import { stackban } from "./settings/stackban.js";
 
 /**
  * @name commandHandler
@@ -267,6 +268,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.antishulker && commandName === "antishulker"):
             antishulker(message);
+            break;
+        case (config.customcommands.stackban && commandName === "stackban"):
+            stackban(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

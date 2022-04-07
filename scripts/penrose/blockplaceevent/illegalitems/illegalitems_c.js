@@ -112,6 +112,9 @@ function illegalitemsc(object) {
             player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
             pl.verify2 = 0;
+            if (config.modules.stackBan.enabled) {
+                return rip(player, inventory_item);
+            }
         }
         // Handles containers
         if (pl.verify === 1) {

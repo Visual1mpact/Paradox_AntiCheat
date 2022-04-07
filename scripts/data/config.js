@@ -60,7 +60,8 @@ export default
         "xraya": true,
         "unbanwindow": true,
         "chatranks": true,
-        "antishulker": true
+        "antishulker": true,
+        "stackban": true
     },
     "modules": {
         "badpackets1": {
@@ -128,11 +129,15 @@ export default
             "maxStack": 64
         },
         "illegalitemsB": {
-            "enabled": true
+            "enabled": true,
+            "maxStack": 64
         },
         "illegalitemsC": {
             "enabled": true,
             "maxStack": 64
+        },
+        "stackBan": {
+            "enabled": false
         },
         "antikbA": {
             "enabled": true,

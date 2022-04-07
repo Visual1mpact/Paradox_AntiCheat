@@ -208,19 +208,37 @@ import { getScore, disabler } from "../../util.js";
     }
 
     if (config.modules.illegalitemsA.enabled) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsA is currently §aENABLED"}]}`);
+        let verification;
+        if (config.modules.stackBan.enabled) {
+            verification = "§aENABLED§r"
+        } else {
+            verification = "§4DISABLED§r"
+        }
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsA is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsA is currently §4DISABLED"}]}`);
     }
 
     if (config.modules.illegalitemsB.enabled) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsB is currently §aENABLED"}]}`);
+        let verification;
+        if (config.modules.stackBan.enabled) {
+            verification = "§aENABLED§r"
+        } else {
+            verification = "§4DISABLED§r"
+        }
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsB is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsB is currently §4DISABLED"}]}`);
     }
 
     if (config.modules.illegalitemsC.enabled) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsC is currently §aENABLED"}]}`);
+        let verification;
+        if (config.modules.stackBan.enabled) {
+            verification = "§aENABLED§r"
+        } else {
+            verification = "§4DISABLED§r"
+        }
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsC is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsC is currently §4DISABLED"}]}`);
     }

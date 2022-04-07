@@ -11,6 +11,30 @@ let pl = {
     verify: 0
 }
 
+function rip(player, inventory_item) {
+    // Get all tags
+    let tags = player.getTags();
+
+    // This removes old ban tags
+    tags.forEach(t => {
+        if(t.startsWith("Reason:")) {
+            player.removeTag(t);
+        }
+        if(t.startsWith("By:")) {
+            player.removeTag(t);
+        }
+    });
+    // Tag with reason and by who
+    try {
+        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item (${inventory_item.id.replace("minecraft:", "")})"`);
+        player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+        player.addTag('isBanned');
+    // Despawn if we cannot kick the player
+    } catch (error) {
+        player.triggerEvent('paradox:kick');
+    }
+}
+
 function illegalitemsa() {
     // Unsubscribe if disabled in-game
     if (config.modules.illegalitemsA.enabled === false) {
@@ -40,26 +64,8 @@ function illegalitemsa() {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
                 } catch {}
-                let tags = player.getTags();
-
-                // This removes old ban tags
-                tags.forEach(t => {
-                    if(t.startsWith("Reason:")) {
-                        player.removeTag(t);
-                    }
-                    if(t.startsWith("By:")) {
-                        player.removeTag(t);
-                    }
-                });
-                // Tag with reason and by who
-                try {
-                    player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item (${inventory_item.id.replace("minecraft:", "")})"`);
-                    player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
-                    player.addTag('isBanned');
-                // Despawn if we cannot kick the player
-                } catch (error) {
-                    player.triggerEvent('paradox:kick');
-                }
+                // Ban
+                return rip(player, inventory_item);
             } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
                 let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
                 // Check if data exceeds vanilla data
@@ -92,6 +98,10 @@ function illegalitemsa() {
             player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
             pl.verify = 0;
+            if (config.modules.stackBan.enabled) {
+                // Ban
+                return rip(player, inventory_item);
+            }
         }
     }
 }
