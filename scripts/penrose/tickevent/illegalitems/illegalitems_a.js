@@ -26,7 +26,7 @@ function rip(player, inventory_item) {
     });
     // Tag with reason and by who
     try {
-        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item (${inventory_item.id.replace("minecraft:", "")})"`);
+        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})"`);
         player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
         player.addTag('isBanned');
     // Despawn if we cannot kick the player
