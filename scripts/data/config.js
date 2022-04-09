@@ -61,7 +61,8 @@ export default
         "unbanwindow": true,
         "chatranks": true,
         "antishulker": true,
-        "stackban": true
+        "stackban": true,
+        "lockdown": true
     },
     "modules": {
         "badpackets1": {
@@ -161,6 +162,9 @@ export default
             "enabled": true
         },
         "antishulker": {
+            "enabled": false
+        },
+        "lockDown": {
             "enabled": false
         }
     }

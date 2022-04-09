@@ -61,6 +61,7 @@ import { unbanwindow } from "./settings/unbanwindow.js";
 import { prefix } from "./moderation/prefix.js";
 import { chatranks } from "./settings/chatranks.js";
 import { stackban } from "./settings/stackban.js";
+import { lockdown } from "./moderation/lockdown.js";
 
 /**
  * @name commandHandler
@@ -271,6 +272,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.stackban && commandName === "stackban"):
             stackban(message);
+            break;
+        case (config.customcommands.lockdown && commandName === "lockdown"):
+            lockdown(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

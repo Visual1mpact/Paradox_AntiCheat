@@ -41,6 +41,7 @@ export function help(message) {
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}modules§r - View all enabled or disabled modules."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}prefix <prefix>§r - Change the prefix for commands. Max is two characters."}]}`);
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}prefix reset§r - Reset the prefix for commands."}]}`);
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}lockdown§r - Kicks player's from server excluding Staff for maintenance."}]}`);
 
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Optional Features§6]§r"}]}`);
 
