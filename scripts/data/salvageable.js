@@ -165,11 +165,6 @@ export default
         data: 0,
         nametag: 'black_banner'
     },
-    'minecraft:armor_stand': {
-        name: 'minecraft:armor_stand',
-        data: 0,
-        nametag: 'armor_stand'
-    },
     'minecraft:splash_potion': {
         name: 'minecraft:splash_potion',
         data: 42,
