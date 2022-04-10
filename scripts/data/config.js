@@ -62,7 +62,8 @@ export default
         "chatranks": true,
         "antishulker": true,
         "stackban": true,
-        "lockdown": true
+        "lockdown": true,
+        "punish": true
     },
     "modules": {
         "badpackets1": {
