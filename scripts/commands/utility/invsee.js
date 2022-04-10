@@ -46,11 +46,11 @@ export function invsee(message, args) {
 
     let container = member.getComponent('inventory').container;
     
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)}'s inventory:\n\n"}]}`);
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)}'s inventory:\n\n"}]}`);
     for (let i = 0; i < container.size; i++) {
         if (container.getItem(i)) {
             let o = container.getItem(i);
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Slot ${i}: ${o.id}:${o.data} x${o.amount}"}]}`);
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§fSlot ${i}§r §6=>§r §4[§f${o.id.replace("minecraft:", "")}§4]§r §6Amount: §4x${o.amount}§r §6=>§r §4[§fData ${o.data}§4]§r"}]}`);
         }
     }
 }
