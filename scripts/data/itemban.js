@@ -46,5 +46,6 @@ export const illegalitems = [
   'minecraft:mob_spawner',
   'minecraft:border_block',
   'minecraft:bubble_column',
-  'minecraft:jigsaw'
+  'minecraft:jigsaw',
+  'minecraft:portal'
 ];
