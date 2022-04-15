@@ -36,7 +36,7 @@ export function gohome(message) {
         }
     })
 
-    if (!homex || !homey || !homez) {
+    if (!homex || !homey || !homez || !dimension) {
         player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You do not have a home point saved!"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome home ${disabler(player.nameTag)}!"}]}`);
