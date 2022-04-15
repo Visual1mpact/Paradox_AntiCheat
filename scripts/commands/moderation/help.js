@@ -444,6 +444,13 @@ export function help(message) {
         gohomeCommand = `§6${prefix}gohome§r - Command §4DISABLED§r.`;
     }
 
+    let tpaCommand;
+    if (config.customcommands.tpa === true) {
+        tpaCommand = `§6${prefix}tpa <username>§r - Teleport to another player.`;
+    } else if (config.customcommands.tpa === false) {
+        tpaCommand = `§6${prefix}tpa <username>§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -462,6 +469,7 @@ ${modulesCommand}
 §6${prefix}prefix reset§r - Reset the prefix for commands.
 ${lockdownCommand}
 ${punishCommand}
+${tpaCommand}
 
 §l§6[§4Optional Features§6]§r
 ${allowgmaCommand}

@@ -65,7 +65,8 @@ export default
         "lockdown": true,
         "punish": true,
         "sethome": true,
-        "gohome": true
+        "gohome": true,
+        "tpa": true
     },
     "modules": {
         "badpackets1": {
