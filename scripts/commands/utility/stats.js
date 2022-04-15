@@ -27,9 +27,7 @@ export function stats(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let verify = getScore('notify', player);
-
-    if (verify <= 0) {
+    if (!player.hasTag('notify')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable cheat notifications."}]}`);
     }
 
