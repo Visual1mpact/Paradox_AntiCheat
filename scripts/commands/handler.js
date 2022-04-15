@@ -63,6 +63,8 @@ import { chatranks } from "./settings/chatranks.js";
 import { stackban } from "./settings/stackban.js";
 import { lockdown } from "./moderation/lockdown.js";
 import { punish } from "./moderation/punish.js";
+import { sethome } from "./utility/sethome.js";
+import { gohome } from "./utility/gohome.js";
 
 /**
  * @name commandHandler
@@ -279,6 +281,12 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.punish && commandName === "punish"):
             punish(message, args);
+            break;
+        case (config.customcommands.sethome && commandName === "sethome"):
+            sethome(message);
+            break;
+        case (config.customcommands.gohome && commandName === "gohome"):
+            gohome(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

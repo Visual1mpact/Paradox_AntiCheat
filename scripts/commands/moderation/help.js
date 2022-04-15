@@ -1,5 +1,6 @@
 import config from "../../data/config.js";
 import { disabler, getPrefix } from "../../util.js";
+import { nonstaffhelp } from "./nonstaffhelp.js";
 
 /**
  * @name help
@@ -21,8 +22,7 @@ export function help(message) {
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
     if (!player.hasTag('paradoxOpped')) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6[§4Non-Staff Commands§6]§r"}]}`);
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§6${prefix}report <username>§r - Report suspicious players to staff."}]}`);
+        return nonstaffhelp(message)
     }
 
     // Make sure the help command wasn't disabled
@@ -430,6 +430,20 @@ export function help(message) {
         chatrank1 = `§6${prefix}tag <username> reset§r - Command §4DISABLED§r.`;
     }
 
+    let sethomeCommand;
+    if (config.customcommands.sethome === true) {
+        sethomeCommand = `§6${prefix}sethome§r - Saves current coordinates as home.`;
+    } else if (config.customcommands.sethome === false) {
+        sethomeCommand = `§6${prefix}sethome§r - Command §4DISABLED§r.`;
+    }
+
+    let gohomeCommand;
+    if (config.customcommands.gohome === true) {
+        gohomeCommand = `§6${prefix}gohome§r - Teleport back to saved home coordinates.`;
+    } else if (config.customcommands.gohome === false) {
+        gohomeCommand = `§6${prefix}gohome§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -499,5 +513,7 @@ ${chatrank0}
 ${chatrank1}
 ${clearchatCommand}
 ${invseeCommand}
+${sethomeCommand}
+${gohomeCommand}
     "}]}`);
 }

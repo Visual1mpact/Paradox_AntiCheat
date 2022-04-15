@@ -63,7 +63,9 @@ export default
         "antishulker": true,
         "stackban": true,
         "lockdown": true,
-        "punish": true
+        "punish": true,
+        "sethome": true,
+        "gohome": true
     },
     "modules": {
         "badpackets1": {
