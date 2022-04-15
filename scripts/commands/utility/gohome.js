@@ -20,6 +20,7 @@ export function gohome(message) {
     let homex;
     let homey;
     let homez;
+    let dimension;
     player.getTags().forEach(tag => {
         if (tag.includes("HomeX:")) {
             homex = parseInt(tag.replace("HomeX:", ""));
@@ -30,12 +31,15 @@ export function gohome(message) {
         if (tag.includes("HomeZ:")) {
             homez = parseInt(tag.replace("HomeZ:", ""));
         }
+        if (tag.includes("Dimension:")) {
+            dimension = tag.replace("Dimension:", "");
+        }
     })
 
     if (!homex || !homey || !homez) {
         player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You do not have a home point saved!"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome home ${disabler(player.nameTag)}!"}]}`);
-        player.teleport(new Location(homex, homey, homez), player.dimension, 0, player.bodyRotation);
+        player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, player.bodyRotation);
     }
 }
