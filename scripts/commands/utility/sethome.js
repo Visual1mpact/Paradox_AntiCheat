@@ -31,5 +31,5 @@ export function sethome(message) {
     player.addTag(`HomeX:${homex}`);
     player.addTag(`HomeY:${homey}`);
     player.addTag(`HomeZ:${homez}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"\nHome has been set at ${homex} ${homey} ${homez}!"}]}`)
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Home has been set at ${homex} ${homey} ${homez}!"}]}`)
 }
