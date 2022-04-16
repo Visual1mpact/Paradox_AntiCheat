@@ -324,6 +324,11 @@ export default
         name: 'minecraft:end_crystal',
         data: 0,
         nametag: 'end_crystal'
+    },
+    'minecraft:string': {
+        name: 'minecraft:string',
+        data: 0,
+        nametag: 'string'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
