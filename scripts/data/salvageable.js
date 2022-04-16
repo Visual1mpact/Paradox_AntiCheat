@@ -284,6 +284,41 @@ export default
         name: 'minecraft:tnt',
         data: 0,
         nametag: 'tnt'
+    },
+    'minecraft:double_plant': {
+        name: 'minecraft:double_plant',
+        data: 0,
+        nametag: 'double_plant'
+    },
+    'minecraft:heart_of_the_sea': {
+        name: 'minecraft:heart_of_the_sea',
+        data: 0,
+        nametag: 'heart_of_the_sea'
+    },
+    'minecraft:orange_dye': {
+        name: 'minecraft:orange_dye',
+        data: 0,
+        nametag: 'orange_dye'
+    },
+    'minecraft:blue_dye': {
+        name: 'minecraft:blue_dye',
+        data: 0,
+        nametag: 'blue_dye'
+    },
+    'minecraft:enchanted_golden_apple': {
+        name: 'minecraft:enchanted_golden_apple',
+        data: 0,
+        nametag: 'enchanted_golden_apple'
+    },
+    'minecraft:lantern': {
+        name: 'minecraft:lantern',
+        data: 0,
+        nametag: 'lantern'
+    },
+    'minecraft:chain': {
+        name: 'minecraft:chain',
+        data: 0,
+        nametag: 'chain'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
