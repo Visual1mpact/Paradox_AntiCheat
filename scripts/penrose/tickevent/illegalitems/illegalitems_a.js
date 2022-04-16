@@ -67,14 +67,14 @@ function illegalitemsa() {
                 // Ban
                 return rip(player, inventory_item);
             } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
-                let potions = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion"];
+                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
                 // Check if data exceeds vanilla data
-                if (potions.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
+                if (uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
                     // Reset item to data type of 0
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
                     } catch (error) {}
-                } else if (salvageable[inventory_item.id].data !== inventory_item.data && potions.indexOf(salvageable[inventory_item.id].name) === -1) {
+                } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
                     // Reset item to data type of equal data if they do not match
                     try {
                         inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));

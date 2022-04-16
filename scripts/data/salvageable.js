@@ -409,6 +409,11 @@ export default
         name: 'minecraft:soul_torch',
         data: 0,
         nametag: 'soul_torch'
+    },
+    'minecraft:skull': {
+        name: 'minecraft:skull',
+        data: 5,
+        nametag: 'skull'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
