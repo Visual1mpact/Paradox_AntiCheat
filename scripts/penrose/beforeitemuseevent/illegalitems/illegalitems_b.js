@@ -42,6 +42,11 @@ function illegalitemsb(object) {
         }
     }
 
+    // Used for getting some info on the item
+    if (config.debug) {
+        source.runCommand(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`)
+    }
+
     let hand = source.selectedSlot
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
