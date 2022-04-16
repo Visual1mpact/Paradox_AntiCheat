@@ -112,9 +112,9 @@ import { getScore, disabler } from "../../util.js";
     }
 
     if (config.modules.badpackets1.enabled) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 2 is currently §aENABLED"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §aENABLED"}]}`);
     } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 2 is currently §4DISABLED"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §4DISABLED"}]}`);
     }
 
     if (config.modules.spammerA.enabled) {
