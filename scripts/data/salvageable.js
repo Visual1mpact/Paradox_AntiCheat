@@ -399,6 +399,16 @@ export default
         name: 'minecraft:snowball',
         data: 0,
         nametag: 'snowball'
+    },
+    'minecraft:sugar': {
+        name: 'minecraft:sugar',
+        data: 0,
+        nametag: 'sugar'
+    },
+    'minecraft:soul_torch': {
+        name: 'minecraft:soul_torch',
+        data: 0,
+        nametag: 'soul_torch'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
