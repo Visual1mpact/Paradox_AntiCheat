@@ -279,6 +279,11 @@ export default
         name: 'minecraft:smoker',
         data: 0,
         nametag: 'smoker'
+    },
+    'minecraft:tnt': {
+        name: 'minecraft:tnt',
+        data: 0,
+        nametag: 'tnt'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
