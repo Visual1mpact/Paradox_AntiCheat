@@ -394,6 +394,11 @@ export default
         name: 'minecraft:magnenta_dye',
         data: 0,
         nametag: 'magnenta_dye'
+    },
+    'minecraft:snowball': {
+        name: 'minecraft:snowball',
+        data: 0,
+        nametag: 'snowball'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
