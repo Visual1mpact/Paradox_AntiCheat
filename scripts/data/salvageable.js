@@ -329,6 +329,71 @@ export default
         name: 'minecraft:string',
         data: 0,
         nametag: 'string'
+    },
+    'minecraft:red_dye': {
+        name: 'minecraft:red_dye',
+        data: 0,
+        nametag: 'red_dye'
+    },
+    'minecraft:lime_dye': {
+        name: 'minecraft:lime_dye',
+        data: 0,
+        nametag: 'lime_dye'
+    },
+    'minecraft:yellow_dye': {
+        name: 'minecraft:yellow_dye',
+        data: 0,
+        nametag: 'yellow_dye'
+    },
+    'minecraft:green_dye': {
+        name: 'minecraft:green_dye',
+        data: 0,
+        nametag: 'green_dye'
+    },
+    'minecraft:cyan_dye': {
+        name: 'minecraft:cyan_dye',
+        data: 0,
+        nametag: 'cyan_dye'
+    },
+    'minecraft:light_blue_dye': {
+        name: 'minecraft:light_blue_dye',
+        data: 0,
+        nametag: 'light_blue_dye'
+    },
+    'minecraft:purple_dye': {
+        name: 'minecraft:purple_dye',
+        data: 0,
+        nametag: 'purple_dye'
+    },
+    'minecraft:white_dye': {
+        name: 'minecraft:white_dye',
+        data: 0,
+        nametag: 'white_dye'
+    },
+    'minecraft:light_gray_dye': {
+        name: 'minecraft:light_gray_dye',
+        data: 0,
+        nametag: 'light_gray_dye'
+    },
+    'minecraft:black_dye': {
+        name: 'minecraft:black_dye',
+        data: 0,
+        nametag: 'black_dye'
+    },
+    'minecraft:gray_dye': {
+        name: 'minecraft:gray_dye',
+        data: 0,
+        nametag: 'gray_dye'
+    },
+    'minecraft:brown_dye': {
+        name: 'minecraft:brown_dye',
+        data: 0,
+        nametag: 'brown_dye'
+    },
+    'minecraft:magnenta_dye': {
+        name: 'minecraft:magnenta_dye',
+        data: 0,
+        nametag: 'magnenta_dye'
     }/*,
     'minecraft:crossbow': {
         name: 'minecraft:crossbow',
