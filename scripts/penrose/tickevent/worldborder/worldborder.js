@@ -10,10 +10,8 @@ function safetyProtocol(player, x, y, z) {
     let blockVerification = parseInt(block.y.toFixed(0));
     let safe;
     for (let i = blockVerification; i < blockVerification + 100; i++) {
-        player.runCommand(`say Looking for safe coordinates`)
         let testAir = player.dimension.getBlock(new BlockLocation(x, i, z));
         if (testAir.isEmpty) {
-            player.runCommand(`say Found safe location at Y=${testAir.y}`)
             safe = parseInt(testAir.y);
             break;
         }
