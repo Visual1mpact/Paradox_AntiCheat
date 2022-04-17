@@ -42,7 +42,7 @@ function onJoinTime() {
 
         // Let's verify if this is enabled globally
         let worldborder = getScore('worldborder', player);
-        // Enable worldborder for this player if active
+        // Disable worldborder for this player if not active
         if (worldborder <= 0) {
             config.modules.worldBorder.enabled = false;
         }
