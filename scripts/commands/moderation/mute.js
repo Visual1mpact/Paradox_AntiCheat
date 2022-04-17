@@ -49,6 +49,12 @@ export function mute(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot mute yourself."}]}`);
     }
 
+    // make sure staff dont mute staff
+    let verify = member.hasTag('paradoxOpped');
+    if (verify) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot mute staff members."}]}`);
+    }
+
     try {
         player.runCommand(`ability "${disabler(member.nameTag)}" mute true`);
         player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have been muted. Reason: ${reason}"}]}`);
