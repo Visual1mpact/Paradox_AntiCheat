@@ -109,7 +109,10 @@ function illegalitemsc(object) {
         }
         // Handles stacked items
         if (pl.verify === 1) {
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
+            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+            try {
+                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
+            } catch (error) {}
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
             pl.verify2 = 0;
             if (config.modules.stackBan.enabled) {
@@ -119,7 +122,10 @@ function illegalitemsc(object) {
         // Handles containers
         if (pl.verify === 1) {
             flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${player.location.x}, Y=${player.location.y}, Z=${player.location.z}. Chest has been cleared!"}]}`);
+            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+            try {
+                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${player.location.x}, Y=${player.location.y}, Z=${player.location.z}. Chest has been cleared!"}]}`);
+            } catch (error) {}
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!"}]}`);
             pl.verify = 0;
         }

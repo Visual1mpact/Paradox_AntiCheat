@@ -74,5 +74,10 @@ export function punish(message, args) {
     }
     // Notify staff and player that punishment has taken place
     player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have been punished for your behavior!"}]}`);
-    return player.runCommand(`tellraw @s[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has punished ${disabler(member.nameTag)}!"}]}`);
+    // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+    try {
+        return player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has punished ${disabler(member.nameTag)}!"}]}`);
+    } catch (error) {
+        return;
+    }
 }

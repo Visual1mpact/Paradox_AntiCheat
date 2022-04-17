@@ -95,7 +95,10 @@ function illegalitemsa() {
         }
         // Handle stacked items
         if (pl.verify === 1) {
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
+            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+            try {
+                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
+            } catch (error) {}
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
             pl.verify = 0;
             if (config.modules.stackBan.enabled) {

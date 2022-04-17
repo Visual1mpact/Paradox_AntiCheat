@@ -21,7 +21,10 @@ function noperms() {
             continue;
         }
         entity.removeTag('paradoxOpped');
-        entity.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${entity.id} had unauthorized permissions. Permissions removed!"}]}`);
+        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+        try {
+            entity.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${entity.id} had unauthorized permissions. Permissions removed!"}]}`);
+        } catch (error) {}
     }
 }
 

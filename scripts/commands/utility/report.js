@@ -53,5 +53,10 @@ export function report(message, args) {
 
     player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have reported ${disabler(member.nameTag)} for: ${reason}."}]}`);
 
-    return player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has reported ${disabler(member.nameTag)} for: ${reason}"}]}`);
+    // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+    try {
+        return player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has reported ${disabler(member.nameTag)} for: ${reason}"}]}`);
+    } catch (error) {
+        return;
+    }
 }
