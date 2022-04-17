@@ -27,6 +27,7 @@ import { FlyA } from "./penrose/tickevent/fly/fly_a.js";
 import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import { NoPerms } from "./penrose/tickevent/noperms/nopermission.js";
 import { WorldBorder } from "./penrose/tickevent/worldborder/worldborder.js";
+import { Vanish } from "./penrose/tickevent/vanish/vanish.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -80,6 +81,7 @@ ChatFilter();
 // Tick Events
 NoPerms();
 PlayerPosition();
+Vanish();
 
 if (config.modules.worldBorder.enabled) {
     WorldBorder();
