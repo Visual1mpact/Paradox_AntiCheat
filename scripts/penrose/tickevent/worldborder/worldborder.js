@@ -6,8 +6,7 @@ const World = world;
 
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player, x, y, z) {
-    let block = player.dimension.getBlock(new BlockLocation(x, y, z));
-    let blockVerification = parseInt(block.y.toFixed(0));
+    let blockVerification = parseInt(y.toFixed(0));
     let safe;
     for (let i = blockVerification; i < blockVerification + 100; i++) {
         let testAir = player.dimension.getBlock(new BlockLocation(x, i, z));
