@@ -170,6 +170,9 @@ export default
         },
         "lockDown": {
             "enabled": false
+        },
+        "worldBorder": {
+            "enabled": true
         }
     }
 };

@@ -15,7 +15,6 @@ execute @s[type=player,tag=!paradoxOpped,m=s,scores={gmc=1..}] ~~~ function chec
 execute @s[scores={commandblocks=1..}] ~~~ function checks/optional/nocommandblocks
 execute @s[scores={cmds=1..}] ~~~ function checks/optional/overridecommandblocksenabled
 execute @s[type=player,tag=!paradoxOpped,scores={ench_boots=1,frostwalker=1..}] ~~~ function checks/optional/frostwalkerNBT
-execute @s[type=player,scores={worldborder=1..}] ~~~ function checks/optional/worldborder
 
 # Armor system
 execute @s[scores={ench_helmet=1,encharmor=1..}] ~~~ function checks/optional/armorNBT

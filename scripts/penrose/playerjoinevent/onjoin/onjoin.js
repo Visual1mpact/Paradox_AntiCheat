@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
-import { disabler, getPrefix, tagRank } from "../../../util.js";
+import { disabler, getPrefix, getScore, tagRank } from "../../../util.js";
 
 const World = world;
 
@@ -39,6 +39,13 @@ function onJoinTime() {
         // Set up custom prefix
         getPrefix(player);
         player.check = true;
+
+        // Let's verify if this is enabled globally
+        let worldborder = getScore('worldborder', player);
+        // Enable worldborder for this player if active
+        if (worldborder <= 0) {
+            config.modules.worldBorder.enabled = false;
+        }
     } catch (error) {}
     if (player.check) {
         player.check = false;
