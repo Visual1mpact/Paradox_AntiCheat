@@ -1,4 +1,4 @@
-import { BlockLocation, Location, world } from "mojang-minecraft";
+import { BlockLocation, EntityQueryOptions, Location, world } from "mojang-minecraft";
 import { disabler, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
 
@@ -28,7 +28,9 @@ const worldborder = () => {
         World.events.tick.unsubscribe(worldborder);
         return;
     }
-    for (let player of World.getPlayers()) {
+    let excludeStaff = new EntityQueryOptions();
+    excludeStaff.excludeTags = ['paradoxOpped'];
+    for (let player of World.getPlayers(excludeStaff)) {
         // What is it currently set to
         let borderSize = getScore('worldborder', player);
         // Player coordinates
