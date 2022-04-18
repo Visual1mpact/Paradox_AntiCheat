@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.10.34](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.10.34) (2022-04-18)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.9.33...v2.10.34)
+
 ## [v2.9.33](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.9.33) (2022-04-10)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.8.32...v2.9.33)
