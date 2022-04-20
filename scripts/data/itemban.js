@@ -24,6 +24,7 @@ export const illegalitems = [
   'minecraft:reserved4',
   'minecraft:reserved6',
   'minecraft:movingblock',
+  'minecraft:moving_block',
   'minecraft:movingBlock',
   'minecraft:invisiblebedrock',
   'minecraft:invisible_bedrock',
