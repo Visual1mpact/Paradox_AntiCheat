@@ -1,4 +1,4 @@
-import { world, Player, ItemStack, Items, MinecraftItemTypes } from "mojang-minecraft";
+import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import salvageable from "../../../data/salvageable.js";
 import { disabler, flag } from "../../../util.js";
@@ -48,6 +48,33 @@ function illegalitemsb(object) {
     }
 
     let hand = source.selectedSlot
+
+    // We get a list of enchantments on this item
+    let item_enchants = item.getComponent("minecraft:enchantments").enchantments;
+    // Check if enchantment is illegal on item
+    if (item_enchants) {
+        for (let enchants in MinecraftEnchantmentTypes) {
+            // If no enchantment then move to next loop
+            let enchanted = MinecraftEnchantmentTypes[enchants];
+            if (!item_enchants.hasEnchantment(enchanted)) {
+                continue;
+            }
+            // Get properties of this enchantment
+            let enchant_data = item_enchants.getEnchantment(MinecraftEnchantmentTypes[enchants]);
+            // Does the enchantment type exceed or break vanilla levels
+            if (enchant_data && enchant_data.level > MinecraftEnchantmentTypes[enchants].maxLevel || enchant_data && enchant_data.level < 0) {
+                // Remove this item immediately
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(source.nameTag)}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
+                    source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
+                } catch (error) {}
+                source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                continue;
+            }
+        }
+    }
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" && !source.hasTag('paradoxOpped') || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box" && !source.hasTag('paradoxOpped')) {
