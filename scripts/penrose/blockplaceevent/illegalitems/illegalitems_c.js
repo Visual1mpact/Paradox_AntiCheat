@@ -71,7 +71,7 @@ function illegalitemsc(object) {
             } else if (block.id !== "minecraft:shulker_box" || block.id !== "minecraft:undyed_shulker_box" || block.id !== "minecraft:ender_chest") {
                 // Most items with a container should be empty when placing down
                 // If we detect items in the container when being placed then it is a hack
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
+                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 pl.verify = 1;
                 continue;
             }
@@ -106,7 +106,7 @@ function illegalitemsc(object) {
             // Check if item found inside the container is illegal
             if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
+                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 return rip(player, inventory_item);
             } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
                 let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
@@ -130,7 +130,7 @@ function illegalitemsc(object) {
             } else if (inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
                 // Item stacks over 64 we remove
                 try {
-                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch (error) {}
                 pl.verify2 = 1;
             }
