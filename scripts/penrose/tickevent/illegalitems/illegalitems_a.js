@@ -56,7 +56,7 @@ function illegalitemsa() {
                 for (let enchants in MinecraftEnchantmentTypes) {
                     // If no enchantment then move to next loop
                     let enchanted = MinecraftEnchantmentTypes[enchants];
-					if (!item_enchants.hasEnchantment(enchanted)) {
+                    if (!item_enchants.hasEnchantment(enchanted)) {
                         continue;
                     }
                     // Get properties of this enchantment
