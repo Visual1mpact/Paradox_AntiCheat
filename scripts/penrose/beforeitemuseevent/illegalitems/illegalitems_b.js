@@ -79,14 +79,14 @@ function illegalitemsb(object) {
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" && !source.hasTag('paradoxOpped') || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box" && !source.hasTag('paradoxOpped')) {
         cancel = true;
-        source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 1));
+        source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         return;
     }
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id) && !source.hasTag('paradoxOpped')) {
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
         cancel = true;
-        source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air,1 ));
+        source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Ban
         return rip(source, item);
     } else if (salvageable[item.id] && !source.hasTag('paradoxOpped')) {
@@ -113,7 +113,7 @@ function illegalitemsb(object) {
         // Item stacks over 64 we remove
         try {
             cancel = true;
-            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 1));
+            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
             source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(source.nameTag)} detected with stacked items greater than x64."}]}`);
             source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
         } catch (error) {}
