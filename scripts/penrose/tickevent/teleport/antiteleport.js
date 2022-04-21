@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { world, EntityQueryOptions } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import { flag, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
@@ -24,7 +24,9 @@ const AntiTeleport = () => {
             zVar = Math.abs(z1 - Math.abs(getScore('zPos', player))).toFixed(0);
 
             if (xVar > config.modules.antiTeleport.constraint|| yVar > config.modules.antiTeleport.constraint + config.modules.antiTeleport.constraint * Math.abs(player.velocity.y).toFixed(0) || zVar > config.modules.antiTeleport.constraint) {
-                flag(player, "AntiTeleport", "A", "Movement", false ,false, true, false);
+                if (!player.hasTag('paradoxOpped')) {
+                    flag(player, "AntiTeleport", "A", "Movement", false ,false, true, false);
+                }
            }
         }
     });
