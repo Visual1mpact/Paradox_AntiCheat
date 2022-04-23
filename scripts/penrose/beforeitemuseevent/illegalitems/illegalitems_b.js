@@ -35,7 +35,7 @@ function illegalitemsb(object) {
             }
         });
         try {
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item (${item.id.replace("minecraft:", "")}=${item.amount})"`);
+            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
             source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
             source.addTag('isBanned');
         } catch (error) {
