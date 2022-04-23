@@ -52,13 +52,13 @@ function illegalitemsb(object) {
 
     // We get a list of enchantments on this item
     let item_enchants = item.getComponent("minecraft:enchantments").enchantments;
+    // List of allowed enchantments on item
+    let enchantedSlot = enchantmentSlot[item_enchants.slot];
     // Check if enchantment is illegal on item
     if (item_enchants) {
         for (let enchants in MinecraftEnchantmentTypes) {
             // If no enchantment then move to next loop
             let enchanted = MinecraftEnchantmentTypes[enchants];
-            // List of allowed enchantments on item
-            let enchantedSlot = enchantmentSlot[item_enchants.slot];
             if (!item_enchants.hasEnchantment(enchanted)) {
                 continue;
             }
