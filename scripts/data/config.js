@@ -14,7 +14,6 @@ export default
         "allowgms": true,
         "bedrockvalidate": true,
         "modules": true,
-        "nofrostwalker": true,
         "overidecommandblocksenabled": true,
         "removecommandblocks": true,
         "worldborder": true,

@@ -16,7 +16,6 @@ import { allowgma } from "./settings/allowgma.js";
 import { allowgmc } from "./settings/allowgmc.js";
 import { allowgms } from "./settings/allowgms.js";
 import { bedrockvalidate } from "./settings/bedrockvalidate.js";
-import { nofrostwalker } from "./settings/nofrostwalker.js";
 import { overidecommandblocksenabled } from "./settings/overidecommandblocksenabled.js";
 import { removecommandblocks } from "./settings/removecommandblocks.js";
 import { worldborders } from "./settings/worldborder.js";
@@ -153,9 +152,6 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.modules && commandName === "modules"):
             modules(message);
-            break;
-        case (config.customcommands.nofrostwalker && commandName === "nofrostwalker"):
-            nofrostwalker(message);
             break;
         case (config.customcommands.overidecommandblocksenabled && commandName === "overridecbe"):
             overidecommandblocksenabled(message);

@@ -27,7 +27,6 @@ import { getScore, disabler } from "../../util.js";
     let commandblocks = getScore('commandblocks', player);
     let cmds = getScore('cmds', player);
     let worldborder = getScore('worldborder', player);
-    let frostwalker = getScore('frostwalker', player);
     let autoclicker = getScore('autoclicker', player);
     let encharmor = getScore('encharmor', player);
     let autoaura = getScore('autoaura', player);
@@ -79,12 +78,6 @@ import { getScore, disabler } from "../../util.js";
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a100k"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §4DISABLED"}]}`);
-    }
-    
-    if (frostwalker >= 1) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frostwalker is currently §aENABLED"}]}`);
-    } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r No Frostwalker is currently §4DISABLED"}]}`);
     }
 
     if (autoclicker >= 1) {

@@ -147,13 +147,6 @@ export function help(message) {
         overridecbeCommand = `§6${prefix}overridecbe§r - Command §4DISABLED§r.`;
     }
 
-    let nofrostwalkerCommand;
-    if (config.customcommands.nofrostwalker === true) {
-        nofrostwalkerCommand = `§6${prefix}nofrostwalker§r - Enables/disables Anti Frostwalker. High levels of Frostwalker can crash realms.`;
-    } else if (config.customcommands.nofrostwalker === false) {
-        nofrostwalkerCommand = `§6${prefix}nofrostwalker§r - Command §4DISABLED§r.`;
-    }
-
     let worldborderCommand;
     if (config.customcommands.worldborder === true) {
         worldborderCommand = `§6${prefix}worldborder <option>§r - Sets the World Border. Option: [1k, 5k, 10k, 25k, 50k, 100k, disable]`;
@@ -478,7 +471,6 @@ ${allowgmsCommand}
 ${removecbCommand}
 ${bedrockValidateCommand}
 ${overridecbeCommand}
-${nofrostwalkerCommand}
 ${worldborderCommand}
 ${autoclickerCommand}
 ${jesusaCommand}

@@ -21,13 +21,6 @@ execute @s[scores={detect_leggings=3,ench_legs=1}] ~~~ replaceitem entity @s slo
 execute @s[scores={detect_leggings=4,ench_legs=1}] ~~~ replaceitem entity @s slot.armor.legs 0 golden_leggings 1 0
 execute @s[scores={detect_leggings=5,ench_legs=1}] ~~~ replaceitem entity @s slot.armor.legs 0 diamond_leggings 1 0
 execute @s[scores={detect_leggings=6,ench_legs=1}] ~~~ replaceitem entity @s slot.armor.legs 0 netherite_leggings 1 0
-
-execute @s[scores={detect_boots=1,ench_boots=1,frostwalker=..0}] ~~~ replaceitem entity @s slot.armor.feet 0 leather_boots 1 0
-execute @s[scores={detect_boots=2,ench_boots=1,frostwalker=..0}] ~~~ replaceitem entity @s slot.armor.feet 0 chainmail_boots 1 0
-execute @s[scores={detect_boots=3,ench_boots=1,frostwalker=..0}] ~~~ replaceitem entity @s slot.armor.feet 0 iron_boots 1 0
-execute @s[scores={detect_boots=4,ench_boots=1,frostwalker=..0}] ~~~ replaceitem entity @s slot.armor.feet 0 golden_boots 1 0
-execute @s[scores={detect_boots=5,ench_boots=1,frostwalker=..0}] ~~~ replaceitem entity @s slot.armor.feet 0 diamond_boots 1 0
-execute @s[scores={detect_boots=6,ench_boots=1,frostwalker=..0}] ~~~ replaceitem entity @s slot.armor.feet 0 netherite_boots 1 0
  
 scoreboard players add @s[type=player] armorvl 1
  
