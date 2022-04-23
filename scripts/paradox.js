@@ -28,7 +28,6 @@ import { AntiKnockbackA } from "./penrose/tickevent/knockback/antikb_a.js";
 import { NoPerms } from "./penrose/tickevent/noperms/nopermission.js";
 import { WorldBorder } from "./penrose/tickevent/worldborder/worldborder.js";
 import { Vanish } from "./penrose/tickevent/vanish/vanish.js";
-import { AntiTeleport } from "./penrose/tickevent/teleport/antiteleport.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -130,10 +129,6 @@ if (config.modules.flyA.enabled) {
 
 if  (config.modules.antikbA.enabled) {
     AntiKnockbackA();
-}
-
-if  (config.modules.antiTeleport.enabled) {
-    AntiTeleport();
 }
 
 // Freeze Check
