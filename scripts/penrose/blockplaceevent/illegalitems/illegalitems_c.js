@@ -106,7 +106,7 @@ function illegalitemsc(object) {
                         continue;
                     }
                     // Does the enchantment type exceed or break vanilla levels
-                    if (enchant_data && enchant_data.level > MinecraftEnchantmentTypes[enchants].maxLevel || enchant_data && enchant_data.level < 0) {
+                    if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
                         // Remove this item immediately
                         try {
                             inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));

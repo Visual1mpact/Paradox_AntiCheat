@@ -78,7 +78,7 @@ function illegalitemsb(object) {
                 continue;
             }
             // Does the enchantment type exceed or break vanilla levels
-            if (enchant_data && enchant_data.level > MinecraftEnchantmentTypes[enchants].maxLevel || enchant_data && enchant_data.level < 0) {
+            if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
                 // Remove this item immediately
                 source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                 // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
