@@ -75,7 +75,7 @@ function illegalitemsb(object) {
                     source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
                 } catch (error) {}
                 source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
-                continue;
+                break;
             }
             // Does the enchantment type exceed or break vanilla levels
             if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
@@ -87,7 +87,7 @@ function illegalitemsb(object) {
                     source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
                 } catch (error) {}
                 source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
-                continue;
+                break;
             }
         }
     }
