@@ -1,4 +1,5 @@
-import { disabler, getScore } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler } from "../../util.js";
 
 /**
  * @name allowgmc
@@ -19,16 +20,19 @@ export function allowgmc(message) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let gmcscore = getScore("gmc", player);
-
-    if (gmcscore <= 0) {
+    if (config.modules.creativeGM.enabled === false) {
         // Allow
-        player.runCommand(`scoreboard players set paradox:config gmc 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 1 (Creative)§r to be used!"}]}`);
-    } else if (gmcscore >= 1) {
+        config.modules.creativeGM.enabled = true;
+        // Make sure at least one is allowed since this could cause serious issues if all were locked down
+        // We will allow Adventure Mode in this case
+        if (config.modules.adventureGM.enabled === true && config.modules.survivalGM.enabled === true) {
+            config.modules.adventureGM.enabled = false;
+            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled."}]}`);
+        }
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 1 (Creative)§r to be used!"}]}`);
+    } else if (config.modules.creativeGM.enabled === true) {
         // Deny
-        player.runCommand(`scoreboard players set paradox:config gmc 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has allowed §6Gamemode 1 (Creative)§r to be used!"}]}`);
+        config.modules.creativeGM.enabled = false;
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has allowed §6Gamemode 1 (Creative)§r to be used!"}]}`);
     }
-    return player.runCommand(`scoreboard players operation @a gmc = paradox:config gmc`);
 }

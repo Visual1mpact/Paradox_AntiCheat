@@ -29,6 +29,9 @@ import { NoPerms } from "./penrose/tickevent/noperms/nopermission.js";
 import { WorldBorder } from "./penrose/tickevent/worldborder/worldborder.js";
 import { Vanish } from "./penrose/tickevent/vanish/vanish.js";
 import { AntiTeleport } from "./penrose/tickevent/teleport/antiteleport.js";
+import { Survival } from "./penrose/tickevent/gamemode/survival.js";
+import { Adventure } from "./penrose/tickevent/gamemode/adventure.js";
+import { Creative } from "./penrose/tickevent/gamemode/creative.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -83,6 +86,18 @@ ChatFilter();
 NoPerms();
 PlayerPosition();
 Vanish();
+
+if (config.modules.survivalGM.enabled) {
+    Survival();
+}
+
+if (config.modules.adventureGM.enabled) {
+    Adventure();
+}
+
+if (config.modules.creativeGM.enabled) {
+    Creative();
+}
 
 if (config.modules.worldBorder.enabled) {
     WorldBorder();

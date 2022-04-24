@@ -177,6 +177,15 @@ export default
         "antiTeleport": {
             "enabled": true,
             "constraint": 50
+        },
+        "survivalGM": {
+            "enabled": false
+        },
+        "adventureGM": {
+            "enabled": false
+        },
+        "creativeGM": {
+            "enabled": false
         }
     }
 };

@@ -9,9 +9,6 @@ execute @s[scores={autoaura=1..}] ~~~ function checks/killaura
 execute @s[type=player,scores={attacks=1..,autoclicker=1..}] ~~~ function checks/autoclicker
 
 # Optional checks
-execute @s[type=player,tag=!paradoxOpped,m=a,scores={gma=1..}] ~~~ function checks/optional/gamemodeA
-execute @s[type=player,tag=!paradoxOpped,m=c,scores={gmc=1..}] ~~~ function checks/optional/gamemodeC
-execute @s[type=player,tag=!paradoxOpped,m=s,scores={gmc=1..}] ~~~ function checks/optional/gamemodeS
 execute @s[scores={commandblocks=1..}] ~~~ function checks/optional/nocommandblocks
 execute @s[scores={cmds=1..}] ~~~ function checks/optional/overridecommandblocksenabled
 

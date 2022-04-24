@@ -21,9 +21,6 @@ import { getScore, disabler } from "../../util.js";
     }
 
     // scores
-    let gma = getScore('gma', player);
-    let gms = getScore('gms', player);
-    let gmc = getScore('gmc', player);
     let commandblocks = getScore('commandblocks', player);
     let cmds = getScore('cmds', player);
     let worldborder = getScore('worldborder', player);
@@ -32,19 +29,19 @@ import { getScore, disabler } from "../../util.js";
     let autoaura = getScore('autoaura', player);
     let antikb = getScore('antikb', player);
 
-    if (gma >= 1) {
+    if (config.modules.adventureGM.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Anti-GMA is currently §4DISABLED"}]}`);
     }
 
-    if (gms >= 1) {
+    if (config.modules.survivalGM.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §4DISABLED"}]}`);
     }
 
-    if (gmc >= 1) {
+    if (config.modules.creativeGM.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §4DISABLED"}]}`);

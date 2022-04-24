@@ -10,7 +10,6 @@ tellraw @s {"rawtext":[{"text":"\n§l§6[§4Moderation Commands§6]§r"}]}
 # Gametest Disabled
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function help§r - Shows this help page."}]}
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ op§r - Op's player in Paradox AntiCheat features."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function settings/modules§r - View all enabled or disabled modules."}]}
 
 tellraw @s {"rawtext":[{"text":"\n§l§6[§4Tools and Utilites§6]§r"}]}
 
