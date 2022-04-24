@@ -77,6 +77,10 @@ export const onJoinData = [
     "scoreboard objectives add velocityvl dummy",
     "scoreboard objectives add atcd dummy",
     "scoreboard players add @s atcd 0",
+    "scoreboard objectives add teleport dummy",
+    "scoreboard players add @s teleport 0",
+    "scoreboard objectives add tpvl dummy",
+    "scoreboard players add @s tpvl 0",
     "event entity @s[tag=vanish] vanish",
     "ability @s[tag=flying] mayfly true"
 ];

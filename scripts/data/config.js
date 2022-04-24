@@ -172,6 +172,10 @@ export default
         },
         "worldBorder": {
             "enabled": true
+        },
+        "antiTeleport": {
+            "enabled": true,
+            "constraint": 50
         }
     }
 };

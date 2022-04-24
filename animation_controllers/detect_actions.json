@@ -111,6 +111,8 @@
 						"/tag @p remove attack",
 						"/tag @p remove left",
 						"/tag @s add dead",
+						"/tag @s remove moving",
+						"/tag @s add wasdead",
 						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6DEATH§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}",
 						"/tellraw @s[scores={gametestapi=1..}] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" died at X=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"xPos\"}},{\"text\":\", Y=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"yPos\"}},{\"text\":\", Z=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"zPos\"}}]}"
 					]

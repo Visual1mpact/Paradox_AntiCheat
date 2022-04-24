@@ -37,8 +37,9 @@ export function gohome(message) {
     })
 
     if (!homex || !homey || !homez || !dimension) {
-        player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You do not have a home point saved!"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You do not have a home point saved!"}]}`);
     } else {
+        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" teleport 25`)
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome home ${disabler(player.nameTag)}!"}]}`);
         player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, player.bodyRotation);
     }
