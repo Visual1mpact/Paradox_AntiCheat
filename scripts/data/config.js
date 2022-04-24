@@ -65,7 +65,8 @@ export default
         "punish": true,
         "sethome": true,
         "gohome": true,
-        "tpa": true
+        "tpa": true,
+        "antiteleport": true
     },
     "modules": {
         "badpackets1": {

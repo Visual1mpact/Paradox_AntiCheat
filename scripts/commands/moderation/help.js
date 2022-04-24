@@ -444,6 +444,13 @@ export function help(message) {
         tpaCommand = `§6${prefix}tpa <username>§r - Command §4DISABLED§r.`;
     }
 
+    let antiTeleportCommand;
+    if (config.customcommands.antiteleport === true) {
+        antiTeleportCommand = `§6${prefix}antiteleport§r - Prevents player's from illegally teleporting.`;
+    } else if (config.customcommands.antiteleport === false) {
+        antiTeleportCommand = `§6${prefix}antiteleport§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -500,6 +507,7 @@ ${xrayaCommand}
 ${unbanwindowCommand}
 ${chatranksCommand}
 ${antishulkerCommand}
+${antiTeleportCommand}
 
 §l§6[§4Tools and Utilites§6]§r
 ${auracheckCommand}

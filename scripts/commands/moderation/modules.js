@@ -277,4 +277,10 @@ import { getScore, disabler } from "../../util.js";
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Shulkers is currently §4DISABLED"}]}`);
     }
+
+    if (config.modules.antiTeleport.enabled) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §4DISABLED"}]}`);
+    }
 }

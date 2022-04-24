@@ -65,6 +65,7 @@ import { punish } from "./moderation/punish.js";
 import { sethome } from "./utility/sethome.js";
 import { gohome } from "./utility/gohome.js";
 import { tpa } from "./moderation/tpa.js";
+import { antiteleport } from "./settings/antiteleport.js";
 
 /**
  * @name commandHandler
@@ -287,6 +288,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.tpa && commandName === "tpa"):
             tpa(message, args);
+            break;
+        case (config.customcommands.antiteleport && commandName === "antiteleport"):
+            antiteleport(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
