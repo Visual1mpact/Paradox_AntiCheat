@@ -231,5 +231,7 @@ export const banplayer = [
     {name: 'Badmanclientdeb'},
     {name: 'LeonTheLeapordJ'},
     {name: 'Inu7172'},
-    {name: 'forestblack8889'}
+    {name: 'forestblack8889'},
+    {name: 'superXmario91'},
+    {name: 'Redjaguarcat'}
 ];
