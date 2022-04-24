@@ -7,12 +7,6 @@ import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
 
-// Custom property
-let pl = {
-    verify: 0,
-    verify2: 0
-}
-
 function rip(player, inventory_item) {
     // Get all tags
     let tags = player.getTags();
@@ -72,8 +66,57 @@ function illegalitemsc(object) {
             } else if (block.id !== "minecraft:shulker_box" || block.id !== "minecraft:undyed_shulker_box" || block.id !== "minecraft:ender_chest") {
                 // Most items with a container should be empty when placing down
                 // If we detect items in the container when being placed then it is a hack
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${player.location.x}, Y=${player.location.y}, Z=${player.location.z}. Chest has been cleared!"}]}`);
+                } catch (error) {}
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!"}]}`);
+                // Clear this container from the world
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                pl.verify = 1;
+                continue;
+            }
+            // Check if item found inside the container is illegal
+            if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
+                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                return rip(player, inventory_item);
+            } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
+                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+                // Check if data exceeds vanilla data
+                if (uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
+                    // Reset item to data type of 0
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                    } catch (error) {}
+                    continue;
+                } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
+                    // Reset item to data type of equal data if they do not match
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                    } catch (error) {}
+                    continue;
+                } else {
+                    // Reset item to data type of equal data because we take no chances
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                    } catch (error) {}
+                    continue;
+                }
+            } else if (inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
+                // Item stacks over 64 we remove
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", block.id.replace('minecraft:', ""), false, false);
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
+                } catch (error) {}
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
+                if (config.modules.stackBan.enabled) {
+                    return rip(player, inventory_item);
+                }
+                try {
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                } catch (error) {}
                 continue;
             }
             // We get a list of enchantments on this item
@@ -121,59 +164,6 @@ function illegalitemsc(object) {
                     }
                 }
             }
-            // Check if item found inside the container is illegal
-            if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
-                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                return rip(player, inventory_item);
-            } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
-                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-                // Check if data exceeds vanilla data
-                if (uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
-                    // Reset item to data type of 0
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                    } catch (error) {}
-                } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
-                    // Reset item to data type of equal data if they do not match
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                    } catch (error) {}
-                } else {
-                    // Reset item to data type of equal data because we take no chances
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                    } catch (error) {}
-                }
-            } else if (inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
-                // Item stacks over 64 we remove
-                try {
-                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch (error) {}
-                pl.verify2 = 1;
-            }
-        }
-        // Handles stacked items
-        if (pl.verify === 1) {
-            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-            try {
-                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
-            } catch (error) {}
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
-            pl.verify2 = 0;
-            if (config.modules.stackBan.enabled) {
-                return rip(player, inventory_item);
-            }
-        }
-        // Handles containers
-        if (pl.verify === 1) {
-            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
-            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-            try {
-                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${player.location.x}, Y=${player.location.y}, Z=${player.location.z}. Chest has been cleared!"}]}`);
-            } catch (error) {}
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!"}]}`);
-            pl.verify = 0;
         }
     }
 }
