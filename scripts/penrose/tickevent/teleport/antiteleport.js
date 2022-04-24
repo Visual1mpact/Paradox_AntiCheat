@@ -65,7 +65,7 @@ function antiteleport() {
                     player.teleport(new Location(xScore, yScore, zScore), player.dimension, 0, player.bodyRotation);
                     try {
                         player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(Movement) §4Teleport/A. VL= "},{"score":{"name":"@s","objective":"tpvl"}}]}`);
-                    }
+                    } catch (e) {}
                 }
             }
         }
