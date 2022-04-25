@@ -11,14 +11,12 @@ function serverban() {
         World.events.tick.unsubscribe(serverban);
         return;
     }
-    let tag = new EntityQueryOptions();
-    tag.tags = ['isBanned'];
+    let filter = new EntityQueryOptions();
+    filter.tags = ['isBanned'];
+    // If they are a tester then let them in
+    filter.excludeTags = ['TestPlayer'];
     // run as each player
-    for (let player of World.getPlayers(tag)) {
-        // If they are a tester then let them in
-        if (player.hasTag('TestPlayer')) {
-            return;
-        }
+    for (let player of World.getPlayers(filter)) {
         // Ban message
         banMessage(player);
     }
