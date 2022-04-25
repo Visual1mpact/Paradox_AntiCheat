@@ -12,8 +12,8 @@ function vanish() {
         // Grant them invisibility and night vision
         // 1728000 = 24 hours
         if (player.hasTag('paradoxOpped')) {
-            player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255);
-            player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255);
+            player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255, false);
+            player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255, false);
             player.runCommand(`title @s actionbar §6YOU ARE VANISHED!`);
         }
         // Make sure they have permission to use Vanish
