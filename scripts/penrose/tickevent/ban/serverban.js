@@ -15,6 +15,10 @@ function serverban() {
     tag.tags = ['isBanned'];
     // run as each player
     for (let player of World.getPlayers(tag)) {
+        // If they are a tester then let them in
+        if (player.hasTag('TestPlayer')) {
+            return;
+        }
         // Ban message
         banMessage(player);
     }

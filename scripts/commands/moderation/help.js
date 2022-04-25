@@ -451,6 +451,13 @@ export function help(message) {
         antiTeleportCommand = `§6${prefix}antiteleport§r - Command §4DISABLED§r.`;
     }
 
+    let testerCommand;
+    if (config.customcommands.tester === true) {
+        testerCommand = `§6${prefix}tester <username>§r - Adds/Removes player's as testers for the World`;
+    } else if (config.customcommands.tester === false) {
+        testerCommand = `§6${prefix}tester <username>§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -470,6 +477,7 @@ ${modulesCommand}
 ${lockdownCommand}
 ${punishCommand}
 ${tpaCommand}
+${testerCommand}
 
 §l§6[§4Optional Features§6]§r
 ${allowgmaCommand}

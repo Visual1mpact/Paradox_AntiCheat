@@ -4,7 +4,7 @@ const World = world;
 
 function noperms() {
     let filter = new EntityQueryOptions();
-    filter.tags = ['paradoxOpped'];
+    filter.tags = ['paradoxOpped', 'TestPlayer'];
     // We need a list of players for checking behind a bug in Minecraft
     let playerArray = [...World.getPlayers(filter)];
     // Let's check the entities for illegal permissions
@@ -20,7 +20,12 @@ function noperms() {
             // Skip to the next entity since this is a bug in Minecraft
             continue;
         }
-        entity.removeTag('paradoxOpped');
+        if (entity.hasTag('paradoxOpped')) {
+            entity.removeTag('paradoxOpped');
+        }
+        if (entity.hasTag('TestPlayer')) {
+            entity.removeTag('TestPlayer');
+        }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
             entity.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${entity.id} had unauthorized permissions. Permissions removed!"}]}`);

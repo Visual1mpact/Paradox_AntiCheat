@@ -66,7 +66,8 @@ export default
         "sethome": true,
         "gohome": true,
         "tpa": true,
-        "antiteleport": true
+        "antiteleport": true,
+        "tester": true
     },
     "modules": {
         "badpackets1": {
