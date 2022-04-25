@@ -42,13 +42,19 @@ function illegalitemsc(object) {
     let { block, player, dimension } = object;
     // Block coordinates
     let { x, y, z } = block.location;
+
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-    if (config.modules.antishulker.enabled && block.id === "minecraft:shulker_box" && !player.hasTag('paradoxOpped') || config.modules.antishulker.enabled && block.id === "minecraft:undyed_shulker_box" && !player.hasTag('paradoxOpped')) {
+    if (config.modules.antishulker.enabled && block.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && block.id === "minecraft:undyed_shulker_box") {
         return dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
     }
     // Check if place item is illegal
-    if(illegalitems.includes(block.id) && !player.hasTag('paradoxOpped')) {
+    if(illegalitems.includes(block.id)) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
         flag(player, "IllegalItems", "C", "Exploit", false, false, false, false, false, false);
         return rip(player);
@@ -58,30 +64,14 @@ function illegalitemsc(object) {
     try {
         inventory = block.getComponent('inventory').container;
     } catch (error) {}
-    if (inventory && !player.hasTag('paradoxOpped')) {
+    if (inventory) {
         for (let i = 0; i < inventory.size; i++) {
             let inventory_item = inventory.getItem(i);
             if (!inventory_item) {
                 continue;
-            } else if (block.id !== "minecraft:shulker_box" || block.id !== "minecraft:undyed_shulker_box" || block.id !== "minecraft:ender_chest") {
-                // Most items with a container should be empty when placing down
-                // If we detect items in the container when being placed then it is a hack
-                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
-                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                try {
-                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${player.location.x}, Y=${player.location.y}, Z=${player.location.z}. Chest has been cleared!"}]}`);
-                } catch (error) {}
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!"}]}`);
-                // Clear this container from the world
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                continue;
             }
-            // Check if item found inside the container is illegal
-            if (illegalitems.includes(inventory_item.id) && !player.hasTag('paradoxOpped')) {
-                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                return rip(player, inventory_item);
-            } else if (salvageable[inventory_item.id] && !player.hasTag('paradoxOpped')) {
+            // Check if item found inside the container is salvageable
+            if (salvageable[inventory_item.id]) {
                 let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
                 // Check if data exceeds vanilla data
                 if (uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
@@ -103,7 +93,15 @@ function illegalitemsc(object) {
                     } catch (error) {}
                     continue;
                 }
-            } else if (inventory_item.amount > config.modules.illegalitemsC.maxStack && !player.hasTag('paradoxOpped')) {
+            }
+            // Check if item found inside the container is illegal
+            if (illegalitems.includes(inventory_item.id)) {
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
+                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                return rip(player, inventory_item);
+            }
+            // Check if item found inside container exceeds allowed stacks
+            if (inventory_item.amount > config.modules.illegalitemsC.maxStack) {
                 // Item stacks over 64 we remove
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", block.id.replace('minecraft:', ""), false, false);
                 // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -163,6 +161,21 @@ function illegalitemsc(object) {
                         break;
                     }
                 }
+                continue;
+            }
+            // Check if item container is not empty
+            if (block.id !== "minecraft:shulker_box" || block.id !== "minecraft:undyed_shulker_box" || block.id !== "minecraft:ender_chest") {
+                // Most items with a container should be empty when placing down
+                // If we detect items in the container when being placed then it is a hack
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${x.toFixed(0)}, Y=${y.toFixed(0)}, Z=${z.toFixed(0)}. Chest has been cleared!"}]}`);
+                } catch (error) {}
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!"}]}`);
+                // Clear this container from the world
+                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                continue;
             }
         }
     }

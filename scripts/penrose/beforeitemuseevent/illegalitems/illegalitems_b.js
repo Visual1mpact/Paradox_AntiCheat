@@ -17,6 +17,11 @@ function illegalitemsb(object) {
     // Properties from class
     let { item, source, cancel } = object;
 
+    // Return if player is OP
+    if (source.hasTag('paradoxOpped')) {
+        return;
+    }
+
     // Only fire if entity is a Player
     if (!(source instanceof Player)) {
         return;
@@ -52,19 +57,13 @@ function illegalitemsb(object) {
 
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-    if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" && !source.hasTag('paradoxOpped') || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box" && !source.hasTag('paradoxOpped')) {
+    if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box") {
         cancel = true;
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         return;
     }
-    // If somehow they bypass illegalitems/A then snag them when they use the item
-    if (illegalitems.includes(item.id) && !source.hasTag('paradoxOpped')) {
-        flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
-        cancel = true;
-        source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
-        // Ban
-        return rip(source, item);
-    } else if (salvageable[item.id] && !source.hasTag('paradoxOpped')) {
+    // Check if item is salvageable and save it
+    if (salvageable[item.id]) {
         cancel = true;
         let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
         // Check if data exceeds vanilla data
@@ -87,7 +86,17 @@ function illegalitemsb(object) {
             } catch (error) {}
             return;
         }
-    } else if (item.amount > config.modules.illegalitemsB.maxStack && !source.hasTag('paradoxOpped')) {
+    }
+    // If somehow they bypass illegalitems/A then snag them when they use the item
+    if (illegalitems.includes(item.id)) {
+        flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
+        cancel = true;
+        source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
+        // Ban
+        return rip(source, item);
+    }
+    // Check if item exceeds allowed stacks then remove and ban if enabled
+    if (item.amount > config.modules.illegalitemsB.maxStack) {
         // Item stacks over 64 we remove
         try {
             cancel = true;
