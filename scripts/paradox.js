@@ -46,6 +46,7 @@ import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalite
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 // Import BeforeItemUse Events
 import { IllegalItemsB } from "./penrose/beforeitemuseevent/illegalitems/illegalitems_b.js";
+import { IllegalItemsD } from "./penrose/tickevent/illegalitems/illegalitems_d.js";
 
 // Self explanatory
 const World = world;
@@ -86,6 +87,10 @@ ChatFilter();
 NoPerms();
 PlayerPosition();
 Vanish();
+
+if (config.modules.illegalitemsD.enabled) {
+    IllegalItemsD();
+}
 
 if (config.modules.survivalGM.enabled) {
     Survival();

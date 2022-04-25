@@ -54,6 +54,7 @@ export default
         "illegalitemsa": true,
         "illegalitemsb": true,
         "illegalitemsc": true,
+        "illegalitemsd": true,
         "antiscaffolda": true,
         "antinukera": true,
         "xraya": true,
@@ -139,6 +140,10 @@ export default
             "maxStack": 64
         },
         "illegalitemsC": {
+            "enabled": true,
+            "maxStack": 64
+        },
+        "illegalitemsD": {
             "enabled": true,
             "maxStack": 64
         },

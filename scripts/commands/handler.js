@@ -67,6 +67,7 @@ import { gohome } from "./utility/gohome.js";
 import { tpa } from "./moderation/tpa.js";
 import { antiteleport } from "./settings/antiteleport.js";
 import { tester } from "./moderation/tester.js";
+import { illegalitemsD } from "./settings/illegalitemsd.js";
 
 /**
  * @name commandHandler
@@ -295,6 +296,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.tester && commandName === "tester"):
             tester(message, args);
+            break;
+        case (config.customcommands.illegalitemsd && commandName === "illegalitemsd"):
+            illegalitemsD(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

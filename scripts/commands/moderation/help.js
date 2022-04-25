@@ -453,9 +453,16 @@ export function help(message) {
 
     let testerCommand;
     if (config.customcommands.tester === true) {
-        testerCommand = `§6${prefix}tester <username>§r - Adds/Removes player's as testers for the World`;
+        testerCommand = `§6${prefix}tester <username>§r - Adds/Removes player's as testers for the World.`;
     } else if (config.customcommands.tester === false) {
         testerCommand = `§6${prefix}tester <username>§r - Command §4DISABLED§r.`;
+    }
+
+    let illegalItemsDCommand;
+    if (config.customcommands.illegalitemsd === true) {
+        illegalItemsDCommand = `§6${prefix}illegalitemsd <username>§r - Checks for illegal dropped items in the world.`;
+    } else if (config.customcommands.illegalitemsd === false) {
+        illegalItemsDCommand = `§6${prefix}illegalitemsd <username>§r - Command §4DISABLED§r.`;
     }
 
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
@@ -508,6 +515,7 @@ ${flyaCommand}
 ${illegalitemsaCommand}
 ${illegalitemsbCommand}
 ${illegalitemscCommand}
+${illegalItemsDCommand}
 ${stackbanCommand}
 ${antiscaffoldaCommand}
 ${antinukeraCommand}
