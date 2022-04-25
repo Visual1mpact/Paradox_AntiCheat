@@ -13,9 +13,13 @@ function antiknockbacka() {
     }
     // run as each player
     for (let player of World.getPlayers()) {
+        // Return if player has op
+        if (player.hasTag('paradoxOpped')) {
+            break;
+        }
 
         // antikb/a = checks for anti knockback and flags it
-        if((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= config.modules.antikbA.magnitude && !player.hasTag('paradoxOpped')) {
+        if((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= config.modules.antikbA.magnitude) {
             if(player.hasTag('attacked') && !player.hasTag('dead') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
                 try {
                     // Make sure Anti Knockback is turned on
@@ -26,6 +30,7 @@ function antiknockbacka() {
             }
         }
     }
+    return;
 }
 
 const AntiKnockbackA = () => {

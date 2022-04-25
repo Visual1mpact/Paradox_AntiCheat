@@ -15,6 +15,12 @@ function scaffolda(object) {
 
     // Properties from class
     let { block, player, dimension } = object;
+
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+
     // Block coordinates
     let { x, y, z } = block.location;
 
@@ -30,7 +36,7 @@ function scaffolda(object) {
     let tiktok = timer.filter(time => time.getTime() > new Date().getTime() - 100);
     blockTimer.set(player.nameTag, tiktok);
 
-    if (tiktok.length >= config.modules.antiscaffoldA.max && !player.hasTag('paradoxOpped')) {
+    if (tiktok.length >= config.modules.antiscaffoldA.max) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
         flag(player, "Scaffold", "A", "Placement", false, false, false, false, false, false);
         /*let tags = player.getTags();

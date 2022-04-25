@@ -12,8 +12,13 @@ function spammerb(msg) {
     }
     const player = msg.sender;
 
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+
     // Spammer/B = checks if someone sends a message while swinging their hand
-    if (player.hasTag('left') && !player.hasTag('paradoxOpped')) {
+    if (player.hasTag('left')) {
         flag(player, "Spammer", "B", "Combat", false, false, false, false, false, msg);
     }
 }

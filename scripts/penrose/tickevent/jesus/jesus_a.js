@@ -24,6 +24,10 @@ function jesusa(){
     }
     // run as each player
     for (let player of World.getPlayers()) {
+        // Return if player has op
+        if (player.hasTag('paradoxOpped')) {
+            break;
+        }
         const x = Math.floor(player.location.x);
         const y = Math.floor(player.location.y);
         const z = Math.floor(player.location.z);
@@ -35,7 +39,7 @@ function jesusa(){
             BlockAtPlayer1 = player.dimension.getBlock(new BlockLocation(x, y, z));
         } catch (error) {}
 
-        if (!player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer0.type.id === "minecraft:water" || !player.hasTag('paradoxOpped') && !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer0.type.id === "minecraft:lava") {
+        if (!player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer0.type.id === "minecraft:water" || !player.hasTag('vanish') && !player.hasTag('swimming') && !player.hasTag('riding') && !player.hasTag('flying') && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer0.type.id === "minecraft:lava") {
             _player.count++;
             // Flag them after 2 seconds of activity
             if (_player.count === 1) {
@@ -47,6 +51,7 @@ function jesusa(){
             _player.count = 0;
         }
     }
+    return;
 }
 
 const JesusA = () => {

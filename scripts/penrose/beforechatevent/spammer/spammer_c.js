@@ -12,8 +12,13 @@ function spammerc(msg) {
     }
     const player = msg.sender;
 
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+
     // Spammer/C = checks if someone sends a message while using an item
-    if (player.hasTag('right') && !player.hasTag('paradoxOpped')) {
+    if (player.hasTag('right')) {
         flag(player, "Spammer", "C", "Misc", false, false, false, false, false, msg);
     }
 }

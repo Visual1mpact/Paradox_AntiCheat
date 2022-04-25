@@ -13,13 +13,18 @@ function namespoofb() {
     }
     // run as each player
     for (let player of World.getPlayers()) {
+        // Return if player has op
+        if (player.hasTag('paradoxOpped')) {
+            break;
+        }
         // Namespoof/B = regex check
         try {
-            if (config.modules.namespoofB.regex.test(player.name) && !player.hasTag('paradoxOpped')) {
+            if (config.modules.namespoofB.regex.test(player.name)) {
                 flag(player, "Namespoof", "B", "Exploit", false, false, false, false, false, false);
             }
         } catch(error) {}
     }
+    return;
 }
 
 const NamespoofB = () => {

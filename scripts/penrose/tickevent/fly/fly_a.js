@@ -35,6 +35,11 @@ function flya() {
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
 
+        // Return if player has op
+        if (player.hasTag('paradoxOpped')) {
+            break;
+        }
+
         let test = getScore("fly_timer", player);
 
         if (check != 1) {
@@ -54,7 +59,7 @@ function flya() {
         let zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
         
         if(xyVelocity != 0.0784 || zyVelocity != 0.0784) {
-            if(!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying')) {
+            if(!player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying')) {
                 try {
                     player.runCommand(`execute @s ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s fly_timer 1`);
                 } catch (error) {}
@@ -76,6 +81,7 @@ function flya() {
         // Check the player's status
         time(player, oldX, oldY, oldZ);
     }
+    return;
 }
 
 const FlyA = () => {

@@ -17,6 +17,11 @@ function nukera(object) {
     // Block coordinates
     let { x, y, z } = block.location;
 
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+
     let timer;
     if (blockTimer.has(player.nameTag)) {
         timer = blockTimer.get(player.nameTag);
@@ -94,7 +99,7 @@ function nukera(object) {
     ]
 
     // Flag and salvage broken blocks to their original forms
-    if (tiktok.length >= config.modules.antinukerA.max && vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && !player.hasTag('paradoxOpped')) {
+    if (tiktok.length >= config.modules.antinukerA.max && vegetation.indexOf(brokenBlockPermutation.type.id) === -1) {
         flag(player, "Nuker", "A", "Break", false, false, false, false, false, false);
         blockLoc.setPermutation(blockID);
         try {

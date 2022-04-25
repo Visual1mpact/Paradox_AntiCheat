@@ -13,6 +13,12 @@ function reachb(object) {
 
     // Properties from class
     let { block, player, brokenBlockPermutation } = object;
+
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+
     // Block coordinates
     let { x, y, z } = block.location;
     // Player coordinates
@@ -24,7 +30,7 @@ function reachb(object) {
     // Calculate the distance between the player and the block being destroyed
     let reach = Math.sqrt((x - x1)**2 + (y - y1)**2 + (z - z1)**2);
 
-    if(reach > config.modules.reachB.reach && !player.hasTag('paradoxOpped')) {
+    if(reach > config.modules.reachB.reach) {
         block.setPermutation(blockID);
         // flag(player, "Reach", "B", "Break", false, false, "reach", reach.toFixed(3), false, false);
     }
