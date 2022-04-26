@@ -68,6 +68,8 @@ import { tpa } from "./moderation/tpa.js";
 import { antiteleport } from "./settings/antiteleport.js";
 import { tester } from "./moderation/tester.js";
 import { illegalitemsD } from "./settings/illegalitemsd.js";
+import { listhome } from "./utility/listhome.js";
+import { delhome } from "./utility/delhome.js";
 
 /**
  * @name commandHandler
@@ -283,10 +285,10 @@ export function commandHandler(player, message) {
             punish(message, args);
             break;
         case (config.customcommands.sethome && commandName === "sethome"):
-            sethome(message);
+            sethome(message, args);
             break;
         case (config.customcommands.gohome && commandName === "gohome"):
-            gohome(message);
+            gohome(message, args);
             break;
         case (config.customcommands.tpa && commandName === "tpa"):
             tpa(message, args);
@@ -299,6 +301,12 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.illegalitemsd && commandName === "illegalitemsd"):
             illegalitemsD(message);
+            break;
+        case (config.customcommands.listhome && commandName === "listhome"):
+            listhome(message);
+            break;
+        case (config.customcommands.delhome && commandName === "delhome"):
+            delhome(message, args);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

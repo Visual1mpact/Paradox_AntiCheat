@@ -42,7 +42,7 @@ function antispam(msg) {
             spamCheck.set(disabler(player.nameTag), message);
         } else {
             let oldChat = spamCheck.get(disabler(player.nameTag));
-            if (oldChat === message) {
+            if (oldChat === message && _player.count >= 2) {
                 _player.spam++;
                 try {
                     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Do not spam chat!"}]}`);

@@ -66,6 +66,8 @@ export default
         "punish": true,
         "sethome": true,
         "gohome": true,
+        "listhome": true,
+        "delhome": true,
         "tpa": true,
         "antiteleport": true,
         "tester": true

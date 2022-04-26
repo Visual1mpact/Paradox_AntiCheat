@@ -432,9 +432,9 @@ export function help(message) {
 
     let gohomeCommand;
     if (config.customcommands.gohome === true) {
-        gohomeCommand = `§6${prefix}gohome§r - Teleport back to saved home coordinates.`;
+        gohomeCommand = `§6${prefix}gohome <name>§r - Teleport back to saved home coordinates.`;
     } else if (config.customcommands.gohome === false) {
-        gohomeCommand = `§6${prefix}gohome§r - Command §4DISABLED§r.`;
+        gohomeCommand = `§6${prefix}gohome <name>§r - Command §4DISABLED§r.`;
     }
 
     let tpaCommand;
@@ -463,6 +463,20 @@ export function help(message) {
         illegalItemsDCommand = `§6${prefix}illegalitemsd <username>§r - Checks for illegal dropped items in the world.`;
     } else if (config.customcommands.illegalitemsd === false) {
         illegalItemsDCommand = `§6${prefix}illegalitemsd <username>§r - Command §4DISABLED§r.`;
+    }
+
+    let listHomeCommand;
+    if (config.customcommands.listhome === true) {
+        listHomeCommand = `§6${prefix}listhome§r - Shows your list of saved locations.`;
+    } else if (config.customcommands.listhome === false) {
+        listHomeCommand = `§6${prefix}listhome§r - Command §4DISABLED§r.`;
+    }
+
+    let delHomeCommand;
+    if (config.customcommands.delhome === true) {
+        delHomeCommand = `§6${prefix}delhome <name>§r - Deletes a saved location from list.`;
+    } else if (config.customcommands.delhome === false) {
+        delHomeCommand = `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`;
     }
 
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
@@ -539,5 +553,7 @@ ${clearchatCommand}
 ${invseeCommand}
 ${sethomeCommand}
 ${gohomeCommand}
+${listHomeCommand}
+${delHomeCommand}
     "}]}`);
 }

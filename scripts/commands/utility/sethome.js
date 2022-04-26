@@ -6,11 +6,15 @@ const World = world;
 /**
  * @name sethome
  * @param {object} message - Message object
+ * @param {array} args - Additional arguments provided.
  */
-export function sethome(message) {
+export function sethome(message, args) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/sethome.js:8)");
+    }
+    if (!args) {
+        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? ./commands/utility/sethome.js:9)");
     }
 
     message.cancel = true;
@@ -24,11 +28,25 @@ export function sethome(message) {
     let homey = y.toFixed(0);
     let homez = z.toFixed(0);
     let currentDimension;
-    player.getTags().forEach(tag => {
-        if (tag.includes("HomeX:") || tag.includes("HomeY:") || tag.includes("HomeZ:") || tag.includes("Dimension:")) {
-            player.removeTag(tag);
+
+    // Did they pass a parameter
+    if (!args.length) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to give a name to your home!"}]}`);
+    }
+
+    // Make sure this name doesn't exist already
+    let verify = false;
+    let tags = player.getTags();
+    for (let i = 0; i < tags.length; i++) {
+        if (tags[i].startsWith(args[0].toString() + " X", 5)) {
+            verify = true;
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You already have a home named ${args[0]}!"}]}`)
+            break;
         }
-    })
+    }
+    if (verify === true) {
+        return;
+    }
 
     // Save which dimension they were in
     // This will have to do until the property id for dimension is released
@@ -49,10 +67,8 @@ export function sethome(message) {
         currentDimension = "the end";
     }
 
-    player.addTag(`HomeX:${homex}`);
-    player.addTag(`HomeY:${homey}`);
-    player.addTag(`HomeZ:${homez}`);
-    player.addTag(`Dimension:${currentDimension}`);
+    // Store their new home coordinates
+    player.addTag(`Home:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`);
     
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Home has been set at ${homex} ${homey} ${homez}!"}]}`)
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} has been set at ${homex} ${homey} ${homez}!"}]}`)
 }
