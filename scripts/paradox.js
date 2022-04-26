@@ -32,6 +32,7 @@ import { AntiTeleport } from "./penrose/tickevent/teleport/antiteleport.js";
 import { Survival } from "./penrose/tickevent/gamemode/survival.js";
 import { Adventure } from "./penrose/tickevent/gamemode/adventure.js";
 import { Creative } from "./penrose/tickevent/gamemode/creative.js";
+import { IllegalItemsD } from "./penrose/tickevent/illegalitems/illegalitems_d.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -44,9 +45,8 @@ import { GlobalBanList } from "./penrose/playerjoinevent/ban/globalbanlist.js";
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
-// Import BeforeItemUse Events
-import { IllegalItemsB } from "./penrose/beforeitemuseevent/illegalitems/illegalitems_b.js";
-import { IllegalItemsD } from "./penrose/tickevent/illegalitems/illegalitems_d.js";
+// Import BeforeItemUseOn Events
+import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 
 // Self explanatory
 const World = world;
@@ -201,7 +201,7 @@ if (config.modules.reachA.enabled) {
     ReachA();
 }
 
-// BeforeItemUse Events
+// BeforeItemUseOn Events
 if (config.modules.illegalitemsB.enabled) {
     IllegalItemsB();
 }
