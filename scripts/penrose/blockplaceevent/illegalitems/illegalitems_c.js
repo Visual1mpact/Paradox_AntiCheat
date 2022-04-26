@@ -51,6 +51,11 @@ function illegalitemsc(object) {
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (config.modules.antishulker.enabled && block.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && block.id === "minecraft:undyed_shulker_box") {
+        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+        try {
+            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${block.id.replace("minecraft:", "")} from ${disabler(player.nameTag)}."}]}`);
+        } catch (error) {}
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
         return dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
     }
     // Check if place item is illegal
@@ -115,6 +120,17 @@ function illegalitemsc(object) {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch (error) {}
+                continue;
+            }
+            if (config.modules.illegalEnchantment.enabled && !config.modules.illegalEnchantment.exclude.includes(String(inventory_item.getLore()))) {
+                try {
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                } catch {}
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${inventory.id.replace("minecraft:", "")} with lore from ${disabler(player.nameTag)}."}]}`);
+                } catch (error) {}
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Items with illegal Lores are not allowed!"}]}`);
                 continue;
             }
             // We get a list of enchantments on this item

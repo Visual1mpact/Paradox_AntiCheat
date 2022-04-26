@@ -55,6 +55,11 @@ function illegalitemsa() {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${disabler(player.nameTag)}."}]}`);
+                } catch (error) {}
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
                 continue;
             }
             // If player has salvageable item we save it
@@ -109,48 +114,61 @@ function illegalitemsa() {
                 } catch {}
                 continue;
             }
-            // We get a list of enchantments on this item
-            let item_enchants = inventory_item.getComponent("minecraft:enchantments").enchantments;
-            // List of allowed enchantments on item
-            let enchantedSlot = enchantmentSlot[item_enchants.slot];
-            // Check if enchantment is illegal on item
-            if (item_enchants) {
-                for (let enchants in MinecraftEnchantmentTypes) {
-                    // If no enchantment then move to next loop
-                    let enchanted = MinecraftEnchantmentTypes[enchants];
-                    if (!item_enchants.hasEnchantment(enchanted)) {
-                        continue;
-                    }
-                    // Get properties of this enchantment
-                    let enchant_data = item_enchants.getEnchantment(MinecraftEnchantmentTypes[enchants]);
-                    // Is this item allowed to have this enchantment
-                    let enchantLevel = enchantedSlot[enchants];
-                    if (!enchantLevel) {
-                        // Remove this item immediately
-                        try {
-                            inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                        } catch {}
-                        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                        try {
-                            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(player.nameTag)}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
-                            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
-                        } catch (error) {}
-                        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
-                        break;
-                    }
-                    // Does the enchantment type exceed or break vanilla levels
-                    if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
-                        // Remove this item immediately
-                        try {
-                            inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                        } catch {}
-                        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                        try {
-                            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(player.nameTag)}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
-                            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
-                        } catch (error) {}
-                        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
-                        break;
+            if (config.modules.illegalEnchantment.enabled && !config.modules.illegalEnchantment.exclude.includes(String(inventory_item.getLore()))) {
+                try {
+                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                } catch {}
+                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                try {
+                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${inventory.id.replace("minecraft:", "")} with lore from ${disabler(player.nameTag)}."}]}`);
+                } catch (error) {}
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Items with illegal Lores are not allowed!"}]}`);
+                continue;
+            }
+            if (config.modules.illegalEnchantment.enabled) {
+                // We get a list of enchantments on this item
+                let item_enchants = inventory_item.getComponent("minecraft:enchantments").enchantments;
+                // List of allowed enchantments on item
+                let enchantedSlot = enchantmentSlot[item_enchants.slot];
+                // Check if enchantment is illegal on item
+                if (item_enchants) {
+                    for (let enchants in MinecraftEnchantmentTypes) {
+                        // If no enchantment then move to next loop
+                        let enchanted = MinecraftEnchantmentTypes[enchants];
+                        if (!item_enchants.hasEnchantment(enchanted)) {
+                            continue;
+                        }
+                        // Get properties of this enchantment
+                        let enchant_data = item_enchants.getEnchantment(MinecraftEnchantmentTypes[enchants]);
+                        // Is this item allowed to have this enchantment
+                        let enchantLevel = enchantedSlot[enchants];
+                        if (!enchantLevel) {
+                            // Remove this item immediately
+                            try {
+                                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                            } catch {}
+                            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                            try {
+                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(player.nameTag)}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
+                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
+                            } catch (error) {}
+                            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                            break;
+                        }
+                        // Does the enchantment type exceed or break vanilla levels
+                        if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
+                            // Remove this item immediately
+                            try {
+                                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+                            } catch {}
+                            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+                            try {
+                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(player.nameTag)}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
+                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
+                            } catch (error) {}
+                            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                            break;
+                        }
                     }
                 }
                 continue;

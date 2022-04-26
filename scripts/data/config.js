@@ -198,6 +198,10 @@ export default
         "setHome": {
             "enabled": true,
             "max": 5
+        },
+        "illegalEnchantment": {
+            "enabled": true,
+            "exclude": "(+DATA)"
         }
     }
 };
