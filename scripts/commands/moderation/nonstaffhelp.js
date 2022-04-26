@@ -27,9 +27,9 @@ export function nonstaffhelp(message) {
 
     let sethomeCommand;
     if (config.customcommands.sethome === true) {
-        sethomeCommand = `§6${prefix}sethome§r - Saves current coordinates as home.`;
+        sethomeCommand = `§6${prefix}sethome <name>§r - Saves current coordinates as home.`;
     } else if (config.customcommands.sethome === false) {
-        sethomeCommand = `§6${prefix}sethome§r - Command §4DISABLED§r.`;
+        sethomeCommand = `§6${prefix}sethome <name>§r - Command §4DISABLED§r.`;
     }
 
     let gohomeCommand;
