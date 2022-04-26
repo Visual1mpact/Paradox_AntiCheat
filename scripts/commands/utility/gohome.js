@@ -33,7 +33,7 @@ export function gohome(message, args) {
     let coordinatesArray;
     let tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
-        if (tags[i].startsWith(args[0].toString() + " X", 5)) {
+        if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             // Split string into array
             coordinatesArray = tags[i].split(' ');
             break;
