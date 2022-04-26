@@ -15,7 +15,7 @@ function illegalitemsb(object) {
     }
 
     // Properties from class
-    let { item, source, cancel } = object;
+    let { item, source } = object;
 
     // Return if player is OP
     if (source.hasTag('paradoxOpped')) {
@@ -58,7 +58,6 @@ function illegalitemsb(object) {
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box") {
-        cancel = true;
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
@@ -69,7 +68,6 @@ function illegalitemsb(object) {
     }
     // Check if item is salvageable and save it
     if (salvageable[item.id]) {
-        cancel = true;
         let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
         // Check if data exceeds vanilla data
         if (uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
@@ -95,7 +93,6 @@ function illegalitemsb(object) {
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id)) {
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
-        cancel = true;
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Ban
         return rip(source, item);
@@ -104,7 +101,6 @@ function illegalitemsb(object) {
     if (item.amount > config.modules.illegalitemsB.maxStack) {
         // Item stacks over 64 we remove
         try {
-            cancel = true;
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
             source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(source.nameTag)} detected with stacked items greater than x64."}]}`);
             source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
