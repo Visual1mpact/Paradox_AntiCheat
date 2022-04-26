@@ -32,7 +32,7 @@ export function delhome(message, args) {
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            player.removeTag(tags[1])
+            player.removeTag(tags[i])
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have successfully deleted ${args[0]}!"}]}`)
             break;
         }
