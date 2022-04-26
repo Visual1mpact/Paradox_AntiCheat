@@ -301,6 +301,13 @@ export function help(message) {
         illegalitemscCommand = `§6${prefix}illegalitemsc§r - Command §4DISABLED§r.`;
     }
 
+    let illegalItemsDCommand;
+    if (config.customcommands.illegalitemsd === true) {
+        illegalItemsDCommand = `§6${prefix}illegalitemsd§r - Checks for illegal dropped items in the world.`;
+    } else if (config.customcommands.illegalitemsd === false) {
+        illegalItemsDCommand = `§6${prefix}illegalitemsd§r - Command §4DISABLED§r.`;
+    }
+
     let stackbanCommand;
     if (config.customcommands.stackban === true) {
         stackbanCommand = `§6${prefix}stackban§r - Checks if player's have illegal stacks over 64.`;
@@ -456,13 +463,6 @@ export function help(message) {
         testerCommand = `§6${prefix}tester <username>§r - Adds/Removes player's as testers for the World.`;
     } else if (config.customcommands.tester === false) {
         testerCommand = `§6${prefix}tester <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let illegalItemsDCommand;
-    if (config.customcommands.illegalitemsd === true) {
-        illegalItemsDCommand = `§6${prefix}illegalitemsd <username>§r - Checks for illegal dropped items in the world.`;
-    } else if (config.customcommands.illegalitemsd === false) {
-        illegalItemsDCommand = `§6${prefix}illegalitemsd <username>§r - Command §4DISABLED§r.`;
     }
 
     let listHomeCommand;
