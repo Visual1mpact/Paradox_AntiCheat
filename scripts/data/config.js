@@ -70,7 +70,8 @@ export default
         "delhome": true,
         "tpa": true,
         "antiteleport": true,
-        "tester": true
+        "tester": true,
+        "illegalenchant": true
     },
     "modules": {
         "badpackets1": {

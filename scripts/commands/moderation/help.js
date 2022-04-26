@@ -479,6 +479,13 @@ export function help(message) {
         delHomeCommand = `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`;
     }
 
+    let illegalEnchantCommand;
+    if (config.customcommands.illegalenchant === true) {
+        illegalEnchantCommand = `§6${prefix}illegalenchant§r - Checks items for illegal enchants and lores.`;
+    } else if (config.customcommands.illegalenchant === false) {
+        illegalEnchantCommand = `§6${prefix}illegalenchant§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -530,6 +537,7 @@ ${illegalitemsaCommand}
 ${illegalitemsbCommand}
 ${illegalitemscCommand}
 ${illegalItemsDCommand}
+${illegalEnchantCommand}
 ${stackbanCommand}
 ${antiscaffoldaCommand}
 ${antinukeraCommand}

@@ -70,6 +70,7 @@ import { tester } from "./moderation/tester.js";
 import { illegalitemsD } from "./settings/illegalitemsd.js";
 import { listhome } from "./utility/listhome.js";
 import { delhome } from "./utility/delhome.js";
+import { illegalEnchant } from "./settings/illegalenchant.js";
 
 /**
  * @name commandHandler
@@ -307,6 +308,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.delhome && commandName === "delhome"):
             delhome(message, args);
+            break;
+        case (config.customcommands.illegalenchant && commandName === "illegalenchant"):
+            illegalEnchant(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
