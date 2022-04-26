@@ -194,6 +194,10 @@ export default
         },
         "creativeGM": {
             "enabled": false
+        },
+        "setHome": {
+            "enabled": true,
+            "max": 5
         }
     }
 };

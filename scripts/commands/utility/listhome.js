@@ -21,7 +21,7 @@ export function listhome(message) {
     let counter = 0;
     let verify = false;
     for (let i = 0; i < tags.length; i++) {
-        if (tags[i].startsWith("Home:")) {
+        if (tags[i].startsWith("LocationHome:")) {
             // Split string into array
             let coordinatesArray = tags[i].split(' ');
             let home;
@@ -30,11 +30,10 @@ export function listhome(message) {
             let homez;
             let dimension;
             counter = ++counter;
-            // Show a list of homes
             for (let i = 0; i < coordinatesArray.length; i++) {
                 // Get their location from the array
-                if (coordinatesArray[i].includes("Home:")) {
-                    home = coordinatesArray[i].replace("Home:", "");
+                if (coordinatesArray[i].includes("LocationHome:")) {
+                    home = coordinatesArray[i].replace("LocationHome:", "");
                 }
                 if (coordinatesArray[i].includes("X:")) {
                     homex = parseInt(coordinatesArray[i].replace("X:", ""));
@@ -55,7 +54,7 @@ export function listhome(message) {
                     if (counter === 1) {
                         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"§l§6[§4List Of Homes§6]§r"}]}`);
                     }
-                    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez}"}]}`);
+                    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r"}]}`);
                     continue;
                 }
             }
@@ -64,7 +63,7 @@ export function listhome(message) {
         continue;
     }
     if (verify === false) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You do not have any saved locations!"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You do not have any saved locations!"}]}`);
     }
     return;
 }

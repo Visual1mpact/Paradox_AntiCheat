@@ -1,4 +1,5 @@
 import { world, BlockLocation } from "mojang-minecraft";
+import config from "../../data/config.js";
 import { disabler } from "../../util.js";
 
 const World = world;
@@ -34,13 +35,22 @@ export function sethome(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to give a name to your home!"}]}`);
     }
 
-    // Make sure this name doesn't exist already
+    // Make sure this name doesn't exist already and it doesn't exceed limitations
     let verify = false;
+    let counter = 0;
     let tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
-        if (tags[i].startsWith(args[0].toString() + " X", 5)) {
+        if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You already have a home named ${args[0]}!"}]}`)
+            break;
+        }
+        if (tags[i].startsWith("LocationHome:")) {
+            counter = ++counter;
+        }
+        if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
+            verify = true;
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You can only have ${config.modules.setHome.max} saved locations!"}]}`)
             break;
         }
     }
@@ -68,7 +78,7 @@ export function sethome(message, args) {
     }
 
     // Store their new home coordinates
-    player.addTag(`Home:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`);
+    player.addTag(`LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`);
     
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} has been set at ${homex} ${homey} ${homez}!"}]}`)
 }

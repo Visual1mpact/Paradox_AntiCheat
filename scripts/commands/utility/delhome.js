@@ -1,4 +1,4 @@
-import { world, BlockLocation } from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { disabler } from "../../util.js";
 
 const World = world;
