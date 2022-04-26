@@ -71,6 +71,7 @@ import { illegalitemsD } from "./settings/illegalitemsd.js";
 import { listhome } from "./utility/listhome.js";
 import { delhome } from "./utility/delhome.js";
 import { illegalEnchant } from "./settings/illegalenchant.js";
+import { illegalLores } from "./settings/illegallores.js";
 
 /**
  * @name commandHandler
@@ -311,6 +312,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.illegalenchant && commandName === "illegalenchant"):
             illegalEnchant(message);
+            break;
+        case (config.customcommands.illegallores && commandName === "illegallores"):
+            illegalLores(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

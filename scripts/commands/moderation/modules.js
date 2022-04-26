@@ -251,6 +251,12 @@ import { getScore, disabler } from "../../util.js";
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalEnchantments is currently §4DISABLED"}]}`);
     }
 
+    if (config.modules.illegalLores.enabled) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §4DISABLED"}]}`);
+    }
+
     if (config.modules.antikbA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-KnockbackA is currently §aENABLED"}]}`);
     } else {

@@ -71,7 +71,8 @@ export default
         "tpa": true,
         "antiteleport": true,
         "tester": true,
-        "illegalenchant": true
+        "illegalenchant": true,
+        "illegallores": true
     },
     "modules": {
         "badpackets1": {
@@ -201,6 +202,9 @@ export default
             "max": 5
         },
         "illegalEnchantment": {
+            "enabled": true
+        },
+        "illegalLores": {
             "enabled": true,
             "exclude": "(+DATA)"
         }

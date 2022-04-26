@@ -122,7 +122,8 @@ function illegalitemsc(object) {
                 } catch (error) {}
                 continue;
             }
-            if (config.modules.illegalEnchantment.enabled && !config.modules.illegalEnchantment.exclude.includes(String(inventory_item.getLore()))) {
+            // Check items for illegal lores
+            if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}

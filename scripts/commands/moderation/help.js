@@ -307,6 +307,12 @@ export function help(message) {
     } else if (config.customcommands.illegalitemsd === false) {
         illegalItemsDCommand = `§6${prefix}illegalitemsd§r - Command §4DISABLED§r.`;
     }
+    let illegalLoresCommand;
+    if (config.customcommands.illegallores === true) {
+        illegalLoresCommand = `§6${prefix}illegallores§r - Checks for illegal lores in items.`;
+    } else if (config.customcommands.illegallores === false) {
+        illegalLoresCommand = `§6${prefix}illegalloresd§r - Command §4DISABLED§r.`;
+    }
 
     let stackbanCommand;
     if (config.customcommands.stackban === true) {
@@ -538,6 +544,7 @@ ${illegalitemsbCommand}
 ${illegalitemscCommand}
 ${illegalItemsDCommand}
 ${illegalEnchantCommand}
+${illegalLoresCommand}
 ${stackbanCommand}
 ${antiscaffoldaCommand}
 ${antinukeraCommand}
