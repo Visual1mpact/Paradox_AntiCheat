@@ -42,11 +42,6 @@ export function tester(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldn't find that player!"}]}`);
     }
 
-    // If they are already ParadoxOpped then cancel request
-    if (member.hasTag('paradoxOpped')) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} is ParadoxOpped so this is not required!"}]}`);
-    }
-
     // Check if the player is a tester or not
     // Add or remove tag based on return value
     if (!member.hasTag('TestPlayer')) {
