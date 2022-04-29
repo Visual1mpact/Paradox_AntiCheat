@@ -17,17 +17,17 @@ function illegalitemsd() {
             let itemName = entity.getComponent('item').itemStack;
             // If shulker boxes are not allowed in the server then we handle this here
             if (config.modules.antishulker.enabled && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
-                entity.runCommand(`kill ${entity.nameTag}`);
+                entity.kill();
                 continue;
             }
             // If it is an illegal item then remove it
             if (illegalitems.includes(itemName.id)) {
-                entity.runCommand(`kill ${entity.nameTag}`);
+                entity.kill();
                 continue;
             }
             // If it is an illegal stack then remove it
             if (itemName.amount > config.modules.illegalitemsD.maxStack) {
-                entity.runCommand(`kill ${entity.nameTag}`);
+                entity.kill();
                 continue;
             }
         }
