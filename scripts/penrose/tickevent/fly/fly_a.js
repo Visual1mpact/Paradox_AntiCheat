@@ -1,5 +1,5 @@
-import { world, EntityQueryOptions, Location } from "mojang-minecraft";
-import { getScore, disabler } from "../../../util.js";
+import { world, EntityQueryOptions, Location, BlockLocation} from "mojang-minecraft";
+import { getScore, disabler, flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -7,18 +7,16 @@ const World = world;
 
 const playersOldCoordinates = new Map();
 
-// This is to allow passing between functions
-let oldX;
-let oldY;
-let oldZ;
+// Global
 let check;
+let oldX, oldY, oldZ;
+let Block1, Block2;
 
-function time(player, x, y, z) {
+function time(player, x, y, z, check) {
     let test = getScore("fly_timer", player);
     let dimension = player.dimension;
     if (test >= 6 && check === 1) {
         player.teleport(new Location(x, y, z), dimension, 0, player.bodyRotation);
-        player.runCommand('scoreboard players set @s fly_timer 0')
     }
     
 }
@@ -35,13 +33,7 @@ function flya() {
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
 
-        // Return if player has op
-        if (player.hasTag('paradoxOpped')) {
-            break;
-        }
-
         let test = getScore("fly_timer", player);
-
         if (check != 1) {
             const playerX = Math.trunc(player.location.x);
             const playerY = Math.trunc(player.location.y);
@@ -57,31 +49,34 @@ function flya() {
         // Will still false flag sometimes, but that's why we have !fly
         let xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
         let zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
+
+        try {
+            // We want to know if the blocks below the player is air or not
+            Block1 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
+            Block2 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 2, player.location.z));
+        } catch (error) {}
         
-        if(xyVelocity != 0.0784 || zyVelocity != 0.0784) {
-            if(!player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying')) {
+        if (xyVelocity != 0.0784 || zyVelocity != 0.0784) {
+            if (!player.hasTag('paradoxOpped') && !player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && !player.hasTag('swimming') && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
                 try {
-                    player.runCommand(`execute @s ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s fly_timer 1`);
+                    player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" fly_timer 1`);
                 } catch (error) {}
                 if (test >= 6) {
                     try {
-                        player.runCommand(`execute @s ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 scoreboard players add @s flyvl 1`);
+                        player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" flyvl 1`);
                     } catch (error) {}
-                    try {
-                        player.runCommand(`execute @s ~~~ detect ~~-1~ air 0 execute @s ~~~ detect ~~-2~ air 0 execute @s ~~~ detect ~~-3 ~ air 0 execute @s ~~~ detect ~~-4~ air 0 execute @s ~~~ detect ~~-5~ air 0 tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §1has failed §7(Movement) §4Fly/A. VL= "},{"score":{"name":"@s","objective":"flyvl"}}]}`);
-                    } catch(error) {}
+                    flag(player, "Fly", "A", "Exploit", false, false, false, false, false, false);
+                    // Check the player's status
+                    time(player, oldX, oldY, oldZ, check);
                 }
-            } else {
+            } else if (player.hasTag('ground')) {
                 try {
                     player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" fly_timer 0`);
-                } catch(error) {}
+                } catch (error) {}
                 check = 0;
             }
         }
-        // Check the player's status
-        time(player, oldX, oldY, oldZ);
     }
-    return;
 }
 
 const FlyA = () => {
