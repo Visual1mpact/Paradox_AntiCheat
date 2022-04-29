@@ -55,31 +55,14 @@ const World = world;
 let hastag;
 
 // BeforeChat Events
-if (config.modules.badpackets1.enabled) {
-    BadPackets1();
-}
-
-if (config.modules.spammerA.enabled) {
-    SpammerA();
-}
-
-if (config.modules.spammerB.enabled) {
-    SpammerB();
-}
-
-if (config.modules.spammerC.enabled) {
-    SpammerC();
-}
-
-if (config.modules.spammerD.enabled) {
-    SpammerD();
-}
-
-if (config.modules.antispam.enabled) {
-    AntiSpam();
-    setTickInterval(timer, config.modules.antispam.cooldown);
-}
-
+BadPackets1();
+SpammerA();
+SpammerB();
+SpammerC();
+SpammerD();
+AntiSpam();
+// For AntiSpam
+setTickInterval(timer, config.modules.antispam.cooldown);
 PrefixCommand();
 ChatFilter();
 
@@ -87,74 +70,24 @@ ChatFilter();
 NoPerms();
 PlayerPosition();
 Vanish();
+IllegalItemsD();
+Survival();
+Adventure();
+Creative();
+WorldBorder();
+ServerBan();
+CrasherA();
+NamespoofA();
+NamespoofB();
+BedrockValidate();
+JesusA();
+NoSlowA();
+IllegalItemsA();
+InvalidSprintA();
+FlyA();
+AntiKnockbackA();
+AntiTeleport();
 
-if (config.modules.illegalitemsD.enabled) {
-    IllegalItemsD();
-}
-
-if (config.modules.survivalGM.enabled) {
-    Survival();
-}
-
-if (config.modules.adventureGM.enabled) {
-    Adventure();
-}
-
-if (config.modules.creativeGM.enabled) {
-    Creative();
-}
-
-if (config.modules.worldBorder.enabled) {
-    WorldBorder();
-}
-
-if (!config.modules.unbanWindow.enabled) {
-    ServerBan();
-}
-
-if (config.modules.crasherA.enabled) {
-    CrasherA();
-}
-
-if (config.modules.namespoofA.enabled) {
-    NamespoofA();
-}
-
-if (config.modules.namespoofB.enabled) {
-    NamespoofB();
-}
-
-if (config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.overworld || config.modules.bedrockValidate.enabled && config.modules.bedrockValidate.nether) {
-    BedrockValidate();
-}
-
-if (config.modules.jesusA.enabled) {
-    JesusA();
-}
-
-if (config.modules.noslowA.enabled) {
-    NoSlowA();
-}
-
-if (config.modules.illegalitemsA.enabled) {
-    IllegalItemsA();
-}
-
-if (config.modules.invalidsprintA.enabled) {
-    InvalidSprintA();
-}
-
-if (config.modules.flyA.enabled) {
-    FlyA();
-}
-
-if  (config.modules.antikbA.enabled) {
-    AntiKnockbackA();
-}
-
-if  (config.modules.antiTeleport.enabled) {
-    AntiTeleport();
-}
 
 // Freeze Check
 setTickInterval(() => {
@@ -171,17 +104,10 @@ setTickInterval(() => {
 }, 60); // Executes every 3 seconds
 
 // BlockBreak Events
-if  (config.modules.xrayA.enabled) {
-    XrayA();
-}
+XrayA();
+NukerA();
+ReachB();
 
-if  (config.modules.antinukerA.enabled) {
-    NukerA();
-}
-
-if (config.modules.reachB.enabled) {
-    ReachB();
-}
 
 // JoinPlayer Events
 GametestCheck();
@@ -189,19 +115,10 @@ onJoin();
 GlobalBanList();
 
 // BlockPlace Events
-if  (config.modules.antiscaffoldA.enabled) {
-    ScaffoldA();
-}
+ScaffoldA();
+IllegalItemsC();
+ReachA();
 
-if  (config.modules.illegalitemsC.enabled) {
-    IllegalItemsC();
-}
-
-if (config.modules.reachA.enabled) {
-    ReachA();
-}
 
 // BeforeItemUseOn Events
-if (config.modules.illegalitemsB.enabled) {
-    IllegalItemsB();
-}
+IllegalItemsB();
