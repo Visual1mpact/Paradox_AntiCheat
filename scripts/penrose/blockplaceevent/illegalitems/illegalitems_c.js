@@ -1,8 +1,8 @@
-import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes } from "mojang-minecraft";
+import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
-import { flag, disabler } from "../../../util.js";
+import { flag, disabler, toCamelCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
@@ -56,11 +56,42 @@ function illegalitemsc(object) {
             player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${block.id.replace("minecraft:", "")} from ${disabler(player.nameTag)}."}]}`);
         } catch (error) {}
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
-        return dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
+        // Set block in world
+        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes[toCamelCase(block.id.replace("minecraft:", ""))]);
+        // replace block in world since destroying would drop item entities
+        // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
+        try {
+            player.runCommand(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
+        } catch (error) {}
+        return;
+    }
+    // Check if place item is salvageable
+    if (salvageable[block.id]) {
+        // Block from specified location
+        let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
+        // Get a copy of this blocks permutation
+        let blockPerm = blockLoc.permutation;
+        // Get the direction property
+        blockPerm.getProperty(BlockProperties.direction);
+        // Set block in world
+        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes[toCamelCase(block.id.replace("minecraft:", ""))]);
+        // replace block in world since destroying would drop item entities
+        // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
+        try {
+            player.runCommand(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.id} 0`);
+        } catch (error) {}
+        // Update block with modified permutation to correct its direction
+        blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
     if(illegalitems.includes(block.id)) {
-        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
+        // Set block in world
+        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes[toCamelCase(block.id.replace("minecraft:", ""))]);
+        // replace block in world since destroying would drop item entities
+        // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
+        try {
+            player.runCommand(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
+        } catch (error) {}
         flag(player, "IllegalItems", "C", "Exploit", false, false, false, false, false, false);
         return rip(player);
     }
