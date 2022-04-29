@@ -88,7 +88,6 @@ FlyA();
 AntiKnockbackA();
 AntiTeleport();
 
-
 // Freeze Check
 setTickInterval(() => {
     // run as each player
@@ -108,7 +107,6 @@ XrayA();
 NukerA();
 ReachB();
 
-
 // JoinPlayer Events
 GametestCheck();
 onJoin();
@@ -118,7 +116,6 @@ GlobalBanList();
 ScaffoldA();
 IllegalItemsC();
 ReachA();
-
 
 // BeforeItemUseOn Events
 IllegalItemsB();
