@@ -203,3 +203,14 @@ export function generateUUID() {
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
+
+/**
+ * @name toCamelCase
+ * @param {string} str - Takes strings and converts to camelCase
+ */
+export function toCamelCase(str){
+    const regExp = /[^a-zA-Z0-9]+(.)/ig;
+    return str.replace(regExp,(match) => {
+        return match[1].toUpperCase();
+    });
+}
