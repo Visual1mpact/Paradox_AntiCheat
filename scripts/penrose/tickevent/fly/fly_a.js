@@ -13,6 +13,7 @@ function flya() {
         World.events.tick.unsubscribe(flya);
         return;
     }
+
     // Exclude creative gamemode
     let gm = new EntityQueryOptions();
     gm.excludeGameModes = [1];
@@ -55,9 +56,6 @@ function flya() {
                     player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" fly_timer 1`);
                 } catch (error) {}
                 if (test >= 6) {
-                    try {
-                        player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" flyvl 1`);
-                    } catch (error) {}
                     try {
                         // Use try/catch since variables for cords could return undefined if player is loading in
                         // and they meet the conditions. An example is them flagging this, logging off, then logging
