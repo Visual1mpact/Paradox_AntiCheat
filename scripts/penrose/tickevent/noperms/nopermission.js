@@ -12,7 +12,7 @@ function noperms() {
     for (let entity of World.getDimension('overworld').getEntities(filter)) {
         // If it's a player then ignore
         if (entity instanceof Player) {
-            break;
+            continue;
         }
         // This covers a bug that exists in Minecraft where for a brief tick the player will not return as a player entity
         // This bug would essentially cause this script to remove permissions from staff unintentionally
