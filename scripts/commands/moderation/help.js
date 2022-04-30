@@ -492,6 +492,13 @@ export function help(message) {
         illegalEnchantCommand = `§6${prefix}illegalenchant§r - Command §4DISABLED§r.`;
     }
 
+    let despawnCommand;
+    if (config.customcommands.despawn === true) {
+        despawnCommand = `§6${prefix}despawn <entityName>:all§r - Despawns all or specified entities if they exist.`;
+    } else if (config.customcommands.despawn === false) {
+        despawnCommand = `§6${prefix}despawn <entityName>:all§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -512,6 +519,7 @@ ${lockdownCommand}
 ${punishCommand}
 ${tpaCommand}
 ${testerCommand}
+${despawnCommand}
 
 §l§6[§4Optional Features§6]§r
 ${allowgmaCommand}

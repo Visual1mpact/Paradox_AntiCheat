@@ -72,7 +72,8 @@ export default
         "antiteleport": true,
         "tester": true,
         "illegalenchant": true,
-        "illegallores": true
+        "illegallores": true,
+        "despawn": true
     },
     "modules": {
         "badpackets1": {

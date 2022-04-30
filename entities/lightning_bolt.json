@@ -1,0 +1,42 @@
+{
+  "format_version": "1.8.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:lightning_bolt",
+      "is_spawnable": false,
+      "is_summonable": false,
+      "is_experimental": false
+    },
+
+    "component_groups": {
+      "paradox:kick": {
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			}
+    },
+
+    "components": {
+      "minecraft:type_family": {
+        "family":["lightning"]          
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+        "default_values": {
+          "max_optimized_distance": 80.0,
+          "max_dropped_ticks": 10,
+          "use_motion_prediction_hints": true
+        }
+      }
+    },
+
+    "events": {
+      "paradox:kick": {
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
+      }
+    }
+  }
+}
