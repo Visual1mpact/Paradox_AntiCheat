@@ -13,6 +13,12 @@ function reacha(object) {
 
     // Properties from class
     let { block, player, dimension } = object;
+
+    // Return if player has op
+    if (player.hasTag('paradoxOpped')) {
+        return;
+    }
+    
     // Block coordinates
     let { x, y, z } = block.location;
     // Player coordinates
@@ -21,7 +27,7 @@ function reacha(object) {
     // Calculate the distance between the player and the block being placed
     let reach = Math.sqrt((x - x1)**2 + (y - y1)**2 + (z - z1)**2);
 
-    if(reach > config.modules.reachA.reach && !block.player.hasTag('paradoxOpped')) {
+    if(reach > config.modules.reachA.reach) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
         // flag(player, "Reach", "A", "Placement", false, false "reach", reach.toFixed(3), false, false);
     }
