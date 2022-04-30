@@ -23,7 +23,12 @@ export function delhome(message, args) {
 
     // Did they pass a parameter
     if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to specify which home to delete!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You need to specify which home to delete!"}]}`);
+    }
+
+    // Don't allow spaces
+    if (args.length > 1) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
     }
 
     // Find and delete this saved home location

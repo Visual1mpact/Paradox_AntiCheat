@@ -23,7 +23,12 @@ export function gohome(message, args) {
 
     // Did they pass a parameter
     if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to give a name to your home!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You need to give a name to your home!"}]}`);
+    }
+
+    // Don't allow spaces
+    if (args.length > 1) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
     }
 
     let homex;
