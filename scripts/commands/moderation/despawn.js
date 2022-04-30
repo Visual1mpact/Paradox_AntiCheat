@@ -38,7 +38,7 @@ export function despawn(message, args) {
     let filter = new EntityQueryOptions();
     filter.excludeTypes = ['player'];
     // Specified entity
-    if (args[0] !== "all") {
+    if (args[0] !== "all" && args.length > 0) {
         for (let entity of World.getDimension('overworld').getEntities(filter)) {
             filteredEntity = entity.id.replace("minecraft:", "");
             requestedEntity = args[0].replace("minecraft:", "");
@@ -63,20 +63,20 @@ export function despawn(message, args) {
         }
     }
     // Let player know how many of the specified entity were removed
-    if (counter > 0) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Despawned ${requestedEntity} (x${counter})!"}]}`);
+    if (counter > 0 && verify === false) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Despawned ${requestedEntity} (x${counter})!"}]}`);
     }
     if (verify === true) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Despawned all (x${counter})!"}]}`);
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Despawned all Entities (x${counter})!"}]}`);
     }
     // If nothing then abort and let them know
-    if (args[0] !== "all") {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"This entity was not found in the world!"}]}`);
+    if (args[0] !== "all" && args.length > 0) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r This entity was not found in the world!"}]}`);
     } else {
         // Need to give a parameter that is recognized
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Please specify which entity or target all!"}]}`);
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: ${prefix}despawn iron_golem"}]}`);
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: ${prefix}despawn all"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Please specify which entity or target all!"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Example: ${prefix}despawn all"}]}`);
         return;
     }
 }
