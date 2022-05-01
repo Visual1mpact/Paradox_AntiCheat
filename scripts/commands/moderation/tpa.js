@@ -49,24 +49,14 @@ export function tpa(message, args) {
     }
 
     // Save which dimension they were in
-    // This will have to do until the property id for dimension is released
-    // realm 0 = overworld, realm 1 = nether, realm 2 = the end
-    let o = World.getDimension('overworld'),
-        n = World.getDimension('nether'),
-        e = World.getDimension('the end');
-    let {x, y, z} = member.location;
-    let pos = new BlockLocation(
-        Math.floor(x),
-        Math.floor(y),
-        Math.floor(z)
-    );
-    let currentDimension;
-    if (o.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == disabler(member.nameTag))) {
-        currentDimension = "overworld";
-    } else if (n.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == disabler(member.nameTag))) {
-        currentDimension = "nether";
-    } else if (e.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == disabler(member.nameTag))) {
-        currentDimension = "the end";
+    if (player.dimension.id === "minecraft:overworld") {
+        currentDimension = "overworld"
+    }
+    if (player.dimension.id === "minecraft:nether") {
+        currentDimension = "nether"
+    }
+    if (player.dimension.id === "minecraft:the_end") {
+        currentDimension = "the end"
     }
 
     // Let's teleport you to that player
