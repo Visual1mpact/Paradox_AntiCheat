@@ -15,6 +15,11 @@ function creative() {
     filter.excludeTags = ['paradoxOpped'];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
+        // Make sure they didn't enable all of them in config.js as this will have a negative impact
+        if (config.modules.survivalGM.enabled === true && config.modules.adventureGM.enabled === true) {
+            // Default to adventure for safety
+            config.modules.adventureGM.enabled = false;
+        }
         // Are they in creative? Fix it.
         if (config.modules.survivalGM.enabled === true && config.modules.adventureGM.enabled === false) {
             // Adventure is allowed so set them to adventure
