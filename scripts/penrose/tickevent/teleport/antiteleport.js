@@ -42,19 +42,21 @@ function antiteleport() {
         let portal9 = player.dimension.getBlock(new BlockLocation(x - 1, y, z));
 
         // Extract conditions to array
-        let portalArray = [portal0.type.id, portal1.type.id, portal2.type.id, portal3.type.id, portal4.type.id, portal5.type.id, portal6.type.id, portal7.type.id, portal8.type.id, portal9.type.id];
+        let portalArray = [portal0, portal1, portal2, portal3, portal4, portal5, portal6, portal7, portal8, portal9];
 
         // Get score
         teleportScore = getScore('teleport', player);
-        
+
         // Verify if the player is in a portal so we don't flag when moving between dimensions
-        if (portalArray.includes('minecraft:portal') || portalArray.includes('minecraft:end_portal') || portalArray.includes('minecraft:end_gateway')) {
-            player.runCommand(`scoreboard players set @s teleport 25`);
-        } else if (teleportScore >= 1) {
-            try {
-                player.runCommand(`scoreboard players remove @s teleport 1`);
-            } catch (e) {}
-        }
+        portalArray.forEach(t => {
+            if (t.type.id === "minecraft:portal" || t.type.id === "minecraft:end_portal" || t.type.id === "minecraft:end_gateway") {
+                player.runCommand(`scoreboard players set @s teleport 25`);
+            } else if (teleportScore >= 1) {
+                try {
+                    player.runCommand(`scoreboard players remove @s teleport 1`);
+                } catch (e) {}
+            }
+        });
 
         try {
             player.runCommand(`scoreboard players set @s[tag=dead] teleport 25`);
