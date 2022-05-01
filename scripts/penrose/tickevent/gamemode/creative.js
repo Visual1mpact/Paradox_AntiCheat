@@ -11,12 +11,24 @@ function creative() {
     }
     let filter = new EntityQueryOptions();
     // 1 = creative
-    filter.excludeGameModes = [1];
+    filter.gameMode = 1;
     filter.excludeTags = ['paradoxOpped'];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
-        // Are they not in creative? Fix it.
-        player.runCommand(`gamemode c`);
+        // Are they in creative? Fix it.
+        if (config.modules.survivalGM.enabled === true && config.modules.adventureGM.enabled === false) {
+            // Adventure is allowed so set them to adventure
+            player.runCommand(`gamemode a`);
+        }
+        if (config.modules.survivalGM.enabled === false && config.modules.adventureGM.enabled === true) {
+            // Survival is allowed so set them to survival
+            player.runCommand(`gamemode s`);
+        }
+        // If both are allowed then default to survival
+        if (config.modules.survivalGM.enabled === false && config.modules.adventureGM.enabled === false) {
+            // Survival is allowed so set them to survival
+            player.runCommand(`gamemode s`);
+        }
         player.runCommand(`scoreboard players add @s gamemodevl 1`);
         // Use try/catch since it could report no target selector if no player is found with tag for notify
         try {
