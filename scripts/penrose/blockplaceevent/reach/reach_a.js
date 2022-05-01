@@ -22,7 +22,7 @@ function reacha(object) {
     // Block coordinates
     let { x, y, z } = block.location;
     // Player coordinates
-    let { x1, y1, z1 } = player.location;
+    let { x: x1, y: y1, z: z1 } = player.location;
     
     // Calculate the distance between the player and the block being placed
     let reach = Math.sqrt((x - x1)**2 + (y - y1)**2 + (z - z1)**2);

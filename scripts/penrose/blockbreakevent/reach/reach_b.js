@@ -22,7 +22,7 @@ function reachb(object) {
     // Block coordinates
     let { x, y, z } = block.location;
     // Player coordinates
-    let { x1, y1, z1 } = player.location;
+    let { x: x1, y: y1, z: z1 } = player.location;
 
     // Get the properties of the block being destroyed
     let blockID = brokenBlockPermutation.clone();
