@@ -41,9 +41,14 @@ function antiteleport() {
         let portal8 = player.dimension.getBlock(new BlockLocation(x + 1, y, z));
         let portal9 = player.dimension.getBlock(new BlockLocation(x - 1, y, z));
 
-        // Verify if the player is in a portal so we don't flag when moving between dimensions
+        // Extract conditions to array
+        let portalArray = [portal0.type.id, portal1.type.id, portal2.type.id, portal3.type.id, portal4.type.id, portal5.type.id, portal6.type.id, portal7.type.id, portal8.type.id, portal9.type.id];
+
+        // Get score
         teleportScore = getScore('teleport', player);
-        if ((portal0.type.id === "minecraft:portal" || portal0.type.id === "minecraft:end_portal") || (portal1.type.id === "minecraft:portal" || portal1.type.id === "minecraft:end_portal") || (portal2.type.id === "minecraft:portal" || portal2.type.id === "minecraft:end_portal") || (portal3.type.id === "minecraft:portal" || portal3.type.id === "minecraft:end_portal") || (portal4.type.id === "minecraft:portal" || portal4.type.id === "minecraft:end_portal") || (portal5.type.id === "minecraft:portal" || portal5.type.id === "minecraft:end_portal") || (portal6.type.id === "minecraft:portal" || portal6.type.id === "minecraft:end_portal") || (portal7.type.id === "minecraft:portal" || portal7.type.id === "minecraft:end_portal") || (portal8.type.id === "minecraft:portal" || portal8.type.id === "minecraft:end_portal") || (portal9.type.id === "minecraft:portal" || portal9.type.id === "minecraft:end_portal")) {
+        
+        // Verify if the player is in a portal so we don't flag when moving between dimensions
+        if (portalArray.includes('minecraft:portal') || portalArray.includes('minecraft:end_portal') || portalArray.includes('minecraft:end_gateway')) {
             player.runCommand(`scoreboard players set @s teleport 25`);
         } else if (teleportScore >= 1) {
             try {
