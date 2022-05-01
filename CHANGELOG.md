@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.13.40](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.13.40) (2022-05-01)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.12.39...v2.13.40)
+
+**Closed issues:**
+
+- Modules turn on/off on realms on its own [\#22](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/22)
+
 ## [v2.12.39](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.12.39) (2022-04-25)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.12.38...v2.12.39)
