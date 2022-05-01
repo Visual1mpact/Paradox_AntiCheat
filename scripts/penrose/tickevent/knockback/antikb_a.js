@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { EntityQueryOptions, world } from "mojang-minecraft";
 import { flag, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
@@ -11,12 +11,10 @@ function antiknockbacka() {
         World.events.tick.unsubscribe(antiknockbacka);
         return;
     }
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['paradoxOpped'];
     // run as each player
-    for (let player of World.getPlayers()) {
-        // Return if player has op
-        if (player.hasTag('paradoxOpped')) {
-            break;
-        }
+    for (let player of World.getPlayers(filter)) {
 
         // antikb/a = checks for anti knockback and flags it
         if((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= config.modules.antikbA.magnitude) {

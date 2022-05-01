@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, EntityQueryOptions } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
@@ -38,11 +38,9 @@ function illegalitemsa() {
         return;
     }
 
-    for (let player of World.getPlayers()) {
-        // Return if player has op
-        if (player.hasTag('paradoxOpped')){
-            break;
-        }
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['paradoxOpped'];
+    for (let player of World.getPlayers(filter)) {
         let inventory = player.getComponent('minecraft:inventory').container;
         for (let i = 0; i < inventory.size; i++) {
             let inventory_item = inventory.getItem(i);

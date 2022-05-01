@@ -1,4 +1,4 @@
-import { world, Location, BlockLocation } from "mojang-minecraft";
+import { world, Location, BlockLocation, EntityQueryOptions } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -22,12 +22,10 @@ function jesusa(){
         World.events.tick.unsubscribe(jesusa);
         return;
     }
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['paradoxOpped'];
     // run as each player
-    for (let player of World.getPlayers()) {
-        // Return if player has op
-        if (player.hasTag('paradoxOpped')) {
-            break;
-        }
+    for (let player of World.getPlayers(filter)) {
         const x = Math.floor(player.location.x);
         const y = Math.floor(player.location.y);
         const z = Math.floor(player.location.z);
