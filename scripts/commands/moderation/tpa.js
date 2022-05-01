@@ -48,14 +48,15 @@ export function tpa(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
+    let currentDimension;
     // Save which dimension they were in
-    if (player.dimension.id === "minecraft:overworld") {
+    if (member.dimension.id === "minecraft:overworld") {
         currentDimension = "overworld"
     }
-    if (player.dimension.id === "minecraft:nether") {
+    if (member.dimension.id === "minecraft:nether") {
         currentDimension = "nether"
     }
-    if (player.dimension.id === "minecraft:the_end") {
+    if (member.dimension.id === "minecraft:the_end") {
         currentDimension = "the end"
     }
 
