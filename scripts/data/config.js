@@ -48,6 +48,7 @@ export default
         "namespoofb": true,
         "reacha": true,
         "reachb": true,
+        "reachc": true,
         "noslowa": true,
         "invalidsprinta": true,
         "flya": true,
@@ -119,6 +120,10 @@ export default
             "reach": 7
         },
         "reachB": {
+            "enabled": true,
+            "reach": 7
+        },
+        "reachC": {
             "enabled": true,
             "reach": 7
         },

@@ -47,6 +47,8 @@ import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalite
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 // Import BeforeItemUseOn Events
 import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
+// Import EntityHit Events
+import { ReachC } from "./penrose/entityhitevent/reach_c.js";
 
 // Self explanatory
 const World = world;
@@ -119,3 +121,6 @@ ReachA();
 
 // BeforeItemUseOn Events
 IllegalItemsB();
+
+// EntityHit Event
+ReachC();

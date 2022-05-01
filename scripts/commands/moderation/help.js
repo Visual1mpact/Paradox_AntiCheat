@@ -266,6 +266,13 @@ export function help(message) {
         reachbCommand = `§6${prefix}reachb§r - Command §4DISABLED§r.`;
     }
 
+    let reachcCommand;
+    if (config.customcommands.reachc === true) {
+        reachcCommand = `§6${prefix}reachc§r - Checks if player's attack beyond reach.`;
+    } else if (config.customcommands.reachc === false) {
+        reachcCommand = `§6${prefix}reachc§r - Command §4DISABLED§r.`;
+    }
+
     let noslowaCommand;
     if (config.customcommands.noslowa === true) {
         noslowaCommand = `§6${prefix}noslowa§r - Checks if player's are speed hacking.`;
@@ -545,6 +552,7 @@ ${namespoofaCommand}
 ${namespoofbCommand}
 ${reachaCommand}
 ${reachbCommand}
+${reachcCommand}
 ${noslowaCommand}
 ${flyaCommand}
 ${illegalitemsaCommand}

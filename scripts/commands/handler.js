@@ -73,6 +73,7 @@ import { delhome } from "./utility/delhome.js";
 import { illegalEnchant } from "./settings/illegalenchant.js";
 import { illegalLores } from "./settings/illegallores.js";
 import { despawn } from "./moderation/despawn.js";
+import { reachC } from "./settings/reachc.js";
 
 /**
  * @name commandHandler
@@ -319,6 +320,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.despawn && commandName === "despawn"):
             despawn(message, args);
+            break;
+        case (config.customcommands.reachc && commandName === "reachc"):
+            reachC(message);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
