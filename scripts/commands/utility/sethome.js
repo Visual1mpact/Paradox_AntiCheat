@@ -64,22 +64,14 @@ export function sethome(message, args) {
     }
 
     // Save which dimension they were in
-    // This will have to do until the property id for dimension is released
-    // realm 0 = overworld, realm 1 = nether, realm 2 = the end
-    let o = World.getDimension('overworld'),
-        n = World.getDimension('nether'),
-        e = World.getDimension('the end');
-    let pos = new BlockLocation(
-        Math.floor(x),
-        Math.floor(y),
-        Math.floor(z)
-    );
-    if (o.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == disabler(player.nameTag))) {
-        currentDimension = "overworld";
-    } else if (n.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == disabler(player.nameTag))) {
-        currentDimension = "nether";
-    } else if (e.getEntitiesAtBlockLocation(pos).some(v => v.nameTag == disabler(player.nameTag))) {
-        currentDimension = "the end";
+    if (player.dimension.id === "minecraft:overworld") {
+        currentDimension = "overworld"
+    }
+    if (player.dimension.id === "minecraft:nether") {
+        currentDimension = "nether"
+    }
+    if (player.dimension.id === "minecraft:the_end") {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Not allowed to set home in this dimension!"}]}`)
     }
 
     // Store their new home coordinates
