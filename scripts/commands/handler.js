@@ -74,7 +74,7 @@ import { illegalEnchant } from "./settings/illegalenchant.js";
 import { illegalLores } from "./settings/illegallores.js";
 import { despawn } from "./moderation/despawn.js";
 import { reachC } from "./settings/reachc.js";
-import { performance } from "./moderation/performance.js";
+import { performance } from "./utility/performance.js";
 
 /**
  * @name commandHandler
