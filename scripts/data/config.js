@@ -74,7 +74,8 @@ export default
         "tester": true,
         "illegalenchant": true,
         "illegallores": true,
-        "despawn": true
+        "despawn": true,
+        "performance": true
     },
     "modules": {
         "badpackets1": {

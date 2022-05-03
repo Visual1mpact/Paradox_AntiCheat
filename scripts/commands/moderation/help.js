@@ -506,6 +506,13 @@ export function help(message) {
         despawnCommand = `§6${prefix}despawn <entityName>:all§r - Command §4DISABLED§r.`;
     }
 
+    let performanceCommand;
+    if (config.customcommands.performance === true) {
+        performanceCommand = `§6${prefix}performance§r - Shows TPS stats while running Paradox (For testing).`;
+    } else if (config.customcommands.performance === false) {
+        performanceCommand = `§6${prefix}performance§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -586,5 +593,6 @@ ${sethomeCommand}
 ${gohomeCommand}
 ${listHomeCommand}
 ${delHomeCommand}
+${performanceCommand}
     "}]}`);
 }

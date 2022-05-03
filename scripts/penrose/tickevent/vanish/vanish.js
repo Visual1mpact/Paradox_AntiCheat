@@ -14,7 +14,9 @@ function vanish() {
         if (player.hasTag('paradoxOpped')) {
             player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255, false);
             player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255, false);
-            player.runCommand(`title @s actionbar §6YOU ARE VANISHED!`);
+            if (!player.hasTag('performance')) {
+                player.runCommand(`title @s actionbar §6YOU ARE VANISHED!`);
+            }
         }
         // Make sure they have permission to use Vanish
         if (!player.hasTag('paradoxOpped')) {
