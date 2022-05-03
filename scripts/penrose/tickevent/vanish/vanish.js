@@ -1,4 +1,4 @@
-import { world, MinecraftEffectTypes, EntityQueryOptions} from "mojang-minecraft";
+import { world, MinecraftEffectTypes, EntityQueryOptions } from "mojang-minecraft";
 import { disabler } from "../../../util.js";
 
 const World = world;

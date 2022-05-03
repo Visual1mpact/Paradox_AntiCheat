@@ -513,6 +513,13 @@ export function help(message) {
         performanceCommand = `§6${prefix}performance§r - Command §4DISABLED§r.`;
     }
 
+    let hotbarCommand;
+    if (config.customcommands.hotbar === true) {
+        hotbarCommand = `§6${prefix}hotbar <optional>§r - Enables/Disables hotbar message for all players. Optional: Message`;
+    } else if (config.customcommands.hotbar === false) {
+        hotbarCommand = `§6${prefix}hotbar <optional>§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -594,5 +601,6 @@ ${gohomeCommand}
 ${listHomeCommand}
 ${delHomeCommand}
 ${performanceCommand}
+${hotbarCommand}
     "}]}`);
 }

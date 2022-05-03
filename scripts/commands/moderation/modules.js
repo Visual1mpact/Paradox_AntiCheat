@@ -28,6 +28,7 @@ import { getScore, disabler } from "../../util.js";
     let encharmor = getScore('encharmor', player);
     let autoaura = getScore('autoaura', player);
     let antikb = getScore('antikb', player);
+    let hotbar = getScore('hotbar', player);
 
     if (config.modules.adventureGM.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
@@ -303,5 +304,11 @@ import { getScore, disabler } from "../../util.js";
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §4DISABLED"}]}`);
+    }
+
+    if (hotbar >= 1 && config.modules.hotbar.enabled) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §4DISABLED"}]}`);
     }
 }

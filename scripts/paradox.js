@@ -34,6 +34,7 @@ import { Adventure } from "./penrose/tickevent/gamemode/adventure.js";
 import { Creative } from "./penrose/tickevent/gamemode/creative.js";
 import { IllegalItemsD } from "./penrose/tickevent/illegalitems/illegalitems_d.js";
 import { PerformanceTest } from "./penrose/tickevent/performance/performance.js";
+import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -70,6 +71,7 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
+Hotbar();
 PerformanceTest();
 NoPerms();
 PlayerPosition();

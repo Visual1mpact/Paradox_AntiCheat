@@ -75,7 +75,8 @@ export default
         "illegalenchant": true,
         "illegallores": true,
         "despawn": true,
-        "performance": true
+        "performance": true,
+        "hotbar": true
     },
     "modules": {
         "badpackets1": {
@@ -214,6 +215,10 @@ export default
         "illegalLores": {
             "enabled": true,
             "exclude": "(+DATA)"
+        },
+        "hotbar": {
+            "enabled": true,
+            "message": "" // Put Message inside the quotes
         }
     }
 };

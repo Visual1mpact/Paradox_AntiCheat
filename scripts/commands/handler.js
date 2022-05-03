@@ -75,6 +75,7 @@ import { illegalLores } from "./settings/illegallores.js";
 import { despawn } from "./moderation/despawn.js";
 import { reachC } from "./settings/reachc.js";
 import { performance } from "./utility/performance.js";
+import { hotbar } from "./utility/hotbar.js";
 
 /**
  * @name commandHandler
@@ -327,6 +328,9 @@ export function commandHandler(player, message) {
             break;
         case (config.customcommands.performance && commandName === "performance"):
             performance(message);
+            break;
+        case (config.customcommands.hotbar && commandName === "hotbar"):
+            hotbar(message, args);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
