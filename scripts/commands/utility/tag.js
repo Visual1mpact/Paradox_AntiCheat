@@ -1,12 +1,41 @@
 import { world } from "mojang-minecraft";
-import { disabler, tagRank, resetTag } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, tagRank, resetTag, getPrefix } from "../../util.js";
 
 const World = world;
+
+function tagHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.tag || !config.customcommands.chatranks) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    let moduleStatus;
+    if (!config.modules.chatranks.enabled || !config.customcommands.chatranks) {
+        moduleStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        moduleStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: tag
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Module§4]§r: ${moduleStatus}
+§4[§6Usage§4]§r: tag <username> [optional]
+§4[§6Optional§4]§r: Rank:tag, Rank:tag--tag, reset, help
+§4[§6Description§4]§r: Gives one or more ranks to a specified player or resets it.
+§4[§6Examples§4]§r:
+    ${prefix}tag ${disabler(player.nameTag)} Rank:Admin
+    ${prefix}tag ${disabler(player.nameTag)} Rank:Contributor--Mod
+    ${prefix}tag ${disabler(player.nameTag)} Rank:Staff--Mod--Helper
+    ${prefix}tag help
+"}]}`)
+}
 
 /**
  * @name tag
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function tag(message, args) {
     // validate that required params are defined
@@ -29,9 +58,13 @@ export function tag(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: !tag ${player.name} Rank:Admin--VIP--Helper"}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !config.modules.chatranks.enabled || !config.customcommands.chatranks) {
+        return tagHelp(player, prefix);
     }
 
     // try to find the player requested
@@ -67,8 +100,7 @@ export function tag(message, args) {
         member.addTag(`${custom}`);
         // tagRank(member);
     } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a target and rank!"}]}`);
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Example: !tag ${member.name} Rank:Admin--VIP--Helper"}]}`);
+        return tagHelp(player, prefix);
     }
 
     if (disabler(player.nameTag) === disabler(member.nameTag)) {

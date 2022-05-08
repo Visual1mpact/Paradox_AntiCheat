@@ -1,22 +1,39 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function invseeHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.invsee) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: invsee
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: invsee <username> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Shows the entire inventory of the specified player.
+§4[§6Examples§4]§r:
+    ${prefix}invsee ${disabler(player.nameTag)}
+    ${prefix}invsee help
+"}]}`)
+}
 
 // found the inventory viewing scipt in the bedrock addons discord, unsure of the original owner (not my code)
 /**
  * @name invsee
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function invsee(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/invsee.js:9)");
-    }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/utility/invsee.js:10)");
     }
 
     message.cancel = true;
@@ -28,8 +45,13 @@ export function invsee(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos inventory to view!"}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.invsee) {
+        return invseeHelp(player, prefix);
     }
     
     // try to find the player requested

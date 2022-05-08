@@ -60,7 +60,7 @@ export function help(message) {
 
     let notifyCommand;
     if (config.customcommands.notify === true) {
-        notifyCommand = `§6${prefix}notify§r - Enables/Disables cheat notifications.`;
+        notifyCommand = `§6${prefix}notify§r - Toggles cheat notifications.`;
     } else if (config.customcommands.notify === false) {
         notifyCommand = `§6${prefix}notify§r - Command §4DISABLED§r.`;
     }
@@ -107,28 +107,28 @@ export function help(message) {
 
     let allowgmaCommand;
     if (config.customcommands.allowgma === true) {
-        allowgmaCommand = `§6${prefix}allowgma§r - Enables/disables Gamemode 2(Adventure) to be used.`;
+        allowgmaCommand = `§6${prefix}allowgma§r - Toggles Gamemode 2(Adventure) to be used.`;
     } else if (config.customcommands.allowgma === false) {
         allowgmaCommand = `§6${prefix}allowgma§r - Command §4DISABLED§r.`;
     }
 
     let allowgmcCommand;
     if (config.customcommands.allowgmc === true) {
-        allowgmcCommand = `§6${prefix}allowgmc§r - Enables/disables Gamemode 1(Creative) to be used.`;
+        allowgmcCommand = `§6${prefix}allowgmc§r - Toggles Gamemode 1(Creative) to be used.`;
     } else if (config.customcommands.allowgmc === false) {
         allowgmcCommand = `§6${prefix}allowgmc§r - Command §4DISABLED§r.`;
     }
 
     let allowgmsCommand;
     if (config.customcommands.allowgms === true) {
-        allowgmsCommand = `§6${prefix}allowgms§r - Enables/disables Gamemode 0(Survival) to be used.`;
+        allowgmsCommand = `§6${prefix}allowgms§r - Toggles Gamemode 0(Survival) to be used.`;
     } else if (config.customcommands.allowgms === false) {
         allowgmsCommand = `§6${prefix}allowgms§r - Command §4DISABLED§r.`;
     }
 
     let removecbCommand;
     if (config.customcommands.removecommandblocks === true) {
-        removecbCommand = `§6${prefix}removecb§r - Enables/disables Anti Command Blocks (Clears all when enabled).`;
+        removecbCommand = `§6${prefix}removecb§r - Toggles Anti Command Blocks (Clears all when enabled).`;
     } else if (config.customcommands.removecommandblocks === false) {
         removecbCommand = `§6${prefix}removecb§r - Command §4DISABLED§r.`;
     }
@@ -156,7 +156,7 @@ export function help(message) {
 
     let autoclickerCommand;
     if (config.customcommands.autoclicker === true) {
-        autoclickerCommand = `§6${prefix}autoclicker§r - Enables/disables Anti Autoclicker.`;
+        autoclickerCommand = `§6${prefix}autoclicker§r - Toggles Anti Autoclicker.`;
     } else if (config.customcommands.autoclicker === false) {
         autoclickerCommand = `§6${prefix}autoclicker§r - Command §4DISABLED§r.`;
     }
@@ -170,21 +170,21 @@ export function help(message) {
 
     let enchantedArmorCommand;
     if (config.customcommands.enchantedarmor === true) {
-        enchantedArmorCommand = `§6${prefix}enchantedarmor§r - Enables/disables Anti Enchanted Armor for all players.`;
+        enchantedArmorCommand = `§6${prefix}enchantedarmor§r - Toggles Anti Enchanted Armor for all players.`;
     } else if (config.customcommands.enchantedarmor === false) {
         enchantedArmorCommand = `§6${prefix}enchantedarmor§r - Command §4DISABLED§r.`;
     }
 
     let autoauraCommand;
     if (config.customcommands.autoaura === true) {
-        autoauraCommand = `§6${prefix}autoaura§r - Enables/disables Auto KillAura checks for all players.`;
+        autoauraCommand = `§6${prefix}autoaura§r - Toggles Auto KillAura checks for all players.`;
     } else if (config.customcommands.autoaura === false) {
         autoauraCommand = `§6${prefix}autoaura§r - Command §4DISABLED§r.`;
     }
 
     let antikbCommand;
     if (config.customcommands.antikb === true) {
-        antikbCommand = `§6${prefix}antikb§r - Enables/disables Anti Knockback for all players.`;
+        antikbCommand = `§6${prefix}antikb§r - Toggles Anti Knockback for all players.`;
     } else if (config.customcommands.antikb === false) {
         antikbCommand = `§6${prefix}antikb§r - Command §4DISABLED§r.`;
     }
@@ -358,14 +358,14 @@ export function help(message) {
 
     let chatranksCommand;
     if (config.customcommands.chatranks === true) {
-        chatranksCommand = `§6${prefix}chatranks§r - Enables/Disables chat ranks.`;
+        chatranksCommand = `§6${prefix}chatranks§r - Toggles chat ranks.`;
     } else if (config.customcommands.chatranks === false) {
         chatranksCommand = `§6${prefix}chatranks§r - Command §4DISABLED§r.`;
     }
 
     let antishulkerCommand;
     if (config.customcommands.antishulker === true) {
-        antishulkerCommand = `§6${prefix}antishulker§r - Enables/Disables shulkers in the world.`;
+        antishulkerCommand = `§6${prefix}antishulker§r - Toggles shulkers in the world.`;
     } else if (config.customcommands.antishulker === false) {
         antishulkerCommand = `§6${prefix}antishulker§r - Command §4DISABLED§r.`;
     }
@@ -386,7 +386,7 @@ export function help(message) {
 
     let flyCommand;
     if (config.customcommands.fly === true) {
-        flyCommand = `§6${prefix}fly <username>§r - Enables/disables fly mode in survival.`;
+        flyCommand = `§6${prefix}fly <username>§r - Toggles fly mode in survival.`;
     } else if (config.customcommands.fly === false) {
         flyCommand = `§6${prefix}fly <username>§r - Command §4DISABLED§r.`;
     }
@@ -414,7 +414,7 @@ export function help(message) {
 
     let vanishCommand;
     if (config.customcommands.vanish === true) {
-        vanishCommand = `§6${prefix}vanish§r - Enables/disables vanish (Used for spying on suspects).`;
+        vanishCommand = `§6${prefix}vanish§r - Toggles vanish (Used for spying on suspects).`;
     } else if (config.customcommands.vanish === false) {
         vanishCommand = `§6${prefix}vanish§r - Command §4DISABLED§r.`;
     }
@@ -494,7 +494,7 @@ export function help(message) {
 
     let illegalEnchantCommand;
     if (config.customcommands.illegalenchant === true) {
-        illegalEnchantCommand = `§6${prefix}illegalenchant§r - Checks items for illegal enchants and lores.`;
+        illegalEnchantCommand = `§6${prefix}illegalenchant§r - Checks items for illegal enchants.`;
     } else if (config.customcommands.illegalenchant === false) {
         illegalEnchantCommand = `§6${prefix}illegalenchant§r - Command §4DISABLED§r.`;
     }
@@ -515,9 +515,16 @@ export function help(message) {
 
     let hotbarCommand;
     if (config.customcommands.hotbar === true) {
-        hotbarCommand = `§6${prefix}hotbar <optional>§r - Enables/Disables hotbar message for all players. Optional: Message`;
+        hotbarCommand = `§6${prefix}hotbar <optional>§r - Toggles hotbar message for all players. Optional: Message`;
     } else if (config.customcommands.hotbar === false) {
         hotbarCommand = `§6${prefix}hotbar <optional>§r - Command §4DISABLED§r.`;
+    }
+
+    let invalidSprintACommand;
+    if (config.customcommands.invalidsprinta === true) {
+        invalidSprintACommand = `§6${prefix}invalidsprinta§r - Toggles checks for illegal sprint with blindness.`;
+    } else if (config.customcommands.invalidsprinta === false) {
+        invalidSprintACommand = `§6${prefix}invalidsprinta§r - Command §4DISABLED§r.`;
     }
 
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
@@ -575,6 +582,7 @@ ${illegalitemscCommand}
 ${illegalItemsDCommand}
 ${illegalEnchantCommand}
 ${illegalLoresCommand}
+${invalidSprintACommand}
 ${stackbanCommand}
 ${antiscaffoldaCommand}
 ${antinukeraCommand}
@@ -602,5 +610,7 @@ ${listHomeCommand}
 ${delHomeCommand}
 ${performanceCommand}
 ${hotbarCommand}
+
+§l§6[§4For more info execute the command with help§6]§r
     "}]}`);
 }

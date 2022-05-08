@@ -1,13 +1,33 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function auraCheckHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.auracheck) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: auracheck
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: auracheck <username> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Will manually test player for killaura hack.
+§4[§6Examples§4]§r:
+    ${prefix}auracheck ${disabler(player.nameTag)}
+    ${prefix}auracheck help
+"}]}`)
+}
 
 /**
  * @name auracheck
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function auracheck(message, args) {
     // validate that required params are defined
@@ -27,8 +47,13 @@ export function auracheck(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide which target to check killaura!"}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.auracheck) {
+        return auraCheckHelp(player, prefix);
     }
     
     // try to find the player requested

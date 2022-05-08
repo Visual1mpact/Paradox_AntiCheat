@@ -1,5 +1,31 @@
 import config from "../../data/config.js";
-import { disabler, getScore } from "../../util.js";
+import { disabler, getScore, getPrefix } from "../../util.js";
+
+function hotbarHelp(player, prefix, hotbarScore) {
+    let commandStatus;
+    if (!config.customcommands.hotbar) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    let moduleStatus;
+    if (hotbarScore <= 0) {
+        moduleStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        moduleStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: hotbar
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Module§4]§r: ${moduleStatus}
+§4[§6Usage§4]§r: hotbar <message> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Displays a hotbar message for all player's currently online.
+§4[§6Examples§4]§r:
+    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843
+    ${prefix}hotbar help
+"}]}`)
+}
 
 /**
  * @name hotbar
@@ -22,6 +48,15 @@ export function hotbar(message, args) {
     }
 
     let hotbarScore = getScore("hotbar", player);
+
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.hotbar) {
+        return hotbarHelp(player, prefix, hotbarScore);
+    }
 
     if (hotbarScore <= 0) {
         // Allow

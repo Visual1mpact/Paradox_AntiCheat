@@ -1,21 +1,40 @@
 /* eslint no-var: "off"*/
 import { EntityQueryOptions, world } from "mojang-minecraft";
+import config from "../../data/config.js";
 import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
 
+function despawnHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.despawn) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: despawn
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: despawn <entity> [optional]
+§4[§6Optional§4]§r: all, help
+§4[§6Description§4]§r: Despawns all or specified entities if they exist.
+§4[§6Examples§4]§r:
+    ${prefix}despawn all
+    ${prefix}despawn iron_golem
+    ${prefix}despawn creeper
+    ${prefix}despawn help
+"}]}`)
+}
+
 /**
  * @name despawn
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function despawn(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/despawn.js:9)");
-    }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/despawn.js:10)");
     }
 
     message.cancel = true;
@@ -29,6 +48,17 @@ export function despawn(message, args) {
 
     // Check for custom prefix
     let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.despawn) {
+        return despawnHelp(player, prefix);
+    }
+
+    // Are there arguements
+    if (!args.length) {
+        return despawnHelp(player, prefix);
+    }
     
     // try to find the entity or despawn them all if requested
     let counter = 0;

@@ -1,29 +1,50 @@
 import { world } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function delhomeHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.delhome) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: delhome
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: delhome <name> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Will delete specified saved home location.
+§4[§6Examples§4]§r:
+    ${prefix}delhome cave
+    ${prefix}delhome help
+"}]}`)
+}
 
 /**
  * @name delhome
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function delhome(message, args) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/delhome.js:8)");
     }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? ./commands/utility/delhome.js:9)");
-    }
 
     message.cancel = true;
 
     let player = message.sender;
 
-    // Did they pass a parameter
-    if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You need to specify which home to delete!"}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.delhome) {
+        return delhomeHelp(player, prefix);
     }
 
     // Don't allow spaces

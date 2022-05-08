@@ -1,13 +1,34 @@
-import { world, Location } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import { world } from "mojang-minecraft";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function listHomeHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.listhome) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: listhome
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: listhome [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Shows a list of saved home locations.
+§4[§6Examples§4]§r:
+    ${prefix}listhome
+    ${prefix}listhome help
+"}]}`)
+}
 
 /**
  * @name listhome
  * @param {object} message - Message object
+ * @param {array} args - Additional arguments provided (optional).
  */
-export function listhome(message) {
+export function listhome(message, args) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/listhome.js:8)");
@@ -16,6 +37,15 @@ export function listhome(message) {
     message.cancel = true;
 
     let player = message.sender;
+
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.listhome) {
+        return listHomeHelp(player, prefix);
+    }
 
     let tags = player.getTags();
     let counter = 0;

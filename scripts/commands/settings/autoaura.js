@@ -1,10 +1,38 @@
-import { disabler, getScore } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix, getScore } from "../../util.js";
+
+function autoauraHelp(player, prefix, autoaurascore) {
+    let commandStatus;
+    if (!config.customcommands.autoaura) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    let moduleStatus;
+    if (autoaurascore <= 0) {
+        moduleStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        moduleStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: autoaura
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Module§4]§r: ${moduleStatus}
+§4[§6Usage§4]§r: autoaura [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Toggles Auto KillAura checks for all players.
+§4[§6Examples§4]§r:
+    ${prefix}autoaura
+    ${prefix}autoaura help
+"}]}`)
+}
 
 /**
  * @name autoaura
  * @param {object} message - Message object
+ * @param {array} args - Additional arguments provided (optional).
  */
-export function autokillaura(message) {
+export function autokillaura(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/autoaura.js:7)");
@@ -20,6 +48,15 @@ export function autokillaura(message) {
     }
 
     let autoaurascore = getScore("autoaura", player);
+
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.autoaura) {
+        return autoauraHelp(player, prefix, autoaurascore);
+    }
 
     if (autoaurascore <= 0) {
         // Allow

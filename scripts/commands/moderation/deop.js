@@ -1,22 +1,39 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
 import { world } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function deopHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.deop) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: deop
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: deop <username> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Revokes permission to use Paradox AntiCheat features.
+§4[§6Examples§4]§r:
+    ${prefix}deop ${disabler(player.nameTag)}
+    ${prefix}deop help
+"}]}`)
+}
 
 /**
  * @name deop
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function deop(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/op.js:9)");
-    }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/op.js:10)");
     }
 
     message.cancel = true;
@@ -26,6 +43,20 @@ export function deop(message, args) {
     // make sure the user has permissions to run the command
     if (!player.hasTag('paradoxOpped')) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.deop) {
+        return deopHelp(player, prefix);
+    }
+
+    // Are there arguements
+    if (!args.length) {
+        return deopHelp(player, prefix);
     }
     
     // try to find the player requested

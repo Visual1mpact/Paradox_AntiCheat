@@ -1,21 +1,38 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
-import { disabler, getScore } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function statsHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.stats) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: stats
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: stats <name> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Shows logs from the specified user.
+§4[§6Examples§4]§r:
+    ${prefix}stats ${disabler(player.nameTag)}
+    ${prefix}stats help
+"}]}`)
+}
 
 /**
  * @name stats
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function stats(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/stats.js:8)");
-    }
-    if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/utility/stats.js:9)");
     }
     
     message.cancel = true;
@@ -27,12 +44,17 @@ export function stats(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!player.hasTag('notify')) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable cheat notifications."}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.stats) {
+        return statsHelp(player, prefix);
     }
 
-    if (!args.length) {
-        return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function tools/stats`);
+    if (!player.hasTag('notify')) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You need to enable cheat notifications."}]}`);
     }
     
     // try to find the player requested

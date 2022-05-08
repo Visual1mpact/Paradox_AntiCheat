@@ -1,22 +1,39 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, Location, BlockLocation } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import { world, Location } from "mojang-minecraft";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function tpaHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.antinukera) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: tpa
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: tpa <username> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Teleport to another player.
+§4[§6Examples§4]§r:
+    ${prefix}tpa ${disabler(player.nameTag)}
+    ${prefix}tpa help
+"}]}`)
+}
 
 /**
  * @name tpa
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function tpa(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/tpa.js:10)");
-    }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/moderation/tpa.js:11)");
     }
 
     message.cancel = true;
@@ -28,9 +45,18 @@ export function tpa(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Was an arg passed?
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tpa) {
+        return tpaHelp(player, prefix);
+    }
+
+    // Are there arguements
     if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide a name for tpa!"}]}`);
+        return tpaHelp(player, prefix);
     }
     
     // Try to find the player requested

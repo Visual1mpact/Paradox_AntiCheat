@@ -1,22 +1,39 @@
 /* eslint no-var: "off"*/
 import { world, MinecraftEffectTypes } from "mojang-minecraft";
+import config from "../../data/config.js";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
-import { disabler } from "../../util.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function freezeHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.freeze) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: freeze
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: freeze <username> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Will freeze or unfreeze the specified player.
+§4[§6Examples§4]§r:
+    ${prefix}freeze ${disabler(player.nameTag)}
+    ${prefix}freeze help
+"}]}`)
+}
 
 /**
  * @name freeze
  * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * @param {array} args - Additional arguments provided (optional).
  */
 export function freeze(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/freeze.js:8)");
-    }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/utility/freeze.js:9)");
     }
 
     message.cancel = true;
@@ -28,8 +45,13 @@ export function freeze(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide which target to freeze!"}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.freeze) {
+        return freezeHelp(player, prefix);
     }
     
     // try to find the player requested

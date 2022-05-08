@@ -1,8 +1,28 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
-import { disabler } from "../../util.js";
+import config from "../../data/config.js";
+import { disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+function ecWipeHelp(player, prefix) {
+    let commandStatus;
+    if (!config.customcommands.ecwipe) {
+        commandStatus = "§6[§4DISABLED§6]§r"
+    } else {
+        commandStatus = "§6[§aENABLED§6]§r"
+    }
+    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
+§4[§6Command§4]§r: ecwipe
+§4[§6Status§4]§r: ${commandStatus}
+§4[§6Usage§4]§r: ecwipe <username> [optional]
+§4[§6Optional§4]§r: help
+§4[§6Description§4]§r: Will wipe out player's entire ender chest.
+§4[§6Examples§4]§r:
+    ${prefix}ecwipe ${disabler(player.nameTag)}
+    ${prefix}ecwipe help
+"}]}`)
+}
 
 /**
  * @name ecwipe
@@ -14,9 +34,6 @@ export function ecwipe(message, args) {
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/ecwipe.js:8)");
     }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./commands/utility/ecwipe.js:9)");
-    }
 
     message.cancel = true;
 
@@ -27,8 +44,13 @@ export function ecwipe(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    if (!args.length) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to provide whos ender chest inventory to wipe!"}]}`);
+    // Check for custom prefix
+    let prefix = getPrefix(player);
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.ecwipe) {
+        return ecWipeHelp(player, prefix);
     }
     
     // try to find the player requested

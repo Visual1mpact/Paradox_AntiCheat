@@ -110,226 +110,226 @@ export function commandHandler(player, message) {
     }
 
     switch (true) {
-        case (config.customcommands.kick && commandName === "kick"):
+        case (commandName === "kick"):
             kick(message, args);
             break;
-        case (config.modules.chatranks.enabled === true && config.customcommands.tag && commandName === "tag"):
+        case (commandName === "tag"):
             tag(message, args);
             break;
-        case (config.customcommands.ban && commandName === "ban"):
+        case (commandName === "ban"):
             ban(message, args);
             break;
-        case (config.customcommands.notify && commandName === "notify"):
-            notify(message);
+        case (commandName === "notify"):
+            notify(message, args);
             break;
-        case (config.customcommands.vanish && commandName === "vanish"):
-            vanish(message);
+        case (commandName === "vanish"):
+            vanish(message, args);
             break;
-        case (config.customcommands.fly && commandName === "fly"):
+        case (commandName === "fly"):
             fly(message, args);
             break;
-        case (config.customcommands.mute && commandName === "mute"):
+        case (commandName === "mute"):
             mute(message, args);
             break;
-        case (config.customcommands.unmute && commandName === "unmute"):
+        case (commandName === "unmute"):
             unmute(message, args);
             break;
-        case (config.customcommands.invsee && commandName === "invsee"):
+        case (commandName === "invsee"):
             invsee(message, args);
             break;
-        case (config.customcommands.ecwipe && commandName === "ecwipe"):
+        case (commandName === "ecwipe"):
             ecwipe(message, args);
             break;
-        case (config.customcommands.freeze && commandName === "freeze"):
+        case (commandName === "freeze"):
             freeze(message, args);
             break;
-        case (config.customcommands.stats && commandName === "stats"):
+        case (commandName === "stats"):
             stats(message, args);
             break;
-        case (config.customcommands.fullreport && commandName === "fullreport"):
-            fullreport(message);
+        case (commandName === "fullreport"):
+            fullreport(message, args);
             break;
-        case (config.customcommands.allowgma && commandName === "allowgma"):
-            allowgma(message);
+        case (commandName === "allowgma"):
+            allowgma(message, args);
             break;
-        case (config.customcommands.allowgmc && commandName === "allowgmc"):
-            allowgmc(message);
+        case (commandName === "allowgmc"):
+            allowgmc(message, args);
             break;
-        case (config.customcommands.allowgms && commandName === "allowgms"):
-            allowgms(message);
+        case (commandName === "allowgms"):
+            allowgms(message, args);
             break;
-        case (config.customcommands.bedrockvalidate && commandName === "bedrockvalidate"):
-            bedrockvalidate(message);
+        case (commandName === "bedrockvalidate"):
+            bedrockvalidate(message, args);
             break;
-        case (config.customcommands.modules && commandName === "modules"):
-            modules(message);
+        case (commandName === "modules"):
+            modules(message, args);
             break;
-        case (config.customcommands.overidecommandblocksenabled && commandName === "overridecbe"):
-            overidecommandblocksenabled(message);
+        case (commandName === "overridecbe"):
+            overidecommandblocksenabled(message, args);
             break;
-        case (config.customcommands.removecommandblocks && commandName === "removecb"):
-            removecommandblocks(message);
+        case (commandName === "removecb"):
+            removecommandblocks(message, args);
             break;
-        case (config.customcommands.worldborder && commandName === "worldborder"):
+        case (commandName === "worldborder"):
             worldborders(message, args);
             break;
         case (config.customcommands.help && commandName === "help"):
             help(message);
             break;
-        case (config.customcommands.credits && commandName === "credits"):
-            credits(message);
+        case (commandName === "credits"):
+            credits(message, args);
             break;
-        case (config.customcommands.op && commandName === "op"):
+        case (commandName === "op"):
             op(message, args);
             break;
-        case (config.customcommands.op && commandName === "deop"):
+        case (commandName === "deop"):
             deop(message, args);
             break;
-        case (config.customcommands.clearchat && commandName === "clearchat"):
-            clearchat(message);
+        case (commandName === "clearchat"):
+            clearchat(message, args);
             break;
-        case (config.customcommands.autoclicker && commandName === "autoclicker"):
-            autoclick(message);
+        case (commandName === "autoclicker"):
+            autoclick(message, args);
             break;
-        case (config.customcommands.jesusa && commandName === "jesusa"):
-            jesusA(message);
+        case (commandName === "jesusa"):
+            jesusA(message, args);
             break;
-        case (config.customcommands.enchantedarmor && commandName === "enchantedarmor"):
-            enchantedarmor(message);
+        case (commandName === "enchantedarmor"):
+            enchantedarmor(message, args);
             break;
-        case (config.customcommands.auracheck && commandName === "auracheck"):
+        case (commandName === "auracheck"):
             auracheck(message, args);
             break;
-        case (config.customcommands.autoaura && commandName === "autoaura"):
-            autokillaura(message);
+        case (commandName === "autoaura"):
+            autokillaura(message, args);
             break;
-        case (config.customcommands.antikb && commandName === "antikb"):
-            antiknockback(message);
+        case (commandName === "antikb"):
+            antiknockback(message, args);
             break;
-        case (config.customcommands.report && commandName === "report"):
+        case (commandName === "report"):
             report(message, args);
             break;
-        case (config.customcommands.badpackets1 && commandName === "badpackets1"):
-            badpackets1(message);
+        case (commandName === "badpackets1"):
+            badpackets1(message, args);
             break;
-        case (config.customcommands.spammera && commandName === "spammera"):
-            spammerA(message);
+        case (commandName === "spammera"):
+            spammerA(message, args);
             break;
-        case (config.customcommands.spammerb && commandName === "spammerb"):
-            spammerB(message);
+        case (commandName === "spammerb"):
+            spammerB(message, args);
             break;
-        case (config.customcommands.spammerc && commandName === "spammerc"):
-            spammerC(message);
+        case (commandName === "spammerc"):
+            spammerC(message, args);
             break;
-        case (config.customcommands.spammerd && commandName === "spammerd"):
-            spammerD(message);
+        case (commandName === "spammerd"):
+            spammerD(message, args);
             break;
-        case (config.customcommands.antispam && commandName === "antispam"):
-            antispam(message);
+        case (commandName === "antispam"):
+            antispam(message, args);
             break;
-        case (config.customcommands.crashera && commandName === "crashera"):
-            crasherA(message);
+        case (commandName === "crashera"):
+            crasherA(message, args);
             break;
-        case (config.customcommands.namespoofa && commandName === "namespoofa"):
-            namespoofA(message);
+        case (commandName === "namespoofa"):
+            namespoofA(message, args);
             break;
-        case (config.customcommands.namespoofb && commandName === "namespoofb"):
-            namespoofB(message);
+        case (commandName === "namespoofb"):
+            namespoofB(message, args);
             break;
-        case (config.customcommands.reacha && commandName === "reacha"):
-            reachA(message);
+        case (commandName === "reacha"):
+            reachA(message, args);
             break;
-        case (config.customcommands.reachb && commandName === "reachb"):
-            reachB(message);
+        case (commandName === "reachb"):
+            reachB(message, args);
             break;
-        case (config.customcommands.noslowa && commandName === "noslowa"):
-            noslowA(message);
+        case (commandName === "noslowa"):
+            noslowA(message, args);
             break;
-        case (config.customcommands.invalidsprinta && commandName === "invalidsprinta"):
-            invalidsprintA(message);
+        case (commandName === "invalidsprinta"):
+            invalidsprintA(message, args);
             break;
-        case (config.customcommands.flya && commandName === "flya"):
-            flyA(message);
+        case (commandName === "flya"):
+            flyA(message, args);
             break;
-        case (config.customcommands.illegalitemsa && commandName === "illegalitemsa"):
-            illegalitemsA(message);
+        case (commandName === "illegalitemsa"):
+            illegalitemsA(message, args);
             break;
-        case (config.customcommands.illegalitemsb && commandName === "illegalitemsb"):
-            illegalitemsB(message);
+        case (commandName === "illegalitemsb"):
+            illegalitemsB(message, args);
             break;
-        case (config.customcommands.antiscaffolda && commandName === "antiscaffolda"):
-            antiscaffoldA(message);
+        case (commandName === "antiscaffolda"):
+            antiscaffoldA(message, args);
             break;
-        case (config.customcommands.antinukera && commandName === "antinukera"):
-            antinukerA(message);
+        case (commandName === "antinukera"):
+            antinukerA(message, args);
             break;
-        case (config.customcommands.illegalitemsc && commandName === "illegalitemsc"):
-            illegalitemsC(message);
+        case (commandName === "illegalitemsc"):
+            illegalitemsC(message, args);
             break;
-        case (config.customcommands.xraya && commandName === "xraya"):
-            xrayA(message);
+        case (commandName === "xraya"):
+            xrayA(message, args);
             break;
-        case (config.customcommands.unbanwindow && commandName === "unbanwindow"):
-            unbanwindow(message);
+        case (commandName === "unbanwindow"):
+            unbanwindow(message, args);
             break;
         case (commandName === "prefix"):
             prefix(message, args);
             break;
-        case (config.customcommands.chatranks && commandName === "chatranks"):
-            chatranks(message);
+        case (commandName === "chatranks"):
+            chatranks(message, args);
             break;
-        case (config.customcommands.antishulker && commandName === "antishulker"):
-            antishulker(message);
+        case (commandName === "antishulker"):
+            antishulker(message, args);
             break;
-        case (config.customcommands.stackban && commandName === "stackban"):
-            stackban(message);
+        case (commandName === "stackban"):
+            stackban(message, args);
             break;
-        case (config.customcommands.lockdown && commandName === "lockdown"):
-            lockdown(message);
+        case (commandName === "lockdown"):
+            lockdown(message, args);
             break;
-        case (config.customcommands.punish && commandName === "punish"):
+        case (commandName === "punish"):
             punish(message, args);
             break;
-        case (config.customcommands.sethome && commandName === "sethome"):
+        case (commandName === "sethome"):
             sethome(message, args);
             break;
-        case (config.customcommands.gohome && commandName === "gohome"):
+        case (commandName === "gohome"):
             gohome(message, args);
             break;
-        case (config.customcommands.tpa && commandName === "tpa"):
+        case (commandName === "tpa"):
             tpa(message, args);
             break;
-        case (config.customcommands.antiteleport && commandName === "antiteleport"):
-            antiteleport(message);
+        case (commandName === "antiteleport"):
+            antiteleport(message, args);
             break;
-        case (config.customcommands.tester && commandName === "tester"):
+        case (commandName === "tester"):
             tester(message, args);
             break;
-        case (config.customcommands.illegalitemsd && commandName === "illegalitemsd"):
-            illegalitemsD(message);
+        case (commandName === "illegalitemsd"):
+            illegalitemsD(message, args);
             break;
-        case (config.customcommands.listhome && commandName === "listhome"):
-            listhome(message);
+        case (commandName === "listhome"):
+            listhome(message, args);
             break;
-        case (config.customcommands.delhome && commandName === "delhome"):
+        case (commandName === "delhome"):
             delhome(message, args);
             break;
-        case (config.customcommands.illegalenchant && commandName === "illegalenchant"):
-            illegalEnchant(message);
+        case (commandName === "illegalenchant"):
+            illegalEnchant(message, args);
             break;
-        case (config.customcommands.illegallores && commandName === "illegallores"):
-            illegalLores(message);
+        case (commandName === "illegallores"):
+            illegalLores(message, args);
             break;
-        case (config.customcommands.despawn && commandName === "despawn"):
+        case (commandName === "despawn"):
             despawn(message, args);
             break;
-        case (config.customcommands.reachc && commandName === "reachc"):
-            reachC(message);
+        case (commandName === "reachc"):
+            reachC(message, args);
             break;
-        case (config.customcommands.performance && commandName === "performance"):
-            performance(message);
+        case (commandName === "performance"):
+            performance(message, args);
             break;
-        case (config.customcommands.hotbar && commandName === "hotbar"):
+        case (commandName === "hotbar"):
             hotbar(message, args);
             break;
         default:
