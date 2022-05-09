@@ -107,28 +107,26 @@ function illegalitemsc(object) {
                 continue;
             }
             // Check if item found inside the container is salvageable
-            if (salvageable[inventory_item.id]) {
-                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-                // Check if data exceeds vanilla data
-                if (uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
-                    // Reset item to data type of 0
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                    } catch (error) {}
-                    continue;
-                } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
-                    // Reset item to data type of equal data if they do not match
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                    } catch (error) {}
-                    continue;
-                } else {
-                    // Reset item to data type of equal data because we take no chances
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                    } catch (error) {}
-                    continue;
-                }
+            let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+            // Check if data exceeds vanilla data
+            if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
+                // Reset item to data type of 0
+                try {
+                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                } catch (error) {}
+                continue;
+            } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
+                // Reset item to data type of equal data if they do not match
+                try {
+                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                } catch (error) {}
+                continue;
+            } else if (salvageable[inventory_item.id]) {
+                // Reset item to data type of equal data because we take no chances
+                try {
+                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                } catch (error) {}
+                continue;
             }
             // Check if item found inside the container is illegal
             if (illegalitems.includes(inventory_item.id)) {

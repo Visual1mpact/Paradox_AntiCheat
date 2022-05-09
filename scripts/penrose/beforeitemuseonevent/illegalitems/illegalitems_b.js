@@ -67,28 +67,26 @@ function illegalitemsb(object) {
         return;
     }
     // Check if item is salvageable and save it
-    if (salvageable[item.id]) {
-        let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-        // Check if data exceeds vanilla data
-        if (uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
-            // Reset item to data type of 0
-            try {
-                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
-            } catch (error) {}
-            return;
-        } else if (salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
-            // Reset item to data type of equal data if they do not match
-            try {
-                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
-            } catch (error) {}
-            return;
-        } else {
-            // Reset item to data type of equal data because we take no chances
-            try {
-                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data));
-            } catch (error) {}
-            return;
-        }
+    let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+    // Check if data exceeds vanilla data
+    if (salvageable[item.id] && uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
+        // Reset item to data type of 0
+        try {
+            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
+        } catch (error) {}
+        return;
+    } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
+        // Reset item to data type of equal data if they do not match
+        try {
+            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
+        } catch (error) {}
+        return;
+    } else if (salvageable[item.id]) {
+        // Reset item to data type of equal data because we take no chances
+        try {
+            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data));
+        } catch (error) {}
+        return;
     }
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id)) {
