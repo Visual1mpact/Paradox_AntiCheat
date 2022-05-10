@@ -76,7 +76,8 @@ export default
         "illegallores": true,
         "despawn": true,
         "performance": true,
-        "hotbar": true
+        "hotbar": true,
+        "rbcr": true
     },
     "modules": {
         "badpackets1": {
@@ -219,6 +220,9 @@ export default
         "hotbar": {
             "enabled": true,
             "message": "" // Put Message inside the quotes
+        },
+        "rbcr": {
+            "enabled": false
         }
     }
 };

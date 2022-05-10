@@ -527,6 +527,13 @@ export function help(message) {
         invalidSprintACommand = `§6${prefix}invalidsprinta§r - Command §4DISABLED§r.`;
     }
 
+    let rbcrCommand;
+    if (config.customcommands.rbcr === true) {
+        rbcrCommand = `§6${prefix}rbcr§r - Toggles option to use Realm Bot Chat Relay.`;
+    } else if (config.customcommands.rbcr === false) {
+        rbcrCommand = `§6${prefix}rbcr§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -591,6 +598,7 @@ ${unbanwindowCommand}
 ${chatranksCommand}
 ${antishulkerCommand}
 ${antiTeleportCommand}
+${rbcrCommand}
 
 §l§6[§4Tools and Utilites§6]§r
 ${auracheckCommand}

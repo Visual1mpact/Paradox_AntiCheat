@@ -76,6 +76,7 @@ import { despawn } from "./moderation/despawn.js";
 import { reachC } from "./settings/reachc.js";
 import { performance } from "./utility/performance.js";
 import { hotbar } from "./utility/hotbar.js";
+import { rbcr } from "./settings/rbcr.js";
 
 /**
  * @name commandHandler
@@ -331,6 +332,9 @@ export function commandHandler(player, message) {
             break;
         case (commandName === "hotbar"):
             hotbar(message, args);
+            break;
+        case (commandName === "rbcr"):
+            rbcr(message, args);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
