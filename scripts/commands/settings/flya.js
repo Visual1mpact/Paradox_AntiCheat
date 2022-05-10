@@ -32,7 +32,7 @@ function flyaHelp(player, prefix) {
  * @param {object} message - Message object
  * @param {array} args - Additional arguments provided (optional).
  */
-export function flyA(message) {
+export function flyA(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/flya.js:5)");

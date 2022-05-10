@@ -32,7 +32,7 @@ function reachAHelp(player, prefix) {
  * @param {object} message - Message object
  * @param {array} args - Additional arguments provided (optional).
  */
-export function reachA(message) {
+export function reachA(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/reacha.js:5)");

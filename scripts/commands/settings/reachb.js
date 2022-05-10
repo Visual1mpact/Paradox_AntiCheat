@@ -32,7 +32,7 @@ function reachBHelp(player, prefix) {
  * @param {object} message - Message object
  * @param {array} args - Additional arguments provided (optional).
  */
-export function reachB(message) {
+export function reachB(message, args) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/reachb.js:5)");
