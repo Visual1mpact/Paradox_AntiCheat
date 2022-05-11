@@ -91,20 +91,10 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OverideCommandBlocksEnabled is currently §4DISABLED"}]}`);
     }
     
-    if (worldborder === 1) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a1k"}]}`);
-    } else if (worldborder === 2) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a5k"}]}`);
-    } else if (worldborder === 3) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a10k"}]}`);
-    } else if (worldborder === 4) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a25k"}]}`);
-    } else if (worldborder === 5) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a50k"}]}`);
-    } else if (worldborder === 6) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a100k"}]}`);
+    if (worldborder > 0) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a${worldborder}"}]}`);
     } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §4DISABLED"}]}`);
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is currently §4DISABLED"}]}`);
     }
 
     if (autoclicker >= 1) {

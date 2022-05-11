@@ -18,11 +18,12 @@ function worldBorderHelp(player, prefix) {
 §4[§6Command§4]§r: worldborder
 §4[§6Status§4]§r: ${commandStatus}
 §4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: worldborder [optional]
-§4[§6Optional§4]§r: 1k, 5k, 10k, 25k, 50k, 100k, disable, help
+§4[§6Usage§4]§r: worldborder <value> [optional]
+§4[§6Optional§4]§r: disable, help
 §4[§6Description§4]§r: Sets the world border and restricts players to that border.
 §4[§6Examples§4]§r:
-    ${prefix}worldborder 10k
+    ${prefix}worldborder 1000
+    ${prefix}worldborder 25689
     ${prefix}worldborder disable
     ${prefix}worldborder help
 "}]}`)
@@ -57,51 +58,20 @@ export function worldborders(message, args) {
         return worldBorderHelp(player, prefix);
     }
 
-    const options = ['1k', '5k', '10k', '25k', '50k', '100k', 'disable'];
 
-    for (let i = 0; i < options.length; i++) {
-        let verify = args[i];
-
-        if (verify === "1k") {
-            // 1k
-            player.runCommand(`scoreboard players set paradox:config worldborder 1`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border to 1k!"}]}`);
-            config.modules.worldBorder.enabled = true;
-        } else if (verify === "5k") {
-            // 5k
-            player.runCommand(`scoreboard players set paradox:config worldborder 2`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border to 5k!"}]}`);
-            config.modules.worldBorder.enabled = true;
-        } else if (verify === "10k") {
-            // 10k
-            player.runCommand(`scoreboard players set paradox:config worldborder 3`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border to 10k!"}]}`);
-            config.modules.worldBorder.enabled = true;
-        } else if (verify === "25k") {
-            // 25k
-            player.runCommand(`scoreboard players set paradox:config worldborder 4`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border to 25k!"}]}`);
-            config.modules.worldBorder.enabled = true;
-        } else if (verify === "50k") {
-            // 50k
-            player.runCommand(`scoreboard players set paradox:config worldborder 5`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border to 50k!"}]}`);
-            config.modules.worldBorder.enabled = true;
-        } else if (verify === "100k") {
-            // 100k
-            player.runCommand(`scoreboard players set paradox:config worldborder 6`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border to 100k!"}]}`);
-            config.modules.worldBorder.enabled = true;
-        } else if (verify === "disable") {
-            // Disable Worldborder
-            player.runCommand(`scoreboard players set paradox:config worldborder 0`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border!"}]}`);
-            config.modules.worldBorder.enabled = false;
-        } else {
-            // Nothing matched
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You need to provide the border size!"}]}`);
-            return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Choose the following: 1k, 5k, 10k, 25k, 50k, 100k, or disable!"}]}`);
-        }
-        return player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+    if (argCheck !== "disable" && isNaN(argCheck) === false) {
+        // Build the wall
+        player.runCommand(`scoreboard players set paradox:config worldborder ${argCheck}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
+        player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        return config.modules.worldBorder.enabled = true;
+    } else if (argCheck === "disable") {
+        // Disable Worldborder
+        player.runCommand(`scoreboard players set paradox:config worldborder 0`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
+        player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        return config.modules.worldBorder.enabled = false;
+    } else {
+        return worldBorderHelp(player, prefix);
     }
 }

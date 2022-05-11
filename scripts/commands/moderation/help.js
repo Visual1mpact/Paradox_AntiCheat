@@ -149,9 +149,9 @@ export function help(message) {
 
     let worldborderCommand;
     if (config.customcommands.worldborder === true) {
-        worldborderCommand = `§6${prefix}worldborder <option>§r - Sets the World Border. Option: [1k, 5k, 10k, 25k, 50k, 100k, disable]`;
+        worldborderCommand = `§6${prefix}worldborder <value>§r - Sets the World Border. Change value to disable to turn off.`;
     } else if (config.customcommands.worldborder === false) {
-        worldborderCommand = `§6${prefix}worldborder <option>§r - Command §4DISABLED§r.`;
+        worldborderCommand = `§6${prefix}worldborder <value>§r - Command §4DISABLED§r.`;
     }
 
     let autoclickerCommand;
