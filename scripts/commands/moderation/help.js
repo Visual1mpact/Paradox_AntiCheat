@@ -534,6 +534,13 @@ export function help(message) {
         rbcrCommand = `§6${prefix}rbcr§r - Command §4DISABLED§r.`;
     }
 
+    let opsCommand;
+    if (config.customcommands.ops === true) {
+        opsCommand = `§6${prefix}ops§r - Toggles One Player Sleep (OPS) for all online players.`;
+    } else if (config.customcommands.ops === false) {
+        opsCommand = `§6${prefix}ops§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -599,6 +606,7 @@ ${chatranksCommand}
 ${antishulkerCommand}
 ${antiTeleportCommand}
 ${rbcrCommand}
+${opsCommand}
 
 §l§6[§4Tools and Utilites§6]§r
 ${auracheckCommand}

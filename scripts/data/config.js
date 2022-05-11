@@ -77,7 +77,8 @@ export default
         "despawn": true,
         "performance": true,
         "hotbar": true,
-        "rbcr": true
+        "rbcr": true,
+        "ops": true
     },
     "modules": {
         "badpackets1": {
@@ -222,6 +223,9 @@ export default
             "message": "" // Put Message inside the quotes
         },
         "rbcr": {
+            "enabled": false
+        },
+        "ops": {
             "enabled": false
         }
     }

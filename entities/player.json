@@ -32,7 +32,8 @@
 					"chest",
 					"leggings",
 					"boots",
-					"attacked"
+					"attacked",
+					"sleep"
 				]
 			},
 			"animations": {
@@ -60,7 +61,8 @@
 				"chest": "controller.animation.chest",
 				"leggings": "controller.animation.leggings",
 				"boots": "controller.animation.boots",
-				"attacked": "controller.animation.attacked"
+				"attacked": "controller.animation.attacked",
+				"sleep": "controller.animation.sleep"
 			}
 		},
 		"component_groups": {
