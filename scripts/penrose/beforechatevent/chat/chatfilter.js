@@ -33,12 +33,11 @@ const ChatFilter = () => {
                         player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message + '\'}'}]})}`);
                     } catch (error) {
                         player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]}).replace(/\\"/g, '"')}`);
-                        msg.cancel = true;
                     }
                 } else {
                     player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]}).replace(/\\"/g, '"')}`);
-                    msg.cancel = true;
                 }
+                msg.cancel = true;
             }
         } else if (!msg.cancel) {
             let message = msg.message;
@@ -50,12 +49,11 @@ const ChatFilter = () => {
                     player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + player.name + ': ' + message + '\'}'}]})}`);
                 } catch (error) {
                     player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
-                    msg.cancel = true;
                 }
             } else {
                 player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
-                msg.cancel = true;
             }
+            msg.cancel = true;
         }
     });
 };
