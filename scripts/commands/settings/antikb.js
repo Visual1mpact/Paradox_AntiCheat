@@ -61,11 +61,11 @@ export function antiknockback(message, args) {
     if (antikbscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
     } else if (antikbscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

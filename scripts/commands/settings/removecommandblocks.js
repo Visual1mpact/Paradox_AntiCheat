@@ -61,11 +61,11 @@ export function removecommandblocks(message, args) {
     if (commandblocksscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Command Blocks!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Command Blocks§r!"}]}`);
     } else if (commandblocksscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Command Blocks!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Command Blocks§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
 }

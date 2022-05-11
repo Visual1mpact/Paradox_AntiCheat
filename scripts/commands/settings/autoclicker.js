@@ -61,11 +61,11 @@ export function autoclick(message, args) {
     if (autoclickerscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config autoclicker 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Autoclicker!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Autoclicker§r!"}]}`);
     } else if (autoclickerscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config autoclicker 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Autoclicker!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Autoclicker§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a autoclicker = paradox:config autoclicker`);
 }

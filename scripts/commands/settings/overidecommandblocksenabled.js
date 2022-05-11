@@ -61,11 +61,11 @@ export function overidecommandblocksenabled(message, args) {
     if (cmdsscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled §6as enabled!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled as §6enabled§r!"}]}`);
     } else if (cmdsscore === 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled §4as disabled!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled as §4disabled§r!"}]}`);
     } else if (cmdsscore >= 2) {
         // Force
         player.runCommand(`scoreboard players set paradox:config cmds 0`);
