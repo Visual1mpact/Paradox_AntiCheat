@@ -42,9 +42,6 @@ export function tag(message, args) {
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./utility/tag.js:7)");
     }
-    if (!args) {
-        return console.warn(`${new Date()} | ` + "Error: ${args} isnt defined. Did you forget to pass it? (./utility/tag.js:8)");
-    }
 
     message.cancel = true;
 
