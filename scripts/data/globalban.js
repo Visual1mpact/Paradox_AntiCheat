@@ -238,5 +238,6 @@ export const banplayer = [
     {name: 'Lojogro'},
     {name: 'PicoNotNeko'},
     {name: 'FazeFishTTV'},
-    {name: 'Zreepah'}
+    {name: 'Zreepah'},
+    {name: 'DeltaGigano'}
 ];
