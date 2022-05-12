@@ -219,7 +219,7 @@ export default
             "exclude": "(+DATA)"
         },
         "hotbar": {
-            "enabled": true,
+            "enabled": false,
             "message": "" // Put Message inside the quotes
         },
         "rbcr": {
