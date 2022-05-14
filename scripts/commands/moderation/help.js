@@ -349,11 +349,11 @@ export function help(message) {
         xrayaCommand = `§6${prefix}xraya§r - Command §4DISABLED§r.`;
     }
 
-    let unbanwindowCommand;
-    if (config.customcommands.unbanwindow === true) {
-        unbanwindowCommand = `§6${prefix}unbanwindow§r - Disables server ban to allow banned players to join (Does not include global ban).`;
-    } else if (config.customcommands.unbanwindow === false) {
-        unbanwindowCommand = `§6${prefix}unbanwindow§r - Command §4DISABLED§r.`;
+    let unbanCommand;
+    if (config.customcommands.unban === true) {
+        unbanCommand = `§6${prefix}unban <username>§r - Allows specified players to join if banned (Doesn't include global ban).`;
+    } else if (config.customcommands.unban === false) {
+        unbanCommand = `§6${prefix}unban <username>§r - Command §4DISABLED§r.`;
     }
 
     let chatranksCommand;
@@ -547,6 +547,7 @@ export function help(message) {
 §l§6[§4Moderation Commands§6]§r
 §6${prefix}help§r - Shows this help page.
 ${banCommand}
+${unbanCommand}
 ${kickCommand}
 ${muteCommand}
 ${unmuteCommand}
@@ -601,7 +602,6 @@ ${stackbanCommand}
 ${antiscaffoldaCommand}
 ${antinukeraCommand}
 ${xrayaCommand}
-${unbanwindowCommand}
 ${chatranksCommand}
 ${antishulkerCommand}
 ${antiTeleportCommand}

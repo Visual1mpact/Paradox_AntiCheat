@@ -1,22 +1,22 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
-import { banMessage } from "../../../util.js";
+import { banMessage, disabler } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
-import config from "../../../data/config.js";
+import { queueUnban } from "../../../commands/moderation/unban.js";
 
 const World = world;
 
 function serverban() {
-    // Unsubscribe if disabled in-game
-    if (config.modules.unbanWindow.enabled === true) {
-        World.events.tick.unsubscribe(serverban);
-        return;
-    }
     let filter = new EntityQueryOptions();
     filter.tags = ['isBanned'];
     // If they are a tester then let them in
     filter.excludeTags = ['TestPlayer'];
     // run as each player
     for (let player of World.getPlayers(filter)) {
+        if (queueUnban.has(disabler(player.nameTag))) {
+            player.removeTag('isBanned');
+            queueUnban.delete(disabler(player.nameTag))
+            continue;
+        }
         // Ban message
         banMessage(player);
     }

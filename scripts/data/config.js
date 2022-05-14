@@ -59,7 +59,7 @@ export default
         "antiscaffolda": true,
         "antinukera": true,
         "xraya": true,
-        "unbanwindow": true,
+        "unban": true,
         "chatranks": true,
         "antishulker": true,
         "stackban": true,
@@ -178,9 +178,6 @@ export default
         },
         "xrayA": {
             "enabled": true
-        },
-        "unbanWindow": {
-            "enabled": false
         },
         "chatranks": {
             "enabled": true

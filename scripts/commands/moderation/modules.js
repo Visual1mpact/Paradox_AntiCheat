@@ -307,12 +307,6 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r XrayA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.unbanWindow.enabled) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Unban Window is currently §aENABLED"}]}`);
-    } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Unban Window is currently §4DISABLED"}]}`);
-    }
-
     if (config.modules.chatranks.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chat Ranks is currently §aENABLED"}]}`);
     } else {

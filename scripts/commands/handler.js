@@ -56,7 +56,7 @@ import { antiscaffoldA } from "./settings/antiscaffolda.js";
 import { antinukerA } from "./settings/antinukera.js";
 import { illegalitemsC } from "./settings/illegalitemsc.js";
 import { xrayA } from "./settings/xraya.js";
-import { unbanwindow } from "./settings/unbanwindow.js";
+import { unban } from "./moderation/unban.js";
 import { prefix } from "./moderation/prefix.js";
 import { chatranks } from "./settings/chatranks.js";
 import { stackban } from "./settings/stackban.js";
@@ -271,8 +271,8 @@ export function commandHandler(player, message) {
         case (commandName === "xraya"):
             xrayA(message, args);
             break;
-        case (commandName === "unbanwindow"):
-            unbanwindow(message, args);
+        case (commandName === "unban"):
+            unban(message, args);
             break;
         case (commandName === "prefix"):
             prefix(message, args);
