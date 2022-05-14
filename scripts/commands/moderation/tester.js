@@ -15,8 +15,8 @@ function testerHelp(player, prefix) {let commandStatus;
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: tester
 §4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: tester <username> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: tester [optional]
+§4[§6Optional§4]§r: tester, help
 §4[§6Description§4]§r: Adds and Removes player's as testers for the World to test Paradox.
 §4[§6Examples§4]§r:
     ${prefix}tester ${disabler(player.nameTag)}

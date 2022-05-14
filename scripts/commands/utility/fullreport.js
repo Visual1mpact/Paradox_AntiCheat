@@ -13,8 +13,8 @@ function fullReportHelp(player, prefix) {
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: fullreport
 §4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: fullreport <username> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: fullreport [optional]
+§4[§6Optional§4]§r: username, help
 §4[§6Description§4]§r: View logs from all player's currently online.
 §4[§6Examples§4]§r:
     ${prefix}fullreport

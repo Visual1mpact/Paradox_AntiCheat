@@ -15,8 +15,8 @@ function muteHelp(player, prefix) {
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: mute
 §4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: mute <username> [optional]
-§4[§6Optional§4]§r: reason, help
+§4[§6Usage§4]§r: mute [optional]
+§4[§6Optional§4]§r: mute, reason, help
 §4[§6Description§4]§r: Mutes the specified user and optionally gives reason.
 §4[§6Examples§4]§r:
     ${prefix}mute ${disabler(player.nameTag)}

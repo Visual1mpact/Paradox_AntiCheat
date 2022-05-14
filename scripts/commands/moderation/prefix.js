@@ -17,8 +17,8 @@ function resetPrefix(player) {
 function prefixHelp(player, prefix) {
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: prefix
-§4[§6Usage§4]§r: prefix <prefix> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: prefix [optional]
+§4[§6Optional§4]§r: prefix, help
 §4[§6Description§4]§r: Changes the prefix for commands. Max is two characters.
 §4[§6Examples§4]§r:
     ${prefix}prefix !!

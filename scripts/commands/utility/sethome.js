@@ -14,8 +14,8 @@ function setHomeHelp(player, prefix) {
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: sethome
 §4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: sethome <name> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: sethome [optional]
+§4[§6Optional§4]§r: name, help
 §4[§6Description§4]§r: Saves home location based on current coordinates. Up to ${config.modules.setHome.max} total.
 §4[§6Examples§4]§r:
     ${prefix}sethome barn

@@ -14,8 +14,8 @@ function goHomeHelp(player, prefix) {
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: gohome
 §4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: gohome <name> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: gohome [optional]
+§4[§6Optional§4]§r: name, help
 §4[§6Description§4]§r: Return home to a specified saved location.
 §4[§6Examples§4]§r:
     ${prefix}gohome barn

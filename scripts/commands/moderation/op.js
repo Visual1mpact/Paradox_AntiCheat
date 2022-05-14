@@ -16,8 +16,8 @@ function opHelp(player, prefix) {
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: op
 §4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: op <username> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: op [optional]
+§4[§6Optional§4]§r: username, help
 §4[§6Description§4]§r: Grants permission to use Paradox AntiCheat features.
 §4[§6Examples§4]§r:
     ${prefix}op ${disabler(player.nameTag)}

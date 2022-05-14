@@ -18,8 +18,8 @@ function hotbarHelp(player, prefix, hotbarScore) {
 §4[§6Command§4]§r: hotbar
 §4[§6Status§4]§r: ${commandStatus}
 §4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: hotbar <message> [optional]
-§4[§6Optional§4]§r: help
+§4[§6Usage§4]§r: hotbar [optional]
+§4[§6Optional§4]§r: message, help
 §4[§6Description§4]§r: Displays a hotbar message for all player's currently online.
 §4[§6Examples§4]§r:
     ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843
