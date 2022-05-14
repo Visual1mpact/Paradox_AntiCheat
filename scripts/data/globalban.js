@@ -72,7 +72,6 @@ export const banplayer = [
     {name: 'frickyea99'},
     {name: 'timmy_is_daddy57'},
     {name: 'Julisco21'},
-    {name: 'xIlSHNAGSlIx'},
     {name: 'PianoPandora948'},
     {name: 'DribFR'},
     {name: 'SlmplyLogicPvP'},
