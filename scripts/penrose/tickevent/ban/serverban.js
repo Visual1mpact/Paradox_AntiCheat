@@ -15,6 +15,8 @@ function serverban() {
         if (queueUnban.has(disabler(player.nameTag))) {
             player.removeTag('isBanned');
             queueUnban.delete(disabler(player.nameTag))
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been unbanned."}]}`);
+            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has been unbanned."}]}`);
             continue;
         }
         // Ban message
