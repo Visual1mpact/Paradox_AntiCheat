@@ -49,11 +49,12 @@ const ChatFilter = () => {
                     player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + player.name + ': ' + message + '\'}'}]})}`);
                 } catch (error) {
                     player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
+                    msg.cancel = true;
                 }
             } else {
                 player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
+                msg.cancel = true;
             }
-            msg.cancel = true;
         }
     });
 };
