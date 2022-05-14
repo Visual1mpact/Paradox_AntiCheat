@@ -7,6 +7,27 @@ import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
 
+function rip(source, item) {
+    let tags = source.getTags();
+
+    // This removes old ban tags
+    tags.forEach(t => {
+        if(t.startsWith("Reason:")) {
+            source.removeTag(t);
+        }
+        if(t.startsWith("By:")) {
+            source.removeTag(t);
+        }
+    });
+    try {
+        source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
+        source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
+        source.addTag('isBanned');
+    } catch (error) {
+        source.triggerEvent('paradox:kick');
+    }
+}
+
 function illegalitemsb(object) {
     // Unsubscribe if disabled in-game
     if (config.modules.illegalitemsB.enabled === false) {
@@ -25,27 +46,6 @@ function illegalitemsb(object) {
     // Only fire if entity is a Player
     if (!(source instanceof Player)) {
         return;
-    }
-
-    function rip(source, item) {
-        let tags = source.getTags();
-
-        // This removes old ban tags
-        tags.forEach(t => {
-            if(t.startsWith("Reason:")) {
-                source.removeTag(t);
-            }
-            if(t.startsWith("By:")) {
-                source.removeTag(t);
-            }
-        });
-        try {
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
-            source.addTag('isBanned');
-        } catch (error) {
-            source.triggerEvent('paradox:kick');
-        }
     }
 
     // Used for getting some info on the item
