@@ -38,6 +38,8 @@ function illegalitemsa() {
         return;
     }
 
+    // Used to contain data about Lores
+    let loreData;
     let filter = new EntityQueryOptions();
     filter.excludeTags = ['paradoxOpped'];
     for (let player of World.getPlayers(filter)) {
@@ -65,17 +67,38 @@ function illegalitemsa() {
             // Check if data exceeds vanilla data
             if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
                 // Reset item to data type of 0
+                if (!config.modules.illegalLores.enabled) {
+                    loreData = inventory_item.getLore();
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount).setLore([loreData]));
+                    } catch (error) {}
+                    continue;
+                }
                 try {
                     inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
                 } catch (error) {}
                 continue;
             } else if (salvageable[inventory_item.id] && salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
+                if (!config.modules.illegalLores.enabled) {
+                    loreData = inventory_item.getLore();
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data).setLore([loreData]));
+                    } catch (error) {}
+                    continue;
+                }
                 // Reset item to data type of equal data if they do not match
                 try {
                     inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
                 } catch (error) {}
                 continue;
             } else if (salvageable[inventory_item.id]) {
+                if (!config.modules.illegalLores.enabled) {
+                    loreData = inventory_item.getLore();
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data).setLore([loreData]));
+                    } catch (error) {}
+                    continue;
+                }
                 // Reset item to data type of equal data because we take no chances
                 try {
                     inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));

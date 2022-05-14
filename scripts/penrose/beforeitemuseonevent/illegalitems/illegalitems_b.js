@@ -66,23 +66,46 @@ function illegalitemsb(object) {
         source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
         return;
     }
+    // Used to contain data about Lores
+    let loreData;
     // Check if item is salvageable and save it
     let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
     // Check if data exceeds vanilla data
     if (salvageable[item.id] && uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
         // Reset item to data type of 0
+        if (!config.modules.illegalLores.enabled) {
+            loreData = item.getLore();
+            try {
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount).setLore([loreData]));
+            } catch (error) {}
+            return;
+        }
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
         } catch (error) {}
         return;
     } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
         // Reset item to data type of equal data if they do not match
+        if (!config.modules.illegalLores.enabled) {
+            loreData = item.getLore();
+            try {
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data).setLore([loreData]));
+            } catch (error) {}
+            return;
+        }
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
         } catch (error) {}
         return;
     } else if (salvageable[item.id]) {
         // Reset item to data type of equal data because we take no chances
+        if (!config.modules.illegalLores.enabled) {
+            loreData = item.getLore();
+            try {
+                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data).setLore([loreData]));
+            } catch (error) {}
+            return;
+        }
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data));
         } catch (error) {}

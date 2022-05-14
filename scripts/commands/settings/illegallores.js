@@ -66,7 +66,7 @@ export function illegalLores(message, args) {
     } else if (config.modules.illegalLores.enabled === true) {
         // Deny
         config.modules.illegalLores.enabled = false;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalLoresD§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalLores§r!"}]}`);
         return;
     }
 }
