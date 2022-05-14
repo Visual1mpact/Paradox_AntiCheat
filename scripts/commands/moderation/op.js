@@ -51,7 +51,7 @@ export function op(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.op) {
-        return muteHelp(player, prefix);
+        return opHelp(player, prefix);
     }
 
     // Are there arguements
