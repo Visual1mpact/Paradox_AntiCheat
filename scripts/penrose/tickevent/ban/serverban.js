@@ -13,8 +13,25 @@ function serverban() {
     // run as each player
     for (let player of World.getPlayers(filter)) {
         if (queueUnban.has(disabler(player.nameTag))) {
+            // Remove tag
             player.removeTag('isBanned');
+
+            let tags = player.getTags();
+
+            // This removes old ban stuff
+            tags.forEach(t => {
+                if(t.startsWith("Reason:")) {
+                    player.removeTag(t);
+                }
+                if(t.startsWith("By:")) {
+                    player.removeTag(t);
+                }
+            });
+
+            // Remove player from queue
             queueUnban.delete(disabler(player.nameTag))
+
+            // Let staff and player know they are unbanned
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been unbanned."}]}`);
             player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has been unbanned."}]}`);
             continue;
