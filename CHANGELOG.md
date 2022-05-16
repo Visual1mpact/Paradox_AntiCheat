@@ -1,5 +1,15 @@
 # Changelog
 
+## [v2.14.42](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.14.42) (2022-05-16)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.13.41...v2.14.42)
+
+**Closed issues:**
+
+- Crash [\#25](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/25)
+- Modules still gets reset when everyone left a realm [\#24](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/24)
+- paradox is a virus [\#23](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/23)
+
 ## [v2.13.41](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.13.41) (2022-05-02)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.13.40...v2.13.41)
