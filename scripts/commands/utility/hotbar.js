@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getScore, getPrefix } from "../../util.js";
+import { disabler, getPrefix } from "../../util.js";
 
 function hotbarHelp(player, prefix) {
     let commandStatus;
