@@ -54,7 +54,7 @@ export function ops(message, args) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.reacha) {
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.ops) {
         return opsHelp(player, prefix);
     }
 
