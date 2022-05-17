@@ -1,7 +1,7 @@
 import config from "../../data/config.js";
 import { disabler, getScore, getPrefix } from "../../util.js";
 
-function hotbarHelp(player, prefix, hotbarScore) {
+function hotbarHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.hotbar) {
         commandStatus = "§6[§4DISABLED§6]§r"
@@ -9,7 +9,7 @@ function hotbarHelp(player, prefix, hotbarScore) {
         commandStatus = "§6[§aENABLED§6]§r"
     }
     let moduleStatus;
-    if (hotbarScore <= 0) {
+    if (!config.modules.hotbar.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r"
     } else {
         moduleStatus = "§6[§aENABLED§6]§r"
@@ -47,30 +47,25 @@ export function hotbar(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let hotbarScore = getScore("hotbar", player);
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.hotbar) {
-        return hotbarHelp(player, prefix, hotbarScore);
+        return hotbarHelp(player, prefix);
     }
 
-    if (hotbarScore <= 0) {
+    if (config.modules.hotbar.enabled === false) {
         // Allow
         config.modules.hotbar.enabled = true;
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         }
-        player.runCommand(`scoreboard players set paradox:config hotbar 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Hotbar!"}]}`);
-    } else if (hotbarScore >= 1) {
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Hotbar!"}]}`);
+    } else if (config.modules.hotbar.enabled === true) {
         // Deny
         config.modules.hotbar.enabled = false;
-        player.runCommand(`scoreboard players set paradox:config hotbar 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Hotbar!"}]}`);
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Hotbar!"}]}`);
     }
-    return player.runCommand(`scoreboard players operation @a hotbar = paradox:config hotbar`);
 }

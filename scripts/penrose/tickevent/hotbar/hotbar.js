@@ -1,4 +1,4 @@
-import { world, EntityQueryScoreOptions, EntityQueryOptions } from "mojang-minecraft";
+import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -10,14 +10,10 @@ function hotbar() {
         return;
     }
     let hotbarMessage;
-    let filter = new EntityQueryScoreOptions();
-    filter.objective = "hotbar";
-    filter.minScore = 1;
-    let scoreFilter = new EntityQueryOptions();
-    scoreFilter.scoreOptions = [filter];
-    scoreFilter.excludeTags = ['performance', 'vanish'];
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['performance', 'vanish'];
     // run as each player
-    for (let player of World.getPlayers(scoreFilter)) {
+    for (let player of World.getPlayers(filter)) {
         hotbarMessage = config.modules.hotbar.message;
         player.runCommand(`titleraw @s actionbar {"rawtext":[{"text":"${hotbarMessage}"}]}`);
     }
