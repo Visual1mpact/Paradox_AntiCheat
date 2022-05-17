@@ -2,9 +2,9 @@
 	"format_version": 2,
 	"header": {
 		"name": "Paradox AntiCheat",
-		"description": "A utility to fight against malicious hackers on Bedrock Edition ~ v2.14.42",
+		"description": "A utility to fight against malicious hackers on Bedrock Edition ~ v2.14.43",
 		"uuid": "54edfea5-ab51-47ca-b992-724e255b5560",
-		"version": [2, 14, 42],
+		"version": [2, 14, 43],
 		"min_engine_version": [1, 18, 30]
 	},
 	"metadata": {
