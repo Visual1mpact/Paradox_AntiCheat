@@ -7,6 +7,7 @@ const World = world;
 function queueSleep(player) {
     player.runCommand(`time set sunrise`);
     player.runCommand(`time add 2000`);
+    player.runCommand(`weather clear`);
     player.runCommand(`title @s actionbar Good Morning`);
 }
 
