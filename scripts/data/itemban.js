@@ -43,6 +43,8 @@ export const illegalitems = [
   'minecraft:deny',
   'minecraft:npc_spawn',
   'minecraft:stickyPistonArmCollision',
+  'minecraft:sticky_piston_arm_collision',
+  'minecraft:piston_arm_collision',
   'minecraft:netherreactor',
   'minecraft:mob_spawner',
   'minecraft:border_block',
