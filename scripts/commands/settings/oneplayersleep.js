@@ -1,4 +1,4 @@
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 
 function opsHelp(player, prefix) {
@@ -45,7 +45,7 @@ export function ops(message, args) {
     let tag = player.getTags();
     
     // make sure the user has permissions to run the command
-    if (!tag.includes('paradoxOpped')) {
+    if (!tag.includes(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,12 +61,12 @@ export function ops(message, args) {
     if (config.modules.ops.enabled === false) {
         // Allow
         config.modules.ops.enabled = true;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6OPS§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6OPS§r!"}]}`);
         return;
     } else if (config.modules.ops.enabled === true) {
         // Deny
         config.modules.ops.enabled = false;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4OPS§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4OPS§r!"}]}`);
         return;
     }
 }

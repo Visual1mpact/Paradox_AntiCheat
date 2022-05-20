@@ -1,4 +1,4 @@
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 
 export const queueUnban = new Set();
@@ -41,7 +41,7 @@ export function unban(message, args) {
     let tag = player.getTags();
     
     // make sure the user has permissions to run the command
-    if (!tag.includes('paradoxOpped')) {
+    if (!tag.includes(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -64,5 +64,5 @@ export function unban(message, args) {
 
     // Add player to queue
     queueUnban.add(args[0]);
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args[0]} is queued to be unbanned!"}]}`);
+    return player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args[0]} is queued to be unbanned!"}]}`);
 }

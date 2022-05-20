@@ -1,10 +1,11 @@
 import { world, Player, EntityQueryOptions } from "mojang-minecraft";
+import { crypto } from "../../../util.js";
 
 const World = world;
 
 function noperms() {
     let filter = new EntityQueryOptions();
-    filter.tags = ['paradoxOpped', 'TestPlayer'];
+    filter.tags = ['paradoxOpped', 'TestPlayer', crypto];
     // We need a list of players for checking behind a bug in Minecraft
     let playerArray = [...World.getPlayers(filter)];
     // Let's check the entities for illegal permissions
@@ -25,6 +26,9 @@ function noperms() {
         }
         if (entity.hasTag('TestPlayer')) {
             entity.removeTag('TestPlayer');
+        }
+        if (entity.hasTag(crypto)) {
+            entity.removeTag(crypto);
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {

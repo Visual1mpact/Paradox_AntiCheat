@@ -1,4 +1,4 @@
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 
 function antiscaffoldaHelp(player, prefix) {
@@ -45,7 +45,7 @@ export function antiscaffoldA(message, args) {
     let tags = player.getTags();
 
     // make sure the user has permissions to run the command
-    if (!tags.includes('paradoxOpped')) {
+    if (!tags.includes(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,12 +61,12 @@ export function antiscaffoldA(message, args) {
     if (config.modules.antiscaffoldA.enabled === false) {
         // Allow
         config.modules.antiscaffoldA.enabled = true;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiScaffoldA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiScaffoldA§r!"}]}`);
         return;
     } else if (config.modules.antiscaffoldA.enabled === true) {
         // Deny
         config.modules.antiscaffoldA.enabled = false;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4AntiScaffoldA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4AntiScaffoldA§r!"}]}`);
         return;
     }
 }

@@ -214,3 +214,27 @@ export function toCamelCase(str){
         return match[1].toUpperCase();
     });
 }
+
+
+/**
+ * @name crypt
+ * @param {string} salt - Hashes information
+ * @param {string} text - String to be hashed
+ */
+export const crypt = (salt, text) => {
+    const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
+    const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
+    const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
+  
+    return text
+        .split("")
+        .map(textToChars)
+        .map(applySaltToChar)
+        .map(byteHex)
+        .join("");
+}
+
+/**
+ * @name crypto
+ */
+export const crypto = crypt(config.modules.encryption.salt, config.modules.encryption.optag);

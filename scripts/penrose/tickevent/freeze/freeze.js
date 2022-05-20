@@ -1,5 +1,5 @@
 import { world, BlockLocation, Location } from "mojang-minecraft";
-import { getScore, disabler } from "../../../util.js";
+import { getScore, disabler, crypto } from "../../../util.js";
 
 const World = world;
 const tickEventCallback = World.events.tick;
@@ -130,7 +130,7 @@ function StopTickFreeze() {
 // Where the magic begins
 function TickFreeze(data) {
     player = data;
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto)) {
         try {
             tickEventCallback.subscribe(Freeze);
         } catch (error) {}

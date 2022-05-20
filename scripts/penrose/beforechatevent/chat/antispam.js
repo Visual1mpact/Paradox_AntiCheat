@@ -1,5 +1,5 @@
 import { world } from "mojang-minecraft";
-import { disabler } from "../../../util.js";
+import { crypto, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -27,7 +27,7 @@ function antispam(msg) {
     let player = msg.sender;
     let message = msg.message;
 
-    let tag = player.hasTag('paradoxOpped');
+    let tag = player.hasTag(crypto);
 
     if (!tag) {
         // Increment

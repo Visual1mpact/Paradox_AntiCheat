@@ -1,4 +1,4 @@
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 
 function illegalItemsDHelp(player, prefix) {
@@ -45,7 +45,7 @@ export function illegalitemsD(message, args) {
     let tag = player.getTags();
     
     // make sure the user has permissions to run the command
-    if (!tag.includes('paradoxOpped')) {
+    if (!tag.includes(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,12 +61,12 @@ export function illegalitemsD(message, args) {
     if (config.modules.illegalitemsD.enabled === false) {
         // Allow
         config.modules.illegalitemsD.enabled = true;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalItemsD§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalItemsD§r!"}]}`);
         return;
     } else if (config.modules.illegalitemsD.enabled === true) {
         // Deny
         config.modules.illegalitemsD.enabled = false;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalItemsD§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalItemsD§r!"}]}`);
         return;
     }
 }

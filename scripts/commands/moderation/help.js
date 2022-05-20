@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";
 
 /**
@@ -21,7 +21,7 @@ export function help(message) {
     
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto)) {
         return nonstaffhelp(message)
     }
 

@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix, getScore } from "../../util.js";
+import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
 function overrideCBEHelp(player, prefix, cmdsscore) {
     let commandStatus;
@@ -43,7 +43,7 @@ export function overidecommandblocksenabled(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,15 +61,15 @@ export function overidecommandblocksenabled(message, args) {
     if (cmdsscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled as §6enabled§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled as §6enabled§r!"}]}`);
     } else if (cmdsscore === 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled as §4disabled§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set CommandBlocksEnabled as §4disabled§r!"}]}`);
     } else if (cmdsscore >= 2) {
         // Force
         player.runCommand(`scoreboard players set paradox:config cmds 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has §etoggled§r Force-CommandBlocksEnabled!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has §etoggled§r Force-CommandBlocksEnabled!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

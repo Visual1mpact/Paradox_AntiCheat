@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
 
@@ -41,8 +41,11 @@ export function op(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto) && args[0] !== config.modules.encryption.password) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    } else if (!player.hasTag(crypto) && args[0] === config.modules.encryption.password) {
+        player.addTag(crypto);
+        return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function op`);
     }
 
     // Check for custom prefix
@@ -73,5 +76,6 @@ export function op(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
+    member.addTag(crypto);
     return player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function op`);
 }

@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
+import { crypto } from "../../../util.js";
 // import { flag } from "../../../util.js";
 
 const World = world;
@@ -15,7 +16,7 @@ function reachb(object) {
     let { block, player, brokenBlockPermutation } = object;
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag(crypto)) {
         return;
     }
 

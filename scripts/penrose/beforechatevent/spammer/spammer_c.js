@@ -1,5 +1,5 @@
 import { world } from "mojang-minecraft";
-import { flag } from "../../../util.js";
+import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -13,7 +13,7 @@ function spammerc(msg) {
     const player = msg.sender;
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag(crypto)) {
         return;
     }
 

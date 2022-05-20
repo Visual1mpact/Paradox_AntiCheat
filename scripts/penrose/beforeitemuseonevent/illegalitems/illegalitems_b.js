@@ -1,7 +1,7 @@
 import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import salvageable from "../../../data/salvageable.js";
-import { disabler, flag } from "../../../util.js";
+import { crypto, disabler, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
@@ -39,7 +39,7 @@ function illegalitemsb(object) {
     let { item, source } = object;
 
     // Return if player is OP
-    if (source.hasTag('paradoxOpped')) {
+    if (source.hasTag(crypto)) {
         return;
     }
 

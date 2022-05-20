@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 
 function worldBorderHelp(player, prefix) {
     let commandStatus;
@@ -45,7 +45,7 @@ export function worldborders(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -62,13 +62,13 @@ export function worldborders(message, args) {
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
         player.runCommand(`scoreboard players set paradox:config worldborder ${argCheck}`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
         player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
         return config.modules.worldBorder.enabled = true;
     } else if (argCheck === "disable") {
         // Disable Worldborder
         player.runCommand(`scoreboard players set paradox:config worldborder 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
         player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
         return config.modules.worldBorder.enabled = false;
     } else {

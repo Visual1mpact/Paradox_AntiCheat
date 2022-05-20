@@ -1,4 +1,4 @@
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 
 function antispamHelp(player, prefix) {
@@ -45,7 +45,7 @@ export function antispam(message, args) {
     let tag = player.getTags();
     
     // make sure the user has permissions to run the command
-    if (!tag.includes('paradoxOpped')) {
+    if (!tag.includes(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,12 +61,12 @@ export function antispam(message, args) {
     if (config.modules.antispam.enabled === false) {
         // Allow
         config.modules.antispam.enabled = true;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Spam§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Spam§r!"}]}`);
         return;
     } else if (config.modules.antispam.enabled === true) {
         // Deny
         config.modules.antispam.enabled = false;
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Spam§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Spam§r!"}]}`);
         return;
     }
 }

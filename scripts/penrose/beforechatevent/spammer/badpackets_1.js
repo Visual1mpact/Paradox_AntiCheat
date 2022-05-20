@@ -1,5 +1,5 @@
 import { world } from "mojang-minecraft";
-import { flag } from "../../../util.js";
+import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -14,7 +14,7 @@ function badpackets1(msg) {
     const message = msg.message.toLowerCase();
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag(crypto)) {
         return;
     }
 

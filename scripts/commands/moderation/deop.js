@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
 
@@ -41,7 +41,7 @@ export function deop(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -75,6 +75,7 @@ export function deop(message, args) {
 
     if (member.hasTag('paradoxOpped')) {
         member.removeTag('paradoxOpped');
+        member.removeTag(crypto);
         try {
             player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer Paradox-Opped."}]}`);
         } catch (error) {}

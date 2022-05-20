@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix, getScore } from "../../util.js";
+import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
 function autoauraHelp(player, prefix, autoaurascore) {
     let commandStatus;
@@ -43,7 +43,7 @@ export function autokillaura(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag(crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,11 +61,11 @@ export function autokillaura(message, args) {
     if (autoaurascore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config autoaura 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Autoaura§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Autoaura§r!"}]}`);
     } else if (autoaurascore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config autoaura 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Autoaura§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Autoaura§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a autoaura = paradox:config autoaura`);
 }

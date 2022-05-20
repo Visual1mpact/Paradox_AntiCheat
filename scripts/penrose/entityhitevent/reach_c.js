@@ -1,6 +1,6 @@
 import { world, Player } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { flag } from "../../util.js";
+import { crypto, flag } from "../../util.js";
 
 const World = world;
 
@@ -25,7 +25,7 @@ function reachc(object) {
     }
 
     // Return if player has op
-    if (entity.hasTag('paradoxOpped')) {
+    if (entity.hasTag(crypto)) {
         return;
     }
 
