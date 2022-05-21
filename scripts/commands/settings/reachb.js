@@ -45,7 +45,7 @@ export function reachB(message, args) {
     let tag = player.getTags();
     
     // make sure the user has permissions to run the command
-    if (!tag.includes(crypto)) {
+    if (!tag.includes('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 

@@ -58,7 +58,7 @@ export function fly(message, args) {
     let playertag = player.getTags();
 
     // make sure the user has permissions to run the command
-    if (!playertag.includes(crypto)) {
+    if (!playertag.includes('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 

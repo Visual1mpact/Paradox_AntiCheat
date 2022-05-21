@@ -45,7 +45,7 @@ export function antiscaffoldA(message, args) {
     let tags = player.getTags();
 
     // make sure the user has permissions to run the command
-    if (!tags.includes(crypto)) {
+    if (!tags.includes('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 

@@ -215,17 +215,19 @@ export function toCamelCase(str){
     });
 }
 
+// Handler for encryption down below
+const { encryption } = config.modules 
 
 /**
  * @name crypt
  * @param {string} salt - Hashes information
  * @param {string} text - String to be hashed
  */
-export const crypt = (salt, text) => {
+const crypt = (salt = encryption.salt, text = encryption.optag) => {
     const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
     const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
     const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
-  
+
     return text
         .split("")
         .map(textToChars)
@@ -234,7 +236,13 @@ export const crypt = (salt, text) => {
         .join("");
 }
 
-/**
- * @name crypto
- */
- export const crypto = crypt(config.modules.encryption.salt, config.modules.encryption.optag);
+
+let cache = {
+    optag: encryption.optag,
+    salt: encryption.salt,
+    crypto: crypt()
+}
+
+export const crypto = {
+    [Symbol.toPrimitive]: () => encryption.salt == cache.salt && encryption.optag == cache.optag ? cache.crypto : ( cache.salt = encryption.salt, cache.optag = encryption.optag, cache.crypto = crypt() )
+}
