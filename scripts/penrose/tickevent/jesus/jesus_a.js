@@ -1,6 +1,7 @@
 import { world, Location, BlockLocation, EntityQueryOptions } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
+import { crypto } from "../../../util.js";
 
 const World = world;
 
@@ -23,7 +24,7 @@ function jesusa(){
         return;
     }
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['paradoxOpped'];
+    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
     for (let player of World.getPlayers(filter)) {
         const x = Math.floor(player.location.x);

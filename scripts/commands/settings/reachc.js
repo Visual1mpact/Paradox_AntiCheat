@@ -61,12 +61,12 @@ export function reachC(message, args) {
     if (config.modules.reachC.enabled === false) {
         // Allow
         config.modules.reachC.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ReachC§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ReachC§r!"}]}`);
         return;
     } else if (config.modules.reachC.enabled === true) {
         // Deny
         config.modules.reachC.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ReachC§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ReachC§r!"}]}`);
         return;
     }
 }

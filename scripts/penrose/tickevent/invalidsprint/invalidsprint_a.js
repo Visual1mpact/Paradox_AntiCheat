@@ -1,5 +1,5 @@
 import { world, MinecraftEffectTypes, EntityQueryOptions } from "mojang-minecraft";
-import { flag } from "../../../util.js";
+import { crypto, flag } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -12,7 +12,7 @@ function invalidsprinta() {
         return;
     }
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['paradoxOpped'];
+    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
     for (let player of World.getPlayers(filter)) {
         const speedcheck = player.getComponent('minecraft:movement');

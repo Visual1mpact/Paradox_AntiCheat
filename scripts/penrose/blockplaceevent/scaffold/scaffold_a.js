@@ -17,7 +17,7 @@ function scaffolda(object) {
     let { block, player, dimension } = object;
 
     // Return if player has op
-    if (player.hasTag(crypto)) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 

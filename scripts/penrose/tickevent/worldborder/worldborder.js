@@ -1,5 +1,5 @@
 import { BlockLocation, EntityQueryOptions, Location, world } from "mojang-minecraft";
-import { disabler, getScore } from "../../../util.js";
+import { crypto, disabler, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -29,7 +29,7 @@ const worldborder = () => {
         return;
     }
     let excludeStaff = new EntityQueryOptions();
-    excludeStaff.excludeTags = ['paradoxOpped'];
+    excludeStaff.excludeTags = ['Hash:' + crypto];
     for (let player of World.getPlayers(excludeStaff)) {
         // What is it currently set to
         let borderSize = getScore('worldborder', player);

@@ -61,12 +61,12 @@ export function jesusA(message, args) {
     if (config.modules.jesusA.enabled === false) {
         // Allow
         config.modules.jesusA.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6JesusA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6JesusA§r!"}]}`);
         return;
     } else if (config.modules.jesusA.enabled === true) {
         // Deny
         config.modules.jesusA.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4JesusA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4JesusA§r!"}]}`);
         return;
     }
 }

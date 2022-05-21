@@ -61,12 +61,12 @@ export function antiscaffoldA(message, args) {
     if (config.modules.antiscaffoldA.enabled === false) {
         // Allow
         config.modules.antiscaffoldA.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiScaffoldA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiScaffoldA§r!"}]}`);
         return;
     } else if (config.modules.antiscaffoldA.enabled === true) {
         // Deny
         config.modules.antiscaffoldA.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4AntiScaffoldA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4AntiScaffoldA§r!"}]}`);
         return;
     }
 }

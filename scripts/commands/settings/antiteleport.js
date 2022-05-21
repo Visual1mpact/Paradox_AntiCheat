@@ -61,12 +61,12 @@ export function antiteleport(message, args) {
     if (config.modules.antiTeleport.enabled === false) {
         // Allow
         config.modules.antiTeleport.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Teleport§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Teleport§r!"}]}`);
         return;
     } else if (config.modules.antiTeleport.enabled === true) {
         // Deny
         config.modules.antiTeleport.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Teleport§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Teleport§r!"}]}`);
         return;
     }
 }

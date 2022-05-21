@@ -61,12 +61,12 @@ export function badpackets1(message, args) {
     if (config.modules.badpackets1.enabled === false) {
         // Allow
         config.modules.badpackets1.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Badpackets2§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Badpackets2§r!"}]}`);
         return;
     } else if (config.modules.badpackets1.enabled === true) {
         // Deny
         config.modules.badpackets1.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Badpackets2§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Badpackets2§r!"}]}`);
         return;
     }
 }

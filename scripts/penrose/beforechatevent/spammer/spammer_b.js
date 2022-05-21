@@ -13,7 +13,7 @@ function spammerb(msg) {
     const player = msg.sender;
 
     // Return if player has op
-    if (player.hasTag(crypto)) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 

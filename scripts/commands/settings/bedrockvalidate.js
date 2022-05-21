@@ -43,7 +43,7 @@ export function bedrockvalidate(message, args) {
     message.cancel = true;
 
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -59,10 +59,10 @@ export function bedrockvalidate(message, args) {
     if (config.modules.bedrockValidate.enabled === false) {
         // Allow
         config.modules.bedrockValidate.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6BedrockValidate§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6BedrockValidate§r!"}]}`);
     } else if (config.modules.bedrockValidate.enabled === true) {
         // Deny
         config.modules.bedrockValidate.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BedrockValidate§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BedrockValidate§r!"}]}`);
     }
 }

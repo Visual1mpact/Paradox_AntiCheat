@@ -11,7 +11,7 @@ function resetPrefix(player) {
             config.customcommands.prefix = "!";
         }
     }
-    return player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has reset their prefix!"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has reset their prefix!"}]}`);
 }
 
 function prefixHelp(player, prefix) {
@@ -44,7 +44,7 @@ export function prefix(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 

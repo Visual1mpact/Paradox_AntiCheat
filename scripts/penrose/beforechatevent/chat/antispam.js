@@ -27,7 +27,7 @@ function antispam(msg) {
     let player = msg.sender;
     let message = msg.message;
 
-    let tag = player.hasTag(crypto);
+    let tag = player.hasTag('Hash:' + crypto);
 
     if (!tag) {
         // Increment

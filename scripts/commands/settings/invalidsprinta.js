@@ -61,12 +61,12 @@ export function invalidsprintA(message, args) {
     if (config.modules.invalidsprintA.enabled === false) {
         // Allow
         config.modules.invalidsprintA.enabled = true;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6InvalidSprintA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6InvalidSprintA§r!"}]}`);
         return;
     } else if (config.modules.invalidsprintA.enabled === true) {
         // Deny
         config.modules.invalidsprintA.enabled = false;
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4InvalidSprintA§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4InvalidSprintA§r!"}]}`);
         return;
     }
 }

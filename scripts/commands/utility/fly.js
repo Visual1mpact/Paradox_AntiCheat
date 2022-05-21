@@ -27,17 +27,17 @@ function flyHelp(player, prefix) {
 
 function mayflydisable(player, member) {
     if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        member.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
     } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-        member.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
     }
 }
 
 function mayflyenable(player, member) {
     if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        return member.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
+        return member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
     } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-        return member.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
+        return member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
     }
 }
 

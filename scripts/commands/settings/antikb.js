@@ -43,7 +43,7 @@ export function antiknockback(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,11 +61,11 @@ export function antiknockback(message, args) {
     if (antikbscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
     } else if (antikbscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

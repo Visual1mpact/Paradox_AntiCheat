@@ -42,7 +42,7 @@ export function unmute(message, args) {
     let reason = args.slice(1).join(" ") || "No reason specified";
 
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -79,5 +79,5 @@ export function unmute(message, args) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to unmute that player! You most likely dont have education edition enabled."}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has unmuted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has unmuted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
 }

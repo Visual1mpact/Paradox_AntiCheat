@@ -1,5 +1,5 @@
 import { EntityQueryOptions, world, BlockLocation, Location } from "mojang-minecraft";
-import { getScore } from "../../../util.js";
+import { crypto, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -11,7 +11,7 @@ function antiteleport() {
         return;
     }
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['paradoxOpped'];
+    filter.excludeTags = ['Hash:' + crypto];
     // Check players who are not Opped
     for (let player of World.getPlayers(filter)) {
         // player position that counts 20 ticks /per second

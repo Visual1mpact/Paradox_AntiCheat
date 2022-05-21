@@ -45,7 +45,7 @@ export function performance(message, args) {
     }
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -57,7 +57,7 @@ export function performance(message, args) {
     } else if (player.hasTag('performance')) {
         // Deny
         player.removeTag('performance');
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You have disabled §4Performance Testing§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You have disabled §4Performance Testing§r!"}]}`);
         return;
     }
 }

@@ -14,7 +14,7 @@ function badpackets1(msg) {
     const message = msg.message.toLowerCase();
 
     // Return if player has op
-    if (player.hasTag(crypto)) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 

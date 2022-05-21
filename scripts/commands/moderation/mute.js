@@ -42,7 +42,7 @@ export function mute(message, args) {
     let reason = args.slice(1).join(" ") || "No reason specified";
 
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -78,7 +78,7 @@ export function mute(message, args) {
     }
 
     // make sure staff dont mute staff
-    let verify = member.hasTag(crypto);
+    let verify = member.hasTag('Hash:' + crypto);
     if (verify) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot mute staff members."}]}`);
     }
@@ -90,5 +90,5 @@ export function mute(message, args) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to mute that player! You most likely dont have education edition enabled."}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has muted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has muted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
 }

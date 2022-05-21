@@ -43,7 +43,7 @@ export function removecommandblocks(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,11 +61,11 @@ export function removecommandblocks(message, args) {
     if (commandblocksscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Command Blocks§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Command Blocks§r!"}]}`);
     } else if (commandblocksscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Command Blocks§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Command Blocks§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
 }

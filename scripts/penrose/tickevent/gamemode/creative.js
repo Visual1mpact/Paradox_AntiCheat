@@ -1,5 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
+import { crypto } from "../../../util.js";
 
 const World = world;
 
@@ -12,7 +13,7 @@ function creative() {
     let filter = new EntityQueryOptions();
     // 1 = creative
     filter.gameMode = 1;
-    filter.excludeTags = ['paradoxOpped'];
+    filter.excludeTags = ['Hash:' + crypto];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
         // Make sure they didn't enable all of them in config.js as this will have a negative impact

@@ -177,7 +177,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
 }
 
 /**
@@ -237,4 +237,4 @@ export const crypt = (salt, text) => {
 /**
  * @name crypto
  */
-export const crypto = crypt(config.modules.encryption.salt, config.modules.encryption.optag);
+ export const crypto = crypt(config.modules.encryption.salt, config.modules.encryption.optag);

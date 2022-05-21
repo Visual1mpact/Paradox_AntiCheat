@@ -39,7 +39,7 @@ function illegalitemsb(object) {
     let { item, source } = object;
 
     // Return if player is OP
-    if (source.hasTag(crypto)) {
+    if (source.hasTag('Hash:' + crypto)) {
         return;
     }
 

@@ -25,7 +25,7 @@ function reachc(object) {
     }
 
     // Return if player has op
-    if (entity.hasTag(crypto)) {
+    if (entity.hasTag('Hash:' + crypto)) {
         return;
     }
 

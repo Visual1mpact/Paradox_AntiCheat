@@ -48,7 +48,7 @@ export function lockdown(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -63,7 +63,7 @@ export function lockdown(message, args) {
 
     // If already locked down then unlock the server
     if (config.modules.lockDown.enabled) {
-        player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
         return config.modules.lockDown.enabled = false;
     }
 
@@ -72,7 +72,7 @@ export function lockdown(message, args) {
     
     // Get players that are not Paradox-Opped
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['TestPlayer', crypto];
+    filter.excludeTags = ['TestPlayer', 'Hash:' + crypto];
 
     // Lock it down
     for (let pl of World.getPlayers(filter)) {
@@ -85,6 +85,6 @@ export function lockdown(message, args) {
         }
     }
     // Shutting it down
-    player.runCommand(`tellraw @a[tag=${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
+    player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
     return config.modules.lockDown.enabled = true;
 }

@@ -54,7 +54,7 @@ export function nonstaffhelp(message) {
     }
     
     // Non staff commands
-    if (!player.hasTag(crypto)) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Non-Staff Commands§6]§r
 ${reportCommand}
