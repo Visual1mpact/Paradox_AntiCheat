@@ -21,8 +21,8 @@ function noperms() {
             // Skip to the next entity since this is a bug in Minecraft
             continue;
         }
-        if (entity.hasTag('Hash:' + crypto)) {
-            entity.removeTag('Hash:' + crypto);
+        if (entity.hasTag('paradoxOpped')) {
+            entity.removeTag('paradoxOpped');
         }
         if (entity.hasTag('TestPlayer')) {
             entity.removeTag('TestPlayer');
