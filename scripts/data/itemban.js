@@ -1,4 +1,10 @@
 export const illegalitems = [
+  'minecraft:lit_smoker',
+  'minecraft:daylight_detector_inverted',
+  'minecraft:unpowered_comparator',
+  'minecraft:powered_comparator',
+  'minecraft:lit_blast_furnace',
+  'minecraft:lit_furnace',
   'minecraft:camera',
   'minecraft:end_gateway',
   'minecraft:fire',
