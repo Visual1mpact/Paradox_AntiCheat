@@ -1,4 +1,5 @@
 export const illegalitems = [
+  'minecraft:light_block',
   'minecraft:lit_smoker',
   'minecraft:daylight_detector_inverted',
   'minecraft:unpowered_comparator',
