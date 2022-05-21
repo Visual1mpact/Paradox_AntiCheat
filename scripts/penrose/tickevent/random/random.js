@@ -12,10 +12,11 @@ function random() {
     for (let player of World.getPlayers(filter)) {
         // Random
         if (player.hasTag('Hash:' + crypto)) {
-            player.removeTag('Hash:' + crypto);
+            let oldCryto = 'Hash:' + crypto;
             config.modules.encryption.optag = generateUUID();
             config.modules.encryption.salt = generateUUID();
             player.addTag('Hash:' + crypto);
+            player.removeTag(oldCryto);
         }
     }
 }
