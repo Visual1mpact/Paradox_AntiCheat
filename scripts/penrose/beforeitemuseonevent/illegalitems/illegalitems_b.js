@@ -36,7 +36,7 @@ function illegalitemsb(object) {
     }
 
     // Properties from class
-    let { item, source } = object;
+    let { item, source, cancel } = object;
 
     // Return if player is OP
     if (source.hasTag('Hash:' + crypto)) {
@@ -58,6 +58,7 @@ function illegalitemsb(object) {
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box") {
+        cancel = true;
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
@@ -113,6 +114,7 @@ function illegalitemsb(object) {
     }
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id)) {
+        cancel = true;
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Ban
@@ -120,6 +122,7 @@ function illegalitemsb(object) {
     }
     // Check if item exceeds allowed stacks then remove and ban if enabled
     if (item.amount > config.modules.illegalitemsB.maxStack) {
+        cancel = true;
         // Item stacks over 64 we remove
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
@@ -135,6 +138,7 @@ function illegalitemsb(object) {
     }
     // Check items for illegal lores
     if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
+        cancel = true;
         try {
             source.getComponent('minecraft:inventory').container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
         } catch {}
@@ -163,6 +167,7 @@ function illegalitemsb(object) {
                 // Is this item allowed to have this enchantment
                 let enchantLevel = enchantedSlot[enchants];
                 if (!enchantLevel) {
+                    cancel = true;
                     // Remove this item immediately
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -175,6 +180,7 @@ function illegalitemsb(object) {
                 }
                 // Does the enchantment type exceed or break vanilla levels
                 if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
+                    cancel = true;
                     // Remove this item immediately
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
