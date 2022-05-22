@@ -55,7 +55,7 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
         } else if (item && stack) {
             player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         } else {
-            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         }
     } catch(error) {}
 

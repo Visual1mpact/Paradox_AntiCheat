@@ -24,7 +24,6 @@ export const illegalitems = [
   'minecraft:spawner',
   'minecraft:structure_block',
   'minecraft:structure_void',
-  'minecraft:unknown',
   'minecraft:info_update',
   'minecraft:info_update2',
   'minecraft:reserved3',

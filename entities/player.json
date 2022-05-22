@@ -9,6 +9,7 @@
 			"scripts": {
 				"animate": [
 					"onTick",
+					"illegalitems",
 					"glide",
 					"levitate",
 					"ground",
@@ -38,6 +39,7 @@
 			},
 			"animations": {
 				"onTick": "animation.onTick",
+				"illegalitems": "controller.animation.illegalitems",
 				"glide": "controller.animation.glide",
 				"levitate": "controller.animation.levitate",
 				"ground": "controller.animation.ground",
