@@ -178,6 +178,7 @@
 				"light_block": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] light_block",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(light_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
@@ -188,6 +189,7 @@
 				"lit_smoker": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] lit_smoker",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_smoker)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
@@ -198,6 +200,7 @@
 				"daylight_detector_inverted": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] daylight_detector_inverted",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(daylight_detector_inverted)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
@@ -208,6 +211,7 @@
 				"unpowered_comparator": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] unpowered_comparator",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unpowered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
@@ -218,6 +222,7 @@
 				"powered_comparator": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] powered_comparator",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(powered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
@@ -228,6 +233,7 @@
 				"lit_blast_furnace": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] lit_blast_furnace",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_blast_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
@@ -238,6 +244,7 @@
 				"lit_furnace": {
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,m=!c] lit_furnace",
+						"/tag @s add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,m=!c] illegalitemsvl 1",
 						"/execute @s[tag=!paradoxOpped,m=!c] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
