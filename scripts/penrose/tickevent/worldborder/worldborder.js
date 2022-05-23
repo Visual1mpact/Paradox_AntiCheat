@@ -35,6 +35,20 @@ const worldborder = () => {
         let borderSize = getScore('worldborder', player);
         // Player coordinates
         let {x, y, z} = player.location;
+        // Player dimension
+        let { id } = player.dimension;
+        // If player is in the nether then modify the size of the world border
+        if (id === "minecraft:nether") {
+            // If they set it to 0 or below then default to 1
+            if (config.modules.worldBorder.nether <= 0) {
+                config.modules.worldBorder.nether = 1;
+            }
+            borderSize = borderSize / config.modules.worldBorder.nether;
+        }
+        // If the player is in the end then ignore the world border
+        if (id === "minecraft:the_end") {
+            continue;
+        }
         // Execute if worldborder is not disabled
         if (borderSize != 0) {
             // Make sure nobody climbs over the wall

@@ -189,7 +189,8 @@ export default
             "enabled": false
         },
         "worldBorder": {
-            "enabled": true
+            "enabled": true,
+            "nether": 8
         },
         "antiTeleport": {
             "enabled": true,
