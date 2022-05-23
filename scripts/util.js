@@ -223,7 +223,7 @@ const { encryption } = config.modules
  * @param {string} salt - Hashes information
  * @param {string} text - String to be hashed
  */
-const crypt = (salt = encryption.salt, text = encryption.optag) => {
+export const crypt = (salt = encryption.salt, text = encryption.optag) => {
     const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
     const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
     const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);

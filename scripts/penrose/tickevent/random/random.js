@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { crypto, generateUUID } from "../../../util.js";
+import { crypt, crypto, generateUUID } from "../../../util.js";
 
 const World = world;
 
@@ -12,10 +12,19 @@ function random() {
     for (let player of World.getPlayers(filter)) {
         // Random
         if (player.hasTag('Hash:' + crypto)) {
+            // Store old hash
             let oldCryto = 'Hash:' + crypto;
-            config.modules.encryption.optag = generateUUID();
-            config.modules.encryption.salt = generateUUID();
-            player.addTag('Hash:' + crypto);
+            // New salt and optag
+            let newSalt = generateUUID();
+            let newOptag = generateUUID();
+            // Create new hash
+            let newCrypto = crypt(newSalt, newOptag);
+            // Add new hash
+            player.addTag('Hash:' + newCrypto);
+            // Set new salt and optag globally
+            config.modules.encryption.salt = newSalt;
+            config.modules.encryption.optag = newOptag;
+            // Remove old hash
             player.removeTag(oldCryto);
         }
     }
