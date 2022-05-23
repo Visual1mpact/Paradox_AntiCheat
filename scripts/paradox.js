@@ -37,6 +37,7 @@ import { PerformanceTest } from "./penrose/tickevent/performance/performance.js"
 import { OPS } from "./penrose/tickevent/oneplayersleep/oneplayersleep.js";
 import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
 import { Random } from "./penrose/tickevent/random/random.js";
+import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -73,6 +74,7 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
+VerifyPermission();
 Random();
 OPS();
 Hotbar();
