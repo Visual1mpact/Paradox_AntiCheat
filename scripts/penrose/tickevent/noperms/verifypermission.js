@@ -11,11 +11,11 @@ function verifypermission() {
         // If they have the basic permission but not the hash then remove it
         if (!player.hasTag('Hash:' + crypto)) {
             player.removeTag('paradoxOpped');
+            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
+            try {
+                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} had unauthorized permissions. Permissions removed!"}]}`);
+            } catch (error) {}
         }
-        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-        try {
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} had unauthorized permissions. Permissions removed!"}]}`);
-        } catch (error) {}
     }
 }
 
