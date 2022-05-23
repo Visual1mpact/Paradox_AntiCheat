@@ -1,7 +1,7 @@
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
-function worldBorderHelp(player, prefix) {
+function worldBorderHelp(player, prefix, worldBorderScore) {
     let commandStatus;
     if (!config.customcommands.worldborder) {
         commandStatus = "§6[§4DISABLED§6]§r"
@@ -9,7 +9,7 @@ function worldBorderHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r"
     }
     let moduleStatus;
-    if (!config.modules.worldBorder.enabled) {
+    if (worldBorderScore <= 0) {
         moduleStatus = "§6[§4DISABLED§6]§r"
     } else {
         moduleStatus = "§6[§aENABLED§6]§r"
@@ -49,13 +49,15 @@ export function worldborders(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    let worldBorderScore = getScore("worldborder", player);
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.worldborder) {
-        return worldBorderHelp(player, prefix);
+        return worldBorderHelp(player, prefix, worldBorderScore);
     }
 
 
