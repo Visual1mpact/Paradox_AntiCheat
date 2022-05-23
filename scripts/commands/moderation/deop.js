@@ -77,7 +77,7 @@ export function deop(message, args) {
     // This removes old tag stuff
     getTags.forEach(t => {
         if(t.startsWith("Hash:")) {
-            player.removeTag(t);
+            member.removeTag(t);
         }
     });
 
