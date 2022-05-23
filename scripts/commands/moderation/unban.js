@@ -63,6 +63,6 @@ export function unban(message, args) {
     }
 
     // Add player to queue
-    queueUnban.add(args[0]);
-    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args[0]} is queued to be unbanned!"}]}`);
+    queueUnban.add(args.join(" "));
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args.join(" ")} is queued to be unbanned!"}]}`);
 }
