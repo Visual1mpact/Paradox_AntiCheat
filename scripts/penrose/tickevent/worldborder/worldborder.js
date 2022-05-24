@@ -33,6 +33,21 @@ const worldborder = () => {
     for (let player of World.getPlayers(excludeStaff)) {
         // What is it currently set to
         let borderSize = getScore('worldborder', player);
+        // Are there differences between config and scoreboard
+        if (config.modules.worldBorder.bordersize !== 0 && borderSize !== config.modules.worldBorder.bordersize) {
+            // Respect config
+            borderSize = config.modules.worldBorder.bordersize;
+            // Make sure it's not a negative
+            if (borderSize < 0) {
+                borderSize = Math.abs(borderSize);
+            }
+            // Update scoreboard with config and set globally for initiation
+            player.runCommand(`scoreboard players set paradox:config worldborder ${borderSize}`);
+            player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        } else if (borderSize < 0) {
+            // Make sure it's not a negative
+            borderSize = Math.abs(borderSize);
+        }
         // Player coordinates
         let {x, y, z} = player.location;
         // Player dimension

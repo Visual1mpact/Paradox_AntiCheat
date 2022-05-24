@@ -66,6 +66,7 @@ export function worldborders(message, args) {
         player.runCommand(`scoreboard players set paradox:config worldborder ${argCheck}`);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
         player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        config.modules.worldBorder.bordersize = argCheck;
         return config.modules.worldBorder.enabled = true;
     } else if (argCheck === "disable") {
         // Disable Worldborder
