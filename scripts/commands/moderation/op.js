@@ -88,11 +88,11 @@ export function op(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    let getTags = player.getTags();
+    let getTags = member.getTags();
     // This removes old tag stuff
     getTags.forEach(t => {
         if(t.startsWith("Hash:")) {
-            player.removeTag(t);
+            member.removeTag(t);
         }
     });
     member.addTag('Hash:' + crypto);
