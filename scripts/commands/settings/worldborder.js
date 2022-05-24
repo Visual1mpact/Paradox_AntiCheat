@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
 function worldBorderHelp(player, prefix, worldBorderScore) {
     let commandStatus;
@@ -73,6 +73,7 @@ export function worldborders(message, args) {
         player.runCommand(`scoreboard players set paradox:config worldborder 0`);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
         player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        config.modules.worldBorder.bordersize = 0;
         return config.modules.worldBorder.enabled = false;
     } else {
         return worldBorderHelp(player, prefix);
