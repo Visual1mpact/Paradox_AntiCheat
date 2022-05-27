@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { Location } from "mojang-minecraft";
+import { Location, Player } from "mojang-minecraft";
 import config from "./data/config.js";
 
 /**
@@ -203,6 +203,30 @@ export function generateUUID() {
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
+
+/** 
+ * Extends Player Class to log tags being added or removed
+ */
+const { addTag: { value: OAddTag }, removeTag: { value: ORemoveTag } } = Object.getOwnPropertyDescriptors(Player.prototype);
+
+Object.defineProperties(Player.prototype, {
+    addTag: {
+        value: function(t) {
+            if (config.debug) {
+                console.warn(`Tag added to ${this.name}: ${t}\n${Error().stack}`);
+            }
+            return OAddTag.call(this, t);
+        }
+    },
+    removeTag: {
+        value: function(t) {
+            if (config.debug) {
+                console.warn(`Tag removed from ${this.name}: ${t}\n${Error().stack}`);
+            }
+            return ORemoveTag.call(this, t);
+        }
+    },
+})
 
 /**
  * @name toCamelCase
