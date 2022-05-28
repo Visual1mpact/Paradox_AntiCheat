@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
+import { disabler } from "../../../util.js";
 
 const World = world;
 
@@ -8,6 +9,13 @@ const ChatFilter = () => {
         if (config.modules.chatranks.enabled === true) {
             let message = msg.message;
             let player = msg.sender;
+
+            // Kill their broadcast if muted
+            if (player.hasTag('isMuted')) {
+                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been muted."}]}`);
+                msg.cancel = true;
+                return;
+            }
 
             let tags = player.getTags();
             let rank;

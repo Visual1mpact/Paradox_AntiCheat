@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, Location, BlockLocation} from "mojang-minecraft";
-import { getScore, disabler, flag } from "../../../util.js";
+import { getScore, disabler, flag, crypto } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -17,7 +17,7 @@ function flya() {
     // Exclude creative gamemode
     let gm = new EntityQueryOptions();
     gm.excludeGameModes = [1];
-    gm.excludeTags = ['paradoxOpped'];
+    gm.excludeTags = ['Hash:' + crypto];
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
 

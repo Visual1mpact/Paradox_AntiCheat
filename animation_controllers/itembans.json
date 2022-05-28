@@ -1,0 +1,935 @@
+{
+	"format_version": "1.10.0",
+	"animation_controllers": {
+		"controller.animation.illegalitems": {
+			"states": {
+				"itemban": {
+					"transitions": [
+						{
+							"light_block": "query.get_equipped_item_name == 'light_block' || query.get_equipped_item_name('off_hand') == 'light_block'"
+						},
+						{
+							"lit_smoker": "query.get_equipped_item_name == 'lit_smoker' || query.get_equipped_item_name('off_hand') == 'lit_smoker'"
+						},
+						{
+							"daylight_detector_inverted": "query.get_equipped_item_name == 'daylight_detector_inverted' || query.get_equipped_item_name('off_hand') == 'daylight_detector_inverted'"
+						},
+						{
+							"unpowered_comparator": "query.get_equipped_item_name == 'unpowered_comparator' || query.get_equipped_item_name('off_hand') == 'unpowered_comparator'"
+						},
+						{
+							"powered_comparator": "query.get_equipped_item_name == 'powered_comparator' || query.get_equipped_item_name('off_hand') == 'powered_comparator'"
+						},
+						{
+							"lit_blast_furnace": "query.get_equipped_item_name == 'lit_blast_furnace' || query.get_equipped_item_name('off_hand') == 'lit_blast_furnace'"
+						},
+						{
+							"lit_furnace": "query.get_equipped_item_name == 'lit_furnace' || query.get_equipped_item_name('off_hand') == 'lit_furnace'"
+						},
+						{
+							"camera": "query.get_equipped_item_name == 'camera' || query.get_equipped_item_name('off_hand') == 'camera'"
+						},
+						{
+							"end_gateway": "query.get_equipped_item_name == 'end_gateway' || query.get_equipped_item_name('off_hand') == 'end_gateway'"
+						},
+						{
+							"fire": "query.get_equipped_item_name == 'fire' || query.get_equipped_item_name('off_hand') == 'fire'"
+						},
+						{
+							"soul_fire": "query.get_equipped_item_name == 'soul_fire' || query.get_equipped_item_name('off_hand') == 'soul_fire'"
+						},
+						{
+							"frosted_ice": "query.get_equipped_item_name == 'frosted_ice' || query.get_equipped_item_name('off_hand') == 'frosted_ice'"
+						},
+						{
+							"flowing_lava": "query.get_equipped_item_name == 'flowing_lava' || query.get_equipped_item_name('off_hand') == 'flowing_lava'"
+						},
+						{
+							"unknown": "query.get_equipped_item_name == 'unknown' || query.get_equipped_item_name('off_hand') == 'unknown'"
+						},
+						{
+							"flowing_water": "query.get_equipped_item_name == 'flowing_water' || query.get_equipped_item_name('off_hand') == 'flowing_water'"
+						},
+						{
+							"barrier": "query.get_equipped_item_name == 'barrier' || query.get_equipped_item_name('off_hand') == 'barrier'"
+						},
+						{
+							"command_block": "query.get_equipped_item_name == 'command_block' || query.get_equipped_item_name('off_hand') == 'command_block'"
+						},
+						{
+							"chemistry_table": "query.get_equipped_item_name == 'chemistry_table' || query.get_equipped_item_name('off_hand') == 'chemistry_table'"
+						},
+						{
+							"debug_stick": "query.get_equipped_item_name == 'debug_stick' || query.get_equipped_item_name('off_hand') == 'debug_stick'"
+						},
+						{
+							"command_block_minecart": "query.get_equipped_item_name == 'command_block_minecart' || query.get_equipped_item_name('off_hand') == 'command_block_minecart'"
+						},
+						{
+							"repeating_command_block": "query.get_equipped_item_name == 'repeating_command_block' || query.get_equipped_item_name('off_hand') == 'repeating_command_block'"
+						},
+						{
+							"spawn_egg": "query.get_equipped_item_name == 'spawn_egg' || query.get_equipped_item_name('off_hand') == 'spawn_egg'"
+						},
+						{
+							"spawner": "query.get_equipped_item_name == 'spawner' || query.get_equipped_item_name('off_hand') == 'spawner'"
+						},
+						{
+							"structure_block": "query.get_equipped_item_name == 'structure_block' || query.get_equipped_item_name('off_hand') == 'structure_block'"
+						},
+						{
+							"structure_void": "query.get_equipped_item_name == 'structure_void' || query.get_equipped_item_name('off_hand') == 'structure_void'"
+						},
+						{
+							"info_update": "query.get_equipped_item_name == 'info_update' || query.get_equipped_item_name('off_hand') == 'info_update'"
+						},
+						{
+							"info_update2": "query.get_equipped_item_name == 'info_update2' || query.get_equipped_item_name('off_hand') == 'info_update2'"
+						},
+						{
+							"reserved3": "query.get_equipped_item_name == 'reserved3' || query.get_equipped_item_name('off_hand') == 'reserved3'"
+						},
+						{
+							"reserved4": "query.get_equipped_item_name == 'reserved4' || query.get_equipped_item_name('off_hand') == 'reserved4'"
+						},
+						{
+							"reserved6": "query.get_equipped_item_name == 'reserved6' || query.get_equipped_item_name('off_hand') == 'reserved6'"
+						},
+						{
+							"movingblock": "query.get_equipped_item_name == 'movingblock' || query.get_equipped_item_name('off_hand') == 'movingblock'"
+						},
+						{
+							"moving_block": "query.get_equipped_item_name == 'moving_block' || query.get_equipped_item_name('off_hand') == 'moving_block'"
+						},
+						{
+							"movingBlock": "query.get_equipped_item_name == 'movingBlock' || query.get_equipped_item_name('off_hand') == 'movingBlock'"
+						},
+						{
+							"invisiblebedrock": "query.get_equipped_item_name == 'invisiblebedrock' || query.get_equipped_item_name('off_hand') == 'invisiblebedrock'"
+						},
+						{
+							"invisible_bedrock": "query.get_equipped_item_name == 'invisible_bedrock' || query.get_equipped_item_name('off_hand') == 'invisible_bedrock'"
+						},
+						{
+							"bedrock": "query.get_equipped_item_name == 'bedrock' || query.get_equipped_item_name('off_hand') == 'bedrock'"
+						},
+						{
+							"glowingobsidian": "query.get_equipped_item_name == 'glowingobsidian' || query.get_equipped_item_name('off_hand') == 'glowingobsidian'"
+						},
+						{
+							"compoundcreator": "query.get_equipped_item_name == 'compoundcreator' || query.get_equipped_item_name('off_hand') == 'compoundcreator'"
+						},
+						{
+							"underwater_torch": "query.get_equipped_item_name == 'underwater_torch' || query.get_equipped_item_name('off_hand') == 'underwater_torch'"
+						},
+						{
+							"chemical_heat": "query.get_equipped_item_name == 'chemical_heat' || query.get_equipped_item_name('off_hand') == 'chemical_heat'"
+						},
+						{
+							"end_portal": "query.get_equipped_item_name == 'end_portal' || query.get_equipped_item_name('off_hand') == 'end_portal'"
+						},
+						{
+							"colored_torch": "query.get_equipped_item_name == 'colored_torch' || query.get_equipped_item_name('off_hand') == 'colored_torch'"
+						},
+						{
+							"hard_stained_glass_pane": "query.get_equipped_item_name == 'hard_stained_glass_pane' || query.get_equipped_item_name('off_hand') == 'hard_stained_glass_pane'"
+						},
+						{
+							"hard_glass_pane": "query.get_equipped_item_name == 'hard_glass_pane' || query.get_equipped_item_name('off_hand') == 'hard_glass_pane'"
+						},
+						{
+							"allow": "query.get_equipped_item_name == 'allow' || query.get_equipped_item_name('off_hand') == 'allow'"
+						},
+						{
+							"chain_command_block": "query.get_equipped_item_name == 'chain_command_block' || query.get_equipped_item_name('off_hand') == 'chain_command_block'"
+						},
+						{
+							"client_request_placeholder_block": "query.get_equipped_item_name == 'client_request_placeholder_block' || query.get_equipped_item_name('off_hand') == 'client_request_placeholder_block'"
+						},
+						{
+							"deny": "query.get_equipped_item_name == 'deny' || query.get_equipped_item_name('off_hand') == 'deny'"
+						},
+						{
+							"npc_spawn": "query.get_equipped_item_name == 'npc_spawn' || query.get_equipped_item_name('off_hand') == 'npc_spawn'"
+						},
+						{
+							"stickyPistonArmCollision": "query.get_equipped_item_name == 'stickyPistonArmCollision' || query.get_equipped_item_name('off_hand') == 'stickyPistonArmCollision'"
+						},
+						{
+							"piston_arm_collision": "query.get_equipped_item_name == 'piston_arm_collision' || query.get_equipped_item_name('off_hand') == 'piston_arm_collision'"
+						},
+						{
+							"mob_spawner": "query.get_equipped_item_name == 'mob_spawner' || query.get_equipped_item_name('off_hand') == 'mob_spawner'"
+						},
+						{
+							"border_block": "query.get_equipped_item_name == 'border_block' || query.get_equipped_item_name('off_hand') == 'border_block'"
+						},
+						{
+							"bubble_column": "query.get_equipped_item_name == 'bubble_column' || query.get_equipped_item_name('off_hand') == 'bubble_column'"
+						},
+						{
+							"jigsaw": "query.get_equipped_item_name == 'jigsaw' || query.get_equipped_item_name('off_hand') == 'jigsaw'"
+						},
+						{
+							"portal": "query.get_equipped_item_name == 'portal' || query.get_equipped_item_name('off_hand') == 'portal'"
+						}
+					]
+				},
+				"light_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] light_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (light_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(light_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'light_block' || query.get_equipped_item_name('off_hand') != 'light_block'"
+					}]
+				},
+				"lit_smoker": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] lit_smoker",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (lit_smoker)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_smoker)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'lit_smoker' || query.get_equipped_item_name('off_hand') != 'lit_smoker'"
+					}]
+				},
+				"daylight_detector_inverted": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] daylight_detector_inverted",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (daylight_detector_inverted)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(daylight_detector_inverted)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'daylight_detector_inverted' || query.get_equipped_item_name('off_hand') != 'daylight_detector_inverted'"
+					}]
+				},
+				"unpowered_comparator": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] unpowered_comparator",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (unpowered_comparator)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unpowered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'unpowered_comparator' || query.get_equipped_item_name('off_hand') != 'unpowered_comparator'"
+					}]
+				},
+				"powered_comparator": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] powered_comparator",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (powered_comparator)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(powered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'powered_comparator' || query.get_equipped_item_name('off_hand') != 'powered_comparator'"
+					}]
+				},
+				"lit_blast_furnace": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] lit_blast_furnace",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (lit_blast_furnace)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_blast_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'lit_blast_furnace' || query.get_equipped_item_name('off_hand') != 'lit_blast_furnace'"
+					}]
+				},
+				"lit_furnace": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] lit_furnace",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (lit_furnace)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'lit_furnace' || query.get_equipped_item_name('off_hand') != 'lit_furnace'"
+					}]
+				},
+				"camera": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] camera",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (camera)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(camera)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'camera' || query.get_equipped_item_name('off_hand') != 'camera'"
+					}]
+				},
+				"end_gateway": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] end_gateway",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (end_gateway)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(end_gateway)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'end_gateway' || query.get_equipped_item_name('off_hand') != 'end_gateway'"
+					}]
+				},
+				"fire": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] fire",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (fire)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(fire)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'fire' || query.get_equipped_item_name('off_hand') != 'fire'"
+					}]
+				},
+				"soul_fire": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] soul_fire",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (soul_fire)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(soul_fire)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'soul_fire' || query.get_equipped_item_name('off_hand') != 'soul_fire'"
+					}]
+				},
+				"frosted_ice": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] frosted_ice",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (frosted_ice)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(frosted_ice)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'frosted_ice' || query.get_equipped_item_name('off_hand') != 'frosted_ice'"
+					}]
+				},
+				"flowing_lava": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] flowing_lava",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (flowing_lava)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(flowing_lava)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'flowing_lava' || query.get_equipped_item_name('off_hand') != 'flowing_lava'"
+					}]
+				},
+				"unknown": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] unknown",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (unknown)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unknown)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'unknown' || query.get_equipped_item_name('off_hand') != 'unknown'"
+					}]
+				},
+				"flowing_water": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] flowing_water",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (flowing_water)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(flowing_water)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'flowing_water' || query.get_equipped_item_name('off_hand') != 'flowing_water'"
+					}]
+				},
+				"barrier": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] barrier",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (barrier)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(barrier)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'barrier' || query.get_equipped_item_name('off_hand') != 'barrier'"
+					}]
+				},
+				"command_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] command_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (command_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'command_block' || query.get_equipped_item_name('off_hand') != 'command_block'"
+					}]
+				},
+				"chemistry_table": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] chemistry_table",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (chemistry_table)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chemistry_table)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'chemistry_table' || query.get_equipped_item_name('off_hand') != 'chemistry_table'"
+					}]
+				},
+				"debug_stick": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] debug_stick",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (debug_stick)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(debug_stick)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'debug_stick' || query.get_equipped_item_name('off_hand') != 'debug_stick'"
+					}]
+				},
+				"command_block_minecart": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] command_block_minecart",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (command_block_minecart)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(command_block_minecart)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'command_block_minecart' || query.get_equipped_item_name('off_hand') != 'command_block_minecart'"
+					}]
+				},
+				"repeating_command_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] repeating_command_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (repeating_command_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(repeating_command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'repeating_command_block' || query.get_equipped_item_name('off_hand') != 'repeating_command_block'"
+					}]
+				},
+				"spawn_egg": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] spawn_egg",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (spawn_egg)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(spawn_egg)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'spawn_egg' || query.get_equipped_item_name('off_hand') != 'spawn_egg'"
+					}]
+				},
+				"spawner": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] spawner",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (spawner)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(spawner)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'spawner' || query.get_equipped_item_name('off_hand') != 'spawner'"
+					}]
+				},
+				"structure_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] structure_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (structure_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(structure_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'structure_block' || query.get_equipped_item_name('off_hand') != 'structure_block'"
+					}]
+				},
+				"structure_void": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] structure_void",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (structure_void)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(structure_void)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'structure_void' || query.get_equipped_item_name('off_hand') != 'structure_void'"
+					}]
+				},
+				"info_update": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] info_update",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (info_update)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(info_update)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'info_update' || query.get_equipped_item_name('off_hand') != 'info_update'"
+					}]
+				},
+				"info_update2": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] info_update2",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (info_update2)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(info_update2)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'info_update2' || query.get_equipped_item_name('off_hand') != 'info_update2'"
+					}]
+				},
+				"reserved3": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] reserved3",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (reserved3)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved3)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'reserved3' || query.get_equipped_item_name('off_hand') != 'reserved3'"
+					}]
+				},
+				"reserved4": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] reserved4",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (reserved4)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved4)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'reserved4' || query.get_equipped_item_name('off_hand') != 'reserved4'"
+					}]
+				},
+				"reserved6": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] reserved6",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (reserved6)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved6)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'reserved6' || query.get_equipped_item_name('off_hand') != 'reserved6'"
+					}]
+				},
+				"movingblock": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] movingblock",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (movingblock)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(movingblock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'movingblock' || query.get_equipped_item_name('off_hand') != 'movingblock'"
+					}]
+				},
+				"moving_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] moving_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (moving_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(moving_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'moving_block' || query.get_equipped_item_name('off_hand') != 'moving_block'"
+					}]
+				},
+				"movingBlock": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] movingBlock",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (movingBlock)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(movingBlock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'movingBlock' || query.get_equipped_item_name('off_hand') != 'movingBlock'"
+					}]
+				},
+				"invisiblebedrock": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] invisiblebedrock",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (invisiblebedrock)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(invisiblebedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'invisiblebedrock' || query.get_equipped_item_name('off_hand') != 'invisiblebedrock'"
+					}]
+				},
+				"invisible_bedrock": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] invisible_bedrock",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (invisible_bedrock)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(invisible_bedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'invisible_bedrock' || query.get_equipped_item_name('off_hand') != 'invisible_bedrock'"
+					}]
+				},
+				"bedrock": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] bedrock",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (bedrock)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(bedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'bedrock' || query.get_equipped_item_name('off_hand') != 'bedrock'"
+					}]
+				},
+				"glowingobsidian": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] glowingobsidian",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (glowingobsidian)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(glowingobsidian)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'glowingobsidian' || query.get_equipped_item_name('off_hand') != 'glowingobsidian'"
+					}]
+				},
+				"compoundcreator": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] compoundcreator",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (compoundcreator)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(compoundcreator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'compoundcreator' || query.get_equipped_item_name('off_hand') != 'compoundcreator'"
+					}]
+				},
+				"underwater_torch": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] underwater_torch",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (underwater_torch)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(underwater_torch)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'underwater_torch' || query.get_equipped_item_name('off_hand') != 'underwater_torch'"
+					}]
+				},
+				"chemical_heat": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] chemical_heat",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (chemical_heat)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chemical_heat)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'chemical_heat' || query.get_equipped_item_name('off_hand') != 'chemical_heat'"
+					}]
+				},
+				"end_portal": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] end_portal",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (end_portal)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(end_portal)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'end_portal' || query.get_equipped_item_name('off_hand') != 'end_portal'"
+					}]
+				},
+				"colored_torch": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] colored_torch",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (colored_torch)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(colored_torch)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'colored_torch' || query.get_equipped_item_name('off_hand') != 'colored_torch'"
+					}]
+				},
+				"hard_stained_glass_pane": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] hard_stained_glass_pane",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (hard_stained_glass_pane)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(hard_stained_glass_pane)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'hard_stained_glass_pane' || query.get_equipped_item_name('off_hand') != 'hard_stained_glass_pane'"
+					}]
+				},
+				"hard_glass_pane": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] hard_glass_pane",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (hard_glass_pane)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(hard_glass_pane)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'hard_glass_pane' || query.get_equipped_item_name('off_hand') != 'hard_glass_pane'"
+					}]
+				},
+				"allow": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] allow",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (allow)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(allow)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'allow' || query.get_equipped_item_name('off_hand') != 'allow'"
+					}]
+				},
+				"chain_command_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] chain_command_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (chain_command_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chain_command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'chain_command_block' || query.get_equipped_item_name('off_hand') != 'chain_command_block'"
+					}]
+				},
+				"client_request_placeholder_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] client_request_placeholder_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (client_request_placeholder_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(client_request_placeholder_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'client_request_placeholder_block' || query.get_equipped_item_name('off_hand') != 'client_request_placeholder_block'"
+					}]
+				},
+				"deny": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] deny",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (deny)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(deny)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'deny' || query.get_equipped_item_name('off_hand') != 'deny'"
+					}]
+				},
+				"npc_spawn": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] npc_spawn",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (npc_spawn)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(npc_spawn)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'npc_spawn' || query.get_equipped_item_name('off_hand') != 'npc_spawn'"
+					}]
+				},
+				"stickyPistonArmCollision": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] stickyPistonArmCollision",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (stickyPistonArmCollision)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(stickyPistonArmCollision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'stickyPistonArmCollision' || query.get_equipped_item_name('off_hand') != 'stickyPistonArmCollision'"
+					}]
+				},
+				"sticky_piston_arm_collision": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] sticky_piston_arm_collision",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (sticky_piston_arm_collision)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(sticky_piston_arm_collision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'sticky_piston_arm_collision' || query.get_equipped_item_name('off_hand') != 'sticky_piston_arm_collision'"
+					}]
+				},
+				"piston_arm_collision": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] piston_arm_collision",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (piston_arm_collision)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(piston_arm_collision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'piston_arm_collision' || query.get_equipped_item_name('off_hand') != 'piston_arm_collision'"
+					}]
+				},
+				"netherreactor": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] netherreactor",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (netherreactor)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(netherreactor)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'netherreactor' || query.get_equipped_item_name('off_hand') != 'netherreactor'"
+					}]
+				},
+				"mob_spawner": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] mob_spawner",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (mob_spawner)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(mob_spawner)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'mob_spawner' || query.get_equipped_item_name('off_hand') != 'mob_spawner'"
+					}]
+				},
+				"border_block": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] border_block",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (border_block)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(border_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'border_block' || query.get_equipped_item_name('off_hand') != 'border_block'"
+					}]
+				},
+				"bubble_column": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] bubble_column",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (bubble_column)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(bubble_column)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'bubble_column' || query.get_equipped_item_name('off_hand') != 'bubble_column'"
+					}]
+				},
+				"jigsaw": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] jigsaw",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (jigsaw)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(jigsaw)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'jigsaw' || query.get_equipped_item_name('off_hand') != 'jigsaw'"
+					}]
+				},
+				"portal": {
+					"on_entry": [
+						"/clear @s[tag=!paradoxOpped] portal",
+						"/tag @s[tag=!paradoxOpped] add By:Paradox",
+						"/tag @s[tag=!paradoxOpped] add 'Reason:Illegal Item A (portal)'",
+						"/tag @s[tag=!paradoxOpped] add isBanned",
+						"/scoreboard players add @s[tag=!paradoxOpped] illegalitemsvl 1",
+						"/execute @s[tag=!paradoxOpped] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(portal)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+					],
+					"transitions": [{
+						"itemban": "query.get_equipped_item_name != 'portal' || query.get_equipped_item_name('off_hand') != 'portal'"
+					}]
+				}
+			}
+		}
+	}
+}

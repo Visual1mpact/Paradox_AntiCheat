@@ -2,7 +2,7 @@ import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStac
 import { illegalitems } from "../../../data/itemban.js";
 import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
-import { flag, disabler, toCamelCase } from "../../../util.js";
+import { flag, disabler, toCamelCase, crypto } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
@@ -44,7 +44,7 @@ function illegalitemsc(object) {
     let { x, y, z } = block.location;
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 

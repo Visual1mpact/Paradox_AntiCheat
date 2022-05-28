@@ -2,7 +2,7 @@ import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes,
 import { illegalitems } from "../../../data/itemban.js";
 import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
-import { disabler, flag } from "../../../util.js";
+import { crypto, disabler, flag } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
@@ -41,7 +41,7 @@ function illegalitemsa() {
     // Used to contain data about Lores
     let loreData;
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['paradoxOpped'];
+    filter.excludeTags = ['Hash:' + crypto];
     for (let player of World.getPlayers(filter)) {
         let inventory = player.getComponent('minecraft:inventory').container;
         for (let i = 0; i < inventory.size; i++) {

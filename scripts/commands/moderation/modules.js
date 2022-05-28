@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { getScore, disabler, getPrefix } from "../../util.js";
+import { getScore, disabler, getPrefix, crypto } from "../../util.js";
 
 function modulesHelp(player, prefix) {
     let commandStatus;
@@ -36,7 +36,7 @@ function modulesHelp(player, prefix) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 

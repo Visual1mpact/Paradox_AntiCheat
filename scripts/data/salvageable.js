@@ -215,6 +215,11 @@ export default
         data: 0,
         nametag: 'campfire'
     },
+    'minecraft:soul_campfire': {
+        name: 'minecraft:soul_campfire',
+        data: 0,
+        nametag: 'soul_campfire'
+    },
     'minecraft:cauldron': {
         name: 'minecraft:cauldron',
         data: 0,
@@ -414,10 +419,40 @@ export default
         name: 'minecraft:skull',
         data: 5,
         nametag: 'skull'
-    }/*,
-    'minecraft:crossbow': {
-        name: 'minecraft:crossbow',
+    },
+    'minecraft:comparator': {
+        name: 'minecraft:comparator',
         data: 0,
-        nametag: 'crossbow'
-    }*/
+        nametag: 'comparator'
+    },
+    'minecraft:conduit': {
+        name: 'minecraft:conduit',
+        data: 0,
+        nametag: 'conduit'
+    },
+    'minecraft:daylight_detector': {
+        name: 'minecraft:daylight_detector',
+        data: 0,
+        nametag: 'daylight_detector'
+    },
+    'minecraft:enchanting_table': {
+        name: 'minecraft:enchanting_table',
+        data: 0,
+        nametag: 'enchanting_table'
+    },
+    'minecraft:ender_chest': {
+        name: 'minecraft:ender_chest',
+        data: 0,
+        nametag: 'ender_chest'
+    },
+    'minecraft:piston': {
+        name: 'minecraft:piston',
+        data: 0,
+        nametag: 'piston'
+    },
+    'minecraft:sticky_piston': {
+        name: 'minecraft:sticky_piston',
+        data: 0,
+        nametag: 'sticky_piston'
+    }
 };

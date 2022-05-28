@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { Location } from "mojang-minecraft";
+import { Location, Player } from "mojang-minecraft";
 import config from "./data/config.js";
 
 /**
@@ -55,7 +55,7 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
         } else if (item && stack) {
             player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         } else {
-            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType}. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
         }
     } catch(error) {}
 
@@ -177,7 +177,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
 }
 
 /**
@@ -204,6 +204,30 @@ export function generateUUID() {
     });
 }
 
+/** 
+ * Extends Player Class to log tags being added or removed
+ */
+const { addTag: { value: OAddTag }, removeTag: { value: ORemoveTag } } = Object.getOwnPropertyDescriptors(Player.prototype);
+
+Object.defineProperties(Player.prototype, {
+    addTag: {
+        value: function(t) {
+            if (config.debug) {
+                console.warn(`Tag added to ${this.name}: ${t}\n${Error().stack}`);
+            }
+            return OAddTag.call(this, t);
+        }
+    },
+    removeTag: {
+        value: function(t) {
+            if (config.debug) {
+                console.warn(`Tag removed from ${this.name}: ${t}\n${Error().stack}`);
+            }
+            return ORemoveTag.call(this, t);
+        }
+    },
+})
+
 /**
  * @name toCamelCase
  * @param {string} str - Takes strings and converts to camelCase
@@ -213,4 +237,36 @@ export function toCamelCase(str){
     return str.replace(regExp,(match) => {
         return match[1].toUpperCase();
     });
+}
+
+// Handler for encryption down below
+const { encryption } = config.modules 
+
+/**
+ * @name crypt
+ * @param {string} salt - Hashes information
+ * @param {string} text - String to be hashed
+ */
+export const crypt = (salt = encryption.salt, text = encryption.optag) => {
+    const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
+    const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
+    const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
+
+    return text
+        .split("")
+        .map(textToChars)
+        .map(applySaltToChar)
+        .map(byteHex)
+        .join("");
+}
+
+
+let cache = {
+    optag: encryption.optag,
+    salt: encryption.salt,
+    crypto: crypt()
+}
+
+export const crypto = {
+    [Symbol.toPrimitive]: () => encryption.salt == cache.salt && encryption.optag == cache.optag ? cache.crypto : ( cache.salt = encryption.salt, cache.optag = encryption.optag, cache.crypto = crypt() )
 }

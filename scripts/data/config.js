@@ -189,7 +189,9 @@ export default
             "enabled": false
         },
         "worldBorder": {
-            "enabled": true
+            "enabled": false,
+            "nether": 8,
+            "bordersize": 0
         },
         "antiTeleport": {
             "enabled": true,
@@ -224,6 +226,34 @@ export default
         },
         "ops": {
             "enabled": false
+        },
+        /**
+         * This is used to encrypt your OP tag which will provide you with
+         * permissions to use Paradox with the Gametest API. This is required!
+         * The salt is used to hash information which provides additional security.
+         * This salt will be applied to your op tag that you will specify below!
+         * 
+         * Your salt should be as random as possible. Spam the keyboard.
+         * 
+         * optag is essentially equivalent to paradoxOpped but here you can specify
+         * what you want it to be. It can be something specific or it can be random.
+         * 
+         * password will be needed to run the op command a second time to use gametest features.
+         * !op password
+         * 
+         * Once again, these are required!
+         * 
+         * Make sure you put the hash and optag inside the quotes. Do not delete the quotes.
+         * 
+         * Example (Do not use these):
+         *   "salt": "asughu373474387g8ureiugrgweog387"
+         *   "optag": "E=MC2"
+         *   "password": "paradoxOpped"
+         */
+        "encryption": {
+            "salt": "",
+            "optag": "",
+            "password": ""
         }
     }
 };

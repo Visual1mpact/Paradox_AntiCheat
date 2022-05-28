@@ -1,4 +1,4 @@
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 
 /**
@@ -54,7 +54,7 @@ export function nonstaffhelp(message) {
     }
     
     // Non staff commands
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Non-Staff Commands§6]§r
 ${reportCommand}

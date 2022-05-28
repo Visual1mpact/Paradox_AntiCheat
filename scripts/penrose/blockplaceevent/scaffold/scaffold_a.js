@@ -1,6 +1,6 @@
 import { world, BlockLocation, MinecraftBlockTypes } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+import { crypto, flag } from "../../../util.js";
 
 let World = world;
 
@@ -17,7 +17,7 @@ function scaffolda(object) {
     let { block, player, dimension } = object;
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 

@@ -1,7 +1,7 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
-function worldBorderHelp(player, prefix) {
+function worldBorderHelp(player, prefix, worldBorderScore) {
     let commandStatus;
     if (!config.customcommands.worldborder) {
         commandStatus = "§6[§4DISABLED§6]§r"
@@ -9,7 +9,7 @@ function worldBorderHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r"
     }
     let moduleStatus;
-    if (!config.modules.worldBorder.enabled) {
+    if (worldBorderScore <= 0) {
         moduleStatus = "§6[§4DISABLED§6]§r"
     } else {
         moduleStatus = "§6[§aENABLED§6]§r"
@@ -45,9 +45,11 @@ export function worldborders(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
+
+    let worldBorderScore = getScore("worldborder", player);
 
     // Check for custom prefix
     let prefix = getPrefix(player);
@@ -55,21 +57,23 @@ export function worldborders(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.worldborder) {
-        return worldBorderHelp(player, prefix);
+        return worldBorderHelp(player, prefix, worldBorderScore);
     }
 
 
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
         player.runCommand(`scoreboard players set paradox:config worldborder ${argCheck}`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
         player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        config.modules.worldBorder.bordersize = argCheck;
         return config.modules.worldBorder.enabled = true;
     } else if (argCheck === "disable") {
         // Disable Worldborder
         player.runCommand(`scoreboard players set paradox:config worldborder 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
         player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        config.modules.worldBorder.bordersize = 0;
         return config.modules.worldBorder.enabled = false;
     } else {
         return worldBorderHelp(player, prefix);

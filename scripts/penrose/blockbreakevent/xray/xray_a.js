@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import { xrayblocks } from "../../../data/xray.js";
-import { disabler } from "../../../util.js";
+import { crypto, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -16,7 +16,7 @@ function xraya(object) {
     let { player, brokenBlockPermutation } = object;
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 

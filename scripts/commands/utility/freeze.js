@@ -2,7 +2,7 @@
 import { world, MinecraftEffectTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
 
@@ -41,7 +41,7 @@ export function freeze(message, args) {
     let player = message.sender;
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('paradoxOpped')) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -66,7 +66,7 @@ export function freeze(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    if (member.hasTag('paradoxOpped')) {
+    if (member.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot freeze Staff Members!"}]}`);
     }
 
@@ -79,7 +79,7 @@ export function freeze(message, args) {
     if (member.hasTag('nofreeze')) {
         member.runCommand(`effect "${disabler(member.nameTag)}" clear`);
         member.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer frozen."}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer frozen."}]}`);
     }
 
     if (!member.hasTag('nofreeze')) {
@@ -95,7 +95,7 @@ export function freeze(message, args) {
 
     if (!member.hasTag('nofreeze')) {
         member.runCommand(`tag "${disabler(member.nameTag)}" add freeze`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
         return TickFreeze(member);
     }
 

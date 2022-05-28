@@ -1,6 +1,6 @@
 import { world, BlockLocation } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+import { crypto, flag } from "../../../util.js";
 
 const World = world;
 
@@ -18,7 +18,7 @@ function nukera(object) {
     let { x, y, z } = block.location;
 
     // Return if player has op
-    if (player.hasTag('paradoxOpped')) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 
