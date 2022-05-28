@@ -50,7 +50,7 @@ function illegalitemsb(object) {
 
     // Used for getting some info on the item
     if (config.debug) {
-        source.runCommand(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`)
+        console.log(`Player: ${source.name} Item: ${item.id || '(none)'}, Data: ${item.data ?? 0}, Amount: ${item.amount ?? 0}`)
     }
 
     let hand = source.selectedSlot
