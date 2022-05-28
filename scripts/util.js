@@ -239,6 +239,15 @@ export function toCamelCase(str){
     });
 }
 
+/**
+ * @name titleCase
+ * @param {*} s - Takes snakeCase and converts it to titleCase
+ * @returns 
+ */
+export const titleCase = (s) =>
+  s.replace (/^[-_]*(.)/, (_, c) => c.toUpperCase())
+   .replace (/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase())
+
 // Handler for encryption down below
 const { encryption } = config.modules 
 
