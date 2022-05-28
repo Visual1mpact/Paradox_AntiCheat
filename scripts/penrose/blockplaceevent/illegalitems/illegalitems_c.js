@@ -1,8 +1,7 @@
 import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
-import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
-import { flag, disabler, toCamelCase, crypto } from "../../../util.js";
+import { flag, disabler, toCamelCase, crypto, titleCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
@@ -66,7 +65,7 @@ function illegalitemsc(object) {
         return;
     }
     // Check if place item is salvageable
-    if (salvageable[block.id]) {
+    if (!illegalitems.includes(block.id)) {
         // Block from specified location
         let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
         // Get a copy of this blocks permutation
@@ -106,28 +105,34 @@ function illegalitemsc(object) {
             if (!inventory_item) {
                 continue;
             }
-            // Check if item found inside the container is salvageable
-            let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-            // Check if data exceeds vanilla data
-            if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
-                // Reset item to data type of 0
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                } catch (error) {}
-                continue;
-            } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
-                // Reset item to data type of equal data if they do not match
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                } catch (error) {}
-                continue;
-            } else if (salvageable[inventory_item.id]) {
-                // Reset item to data type of equal data because we take no chances
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                } catch (error) {}
-                continue;
+
+            /**
+             * Salvage System to mitigate NBT's on every item in the game
+             */
+            let verifiedItemName = inventory_item.nameTag
+            let actualItemName = new ItemStack(Items.get(inventory_item.id));
+            actualItemName.data = inventory_item.data;
+            actualItemName.amount = inventory_item.amount;
+
+            let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
+
+            if (verifiedItemName !== newNameTag) {
+                actualItemName.nameTag = newNameTag;
+                if (!config.modules.illegalLores.enabled) {
+                    let loreData = inventory_item.getLore();
+                    try {
+                        inventory.setItem(i, actualItemName.setLore([loreData]));
+                    } catch (error) {}
+                } else if (config.modules.illegalLores.enabled) {
+                    try {
+                        inventory.setItem(i, actualItemName);
+                    } catch (error) {}
+                }
+                if (config.debug) {
+                    console.warn(`${newNameTag} has been set and verified by Paradox!`);
+                }
             }
+
             // Check if item found inside the container is illegal
             if (illegalitems.includes(inventory_item.id)) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);

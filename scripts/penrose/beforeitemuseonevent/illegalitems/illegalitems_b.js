@@ -1,7 +1,6 @@
 import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
-import salvageable from "../../../data/salvageable.js";
-import { crypto, disabler, flag } from "../../../util.js";
+import { crypto, disabler, flag, titleCase } from "../../../util.js";
 import config from "../../../data/config.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
@@ -67,51 +66,36 @@ function illegalitemsb(object) {
         source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
         return;
     }
-    // Used to contain data about Lores
-    let loreData;
-    // Check if item is salvageable and save it
-    let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-    // Check if data exceeds vanilla data
-    if (salvageable[item.id] && uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
-        // Reset item to data type of 0
-        if (!config.modules.illegalLores.enabled) {
-            loreData = item.getLore();
-            try {
-                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount).setLore([loreData]));
-            } catch (error) {}
-            return;
+
+    /**
+     * Salvage System to mitigate NBT's on every item in the game
+     */
+    try {
+        let verifiedItemName = item.nameTag;
+        let actualItemName = new ItemStack(Items.get(item.id));
+        actualItemName.data = item.data;
+        actualItemName.amount = item.amount;
+
+        let newNameTag = titleCase(item.id.replace("minecraft:", ""));
+
+        if (verifiedItemName !== newNameTag) {
+            actualItemName.nameTag = newNameTag;
+            if (!config.modules.illegalLores.enabled) {
+                let loreData = item.getLore();
+                try {
+                    source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName.setLore([loreData]));
+                } catch (error) {}
+            } else if (config.modules.illegalLores.enabled) {
+                try {
+                    source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName);
+                } catch (error) {}
+            }
+            if (config.debug) {
+                console.warn(`${newNameTag} has been set and verified by Paradox!`);
+            }
         }
-        try {
-            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
-        } catch (error) {}
-        return;
-    } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
-        // Reset item to data type of equal data if they do not match
-        if (!config.modules.illegalLores.enabled) {
-            loreData = item.getLore();
-            try {
-                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data).setLore([loreData]));
-            } catch (error) {}
-            return;
-        }
-        try {
-            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
-        } catch (error) {}
-        return;
-    } else if (salvageable[item.id]) {
-        // Reset item to data type of equal data because we take no chances
-        if (!config.modules.illegalLores.enabled) {
-            loreData = item.getLore();
-            try {
-                source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data).setLore([loreData]));
-            } catch (error) {}
-            return;
-        }
-        try {
-            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data));
-        } catch (error) {}
-        return;
-    }
+    } catch (error) {}
+
     // If somehow they bypass illegalitems/A then snag them when they use the item
     if (illegalitems.includes(item.id)) {
         cancel = true;

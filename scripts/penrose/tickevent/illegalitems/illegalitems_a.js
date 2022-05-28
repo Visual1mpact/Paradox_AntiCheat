@@ -1,8 +1,7 @@
 import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, EntityQueryOptions } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
-import salvageable from "../../../data/salvageable.js";
 import config from "../../../data/config.js";
-import { crypto, disabler, flag } from "../../../util.js";
+import { crypto, disabler, flag, titleCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
@@ -39,7 +38,6 @@ function illegalitemsa() {
     }
 
     // Used to contain data about Lores
-    let loreData;
     let filter = new EntityQueryOptions();
     filter.excludeTags = ['Hash:' + crypto];
     for (let player of World.getPlayers(filter)) {
@@ -62,49 +60,34 @@ function illegalitemsa() {
                 player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
                 continue;
             }
-            // If player has salvageable item we save it
-            let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-            // Check if data exceeds vanilla data
-            if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
-                // Reset item to data type of 0
+
+            /**
+             * Salvage System to mitigate NBT's on every item in the game
+             */
+            let verifiedItemName = inventory_item.nameTag
+            let actualItemName = new ItemStack(Items.get(inventory_item.id));
+            actualItemName.data = inventory_item.data;
+            actualItemName.amount = inventory_item.amount;
+
+            let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
+
+            if (verifiedItemName !== newNameTag) {
+                actualItemName.nameTag = newNameTag;
                 if (!config.modules.illegalLores.enabled) {
-                    loreData = inventory_item.getLore();
+                    let loreData = inventory_item.getLore();
                     try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount).setLore([loreData]));
+                        inventory.setItem(i, actualItemName.setLore([loreData]));
                     } catch (error) {}
-                    continue;
-                }
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                } catch (error) {}
-                continue;
-            } else if (salvageable[inventory_item.id] && salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
-                if (!config.modules.illegalLores.enabled) {
-                    loreData = inventory_item.getLore();
+                } else if (config.modules.illegalLores.enabled) {
                     try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data).setLore([loreData]));
+                        inventory.setItem(i, actualItemName);
                     } catch (error) {}
-                    continue;
                 }
-                // Reset item to data type of equal data if they do not match
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                } catch (error) {}
-                continue;
-            } else if (salvageable[inventory_item.id]) {
-                if (!config.modules.illegalLores.enabled) {
-                    loreData = inventory_item.getLore();
-                    try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data).setLore([loreData]));
-                    } catch (error) {}
-                    continue;
+                if (config.debug) {
+                    console.warn(`${newNameTag} has been set and verified by Paradox!`);
                 }
-                // Reset item to data type of equal data because we take no chances
-                try {
-                    inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                } catch (error) {}
-                continue;
             }
+
             // If player has an illegal item we kick them
             // If we cannot kick them then we despawn them (no mercy)
             if (illegalitems.includes(inventory_item.id)) {
