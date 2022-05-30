@@ -4,6 +4,7 @@ import config from "../../../data/config.js";
 import { crypto, disabler, flag, titleCase, toCamelCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
+import { whitelist } from "../../../data/whitelistitems.js";
 
 const World = world;
 
@@ -62,7 +63,7 @@ function illegalitemsa() {
                 continue;
             }
 
-            if (config.modules.salvage.enabled) {
+            if (config.modules.salvage.enabled && !whitelist.includes(inventory_item.id)) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
