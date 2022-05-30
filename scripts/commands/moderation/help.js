@@ -541,6 +541,13 @@ export function help(message) {
         opsCommand = `§6${prefix}ops§r - Command §4DISABLED§r.`;
     }
 
+    let salvageCommand;
+    if (config.customcommands.salvage === true) {
+        salvageCommand = `§6${prefix}salvage§r - Toggles new salvage system (Off defaults to old).`;
+    } else if (config.customcommands.salvage === false) {
+        salvageCommand = `§6${prefix}salvage§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -607,6 +614,7 @@ ${antishulkerCommand}
 ${antiTeleportCommand}
 ${rbcrCommand}
 ${opsCommand}
+${salvageCommand}
 
 §l§6[§4Tools and Utilites§6]§r
 ${auracheckCommand}
