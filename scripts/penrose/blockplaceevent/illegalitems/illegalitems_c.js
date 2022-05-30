@@ -150,33 +150,7 @@ function illegalitemsc(object) {
                             }
                         }
                     }
-                } else {
-                    /**
-                     * Old salvage system if new is disabled
-                     */
-                    // Check if item found inside the container is salvageable
-                    let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-                    // Check if data exceeds vanilla data
-                    if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
-                        // Reset item to data type of 0
-                        try {
-                            inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                        } catch (error) {}
-                        continue;
-                    } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
-                        // Reset item to data type of equal data if they do not match
-                        try {
-                            inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                        } catch (error) {}
-                        continue;
-                    } else if (salvageable[inventory_item.id]) {
-                        // Reset item to data type of equal data because we take no chances
-                        try {
-                            inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                        } catch (error) {}
-                        continue;
-                    }
-                }
+                } 
 
                 // Gets enchantment component for new instance
                 let new_ench_comp = actualItemName.getComponent("minecraft:enchantments");
@@ -204,6 +178,32 @@ function illegalitemsc(object) {
                 }
                 if (config.debug) {
                     console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/C)!`);
+                }
+            } else {
+                /**
+                 * Old salvage system if new is disabled
+                 */
+                // Check if item found inside the container is salvageable
+                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+                // Check if data exceeds vanilla data
+                if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
+                    // Reset item to data type of 0
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                    } catch (error) {}
+                    continue;
+                } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
+                    // Reset item to data type of equal data if they do not match
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                    } catch (error) {}
+                    continue;
+                } else if (salvageable[inventory_item.id]) {
+                    // Reset item to data type of equal data because we take no chances
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                    } catch (error) {}
+                    continue;
                 }
             }
 
