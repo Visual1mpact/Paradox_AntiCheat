@@ -1,6 +1,6 @@
-import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes } from "mojang-minecraft";
+import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
-import { crypto, disabler, flag, titleCase } from "../../../util.js";
+import { crypto, disabler, flag, titleCase, toCamelCase } from "../../../util.js";
 import config from "../../../data/config.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
