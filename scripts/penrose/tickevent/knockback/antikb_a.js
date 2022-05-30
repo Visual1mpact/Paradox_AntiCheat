@@ -16,6 +16,21 @@ function antiknockbacka() {
     // run as each player
     for (let player of World.getPlayers(filter)) {
 
+        let hand = player.selectedSlot;
+
+        let inventory = player.getComponent("inventory").container;
+        let equippedItem = inventory.getItem(hand);
+
+        let defineItem = "";
+        // Check if object returns defined
+        if (equippedItem !== undefined) {
+            defineItem = equippedItem.id;
+        }
+        // Verify if property of object is a trident and skip if it is
+        if (defineItem === "minecraft:trident") {
+            continue;
+        }
+
         // antikb/a = checks for anti knockback and flags it
         if((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3) <= config.modules.antikbA.magnitude) {
             if(player.hasTag('attacked') && !player.hasTag('dead') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
