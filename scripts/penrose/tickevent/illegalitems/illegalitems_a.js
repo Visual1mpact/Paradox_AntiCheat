@@ -1,7 +1,7 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, EntityQueryOptions } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, EntityQueryOptions, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
-import { crypto, disabler, flag, titleCase } from "../../../util.js";
+import { crypto, disabler, flag, titleCase, toCamelCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 
 const World = world;
@@ -64,15 +64,59 @@ function illegalitemsa() {
             /**
              * Salvage System to mitigate NBT's on every item in the game
              */
+            let enchantArray = [];
+            let enchantLevelArray = [];
             let verifiedItemName = inventory_item.nameTag
+            let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
             let actualItemName = new ItemStack(Items.get(inventory_item.id));
             actualItemName.data = inventory_item.data;
             actualItemName.amount = inventory_item.amount;
-
-            let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
+            actualItemName.nameTag = newNameTag;
 
             if (verifiedItemName !== newNameTag) {
-                actualItemName.nameTag = newNameTag;
+                // Gets enchantment component
+                let ench_comp = inventory_item.getComponent("minecraft:enchantments");
+                // Gets enchantment list from enchantment
+                let ench_data = ench_comp.enchantments;
+
+                // List of allowed enchantments on item
+                let enchantedSlot = enchantmentSlot[ench_data.slot];
+                // Check if enchantment is not illegal on item
+                if (ench_data) {
+                    for (let enchants in MinecraftEnchantmentTypes) {
+                        // If no enchantment then move to next loop
+                        let enchanted = MinecraftEnchantmentTypes[enchants];
+                        if (!ench_data.hasEnchantment(enchanted)) {
+                            continue;
+                        }
+                        // Get properties of this enchantment
+                        let enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]);
+                        // Is this item allowed to have this enchantment and does it not exceed level limitations
+                        let enchantLevel = enchantedSlot[enchants];
+                        if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level  >= 0) {
+                            // Save this enchantment and level for new item
+                            let changeCase = toCamelCase(enchants);
+                            enchantArray.push(changeCase);
+                            enchantLevelArray.push(enchant_data.level);
+                            
+                        }
+                    }
+                }
+
+                // Gets enchantment component for new instance
+                let new_ench_comp = actualItemName.getComponent("minecraft:enchantments");
+                // Gets enchantment list from enchantment of new instance
+                let new_ench_data = new_ench_comp.enchantments;
+
+                // Both arrays should be inline with each other so we just use enchantArray here
+                // Add enchantment and corresponding level to the item
+                for (let e = 0; e < enchantArray.length; e++) {
+                    // Adds enchantment to enchantment list of new instance
+                    new_ench_data.addEnchantment(new Enchantment(MinecraftEnchantmentTypes[enchantArray[e]], enchantLevelArray[e]));
+                    // Sets enchantment list to enchantment of new instance
+                    new_ench_comp.enchantments = new_ench_data;
+                }
+                // Restore enchanted item
                 if (!config.modules.illegalLores.enabled) {
                     let loreData = inventory_item.getLore();
                     try {
@@ -84,7 +128,7 @@ function illegalitemsa() {
                     } catch (error) {}
                 }
                 if (config.debug) {
-                    console.warn(`${newNameTag} has been set and verified by Paradox!`);
+                    console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/A)!`);
                 }
             }
 
