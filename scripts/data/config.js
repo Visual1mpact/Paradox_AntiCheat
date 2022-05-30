@@ -78,7 +78,8 @@ export default
         "performance": true,
         "hotbar": true,
         "rbcr": true,
-        "ops": true
+        "ops": true,
+        "salvage": true
     },
     "modules": {
         "badpackets1": {
@@ -225,6 +226,9 @@ export default
             "enabled": false
         },
         "ops": {
+            "enabled": false
+        },
+        "salvage": {
             "enabled": false
         },
         /**
