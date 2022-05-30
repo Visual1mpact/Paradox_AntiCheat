@@ -13,8 +13,23 @@ function illegalitemsd() {
     let filter = new EntityQueryOptions();
     filter.type = "item"
     for (let entity of World.getDimension('overworld').getEntities(filter)) {
+        // Check if entity object returns undefined and skip it
+        if (entity === undefined) {
+            continue;
+        }
+
+        let itemName;
+        // Get component of itemStack for dropped item
+        try {
+            itemName = entity.getComponent('item').itemStack;
+        } catch (error) {}
+
+        // Check if object returns undefined and skip if it does
+        if (itemName === undefined) {
+            continue;
+        }
         if (entity.id === "minecraft:item") {
-            let itemName = entity.getComponent('item').itemStack;
+
             // If shulker boxes are not allowed in the server then we handle this here
             if (config.modules.antishulker.enabled && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
                 entity.kill();
