@@ -78,7 +78,8 @@ export default
         "performance": true,
         "hotbar": true,
         "rbcr": true,
-        "ops": true
+        "ops": true,
+        "salvage": true
     },
     "modules": {
         "badpackets1": {
@@ -210,6 +211,12 @@ export default
             "enabled": true,
             "max": 5
         },
+        "goHome": {
+            "seconds": 0,
+            "minutes": 5,
+            "hours": 0,
+            "days": 0
+        },
         "illegalEnchantment": {
             "enabled": true
         },
@@ -225,6 +232,9 @@ export default
             "enabled": false
         },
         "ops": {
+            "enabled": false
+        },
+        "salvage": {
             "enabled": false
         },
         /**

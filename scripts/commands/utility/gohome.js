@@ -1,8 +1,32 @@
 import { world, Location } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
+
+let cooldownTimer = new Map();
+
+function dhms (ms) {
+    const days = Math.floor(ms / (24*60*60*1000));
+    const daysms = ms % (24*60*60*1000);
+    const hours = Math.floor(daysms / (60*60*1000));
+    const hoursms = ms % (60*60*1000);
+    const minutes = Math.floor(hoursms / (60*1000));
+    const minutesms = ms % (60*1000);
+    const sec = Math.floor(minutesms / 1000);
+    if (days !== 0) {
+        return days + " Days : " + hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
+    }
+    if (hours !== 0) {
+        return hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
+    }
+    if (minutes !== 0) {
+        return minutes + " Minutes : " + sec + " Seconds";
+    }
+    if (sec !== 0) {
+        return sec + " Seconds";
+    }
+}
 
 function goHomeHelp(player, prefix) {
     let commandStatus;
@@ -31,7 +55,7 @@ function goHomeHelp(player, prefix) {
 export function gohome(message, args) {
     // Validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/gohome.js:8)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/gohome.js:52)");
     }
 
     message.cancel = true;
@@ -85,8 +109,35 @@ export function gohome(message, args) {
     if (!homex || !homey || !homez || !dimension) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} does not exist!"}]}`);
     } else {
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" teleport 25`);
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome back ${disabler(player.nameTag)}!"}]}`);
-        player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, player.bodyRotation);
+        let cooldownCalc;
+        let activeTimer;
+        // Get original time in milliseconds
+        let cooldownVerify = cooldownTimer.get(disabler(player.nameTag));
+        // Convert config settings to milliseconds so we can be sure the countdown is accurate
+        let msSettings = (config.modules.goHome.days * 24 * 60 * 60 * 1000) + (config.modules.goHome.hours * 60 * 60 * 1000) + (config.modules.goHome.minutes * 60 * 1000) + (config.modules.goHome.seconds * 1000);
+        if (cooldownVerify !== undefined) {
+            // Determine difference between new and original times in milliseconds
+            let bigBrain = new Date().getTime() - cooldownVerify;
+            // Subtract realtime clock from countdown in configuration to get difference
+            cooldownCalc = msSettings - bigBrain;
+            // Convert difference to clock format D : H : M : S
+            activeTimer = dhms(cooldownCalc);
+        } else {
+            // First time executed so we default to configuration in milliseconds
+            cooldownCalc = msSettings;
+        }
+        // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
+        if (cooldownCalc === msSettings || cooldownCalc <= 0 || player.hasTag('Hash:' + crypto)) {
+            player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" teleport 25`);
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome back ${disabler(player.nameTag)}!"}]}`);
+            player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, player.bodyRotation);
+            // Delete old key and value
+            cooldownTimer.delete(disabler(player.nameTag));
+            // Create new key and value with current time in milliseconds
+            cooldownTimer.set(disabler(player.nameTag), new Date().getTime());
+        } else {
+            // Teleporting to fast
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Please wait ${activeTimer} before going home!"}]}`);
+        }
     }
 }

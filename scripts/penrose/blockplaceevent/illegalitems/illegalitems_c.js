@@ -1,8 +1,10 @@
-import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties } from "mojang-minecraft";
+import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, disabler, toCamelCase, crypto, titleCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
+import salvageable from "../../../data/salvageable.js";
+import { whitelist } from "../../../data/whitelistitems.js";
 
 const World = world;
 
@@ -106,18 +108,64 @@ function illegalitemsc(object) {
                 continue;
             }
 
-            /**
-             * Salvage System to mitigate NBT's on every item in the game
-             */
-            let verifiedItemName = inventory_item.nameTag
-            let actualItemName = new ItemStack(Items.get(inventory_item.id));
-            actualItemName.data = inventory_item.data;
-            actualItemName.amount = inventory_item.amount;
-
-            let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
-
-            if (verifiedItemName !== newNameTag) {
+            if (config.modules.salvage.enabled && !whitelist.includes(inventory_item.id)) {
+                /**
+                 * Salvage System to mitigate NBT's on every item in the game
+                 */
+                let enchantArray = [];
+                let enchantLevelArray = [];
+                let verifiedItemName = inventory_item.nameTag
+                let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
+                let actualItemName = new ItemStack(Items.get(inventory_item.id));
+                actualItemName.data = inventory_item.data;
+                actualItemName.amount = inventory_item.amount;
                 actualItemName.nameTag = newNameTag;
+
+                if (verifiedItemName !== newNameTag) {
+                    // Gets enchantment component
+                    let ench_comp = inventory_item.getComponent("minecraft:enchantments");
+                    // Gets enchantment list from enchantment
+                    let ench_data = ench_comp.enchantments;
+
+                    // List of allowed enchantments on item
+                    let enchantedSlot = enchantmentSlot[ench_data.slot];
+                    // Check if enchantment is not illegal on item
+                    if (ench_data) {
+                        for (let enchants in MinecraftEnchantmentTypes) {
+                            // If no enchantment then move to next loop
+                            let enchanted = MinecraftEnchantmentTypes[enchants];
+                            if (!ench_data.hasEnchantment(enchanted)) {
+                                continue;
+                            }
+                            // Get properties of this enchantment
+                            let enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]);
+                            // Is this item allowed to have this enchantment and does it not exceed level limitations
+                            let enchantLevel = enchantedSlot[enchants];
+                            if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level  >= 0) {
+                                // Save this enchantment and level for new item
+                                let changeCase = toCamelCase(enchants);
+                                enchantArray.push(changeCase);
+                                enchantLevelArray.push(enchant_data.level);
+                                
+                            }
+                        }
+                    }
+                } 
+
+                // Gets enchantment component for new instance
+                let new_ench_comp = actualItemName.getComponent("minecraft:enchantments");
+                // Gets enchantment list from enchantment of new instance
+                let new_ench_data = new_ench_comp.enchantments;
+
+                // Both arrays should be inline with each other so we just use enchantArray here
+                // Add enchantment and corresponding level to the item
+                for (let e = 0; e < enchantArray.length; e++) {
+                    // Adds enchantment to enchantment list of new instance
+                    new_ench_data.addEnchantment(new Enchantment(MinecraftEnchantmentTypes[enchantArray[e]], enchantLevelArray[e]));
+                    // Sets enchantment list to enchantment of new instance
+                    new_ench_comp.enchantments = new_ench_data;
+                }
+                // Restore enchanted item
                 if (!config.modules.illegalLores.enabled) {
                     let loreData = inventory_item.getLore();
                     try {
@@ -129,7 +177,33 @@ function illegalitemsc(object) {
                     } catch (error) {}
                 }
                 if (config.debug) {
-                    console.warn(`${newNameTag} has been set and verified by Paradox!`);
+                    console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/C)!`);
+                }
+            } else {
+                /**
+                 * Old salvage system if new is disabled
+                 */
+                // Check if item found inside the container is salvageable
+                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+                // Check if data exceeds vanilla data
+                if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
+                    // Reset item to data type of 0
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                    } catch (error) {}
+                    continue;
+                } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
+                    // Reset item to data type of equal data if they do not match
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                    } catch (error) {}
+                    continue;
+                } else if (salvageable[inventory_item.id]) {
+                    // Reset item to data type of equal data because we take no chances
+                    try {
+                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                    } catch (error) {}
+                    continue;
                 }
             }
 

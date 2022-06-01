@@ -1,5 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
+import { setTickInterval } from "../../../timer/scheduling.js";
 import { crypt, crypto, generateUUID } from "../../../util.js";
 
 const World = world;
@@ -31,7 +32,8 @@ function random() {
 }
 
 const Random = () => {
-    World.events.tick.subscribe(() => random());
+    // Execute once per second
+    setTickInterval(() => random(), 20);
 };
 
 export { Random };

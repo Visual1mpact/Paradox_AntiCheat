@@ -341,4 +341,10 @@ function modulesHelp(player, prefix) {
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r RBCR is currently §4DISABLED"}]}`);
     }
+
+    if (config.modules.salvage.enabled) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Salvage is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Salvage is currently §4DISABLED"}]}`);
+    }
 }
