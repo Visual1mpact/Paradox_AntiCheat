@@ -211,6 +211,12 @@ export default
             "enabled": true,
             "max": 5
         },
+        "goHome": {
+            "seconds": 0,
+            "minutes": 5,
+            "hours": 0,
+            "days": 0
+        },
         "illegalEnchantment": {
             "enabled": true
         },
