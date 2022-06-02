@@ -17,10 +17,22 @@ function namespoofb() {
     for (let player of World.getPlayers(filter)) {
         // Namespoof/B = regex check
         try {
-            if (config.modules.namespoofB.regex.test(player.name)) {
+            if (config.modules.namespoofB.banregex.test(player.name)) {
+                try {
+                    if(!player.hasTag('isBanned')) {
+                        player.addTag(`isBanned`);
+                        player.addTag(`By:Paradox`);
+                        player.addTag(`Reason:Namespoof`);
+                    }
+                } catch(e) {} //Add ban tags cause when namespoofing it doesnt add them correctly
                 flag(player, "Namespoof", "B", "Exploit", false, false, false, false, false, false);
             }
-        } catch(error) {}
+            else if (config.modules.namespoofB.kickregex.test(player.name))
+                player.runCommand(`kick "${player.nametag}" Plaese use your real xbl name!`); //Might want to change it to a flag 
+        } catch(error) {
+            //if someohow the nametag is modified before the tick event(joinevent) it will disconnect the player by the event
+            player.triggerEvent("paradox:kick");
+        }
     }
     return;
 }
