@@ -113,9 +113,9 @@ export default
         },
         "namespoofB": {
             "enabled": true,
-            "banregex": /(\"|\\)/,
-            //.-ßüäö are not in msa-gamertags but for being sure they are excluded
-            //only kick cause playstation and switch are able to rename themselfs
+            "banregex": /("|\\)/,
+            // .-ßüäö are not msa-gamertags but to be sure they are excluded
+            // Only kick because playstation and switch consoles are able to rename themselves
             "kickregex": /[^A-Za-z0-9_.\- ßöäü]/ 
         },
         "bedrockValidate": {

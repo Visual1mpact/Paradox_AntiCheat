@@ -63,7 +63,7 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick "${disabler(player.nameTag)}" §r§4[§6Paradox§4]§r Invalid username`);
+            player.runCommand(`kick "${disabler(player.nameTag)}" §r§4[§6Paradox§4]§r Please use your real xbl name!`);
         }
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
