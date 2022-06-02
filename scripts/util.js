@@ -47,7 +47,9 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
         player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, player.bodyRotation);
     }
 
-    player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" ${check.toLowerCase()}vl 1`);
+    try {
+        player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" ${check.toLowerCase()}vl 1`);
+    } catch(error) {}
 
     try {
         if(debug) {
@@ -120,8 +122,7 @@ export function getScore(objective, player, { minimum, maximum } = {}) {
  */
 export function disabler(player) {
     // fix a disabler method
-    player = player.replace("\"", "");
-    return player = player.replace("\\", "");
+    return player.replace(/(\\|\")/g, "");
 }
 
 /**
