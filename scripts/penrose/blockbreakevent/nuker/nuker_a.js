@@ -96,7 +96,7 @@ function nukera(object) {
         "minecraft:warped_roots",
         "minecraft:twisting_vines",
         "minecraft:weeping_vines"
-    ]
+    ];
 
     // Flag and salvage broken blocks to their original forms
     if (tiktok.length >= config.modules.antinukerA.max && vegetation.indexOf(brokenBlockPermutation.type.id) === -1) {

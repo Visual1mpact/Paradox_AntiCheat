@@ -4,15 +4,15 @@ import { crypto, disabler, getPrefix } from "../../util.js";
 function hotbarHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.hotbar) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.hotbar.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: hotbar
@@ -24,7 +24,7 @@ function hotbarHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843
     ${prefix}hotbar help
-"}]}`)
+"}]}`);
 }
 
 /**

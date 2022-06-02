@@ -4,15 +4,15 @@ import config from "../../data/config.js";
 function illegalItemsDHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.illegalitemsd) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.illegalitemsD.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: illegalitemsd
@@ -24,7 +24,7 @@ function illegalItemsDHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}illegalitemsd
     ${prefix}illegalitemsd help
-"}]}`)
+"}]}`);
 }
 
 /**

@@ -4,15 +4,15 @@ import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 function removeCBEHelp(player, prefix, commandblocksscore) {
     let commandStatus;
     if (!config.customcommands.removecommandblocks) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (commandblocksscore <= 0) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: removecb
@@ -24,7 +24,7 @@ function removeCBEHelp(player, prefix, commandblocksscore) {
 §4[§6Examples§4]§r:
     ${prefix}removecb
     ${prefix}removecb help
-"}]}`)
+"}]}`);
 }
 
 /**

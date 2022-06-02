@@ -7,15 +7,15 @@ const World = world;
 function tagHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.tag || !config.customcommands.chatranks) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.chatranks.enabled || !config.customcommands.chatranks) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: tag
@@ -29,7 +29,7 @@ function tagHelp(player, prefix) {
     ${prefix}tag ${disabler(player.nameTag)} Rank:Contributor--Mod
     ${prefix}tag ${disabler(player.nameTag)} Rank:Staff--Mod--Helper
     ${prefix}tag help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -91,7 +91,7 @@ export function tag(message, args) {
         if(t.startsWith('Rank:')) {
             custom = t;
         }
-    })
+    });
     if (custom.startsWith('Rank:')) {
         resetTag(player, member);
         member.addTag(`${custom}`);

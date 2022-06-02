@@ -8,9 +8,9 @@ const World = world;
 
 function testerHelp(player, prefix) {let commandStatus;
     if (!config.customcommands.tester) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: tester
@@ -21,7 +21,7 @@ function testerHelp(player, prefix) {let commandStatus;
 §4[§6Examples§4]§r:
     ${prefix}tester ${disabler(player.nameTag)}
     ${prefix}tester help
-"}]}`)
+"}]}`);
 }
 
 /**

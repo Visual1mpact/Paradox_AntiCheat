@@ -8,9 +8,9 @@ const World = world;
 function auraCheckHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.auracheck) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: auracheck
@@ -21,7 +21,7 @@ function auraCheckHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}auracheck ${disabler(player.nameTag)}
     ${prefix}auracheck help
-"}]}`)
+"}]}`);
 }
 
 /**

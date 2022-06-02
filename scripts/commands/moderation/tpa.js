@@ -9,9 +9,9 @@ const World = world;
 function tpaHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.antinukera) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: tpa
@@ -22,7 +22,7 @@ function tpaHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}tpa ${disabler(player.nameTag)}
     ${prefix}tpa help
-"}]}`)
+"}]}`);
 }
 
 /**

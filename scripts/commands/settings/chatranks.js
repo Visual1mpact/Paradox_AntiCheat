@@ -5,15 +5,15 @@ import { world, Location } from "mojang-minecraft";
 function chatRanksHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.chatranks) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.chatranks.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: chatranks
@@ -25,7 +25,7 @@ function chatRanksHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}chatranks
     ${prefix}chatranks help
-"}]}`)
+"}]}`);
 }
 
 /**

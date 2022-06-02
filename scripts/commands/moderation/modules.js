@@ -4,9 +4,9 @@ import { getScore, disabler, getPrefix, crypto } from "../../util.js";
 function modulesHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.modules) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: modules
@@ -17,7 +17,7 @@ function modulesHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}modules
     ${prefix}modules help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -225,9 +225,9 @@ function modulesHelp(player, prefix) {
     if (config.modules.illegalitemsA.enabled) {
         let verification;
         if (config.modules.stackBan.enabled) {
-            verification = "§aENABLED§r"
+            verification = "§aENABLED§r";
         } else {
-            verification = "§4DISABLED§r"
+            verification = "§4DISABLED§r";
         }
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsA is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
@@ -237,9 +237,9 @@ function modulesHelp(player, prefix) {
     if (config.modules.illegalitemsB.enabled) {
         let verification;
         if (config.modules.stackBan.enabled) {
-            verification = "§aENABLED§r"
+            verification = "§aENABLED§r";
         } else {
-            verification = "§4DISABLED§r"
+            verification = "§4DISABLED§r";
         }
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsB is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
@@ -249,9 +249,9 @@ function modulesHelp(player, prefix) {
     if (config.modules.illegalitemsC.enabled) {
         let verification;
         if (config.modules.stackBan.enabled) {
-            verification = "§aENABLED§r"
+            verification = "§aENABLED§r";
         } else {
-            verification = "§4DISABLED§r"
+            verification = "§4DISABLED§r";
         }
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsC is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
@@ -261,9 +261,9 @@ function modulesHelp(player, prefix) {
     if (config.modules.illegalitemsD.enabled) {
         let verification;
         if (config.modules.stackBan.enabled) {
-            verification = "§aENABLED§r"
+            verification = "§aENABLED§r";
         } else {
-            verification = "§4DISABLED§r"
+            verification = "§4DISABLED§r";
         }
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {

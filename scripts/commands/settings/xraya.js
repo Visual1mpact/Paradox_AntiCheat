@@ -4,15 +4,15 @@ import config from "../../data/config.js";
 function xrayAHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.xraya) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.xrayA.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: xraya
@@ -24,7 +24,7 @@ function xrayAHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}xraya
     ${prefix}xraya help
-"}]}`)
+"}]}`);
 }
 
 /**

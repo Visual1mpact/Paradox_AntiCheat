@@ -8,9 +8,9 @@ const World = world;
 function banHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.ban) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: ban
@@ -23,7 +23,7 @@ function banHelp(player, prefix) {
     ${prefix}ban ${disabler(player.nameTag)} Hacker!
     ${prefix}ban ${disabler(player.nameTag)} Caught exploiting!
     ${prefix}ban help
-"}]}`)
+"}]}`);
 }
 
 /**

@@ -4,15 +4,15 @@ import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 function worldBorderHelp(player, prefix, worldBorderScore) {
     let commandStatus;
     if (!config.customcommands.worldborder) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (worldBorderScore <= 0) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: worldborder
@@ -26,7 +26,7 @@ function worldBorderHelp(player, prefix, worldBorderScore) {
     ${prefix}worldborder 25689
     ${prefix}worldborder disable
     ${prefix}worldborder help
-"}]}`)
+"}]}`);
 }
 
 /**

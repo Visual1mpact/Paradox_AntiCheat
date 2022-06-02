@@ -261,4 +261,4 @@ export const enchantmentSlot = {
         quickCharge: 3,
         soulSpeed: 3
     }
-}
+};

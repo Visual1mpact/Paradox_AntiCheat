@@ -10,9 +10,9 @@ let isSilent;
 function kickHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.kick) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: kick
@@ -25,7 +25,7 @@ function kickHelp(player, prefix) {
     ${prefix}kick ${disabler(player.nameTag)} Hacker!
     ${prefix}kick ${disabler(player.nameTag)} Stop trolling!
     ${prefix}kick help
-"}]}`)
+"}]}`);
 }
 
 /**

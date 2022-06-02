@@ -114,7 +114,7 @@ function illegalitemsc(object) {
                  */
                 let enchantArray = [];
                 let enchantLevelArray = [];
-                let verifiedItemName = inventory_item.nameTag
+                let verifiedItemName = inventory_item.nameTag;
                 let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
                 let actualItemName = new ItemStack(Items.get(inventory_item.id));
                 actualItemName.data = inventory_item.data;

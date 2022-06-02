@@ -122,7 +122,7 @@ export function getScore(objective, player, { minimum, maximum } = {}) {
  */
 export function disabler(player) {
     // fix a disabler method
-    return player.replace(/(\\|\")/g, "");
+    return player.replace(/(\\|")/g, "");
 }
 
 /**
@@ -227,7 +227,7 @@ Object.defineProperties(Player.prototype, {
             return ORemoveTag.call(this, t);
         }
     },
-})
+});
 
 /**
  * @name toCamelCase
@@ -247,10 +247,10 @@ export function toCamelCase(str){
  */
 export const titleCase = (s) =>
   s.replace (/^[-_]*(.)/, (_, c) => c.toUpperCase())
-   .replace (/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase())
+   .replace (/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 
 // Handler for encryption down below
-const { encryption } = config.modules 
+const { encryption } = config.modules;
 
 /**
  * @name crypt
@@ -268,15 +268,15 @@ export const crypt = (salt = encryption.salt, text = encryption.optag) => {
         .map(applySaltToChar)
         .map(byteHex)
         .join("");
-}
+};
 
 
 let cache = {
     optag: encryption.optag,
     salt: encryption.salt,
     crypto: crypt()
-}
+};
 
 export const crypto = {
     [Symbol.toPrimitive]: () => encryption.salt == cache.salt && encryption.optag == cache.optag ? cache.crypto : ( cache.salt = encryption.salt, cache.optag = encryption.optag, cache.crypto = crypt() )
-}
+};

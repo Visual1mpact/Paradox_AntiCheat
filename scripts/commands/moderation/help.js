@@ -22,7 +22,7 @@ export function help(message) {
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
     if (!player.hasTag('Hash:' + crypto)) {
-        return nonstaffhelp(message)
+        return nonstaffhelp(message);
     }
 
     // Make sure the help command wasn't disabled
