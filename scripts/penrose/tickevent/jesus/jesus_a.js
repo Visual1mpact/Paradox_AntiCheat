@@ -5,7 +5,7 @@ import { crypto } from "../../../util.js";
 
 const World = world;
 
-let BlockAtPlayer0
+let BlockAtPlayer0;
 let BlockAtPlayer1;
 
 const _player = {

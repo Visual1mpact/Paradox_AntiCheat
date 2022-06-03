@@ -1,6 +1,5 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { xrayA } from "./xraya.js";
 
 function illegalEnchantHelp(player, prefix) {
     let commandStatus;

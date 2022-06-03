@@ -1,8 +1,5 @@
-import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { disabler, getPrefix } from "../../util.js";
-
-const World = world;
 
 function setHomeHelp(player, prefix) {
     let commandStatus;
@@ -75,7 +72,7 @@ export function sethome(message, args) {
         }
         if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
             verify = true;
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You can only have ${config.modules.setHome.max} saved locations!"}]}`)
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You can only have ${config.modules.setHome.max} saved locations!"}]}`);
             break;
         }
     }
@@ -85,17 +82,17 @@ export function sethome(message, args) {
 
     // Save which dimension they were in
     if (player.dimension.id === "minecraft:overworld") {
-        currentDimension = "overworld"
+        currentDimension = "overworld";
     }
     if (player.dimension.id === "minecraft:nether") {
-        currentDimension = "nether"
+        currentDimension = "nether";
     }
     if (player.dimension.id === "minecraft:the_end") {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Not allowed to set home in this dimension!"}]}`)
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Not allowed to set home in this dimension!"}]}`);
     }
 
     // Store their new home coordinates
     player.addTag(`LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`);
     
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} has been set at ${homex} ${homey} ${homez}!"}]}`)
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} has been set at ${homex} ${homey} ${homez}!"}]}`);
 }

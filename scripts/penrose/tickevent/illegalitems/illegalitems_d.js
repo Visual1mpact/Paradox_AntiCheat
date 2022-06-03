@@ -11,7 +11,7 @@ function illegalitemsd() {
         return;
     }
     let filter = new EntityQueryOptions();
-    filter.type = "item"
+    filter.type = "item";
     for (let entity of World.getDimension('overworld').getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {

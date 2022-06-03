@@ -77,18 +77,18 @@ export function tpa(message, args) {
     let currentDimension;
     // Save which dimension they were in
     if (member.dimension.id === "minecraft:overworld") {
-        currentDimension = "overworld"
+        currentDimension = "overworld";
     }
     if (member.dimension.id === "minecraft:nether") {
-        currentDimension = "nether"
+        currentDimension = "nether";
     }
     if (member.dimension.id === "minecraft:the_end") {
-        currentDimension = "the end"
+        currentDimension = "the end";
     }
 
     // Let's teleport you to that player
     player.teleport(new Location(member.location.x, member.location.y, member.location.z), World.getDimension(currentDimension), 0, player.bodyRotation);
 
     // Let you know that you have been teleported
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been teleported to ${disabler(member.nameTag)}."}]}`)
+    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been teleported to ${disabler(member.nameTag)}."}]}`);
 }

@@ -83,4 +83,4 @@ const AntiTeleport = () => {
     World.events.tick.subscribe(() => antiteleport());
 };
 
-export { AntiTeleport }
+export { AntiTeleport };

@@ -29,7 +29,7 @@ function serverban() {
             });
 
             // Remove player from queue
-            queueUnban.delete(disabler(player.nameTag))
+            queueUnban.delete(disabler(player.nameTag));
 
             // Let staff and player know they are unbanned
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been unbanned."}]}`);
