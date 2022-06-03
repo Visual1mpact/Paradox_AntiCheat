@@ -72,7 +72,7 @@ export function lockdown(message, args) {
     
     // Get players that are not Paradox-Opped
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['TestPlayer', 'Hash:' + crypto];
+    filter.excludeTags = ['Hash:' + crypto];
 
     // Lock it down
     for (let pl of World.getPlayers(filter)) {

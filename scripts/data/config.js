@@ -71,7 +71,6 @@ export default
         "delhome": true,
         "tpa": true,
         "antiteleport": true,
-        "tester": true,
         "illegalenchant": true,
         "illegallores": true,
         "despawn": true,

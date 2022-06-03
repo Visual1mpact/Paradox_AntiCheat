@@ -8,8 +8,6 @@ const World = world;
 function serverban() {
     let filter = new EntityQueryOptions();
     filter.tags = ['isBanned'];
-    // If they are a tester then let them in
-    filter.excludeTags = ['TestPlayer'];
     // run as each player
     for (let player of World.getPlayers(filter)) {
         if (queueUnban.has(disabler(player.nameTag))) {

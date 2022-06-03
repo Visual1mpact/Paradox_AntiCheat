@@ -5,7 +5,7 @@ const World = world;
 
 function noperms() {
     let filter = new EntityQueryOptions();
-    filter.tags = ['paradoxOpped', 'TestPlayer', 'Hash:' + crypto];
+    filter.tags = ['paradoxOpped', 'Hash:' + crypto];
     // We need a list of players for checking behind a bug in Minecraft
     let playerArray = [...World.getPlayers(filter)];
     // Let's check the entities for illegal permissions
@@ -23,9 +23,6 @@ function noperms() {
         }
         if (entity.hasTag('paradoxOpped')) {
             entity.removeTag('paradoxOpped');
-        }
-        if (entity.hasTag('TestPlayer')) {
-            entity.removeTag('TestPlayer');
         }
         if (entity.hasTag('Hash:' + crypto)) {
             entity.removeTag('Hash:' + crypto);
