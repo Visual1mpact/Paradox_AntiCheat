@@ -10,7 +10,7 @@
 	"metadata": {
 		"authors": ["MrDiamond64, Visual1mpact"],
 		"license": "GPLv3",
-    	"url": "https://github.com/Visual1mpact/Paradox_AntiCheat"
+		"url": "https://github.com/Visual1mpact/Paradox_AntiCheat"
 	},
 	"modules": [{
 			"type": "data",
