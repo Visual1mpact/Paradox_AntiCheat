@@ -8,7 +8,9 @@
 		"min_engine_version": [1, 18, 30]
 	},
 	"metadata": {
-		"authors": ["MrDiamond64, Visual1mpact"]
+		"authors": ["MrDiamond64, Visual1mpact"],
+		"license": "GPLv3",
+    	"url": "https://github.com/Visual1mpact/Paradox_AntiCheat"
 	},
 	"modules": [{
 			"type": "data",
@@ -21,7 +23,8 @@
 		},
 		{
 			"description": "Paradox AntiCheat Gametest Features",
-			"type": "javascript",
+			"language": "javascript",
+			"type": "script",
 			"uuid": "1326c87b-37f3-4543-9f0f-0d03893134e1",
 			"version": [0, 0, 1],
 			"entry": "scripts/paradox.js"
