@@ -66,6 +66,7 @@ function modulesHelp(player, prefix) {
     let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
     let opsBoolean = World.getDynamicProperty('ops_b');
     let noSlowBoolean = World.getDynamicProperty('noslowa_b');
+    let nameSpoofABoolean = World.getDynamicProperty('namespoofa_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -174,7 +175,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r CrasherA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.namespoofA.enabled) {
+    if (nameSpoofABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofA is currently §4DISABLED"}]}`);
