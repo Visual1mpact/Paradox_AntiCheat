@@ -6,8 +6,13 @@ import { setTickInterval } from "../../../timer/scheduling.js";
 const World = world;
 
 function antiknockbacka() {
+    // Get Dynamic Property
+    let antikbBoolean = World.getDynamicProperty('antikb_b');
+    if (antikbBoolean === undefined) {
+        antikbBoolean = config.modules.antikbA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.antikbA.enabled === false) {
+    if (antikbBoolean === false) {
         World.events.tick.unsubscribe(antiknockbacka);
         return;
     }

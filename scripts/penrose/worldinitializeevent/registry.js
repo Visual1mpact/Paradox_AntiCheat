@@ -33,6 +33,9 @@ function registry(data) {
 
     // Define properties for namespoofb
     property.defineBoolean('namespoofb_b');
+
+    // Define properties for antikb
+    property.defineBoolean('antikb_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -81,6 +84,12 @@ function registry(data) {
     let namespoofb_b = World.getDynamicProperty('namespoofb_b');
     if (namespoofb_b === undefined) {
         World.setDynamicProperty('namespoofb_b', config.modules.namespoofB.enabled);
+    }
+
+    // Set properties for antikb
+    let antikb_b = World.getDynamicProperty('antikb_b');
+    if (antikb_b === undefined) {
+        World.setDynamicProperty('antikb_b', config.modules.antikbA.enabled);
     }
 }
 
