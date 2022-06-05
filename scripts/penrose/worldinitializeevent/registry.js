@@ -27,6 +27,12 @@ function registry(data) {
 
     // Define properties for noslow
     property.defineBoolean('noslowa_b');
+
+    // Define properties for namespoofa
+    property.defineBoolean('namespoofa_b');
+
+    // Define properties for namespoofb
+    property.defineBoolean('namespoofb_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -63,6 +69,18 @@ function registry(data) {
     let noslowa_b = World.getDynamicProperty('noslowa_b');
     if (noslowa_b === undefined) {
         World.setDynamicProperty('noslowa_b', config.modules.noslowA.enabled);
+    }
+
+    // Set properties for namespoofa
+    let namespoofa_b = World.getDynamicProperty('namespoofa_b');
+    if (namespoofa_b === undefined) {
+        World.setDynamicProperty('namespoofa_b', config.modules.namespoofA.enabled);
+    }
+
+    // Set properties for namespoofb
+    let namespoofb_b = World.getDynamicProperty('namespoofb_b');
+    if (namespoofb_b === undefined) {
+        World.setDynamicProperty('namespoofb_b', config.modules.namespoofB.enabled);
     }
 }
 
