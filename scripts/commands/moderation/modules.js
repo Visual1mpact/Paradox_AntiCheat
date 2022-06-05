@@ -70,6 +70,7 @@ function modulesHelp(player, prefix) {
     let nameSpoofBBoolean = World.getDynamicProperty('namespoofb_b');
     let jesusABoolean = World.getDynamicProperty('jesusa_b');
     let InvalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
+    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -238,7 +239,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r FlyA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalitemsA.enabled) {
+    if (illegalItemsABoolean) {
         let verification;
         if (config.modules.stackBan.enabled) {
             verification = "§aENABLED§r";
