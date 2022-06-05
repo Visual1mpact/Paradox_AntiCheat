@@ -9,7 +9,7 @@ function invalidsprinta() {
     // Get Dynamic Property
     let invalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
     if (invalidSprintABoolean === undefined) {
-        invalidSprintABoolean = config.modules.jesusA.enabled;
+        invalidSprintABoolean = config.modules.invalidsprintA.enabled;
     }
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
