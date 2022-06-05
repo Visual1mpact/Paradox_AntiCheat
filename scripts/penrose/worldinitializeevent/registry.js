@@ -25,7 +25,7 @@ function registry(data) {
     // Define properties for ops
     property.defineBoolean('ops_b');
 
-    // Define properties for noslow
+    // Define properties for noslowa
     property.defineBoolean('noslowa_b');
 
     // Define properties for namespoofa
@@ -34,8 +34,11 @@ function registry(data) {
     // Define properties for namespoofb
     property.defineBoolean('namespoofb_b');
 
-    // Define properties for antikb
+    // Define properties for antikba
     property.defineBoolean('antikb_b');
+
+    // Define properties for jesusa
+    property.defineBoolean('jesusa_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -68,7 +71,7 @@ function registry(data) {
         World.setDynamicProperty('ops_b', config.modules.ops.enabled);
     }
 
-    // Set properties for ops
+    // Set properties for noslowa
     let noslowa_b = World.getDynamicProperty('noslowa_b');
     if (noslowa_b === undefined) {
         World.setDynamicProperty('noslowa_b', config.modules.noslowA.enabled);
@@ -86,10 +89,16 @@ function registry(data) {
         World.setDynamicProperty('namespoofb_b', config.modules.namespoofB.enabled);
     }
 
-    // Set properties for antikb
+    // Set properties for antikba
     let antikb_b = World.getDynamicProperty('antikb_b');
     if (antikb_b === undefined) {
         World.setDynamicProperty('antikb_b', config.modules.antikbA.enabled);
+    }
+
+    // Set properties for jesusa
+    let jesusa_b = World.getDynamicProperty('jesusa_b');
+    if (jesusa_b === undefined) {
+        World.setDynamicProperty('jesusa_b', config.modules.jesusA.enabled);
     }
 }
 
