@@ -45,6 +45,9 @@ function registry(data) {
 
     // Define properties for illegalitemsa
     property.defineBoolean('illegalitemsa_b');
+
+    // Define properties for illegalitemsd
+    property.defineBoolean('illegalitemsd_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -117,6 +120,12 @@ function registry(data) {
     let illegalitemsa_b = World.getDynamicProperty('illegalitemsa_b');
     if (illegalitemsa_b === undefined) {
         World.setDynamicProperty('illegalitemsa_b', config.modules.illegalitemsA.enabled);
+    }
+
+    // Set properties for illegalitemsd
+    let illegalitemsd_b = World.getDynamicProperty('illegalitemsd_b');
+    if (illegalitemsd_b === undefined) {
+        World.setDynamicProperty('illegalitemsd_b', config.modules.illegalitemsD.enabled);
     }
 }
 
