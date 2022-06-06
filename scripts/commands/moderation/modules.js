@@ -73,23 +73,26 @@ function modulesHelp(player, prefix) {
     let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
     let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
     let hotbarBoolean = World.getDynamicProperty('hotbar_b');
+    let adventureGMBoolean = World.getDynamicProperty('adventuregm_b');
+    let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
+    let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
 
-    if (config.modules.adventureGM.enabled) {
+    if (adventureGMBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Anti-GMA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.survivalGM.enabled) {
+    if (survivalGMBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.creativeGM.enabled) {
+    if (creativeGMBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §4DISABLED"}]}`);

@@ -51,6 +51,15 @@ function registry(data) {
 
     // Define properties for hotbar
     property.defineBoolean('hotbar_b');
+
+    // Define properties for adventuregm
+    property.defineBoolean('adventuregm_b');
+
+    // Define properties for creativegm
+    property.defineBoolean('creativegm_b');
+
+    // Define properties for survivalgm
+    property.defineBoolean('survivalgm_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -135,6 +144,24 @@ function registry(data) {
     let hotbar_b = World.getDynamicProperty('hotbar_b');
     if (hotbar_b === undefined) {
         World.setDynamicProperty('hotbar_b', config.modules.hotbar.enabled);
+    }
+
+    // Set properties for adventuregm
+    let adventuregm_b = World.getDynamicProperty('adventuregm_b');
+    if (adventuregm_b === undefined) {
+        World.setDynamicProperty('adventuregm_b', config.modules.adventureGM.enabled);
+    }
+
+    // Set properties for creativegm
+    let creativegm_b = World.getDynamicProperty('creativegm_b');
+    if (creativegm_b === undefined) {
+        World.setDynamicProperty('creativegm_b', config.modules.creativeGM.enabled);
+    }
+
+    // Set properties for survivalgm
+    let survivalgm_b = World.getDynamicProperty('survivalgm_b');
+    if (survivalgm_b === undefined) {
+        World.setDynamicProperty('survivalgm_b', config.modules.survivalGM.enabled);
     }
 }
 
