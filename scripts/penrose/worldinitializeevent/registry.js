@@ -87,6 +87,9 @@ function registry(data) {
 
     // Define properties for antinukera
     property.defineBoolean('antinukera_b');
+
+    // Define properties for illegalitemsb
+    property.defineBoolean('illegalitemsb_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -243,6 +246,12 @@ function registry(data) {
     let antinukera_b = World.getDynamicProperty('antinukera_b');
     if (antinukera_b === undefined) {
         World.setDynamicProperty('antinukera_b', config.modules.antinukerA.enabled);
+    }
+
+    // Set properties for illegalitemsb
+    let illegalitemsb_b = World.getDynamicProperty('illegalitemsb_b');
+    if (illegalitemsb_b === undefined) {
+        World.setDynamicProperty('illegalitemsb_b', config.modules.illegalitemsB.enabled);
     }
 }
 

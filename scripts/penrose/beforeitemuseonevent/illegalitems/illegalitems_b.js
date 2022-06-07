@@ -30,8 +30,13 @@ function rip(source, item) {
 }
 
 function illegalitemsb(object) {
+    // Get Dynamic Property
+    let illegalItemsBBoolean = World.getDynamicProperty('illegalitemsb_b');
+    if (illegalItemsBBoolean === undefined) {
+        illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.illegalitemsB.enabled === false) {
+    if (illegalItemsBBoolean === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
         return;
     }
