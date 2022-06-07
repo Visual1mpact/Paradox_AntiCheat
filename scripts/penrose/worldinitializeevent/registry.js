@@ -84,6 +84,9 @@ function registry(data) {
 
     // Define properties for reachb
     property.defineBoolean('reachb_b');
+
+    // Define properties for antinukera
+    property.defineBoolean('antinukera_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -234,6 +237,12 @@ function registry(data) {
     let reachb_b = World.getDynamicProperty('reachb_b');
     if (reachb_b === undefined) {
         World.setDynamicProperty('reachb_b', config.modules.reachB.enabled);
+    }
+
+    // Set properties for antinukera
+    let antinukera_b = World.getDynamicProperty('antinukera_b');
+    if (antinukera_b === undefined) {
+        World.setDynamicProperty('antinukera_b', config.modules.antinukerA.enabled);
     }
 }
 

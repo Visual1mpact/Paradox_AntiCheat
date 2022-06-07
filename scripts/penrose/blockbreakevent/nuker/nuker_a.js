@@ -7,7 +7,12 @@ const World = world;
 let blockTimer = new Map();
 
 function nukera(object) {
-    if (config.modules.antinukerA.enabled === false) {
+    // Get Dynamic Property
+    let antiNukerABoolean = World.getDynamicProperty('antinukera_b');
+    if (antiNukerABoolean === undefined) {
+        antiNukerABoolean = config.modules.antinukerA.enabled;
+    }
+    if (antiNukerABoolean === false) {
         World.events.blockBreak.unsubscribe(nukera);
         return;
     }
