@@ -33,8 +33,13 @@ function rip(player, inventory_item) {
 }
 
 function illegalitemsc(object) {
+    // Get Dynamic Property
+    let illegalItemsCBoolean = World.getDynamicProperty('illegalitemsc_b');
+    if (illegalItemsCBoolean === undefined) {
+        illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.illegalitemsC.enabled === false) {
+    if (illegalItemsCBoolean === false) {
         World.events.blockPlace.unsubscribe(illegalitemsc);
         return;
     }
