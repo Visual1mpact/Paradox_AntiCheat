@@ -4,15 +4,15 @@ import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 function autoauraHelp(player, prefix, autoaurascore) {
     let commandStatus;
     if (!config.customcommands.autoaura) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (autoaurascore <= 0) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: autoaura
@@ -24,7 +24,7 @@ function autoauraHelp(player, prefix, autoaurascore) {
 §4[§6Examples§4]§r:
     ${prefix}autoaura
     ${prefix}autoaura help
-"}]}`)
+"}]}`);
 }
 
 /**

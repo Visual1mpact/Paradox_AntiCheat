@@ -5,15 +5,15 @@ import { world, Location } from "mojang-minecraft";
 function chatRanksHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.chatranks) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.chatranks.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: chatranks
@@ -25,7 +25,7 @@ function chatRanksHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}chatranks
     ${prefix}chatranks help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -62,25 +62,29 @@ export function chatranks(message, args) {
     if (config.modules.chatranks.enabled === false) {
         // Allow
         config.modules.chatranks.enabled = true;
+        /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
-            // Restore their custom nametag
-            // tagRank(pl);
-            // This refreshes the nameTag in the World for everyone online
-            // pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            Restore their custom nametag
+            tagRank(pl);
+            This refreshes the nameTag in the World for everyone online
+            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }
+        */
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ChatRanks§r!"}]}`);
         return;
     } else if (config.modules.chatranks.enabled === true) {
         // Deny
         config.modules.chatranks.enabled = false;
+        /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
-            // Reset their nametag to its original name
-            // pl.nameTag = pl.name;
-            // This refreshes the nameTag in the World for everyone online
-            // pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            Reset their nametag to its original name
+            pl.nameTag = pl.name;
+            This refreshes the nameTag in the World for everyone online
+            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
         }
+        */
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ChatRanks§r!"}]}`);
         return;
     }

@@ -66,7 +66,6 @@ import { sethome } from "./utility/sethome.js";
 import { gohome } from "./utility/gohome.js";
 import { tpa } from "./moderation/tpa.js";
 import { antiteleport } from "./settings/antiteleport.js";
-import { tester } from "./moderation/tester.js";
 import { illegalitemsD } from "./settings/illegalitemsd.js";
 import { listhome } from "./utility/listhome.js";
 import { delhome } from "./utility/delhome.js";
@@ -304,9 +303,6 @@ export function commandHandler(player, message) {
             break;
         case (commandName === "antiteleport"):
             antiteleport(message, args);
-            break;
-        case (commandName === "tester"):
-            tester(message, args);
             break;
         case (commandName === "illegalitemsd"):
             illegalitemsD(message, args);

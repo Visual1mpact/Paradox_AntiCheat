@@ -1,18 +1,21 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function jesusAHelp(player, prefix) {
+const World = world;
+
+function jesusAHelp(player, prefix, jesusaBoolean) {
     let commandStatus;
     if (!config.customcommands.jesusa) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.jesusA.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+    if (jesusaBoolean === false) {
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: jesusa
@@ -24,7 +27,7 @@ function jesusAHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}jesusa
     ${prefix}jesusa help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -49,23 +52,29 @@ export function jesusA(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let jesusaBoolean = World.getDynamicProperty('jesusa_b');
+    if (jesusaBoolean === undefined) {
+        jesusaBoolean = config.modules.jesusA.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.jesusa) {
-        return jesusAHelp(player, prefix);
+        return jesusAHelp(player, prefix, jesusaBoolean);
     }
 
-    if (config.modules.jesusA.enabled === false) {
+    if (jesusaBoolean === false) {
         // Allow
-        config.modules.jesusA.enabled = true;
+        World.setDynamicProperty('jesusa_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6JesusA§r!"}]}`);
         return;
-    } else if (config.modules.jesusA.enabled === true) {
+    } else if (jesusaBoolean === true) {
         // Deny
-        config.modules.jesusA.enabled = false;
+        World.setDynamicProperty('jesusa_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4JesusA§r!"}]}`);
         return;
     }

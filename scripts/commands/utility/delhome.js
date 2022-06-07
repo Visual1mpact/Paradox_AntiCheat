@@ -1,15 +1,12 @@
-import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { disabler, getPrefix } from "../../util.js";
-
-const World = world;
 
 function delhomeHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.delhome) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: delhome
@@ -20,7 +17,7 @@ function delhomeHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}delhome cave
     ${prefix}delhome help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -58,14 +55,14 @@ export function delhome(message, args) {
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            player.removeTag(tags[i])
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have successfully deleted ${args[0]}!"}]}`)
+            player.removeTag(tags[i]);
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have successfully deleted ${args[0]}!"}]}`);
             break;
         }
     }
     if (verify === true) {
         return;
     } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} does not exist!"}]}`)
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} does not exist!"}]}`);
     }
 }

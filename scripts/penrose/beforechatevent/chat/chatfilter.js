@@ -28,10 +28,6 @@ const ChatFilter = () => {
             if (!rank) {
                 rank = "Member";
             }
-            // Make sure their tag reflects as a tester
-            if (player.hasTag('TestPlayer')) {
-                rank = "Tester";
-            }
             // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
             // player.nameTag = nametag;
             if (!msg.cancel) {

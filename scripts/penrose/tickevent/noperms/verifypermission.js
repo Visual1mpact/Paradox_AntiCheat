@@ -6,7 +6,7 @@ const World = world;
 function verifypermission() {
     let filter = new EntityQueryOptions();
     filter.tags = ['paradoxOpped'];
-    filter.excludeTags = ['Hash:' + crypto]
+    filter.excludeTags = ['Hash:' + crypto];
     // Let's check the players for illegal permissions
     for (let player of World.getPlayers(filter)) {
         // If they have the basic permission but not the hash then remove it

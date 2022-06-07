@@ -8,8 +8,13 @@ const World = world;
 let playersOldCoordinates = new Map();
 
 function flya() {
+    // Get Dynamic Property
+    let flyABoolean = World.getDynamicProperty('flya_b');
+    if (flyABoolean === undefined) {
+        flyABoolean = config.modules.flyA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.flyA.enabled === false) {
+    if (flyABoolean === false) {
         World.events.tick.unsubscribe(flya);
         return;
     }
@@ -51,7 +56,7 @@ function flya() {
         } catch (error) {}
         
         if (xyVelocity != 0.0784 || zyVelocity != 0.0784) {
-            if (!player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && !player.hasTag('swimming') && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
+            if (!player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && !player.hasTag('swimming') && Block.type.id === "minecraft:air" && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
                 try {
                     player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" fly_timer 1`);
                 } catch (error) {}

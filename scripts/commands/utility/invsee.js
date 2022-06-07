@@ -8,9 +8,9 @@ const World = world;
 function invseeHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.invsee) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: invsee
@@ -21,7 +21,7 @@ function invseeHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}invsee ${disabler(player.nameTag)}
     ${prefix}invsee help
-"}]}`)
+"}]}`);
 }
 
 // found the inventory viewing scipt in the bedrock addons discord, unsure of the original owner (not my code)

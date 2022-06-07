@@ -8,9 +8,9 @@ const World = world;
 function despawnHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.despawn) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: despawn
@@ -23,7 +23,7 @@ function despawnHelp(player, prefix) {
     ${prefix}despawn iron_golem
     ${prefix}despawn creeper
     ${prefix}despawn help
-"}]}`)
+"}]}`);
 }
 
 /**

@@ -8,4 +8,4 @@ export const whitelist = [
     "minecraft:example1",
     "minecraft:example2",
     "minecraft:example3"
-]
+];

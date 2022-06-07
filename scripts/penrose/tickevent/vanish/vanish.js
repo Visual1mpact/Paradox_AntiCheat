@@ -21,7 +21,7 @@ function vanish() {
         // Make sure they have permission to use Vanish
         if (!player.hasTag('Hash:' + crypto)) {
             // They have been busted!
-            player.removeTag('vanish')
+            player.removeTag('vanish');
             if (player.getEffect(MinecraftEffectTypes.invisibility) || player.getEffect(MinecraftEffectTypes.nightVision)) {
                 player.runCommand(`effect "${disabler(player.nameTag)}" clear`);
             }

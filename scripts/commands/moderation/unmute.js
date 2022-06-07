@@ -8,9 +8,9 @@ const World = world;
 function unmuteHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.unmute) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: unmute
@@ -22,7 +22,7 @@ function unmuteHelp(player, prefix) {
     ${prefix}unmute ${disabler(player.nameTag)}
     ${prefix}unmute ${disabler(player.nameTag)} You may chat
     ${prefix}unmute help
-"}]}`)
+"}]}`);
 }
 
 /**

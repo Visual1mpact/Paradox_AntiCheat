@@ -6,8 +6,13 @@ import config from "../../../data/config.js";
 const World = world;
 
 function xraya(object) {
+    // Get Dynamic Property
+    let xrayBoolean = World.getDynamicProperty('xraya_b');
+    if (xrayBoolean === undefined) {
+        xrayBoolean = config.modules.xrayA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.xrayA.enabled === false) {
+    if (xrayBoolean === false) {
         World.events.blockBreak.unsubscribe(xraya);
         return;
     }
