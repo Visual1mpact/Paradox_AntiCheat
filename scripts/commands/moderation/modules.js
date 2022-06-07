@@ -76,6 +76,7 @@ function modulesHelp(player, prefix) {
     let adventureGMBoolean = World.getDynamicProperty('adventuregm_b');
     let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
     let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
+    let flyABoolean = World.getDynamicProperty('flya_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -238,7 +239,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r InvalidSprintA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.flyA.enabled) {
+    if (flyABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r FlyA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r FlyA is currently §4DISABLED"}]}`);

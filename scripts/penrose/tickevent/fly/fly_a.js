@@ -8,8 +8,13 @@ const World = world;
 let playersOldCoordinates = new Map();
 
 function flya() {
+    // Get Dynamic Property
+    let flyABoolean = World.getDynamicProperty('flya_b');
+    if (flyABoolean === undefined) {
+        flyABoolean = config.modules.flyA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.flyA.enabled === false) {
+    if (flyABoolean === false) {
         World.events.tick.unsubscribe(flya);
         return;
     }
