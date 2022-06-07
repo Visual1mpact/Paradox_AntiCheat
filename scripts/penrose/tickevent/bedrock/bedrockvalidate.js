@@ -5,8 +5,13 @@ import config from "../../../data/config.js";
 const World = world;
 
 function bedrockvalidate() {
+    // Get Dynamic Property
+    let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
+    if (bedrockValidateBoolean === undefined) {
+        bedrockValidateBoolean = config.modules.bedrockValidate.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.bedrockValidate.enabled === false) {
+    if (bedrockValidateBoolean === false) {
         World.events.tick.unsubscribe(bedrockvalidate);
         return;
     }

@@ -66,6 +66,9 @@ function registry(data) {
 
     // Define properties for crashera
     property.defineBoolean('crashera_b');
+
+    // Define properties for bedrockvalidate
+    property.defineBoolean('bedrockvalidate_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -180,6 +183,12 @@ function registry(data) {
     let crashera_b = World.getDynamicProperty('crashera_b');
     if (crashera_b === undefined) {
         World.setDynamicProperty('crashera_b', config.modules.crasherA.enabled);
+    }
+
+    // Set properties for bedrockvalidate
+    let bedrockvalidate_b = World.getDynamicProperty('bedrockvalidate_b');
+    if (bedrockvalidate_b === undefined) {
+        World.setDynamicProperty('bedrockvalidate_b', config.modules.bedrockValidate.enabled);
     }
 }
 
