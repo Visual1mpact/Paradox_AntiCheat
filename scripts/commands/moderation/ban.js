@@ -8,9 +8,9 @@ const World = world;
 function banHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.ban) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: ban
@@ -23,7 +23,7 @@ function banHelp(player, prefix) {
     ${prefix}ban ${disabler(player.nameTag)} Hacker!
     ${prefix}ban ${disabler(player.nameTag)} Caught exploiting!
     ${prefix}ban help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -72,11 +72,6 @@ export function ban(message, args) {
     // Check if player exists
     if (!member) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
-    }
-
-    // You can't ban a tester
-    if (member.hasTag('TestPlayer')) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot ban a Tester!"}]}`);
     }
 
     // make sure they dont ban themselves

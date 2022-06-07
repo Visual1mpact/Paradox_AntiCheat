@@ -1,4 +1,4 @@
-import { world, BlockLocation, Location } from "mojang-minecraft";
+import { world, Location } from "mojang-minecraft";
 import { getScore, disabler, crypto } from "../../../util.js";
 
 const World = world;

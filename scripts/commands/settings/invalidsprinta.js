@@ -1,18 +1,21 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function invalidSprintAHelp(player, prefix) {
+const World = world;
+
+function invalidSprintAHelp(player, prefix, invalidSprintABoolean) {
     let commandStatus;
     if (!config.customcommands.invalidsprinta) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.invalidsprintA.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: invalidsprinta
@@ -24,7 +27,7 @@ function invalidSprintAHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}invalidsprinta
     ${prefix}invalidsprinta help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -49,23 +52,29 @@ export function invalidsprintA(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let invalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
+    if (invalidSprintABoolean === undefined) {
+        invalidSprintABoolean = config.modules.invalidsprintA.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.invalidsprinta) {
-        return invalidSprintAHelp(player, prefix);
+        return invalidSprintAHelp(player, prefix, invalidSprintABoolean);
     }
 
-    if (config.modules.invalidsprintA.enabled === false) {
+    if (invalidSprintABoolean === false) {
         // Allow
-        config.modules.invalidsprintA.enabled = true;
+        World.setDynamicProperty('invalidsprinta_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6InvalidSprintA§r!"}]}`);
         return;
-    } else if (config.modules.invalidsprintA.enabled === true) {
+    } else if (invalidSprintABoolean === true) {
         // Deny
-        config.modules.invalidsprintA.enabled = false;
+        World.setDynamicProperty('invalidsprinta_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4InvalidSprintA§r!"}]}`);
         return;
     }

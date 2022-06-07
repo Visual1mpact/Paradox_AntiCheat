@@ -71,7 +71,6 @@ export default
         "delhome": true,
         "tpa": true,
         "antiteleport": true,
-        "tester": true,
         "illegalenchant": true,
         "illegallores": true,
         "despawn": true,
@@ -113,7 +112,10 @@ export default
         },
         "namespoofB": {
             "enabled": true,
-            "regex": /[^\x00-\xFF]/
+            "banregex": /("|\\)/,
+            // .-ßüäö are not msa-gamertags but to be sure they are excluded
+            // Only kick because playstation and switch consoles are able to rename themselves
+            "kickregex": /[^A-Za-z0-9_.\- ßöäü]/ 
         },
         "bedrockValidate": {
             "enabled": true,

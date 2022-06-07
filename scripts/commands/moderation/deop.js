@@ -9,9 +9,9 @@ const World = world;
 function deopHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.deop) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: deop
@@ -22,7 +22,7 @@ function deopHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}deop ${disabler(player.nameTag)}
     ${prefix}deop help
-"}]}`)
+"}]}`);
 }
 
 /**

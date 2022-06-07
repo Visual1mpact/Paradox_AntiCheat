@@ -25,7 +25,7 @@ function prefixHelp(player, prefix) {
     ${prefix}prefix @!
     ${prefix}prefix $
     ${prefix}prefix help
-"}]}`)
+"}]}`);
 }
 
 /**

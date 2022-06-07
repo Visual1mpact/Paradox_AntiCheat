@@ -1,15 +1,12 @@
-import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { disabler, getPrefix } from "../../util.js";
-
-const World = world;
 
 function listHomeHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.listhome) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: listhome
@@ -20,7 +17,7 @@ function listHomeHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}listhome
     ${prefix}listhome help
-"}]}`)
+"}]}`);
 }
 
 /**

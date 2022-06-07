@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.16.48](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.16.48) (2022-06-03)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.15.47...v2.16.48)
+
+**Merged pull requests:**
+
+- disabler fix [\#26](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/26) ([LegoDori](https://github.com/LegoDori))
+
 ## [v2.15.47](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.15.47) (2022-05-24)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.15.46...v2.15.47)

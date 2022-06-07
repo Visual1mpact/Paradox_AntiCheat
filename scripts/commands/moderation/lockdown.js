@@ -9,15 +9,15 @@ const World = world;
 function lockdownHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.lockdown) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
     if (!config.modules.lockDown.enabled) {
-        moduleStatus = "§6[§4DISABLED§6]§r"
+        moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r"
+        moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: lockdown
@@ -29,7 +29,7 @@ function lockdownHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}lockdown
     ${prefix}lockdown help
-"}]}`)
+"}]}`);
 }
 
 /**
@@ -72,7 +72,7 @@ export function lockdown(message, args) {
     
     // Get players that are not Paradox-Opped
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['TestPlayer', 'Hash:' + crypto];
+    filter.excludeTags = ['Hash:' + crypto];
 
     // Lock it down
     for (let pl of World.getPlayers(filter)) {

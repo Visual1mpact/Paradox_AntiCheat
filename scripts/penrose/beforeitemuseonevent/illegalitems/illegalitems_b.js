@@ -30,8 +30,13 @@ function rip(source, item) {
 }
 
 function illegalitemsb(object) {
+    // Get Dynamic Property
+    let illegalItemsBBoolean = World.getDynamicProperty('illegalitemsb_b');
+    if (illegalItemsBBoolean === undefined) {
+        illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.illegalitemsB.enabled === false) {
+    if (illegalItemsBBoolean === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
         return;
     }
@@ -51,10 +56,10 @@ function illegalitemsb(object) {
 
     // Used for getting some info on the item
     if (config.debug) {
-        console.log(`Player: ${source.name} Item: ${item.id || '(none)'}, Data: ${item.data ?? 0}, Amount: ${item.amount ?? 0}`)
+        source.runCommand(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`);
     }
 
-    let hand = source.selectedSlot
+    let hand = source.selectedSlot;
 
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
@@ -76,7 +81,7 @@ function illegalitemsb(object) {
         try {
             let enchantArray = [];
             let enchantLevelArray = [];
-            let verifiedItemName = item.nameTag
+            let verifiedItemName = item.nameTag;
             let newNameTag = titleCase(item.id.replace("minecraft:", ""));
             let actualItemName = new ItemStack(Items.get(item.id));
             actualItemName.data = item.data;
@@ -218,7 +223,7 @@ function illegalitemsb(object) {
     if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
         cancel = true;
         try {
-            source.getComponent('minecraft:inventory').container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
+            source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         } catch {}
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {

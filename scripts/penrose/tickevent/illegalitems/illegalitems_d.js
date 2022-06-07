@@ -5,13 +5,18 @@ import { illegalitems } from "../../../data/itemban.js";
 const World = world;
 
 function illegalitemsd() {
+    // Get Dynamic Property
+    let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
+    if (illegalItemsDBoolean === undefined) {
+        illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.illegalitemsD.enabled === false) {
+    if (illegalItemsDBoolean === false) {
         World.events.tick.unsubscribe(illegalitemsd);
         return;
     }
     let filter = new EntityQueryOptions();
-    filter.type = "item"
+    filter.type = "item";
     for (let entity of World.getDimension('overworld').getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {

@@ -6,9 +6,9 @@ import { crypto, disabler, getPrefix } from "../../util.js";
 function fullReportHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.fullreport) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: fullreport
@@ -19,7 +19,7 @@ function fullReportHelp(player, prefix) {
 §4[§6Examples§4]§r:
     ${prefix}fullreport
     ${prefix}fullreport help
-"}]}`)
+"}]}`);
 }
 
 /**

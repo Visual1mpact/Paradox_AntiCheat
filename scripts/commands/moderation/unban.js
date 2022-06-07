@@ -6,9 +6,9 @@ export const queueUnban = new Set();
 function unbanHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.unban) {
-        commandStatus = "§6[§4DISABLED§6]§r"
+        commandStatus = "§6[§4DISABLED§6]§r";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r"
+        commandStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §4[§6Command§4]§r: unban
@@ -20,7 +20,7 @@ function unbanHelp(player, prefix) {
     ${prefix}unban ${disabler(player.nameTag)}
     ${prefix}unban list
     ${prefix}unban help
-"}]}`)
+"}]}`);
 }
 
 /**
