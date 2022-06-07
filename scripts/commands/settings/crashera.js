@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function crasheraHelp(player, prefix) {
+const World = world;
+
+function crasheraHelp(player, prefix, crasherABoolean) {
     let commandStatus;
     if (!config.customcommands.crashera) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function crasheraHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.crasherA.enabled) {
+    if (crasherABoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,23 +52,29 @@ export function crasherA(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let crasherABoolean = World.getDynamicProperty('crashera_b');
+    if (crasherABoolean === undefined) {
+        crasherABoolean = config.modules.crasherA.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.crashera) {
-        return crasheraHelp(player, prefix);
+        return crasheraHelp(player, prefix, crasherABoolean);
     }
 
-    if (config.modules.crasherA.enabled === false) {
+    if (crasherABoolean === false) {
         // Allow
-        config.modules.crasherA.enabled = true;
+        World.setDynamicProperty('crashera_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6CrasherA§r!"}]}`);
         return;
-    } else if (config.modules.crasherA.enabled === true) {
+    } else if (crasherABoolean === true) {
         // Deny
-        config.modules.crasherA.enabled = false;
+        World.setDynamicProperty('crashera_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4CrasherA§r!"}]}`);
         return;
     }
