@@ -95,6 +95,7 @@ function modulesHelp(player, prefix) {
     let rcbrBoolean = World.getDynamicProperty('rcbr_b');
     let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
     let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
+    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -381,5 +382,11 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Salvage is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Salvage is currently §4DISABLED"}]}`);
+    }
+
+    if (lockdownBoolean) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Lockdown is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Lockdown is currently §4DISABLED"}]}`);
     }
 }
