@@ -42,6 +42,10 @@ function illegalitemsc(object) {
     if (salvageBoolean === undefined) {
         salvageBoolean = config.modules.salvage.enabled;
     }
+    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
+    if (illegalLoresBoolean === undefined) {
+        illegalLoresBoolean = config.modules.illegalLores.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsCBoolean === false) {
         World.events.blockPlace.unsubscribe(illegalitemsc);
@@ -175,12 +179,12 @@ function illegalitemsc(object) {
                     new_ench_comp.enchantments = new_ench_data;
                 }
                 // Restore enchanted item
-                if (!config.modules.illegalLores.enabled) {
+                if (!illegalLoresBoolean) {
                     let loreData = inventory_item.getLore();
                     try {
                         inventory.setItem(i, actualItemName.setLore([loreData]));
                     } catch (error) {}
-                } else if (config.modules.illegalLores.enabled) {
+                } else if (illegalLoresBoolean) {
                     try {
                         inventory.setItem(i, actualItemName);
                     } catch (error) {}
@@ -240,7 +244,7 @@ function illegalitemsc(object) {
                 continue;
             }
             // Check items for illegal lores
-            if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
+            if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}

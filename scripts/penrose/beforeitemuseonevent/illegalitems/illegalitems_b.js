@@ -39,6 +39,10 @@ function illegalitemsb(object) {
     if (salvageBoolean === undefined) {
         salvageBoolean = config.modules.salvage.enabled;
     }
+    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
+    if (illegalLoresBoolean === undefined) {
+        illegalLoresBoolean = config.modules.illegalLores.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
@@ -136,12 +140,12 @@ function illegalitemsb(object) {
                     new_ench_comp.enchantments = new_ench_data;
                 }
                 // Restore enchanted item
-                if (!config.modules.illegalLores.enabled) {
+                if (!illegalLoresBoolean) {
                     let loreData = item.getLore();
                     try {
                         source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName.setLore([loreData]));
                     } catch (error) {}
-                } else if (config.modules.illegalLores.enabled) {
+                } else if (illegalLoresBoolean) {
                     try {
                         source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName);
                     } catch (error) {}
@@ -159,7 +163,7 @@ function illegalitemsb(object) {
         // Check if data exceeds vanilla data
         if (salvageable[item.id] && uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
             // Reset item to data type of 0
-            if (!config.modules.illegalLores.enabled) {
+            if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount).setLore([loreData]));
@@ -172,7 +176,7 @@ function illegalitemsb(object) {
             return;
         } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
             // Reset item to data type of equal data if they do not match
-            if (!config.modules.illegalLores.enabled) {
+            if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data).setLore([loreData]));
@@ -185,7 +189,7 @@ function illegalitemsb(object) {
             return;
         } else if (salvageable[item.id]) {
             // Reset item to data type of equal data because we take no chances
-            if (!config.modules.illegalLores.enabled) {
+            if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data).setLore([loreData]));
@@ -224,7 +228,7 @@ function illegalitemsb(object) {
         }
     }
     // Check items for illegal lores
-    if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
+    if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
         cancel = true;
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));

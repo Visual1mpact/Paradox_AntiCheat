@@ -111,6 +111,9 @@ function registry(data) {
 
     // Define properties for rcbr
     property.defineBoolean('rcbr_b');
+
+    // Define properties for illegallores
+    property.defineBoolean('illegallores_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -315,6 +318,12 @@ function registry(data) {
     let rcbr_b = World.getDynamicProperty('rcbr_b');
     if (rcbr_b === undefined) {
         World.setDynamicProperty('rcbr_b', config.modules.rbcr.enabled);
+    }
+
+    // Set properties for illegallores
+    let illegallores_b = World.getDynamicProperty('illegallores_b');
+    if (illegallores_b === undefined) {
+        World.setDynamicProperty('illegallores_b', config.modules.illegalLores.enabled);
     }
 }
 
