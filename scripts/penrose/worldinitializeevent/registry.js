@@ -120,6 +120,9 @@ function registry(data) {
 
     // Define properties for lockdown
     property.defineBoolean('lockdown_b');
+
+    // Define properties for antishulker
+    property.defineBoolean('antishulker_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -342,6 +345,12 @@ function registry(data) {
     let lockdown_b = World.getDynamicProperty('lockdown_b');
     if (lockdown_b === undefined) {
         World.setDynamicProperty('lockdown_b', config.modules.lockDown.enabled);
+    }
+
+    // Set properties for antishulker
+    let antishulker_b = World.getDynamicProperty('antishulker_b');
+    if (antishulker_b === undefined) {
+        World.setDynamicProperty('antishulker_b', config.modules.antishulker.enabled);
     }
 }
 

@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function antishulkerHelp(player, prefix) {
+const World = world;
+
+function antishulkerHelp(player, prefix, antiShulkerBoolean) {
     let commandStatus;
     if (!config.customcommands.antishulker) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function antishulkerHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.antishulker.enabled) {
+    if (antiShulkerBoolean) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,23 +52,29 @@ export function antishulker(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    if (antiShulkerBoolean === undefined) {
+        antiShulkerBoolean = config.modules.antishulker.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antishulker) {
-        return antishulkerHelp(player, prefix);
+        return antishulkerHelp(player, prefix, antiShulkerBoolean);
     }
 
-    if (config.modules.antishulker.enabled === false) {
+    if (antiShulkerBoolean === false) {
         // Allow
-        config.modules.antishulker.enabled = true;
+        World.setDynamicProperty('antishulker_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti-Shulkers§r!"}]}`);
         return;
-    } else if (config.modules.antishulker.enabled === true) {
+    } else if (antiShulkerBoolean === true) {
         // Deny
-        config.modules.antishulker.enabled = false;
+        World.setDynamicProperty('antishulker_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti-Shulkers§r!"}]}`);
         return;
     }
