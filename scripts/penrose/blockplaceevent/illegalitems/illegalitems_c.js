@@ -92,7 +92,7 @@ function illegalitemsc(object) {
         return;
     }
     // Check if place item is salvageable
-    if (!illegalitems.includes(block.id)) {
+    if (salvageable[block.id]) {
         // Block from specified location
         let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
         // Get a copy of this blocks permutation
