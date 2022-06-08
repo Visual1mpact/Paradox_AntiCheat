@@ -1,6 +1,9 @@
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";
+
+const World = world;
 
 /**
  * @name help
