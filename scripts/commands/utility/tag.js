@@ -4,7 +4,7 @@ import { disabler, tagRank, resetTag, getPrefix, crypto } from "../../util.js";
 
 const World = world;
 
-function tagHelp(player, prefix) {
+function tagHelp(player, prefix, chatRanksBoolean) {
     let commandStatus;
     if (!config.customcommands.tag || !config.customcommands.chatranks) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +12,7 @@ function tagHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.chatranks.enabled || !config.customcommands.chatranks) {
+    if (chatRanksBoolean === false || !config.customcommands.chatranks) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -55,13 +55,19 @@ export function tag(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+    if (chatRanksBoolean === undefined) {
+        chatRanksBoolean = config.modules.chatranks.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !config.modules.chatranks.enabled || !config.customcommands.chatranks) {
-        return tagHelp(player, prefix);
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
+        return tagHelp(player, prefix, chatRanksBoolean);
     }
 
     // try to find the player requested

@@ -97,6 +97,7 @@ function modulesHelp(player, prefix) {
     let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
     let lockdownBoolean = World.getDynamicProperty('lockdown_b');
     let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -343,7 +344,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r XrayA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.chatranks.enabled) {
+    if (chatRanksBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chat Ranks is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chat Ranks is currently §4DISABLED"}]}`);

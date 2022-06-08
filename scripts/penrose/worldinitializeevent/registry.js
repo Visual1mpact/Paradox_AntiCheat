@@ -123,6 +123,9 @@ function registry(data) {
 
     // Define properties for antishulker
     property.defineBoolean('antishulker_b');
+
+    // Define properties for chatranks
+    property.defineBoolean('chatranks_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -351,6 +354,12 @@ function registry(data) {
     let antishulker_b = World.getDynamicProperty('antishulker_b');
     if (antishulker_b === undefined) {
         World.setDynamicProperty('antishulker_b', config.modules.antishulker.enabled);
+    }
+
+    // Set properties for chatranks
+    let chatranks_b = World.getDynamicProperty('chatranks_b');
+    if (chatranks_b === undefined) {
+        World.setDynamicProperty('chatranks_b', config.modules.chatranks.enabled);
     }
 }
 
