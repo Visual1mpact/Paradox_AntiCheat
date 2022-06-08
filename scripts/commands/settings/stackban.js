@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function stackBanHelp(player, prefix) {
+const World = world;
+
+function stackBanHelp(player, prefix, stackBanBoolean) {
     let commandStatus;
     if (!config.customcommands.stackban) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function stackBanHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.stackBan.enabled) {
+    if (stackBanBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,33 +52,51 @@ export function stackban(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let stackBanBoolean = World.getDynamicProperty('stackban_b');
+    if (stackBanBoolean === undefined) {
+        stackBanBoolean = config.modules.stackBan.enabled;
+    }
+    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
+    if (illegalItemsABoolean === undefined) {
+        illegalItemsABoolean = config.modules.illegalitemsA.enabled;
+    }
+    let illegalItemsBBoolean = World.getDynamicProperty('illegalitemsb_b');
+    if (illegalItemsBBoolean === undefined) {
+        illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
+    }
+    let illegalItemsCBoolean = World.getDynamicProperty('illegalitemsc_b');
+    if (illegalItemsCBoolean === undefined) {
+        illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.stackban) {
-        return stackBanHelp(player, prefix);
+        return stackBanHelp(player, prefix, stackBanBoolean);
     }
 
-    if (!config.modules.illegalitemsA.enabled && !config.modules.illegalitemsB.enabled && !config.modules.illegalitemsC.enabled) {
-        if (config.modules.stackBan.enabled) {
+    if (!illegalItemsABoolean && !illegalItemsBBoolean && !illegalItemsCBoolean) {
+        if (stackBanBoolean) {
             // In this stage they are likely turning it off so oblige their request
-            return config.modules.stackBan.enabled = false;
+            return World.setDynamicProperty('stackban_b', false);
         }
         // If illegal items are not enabled then let user know this feature is inaccessible
         // It will not work without one of them
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Illegal Items to use this feature."}]}`);
     }
 
-    if (config.modules.stackBan.enabled === false) {
+    if (stackBanBoolean === false) {
         // Allow
-        config.modules.stackBan.enabled = true;
+        World.setDynamicProperty('stackban_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6StackBans§r!"}]}`);
         return;
-    } else if (config.modules.stackBan.enabled === true) {
+    } else if (stackBanBoolean === true) {
         // Deny
-        config.modules.stackBan.enabled = false;
+        World.setDynamicProperty('stackban_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4StackBans§r!"}]}`);
         return;
     }
