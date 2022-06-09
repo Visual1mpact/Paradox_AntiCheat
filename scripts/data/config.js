@@ -240,27 +240,22 @@ export default
             "enabled": false
         },
         /**
-         * This is used to encrypt your OP tag which will provide you with
-         * permissions to use Paradox with the Gametest API. This is required!
-         * The salt is used to hash information which provides additional security.
-         * This salt will be applied to your op tag that you will specify below!
+         * Add a password in-between the quotes.
          * 
-         * Your salt should be as random as possible. Spam the keyboard.
+         * Example:
+         * "password": "test"
          * 
-         * optag is essentially equivalent to paradoxOpped but here you can specify
-         * what you want it to be. It can be something specific or it can be random.
+         * Remember this password as it will be required to gain permission to use Paradox as Staff.
          * 
-         * password will be needed to run the op command a second time to use gametest features.
-         * !op password
+         * Example:
+         * !op test
          * 
-         * Once again, these are required!
+         * After you gain permissions you can give others op in a normal fashion.
          * 
-         * Make sure you put the hash and optag inside the quotes. Do not delete the quotes.
+         * Example:
+         * !op gamertag
          * 
-         * Example (Do not use these):
-         *   "salt": "asughu373474387g8ureiugrgweog387"
-         *   "optag": "E=MC2"
-         *   "password": "paradoxOpped"
+         * Change your password frequently and only share with trusted sources.
          */
         "encryption": {
             "password": ""
