@@ -53,8 +53,15 @@ export function nonstaffhelp(message) {
         delHomeCommand = `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`;
     }
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // Non staff commands
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Non-Staff Commands§6]§r
 ${reportCommand}

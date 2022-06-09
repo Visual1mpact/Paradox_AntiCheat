@@ -1,4 +1,4 @@
-import { BlockLocation, EntityQueryOptions, Location, world } from "mojang-minecraft";
+import { BlockLocation, Location, world } from "mojang-minecraft";
 import { crypto, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
@@ -38,9 +38,17 @@ const worldborder = () => {
         World.events.tick.unsubscribe(worldborder);
         return;
     }
-    let excludeStaff = new EntityQueryOptions();
-    excludeStaff.excludeTags = ['Hash:' + crypto];
-    for (let player of World.getPlayers(excludeStaff)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         // What is it currently set to
         let borderSize = worldBorderNumber;
         // Make sure it's not a negative

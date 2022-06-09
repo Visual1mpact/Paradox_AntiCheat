@@ -263,8 +263,6 @@ export default
          *   "password": "paradoxOpped"
          */
         "encryption": {
-            "salt": "",
-            "optag": "",
             "password": ""
         }
     }

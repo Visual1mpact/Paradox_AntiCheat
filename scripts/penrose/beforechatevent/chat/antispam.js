@@ -27,9 +27,15 @@ function antispam(msg) {
     let player = msg.sender;
     let message = msg.message;
 
-    let tag = player.hasTag('Hash:' + crypto);
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
 
-    if (!tag) {
+    if (hash === undefined || encode !== hash) {
         // Increment
         _player.count++;
 

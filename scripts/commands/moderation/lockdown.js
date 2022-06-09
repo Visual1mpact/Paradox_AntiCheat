@@ -46,9 +46,16 @@ export function lockdown(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -69,19 +76,25 @@ export function lockdown(message, args) {
 
     // If already locked down then unlock the server
     if (lockdownBoolean) {
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
         return World.setDynamicProperty('lockdown_b', false);
     }
 
     // Default reason for locking it down
     let reason = "Under Maintenance! Sorry for the inconvenience.";
-    
-    // Get players that are not Paradox-Opped
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
 
     // Lock it down
-    for (let pl of World.getPlayers(filter)) {
+    for (let pl of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = pl.getDynamicProperty('hash');
+        let salt = pl.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         try {
             // Kick players from server
             pl.runCommand(`lockdown "${disabler(pl.nameTag)}" ${reason}`);
@@ -91,6 +104,6 @@ export function lockdown(message, args) {
         }
     }
     // Shutting it down
-    player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
+    player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
     return World.setDynamicProperty('lockdown_b', true);
 }

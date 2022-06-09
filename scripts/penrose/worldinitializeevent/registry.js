@@ -1,10 +1,13 @@
-import { world, DynamicPropertiesDefinition } from "mojang-minecraft";
+import { world, DynamicPropertiesDefinition, MinecraftEntityTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
 
 const World = world;
 
 function registry(data) {
+    // World instance
     let property = new DynamicPropertiesDefinition();
+    // Entity instance
+    let personal = new DynamicPropertiesDefinition();
 
     /**
      * Define property first
@@ -129,9 +132,18 @@ function registry(data) {
 
     // Define properties for stackban
     property.defineBoolean('stackban_b');
+
+    // Define properties for hash
+    personal.defineString('hash', 200);
+
+    // Define properties for hash
+    personal.defineString('salt', 200);
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
+
+    // Register Defined properties in entity globally
+    data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.player);
 
     // Set properties for world border
     let worldborder_n = World.getDynamicProperty('worldborder_n');
