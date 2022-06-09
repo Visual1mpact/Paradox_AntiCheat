@@ -23,7 +23,7 @@ function salvageHelp(player, prefix, salvageBoolean) {
 §4[§6Module§4]§r: ${moduleStatus}
 §4[§6Usage§4]§r: salvage [optional]
 §4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles new salvage system (Off defaults to old).
+§4[§6Description§4]§r: Toggles new salvage system [Experimental].
 §4[§6Examples§4]§r:
     ${prefix}salvage
     ${prefix}salvage help

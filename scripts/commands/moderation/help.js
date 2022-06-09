@@ -551,7 +551,7 @@ export function help(message) {
 
     let salvageCommand;
     if (config.customcommands.salvage === true) {
-        salvageCommand = `§6${prefix}salvage§r - Toggles new salvage system (Off defaults to old).`;
+        salvageCommand = `§6${prefix}salvage§r - Toggles new salvage system [Experimental].`;
     } else if (config.customcommands.salvage === false) {
         salvageCommand = `§6${prefix}salvage§r - Command §4DISABLED§r.`;
     }
