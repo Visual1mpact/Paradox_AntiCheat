@@ -98,8 +98,12 @@ function illegalitemsc(object) {
         } catch (error) {}
         return;
     }
+    let ignoreContainerPlace = [
+    'minecraft:chest',
+    'minecraft:trapped_chest'
+    ]
     // Check if place item is salvageable
-    if (salvageable[block.id]) {
+    if (salvageable[block.id] && !ignoreContainerPlace.includes(block.id)) {
         // Block from specified location
         let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
         // Get a copy of this blocks permutation
