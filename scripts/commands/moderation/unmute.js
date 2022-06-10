@@ -41,8 +41,15 @@ export function unmute(message, args) {
     let player = message.sender;
     let reason = args.slice(1).join(" ") || "No reason specified";
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -83,5 +90,5 @@ export function unmute(message, args) {
         player.runCommand(`ability "${disabler(member.nameTag)}" mute false`);
     } catch (error) {}
     player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have been unmuted."}]}`);
-    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has unmuted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has unmuted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
 }

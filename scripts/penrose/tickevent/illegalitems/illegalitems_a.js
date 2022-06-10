@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, EntityQueryOptions, Enchantment } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { crypto, disabler, flag, titleCase, toCamelCase } from "../../../util.js";
@@ -38,16 +38,43 @@ function illegalitemsa() {
     if (illegalItemsABoolean === undefined) {
         illegalItemsABoolean = config.modules.illegalitemsA.enabled;
     }
+    let salvageBoolean = World.getDynamicProperty('salvage_b');
+    if (salvageBoolean === undefined) {
+        salvageBoolean = config.modules.salvage.enabled;
+    }
+    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
+    if (illegalLoresBoolean === undefined) {
+        illegalLoresBoolean = config.modules.illegalLores.enabled;
+    }
+    let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
+    if (illegalEnchantmentBoolean === undefined) {
+        illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
+    }
+    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    if (antiShulkerBoolean === undefined) {
+        antiShulkerBoolean = config.modules.antishulker.enabled;
+    }
+    let stackBanBoolean = World.getDynamicProperty('stackban_b');
+    if (stackBanBoolean === undefined) {
+        stackBanBoolean = config.modules.stackBan.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
         World.events.tick.unsubscribe(illegalitemsa);
         return;
     }
 
-    // Used to contain data about Lores
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         let inventory = player.getComponent('minecraft:inventory').container;
         for (let i = 0; i < inventory.size; i++) {
             let inventory_item = inventory.getItem(i);
@@ -56,7 +83,7 @@ function illegalitemsa() {
             }
             // If shulker boxes are not allowed in the server then we handle this here
             // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-            if (config.modules.antishulker.enabled && inventory_item.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && inventory_item.id === "minecraft:undyed_shulker_box") {
+            if (antiShulkerBoolean && inventory_item.id === "minecraft:shulker_box" || antiShulkerBoolean && inventory_item.id === "minecraft:undyed_shulker_box") {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
@@ -68,7 +95,7 @@ function illegalitemsa() {
                 continue;
             }
 
-            if (config.modules.salvage.enabled && !whitelist.includes(inventory_item.id)) {
+            if (salvageBoolean && !whitelist.includes(inventory_item.id)) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
@@ -125,12 +152,12 @@ function illegalitemsa() {
                         new_ench_comp.enchantments = new_ench_data;
                     }
                     // Restore enchanted item
-                    if (!config.modules.illegalLores.enabled) {
+                    if (!illegalLoresBoolean) {
                         let loreData = inventory_item.getLore();
                         try {
                             inventory.setItem(i, actualItemName.setLore([loreData]));
                         } catch (error) {}
-                    } else if (config.modules.illegalLores.enabled) {
+                    } else if (illegalLoresBoolean) {
                         try {
                             inventory.setItem(i, actualItemName);
                         } catch (error) {}
@@ -149,7 +176,7 @@ function illegalitemsa() {
                 // Check if data exceeds vanilla data
                 if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
                     // Reset item to data type of 0
-                    if (!config.modules.illegalLores.enabled) {
+                    if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
                             inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount).setLore([loreData]));
@@ -161,7 +188,7 @@ function illegalitemsa() {
                     } catch (error) {}
                     continue;
                 } else if (salvageable[inventory_item.id] && salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
-                    if (!config.modules.illegalLores.enabled) {
+                    if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
                             inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data).setLore([loreData]));
@@ -174,7 +201,7 @@ function illegalitemsa() {
                     } catch (error) {}
                     continue;
                 } else if (salvageable[inventory_item.id]) {
-                    if (!config.modules.illegalLores.enabled) {
+                    if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
                             inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data).setLore([loreData]));
@@ -208,7 +235,7 @@ function illegalitemsa() {
                     player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
                 } catch (error) {}
                 player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
-                if (config.modules.stackBan.enabled) {
+                if (stackBanBoolean) {
                     // Ban
                     return rip(player, inventory_item);
                 }
@@ -218,7 +245,7 @@ function illegalitemsa() {
                 continue;
             }
             // Check items for illegal lores
-            if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
+            if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
@@ -229,7 +256,7 @@ function illegalitemsa() {
                 player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Items with illegal Lores are not allowed!"}]}`);
                 continue;
             }
-            if (config.modules.illegalEnchantment.enabled) {
+            if (illegalEnchantmentBoolean) {
                 // We get a list of enchantments on this item
                 let item_enchants = inventory_item.getComponent("minecraft:enchantments").enchantments;
                 // List of allowed enchantments on item

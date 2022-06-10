@@ -130,7 +130,7 @@ export function gohome(message, args) {
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || player.hasTag('Hash:' + crypto)) {
             player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" teleport 25`);
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome back ${disabler(player.nameTag)}!"}]}`);
-            player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, player.bodyRotation);
+            player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value
             cooldownTimer.delete(disabler(player.nameTag));
             // Create new key and value with current time in milliseconds

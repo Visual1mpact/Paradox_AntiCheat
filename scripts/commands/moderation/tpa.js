@@ -40,8 +40,15 @@ export function tpa(message, args) {
 
     let player = message.sender;
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // Make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -87,7 +94,7 @@ export function tpa(message, args) {
     }
 
     // Let's teleport you to that player
-    player.teleport(new Location(member.location.x, member.location.y, member.location.z), World.getDimension(currentDimension), 0, player.bodyRotation);
+    player.teleport(new Location(member.location.x, member.location.y, member.location.z), World.getDimension(currentDimension), 0, 0);
 
     // Let you know that you have been teleported
     player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been teleported to ${disabler(member.nameTag)}."}]}`);

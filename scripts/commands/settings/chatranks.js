@@ -2,7 +2,9 @@ import { crypto, disabler, getPrefix, tagRank } from "../../util.js";
 import config from "../../data/config.js";
 import { world, Location } from "mojang-minecraft";
 
-function chatRanksHelp(player, prefix) {
+const World = world;
+
+function chatRanksHelp(player, prefix, chatRanksBoolean) {
     let commandStatus;
     if (!config.customcommands.chatranks) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -10,7 +12,7 @@ function chatRanksHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.chatranks.enabled) {
+    if (chatRanksBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -42,12 +44,23 @@ export function chatranks(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Get Dynamic Property Boolean
+    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+    if (chatRanksBoolean === undefined) {
+        chatRanksBoolean = config.modules.chatranks.enabled;
     }
 
     // Check for custom prefix
@@ -56,36 +69,36 @@ export function chatranks(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.chatranks) {
-        return chatRanksHelp(player, prefix);
+        return chatRanksHelp(player, prefix, chatRanksBoolean);
     }
 
-    if (config.modules.chatranks.enabled === false) {
+    if (chatRanksBoolean === false) {
         // Allow
-        config.modules.chatranks.enabled = true;
+        World.setDynamicProperty('chatranks_b', true);
         /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
             Restore their custom nametag
             tagRank(pl);
             This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
         }
         */
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ChatRanks§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ChatRanks§r!"}]}`);
         return;
-    } else if (config.modules.chatranks.enabled === true) {
+    } else if (chatRanksBoolean === true) {
         // Deny
-        config.modules.chatranks.enabled = false;
+        World.setDynamicProperty('chatranks_b', false);
         /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
             Reset their nametag to its original name
             pl.nameTag = pl.name;
             This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
         }
         */
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ChatRanks§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ChatRanks§r!"}]}`);
         return;
     }
 }

@@ -7,7 +7,7 @@ function hotbar() {
     // Get Dynamic Property
     let hotbarBoolean = World.getDynamicProperty('hotbar_b');
     if (hotbarBoolean === undefined) {
-        hotbarBoolean = config.modules.hotbarBoolean.enabled;
+        hotbarBoolean = config.modules.hotbar.enabled;
     }
     // Unsubscribe if disabled in-game
     if (hotbarBoolean === false) {

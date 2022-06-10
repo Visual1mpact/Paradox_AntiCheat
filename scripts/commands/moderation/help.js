@@ -1,6 +1,9 @@
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";
+
+const World = world;
 
 /**
  * @name help
@@ -21,7 +24,14 @@ export function help(message) {
     
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
-    if (!player.hasTag('Hash:' + crypto)) {
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+    if (hash === undefined || encode !== hash) {
         return nonstaffhelp(message);
     }
 
@@ -435,10 +445,15 @@ export function help(message) {
 
     let chatrank0;
     let chatrank1;
-    if (config.modules.chatranks.enabled === true) {
+    // Get Dynamic Property Boolean
+    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+    if (chatRanksBoolean === undefined) {
+        chatRanksBoolean = config.modules.chatranks.enabled;
+    }
+    if (chatRanksBoolean === true) {
         chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Add ranks to username.`;
         chatrank1 = `§6${prefix}tag <username> reset§r - Remove rank to username.`;
-    } else if (config.modules.chatranks.enabled === false) {
+    } else if (chatRanksBoolean === false) {
         chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Command §4DISABLED§r.`;
         chatrank1 = `§6${prefix}tag <username> reset§r - Command §4DISABLED§r.`;
     }
@@ -536,9 +551,16 @@ export function help(message) {
 
     let salvageCommand;
     if (config.customcommands.salvage === true) {
-        salvageCommand = `§6${prefix}salvage§r - Toggles new salvage system (Off defaults to old).`;
+        salvageCommand = `§6${prefix}salvage§r - Toggles new salvage system [Experimental].`;
     } else if (config.customcommands.salvage === false) {
         salvageCommand = `§6${prefix}salvage§r - Command §4DISABLED§r.`;
+    }
+
+    let badPackets2Command;
+    if (config.customcommands.badpackets2 === true) {
+        badPackets2Command = `§6${prefix}badpackets2§r - Toggles checks for invalid selected slots by player.`;
+    } else if (config.customcommands.badpackets2 === false) {
+        badPackets2Command = `§6${prefix}badpackets2§r - Command §4DISABLED§r.`;
     }
 
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
@@ -607,6 +629,7 @@ ${antiTeleportCommand}
 ${rbcrCommand}
 ${opsCommand}
 ${salvageCommand}
+${badPackets2Command}
 
 §l§6[§4Tools and Utilites§6]§r
 ${auracheckCommand}

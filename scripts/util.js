@@ -42,9 +42,9 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
     }
 
     if (shouldTP && check !== "Crasher") {
-        player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, player.bodyRotation);
+        player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
     } else if (shouldTP && check === "Crasher") {
-        player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, player.bodyRotation);
+        player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, 0);
     }
 
     try {
@@ -163,7 +163,7 @@ export function tagRank(player) {
     player.nameTag = nametag;
     const dimension = player.dimension;
     // This refreshes the nameTag in the World
-    player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, player.bodyRotation);
+    player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, 0);
 }
 
 /**
@@ -178,7 +178,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
 }
 
 /**
@@ -253,11 +253,11 @@ export const titleCase = (s) =>
 const { encryption } = config.modules;
 
 /**
- * @name crypt
+ * @name crypto
  * @param {string} salt - Hashes information
  * @param {string} text - String to be hashed
  */
-export const crypt = (salt = encryption.salt, text = encryption.optag) => {
+ export const crypto = (salt, text) => {
     const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
     const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
     const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
@@ -268,15 +268,4 @@ export const crypt = (salt = encryption.salt, text = encryption.optag) => {
         .map(applySaltToChar)
         .map(byteHex)
         .join("");
-};
-
-
-let cache = {
-    optag: encryption.optag,
-    salt: encryption.salt,
-    crypto: crypt()
-};
-
-export const crypto = {
-    [Symbol.toPrimitive]: () => encryption.salt == cache.salt && encryption.optag == cache.optag ? cache.crypto : ( cache.salt = encryption.salt, cache.optag = encryption.optag, cache.crypto = crypt() )
-};
+}

@@ -1,4 +1,4 @@
-import { EntityQueryOptions, world, BlockLocation, Location } from "mojang-minecraft";
+import { world, BlockLocation, Location } from "mojang-minecraft";
 import { crypto, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
 
@@ -15,10 +15,18 @@ function antiteleport() {
         World.events.tick.unsubscribe(antiteleport);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // Check players who are not Opped
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         // player position that counts 20 ticks /per second
         let {x, y, z} = player.location;
 
@@ -74,7 +82,7 @@ function antiteleport() {
                 teleportScore = getScore('teleport', player);
                 if (teleportScore === 0) {
                     player.runCommand(`scoreboard players add @s tpvl 1`);
-                    player.teleport(new Location(xScore, yScore, zScore), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(xScore, yScore, zScore), player.dimension, 0, 0);
                     try {
                         player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(Movement) §4Teleport/A. VL= "},{"score":{"name":"@s","objective":"tpvl"}}]}`);
                     } catch (e) {}
