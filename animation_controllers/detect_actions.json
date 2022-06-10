@@ -1335,28 +1335,6 @@
 					]
 				}
 			}
-		},
-		"controller.animation.climb": {
-			"states": {
-				"default": {
-					"transitions": [{
-						"sleep": "query.is_climbing"
-					}],
-					"on_entry": [
-						"/tag @s remove climbing",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6CLIMB§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"
-					]
-				},
-				"sleep": {
-					"transitions": [{
-						"default": "!query.is_climbing"
-					}],
-					"on_entry": [
-						"/tag @s add climbing",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6CLIMB§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"
-					]
-				}
-			}
 		}
 	}
 }
