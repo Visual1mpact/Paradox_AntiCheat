@@ -1,4 +1,5 @@
 import { world } from 'mojang-minecraft'
+import getStack from './stack.js'
 
 for (const k in world.events) {
     const evSignal = world.events[k],
@@ -8,11 +9,11 @@ for (const k in world.events) {
     OSubscribe(() => console.log(`Event ${k} triggered`))
 
     evSignal.subscribe = (fn) => {
-        console.log(`Event ${k} subscribe (${fn.name})\n${Error().stack.replace(/^.*\n?/, '')}`)
+        console.log(`Event ${k} subscribe (${fn.name}) \n${getStack()}`)
         OSubscribe(fn)
     }
     evSignal.unsubscribe = (fn) => {
-        console.log(`Event ${k} unsubscribe (${fn.name})\n${Error().stack.replace(/^.*\n?/, '')}`)
+        console.log(`Event ${k} unsubscribe (${fn.name}) \n${getStack()}`)
         OUnsubscribe(fn)
     }
 }
