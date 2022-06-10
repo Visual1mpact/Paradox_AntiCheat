@@ -1,10 +1,13 @@
-import { world, DynamicPropertiesDefinition } from "mojang-minecraft";
+import { world, DynamicPropertiesDefinition, MinecraftEntityTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
 
 const World = world;
 
 function registry(data) {
+    // World instance
     let property = new DynamicPropertiesDefinition();
+    // Entity instance
+    let personal = new DynamicPropertiesDefinition();
 
     /**
      * Define property first
@@ -90,9 +93,60 @@ function registry(data) {
 
     // Define properties for illegalitemsb
     property.defineBoolean('illegalitemsb_b');
+
+    // Define properties for spammerd
+    property.defineBoolean('spammerd_b');
+
+    // Define properties for spammerc
+    property.defineBoolean('spammerc_b');
+
+    // Define properties for spammerb
+    property.defineBoolean('spammerb_b');
+
+    // Define properties for spammera
+    property.defineBoolean('spammera_b');
+
+    // Define properties for badpackets1
+    property.defineBoolean('badpackets1_b');
+
+    // Define properties for salvage
+    property.defineBoolean('salvage_b');
+
+    // Define properties for rcbr
+    property.defineBoolean('rcbr_b');
+
+    // Define properties for illegallores
+    property.defineBoolean('illegallores_b');
+
+    // Define properties for illegalenchantment
+    property.defineBoolean('illegalenchantment_b');
+
+    // Define properties for lockdown
+    property.defineBoolean('lockdown_b');
+
+    // Define properties for antishulker
+    property.defineBoolean('antishulker_b');
+
+    // Define properties for chatranks
+    property.defineBoolean('chatranks_b');
+
+    // Define properties for stackban
+    property.defineBoolean('stackban_b');
+
+    // Define properties for badpackets2
+    property.defineBoolean('badpackets2_b');
+
+    // Define properties for hash
+    personal.defineString('hash', 200);
+
+    // Define properties for hash
+    personal.defineString('salt', 200);
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
+
+    // Register Defined properties in entity globally
+    data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.player);
 
     // Set properties for world border
     let worldborder_n = World.getDynamicProperty('worldborder_n');
@@ -252,6 +306,90 @@ function registry(data) {
     let illegalitemsb_b = World.getDynamicProperty('illegalitemsb_b');
     if (illegalitemsb_b === undefined) {
         World.setDynamicProperty('illegalitemsb_b', config.modules.illegalitemsB.enabled);
+    }
+
+    // Set properties for spammerd
+    let spammerd_b = World.getDynamicProperty('spammerd_b');
+    if (spammerd_b === undefined) {
+        World.setDynamicProperty('spammerd_b', config.modules.spammerD.enabled);
+    }
+
+    // Set properties for spammerc
+    let spammerc_b = World.getDynamicProperty('spammerc_b');
+    if (spammerc_b === undefined) {
+        World.setDynamicProperty('spammerc_b', config.modules.spammerC.enabled);
+    }
+
+    // Set properties for spammerb
+    let spammerb_b = World.getDynamicProperty('spammerb_b');
+    if (spammerb_b === undefined) {
+        World.setDynamicProperty('spammerb_b', config.modules.spammerB.enabled);
+    }
+
+    // Set properties for spammera
+    let spammera_b = World.getDynamicProperty('spammera_b');
+    if (spammera_b === undefined) {
+        World.setDynamicProperty('spammera_b', config.modules.spammerA.enabled);
+    }
+
+    // Set properties for badpackets1
+    let badpackets1_b = World.getDynamicProperty('badpackets1_b');
+    if (badpackets1_b === undefined) {
+        World.setDynamicProperty('badpackets1_b', config.modules.badpackets1.enabled);
+    }
+
+    // Set properties for salvage
+    let salvage_b = World.getDynamicProperty('salvage_b');
+    if (salvage_b === undefined) {
+        World.setDynamicProperty('salvage_b', config.modules.salvage.enabled);
+    }
+
+    // Set properties for rcbr
+    let rcbr_b = World.getDynamicProperty('rcbr_b');
+    if (rcbr_b === undefined) {
+        World.setDynamicProperty('rcbr_b', config.modules.rbcr.enabled);
+    }
+
+    // Set properties for illegallores
+    let illegallores_b = World.getDynamicProperty('illegallores_b');
+    if (illegallores_b === undefined) {
+        World.setDynamicProperty('illegallores_b', config.modules.illegalLores.enabled);
+    }
+
+    // Set properties for illegalenchantment
+    let illegalenchantment_b = World.getDynamicProperty('illegalenchantment_b');
+    if (illegalenchantment_b === undefined) {
+        World.setDynamicProperty('illegalenchantment_b', config.modules.illegalEnchantment.enabled);
+    }
+
+    // Set properties for lockdown
+    let lockdown_b = World.getDynamicProperty('lockdown_b');
+    if (lockdown_b === undefined) {
+        World.setDynamicProperty('lockdown_b', config.modules.lockDown.enabled);
+    }
+
+    // Set properties for antishulker
+    let antishulker_b = World.getDynamicProperty('antishulker_b');
+    if (antishulker_b === undefined) {
+        World.setDynamicProperty('antishulker_b', config.modules.antishulker.enabled);
+    }
+
+    // Set properties for chatranks
+    let chatranks_b = World.getDynamicProperty('chatranks_b');
+    if (chatranks_b === undefined) {
+        World.setDynamicProperty('chatranks_b', config.modules.chatranks.enabled);
+    }
+
+    // Set properties for stackban
+    let stackban_b = World.getDynamicProperty('stackban_b');
+    if (stackban_b === undefined) {
+        World.setDynamicProperty('stackban_b', config.modules.stackBan.enabled);
+    }
+
+    // Set properties for stackban
+    let badpackets2_b = World.getDynamicProperty('badpackets2_b');
+    if (badpackets2_b === undefined) {
+        World.setDynamicProperty('badpackets2_b', config.modules.badpackets2.enabled);
     }
 }
 

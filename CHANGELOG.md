@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.17.50](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.17.50) (2022-06-10)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.17.49...v2.17.50)
+
+## [v2.17.49](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.17.49) (2022-06-10)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.16.48...v2.17.49)
+
+**Closed issues:**
+
+- Anti cheat doesn't work on 1.18 versions  [\#27](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/27)
+
 ## [v2.16.48](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.16.48) (2022-06-03)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.15.47...v2.16.48)

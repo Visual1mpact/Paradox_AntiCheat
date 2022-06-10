@@ -11,12 +11,17 @@ const tickEventCallback = World.events.tick;
 let player;
 
 function onJoinTime() {
+    // Get Dynamic Property
+    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
+    if (lockdownBoolean === undefined) {
+        lockdownBoolean = config.modules.lockDown.enabled;
+    }
     try {
         // Loop until player is detected in the world
         player.runCommand(`testfor @a[name=${disabler(player.nameTag)}]`);
 
         // Lock down the server if enabled
-        if (config.modules.lockDown.enabled) {
+        if (lockdownBoolean) {
             let reason = "Under Maintenance! Sorry for the inconvenience.";
             try {
                 // Kick players from server
@@ -40,12 +45,6 @@ function onJoinTime() {
         getPrefix(player);
         player.check = true;
 
-        // Let's verify if this is enabled globally
-        let worldborder = getScore('worldborder', player);
-        // Disable worldborder for this player if not active
-        if (worldborder <= 0) {
-            config.modules.worldBorder.enabled = false;
-        }
     } catch (error) {}
     if (player.check) {
         player.check = false;

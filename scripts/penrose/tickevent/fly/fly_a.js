@@ -22,9 +22,18 @@ function flya() {
     // Exclude creative gamemode
     let gm = new EntityQueryOptions();
     gm.excludeGameModes = [1];
-    gm.excludeTags = ['Hash:' + crypto];
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
 
         let test = getScore("fly_timer", player);
 
@@ -65,7 +74,7 @@ function flya() {
                         // Use try/catch since variables for cords could return undefined if player is loading in
                         // and they meet the conditions. An example is them flagging this, logging off, then logging
                         // back on again.
-                        player.teleport(new Location(oldX, oldY, oldZ), player.dimension, 0, player.bodyRotation);
+                        player.teleport(new Location(oldX, oldY, oldZ), player.dimension, 0, 0);
                     } catch (error) {}
                     flag(player, "Fly", "A", "Exploit", false, false, false, false, false, false);
                 }

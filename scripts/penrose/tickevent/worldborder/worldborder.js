@@ -1,4 +1,4 @@
-import { BlockLocation, EntityQueryOptions, Location, world } from "mojang-minecraft";
+import { BlockLocation, Location, world } from "mojang-minecraft";
 import { crypto, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
@@ -38,9 +38,17 @@ const worldborder = () => {
         World.events.tick.unsubscribe(worldborder);
         return;
     }
-    let excludeStaff = new EntityQueryOptions();
-    excludeStaff.excludeTags = ['Hash:' + crypto];
-    for (let player of World.getPlayers(excludeStaff)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         // What is it currently set to
         let borderSize = worldBorderNumber;
         // Make sure it's not a negative
@@ -70,16 +78,16 @@ const worldborder = () => {
                 player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§4§lHey!§r You have reached the world border."}]}`);
                 if (x >= borderSize) {
                     let safe = safetyProtocol(player, borderSize - 3, y, z);
-                    player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, 0);
                 } else if (x <= -borderSize) {
                     let safe = safetyProtocol(player, -borderSize + 3, y, z);
-                    player.teleport(new Location(-borderSize + 3, safe, z), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(-borderSize + 3, safe, z), player.dimension, 0, 0);
                 } else if (z >= borderSize){
                     let safe = safetyProtocol(player, x, y, borderSize - 3);
-                    player.teleport(new Location(x, safe, borderSize - 3), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(x, safe, borderSize - 3), player.dimension, 0, 0);
                 } else if (z <= -borderSize) {
                     let safe = safetyProtocol(player, x, y, -borderSize + 3);
-                    player.teleport(new Location(x, safe, -borderSize + 3), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(x, safe, -borderSize + 3), player.dimension, 0, 0);
                 }
             }
         }

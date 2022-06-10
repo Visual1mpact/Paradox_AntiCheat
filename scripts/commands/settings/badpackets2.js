@@ -4,41 +4,41 @@ import { world } from "mojang-minecraft";
 
 const World = world;
 
-function flyaHelp(player, prefix, flyABoolean) {
+function badpackets2Help(player, prefix, badPackets2Boolean) {
     let commandStatus;
-    if (!config.customcommands.flya) {
+    if (!config.customcommands.badpackets2) {
         commandStatus = "§6[§4DISABLED§6]§r";
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (flyABoolean === false) {
+    if (badPackets2Boolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: flya
+§4[§6Command§4]§r: badpackets2
 §4[§6Status§4]§r: ${commandStatus}
 §4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: flya [optional]
+§4[§6Usage§4]§r: badpackets2 [optional]
 §4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles checks for illegal flying in survival.
+§4[§6Description§4]§r: Toggles checks for invalid selected slots by player.
 §4[§6Examples§4]§r:
-    ${prefix}flya
-    ${prefix}flya help
+    ${prefix}badpackets2
+    ${prefix}badpackets2 help
 "}]}`);
 }
 
 /**
- * @name flyA
+ * @name badpackets2
  * @param {object} message - Message object
  * @param {array} args - Additional arguments provided (optional).
  */
-export function flyA(message, args) {
+export function badpackets2(message, args) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/flya.js:5)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets2.js:5)");
     }
 
     message.cancel = true;
@@ -58,9 +58,9 @@ export function flyA(message, args) {
     }
 
     // Get Dynamic Property Boolean
-    let flyABoolean = World.getDynamicProperty('flya_b');
-    if (flyABoolean === undefined) {
-        flyABoolean = config.modules.flyA.enabled;
+    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
+    if (badPackets2Boolean === undefined) {
+        badPackets2Boolean = config.modules.badpackets2.enabled;
     }
 
     // Check for custom prefix
@@ -68,19 +68,19 @@ export function flyA(message, args) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.flya) {
-        return flyaHelp(player, prefix, flyABoolean);
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.badpackets2) {
+        return badpackets2Help(player, prefix, badPackets2Boolean);
     }
 
-    if (flyABoolean === false) {
+    if (badPackets2Boolean === false) {
         // Allow
-        World.setDynamicProperty('flya_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6FlyA§r!"}]}`);
+        World.setDynamicProperty('badpackets2_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Badpackets2§r!"}]}`);
         return;
-    } else if (flyABoolean === true) {
+    } else if (badPackets2Boolean === true) {
         // Deny
-        World.setDynamicProperty('flya_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4FlyA§r!"}]}`);
+        World.setDynamicProperty('badpackets2_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Badpackets2§r!"}]}`);
         return;
     }
 }

@@ -78,6 +78,7 @@ import { hotbar } from "./utility/hotbar.js";
 import { rbcr } from "./settings/rbcr.js";
 import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
+import { badpackets2 } from "./settings/badpackets2.js";
 
 /**
  * @name commandHandler
@@ -339,6 +340,9 @@ export function commandHandler(player, message) {
             break;
         case (commandName === "salvage"):
             salvage(message, args);
+            break;
+        case (commandName === "badpackets2"):
+            badpackets2(message, args);
             break;
         default:
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);

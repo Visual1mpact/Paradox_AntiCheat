@@ -1,4 +1,4 @@
-import { world, Location, BlockLocation, EntityQueryOptions } from "mojang-minecraft";
+import { world, Location, BlockLocation } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
@@ -13,7 +13,7 @@ const _player = {
 };
 
 function timer(player, dimension, x, y, z) {
-    player.teleport(new Location(x, y - 2, z), dimension, 0, player.bodyRotation);
+    player.teleport(new Location(x, y - 2, z), dimension, 0, 0);
     _player.count = 0;
 }
 
@@ -28,10 +28,18 @@ function jesusa(){
         World.events.tick.unsubscribe(jesusa);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         const x = Math.floor(player.location.x);
         const y = Math.floor(player.location.y);
         const z = Math.floor(player.location.z);

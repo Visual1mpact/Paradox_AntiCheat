@@ -40,23 +40,30 @@ export function op(message, args) {
 
     let player = message.sender;
 
-    // If this is not defined then prevent access by randomizing the password on each call
-    if (config.modules.encryption.password === "" || config.modules.encryption.optag === "" || config.modules.encryption.salt === "") {
-        config.modules.encryption.password = generateUUID();
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    // If no salt then create one
+    if (salt === undefined && args[0] === config.modules.encryption.password) {
+        player.setDynamicProperty('salt', generateUUID());
+        salt = player.getDynamicProperty('salt');
     }
-    
-    // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto) && args[0] !== config.modules.encryption.password) {
+    // If no hash then create one
+    if (hash === undefined && args[0] === config.modules.encryption.password) {
+        encode = crypto(salt, config.modules.encryption.password);
+        player.setDynamicProperty('hash', encode);
+        hash = player.getDynamicProperty('hash');
+    } else {
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
+    }
+    // Make sure the user has permissions to run the command
+    if (hash === undefined || hash !== encode && args[0] !== config.modules.encryption.password) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    } else if (!player.hasTag('Hash:' + crypto) && args[0] === config.modules.encryption.password) {
-        let getAllTags = player.getTags();
-        // This removes old tag stuff
-        getAllTags.forEach(t => {
-            if(t.startsWith("Hash:")) {
-                player.removeTag(t);
-            }
-        });
-        player.addTag('Hash:' + crypto);
+    } else if (hash === encode && args[0] === config.modules.encryption.password) {
+        // Old stuff that makes up for less than 5% of the project
         return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function op`);
     }
 
@@ -88,13 +95,19 @@ export function op(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    let getTags = member.getTags();
-    // This removes old tag stuff
-    getTags.forEach(t => {
-        if(t.startsWith("Hash:")) {
-            member.removeTag(t);
-        }
-    });
-    member.addTag('Hash:' + crypto);
+    // Check for hash/salt and validate password
+    let memberHash = member.getDynamicProperty('hash');
+    let memberSalt = member.getDynamicProperty('salt');
+    // If no salt then create one
+    if (memberSalt === undefined) {
+        member.setDynamicProperty('salt', generateUUID());
+        memberSalt = member.getDynamicProperty('salt');
+    }
+    // If no hash then create one
+    if (memberHash === undefined) {
+        let encode = crypto(memberSalt, config.modules.encryption.password);
+        member.setDynamicProperty('hash', encode);
+        memberHash = member.getDynamicProperty('hash');
+    }
     return player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function op`);
 }

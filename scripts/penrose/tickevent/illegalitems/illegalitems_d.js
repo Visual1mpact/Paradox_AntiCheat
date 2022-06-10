@@ -10,6 +10,10 @@ function illegalitemsd() {
     if (illegalItemsDBoolean === undefined) {
         illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
     }
+    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    if (antiShulkerBoolean === undefined) {
+        antiShulkerBoolean = config.modules.antishulker.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsDBoolean === false) {
         World.events.tick.unsubscribe(illegalitemsd);
@@ -36,7 +40,7 @@ function illegalitemsd() {
         if (entity.id === "minecraft:item") {
 
             // If shulker boxes are not allowed in the server then we handle this here
-            if (config.modules.antishulker.enabled && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
+            if (antiShulkerBoolean && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
                 entity.kill();
                 continue;
             }
