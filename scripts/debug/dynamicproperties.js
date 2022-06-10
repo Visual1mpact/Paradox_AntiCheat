@@ -53,7 +53,7 @@ const regWld = PropertyRegistry.prototype.registerWorldDynamicProperties
 PropertyRegistry.prototype.registerWorldDynamicProperties = function(def) {
     console.log(`Registering dynamic properties definition to world \n${getStack()}`)
     try {
-        regWld.call(this, def, type)
+        regWld.call(this, def)
     } catch(e) {
         console.warn(`Register dynamic properties definition to world FAILED: \n${e} \n${getStack()}`)
         throw e
