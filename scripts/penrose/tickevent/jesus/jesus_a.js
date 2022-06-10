@@ -13,7 +13,7 @@ const _player = {
 };
 
 function timer(player, dimension, x, y, z) {
-    player.teleport(new Location(x, y - 2, z), dimension, 0, player.bodyRotation);
+    player.teleport(new Location(x, y - 2, z), dimension, 0, 0);
     _player.count = 0;
 }
 

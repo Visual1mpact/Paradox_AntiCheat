@@ -78,16 +78,16 @@ const worldborder = () => {
                 player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§4§lHey!§r You have reached the world border."}]}`);
                 if (x >= borderSize) {
                     let safe = safetyProtocol(player, borderSize - 3, y, z);
-                    player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, 0);
                 } else if (x <= -borderSize) {
                     let safe = safetyProtocol(player, -borderSize + 3, y, z);
-                    player.teleport(new Location(-borderSize + 3, safe, z), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(-borderSize + 3, safe, z), player.dimension, 0, 0);
                 } else if (z >= borderSize){
                     let safe = safetyProtocol(player, x, y, borderSize - 3);
-                    player.teleport(new Location(x, safe, borderSize - 3), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(x, safe, borderSize - 3), player.dimension, 0, 0);
                 } else if (z <= -borderSize) {
                     let safe = safetyProtocol(player, x, y, -borderSize + 3);
-                    player.teleport(new Location(x, safe, -borderSize + 3), player.dimension, 0, player.bodyRotation);
+                    player.teleport(new Location(x, safe, -borderSize + 3), player.dimension, 0, 0);
                 }
             }
         }

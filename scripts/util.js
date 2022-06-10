@@ -42,9 +42,9 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
     }
 
     if (shouldTP && check !== "Crasher") {
-        player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, player.bodyRotation);
+        player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
     } else if (shouldTP && check === "Crasher") {
-        player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, player.bodyRotation);
+        player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, 0);
     }
 
     try {
@@ -163,7 +163,7 @@ export function tagRank(player) {
     player.nameTag = nametag;
     const dimension = player.dimension;
     // This refreshes the nameTag in the World
-    player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, player.bodyRotation);
+    player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, 0);
 }
 
 /**

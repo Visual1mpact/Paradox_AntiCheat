@@ -81,7 +81,7 @@ export function chatranks(message, args) {
             Restore their custom nametag
             tagRank(pl);
             This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
         }
         */
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ChatRanks§r!"}]}`);
@@ -95,7 +95,7 @@ export function chatranks(message, args) {
             Reset their nametag to its original name
             pl.nameTag = pl.name;
             This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, pl.bodyRotation);
+            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
         }
         */
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ChatRanks§r!"}]}`);
