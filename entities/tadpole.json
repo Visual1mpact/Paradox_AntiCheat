@@ -3,8 +3,8 @@
 	"minecraft:entity": {
 		"description": {
 			"identifier": "minecraft:tadpole",
-			"is_spawnable": true,
-			"is_summonable": true,
+			"is_spawnable": false,
+			"is_summonable": false,
 			"is_experimental": false
 		},
 		"component_groups": {
