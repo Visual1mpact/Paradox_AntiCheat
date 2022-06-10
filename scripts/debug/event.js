@@ -6,14 +6,14 @@ for (const k in world.events) {
         OSubscribe = evSignal.subscribe.bind(evSignal),
         OUnsubscribe = evSignal.unsubscribe.bind(evSignal)
 
-    OSubscribe(() => console.log(`Event ${k} triggered`))
+    OSubscribe(() => { if (config.debug) console.log(`Event ${k} triggered`) } )
 
     evSignal.subscribe = (fn) => {
-        console.log(`Event ${k} subscribe (${fn.name}) \n${getStack()}`)
+        if (config.debug) console.log(`Event ${k} subscribe (${fn.name}) \n${getStack()}`)
         OSubscribe(fn)
     }
     evSignal.unsubscribe = (fn) => {
-        console.log(`Event ${k} unsubscribe (${fn.name}) \n${getStack()}`)
+        if (config.debug) console.log(`Event ${k} unsubscribe (${fn.name}) \n${getStack()}`)
         OUnsubscribe(fn)
     }
 }

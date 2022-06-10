@@ -205,30 +205,6 @@ export function generateUUID() {
     });
 }
 
-/** 
- * Extends Player Class to log tags being added or removed
- */
-const { addTag: { value: OAddTag }, removeTag: { value: ORemoveTag } } = Object.getOwnPropertyDescriptors(Player.prototype);
-
-Object.defineProperties(Player.prototype, {
-    addTag: {
-        value: function(t) {
-            if (config.debug) {
-                console.warn(`Tag added to ${this.name}: ${t}\n${Error().stack}`);
-            }
-            return OAddTag.call(this, t);
-        }
-    },
-    removeTag: {
-        value: function(t) {
-            if (config.debug) {
-                console.warn(`Tag removed from ${this.name}: ${t}\n${Error().stack}`);
-            }
-            return ORemoveTag.call(this, t);
-        }
-    },
-});
-
 /**
  * @name toCamelCase
  * @param {string} str - Takes strings and converts to camelCase
