@@ -1,4 +1,5 @@
 import { Dimension, Entity, Player } from 'mojang-minecraft'
+import config from '../data/config.js'
 import getStack from './stack.js'
 
 const DORC = Dimension.prototype.runCommand

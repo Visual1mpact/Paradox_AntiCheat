@@ -1,4 +1,5 @@
 import { world } from 'mojang-minecraft'
+import config from '../data/config.js'
 import getStack from './stack.js'
 
 for (const k in world.events) {

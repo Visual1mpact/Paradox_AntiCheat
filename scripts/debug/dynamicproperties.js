@@ -1,5 +1,6 @@
 import { Entity, Player, World, PropertyRegistry, DynamicPropertiesDefinition, EntityType } from 'mojang-minecraft'
 import getStack from './stack.js'
+import config from '../data/config.js'
 
 for (const v of [ Entity, Player, World ]) {
     const oGet = v.prototype.getDynamicProperty
