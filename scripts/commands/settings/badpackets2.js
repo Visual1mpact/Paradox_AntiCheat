@@ -4,41 +4,41 @@ import { world } from "mojang-minecraft";
 
 const World = world;
 
-function badpackets1Help(player, prefix, badPackets1Boolean) {
+function badpackets2Help(player, prefix, badPackets2Boolean) {
     let commandStatus;
-    if (!config.customcommands.badpackets1) {
+    if (!config.customcommands.badpackets2) {
         commandStatus = "§6[§4DISABLED§6]§r";
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (badPackets1Boolean === false) {
+    if (badPackets2Boolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: badpackets1
+§4[§6Command§4]§r: badpackets2
 §4[§6Status§4]§r: ${commandStatus}
 §4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: badpackets1 [optional]
+§4[§6Usage§4]§r: badpackets2 [optional]
 §4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles checks for message lengths with each broadcast.
+§4[§6Description§4]§r: Toggles checks for invalid selected slots by player.
 §4[§6Examples§4]§r:
-    ${prefix}badpackets1
-    ${prefix}badpackets1 help
+    ${prefix}badpackets2
+    ${prefix}badpackets2 help
 "}]}`);
 }
 
 /**
- * @name badpackets1
+ * @name badpackets2
  * @param {object} message - Message object
  * @param {array} args - Additional arguments provided (optional).
  */
-export function badpackets1(message, args) {
+export function badpackets2(message, args) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets1.js:5)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets2.js:5)");
     }
 
     message.cancel = true;
@@ -58,9 +58,9 @@ export function badpackets1(message, args) {
     }
 
     // Get Dynamic Property Boolean
-    let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
-    if (badPackets1Boolean === undefined) {
-        badPackets1Boolean = config.modules.badpackets1.enabled;
+    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
+    if (badPackets2Boolean === undefined) {
+        badPackets2Boolean = config.modules.badpackets2.enabled;
     }
 
     // Check for custom prefix
@@ -68,19 +68,19 @@ export function badpackets1(message, args) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.badpackets1) {
-        return badpackets1Help(player, prefix, badPackets1Boolean);
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.badpackets2) {
+        return badpackets2Help(player, prefix, badPackets2Boolean);
     }
 
-    if (badPackets1Boolean === false) {
+    if (badPackets2Boolean === false) {
         // Allow
-        World.setDynamicProperty('badpackets1_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Badpackets1§r!"}]}`);
+        World.setDynamicProperty('badpackets2_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Badpackets2§r!"}]}`);
         return;
-    } else if (badPackets1Boolean === true) {
+    } else if (badPackets2Boolean === true) {
         // Deny
-        World.setDynamicProperty('badpackets1_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Badpackets1§r!"}]}`);
+        World.setDynamicProperty('badpackets2_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Badpackets2§r!"}]}`);
         return;
     }
 }

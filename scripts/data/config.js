@@ -78,7 +78,8 @@ export default
         "hotbar": true,
         "rbcr": true,
         "ops": true,
-        "salvage": true
+        "salvage": true,
+        "badpackets2": true
     },
     "modules": {
         "badpackets1": {
@@ -238,6 +239,9 @@ export default
         },
         "salvage": {
             "enabled": false
+        },
+        "badpackets2": {
+            "enabled": true
         },
         /**
          * Add a password in-between the quotes.

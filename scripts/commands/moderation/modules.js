@@ -106,6 +106,7 @@ function modulesHelp(player, prefix) {
     let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
     let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
     let stackBanBoolean = World.getDynamicProperty('stackban_b');
+    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -392,5 +393,11 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Lockdown is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Lockdown is currently §4DISABLED"}]}`);
+    }
+
+    if (badPackets2Boolean) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets2 is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets2 is currently §4DISABLED"}]}`);
     }
 }

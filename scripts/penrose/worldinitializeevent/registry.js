@@ -133,6 +133,9 @@ function registry(data) {
     // Define properties for stackban
     property.defineBoolean('stackban_b');
 
+    // Define properties for badpackets2
+    property.defineBoolean('badpackets2_b');
+
     // Define properties for hash
     personal.defineString('hash', 200);
 
@@ -381,6 +384,12 @@ function registry(data) {
     let stackban_b = World.getDynamicProperty('stackban_b');
     if (stackban_b === undefined) {
         World.setDynamicProperty('stackban_b', config.modules.stackBan.enabled);
+    }
+
+    // Set properties for stackban
+    let badpackets2_b = World.getDynamicProperty('badpackets2_b');
+    if (badpackets2_b === undefined) {
+        World.setDynamicProperty('badpackets2_b', config.modules.badpackets2.enabled);
     }
 }
 

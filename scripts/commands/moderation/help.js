@@ -556,6 +556,13 @@ export function help(message) {
         salvageCommand = `§6${prefix}salvage§r - Command §4DISABLED§r.`;
     }
 
+    let badPackets2Command;
+    if (config.customcommands.badpackets2 === true) {
+        badPackets2Command = `§6${prefix}badpackets2§r - Toggles checks for invalid selected slots by player.`;
+    } else if (config.customcommands.badpackets2 === false) {
+        badPackets2Command = `§6${prefix}badpackets2§r - Command §4DISABLED§r.`;
+    }
+
     return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
 §l§6[§4Paradox AntiCheat Command Help§6]§r
 
@@ -622,6 +629,7 @@ ${antiTeleportCommand}
 ${rbcrCommand}
 ${opsCommand}
 ${salvageCommand}
+${badPackets2Command}
 
 §l§6[§4Tools and Utilites§6]§r
 ${auracheckCommand}
