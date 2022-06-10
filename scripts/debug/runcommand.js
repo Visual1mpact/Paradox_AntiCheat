@@ -9,7 +9,7 @@ for (const v of [ Dimension, Entity, Player ]) {
         console.log(`Run command on ${v.name} (${this.id}): ${cmd} \n${getStack()}`)
         try { return ORC.call(this, cmd) }
         catch(e) {
-            console.warn(`Run command throws error:\nCommand: ${cmd}\nError: ${e} \n${getStack()}`)
+            console.warn(`Run command throws error:\nCommand: ${cmd}\nError: ${e} ${getStack()}`)
             throw e
         }
     }
