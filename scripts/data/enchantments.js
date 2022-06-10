@@ -54,7 +54,8 @@ export const enchantmentSlot = {
         unbreaking: 3,
         mending: 1,
         binding: 1,
-        vanishing: 1
+        vanishing: 1,
+        swiftSneak: 3
     },
     // gArmor
     15: {
@@ -259,6 +260,7 @@ export const enchantmentSlot = {
         multishot: 1,
         piercing: 4,
         quickCharge: 3,
-        soulSpeed: 3
+        soulSpeed: 3,
+        swiftSneak: 3
     }
 };
