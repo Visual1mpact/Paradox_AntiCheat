@@ -122,5 +122,9 @@ export const illegalitems = [
   'minecraft:zombie_villager_spawn_egg',
   'minecraft:phantom_spawn_egg',
   'minecraft:pillager_spawn_egg',
-  'minecraft:ravager_spawn_egg'
+  'minecraft:ravager_spawn_egg',
+  'minecraft:allay_spawn_egg',
+  'minecraft:tadpole_spawn_egg',
+  'minecraft:frog_spawn_egg',
+  'minecraft:warden_spawn_egg'
 ];
