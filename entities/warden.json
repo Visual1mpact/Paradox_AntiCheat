@@ -189,10 +189,12 @@
     },
     "events": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
 				}
-			},
+      },
       "minecraft:spawn_emerging": {
         "add": {
           "component_groups": [

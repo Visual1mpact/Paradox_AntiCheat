@@ -111,10 +111,12 @@
     },
 		"events": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
 				}
-			},
+      },
 			"ageable_grow_up": {
 				"sequence": [
 					{
