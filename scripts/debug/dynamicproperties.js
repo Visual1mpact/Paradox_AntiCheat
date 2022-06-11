@@ -7,7 +7,9 @@ for (const v of [ Entity, Player, World ]) {
     v.prototype.getDynamicProperty = function(id) {
         if (config.debug) console.log(`Getting dynamic property '${id}' of ${this.constructor.name} \n${getStack()}`)
         try {
-            return oGet.call(this, id)
+            const v = oGet.call(this, id)
+            if (config.debug) console.log(`Dynamic property '${id}' of ${this.constructor.name}: '${v}' (${typeof v}) \n${getStack()}`)
+            return v
         } catch(e) {
             if (config.debug) console.warn(`Get dynamic property '${id}' of ${this.constructor.name} FAILED: \n${e} \n${getStack()}`)
             throw e
