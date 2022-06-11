@@ -141,7 +141,7 @@ function nukera(object) {
 }
 
 const NukerA = () => {
-    World.events.blockBreak.subscribe(object => nukera(object));
+    World.events.blockBreak.subscribe(nukera);
 };
 
 export { NukerA };

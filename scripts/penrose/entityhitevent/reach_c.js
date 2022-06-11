@@ -55,7 +55,7 @@ function reachc(object) {
 }
 
 const ReachC = () => {
-    World.events.entityHit.subscribe(object => reachc(object));
+    World.events.entityHit.subscribe(reachc);
 };
 
 export { ReachC };

@@ -47,7 +47,7 @@ function reacha(object) {
 }
 
 const ReachA = () => {
-    World.events.blockPlace.subscribe(object => reacha(object));
+    World.events.blockPlace.subscribe(reacha);
 };
 
 export { ReachA };

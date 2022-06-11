@@ -43,7 +43,7 @@ function xraya(object) {
 }
 
 const XrayA = () => {
-    World.events.blockBreak.subscribe(object => xraya(object));
+    World.events.blockBreak.subscribe(xraya);
 };
 
 export { XrayA };
