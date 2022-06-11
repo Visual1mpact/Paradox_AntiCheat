@@ -38,9 +38,11 @@ const maxLevel = {
     multishot: 1,
     piercing: 4,
     quickCharge: 3,
-    soulSpeed: 3
+    soulSpeed: 3,
+    swiftSneak: 3,
 }
 
+/** @type { <L extends ( keyof typeof maxLevel)[]>(compatibles: L ) => { [K in L[number]]: typeof maxLevel[K] } } */
 const compatibles = (compatibleEnchantments = []) => {
     const obj = Object.create(null)
     for (const ench of compatibleEnchantments) obj[ench] = maxLevel[ench]
@@ -104,6 +106,7 @@ export const enchantmentSlot = {
         'mending',
         'binding',
         'vanishing',
+        'swiftSneak',
     ]),
     // gArmor
     15: compatibles([
@@ -309,5 +312,6 @@ export const enchantmentSlot = {
         'piercing',
         'quickCharge',
         'soulSpeed',
+        'swiftSneak'
     ])
 }
