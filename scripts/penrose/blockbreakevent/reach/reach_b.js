@@ -50,7 +50,7 @@ function reachb(object) {
 }
 
 const ReachB = () => {
-    World.events.blockBreak.subscribe(object => reachb(object));
+    World.events.blockBreak.subscribe(reachb);
 };
 
 export { ReachB };

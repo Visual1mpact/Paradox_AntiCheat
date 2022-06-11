@@ -73,7 +73,7 @@ function scaffolda(object) {
 }
 
 const ScaffoldA = () => {
-    World.events.blockPlace.subscribe(object => scaffolda(object));
+    World.events.blockPlace.subscribe(scaffolda);
 };
 
 export { ScaffoldA };

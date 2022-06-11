@@ -99,7 +99,7 @@ function antispam(msg) {
 }
 
 const AntiSpam = () => {
-    World.events.beforeChat.subscribe(msg => antispam(msg));
+    World.events.beforeChat.subscribe(antispam);
 };
 
 export { AntiSpam, timer };

@@ -371,7 +371,7 @@ function illegalitemsc(object) {
 }
 
 const IllegalItemsC = () => {
-    World.events.blockPlace.subscribe(object => illegalitemsc(object));
+    World.events.blockPlace.subscribe(illegalitemsc);
 };
 
 export { IllegalItemsC };
