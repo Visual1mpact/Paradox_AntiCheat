@@ -307,7 +307,7 @@ function illegalitemsb(object) {
 }
 
 const IllegalItemsB = () => {
-    World.events.beforeItemUseOn.subscribe(object => illegalitemsb(object));
+    World.events.beforeItemUseOn.subscribe(illegalitemsb);
 };
 
 export { IllegalItemsB };

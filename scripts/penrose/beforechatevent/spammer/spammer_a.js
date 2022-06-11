@@ -36,7 +36,7 @@ function spammera(msg) {
 }
 
 const SpammerA = () => {
-    World.events.beforeChat.subscribe(msg => spammera(msg));
+    World.events.beforeChat.subscribe(spammera);
 };
 
 export { SpammerA };

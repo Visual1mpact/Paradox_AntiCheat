@@ -37,7 +37,7 @@ function badpackets1(msg) {
 }
 
 const BadPackets1 = () => {
-    World.events.beforeChat.subscribe(msg => badpackets1(msg));
+    World.events.beforeChat.subscribe(badpackets1);
 };
 
 export { BadPackets1 };
