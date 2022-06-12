@@ -1,4 +1,4 @@
-import { world, BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment } from "mojang-minecraft";
+import { world, BlockLocation, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, disabler, toCamelCase, crypto, titleCase } from "../../../util.js";
