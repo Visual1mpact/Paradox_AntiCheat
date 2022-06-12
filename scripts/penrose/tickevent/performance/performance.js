@@ -20,7 +20,7 @@ const PerformanceTest = () => {
         let filter = new EntityQueryOptions();
         filter.tags = ['performance'];
         for (let player of World.getPlayers(filter)) {
-            player.runCommand(`title @s actionbar §6Server Time: §4${serverTime}ms | §6TPS: §4${(1/deltaTime).toFixed(2)} §6(§4${(deltaTime * 1000).toFixed(2)}§6ms)`);
+            player.runCommand(`title @s actionbar §6Server Time: §r${serverTime}§6ms §r| §6TPS: §r${(1/deltaTime).toFixed(2)} §6(§r${(deltaTime * 1000).toFixed(2)}§6ms)`);
         }
     });
 };
