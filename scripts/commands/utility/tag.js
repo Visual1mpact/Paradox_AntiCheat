@@ -95,7 +95,7 @@ export function tag(message, args) {
     // reset rank
     if (argcheck === true) {
         resetTag(player, member);
-        // tagRank(member);
+        tagRank(member);
         return;
     }
 
@@ -108,7 +108,7 @@ export function tag(message, args) {
     if (custom.startsWith('Rank:')) {
         resetTag(player, member);
         member.addTag(`${custom}`);
-        // tagRank(member);
+        tagRank(member);
     } else {
         return tagHelp(player, prefix);
     }

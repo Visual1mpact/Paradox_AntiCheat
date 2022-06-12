@@ -37,8 +37,8 @@ const ChatFilter = () => {
             if (!rank) {
                 rank = "Member";
             }
-            // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
-            // player.nameTag = nametag;
+            let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
+            player.nameTag = nametag;
             if (!msg.cancel) {
                 if (rcbrBoolean) {
                     // Use try/catch in case this is enabled and they don't use chat relay as this would error
