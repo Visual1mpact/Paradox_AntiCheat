@@ -45,11 +45,11 @@ const ChatFilter = () => {
                     try {
                         player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message + '\'}'}]})}`);
                     } catch (error) {
-                        player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]}).replace(/\\"/g, '"')}`);
+                        player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message } ] } )}`);
                         msg.cancel = true;
                     }
                 } else {
-                    player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:'§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message}]}).replace(/\\"/g, '"')}`);
+                    player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message } ] } )}`);
                     msg.cancel = true;
                 }
             }
@@ -62,11 +62,11 @@ const ChatFilter = () => {
                 try {
                     player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + player.name + ': ' + message + '\'}'}]})}`);
                 } catch (error) {
-                    player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
+                    player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: player.name + ': ' + message } ] } )}`);
                     msg.cancel = true;
                 }
             } else {
-                player.runCommand(`tellraw @a ${JSON.stringify({rawtext:[{text:player.name + ': ' + message}]}).replace(/\\"/g, '"')}`);
+                player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: player.name + ': ' + message } ] } )}`);
                 msg.cancel = true;
             }
         }
