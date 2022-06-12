@@ -90,7 +90,7 @@ function illegalitemsc(object) {
         } catch (error) {}
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
         // Set block in world
-        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes[toCamelCase(block.id.replace("minecraft:", ""))]);
+        block.setType(block.type);
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
@@ -111,7 +111,7 @@ function illegalitemsc(object) {
         // Get the direction property
         blockPerm.getProperty(BlockProperties.direction);
         // Set block in world
-        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes[toCamelCase(block.id.replace("minecraft:", ""))]);
+        block.setType(block.type);
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
@@ -123,7 +123,7 @@ function illegalitemsc(object) {
     // Check if place item is illegal
     if(illegalitems.includes(block.id)) {
         // Set block in world
-        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes[toCamelCase(block.id.replace("minecraft:", ""))]);
+        block.setType(block.type);
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
