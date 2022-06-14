@@ -8,7 +8,7 @@ import { whitelist } from "../../../data/whitelistitems.js";
 
 const World = world;
 
-function rip(player, inventory_item) {
+function rip(player, inventory_item, enchant_data, block) {
     // Get all tags
     let tags = player.getTags();
 
@@ -21,14 +21,36 @@ function rip(player, inventory_item) {
             player.removeTag(t);
         }
     });
-    // Tag with reason and by who
-    try {
-        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})"`);
-        player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
-        player.addTag('isBanned');
-    // Despawn if we cannot kick the player
-    } catch (error) {
-        player.triggerEvent('paradox:kick');
+    if (!enchant_data && !block) {
+        // Tag with reason and by who
+        try {
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})"`);
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('isBanned');
+        // Despawn if we cannot kick the player
+        } catch (error) {
+            player.triggerEvent('paradox:kick');
+        }
+    } else if (!block) {
+        // Tag with reason and by who
+        try {
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}: ${enchant_data.type.id}=${enchant_data.level})"`);
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('isBanned');
+        // Despawn if we cannot kick the player
+        } catch (error) {
+            player.triggerEvent('paradox:kick');
+        }
+    } else {
+        // Tag with reason and by who
+        try {
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${block.type.id.replace("minecraft:", "")})"`);
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('isBanned');
+        // Despawn if we cannot kick the player
+        } catch (error) {
+            player.triggerEvent('paradox:kick');
+        }
     }
 }
 
@@ -121,7 +143,7 @@ function illegalitemsc(object) {
         blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
-    if(illegalitems.includes(block.id)) {
+    if(illegalitems.includes(block.type.id)) {
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
@@ -130,7 +152,7 @@ function illegalitemsc(object) {
             player.runCommand(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
         } catch (error) {}
         flag(player, "IllegalItems", "C", "Exploit", false, false, false, false, false, false);
-        return rip(player);
+        return rip(player, false, false, block);
     }
     // Check if placed item has a inventory container
     let inventory;
@@ -247,7 +269,7 @@ function illegalitemsc(object) {
             if (illegalitems.includes(inventory_item.id)) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                return rip(player, inventory_item);
+                return rip(player, inventory_item, false, false);
             }
             // Check if item found inside container exceeds allowed stacks
             if (inventory_item.amount > config.modules.illegalitemsC.maxStack) {
@@ -259,7 +281,7 @@ function illegalitemsc(object) {
                 } catch (error) {}
                 player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
                 if (stackBanBoolean) {
-                    return rip(player, inventory_item);
+                    return rip(player, inventory_item, false, false);
                 }
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
@@ -296,6 +318,7 @@ function illegalitemsc(object) {
                         // Is this item allowed to have this enchantment
                         let enchantLevel = enchantedSlot[enchants];
                         if (!enchantLevel) {
+                            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                             // Remove this item immediately
                             try {
                                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
@@ -306,10 +329,12 @@ function illegalitemsc(object) {
                                 player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
                             } catch (error) {}
                             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                            rip(player, inventory_item, enchant_data, false);
                             break;
                         }
                         // Does the enchantment type exceed or break vanilla levels
                         if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
+                            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, false, false, false, false);
                             // Remove this item immediately
                             try {
                                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
@@ -320,6 +345,7 @@ function illegalitemsc(object) {
                                 player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
                             } catch (error) {}
                             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                            rip(player, inventory_item, enchant_data, false);
                             break;
                         }
                     }
