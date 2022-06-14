@@ -22,16 +22,16 @@ function rip(source, item, enchant_data) {
     });
     if (!enchant_data) {
         try {
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
+            source.addTag('Reason:Illegal Item B (' + item.id.replace("minecraft:", "") + '=' + item.amount + ')');
+            source.addTag('By:Paradox');
             source.addTag('isBanned');
         } catch (error) {
             source.triggerEvent('paradox:kick');
         }
     } else {
         try {
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}: ${enchant_data.type.id}=${enchant_data.level})"`);
-            source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
+            source.addTag('Reason:Illegal Item B (' + item.id.replace("minecraft:", "") + ':' + enchant_data.type.id + '=' + enchant_data.level + ')');
+            source.addTag('By:Paradox');
             source.addTag('isBanned');
         } catch (error) {
             source.triggerEvent('paradox:kick');

@@ -14,11 +14,11 @@ function banHammerTime(player) {
         if (banplayer.some(code => JSON.stringify(code) === JSON.stringify({ name: player.nameTag }))) {
             if (!player.hasTag('By:Paradox Anticheat')) {
                 // if they are not tagged then we do that here before we ban
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox Anticheat"`);
+                player.addTag('By:Paradox Anticheat');
             }
-            if (!player.hasTag('Reason:You are Paradox Anticheat global banned!')) {
+            if (!player.hasTag('Reason:You are globally banned from Paradox!')) {
                 // if they are not tagged then we do that here before we ban
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:You are Paradox Anticheat global banned!"`);
+                player.addTag('Reason:You are globally banned from Paradox!');
             }
             banMessage(player);
         }

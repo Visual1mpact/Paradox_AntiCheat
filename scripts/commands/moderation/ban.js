@@ -99,8 +99,8 @@ export function ban(message, args) {
     });
 
     try {
-        player.runCommand(`tag "${disabler(member.nameTag)}" add "Reason:${reason}"`);
-        player.runCommand(`tag "${disabler(member.nameTag)}" add "By:${disabler(player.nameTag)}"`);
+        member.addTag('Reason:' + reason);
+        member.addTag('By:' + disabler(player.nameTag));
         member.addTag('isBanned');
     } catch (error) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);

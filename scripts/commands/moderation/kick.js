@@ -95,7 +95,7 @@ export function kick(message, args) {
 
     try {
         if (!isSilent) {
-            player.runCommand(`kick "${disabler(member.nameTag)}" ${reason}`);
+            player.runCommand(`kick "${member.name}" ${reason}`);
         } else {
             member.triggerEvent('paradox:kick');
         }

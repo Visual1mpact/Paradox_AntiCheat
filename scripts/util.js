@@ -63,7 +63,7 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick "${disabler(player.nameTag)}" §r§4[§6Paradox§4]§r Please use your real xbl name!`);
+            player.runCommand(`kick "${player.name}" §r§4[§6Paradox§4]§r Please use your real xbl name!`);
         }
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -93,7 +93,7 @@ export function banMessage(player) {
     });
 
     try {
-        player.runCommand(`kick "${disabler(player.nameTag)}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.runCommand(`kick "${player.name}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");

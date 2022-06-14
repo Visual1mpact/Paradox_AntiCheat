@@ -24,8 +24,8 @@ function rip(player, inventory_item, enchant_data, block) {
     if (!enchant_data && !block) {
         // Tag with reason and by who
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})"`);
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('Reason:Illegal Item C (' + inventory_item.id.replace("minecraft:", "") + '=' + inventory_item.amount + ')');
+            player.addTag('By:Paradox');
             player.addTag('isBanned');
         // Despawn if we cannot kick the player
         } catch (error) {
@@ -34,8 +34,8 @@ function rip(player, inventory_item, enchant_data, block) {
     } else if (!block) {
         // Tag with reason and by who
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}: ${enchant_data.type.id}=${enchant_data.level})"`);
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('Reason:Illegal Item C (' + inventory_item.id.replace("minecraft:", "") + ':' + enchant_data.type.id + '=' + enchant_data.level + ')');
+            player.addTag('By:Paradox');
             player.addTag('isBanned');
         // Despawn if we cannot kick the player
         } catch (error) {
@@ -44,8 +44,8 @@ function rip(player, inventory_item, enchant_data, block) {
     } else {
         // Tag with reason and by who
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Item C (${block.type.id.replace("minecraft:", "")})"`);
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.addTag('Reason:Illegal Item C (' + block.type.id.replace("minecraft:", "") + ')');
+            player.addTag('By:Paradox');
             player.addTag('isBanned');
         // Despawn if we cannot kick the player
         } catch (error) {

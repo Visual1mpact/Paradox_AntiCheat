@@ -78,10 +78,10 @@ export function freeze(message, args) {
     }
 
     if (member.hasTag('freeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" add nofreeze`);
+        member.addTag('nofreeze');
     }
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" remove freeze`);
+        member.addTag('freeze');
     }
     if (member.hasTag('nofreeze')) {
         member.runCommand(`effect "${disabler(member.nameTag)}" clear`);
@@ -101,13 +101,13 @@ export function freeze(message, args) {
     }
 
     if (!member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" add freeze`);
+        member.addTag('freeze');
         member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
         return TickFreeze(member);
     }
 
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" remove nofreeze`);
+        member.addTag('nofreeze');
         return TickFreeze(member);
     }
 }

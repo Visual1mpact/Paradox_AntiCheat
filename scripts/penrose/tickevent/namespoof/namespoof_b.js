@@ -20,8 +20,8 @@ function rip(player) {
     });
     // Tag with reason and by who
     try {
-        player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Namespoof B (Disabler)"`);
-        player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+        player.addTag('Reason:Namespoof B (Disabler)');
+        player.addTag('By:Paradox');
         player.addTag('isBanned');
     // Despawn if we cannot kick the player
     } catch (error) {
