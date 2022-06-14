@@ -8,7 +8,7 @@ import { whitelist } from "../../../data/whitelistitems.js";
 
 const World = world;
 
-function rip(source, item) {
+function rip(source, item, enchant_data) {
     let tags = source.getTags();
 
     // This removes old ban tags
@@ -20,12 +20,22 @@ function rip(source, item) {
             source.removeTag(t);
         }
     });
-    try {
-        source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
-        source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
-        source.addTag('isBanned');
-    } catch (error) {
-        source.triggerEvent('paradox:kick');
+    if (!enchant_data) {
+        try {
+            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
+            source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
+            source.addTag('isBanned');
+        } catch (error) {
+            source.triggerEvent('paradox:kick');
+        }
+    } else {
+        try {
+            source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}: ${enchant_data.type.id}=${enchant_data.level})"`);
+            source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
+            source.addTag('isBanned');
+        } catch (error) {
+            source.triggerEvent('paradox:kick');
+        }
     }
 }
 
@@ -228,7 +238,7 @@ function illegalitemsb(object) {
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Ban
-        return rip(source, item);
+        return rip(source, item, false);
     }
     // Check if item exceeds allowed stacks then remove and ban if enabled
     if (item.amount > config.modules.illegalitemsB.maxStack) {
@@ -241,7 +251,7 @@ function illegalitemsb(object) {
         } catch (error) {}
         if (stackBanBoolean) {
             // Ban
-            return rip(source, item);
+            return rip(source, item, false);
         } else {
             return;
         }
@@ -278,6 +288,7 @@ function illegalitemsb(object) {
                 let enchantLevel = enchantedSlot[enchants];
                 if (!enchantLevel) {
                     cancel = true;
+                    flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
                     // Remove this item immediately
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -286,11 +297,13 @@ function illegalitemsb(object) {
                         source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
                     } catch (error) {}
                     source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                    rip(source, item, enchant_data);
                     break;
                 }
                 // Does the enchantment type exceed or break vanilla levels
                 if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
                     cancel = true;
+                    flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
                     // Remove this item immediately
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -299,6 +312,7 @@ function illegalitemsb(object) {
                         source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
                     } catch (error) {}
                     source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                    rip(source, item, enchant_data);
                     break;
                 }
             }
