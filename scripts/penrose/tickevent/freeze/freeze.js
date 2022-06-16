@@ -1,4 +1,5 @@
 import { world, Location } from "mojang-minecraft";
+import config from "../../../data/config.js";
 import { getScore, disabler, crypto } from "../../../util.js";
 
 const World = world;
