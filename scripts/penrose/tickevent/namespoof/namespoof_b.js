@@ -1,5 +1,5 @@
 import { world } from "mojang-minecraft";
-import { crypto, disabler, flag } from "../../../util.js";
+import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 
