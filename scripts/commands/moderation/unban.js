@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 
 export const queueUnban = new Set();
 
-function listQueue(queue) {
+function listQueue(queue, player) {
     if (queue) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${queue} is queued to be unbanned!"}]}`);
     }
@@ -64,7 +64,7 @@ export function unban(message, args) {
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.unban) {
         return unbanHelp(player, prefix);
     } else if (argCheck && args[0].toLowerCase() === "list" || !config.customcommands.unban) {
-        queueUnban.forEach((queue) => listQueue(queue));
+        queueUnban.forEach((queue) => listQueue(queue, player));
         return;
     }
 
