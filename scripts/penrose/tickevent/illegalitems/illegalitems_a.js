@@ -22,7 +22,7 @@ function rip(player, inventory_item, enchant_data) {
         }
     });
     // If enchanted then show it otherwise ignore
-    if (!ench_data) {
+    if (!enchant_data) {
         // Tag with reason and by who
         try {
             player.addTag('Reason:Illegal Item A (' + inventory_item.id.replace("minecraft:", "") + '=' + inventory_item.amount + ')');
