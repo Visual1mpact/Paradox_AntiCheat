@@ -58,7 +58,7 @@ export function antiteleport(message, args) {
     }
 
     // Get Dynamic Property Boolean
-    let antiTeleportBoolean = World.getDynamicProperty('antiTeleport_b');
+    let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
     if (antiTeleportBoolean === undefined) {
         antiTeleportBoolean = config.modules.antiTeleport.enabled;
     }
