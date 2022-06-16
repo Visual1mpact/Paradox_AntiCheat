@@ -8,7 +8,7 @@ import { whitelist } from "../../../data/whitelistitems.js";
 
 const World = world;
 
-function rip(player, inventory_item, ench_data) {
+function rip(player, inventory_item, enchant_data) {
     // Get all tags
     let tags = player.getTags();
 
