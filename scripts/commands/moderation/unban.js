@@ -3,6 +3,12 @@ import config from "../../data/config.js";
 
 export const queueUnban = new Set();
 
+function listQueue(queue) {
+    if (queue) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${queue} is queued to be unbanned!"}]}`);
+    }
+}
+
 function unbanHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.unban) {
@@ -31,7 +37,7 @@ function unbanHelp(player, prefix) {
 export function unban(message, args) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/unban.js:29)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/unban.js:34)");
     }
 
     message.cancel = true;
@@ -58,11 +64,6 @@ export function unban(message, args) {
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.unban) {
         return unbanHelp(player, prefix);
     } else if (argCheck && args[0].toLowerCase() === "list" || !config.customcommands.unban) {
-        function listQueue(queue) {
-            if (queue) {
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${queue} is queued to be unbanned!"}]}`);
-            }
-        }
         queueUnban.forEach((queue) => listQueue(queue));
         return;
     }
