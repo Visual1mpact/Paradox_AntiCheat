@@ -1,5 +1,5 @@
-import './debug/main.js'
 // Import Customs
+import './debug/main.js';
 import { world } from "mojang-minecraft";
 import config from "./data/config.js";
 import { setTickInterval } from "./timer/scheduling.js";

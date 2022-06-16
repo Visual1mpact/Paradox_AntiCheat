@@ -244,4 +244,4 @@ const { encryption } = config.modules;
         .map(applySaltToChar)
         .map(byteHex)
         .join("");
-}
+};

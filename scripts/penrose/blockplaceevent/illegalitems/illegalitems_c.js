@@ -123,7 +123,7 @@ function illegalitemsc(object) {
     let ignoreContainerPlace = [
     'minecraft:chest',
     'minecraft:trapped_chest'
-    ]
+    ];
     // Check if place item is salvageable
     if (salvageable[block.id] && !ignoreContainerPlace.includes(block.id)) {
         // Block from specified location

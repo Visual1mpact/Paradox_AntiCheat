@@ -80,7 +80,7 @@ export function worldborders(message, args) {
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
         World.setDynamicProperty('worldborder_b', true);
         World.setDynamicProperty('worldborder_n', Math.abs(argCheck));
-        return
+        return;
     } else if (argCheck === "disable") {
         // Disable Worldborder
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
