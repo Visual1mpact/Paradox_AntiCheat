@@ -60,7 +60,7 @@ export function antiknockback(message, args) {
     // Get Dynamic Property Boolean
     let antikbBoolean = World.getDynamicProperty('antikb_b');
     if (antikbBoolean === undefined) {
-        noSlowBoolean = config.modules.antikbA.enabled;
+        antikbBoolean = config.modules.antikbA.enabled;
     }
 
     // Check for custom prefix
