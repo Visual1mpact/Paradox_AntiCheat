@@ -37,8 +37,6 @@ export function unban(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
