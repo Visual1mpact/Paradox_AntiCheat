@@ -1,5 +1,5 @@
 import { world } from "mojang-minecraft";
-import { flag, disabler } from "../../../util.js";
+import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
