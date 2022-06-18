@@ -139,7 +139,7 @@ export function disabler(player) {
         }
     }
     if (!customprefix) {
-        return config.customcommands.prefix = "!";
+        return config.customcommands.prefix = config.customcommands.prefix;
     }
 }
 
