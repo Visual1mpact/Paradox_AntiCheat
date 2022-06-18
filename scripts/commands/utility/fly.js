@@ -94,9 +94,13 @@ export function fly(message, args) {
     let membertag = member.getTags();
 
     if (!membertag.includes('noflying') && !membertag.includes('flying')) {
-        member.runCommand(`ability "${disabler(member.nameTag)}" mayfly true`);
-        member.addTag('flying');
-        mayflyenable(player, member);
+        try {
+            member.runCommand(`ability "${disabler(member.nameTag)}" mayfly true`);
+            member.addTag('flying');
+            mayflyenable(player, member);
+        } catch (Error) {
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Education Edition!"}]}`);
+        }
         return;
     }
 
@@ -105,10 +109,14 @@ export function fly(message, args) {
     }
 
     if (member.hasTag('noflying')) {
-        member.removeTag('flying');
-        member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
-        mayflydisable(player, member);
-        member.removeTag('noflying');
+        try {
+            member.removeTag('flying');
+            member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
+            mayflydisable(player, member);
+            member.removeTag('noflying');
+        } catch (error) {
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Education Edition!"}]}`);
+        }
         return;
     }
 }
