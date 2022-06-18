@@ -110,8 +110,8 @@ export function fly(message, args) {
 
     if (member.hasTag('noflying')) {
         try {
-            member.removeTag('flying');
             member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
+            member.removeTag('flying');
             mayflydisable(player, member);
             member.removeTag('noflying');
         } catch (error) {
