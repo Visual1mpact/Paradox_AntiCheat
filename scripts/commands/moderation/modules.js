@@ -61,11 +61,7 @@ function modulesHelp(player, prefix) {
     let antikb = getScore('antikb', player);
 
     // Booleans
-    let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
-    let xrayaBoolean = World.getDynamicProperty('xraya_b');
-
-    // Numbers
-    let worldBorderNumber = World.getDynamicProperty('worldborder_n');
+    let worldborder = World.getDynamicProperty('worldborder_b');
 
     if (config.modules.adventureGM.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
@@ -99,8 +95,8 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OverideCommandBlocksEnabled is currently §4DISABLED"}]}`);
     }
     
-    if (worldBorderBoolean) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a${worldBorderNumber}"}]}`);
+    if (worldborder) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a${worldborder}"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is currently §4DISABLED"}]}`);
     }
@@ -309,7 +305,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-NukerA is currently §4DISABLED"}]}`);
     }
 
-    if (xrayaBoolean) {
+    if (config.modules.xrayA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r XrayA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r XrayA is currently §4DISABLED"}]}`);
