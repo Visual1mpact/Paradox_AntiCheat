@@ -80,7 +80,6 @@ function modulesHelp(player, prefix) {
     let crasherABoolean = World.getDynamicProperty('crashera_b');
     let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
     let reachCBoolean = World.getDynamicProperty('reachc_b');
-    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -309,7 +308,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §4DISABLED"}]}`);
     }
 
-    if (antiScaffoldABoolean) {
+    if (config.modules.antiscaffoldA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-ScaffoldA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-ScaffoldA is currently §4DISABLED"}]}`);

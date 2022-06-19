@@ -2,18 +2,13 @@ import { world, BlockLocation, MinecraftBlockTypes } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { crypto, flag } from "../../../util.js";
 
-const World = world;
+let World = world;
 
 let blockTimer = new Map();
 
 function scaffolda(object) {
-    // Get Dynamic Property
-    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
-    if (antiScaffoldABoolean === undefined) {
-        antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (antiScaffoldABoolean === false) {
+    if (config.modules.antiscaffoldA.enabled === false) {
         World.events.blockPlace.unsubscribe(scaffolda);
         return;
     }

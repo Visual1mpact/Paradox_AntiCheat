@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function antiscaffoldaHelp(player, prefix, antiScaffoldABoolean) {
+function antiscaffoldaHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.antiscaffolda) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function antiscaffoldaHelp(player, prefix, antiScaffoldABoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (antiScaffoldABoolean === false) {
+    if (!config.modules.antiscaffoldA.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -52,29 +49,23 @@ export function antiscaffoldA(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
-    if (antiScaffoldABoolean === undefined) {
-        antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antiscaffolda) {
-        return antiscaffoldaHelp(player, prefix, antiScaffoldABoolean);
+        return antiscaffoldaHelp(player, prefix);
     }
 
-    if (antiScaffoldABoolean === false) {
+    if (config.modules.antiscaffoldA.enabled === false) {
         // Allow
-        World.setDynamicProperty('antiscaffolda_b', true);
+        config.modules.antiscaffoldA.enabled = true;
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiScaffoldA§r!"}]}`);
         return;
-    } else if (antiScaffoldABoolean === true) {
+    } else if (config.modules.antiscaffoldA.enabled === true) {
         // Deny
-        World.setDynamicProperty('antiscaffolda_b', false);
+        config.modules.antiscaffoldA.enabled = false;
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4AntiScaffoldA§r!"}]}`);
         return;
     }
