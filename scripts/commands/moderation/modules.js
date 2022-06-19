@@ -72,7 +72,6 @@ function modulesHelp(player, prefix) {
     let InvalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
     let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
     let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
-    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -337,7 +336,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §4DISABLED"}]}`);
     }
 
-    if (hotbarBoolean) {
+    if (config.modules.hotbar.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §4DISABLED"}]}`);

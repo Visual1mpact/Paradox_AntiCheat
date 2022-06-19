@@ -48,9 +48,6 @@ function registry(data) {
 
     // Define properties for illegalitemsd
     property.defineBoolean('illegalitemsd_b');
-
-    // Define properties for hotbar
-    property.defineBoolean('hotbar_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -129,12 +126,6 @@ function registry(data) {
     let illegalitemsd_b = World.getDynamicProperty('illegalitemsd_b');
     if (illegalitemsd_b === undefined) {
         World.setDynamicProperty('illegalitemsd_b', config.modules.illegalitemsD.enabled);
-    }
-
-    // Set properties for hotbar
-    let hotbar_b = World.getDynamicProperty('hotbar_b');
-    if (hotbar_b === undefined) {
-        World.setDynamicProperty('hotbar_b', config.modules.hotbar.enabled);
     }
 }
 

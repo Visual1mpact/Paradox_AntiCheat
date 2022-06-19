@@ -1,10 +1,7 @@
-import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
-const World = world;
-
-function hotbarHelp(player, prefix, hotbarBoolean) {
+function hotbarHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.hotbar) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function hotbarHelp(player, prefix, hotbarBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (hotbarBoolean === false) {
+    if (!config.modules.hotbar.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -50,31 +47,25 @@ export function hotbar(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
-    if (hotbarBoolean === undefined) {
-        hotbarBoolean = config.modules.hotbar.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.hotbar) {
-        return hotbarHelp(player, prefix, hotbarBoolean);
+        return hotbarHelp(player, prefix);
     }
 
-    if (hotbarBoolean === false) {
+    if (config.modules.hotbar.enabled === false) {
         // Allow
-        World.setDynamicProperty('hotbar_b', true);
+        config.modules.hotbar.enabled = true;
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         }
         return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Hotbar!"}]}`);
-    } else if (hotbarBoolean === true) {
+    } else if (config.modules.hotbar.enabled === true) {
         // Deny
-        World.setDynamicProperty('hotbar_b', false);
+        config.modules.hotbar.enabled = false;
         return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Hotbar!"}]}`);
     }
 }
