@@ -91,7 +91,6 @@ function modulesHelp(player, prefix) {
     let spammerBBoolean = World.getDynamicProperty('spammerb_b');
     let spammerABoolean = World.getDynamicProperty('spammera_b');
     let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
-    let slavageBoolean = World.getDynamicProperty('salvage_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');

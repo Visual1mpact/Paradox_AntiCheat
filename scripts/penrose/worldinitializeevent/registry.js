@@ -105,9 +105,6 @@ function registry(data) {
 
     // Define properties for badpackets1
     property.defineBoolean('badpackets1_b');
-
-    // Define properties for salvage
-    property.defineBoolean('salvage_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -300,12 +297,6 @@ function registry(data) {
     let badpackets1_b = World.getDynamicProperty('badpackets1_b');
     if (badpackets1_b === undefined) {
         World.setDynamicProperty('badpackets1_b', config.modules.badpackets1.enabled);
-    }
-
-    // Set properties for salvage
-    let salvage_b = World.getDynamicProperty('salvage_b');
-    if (salvage_b === undefined) {
-        World.setDynamicProperty('salvage_b', config.modules.salvage.enabled);
     }
 }
 
