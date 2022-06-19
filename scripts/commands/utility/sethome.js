@@ -53,7 +53,8 @@ export function sethome(message, args) {
     let currentDimension;
 
     // Don't allow spaces
-    if (args.length > 1) {
+    if (args.length > 1 || args[0].trim().length === 0) {
+        setHomeHelp(player, prefix);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
     }
 
