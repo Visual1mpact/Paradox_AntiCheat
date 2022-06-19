@@ -93,7 +93,6 @@ function modulesHelp(player, prefix) {
     let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
     let savageBoolean = World.getDynamicProperty('salvage_b');
     let rcbrBoolean = World.getDynamicProperty('rcbr_b');
-    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -316,7 +315,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalEnchantments is currently §4DISABLED"}]}`);
     }
 
-    if (illegalLoresBoolean) {
+    if (config.modules.illegalLores.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §4DISABLED"}]}`);

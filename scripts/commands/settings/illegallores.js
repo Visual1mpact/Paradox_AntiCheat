@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function illegalLoresHelp(player, prefix, illegalLoresBoolean) {
+function illegalLoresHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.illegallores) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function illegalLoresHelp(player, prefix, illegalLoresBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (illegalLoresBoolean === false) {
+    if (!config.modules.illegalLores.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -52,29 +49,23 @@ export function illegalLores(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
-    if (illegalLoresBoolean === undefined) {
-        illegalLoresBoolean = config.modules.illegalLores.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.illegallores) {
-        return illegalLoresHelp(player, prefix, illegalLoresBoolean);
+        return illegalLoresHelp(player, prefix);
     }
 
-    if (illegalLoresBoolean === false) {
+    if (config.modules.illegalLores.enabled === false) {
         // Allow
-        World.setDynamicProperty('illegallores_b', true);
+        config.modules.illegalLores.enabled = true;
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalLores§r!"}]}`);
         return;
-    } else if (illegalLoresBoolean === true) {
+    } else if (config.modules.illegalLores.enabled === true) {
         // Deny
-        World.setDynamicProperty('illegallores_b', false);
+        config.modules.illegalLores.enabled = false;
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalLores§r!"}]}`);
         return;
     }
