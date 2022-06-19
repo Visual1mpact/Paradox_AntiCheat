@@ -55,13 +55,8 @@ function rip(player, inventory_item, enchant_data, block) {
 }
 
 function illegalitemsc(object) {
-    // Get Dynamic Property
-    let illegalItemsCBoolean = World.getDynamicProperty('illegalitemsc_b');
-    if (illegalItemsCBoolean === undefined) {
-        illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (illegalItemsCBoolean === false) {
+    if (config.modules.illegalitemsC.enabled === false) {
         World.events.blockPlace.unsubscribe(illegalitemsc);
         return;
     }

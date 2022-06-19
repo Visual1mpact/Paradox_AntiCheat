@@ -82,7 +82,6 @@ function modulesHelp(player, prefix) {
     let reachCBoolean = World.getDynamicProperty('reachc_b');
     let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
     let reachABoolean = World.getDynamicProperty('reacha_b');
-    let illegalItemsCBoolean = World.getDynamicProperty('illegalitemsc_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -275,7 +274,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsB is currently §4DISABLED"}]}`);
     }
 
-    if (illegalItemsCBoolean) {
+    if (config.modules.illegalitemsC.enabled) {
         let verification;
         if (config.modules.stackBan.enabled) {
             verification = "§aENABLED§r";
