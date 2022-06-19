@@ -5,13 +5,8 @@ import config from "../../../data/config.js";
 const World = world;
 
 function antiteleport() {
-    // Get Dynamic Property
-    let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
-    if (antiTeleportBoolean === undefined) {
-        antiTeleportBoolean = config.modules.antiTeleport.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (antiTeleportBoolean === false) {
+    if (config.modules.antiTeleport.enabled === false) {
         World.events.tick.unsubscribe(antiteleport);
         return;
     }
