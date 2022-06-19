@@ -96,7 +96,6 @@ function modulesHelp(player, prefix) {
     let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
     let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
     let lockdownBoolean = World.getDynamicProperty('lockdown_b');
-    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -349,7 +348,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chat Ranks is currently §4DISABLED"}]}`);
     }
 
-    if (antiShulkerBoolean) {
+    if (config.modules.antishulker.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Shulkers is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Shulkers is currently §4DISABLED"}]}`);

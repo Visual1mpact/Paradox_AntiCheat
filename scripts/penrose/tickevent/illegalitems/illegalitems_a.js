@@ -63,10 +63,6 @@ function illegalitemsa() {
     if (illegalEnchantmentBoolean === undefined) {
         illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
     }
-    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
-    if (antiShulkerBoolean === undefined) {
-        antiShulkerBoolean = config.modules.antishulker.enabled;
-    }
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
         World.events.tick.unsubscribe(illegalitemsa);
@@ -85,7 +81,7 @@ function illegalitemsa() {
             }
             // If shulker boxes are not allowed in the server then we handle this here
             // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-            if (antiShulkerBoolean && inventory_item.id === "minecraft:shulker_box" || antiShulkerBoolean && inventory_item.id === "minecraft:undyed_shulker_box") {
+            if (config.modules.antishulker.enabled && inventory_item.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && inventory_item.id === "minecraft:undyed_shulker_box") {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
