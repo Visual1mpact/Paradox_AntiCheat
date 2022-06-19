@@ -96,9 +96,6 @@ function registry(data) {
 
     // Define properties for spammerc
     property.defineBoolean('spammerc_b');
-
-    // Define properties for spammerb
-    property.defineBoolean('spammerb_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -273,12 +270,6 @@ function registry(data) {
     let spammerc_b = World.getDynamicProperty('spammerc_b');
     if (spammerc_b === undefined) {
         World.setDynamicProperty('spammerc_b', config.modules.spammerC.enabled);
-    }
-
-    // Set properties for spammerb
-    let spammerb_b = World.getDynamicProperty('spammerb_b');
-    if (spammerb_b === undefined) {
-        World.setDynamicProperty('spammerb_b', config.modules.spammerB.enabled);
     }
 }
 

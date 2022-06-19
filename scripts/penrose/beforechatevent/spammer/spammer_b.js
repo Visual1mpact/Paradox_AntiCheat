@@ -5,13 +5,8 @@ import config from "../../../data/config.js";
 const World = world;
 
 function spammerb(msg) {
-    // Get Dynamic Property
-    let spammerBBoolean = World.getDynamicProperty('spammerb_b');
-    if (spammerBBoolean === undefined) {
-        spammerBBoolean = config.modules.spammerB.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (spammerBBoolean === false) {
+    if (config.modules.spammerB.enabled === false) {
         World.events.beforeChat.unsubscribe(spammerb);
         return;
     }
