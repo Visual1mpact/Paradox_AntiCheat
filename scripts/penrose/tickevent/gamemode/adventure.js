@@ -5,21 +5,8 @@ import { crypto } from "../../../util.js";
 const World = world;
 
 function adventure() {
-    // Get Dynamic Property
-    let adventureGMBoolean = World.getDynamicProperty('adventuregm_b');
-    if (adventureGMBoolean === undefined) {
-        adventureGMBoolean = config.modules.adventureGM.enabled;
-    }
-    let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
-    if (creativeGMBoolean === undefined) {
-        creativeGMBoolean = config.modules.creativeGM.enabled;
-    }
-    let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
-    if (survivalGMBoolean === undefined) {
-        survivalGMBoolean = config.modules.survivalGM.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (adventureGMBoolean === false) {
+    if (config.modules.adventureGM.enabled === false) {
         World.events.tick.unsubscribe(adventure);
         return;
     }
@@ -30,21 +17,21 @@ function adventure() {
     // Run as each player
     for (let player of World.getPlayers(filter)) {
         // Make sure they didn't enable all of them in config.js as this will have a negative impact
-        if (survivalGMBoolean === true && creativeGMBoolean === true) {
+        if (config.modules.survivalGM.enabled === true && config.modules.creativeGM.enabled === true) {
             // Default to adventure for safety
-            World.setDynamicProperty('adventuregm_b', false);
+            config.modules.adventureGM.enabled = false;
         }
         // Are they in adventure? Fix it.
-        if (survivalGMBoolean === true && creativeGMBoolean === false) {
+        if (config.modules.survivalGM.enabled === true && config.modules.creativeGM.enabled === false) {
             // Creative is allowed so set them to creative
             player.runCommand(`gamemode c`);
         }
-        if (survivalGMBoolean === false && creativeGMBoolean === true) {
+        if (config.modules.survivalGM.enabled === false && config.modules.creativeGM.enabled === true) {
             // Survival is allowed so set them to survival
             player.runCommand(`gamemode s`);
         }
         // If both are allowed then default to survival
-        if (survivalGMBoolean === false && creativeGMBoolean === false) {
+        if (config.modules.survivalGM.enabled === false && config.modules.creativeGM.enabled === false) {
             // Survival is allowed so set them to survival
             player.runCommand(`gamemode s`);
         }
