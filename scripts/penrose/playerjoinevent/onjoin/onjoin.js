@@ -7,7 +7,7 @@ const World = world;
 
 const tickEventCallback = World.events.tick;
 
-function onJoinTime() {
+function onJoinTime(player) {
     // Get Dynamic Property
     let lockdownBoolean = World.getDynamicProperty('lockdown_b');
     if (lockdownBoolean === undefined) {
