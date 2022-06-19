@@ -24,9 +24,6 @@ function registry(data) {
 
     // Define properties for ops
     property.defineBoolean('ops_b');
-
-    // Define properties for noslow
-    property.defineBoolean('noslowa_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -57,12 +54,6 @@ function registry(data) {
     let ops_b = World.getDynamicProperty('ops_b');
     if (ops_b === undefined) {
         World.setDynamicProperty('ops_b', config.modules.ops.enabled);
-    }
-
-    // Set properties for ops
-    let noslowa_b = World.getDynamicProperty('noslowa_b');
-    if (noslowa_b === undefined) {
-        World.setDynamicProperty('noslowa_b', config.modules.noslowA.enabled);
     }
 }
 

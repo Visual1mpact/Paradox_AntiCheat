@@ -6,11 +6,6 @@ import { setTickInterval } from "../../../timer/scheduling.js";
 const World = world;
 
 function noslowa() {
-    // Get Dynamic Property
-    let noSlowBoolean = World.getDynamicProperty('noslowa_b');
-    if (noSlowBoolean === undefined) {
-        noSlowBoolean = config.modules.noslowA.enabled;
-    }
     // Unsubscribe if disabled in-game
     if (config.modules.noslowA.enabled === false) {
         World.events.tick.unsubscribe(noslowa);
