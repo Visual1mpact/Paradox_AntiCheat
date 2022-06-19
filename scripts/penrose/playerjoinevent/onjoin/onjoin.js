@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
-import { getPrefix, tagRank } from "../../../util.js";
+import { disabler, getPrefix, tagRank } from "../../../util.js";
 
 const World = world;
 
@@ -15,7 +15,7 @@ function onJoinTime() {
     }
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor ${player.name}`);
+        player.runCommand(`testfor ${disabler(player.nameTag)}`);
 
         // Lock down the server if enabled
         if (lockdownBoolean) {
