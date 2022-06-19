@@ -69,9 +69,6 @@ function registry(data) {
 
     // Define properties for bedrockvalidate
     property.defineBoolean('bedrockvalidate_b');
-
-    // Define properties for reachc
-    property.defineBoolean('reachc_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -192,12 +189,6 @@ function registry(data) {
     let bedrockvalidate_b = World.getDynamicProperty('bedrockvalidate_b');
     if (bedrockvalidate_b === undefined) {
         World.setDynamicProperty('bedrockvalidate_b', config.modules.bedrockValidate.enabled);
-    }
-
-    // Set properties for reachc
-    let reachc_b = World.getDynamicProperty('reachc_b');
-    if (reachc_b === undefined) {
-        World.setDynamicProperty('reachc_b', config.modules.reachC.enabled);
     }
 }
 
