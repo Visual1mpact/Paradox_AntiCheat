@@ -60,9 +60,6 @@ function registry(data) {
 
     // Define properties for survivalgm
     property.defineBoolean('survivalgm_b');
-
-    // Define properties for flya
-    property.defineBoolean('flya_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -165,12 +162,6 @@ function registry(data) {
     let survivalgm_b = World.getDynamicProperty('survivalgm_b');
     if (survivalgm_b === undefined) {
         World.setDynamicProperty('survivalgm_b', config.modules.survivalGM.enabled);
-    }
-
-    // Set properties for flya
-    let flya_b = World.getDynamicProperty('flya_b');
-    if (flya_b === undefined) {
-        World.setDynamicProperty('flya_b', config.modules.flyA.enabled);
     }
 }
 
