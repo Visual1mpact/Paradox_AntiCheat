@@ -438,15 +438,10 @@ export function help(message) {
 
     let chatrank0;
     let chatrank1;
-    // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
-    if (chatRanksBoolean === undefined) {
-        chatRanksBoolean = config.modules.chatranks.enabled;
-    }
-    if (chatRanksBoolean === true) {
+    if (config.modules.chatranks.enabled === true) {
         chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Add ranks to username.`;
         chatrank1 = `§6${prefix}tag <username> reset§r - Remove rank to username.`;
-    } else if (chatRanksBoolean === false) {
+    } else if (config.modules.chatranks.enabled === false) {
         chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Command §4DISABLED§r.`;
         chatrank1 = `§6${prefix}tag <username> reset§r - Command §4DISABLED§r.`;
     }

@@ -2,9 +2,7 @@ import { crypto, disabler, getPrefix, tagRank } from "../../util.js";
 import config from "../../data/config.js";
 import { world, Location } from "mojang-minecraft";
 
-const World = world;
-
-function chatRanksHelp(player, prefix, chatRanksBoolean) {
+function chatRanksHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.chatranks) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +10,7 @@ function chatRanksHelp(player, prefix, chatRanksBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (chatRanksBoolean === false) {
+    if (!config.modules.chatranks.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -52,24 +50,18 @@ export function chatranks(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
-    if (chatRanksBoolean === undefined) {
-        chatRanksBoolean = config.modules.chatranks.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.chatranks) {
-        return chatRanksHelp(player, prefix, chatRanksBoolean);
+        return chatRanksHelp(player, prefix);
     }
 
-    if (chatRanksBoolean === false) {
+    if (config.modules.chatranks.enabled === false) {
         // Allow
-        World.setDynamicProperty('chatranks_b', true);
+        config.modules.chatranks.enabled = true;
         /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
@@ -81,9 +73,9 @@ export function chatranks(message, args) {
         */
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ChatRanks§r!"}]}`);
         return;
-    } else if (chatRanksBoolean === true) {
+    } else if (config.modules.chatranks.enabled === true) {
         // Deny
-        World.setDynamicProperty('chatranks_b', false);
+        config.modules.chatranks.enabled = false;
         /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
