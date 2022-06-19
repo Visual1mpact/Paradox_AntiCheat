@@ -98,8 +98,6 @@ function modulesHelp(player, prefix) {
     let lockdownBoolean = World.getDynamicProperty('lockdown_b');
     let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
     let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
-    let stackBanBoolean = World.getDynamicProperty('stackban_b');
-    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -270,7 +268,7 @@ function modulesHelp(player, prefix) {
 
     if (illegalItemsABoolean) {
         let verification;
-        if (stackBanBoolean) {
+        if (config.modules.stackBan.enabled) {
             verification = "§aENABLED§r";
         } else {
             verification = "§4DISABLED§r";
@@ -282,7 +280,7 @@ function modulesHelp(player, prefix) {
 
     if (illegalItemsBBoolean) {
         let verification;
-        if (stackBanBoolean) {
+        if (config.modules.stackBan.enabled) {
             verification = "§aENABLED§r";
         } else {
             verification = "§4DISABLED§r";
@@ -294,7 +292,7 @@ function modulesHelp(player, prefix) {
 
     if (illegalItemsCBoolean) {
         let verification;
-        if (stackBanBoolean) {
+        if (config.modules.stackBan.enabled) {
             verification = "§aENABLED§r";
         } else {
             verification = "§4DISABLED§r";
@@ -305,7 +303,13 @@ function modulesHelp(player, prefix) {
     }
 
     if (illegalItemsDBoolean) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §aENABLED§r"}]}`);
+        let verification;
+        if (config.modules.stackBan.enabled) {
+            verification = "§aENABLED§r";
+        } else {
+            verification = "§4DISABLED§r";
+        }
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §4DISABLED"}]}`);
     }
