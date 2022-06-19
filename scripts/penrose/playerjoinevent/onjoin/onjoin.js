@@ -7,6 +7,9 @@ const World = world;
 
 const tickEventCallback = World.events.tick;
 
+// This is to allow passing between functions
+let player;
+
 function onJoinTime() {
     // Get Dynamic Property
     let lockdownBoolean = World.getDynamicProperty('lockdown_b');
@@ -15,7 +18,7 @@ function onJoinTime() {
     }
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor ${player.name}`);
+        player.runCommand(`testfor @a`);
 
         // Lock down the server if enabled
         if (lockdownBoolean) {
@@ -52,9 +55,9 @@ function onJoinTime() {
 const onJoin = () => {
     World.events.playerJoin.subscribe(loaded => {
         // Get the name of the player who is joining
-        let player = loaded.player;
+        player = loaded.player;
         // Subscribe tick event to the time function
-        tickEventCallback.subscribe(() => onJoinTime(player));
+        tickEventCallback.subscribe(onJoinTime);
     });
 };
 
