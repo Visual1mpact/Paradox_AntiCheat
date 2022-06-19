@@ -6,7 +6,7 @@ import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
 
-function lockdownHelp(player, prefix, lockdownBoolean) {
+function lockdownHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.lockdown) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -14,7 +14,7 @@ function lockdownHelp(player, prefix, lockdownBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (lockdownBoolean === false) {
+    if (!config.modules.lockDown.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -52,25 +52,19 @@ export function lockdown(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
-    if (lockdownBoolean === undefined) {
-        lockdownBoolean = config.modules.lockDown.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.lockdown) {
-        return lockdownHelp(player, prefix, lockdownBoolean);
+        return lockdownHelp(player, prefix);
     }
 
     // If already locked down then unlock the server
-    if (lockdownBoolean) {
+    if (config.modules.lockDown.enabled) {
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
-        return World.setDynamicProperty('lockdown_b', false);
+        return config.modules.lockDown.enabled = false;
     }
 
     // Default reason for locking it down
@@ -92,5 +86,5 @@ export function lockdown(message, args) {
     }
     // Shutting it down
     player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
-    return World.setDynamicProperty('lockdown_b', true);
+    return config.modules.lockDown.enabled = true;
 }

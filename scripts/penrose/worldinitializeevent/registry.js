@@ -117,9 +117,6 @@ function registry(data) {
 
     // Define properties for illegalenchantment
     property.defineBoolean('illegalenchantment_b');
-
-    // Define properties for lockdown
-    property.defineBoolean('lockdown_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -336,12 +333,6 @@ function registry(data) {
     let illegalenchantment_b = World.getDynamicProperty('illegalenchantment_b');
     if (illegalenchantment_b === undefined) {
         World.setDynamicProperty('illegalenchantment_b', config.modules.illegalEnchantment.enabled);
-    }
-
-    // Set properties for lockdown
-    let lockdown_b = World.getDynamicProperty('lockdown_b');
-    if (lockdown_b === undefined) {
-        World.setDynamicProperty('lockdown_b', config.modules.lockDown.enabled);
     }
 }
 
