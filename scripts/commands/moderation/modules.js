@@ -296,6 +296,12 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §4DISABLED"}]}`);
     }
 
+    if (config.modules.antikbA.enabled) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-KnockbackA is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-KnockbackA is currently §4DISABLED"}]}`);
+    }
+
     if (config.modules.antiscaffoldA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-ScaffoldA is currently §aENABLED"}]}`);
     } else {
