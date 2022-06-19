@@ -39,9 +39,6 @@ function registry(data) {
 
     // Define properties for jesusa
     property.defineBoolean('jesusa_b');
-
-    // Define properties for invalidsprinta
-    property.defineBoolean('invalidsprinta_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -102,12 +99,6 @@ function registry(data) {
     let jesusa_b = World.getDynamicProperty('jesusa_b');
     if (jesusa_b === undefined) {
         World.setDynamicProperty('jesusa_b', config.modules.jesusA.enabled);
-    }
-
-    // Set properties for invalidsprinta
-    let invalidsprinta_b = World.getDynamicProperty('invalidsprinta_b');
-    if (invalidsprinta_b === undefined) {
-        World.setDynamicProperty('invalidsprinta_b', config.modules.jesusA.enabled);
     }
 }
 

@@ -69,7 +69,6 @@ function modulesHelp(player, prefix) {
     let nameSpoofABoolean = World.getDynamicProperty('namespoofa_b');
     let nameSpoofBBoolean = World.getDynamicProperty('namespoofb_b');
     let jesusABoolean = World.getDynamicProperty('jesusa_b');
-    let InvalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -226,7 +225,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NoSlowA is currently §4DISABLED"}]}`);
     }
 
-    if (InvalidSprintABoolean) {
+    if (config.modules.invalidsprintA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r InvalidSprintA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r InvalidSprintA is currently §4DISABLED"}]}`);

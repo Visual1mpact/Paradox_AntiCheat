@@ -6,13 +6,8 @@ import config from "../../../data/config.js";
 const World = world;
 
 function invalidsprinta() {
-    // Get Dynamic Property
-    let invalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
-    if (invalidSprintABoolean === undefined) {
-        invalidSprintABoolean = config.modules.invalidsprintA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (invalidSprintABoolean === false) {
+    if (config.modules.invalidsprintA.enabled === false) {
         World.events.tick.unsubscribe(invalidsprinta);
         return;
     }
