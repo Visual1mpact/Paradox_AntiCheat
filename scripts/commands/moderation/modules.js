@@ -84,7 +84,6 @@ function modulesHelp(player, prefix) {
     let reachABoolean = World.getDynamicProperty('reacha_b');
     let illegalItemsCBoolean = World.getDynamicProperty('illegalitemsc_b');
     let reachBBoolean = World.getDynamicProperty('reachb_b');
-    let antiNukerABoolean = World.getDynamicProperty('antinukera_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -319,7 +318,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-ScaffoldA is currently §4DISABLED"}]}`);
     }
 
-    if (antiNukerABoolean) {
+    if (config.modules.antinukerA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-NukerA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-NukerA is currently §4DISABLED"}]}`);

@@ -12,7 +12,7 @@ function reachBHelp(player, prefix, reachBBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (reachBBoolean === false) {
+    if (reachBBoolean) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
