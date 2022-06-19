@@ -5,13 +5,8 @@ import config from "../../../data/config.js";
 const World = world;
 
 function badpackets1(msg) {
-    // Get Dynamic Property
-    let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
-    if (badPackets1Boolean === undefined) {
-        badPackets1Boolean = config.modules.badpackets1.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (badPackets1Boolean === false) {
+    if (config.modules.badpackets1.enabled === false) {
         World.events.beforeChat.unsubscribe(badpackets1);
         return;
     }

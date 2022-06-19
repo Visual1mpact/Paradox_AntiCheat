@@ -90,7 +90,6 @@ function modulesHelp(player, prefix) {
     let spammerCBoolean = World.getDynamicProperty('spammerc_b');
     let spammerBBoolean = World.getDynamicProperty('spammerb_b');
     let spammerABoolean = World.getDynamicProperty('spammera_b');
-    let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -157,7 +156,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Knockback is currently §4DISABLED"}]}`);
     }
 
-    if (badPackets1Boolean) {
+    if (config.modules.badpackets1.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §4DISABLED"}]}`);
