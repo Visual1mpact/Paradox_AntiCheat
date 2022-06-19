@@ -77,7 +77,6 @@ function modulesHelp(player, prefix) {
     let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
     let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
     let flyABoolean = World.getDynamicProperty('flya_b');
-    let crasherABoolean = World.getDynamicProperty('crashera_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -180,7 +179,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Spam is currently §4DISABLED"}]}`);
     }
 
-    if (crasherABoolean) {
+    if (config.modules.crasherA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r CrasherA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r CrasherA is currently §4DISABLED"}]}`);

@@ -63,9 +63,6 @@ function registry(data) {
 
     // Define properties for flya
     property.defineBoolean('flya_b');
-
-    // Define properties for crashera
-    property.defineBoolean('crashera_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -174,12 +171,6 @@ function registry(data) {
     let flya_b = World.getDynamicProperty('flya_b');
     if (flya_b === undefined) {
         World.setDynamicProperty('flya_b', config.modules.flyA.enabled);
-    }
-
-    // Set properties for crashera
-    let crashera_b = World.getDynamicProperty('crashera_b');
-    if (crashera_b === undefined) {
-        World.setDynamicProperty('crashera_b', config.modules.crasherA.enabled);
     }
 }
 
