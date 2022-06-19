@@ -75,9 +75,6 @@ function registry(data) {
 
     // Define properties for antiscaffolda
     property.defineBoolean('antiscaffolda_b');
-
-    // Define properties for reacha
-    property.defineBoolean('reacha_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -210,12 +207,6 @@ function registry(data) {
     let antiscaffolda_b = World.getDynamicProperty('antiscaffolda_b');
     if (antiscaffolda_b === undefined) {
         World.setDynamicProperty('antiscaffolda_b', config.modules.antiscaffoldA.enabled);
-    }
-
-    // Set properties for reacha
-    let reacha_b = World.getDynamicProperty('reacha_b');
-    if (reacha_b === undefined) {
-        World.setDynamicProperty('reacha_b', config.modules.reachA.enabled);
     }
 }
 
