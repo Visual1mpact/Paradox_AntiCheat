@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function jesusAHelp(player, prefix, jesusaBoolean) {
+function jesusAHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.jesusa) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function jesusAHelp(player, prefix, jesusaBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (jesusaBoolean === false) {
+    if (!config.modules.jesusA.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -52,29 +49,23 @@ export function jesusA(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let jesusaBoolean = World.getDynamicProperty('jesusa_b');
-    if (jesusaBoolean === undefined) {
-        jesusaBoolean = config.modules.jesusA.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.jesusa) {
-        return jesusAHelp(player, prefix, jesusaBoolean);
+        return jesusAHelp(player, prefix);
     }
 
-    if (jesusaBoolean === false) {
+    if (config.modules.jesusA.enabled === false) {
         // Allow
-        World.setDynamicProperty('jesusa_b', true);
+        config.modules.jesusA.enabled = true;
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6JesusA§r!"}]}`);
         return;
-    } else if (jesusaBoolean === true) {
+    } else if (config.modules.jesusA.enabled === true) {
         // Deny
-        World.setDynamicProperty('jesusa_b', false);
+        config.modules.jesusA.enabled = false;
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4JesusA§r!"}]}`);
         return;
     }

@@ -18,13 +18,8 @@ function timer(player, dimension, x, y, z) {
 }
 
 function jesusa(){
-    // Get Dynamic Property
-    let jesusaBoolean = World.getDynamicProperty('jesusa_b');
-    if (jesusaBoolean === undefined) {
-        jesusaBoolean = config.modules.jesusA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (jesusaBoolean === false) {
+    if (config.modules.jesusA.enabled === false) {
         World.events.tick.unsubscribe(jesusa);
         return;
     }
