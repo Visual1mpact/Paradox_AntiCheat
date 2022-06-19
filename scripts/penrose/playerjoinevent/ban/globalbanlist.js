@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import { banplayer } from "../../../data/globalban.js";
-import { banMessage } from "../../../util.js";
+import { banMessage, disabler } from "../../../util.js";
 
 const World = world;
 
@@ -9,9 +9,9 @@ const tickEventCallback = World.events.tick;
 function banHammerTime(player) {
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor @a`);
+        player.runCommand(`testfor @a[name=${disabler(player.nameTag)}]`);
         // Check global ban list and if the player who is joining is on the server then kick them out
-        if (banplayer.some(code => JSON.stringify(code) === JSON.stringify({ name: player.name }))) {
+        if (banplayer.some(code => JSON.stringify(code) === JSON.stringify({ name: player.nameTag }))) {
             if (!player.hasTag('By:Paradox Anticheat')) {
                 // if they are not tagged then we do that here before we ban
                 player.addTag('By:Paradox Anticheat');
