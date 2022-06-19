@@ -5,13 +5,8 @@ import { illegalitems } from "../../../data/itemban.js";
 const World = world;
 
 function illegalitemsd() {
-    // Get Dynamic Property
-    let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
-    if (illegalItemsDBoolean === undefined) {
-        illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (illegalItemsDBoolean === false) {
+    if (config.modules.illegalitemsD.enabled === false) {
         World.events.tick.unsubscribe(illegalitemsd);
         return;
     }
