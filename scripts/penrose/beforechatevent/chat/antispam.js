@@ -18,13 +18,8 @@ function timer() {
 }
 
 function antispam(msg) {
-    // Get Dynamic Property
-    let antiSpamBoolean = World.getDynamicProperty('antispam_b');
-    if (antiSpamBoolean === undefined) {
-        antiSpamBoolean = config.modules.antispam.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (antiSpamBoolean === false) {
+    if (config.modules.antispam.enabled === false) {
         World.events.beforeChat.unsubscribe(antispam);
         return;
     }

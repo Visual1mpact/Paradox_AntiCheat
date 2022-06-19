@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function antispamHelp(player, prefix, antiSpamBoolean) {
+function antispamHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.antispam) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function antispamHelp(player, prefix, antiSpamBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (antiSpamBoolean === false) {
+    if (!config.modules.antispam.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -57,29 +54,23 @@ export function antispam(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    // Get Dynamic Property Boolean
-    let antiSpamBoolean = World.getDynamicProperty('antispam_b');
-    if (antiSpamBoolean === undefined) {
-        antiSpamBoolean = config.modules.antispam.enabled;
-    }
-
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antispam) {
-        return antispamHelp(player, prefix, antiSpamBoolean);
+        return antispamHelp(player, prefix);
     }
 
-    if (antiSpamBoolean === false) {
+    if (config.modules.antispam.enabled === false) {
         // Allow
-        World.setDynamicProperty('antispam_b', true);
+        config.modules.antispam.enabled = true;
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Spam§r!"}]}`);
         return;
-    } else if (antiSpamBoolean === true) {
+    } else if (config.modules.antispam.enabled === true) {
         // Deny
-        World.setDynamicProperty('antispam_b', false);
+        config.modules.antispam.enabled = false;
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Spam§r!"}]}`);
         return;
     }

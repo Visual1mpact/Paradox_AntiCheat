@@ -136,9 +136,6 @@ function registry(data) {
     // Define properties for badpackets2
     property.defineBoolean('badpackets2_b');
 
-    // Define properties for antispam
-    property.defineBoolean('antispam_b');
-
     // Define properties for hash
     personal.defineString('hash', 200);
 
@@ -393,12 +390,6 @@ function registry(data) {
     let badpackets2_b = World.getDynamicProperty('badpackets2_b');
     if (badpackets2_b === undefined) {
         World.setDynamicProperty('badpackets2_b', config.modules.badpackets2.enabled);
-    }
-
-    // Set properties for antispam
-    let antispam_b = World.getDynamicProperty('antispam_b');
-    if (antispam_b === undefined) {
-        World.setDynamicProperty('antispam_b', config.modules.antispam.enabled);
     }
 }
 
