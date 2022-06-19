@@ -64,7 +64,6 @@ function modulesHelp(player, prefix) {
     let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
     let xrayaBoolean = World.getDynamicProperty('xraya_b');
     let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
-    let opsBoolean = World.getDynamicProperty('ops_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -341,7 +340,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §4DISABLED"}]}`);
     }
 
-    if (opsBoolean) {
+    if (config.modules.ops.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OPS is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OPS is currently §4DISABLED"}]}`);
