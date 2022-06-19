@@ -89,7 +89,6 @@ function modulesHelp(player, prefix) {
     let spammerDBoolean = World.getDynamicProperty('spammerd_b');
     let spammerCBoolean = World.getDynamicProperty('spammerc_b');
     let spammerBBoolean = World.getDynamicProperty('spammerb_b');
-    let spammerABoolean = World.getDynamicProperty('spammera_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -162,7 +161,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §4DISABLED"}]}`);
     }
 
-    if (spammerABoolean) {
+    if (config.modules.spammerA.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerA is currently §4DISABLED"}]}`);
