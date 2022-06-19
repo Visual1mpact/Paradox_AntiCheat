@@ -108,9 +108,6 @@ function registry(data) {
 
     // Define properties for salvage
     property.defineBoolean('salvage_b');
-
-    // Define properties for rcbr
-    property.defineBoolean('rcbr_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -309,12 +306,6 @@ function registry(data) {
     let salvage_b = World.getDynamicProperty('salvage_b');
     if (salvage_b === undefined) {
         World.setDynamicProperty('salvage_b', config.modules.salvage.enabled);
-    }
-
-    // Set properties for rcbr
-    let rcbr_b = World.getDynamicProperty('rcbr_b');
-    if (rcbr_b === undefined) {
-        World.setDynamicProperty('rcbr_b', config.modules.rbcr.enabled);
     }
 }
 
