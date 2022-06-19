@@ -114,9 +114,6 @@ function registry(data) {
 
     // Define properties for illegallores
     property.defineBoolean('illegallores_b');
-
-    // Define properties for illegalenchantment
-    property.defineBoolean('illegalenchantment_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -327,12 +324,6 @@ function registry(data) {
     let illegallores_b = World.getDynamicProperty('illegallores_b');
     if (illegallores_b === undefined) {
         World.setDynamicProperty('illegallores_b', config.modules.illegalLores.enabled);
-    }
-
-    // Set properties for illegalenchantment
-    let illegalenchantment_b = World.getDynamicProperty('illegalenchantment_b');
-    if (illegalenchantment_b === undefined) {
-        World.setDynamicProperty('illegalenchantment_b', config.modules.illegalEnchantment.enabled);
     }
 }
 

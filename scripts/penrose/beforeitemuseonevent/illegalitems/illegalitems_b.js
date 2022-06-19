@@ -53,10 +53,6 @@ function illegalitemsb(object) {
     if (illegalLoresBoolean === undefined) {
         illegalLoresBoolean = config.modules.illegalLores.enabled;
     }
-    let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
-    if (illegalEnchantmentBoolean === undefined) {
-        illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
-    }
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
@@ -254,7 +250,7 @@ function illegalitemsb(object) {
         source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Items with illegal Lores are not allowed!"}]}`);
         return;
     }
-    if (illegalEnchantmentBoolean) {
+    if (config.modules.illegalEnchantment.enabled) {
         // We get a list of enchantments on this item
         let item_enchants = item.getComponent("minecraft:enchantments").enchantments;
         // List of allowed enchantments on item
