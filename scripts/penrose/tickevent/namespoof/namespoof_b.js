@@ -30,13 +30,8 @@ function rip(player) {
 }
 
 function namespoofb() {
-    // Get Dynamic Property
-    let nameSpoofBoolean = World.getDynamicProperty('namespoofb_b');
-    if (nameSpoofBoolean === undefined) {
-        nameSpoofBoolean = config.modules.namespoofB.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (nameSpoofBoolean === false) {
+    if (config.modules.namespoofB.enabled === false) {
         World.events.tick.unsubscribe(namespoofb);
         return;
     }
