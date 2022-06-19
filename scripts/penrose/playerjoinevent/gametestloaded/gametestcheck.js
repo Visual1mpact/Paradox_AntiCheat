@@ -4,16 +4,15 @@ const World = world;
 const tickEventCallback = World.events.tick;
 
 // This is to allow passing between functions
-let player;
 let isChecked = false;
 
 // This function will be called when tick event is triggered from the playerloaded function
-function time() {
+function time(player) {
     try {
         // We loop testfor until it returns true so we know the
         // player is in the world because playerJoin triggers
         // too quickly while player is in loading screen
-        player.runCommand(`testfor @a`);
+        player.runCommand(`testfor ${player.name}`);
         try {
             // (1..) Set gametestapi to 1
             player.runCommand(`scoreboard players set paradox:config gametestapi 1`);
@@ -29,9 +28,9 @@ const GametestCheck = () => {
     World.events.playerJoin.subscribe(loaded => {
         if (isChecked === false) {
             // Get the name of the player who is joining
-            player = loaded.player;
+            let player = loaded.player;
             // Subscribe tick event to the time function
-            tickEventCallback.subscribe(time);
+            tickEventCallback.subscribe(() => time(player));
         }
     });
 };

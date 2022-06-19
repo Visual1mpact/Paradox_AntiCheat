@@ -9,7 +9,7 @@ const tickEventCallback = World.events.tick;
 function banHammerTime(player) {
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor @a`);
+        player.runCommand(`testfor ${player.name}`);
         // Check global ban list and if the player who is joining is on the server then kick them out
         if (banplayer.some(code => JSON.stringify(code) === JSON.stringify({ name: player.name }))) {
             if (!player.hasTag('By:Paradox Anticheat')) {
