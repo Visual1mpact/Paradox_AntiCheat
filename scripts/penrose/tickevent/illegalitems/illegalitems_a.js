@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, EntityQueryOptions, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { crypto, disabler, flag, titleCase, toCamelCase } from "../../../util.js";
@@ -77,17 +77,10 @@ function illegalitemsa() {
         return;
     }
 
-    for (let player of World.getPlayers()) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
-        let encode;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
+    // Used to contain data about Lores
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['Hash:' + crypto];
+    for (let player of World.getPlayers(filter)) {
         let inventory = player.getComponent('minecraft:inventory').container;
         for (let i = 0; i < inventory.size; i++) {
             let inventory_item = inventory.getItem(i);

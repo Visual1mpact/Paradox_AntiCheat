@@ -45,7 +45,7 @@ function Freeze() {
             player.removeTag('freezeactive');
             player.removeTag('freeze');
             player.runCommand(`effect "${disabler(player.nameTag)}" clear`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine dimension for ${disabler(player.nameTag)}."}]}`);
+            player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine dimension for ${disabler(player.nameTag)}."}]}`);
             playerLeaveEventCallback.unsubscribe(StopTickFreeze);
             tickEventCallback.unsubscribe(Freeze);
             return;
@@ -131,14 +131,7 @@ function StopTickFreeze() {
 // Where the magic begins
 function TickFreeze(data) {
     player = data;
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         try {
             tickEventCallback.subscribe(Freeze);
         } catch (error) {}

@@ -26,18 +26,9 @@ function adventure() {
     let filter = new EntityQueryOptions();
     // 2 = adventure
     filter.gameMode = 2;
+    filter.excludeTags = ['Hash' + crypto];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
-        let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
         // Make sure they didn't enable all of them in config.js as this will have a negative impact
         if (survivalGMBoolean === true && creativeGMBoolean === true) {
             // Default to adventure for safety

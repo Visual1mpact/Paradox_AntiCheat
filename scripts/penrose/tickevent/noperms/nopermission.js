@@ -1,12 +1,11 @@
 import { world, Player, EntityQueryOptions } from "mojang-minecraft";
-import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 
 const World = world;
 
 function noperms() {
     let filter = new EntityQueryOptions();
-    filter.tags = ['paradoxOpped'];
+    filter.tags = ['paradoxOpped', 'Hash:' + crypto];
     // We need a list of players for checking behind a bug in Minecraft
     let playerArray = [...World.getPlayers(filter)];
     // Let's check the entities for illegal permissions
@@ -22,19 +21,11 @@ function noperms() {
             // Skip to the next entity since this is a bug in Minecraft
             continue;
         }
-        // Check for hash/salt and validate password
-        let hash = entity.getDynamicProperty('hash');
-        let salt = entity.getDynamicProperty('salt');
-        let encode;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
         if (entity.hasTag('paradoxOpped')) {
             entity.removeTag('paradoxOpped');
         }
-        if (hash !== undefined && encode === hash) {
-            entity.removeDynamicProperty('hash');
-            entity.removeDynamicProperty('salt');
+        if (entity.hasTag('Hash:' + crypto)) {
+            entity.removeTag('Hash:' + crypto);
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {

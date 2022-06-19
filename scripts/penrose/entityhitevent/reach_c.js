@@ -29,15 +29,8 @@ function reachc(object) {
         return;
     }
 
-    // Check for hash/salt and validate password
-    let hash = entity.getDynamicProperty('hash');
-    let salt = entity.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    if (entity.hasTag('Hash:' + crypto)) {
         return;
     }
 

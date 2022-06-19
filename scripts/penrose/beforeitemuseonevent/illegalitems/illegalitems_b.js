@@ -74,15 +74,8 @@ function illegalitemsb(object) {
     // Properties from class
     let { item, source, cancel } = object;
 
-    // Check for hash/salt and validate password
-    let hash = source.getDynamicProperty('hash');
-    let salt = source.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // Return if player is OP
-    if (hash !== undefined && encode === hash) {
+    if (source.hasTag('Hash:' + crypto)) {
         return;
     }
 

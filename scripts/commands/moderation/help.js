@@ -24,14 +24,7 @@ export function help(message) {
     
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return nonstaffhelp(message);
     }
 

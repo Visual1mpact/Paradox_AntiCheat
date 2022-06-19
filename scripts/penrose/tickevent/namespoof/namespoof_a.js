@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { EntityQueryOptions, world } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
@@ -16,18 +16,10 @@ function namespoofa() {
         World.events.tick.unsubscribe(namespoofa);
         return;
     }
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers()) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
-        let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
+    for (let player of World.getPlayers(filter)) {
         // Namespoof/A = username length check.
         try {
             if (player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength) {
