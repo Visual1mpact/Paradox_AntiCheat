@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function reachAHelp(player, prefix) {
+const World = world;
+
+function reachAHelp(player, prefix, reachABoolean) {
     let commandStatus;
     if (!config.customcommands.reacha) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function reachAHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.reachA.enabled) {
+    if (reachABoolean) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,23 +52,29 @@ export function reachA(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let reachABoolean = World.getDynamicProperty('reacha_b');
+    if (reachABoolean === undefined) {
+        reachABoolean = config.modules.reachA.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.reacha) {
-        return reachAHelp(player, prefix);
+        return reachAHelp(player, prefix, reachABoolean);
     }
 
-    if (config.modules.reachA.enabled === false) {
+    if (reachABoolean === false) {
         // Allow
-        config.modules.reachA.enabled = true;
+        World.setDynamicProperty('reacha_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ReachA§r!"}]}`);
         return;
-    } else if (config.modules.reachA.enabled === true) {
+    } else if (reachABoolean === true) {
         // Deny
-        config.modules.reachA.enabled = false;
+        World.setDynamicProperty('reacha_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ReachA§r!"}]}`);
         return;
     }

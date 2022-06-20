@@ -81,6 +81,7 @@ function modulesHelp(player, prefix) {
     let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
     let reachCBoolean = World.getDynamicProperty('reachc_b');
     let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
+    let reachABoolean = World.getDynamicProperty('reacha_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -207,7 +208,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Bedrock Validate is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.reachA.enabled) {
+    if (reachABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachA is currently §4DISABLED"}]}`);
