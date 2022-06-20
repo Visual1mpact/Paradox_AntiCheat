@@ -72,6 +72,10 @@ function illegalitemsc(object) {
     if (illegalEnchantmentBoolean === undefined) {
         illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
     }
+    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    if (antiShulkerBoolean === undefined) {
+        antiShulkerBoolean = config.modules.antishulker.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsCBoolean === false) {
         World.events.blockPlace.unsubscribe(illegalitemsc);
@@ -90,7 +94,7 @@ function illegalitemsc(object) {
 
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-    if (config.modules.antishulker.enabled && block.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && block.id === "minecraft:undyed_shulker_box") {
+    if (antiShulkerBoolean && block.id === "minecraft:shulker_box" || antiShulkerBoolean && block.id === "minecraft:undyed_shulker_box") {
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
             player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${block.id.replace("minecraft:", "")} from ${disabler(player.nameTag)}."}]}`);
