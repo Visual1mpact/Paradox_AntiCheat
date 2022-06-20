@@ -6,7 +6,7 @@ const World = world;
 
 const tickEventCallback = World.events.tick;
 
-function banHammerTime(player) {
+function banHammerTime(player, callback) {
     try {
         // Loop until player is detected in the world
         player.runCommand(`testfor @a[name=${disabler(player.nameTag)}]`);
@@ -26,7 +26,7 @@ function banHammerTime(player) {
     } catch (error) {}
     if (player.check) {
         player.check = false;
-        tickEventCallback.unsubscribe(banHammerTime);
+        tickEventCallback.unsubscribe(callback);
         return;
     }
 }
@@ -36,7 +36,8 @@ const GlobalBanList = () => {
         // Get the name of the player who is joining
         let player = loaded.player;
         // Subscribe tick event to the time function
-        tickEventCallback.subscribe(() => banHammerTime(player));
+        let callback
+        tickEventCallback.subscribe(callback = () => banHammerTime(player, callback));
     });
 };
 
