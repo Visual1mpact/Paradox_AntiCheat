@@ -225,6 +225,10 @@ export const titleCase = (s) =>
   s.replace (/^[-_]*(.)/, (_, c) => c.toUpperCase())
    .replace (/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 
+
+// Handler for encryption down below
+const { encryption } = config.modules;
+
 /**
  * @name crypt
  * @param {string} salt - Hashes information

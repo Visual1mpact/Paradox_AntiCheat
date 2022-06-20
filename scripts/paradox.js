@@ -62,7 +62,7 @@ const World = world;
 
 // Define globally within script
 let hastag;
-
+dynamicproperty
 // BeforeChat Events
 BadPackets1();
 SpammerA();
@@ -76,7 +76,7 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
-BadPackets2();
+// BadPackets2();
 VerifyPermission();
 Random();
 OPS();
