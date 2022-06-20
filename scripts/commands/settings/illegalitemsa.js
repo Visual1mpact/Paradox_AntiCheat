@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function illegalItemsAHelp(player, prefix, illegalItemsABoolean) {
+function illegalItemsAHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.illegalitemsa) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function illegalItemsAHelp(player, prefix, illegalItemsABoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (illegalItemsABoolean === false) {
+    if (!config.modules.illegalitemsA.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -45,22 +42,11 @@ export function illegalitemsA(message, args) {
 
     let player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    let tag = player.getTags();
+    
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!tag.includes('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
-
-    // Get Dynamic Property Boolean
-    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
-    if (illegalItemsABoolean === undefined) {
-        illegalItemsABoolean = config.modules.illegalitemsA.enabled;
     }
 
     // Check for custom prefix
@@ -69,18 +55,18 @@ export function illegalitemsA(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.illegalitemsa) {
-        return illegalItemsAHelp(player, prefix, illegalItemsABoolean);
+        return illegalItemsAHelp(player, prefix);
     }
 
-    if (illegalItemsABoolean === false) {
+    if (config.modules.illegalitemsA.enabled === false) {
         // Allow
-        World.setDynamicProperty('illegalitemsa_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalItemsA§r!"}]}`);
+        config.modules.illegalitemsA.enabled = true;
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalItemsA§r!"}]}`);
         return;
-    } else if (illegalItemsABoolean === true) {
+    } else if (config.modules.illegalitemsA.enabled === true) {
         // Deny
-        World.setDynamicProperty('illegalitemsa_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalItemsA§r!"}]}`);
+        config.modules.illegalitemsA.enabled = false;
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalItemsA§r!"}]}`);
         return;
     }
 }

@@ -27,17 +27,17 @@ function flyHelp(player, prefix) {
 
 function mayflydisable(player, member) {
     if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
     } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
     }
 }
 
 function mayflyenable(player, member) {
     if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        return member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
+        return member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
     } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-        return member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
+        return member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
     }
 }
 
@@ -55,16 +55,10 @@ export function fly(message, args) {
     message.cancel = true;
 
     let player = message.sender;
+    let playertag = player.getTags();
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!playertag.includes('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -94,9 +88,13 @@ export function fly(message, args) {
     let membertag = member.getTags();
 
     if (!membertag.includes('noflying') && !membertag.includes('flying')) {
-        member.runCommand(`ability "${disabler(member.nameTag)}" mayfly true`);
-        member.addTag('flying');
-        mayflyenable(player, member);
+        try {
+            member.runCommand(`ability "${disabler(member.nameTag)}" mayfly true`);
+            member.addTag('flying');
+            mayflyenable(player, member);
+        } catch (Error) {
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Education Edition!"}]}`);
+        }
         return;
     }
 
@@ -105,10 +103,14 @@ export function fly(message, args) {
     }
 
     if (member.hasTag('noflying')) {
-        member.removeTag('flying');
-        member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
-        mayflydisable(player, member);
-        member.removeTag('noflying');
+        try {
+            member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
+            member.removeTag('flying');
+            mayflydisable(player, member);
+            member.removeTag('noflying');
+        } catch (error) {
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Education Edition!"}]}`);
+        }
         return;
     }
 }

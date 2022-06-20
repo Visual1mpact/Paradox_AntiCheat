@@ -4,7 +4,7 @@ import { disabler, tagRank, resetTag, getPrefix, crypto } from "../../util.js";
 
 const World = world;
 
-function tagHelp(player, prefix, chatRanksBoolean) {
+function tagHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.tag || !config.customcommands.chatranks) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +12,7 @@ function tagHelp(player, prefix, chatRanksBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (chatRanksBoolean === false || !config.customcommands.chatranks) {
+    if (!config.modules.chatranks.enabled || !config.customcommands.chatranks) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -50,22 +50,9 @@ export function tag(message, args) {
     // fixes a bug that kills !tag when using custom names
     player.nameTag = player.name;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
-
-    // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
-    if (chatRanksBoolean === undefined) {
-        chatRanksBoolean = config.modules.chatranks.enabled;
     }
 
     // Check for custom prefix
@@ -73,8 +60,8 @@ export function tag(message, args) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
-        return tagHelp(player, prefix, chatRanksBoolean);
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !config.modules.chatranks.enabled || !config.customcommands.chatranks) {
+        return tagHelp(player, prefix);
     }
 
     // try to find the player requested
@@ -114,8 +101,8 @@ export function tag(message, args) {
     }
 
     if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed their rank!"}]}`);
+        return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed their rank!"}]}`);
     }
 
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed the rank of ${member.name}!"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed the rank of ${member.name}!"}]}`);
 }

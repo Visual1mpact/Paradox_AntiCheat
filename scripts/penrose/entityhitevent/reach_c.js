@@ -5,13 +5,8 @@ import { crypto, flag } from "../../util.js";
 const World = world;
 
 function reachc(object) {
-    // Get Dynamic Property
-    let reachCBoolean = World.getDynamicProperty('reachc_b');
-    if (reachCBoolean === undefined) {
-        reachCBoolean = config.modules.reachC.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (reachCBoolean === false) {
+    if (config.modules.reachC.enabled === false) {
         World.events.entityHit.unsubscribe(reachc);
         return;
     }
@@ -29,15 +24,8 @@ function reachc(object) {
         return;
     }
 
-    // Check for hash/salt and validate password
-    let hash = entity.getDynamicProperty('hash');
-    let salt = entity.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    if (entity.hasTag('Hash:' + crypto)) {
         return;
     }
 
@@ -55,7 +43,7 @@ function reachc(object) {
 }
 
 const ReachC = () => {
-    World.events.entityHit.subscribe(object => reachc(object));
+    World.events.entityHit.subscribe(reachc);
 };
 
 export { ReachC };

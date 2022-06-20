@@ -1,10 +1,7 @@
-import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
-const World = world;
-
-function antikbHelp(player, prefix, antikbBoolean) {
+function antikbHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.antikb) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function antikbHelp(player, prefix, antikbBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (antikbBoolean === false) {
+    if (!config.modules.antikbA.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -45,22 +42,9 @@ export function antiknockback(message, args) {
 
     let player = message.sender;
     
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
-
-    // Get Dynamic Property Boolean
-    let antikbBoolean = World.getDynamicProperty('antikb_b');
-    if (antikbBoolean === undefined) {
-        noSlowBoolean = config.modules.antikbA.enabled;
     }
 
     // Check for custom prefix
@@ -69,21 +53,19 @@ export function antiknockback(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antikb) {
-        return antikbHelp(player, prefix, antikbBoolean);
+        return antikbHelp(player, prefix);
     }
 
     let antikbscore = getScore("antikb", player);
 
     if (antikbscore <= 0) {
         // Allow
-        World.setDynamicProperty('antikb_b', true);
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
     } else if (antikbscore >= 1) {
         // Deny
-        World.setDynamicProperty('antikb_b', false);
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
     }
     return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

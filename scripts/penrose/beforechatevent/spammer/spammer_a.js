@@ -5,27 +5,15 @@ import config from "../../../data/config.js";
 const World = world;
 
 function spammera(msg) {
-    // Get Dynamic Property
-    let spammerABoolean = World.getDynamicProperty('spammera_b');
-    if (spammerABoolean === undefined) {
-        spammerABoolean = config.modules.spammerA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (spammerABoolean === false) {
+    if (config.modules.spammerA.enabled === false) {
         World.events.beforeChat.unsubscribe(spammera);
         return;
     }
     const player = msg.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 
@@ -36,7 +24,7 @@ function spammera(msg) {
 }
 
 const SpammerA = () => {
-    World.events.beforeChat.subscribe(msg => spammera(msg));
+    World.events.beforeChat.subscribe(spammera);
 };
 
 export { SpammerA };

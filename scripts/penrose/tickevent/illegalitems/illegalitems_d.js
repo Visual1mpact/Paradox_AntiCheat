@@ -5,17 +5,8 @@ import { illegalitems } from "../../../data/itemban.js";
 const World = world;
 
 function illegalitemsd() {
-    // Get Dynamic Property
-    let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
-    if (illegalItemsDBoolean === undefined) {
-        illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
-    }
-    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
-    if (antiShulkerBoolean === undefined) {
-        antiShulkerBoolean = config.modules.antishulker.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (illegalItemsDBoolean === false) {
+    if (config.modules.illegalitemsD.enabled === false) {
         World.events.tick.unsubscribe(illegalitemsd);
         return;
     }
@@ -40,7 +31,7 @@ function illegalitemsd() {
         if (entity.id === "minecraft:item") {
 
             // If shulker boxes are not allowed in the server then we handle this here
-            if (antiShulkerBoolean && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
+            if (config.modules.antishulker.enabled && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
                 entity.kill();
                 continue;
             }

@@ -8,7 +8,7 @@ import { whitelist } from "../../../data/whitelistitems.js";
 
 const World = world;
 
-function rip(source, item) {
+function rip(source, item, enchant_data) {
     let tags = source.getTags();
 
     // This removes old ban tags
@@ -20,43 +20,28 @@ function rip(source, item) {
             source.removeTag(t);
         }
     });
-    try {
-        source.runCommand(`tag "${disabler(source.nameTag)}" add "Reason:Illegal Item B (${item.id.replace("minecraft:", "")}=${item.amount})"`);
-        source.runCommand(`tag "${disabler(source.nameTag)}" add "By:Paradox"`);
-        source.addTag('isBanned');
-    } catch (error) {
-        source.triggerEvent('paradox:kick');
+    if (!enchant_data) {
+        try {
+            source.addTag('Reason:Illegal Item B (' + item.id.replace("minecraft:", "") + '=' + item.amount + ')');
+            source.addTag('By:Paradox');
+            source.addTag('isBanned');
+        } catch (error) {
+            source.triggerEvent('paradox:kick');
+        }
+    } else {
+        try {
+            source.addTag('Reason:Illegal Item B (' + item.id.replace("minecraft:", "") + ':' + enchant_data.type.id + '=' + enchant_data.level + ')');
+            source.addTag('By:Paradox');
+            source.addTag('isBanned');
+        } catch (error) {
+            source.triggerEvent('paradox:kick');
+        }
     }
 }
 
 function illegalitemsb(object) {
-    // Get Dynamic Property
-    let illegalItemsBBoolean = World.getDynamicProperty('illegalitemsb_b');
-    if (illegalItemsBBoolean === undefined) {
-        illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
-    }
-    let salvageBoolean = World.getDynamicProperty('salvage_b');
-    if (salvageBoolean === undefined) {
-        salvageBoolean = config.modules.salvage.enabled;
-    }
-    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
-    if (illegalLoresBoolean === undefined) {
-        illegalLoresBoolean = config.modules.illegalLores.enabled;
-    }
-    let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
-    if (illegalEnchantmentBoolean === undefined) {
-        illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
-    }
-    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
-    if (antiShulkerBoolean === undefined) {
-        antiShulkerBoolean = config.modules.antishulker.enabled;
-    }
-    let stackBanBoolean = World.getDynamicProperty('stackban_b');
-    if (stackBanBoolean === undefined) {
-        stackBanBoolean = config.modules.stackBan.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (illegalItemsBBoolean === false) {
+    if (config.modules.illegalitemsB.enabled === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
         return;
     }
@@ -64,15 +49,8 @@ function illegalitemsb(object) {
     // Properties from class
     let { item, source, cancel } = object;
 
-    // Check for hash/salt and validate password
-    let hash = source.getDynamicProperty('hash');
-    let salt = source.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // Return if player is OP
-    if (hash !== undefined && encode === hash) {
+    if (source.hasTag('Hash:' + crypto)) {
         return;
     }
 
@@ -90,7 +68,7 @@ function illegalitemsb(object) {
 
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-    if (antiShulkerBoolean && item.id === "minecraft:shulker_box" || antiShulkerBoolean && item.id === "minecraft:undyed_shulker_box") {
+    if (config.modules.antishulker.enabled && item.id === "minecraft:shulker_box" || config.modules.antishulker.enabled && item.id === "minecraft:undyed_shulker_box") {
         cancel = true;
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -101,7 +79,7 @@ function illegalitemsb(object) {
         return;
     }
 
-    if (salvageBoolean && !whitelist.includes(item.id)) {
+    if (config.modules.salvage.enabled && !whitelist.includes(item.id)) {
         /**
          * Salvage System to mitigate NBT's on every item in the game
          */
@@ -159,12 +137,12 @@ function illegalitemsb(object) {
                     new_ench_comp.enchantments = new_ench_data;
                 }
                 // Restore enchanted item
-                if (!illegalLoresBoolean) {
+                if (!config.modules.illegalLores.enabled) {
                     let loreData = item.getLore();
                     try {
                         source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName.setLore([loreData]));
                     } catch (error) {}
-                } else if (illegalLoresBoolean) {
+                } else if (config.modules.illegalLores.enabled) {
                     try {
                         source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName);
                     } catch (error) {}
@@ -182,7 +160,7 @@ function illegalitemsb(object) {
         // Check if data exceeds vanilla data
         if (salvageable[item.id] && uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
             // Reset item to data type of 0
-            if (!illegalLoresBoolean) {
+            if (!config.modules.illegalLores.enabled) {
                 loreData = item.getLore();
                 try {
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount).setLore([loreData]));
@@ -195,7 +173,7 @@ function illegalitemsb(object) {
             return;
         } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
             // Reset item to data type of equal data if they do not match
-            if (!illegalLoresBoolean) {
+            if (!config.modules.illegalLores.enabled) {
                 loreData = item.getLore();
                 try {
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data).setLore([loreData]));
@@ -208,7 +186,7 @@ function illegalitemsb(object) {
             return;
         } else if (salvageable[item.id]) {
             // Reset item to data type of equal data because we take no chances
-            if (!illegalLoresBoolean) {
+            if (!config.modules.illegalLores.enabled) {
                 loreData = item.getLore();
                 try {
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data).setLore([loreData]));
@@ -228,7 +206,7 @@ function illegalitemsb(object) {
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         // Ban
-        return rip(source, item);
+        return rip(source, item, false);
     }
     // Check if item exceeds allowed stacks then remove and ban if enabled
     if (item.amount > config.modules.illegalitemsB.maxStack) {
@@ -239,15 +217,15 @@ function illegalitemsb(object) {
             source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(source.nameTag)} detected with stacked items greater than x64."}]}`);
             source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
         } catch (error) {}
-        if (stackBanBoolean) {
+        if (config.modules.stackBan.enabled) {
             // Ban
-            return rip(source, item);
+            return rip(source, item, false);
         } else {
             return;
         }
     }
     // Check items for illegal lores
-    if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
+    if (config.modules.illegalLores.enabled && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
         cancel = true;
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
@@ -259,7 +237,7 @@ function illegalitemsb(object) {
         source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Items with illegal Lores are not allowed!"}]}`);
         return;
     }
-    if (illegalEnchantmentBoolean) {
+    if (config.modules.illegalEnchantment.enabled) {
         // We get a list of enchantments on this item
         let item_enchants = item.getComponent("minecraft:enchantments").enchantments;
         // List of allowed enchantments on item
@@ -278,6 +256,7 @@ function illegalitemsb(object) {
                 let enchantLevel = enchantedSlot[enchants];
                 if (!enchantLevel) {
                     cancel = true;
+                    flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
                     // Remove this item immediately
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -286,11 +265,13 @@ function illegalitemsb(object) {
                         source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
                     } catch (error) {}
                     source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                    rip(source, item, enchant_data);
                     break;
                 }
                 // Does the enchantment type exceed or break vanilla levels
                 if (enchant_data && enchant_data.level > enchantLevel || enchant_data && enchant_data.level < 0) {
                     cancel = true;
+                    flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, false, false, false, false);
                     // Remove this item immediately
                     source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
                     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
@@ -299,6 +280,7 @@ function illegalitemsb(object) {
                         source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${disabler(source.nameTag)}."}]}`);
                     } catch (error) {}
                     source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                    rip(source, item, enchant_data);
                     break;
                 }
             }
@@ -307,7 +289,7 @@ function illegalitemsb(object) {
 }
 
 const IllegalItemsB = () => {
-    World.events.beforeItemUseOn.subscribe(object => illegalitemsb(object));
+    World.events.beforeItemUseOn.subscribe(illegalitemsb);
 };
 
 export { IllegalItemsB };

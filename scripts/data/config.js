@@ -262,6 +262,8 @@ export default
          * Change your password frequently and only share with trusted sources.
          */
         "encryption": {
+            "salt": "",
+            "optag": "",
             "password": ""
         }
     }

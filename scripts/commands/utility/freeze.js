@@ -40,15 +40,8 @@ export function freeze(message, args) {
 
     let player = message.sender;
     
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -78,15 +71,15 @@ export function freeze(message, args) {
     }
 
     if (member.hasTag('freeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" add nofreeze`);
+        member.addTag('nofreeze');
     }
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" remove freeze`);
+        member.addTag('freeze');
     }
     if (member.hasTag('nofreeze')) {
         member.runCommand(`effect "${disabler(member.nameTag)}" clear`);
         member.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer frozen."}]}`);
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer frozen."}]}`);
     }
 
     if (!member.hasTag('nofreeze')) {
@@ -101,13 +94,13 @@ export function freeze(message, args) {
     }
 
     if (!member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" add freeze`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
+        member.addTag('freeze');
+        member.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
         return TickFreeze(member);
     }
 
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`tag "${disabler(member.nameTag)}" remove nofreeze`);
+        member.addTag('nofreeze');
         return TickFreeze(member);
     }
 }

@@ -39,9 +39,9 @@ export default (function viewObj() {
             '§l': 'BOLD',
             '§o': 'RESET',
             '§r': 'ITLC',
-        }
+        };
 
-    const keyFormat = (k) => typeof k == 'symbol' ? `§a${String(k)}§r` : k[0] == '_' ? `§7${k}§r` : k
+    const keyFormat = (k) => typeof k == 'symbol' ? `§a${String(k)}§r` : k[0] == '_' ? `§7${k}§r` : k;
 
     /**
      * main execution function
@@ -54,25 +54,25 @@ export default (function viewObj() {
      */
     // theres a lot of involvement between class instance and class prototype, so we must be careful
     const exec = ( obj, oTab = defTab, tab = oTab, objlist = [], addObj = obj ) => {
-        if (objlist.includes(obj)) return '§b[Circular]'
+        if (objlist.includes(obj)) return '§b[Circular]';
 
-        if (obj === null || obj === undefined) return `§8${obj}`
+        if (obj === null || obj === undefined) return `§8${obj}`;
         const objConstructor = Object.getPrototypeOf(obj)?.constructor,
             constructorIsObject = objConstructor === Object || objConstructor == null,
-            constructorIsFunction = [ Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction ].includes(objConstructor)
+            constructorIsFunction = [ Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction ].includes(objConstructor);
 
-        const o = []
+        const o = [];
 
         const prevTab = tab.slice(0, -oTab.length),
-            nextTab = tab + oTab
+            nextTab = tab + oTab;
         const kv = (k) => {
-                const headings = `${tab} ${keyFormat(k)}${getGetterSetter(k)}: `
-                try { return headings + exec( obj[k], oTab, nextTab, objlist.concat([addObj]), obj[k] ) }
-                catch { return headings + errUnknown }
+                const headings = `${tab} ${keyFormat(k)}${getGetterSetter(k)}: `;
+                try { return headings + exec( obj[k], oTab, nextTab, objlist.concat([addObj]), obj[k] ); }
+                catch { return headings + errUnknown; }
             },
             getKeys = () => {
                 if (constructorIsObject) {
-                    return new Set( Reflect.ownKeys(obj) )
+                    return new Set( Reflect.ownKeys(obj) );
                 } else {
                     // we want to get keys of an object
                     // from the prototype, if object constructor is a native function, use the object instance, otherwise use object constructor's prototype and object instance
@@ -80,21 +80,21 @@ export default (function viewObj() {
                     const o = new Set(
                         constructorIsFunction ? Reflect.ownKeys(obj)
                         : Reflect.ownKeys(objConstructor.prototype).filter(v => v in obj).concat(Reflect.ownKeys(obj))
-                    )
+                    );
                     // delete all keys
                     // from the prototype, if object constructor is a native function, delete function properties
                     if (constructorIsFunction) {
-                        o.delete('length')
-                        o.delete('name')
-                        o.delete('arguments')
-                        o.delete('caller')
-                        o.delete('prototype')
-                        o.delete('constructor')
+                        o.delete('length');
+                        o.delete('name');
+                        o.delete('arguments');
+                        o.delete('caller');
+                        o.delete('prototype');
+                        o.delete('constructor');
                     // from the prototype, if object constructor is a function, delete 'constructor' property
                     } else if (!constructorIsObject) {
-                        o.delete('constructor')
+                        o.delete('constructor');
                     }
-                    return o
+                    return o;
                 }
             },
             getGetterSetter = (k) => {
@@ -104,29 +104,29 @@ export default (function viewObj() {
                 // if still undefined returns empty object
                 const { get, set } = Reflect.getOwnPropertyDescriptor(obj, k)
                     ?? ( k in obj ? Reflect.getOwnPropertyDescriptor(objConstructor.prototype, k) : null )
-                    ?? {}
+                    ?? {};
                 return get && set ? ` §b[Get/Set]§r `
                     : get ? ` §b[Get]§r `
                     : set ? ` §b[Set]§r `
-                    : ''
-            }
+                    : '';
+            };
 
         try {
             switch (objConstructor) {
                 case String:
-                    return `§7"§r${ obj.replace( /[\t\r\n\v\f\0]|§./g, (v) => v in defStrEscDict ? `§d[${defStrEscDict[v]}]§r` : v in defStrColorDict ? `§b[${defStrColorDict[v]}]§r` : v in defStrFormatDict ? `§a[${defStrFormatDict[v]}]§r` : `§8[S${v.slice(-1)}]§r` ) }§7"§r`
+                    return `§7"§r${ obj.replace( /[\t\r\n\v\f\0]|§./g, (v) => v in defStrEscDict ? `§d[${defStrEscDict[v]}]§r` : v in defStrColorDict ? `§b[${defStrColorDict[v]}]§r` : v in defStrFormatDict ? `§a[${defStrFormatDict[v]}]§r` : `§8[S${v.slice(-1)}]§r` ) }§7"§r`;
                 
                 case Number:
-                    return `§a${obj}§r`
+                    return `§a${obj}§r`;
                 
                 case Boolean:
-                    return `§a${obj}§r`
+                    return `§a${obj}§r`;
                 
                 case RegExp:
-                    return `§c${obj}§r`
+                    return `§c${obj}§r`;
                 
                 case Symbol:
-                    return `§b${String(obj)}§r`
+                    return `§b${String(obj)}§r`;
                 
                 case AsyncFunction:
                 case AsyncGeneratorFunction:
@@ -139,10 +139,10 @@ export default (function viewObj() {
                      * `2`: class
                      * else is unknown
                      */
-                    let l = 0
-                    if (obj.prototype) l++
-                    if (!( Object.getOwnPropertyDescriptor(obj, 'prototype')?.writable ?? true )) l++
-                    const cn = obj.name || '(anonymous)'
+                    let l = 0;
+                    if (obj.prototype) l++;
+                    if (!( Object.getOwnPropertyDescriptor(obj, 'prototype')?.writable ?? true )) l++;
+                    const cn = obj.name || '(anonymous)';
 
                     o.push(
                         objConstructor == AsyncGeneratorFunction ? `§e[AsyncGeneratorFunction: ${cn}]§r`
@@ -151,16 +151,16 @@ export default (function viewObj() {
                         : l == 0 || l == 1 ? `§e[Function: ${cn}]§r`
                         : l == 2 ? `§b[Class: ${cn}]§r`
                         : ''
-                    )
+                    );
 
-                    const keys = getKeys()
+                    const keys = getKeys();
                     if (keys.size) {
-                        o[0] += ' {'
-                        for (const k of keys) o.push( kv(k) )
-                        o.push(`${prevTab} }`)
+                        o[0] += ' {';
+                        for (const k of keys) o.push( kv(k) );
+                        o.push(`${prevTab} }`);
                     }
 
-                    return o.join('\n§r')
+                    return o.join('\n§r');
                 }
 
                 case Error:
@@ -169,59 +169,59 @@ export default (function viewObj() {
                 case RangeError:
                 case SyntaxError:
                 case Promise:
-                    return `§b[${objConstructor.name}]§r`
+                    return `§b[${objConstructor.name}]§r`;
 
                 case Array: {
-                    if (!obj.length) return `[] §7Array<0>`
+                    if (!obj.length) return `[] §7Array<0>`;
 
-                    o.push(`[ §7Array<${obj.length}>`)
-                    for (const k in obj) o.push( kv(k) )
-                    o.push(`${prevTab} ]`)
+                    o.push(`[ §7Array<${obj.length}>`);
+                    for (const k in obj) o.push( kv(k) );
+                    o.push(`${prevTab} ]`);
 
-                    return o.join('\n§r')
+                    return o.join('\n§r');
                 }
 
                 case Set: {
-                    if (!obj.size) return `[] §7Set<0>`
+                    if (!obj.size) return `[] §7Set<0>`;
 
-                    o.push(`[ §7Set<${obj.size}>`)
-                    for (const v of obj) o.push( `${tab} => ` + exec( v, oTab, nextTab, objlist.concat([addObj]), v ) )
-                    o.push(`${prevTab} ]`)
+                    o.push(`[ §7Set<${obj.size}>`);
+                    for (const v of obj) o.push( `${tab} => ` + exec( v, oTab, nextTab, objlist.concat([addObj]), v ) );
+                    o.push(`${prevTab} ]`);
 
-                    return o.join('\n§r')
+                    return o.join('\n§r');
                 }
 
                 case Map: {
-                    if (!obj.size) return `[] §7Map<0>`
+                    if (!obj.size) return `[] §7Map<0>`;
 
-                    o.push(`[ §7Map<${obj.size}>`)
-                    for (const [a, b] of obj) o.push( `${tab} => ${exec( a, oTab, nextTab, objlist.concat([addObj]), a )} -> ${exec( b, oTab, nextTab, objlist.concat([addObj]), b )}` )
-                    o.push(`${prevTab} ]`)
+                    o.push(`[ §7Map<${obj.size}>`);
+                    for (const [a, b] of obj) o.push( `${tab} => ${exec( a, oTab, nextTab, objlist.concat([addObj]), a )} -> ${exec( b, oTab, nextTab, objlist.concat([addObj]), b )}` );
+                    o.push(`${prevTab} ]`);
 
-                    return o.join('\n§r')
+                    return o.join('\n§r');
                 }
 
                 default: {
-                    let constructorName = objConstructor != Object ? objConstructor?.name ?? '[Object: null prototype]' : ''
+                    let constructorName = objConstructor != Object ? objConstructor?.name ?? '[Object: null prototype]' : '';
 
-                    const keys = getKeys()
-                    if (!keys.size) return `{} §7${constructorName}§r`
+                    const keys = getKeys();
+                    if (!keys.size) return `{} §7${constructorName}§r`;
 
-                    o.push(`{ §7${constructorName}§r`)
-                    for (const k of keys) o.push( kv(k) )
-                    o.push(`${prevTab} }`)
+                    o.push(`{ §7${constructorName}§r`);
+                    for (const k of keys) o.push( kv(k) );
+                    o.push(`${prevTab} }`);
 
-                    return o.join('\n§r')
+                    return o.join('\n§r');
                 }
             }
         } catch {
-            return errUnknown
+            return errUnknown;
         }
-    }
+    };
     /**
     * Generates a readable object.
     * @param obj Object.
     * @param tab Tab.
     */
-    return (obj, tab = defTab) => exec(obj, tab)
-})()
+    return (obj, tab = defTab) => exec(obj, tab);
+})();

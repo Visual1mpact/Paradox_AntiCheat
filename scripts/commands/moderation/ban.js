@@ -42,15 +42,8 @@ export function ban(message, args) {
     let player = message.sender;
     let reason = args.slice(1).join(" ") || "No reason specified";
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -99,11 +92,11 @@ export function ban(message, args) {
     });
 
     try {
-        player.runCommand(`tag "${disabler(member.nameTag)}" add "Reason:${reason}"`);
-        player.runCommand(`tag "${disabler(member.nameTag)}" add "By:${disabler(player.nameTag)}"`);
+        member.addTag('Reason:' + reason);
+        member.addTag('By:' + disabler(player.nameTag));
         member.addTag('isBanned');
     } catch (error) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has banned ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has banned ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
 }

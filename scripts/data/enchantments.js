@@ -40,14 +40,14 @@ const maxLevel = {
     quickCharge: 3,
     soulSpeed: 3,
     swiftSneak: 3,
-}
+};
 
 /** @type { <L extends ( keyof typeof maxLevel)[]>(compatibles: L ) => { [K in L[number]]: typeof maxLevel[K] } } */
 const compatibles = (compatibleEnchantments = []) => {
-    const obj = Object.create(null)
-    for (const ench of compatibleEnchantments) obj[ench] = maxLevel[ench]
-    return obj
-}
+    const obj = Object.create(null);
+    for (const ench of compatibleEnchantments) obj[ench] = maxLevel[ench];
+    return obj;
+};
 
 // Compatible enchantments per enchantment slot.
 export const enchantmentSlot = {
@@ -314,4 +314,4 @@ export const enchantmentSlot = {
         'soulSpeed',
         'swiftSneak'
     ])
-}
+};

@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { EntityQueryOptions, world } from "mojang-minecraft";
 import { flag, disabler, crypto } from "../../../util.js";
 import config from "../../../data/config.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
@@ -6,28 +6,15 @@ import { setTickInterval } from "../../../timer/scheduling.js";
 const World = world;
 
 function antiknockbacka() {
-    // Get Dynamic Property
-    let antikbBoolean = World.getDynamicProperty('antikb_b');
-    if (antikbBoolean === undefined) {
-        antikbBoolean = config.modules.antikbA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (antikbBoolean === false) {
+    if (config.modules.antikbA.enabled === false) {
         World.events.tick.unsubscribe(antiknockbacka);
         return;
     }
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers()) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
-        let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
+    for (let player of World.getPlayers(filter)) {
 
         let hand = player.selectedSlot;
 

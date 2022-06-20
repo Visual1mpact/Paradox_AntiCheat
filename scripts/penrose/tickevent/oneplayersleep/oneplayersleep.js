@@ -12,13 +12,8 @@ function queueSleep(player) {
 }
 
 function ops() {
-    // Get Dynamic Property
-    let opsBoolean = World.getDynamicProperty('ops_b');
-    if (opsBoolean === undefined) {
-        opsBoolean = config.modules.ops.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (opsBoolean === false) {
+    if (config.modules.ops.enabled === false) {
         World.events.tick.unsubscribe(ops);
         return;
     }

@@ -1,12 +1,12 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { EntityQueryOptions, world } from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
 
-function lockdownHelp(player, prefix, lockdownBoolean) {
+function lockdownHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.lockdown) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -14,7 +14,7 @@ function lockdownHelp(player, prefix, lockdownBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (lockdownBoolean === false) {
+    if (!config.modules.lockDown.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -46,23 +46,10 @@ export function lockdown(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
-
-    // Get Dynamic Property Boolean
-    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
-    if (lockdownBoolean === undefined) {
-        lockdownBoolean = config.modules.lockDown.enabled;
     }
 
     // Check for custom prefix
@@ -71,30 +58,24 @@ export function lockdown(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.lockdown) {
-        return lockdownHelp(player, prefix, lockdownBoolean);
+        return lockdownHelp(player, prefix);
     }
 
     // If already locked down then unlock the server
-    if (lockdownBoolean) {
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
-        return World.setDynamicProperty('lockdown_b', false);
+    if (config.modules.lockDown.enabled) {
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is no longer in lockdown!"}]}`);
+        return config.modules.lockDown.enabled = false;
     }
 
     // Default reason for locking it down
     let reason = "Under Maintenance! Sorry for the inconvenience.";
+    
+    // Get players that are not Paradox-Opped
+    let filter = new EntityQueryOptions();
+    filter.excludeTags = ['Hash:' + crypto];
 
     // Lock it down
-    for (let pl of World.getPlayers()) {
-        // Check for hash/salt and validate password
-        let hash = pl.getDynamicProperty('hash');
-        let salt = pl.getDynamicProperty('salt');
-        let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
+    for (let pl of World.getPlayers(filter)) {
         try {
             // Kick players from server
             pl.runCommand(`lockdown "${disabler(pl.nameTag)}" ${reason}`);
@@ -104,6 +85,6 @@ export function lockdown(message, args) {
         }
     }
     // Shutting it down
-    player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
-    return World.setDynamicProperty('lockdown_b', true);
+    player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Server is in lockdown!"}]}`);
+    return config.modules.lockDown.enabled = true;
 }

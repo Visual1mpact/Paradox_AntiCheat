@@ -1,5 +1,5 @@
-import { BlockLocation, Location, world } from "mojang-minecraft";
-import { crypto, disabler } from "../../../util.js";
+import { BlockLocation, EntityQueryOptions, Location, world } from "mojang-minecraft";
+import { crypto, disabler, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -23,36 +23,29 @@ function safetyProtocol(player, x, y, z) {
 }
 
 const worldborder = () => {
-    // Dynamic Properties for boolean
-    let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
-    if (worldBorderBoolean === undefined) {
-        worldBorderBoolean = config.modules.worldBorder.enabled;
-    }
-    // Dynamic Properties for number
-    let worldBorderNumber = World.getDynamicProperty('worldborder_n');
-    if (worldBorderNumber === undefined) {
-        worldBorderNumber = config.modules.worldBorder.bordersize;
-    }
     // Unsubscribe if disabled in-game
-    if (worldBorderBoolean === false) {
+    if (config.modules.worldBorder.enabled === false) {
         World.events.tick.unsubscribe(worldborder);
         return;
     }
-    for (let player of World.getPlayers()) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
-        let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
+    let excludeStaff = new EntityQueryOptions();
+    excludeStaff.excludeTags = ['Hash:' + crypto];
+    for (let player of World.getPlayers(excludeStaff)) {
         // What is it currently set to
-        let borderSize = worldBorderNumber;
-        // Make sure it's not a negative
-        if (borderSize < 0) {
+        let borderSize = getScore('worldborder', player);
+        // Are there differences between config and scoreboard
+        if (config.modules.worldBorder.bordersize !== 0 && borderSize !== config.modules.worldBorder.bordersize) {
+            // Respect config
+            borderSize = config.modules.worldBorder.bordersize;
+            // Make sure it's not a negative
+            if (borderSize < 0) {
+                borderSize = Math.abs(borderSize);
+            }
+            // Update scoreboard with config and set globally for initiation
+            player.runCommand(`scoreboard players set paradox:config worldborder ${borderSize}`);
+            player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
+        } else if (borderSize < 0) {
+            // Make sure it's not a negative
             borderSize = Math.abs(borderSize);
         }
         // Player coordinates

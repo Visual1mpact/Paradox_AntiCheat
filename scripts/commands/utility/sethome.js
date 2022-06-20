@@ -53,7 +53,8 @@ export function sethome(message, args) {
     let currentDimension;
 
     // Don't allow spaces
-    if (args.length > 1) {
+    if (args.length > 1 || args[0].trim().length === 0) {
+        setHomeHelp(player, prefix);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
     }
 
@@ -64,7 +65,7 @@ export function sethome(message, args) {
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You already have a home named ${args[0]}!"}]}`)
+            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You already have a home named ${args[0]}!"}]}`);
             break;
         }
         if (tags[i].startsWith("LocationHome:")) {

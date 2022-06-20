@@ -3,6 +3,12 @@ import config from "../../data/config.js";
 
 export const queueUnban = new Set();
 
+function listQueue(queue, player) {
+    if (queue) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${queue} is queued to be unbanned!"}]}`);
+    }
+}
+
 function unbanHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.unban) {
@@ -31,24 +37,15 @@ function unbanHelp(player, prefix) {
 export function unban(message, args) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/unban.js:29)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/unban.js:34)");
     }
 
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!tag.includes('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -60,17 +57,12 @@ export function unban(message, args) {
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.unban) {
         return unbanHelp(player, prefix);
     } else if (argCheck && args[0].toLowerCase() === "list" || !config.customcommands.unban) {
-        function listQueue(queue) {
-            if (queue) {
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${queue} is queued to be unbanned!"}]}`);
-            }
-        }
-        queueUnban.forEach((queue) => listQueue(queue));
+        queueUnban.forEach((queue) => listQueue(queue, player));
         return;
     }
 
     // Add player to queue
     let regexp = /["'`]/g;
     queueUnban.add(args.join(" ").replace(regexp, ""));
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!"}]}`);
 }

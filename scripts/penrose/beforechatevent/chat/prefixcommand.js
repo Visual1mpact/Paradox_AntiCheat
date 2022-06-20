@@ -10,7 +10,7 @@ function prefixcommand(msg) {
 }
 
 const PrefixCommand = () => {
-    World.events.beforeChat.subscribe(msg => prefixcommand(msg));
+    World.events.beforeChat.subscribe(prefixcommand);
 };
 
 export { PrefixCommand };

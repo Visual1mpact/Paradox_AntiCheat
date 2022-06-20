@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function noslowAHelp(player, prefix, noSlowBoolean) {
+function noslowAHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.noslowa) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function noslowAHelp(player, prefix, noSlowBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (noSlowBoolean === false) {
+    if (!config.modules.noslowA.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -44,23 +41,12 @@ export function noslowA(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-    
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
 
-    // Get Dynamic Property Boolean
-    let noSlowBoolean = World.getDynamicProperty('noslowa_b');
-    if (noSlowBoolean === undefined) {
-        noSlowBoolean = config.modules.noslowA.enabled;
+    let tag = player.getTags();
+    
+    // make sure the user has permissions to run the command
+    if (!tag.includes('Hash:' + crypto)) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     // Check for custom prefix
@@ -69,18 +55,18 @@ export function noslowA(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.noslowa) {
-        return noslowAHelp(player, prefix, noSlowBoolean);
+        return noslowAHelp(player, prefix);
     }
 
-    if (noSlowBoolean === false) {
+    if (config.modules.noslowA.enabled === false) {
         // Allow
-        World.setDynamicProperty('noslowa_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NoSlowA§r!"}]}`);
+        config.modules.noslowA.enabled = true;
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NoSlowA§r!"}]}`);
         return;
-    } else if (noSlowBoolean === true) {
+    } else if (config.modules.noslowA.enabled === true) {
         // Deny
-        World.setDynamicProperty('noslowa_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4NoSlowA§r!"}]}`);
+        config.modules.noslowA.enabled = false;
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4NoSlowA§r!"}]}`);
         return;
     }
 }

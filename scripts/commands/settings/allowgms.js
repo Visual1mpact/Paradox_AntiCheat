@@ -1,10 +1,7 @@
-import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
-const World = world;
-
-function allowgmsHelp(player, prefix, survivalGMBoolean) {
+function allowgmsHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.allowgms) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function allowgmsHelp(player, prefix, survivalGMBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (survivalGMBoolean === false) {
+    if (!config.modules.survivalGM.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -45,30 +42,9 @@ export function allowgms(message, args) {
 
     let player = message.sender;
     
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!player.hasTag('Hash:' + crypto)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
-
-    // Get Dynamic Property Boolean
-    let adventureGMBoolean = World.getDynamicProperty('adventuregm_b');
-    if (adventureGMBoolean === undefined) {
-        adventureGMBoolean = config.modules.adventureGM.enabled;
-    }
-    let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
-    if (creativeGMBoolean === undefined) {
-        creativeGMBoolean = config.modules.creativeGM.enabled;
-    }
-    let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
-    if (survivalGMBoolean === undefined) {
-        survivalGMBoolean = config.modules.survivalGM.enabled;
     }
 
     // Check for custom prefix
@@ -77,22 +53,22 @@ export function allowgms(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.allowgms) {
-        return allowgmsHelp(player, prefix, survivalGMBoolean);
+        return allowgmsHelp(player, prefix);
     }
 
-    if (survivalGMBoolean === false) {
+    if (config.modules.survivalGM.enabled === false) {
         // Allow
-        World.setDynamicProperty('survivalgm_b', true);
+        config.modules.survivalGM.enabled = true;
         // Make sure at least one is allowed since this could cause serious issues if all were locked down
         // We will allow Adventure Mode in this case
-        if (adventureGMBoolean === true && creativeGMBoolean === true) {
-            World.setDynamicProperty('adventuregm_b', false);
-            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled."}]}`);
+        if (config.modules.adventureGM.enabled === true && config.modules.creativeGM.enabled === true) {
+            config.modules.adventureGM.enabled = false;
+            return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled."}]}`);
         }
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 0 (Survival)§r to be used!"}]}`);
-    } else if (survivalGMBoolean === true) {
+        return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 0 (Survival)§r to be used!"}]}`);
+    } else if (config.modules.survivalGM.enabled === true) {
         // Deny
-        World.setDynamicProperty('survivalgm_b', true);
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has allowed §6Gamemode 0 (Survival)§r to be used!"}]}`);
+        config.modules.survivalGM.enabled = false;
+        return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has allowed §6Gamemode 0 (Survival)§r to be used!"}]}`);
     }
 }

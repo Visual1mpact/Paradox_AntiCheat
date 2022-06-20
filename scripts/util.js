@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { Location, Player } from "mojang-minecraft";
+import { Location } from "mojang-minecraft";
 import config from "./data/config.js";
 
 /**
@@ -63,7 +63,7 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick "${disabler(player.nameTag)}" §r§4[§6Paradox§4]§r Please use your real xbl name!`);
+            player.runCommand(`kick "${player.name}" §r§4[§6Paradox§4]§r Please use your real xbl name!`);
         }
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -93,7 +93,7 @@ export function banMessage(player) {
     });
 
     try {
-        player.runCommand(`kick "${disabler(player.nameTag)}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.runCommand(`kick "${player.name}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -139,7 +139,7 @@ export function disabler(player) {
         }
     }
     if (!customprefix) {
-        return config.customcommands.prefix = "!";
+        return config.customcommands.prefix = config.customcommands.prefix;
     }
 }
 
@@ -178,7 +178,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
 }
 
 /**
@@ -225,15 +225,16 @@ export const titleCase = (s) =>
   s.replace (/^[-_]*(.)/, (_, c) => c.toUpperCase())
    .replace (/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 
+
 // Handler for encryption down below
 const { encryption } = config.modules;
 
 /**
- * @name crypto
+ * @name crypt
  * @param {string} salt - Hashes information
  * @param {string} text - String to be hashed
  */
- export const crypto = (salt, text) => {
+export const crypt = (salt = encryption.salt, text = encryption.optag) => {
     const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
     const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
     const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
@@ -244,4 +245,14 @@ const { encryption } = config.modules;
         .map(applySaltToChar)
         .map(byteHex)
         .join("");
-}
+};
+
+let cache = {
+    optag: encryption.optag,
+    salt: encryption.salt,
+    crypto: crypt()
+};
+
+export const crypto = {
+    [Symbol.toPrimitive]: () => encryption.salt == cache.salt && encryption.optag == cache.optag ? cache.crypto : ( cache.salt = encryption.salt, cache.optag = encryption.optag, cache.crypto = crypt() )
+};

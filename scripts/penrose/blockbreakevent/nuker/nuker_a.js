@@ -7,12 +7,7 @@ const World = world;
 let blockTimer = new Map();
 
 function nukera(object) {
-    // Get Dynamic Property
-    let antiNukerABoolean = World.getDynamicProperty('antinukera_b');
-    if (antiNukerABoolean === undefined) {
-        antiNukerABoolean = config.modules.antinukerA.enabled;
-    }
-    if (antiNukerABoolean === false) {
+    if (config.modules.antinukerA.enabled === false) {
         World.events.blockBreak.unsubscribe(nukera);
         return;
     }
@@ -22,15 +17,8 @@ function nukera(object) {
     // Block coordinates
     let { x, y, z } = block.location;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
     // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    if (player.hasTag('Hash:' + crypto)) {
         return;
     }
 
@@ -141,7 +129,7 @@ function nukera(object) {
 }
 
 const NukerA = () => {
-    World.events.blockBreak.subscribe(object => nukera(object));
+    World.events.blockBreak.subscribe(nukera);
 };
 
 export { NukerA };

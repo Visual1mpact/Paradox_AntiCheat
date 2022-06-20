@@ -8,13 +8,8 @@ const World = world;
 let playersOldCoordinates = new Map();
 
 function flya() {
-    // Get Dynamic Property
-    let flyABoolean = World.getDynamicProperty('flya_b');
-    if (flyABoolean === undefined) {
-        flyABoolean = config.modules.flyA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (flyABoolean === false) {
+    if (config.modules.flyA.enabled === false) {
         World.events.tick.unsubscribe(flya);
         return;
     }
@@ -22,18 +17,9 @@ function flya() {
     // Exclude creative gamemode
     let gm = new EntityQueryOptions();
     gm.excludeGameModes = [1];
+    gm.excludeTags = ['Hash:' + crypto];
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
-        let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-        if (hash !== undefined && encode === hash) {
-            continue;
-        }
 
         let test = getScore("fly_timer", player);
 

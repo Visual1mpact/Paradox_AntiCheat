@@ -1,10 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
-import { world } from "mojang-minecraft";
 
-const World = world;
-
-function crasheraHelp(player, prefix, crasherABoolean) {
+function crasheraHelp(player, prefix) {
     let commandStatus;
     if (!config.customcommands.crashera) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -12,7 +9,7 @@ function crasheraHelp(player, prefix, crasherABoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (crasherABoolean === false) {
+    if (!config.modules.crasherA.enabled) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -44,23 +41,12 @@ export function crasherA(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-    
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
-    }
 
-    // Get Dynamic Property Boolean
-    let crasherABoolean = World.getDynamicProperty('crashera_b');
-    if (crasherABoolean === undefined) {
-        crasherABoolean = config.modules.crasherA.enabled;
+    let tag = player.getTags();
+    
+    // make sure the user has permissions to run the command
+    if (!tag.includes('Hash:' + crypto)) {
+        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
     // Check for custom prefix
@@ -69,18 +55,18 @@ export function crasherA(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.crashera) {
-        return crasheraHelp(player, prefix, crasherABoolean);
+        return crasheraHelp(player, prefix);
     }
 
-    if (crasherABoolean === false) {
+    if (config.modules.crasherA.enabled === false) {
         // Allow
-        World.setDynamicProperty('crashera_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6CrasherA§r!"}]}`);
+        config.modules.crasherA.enabled = true;
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6CrasherA§r!"}]}`);
         return;
-    } else if (crasherABoolean === true) {
+    } else if (config.modules.crasherA.enabled === true) {
         // Deny
-        World.setDynamicProperty('crashera_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4CrasherA§r!"}]}`);
+        config.modules.crasherA.enabled = false;
+        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4CrasherA§r!"}]}`);
         return;
     }
 }

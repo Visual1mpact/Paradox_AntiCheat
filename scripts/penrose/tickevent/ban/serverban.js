@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
-import { banMessage, disabler } from "../../../util.js";
+import { banMessage, crypto, disabler } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
@@ -31,7 +31,7 @@ function serverban() {
 
             // Let staff and player know they are unbanned
             player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been unbanned."}]}`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has been unbanned."}]}`);
+            player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has been unbanned."}]}`);
             continue;
         }
         // Ban message

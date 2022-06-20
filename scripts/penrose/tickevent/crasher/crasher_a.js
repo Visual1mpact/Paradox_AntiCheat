@@ -1,17 +1,12 @@
 import { world } from "mojang-minecraft";
-import { flag, disabler } from "../../../util.js";
+import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
 function crashera() {
-    // Get Dynamic Property
-    let crasherABoolean = World.getDynamicProperty('crashera_b');
-    if (crasherABoolean === undefined) {
-        crasherABoolean = config.modules.crasherA.enabled;
-    }
     // Unsubscribe if disabled in-game
-    if (crasherABoolean === false) {
+    if (config.modules.crasherA.enabled === false) {
         World.events.tick.unsubscribe(crashera);
         return;
     }
@@ -31,8 +26,8 @@ function crashera() {
                 }
             });
             try {
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Crasher"`);
-                player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+                player.addTag('Reason:Crasher');
+                player.addTag('By:Paradox');
                 player.addTag('isBanned');
             } catch (error) {
                 player.triggerEvent('paradox:kick');
