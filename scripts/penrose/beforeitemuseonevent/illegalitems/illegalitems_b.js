@@ -61,6 +61,10 @@ function illegalitemsb(object) {
     if (antiShulkerBoolean === undefined) {
         antiShulkerBoolean = config.modules.antishulker.enabled;
     }
+    let stackBanBoolean = World.getDynamicProperty('stackban_b');
+    if (stackBanBoolean === undefined) {
+        stackBanBoolean = config.modules.stackBan.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
@@ -238,7 +242,7 @@ function illegalitemsb(object) {
             source.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(source.nameTag)} detected with stacked items greater than x64."}]}`);
             source.runCommand(`tellraw "${disabler(source.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
         } catch (error) {}
-        if (config.modules.stackBan.enabled) {
+        if (stackBanBoolean) {
             // Ban
             return rip(source, item, false);
         } else {

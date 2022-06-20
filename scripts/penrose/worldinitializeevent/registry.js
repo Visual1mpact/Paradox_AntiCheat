@@ -126,6 +126,9 @@ function registry(data) {
 
     // Define properties for chatranks
     property.defineBoolean('chatranks_b');
+
+    // Define properties for stackban
+    property.defineBoolean('stackban_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -360,6 +363,18 @@ function registry(data) {
     let chatranks_b = World.getDynamicProperty('chatranks_b');
     if (chatranks_b === undefined) {
         World.setDynamicProperty('chatranks_b', config.modules.chatranks.enabled);
+    }
+
+    // Set properties for stackban
+    let stackban_b = World.getDynamicProperty('stackban_b');
+    if (stackban_b === undefined) {
+        World.setDynamicProperty('stackban_b', config.modules.stackBan.enabled);
+    }
+
+    // Set properties for stackban
+    let badpackets2_b = World.getDynamicProperty('badpackets2_b');
+    if (badpackets2_b === undefined) {
+        World.setDynamicProperty('badpackets2_b', config.modules.badpackets2.enabled);
     }
 }
 
