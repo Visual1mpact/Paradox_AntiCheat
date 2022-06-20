@@ -11,7 +11,11 @@ const ChatFilter = () => {
         if (rcbrBoolean === undefined) {
             rcbrBoolean = config.modules.rbcr.enabled;
         }
-        if (config.modules.chatranks.enabled === true) {
+        let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+        if (chatRanksBoolean === undefined) {
+            chatRanksBoolean = config.modules.chatranks.enabled;
+        }
+        if (chatRanksBoolean === true) {
             let message = msg.message;
             let player = msg.sender;
 
