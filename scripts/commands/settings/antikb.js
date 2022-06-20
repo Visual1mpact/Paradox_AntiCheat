@@ -1,7 +1,10 @@
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
-function antikbHelp(player, prefix) {
+const World = world;
+
+function antikbHelp(player, prefix, antikbBoolean) {
     let commandStatus;
     if (!config.customcommands.antikb) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function antikbHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.antikbA.enabled) {
+    if (antikbBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -47,23 +50,31 @@ export function antiknockback(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let antikbBoolean = World.getDynamicProperty('antikb_b');
+    if (antikbBoolean === undefined) {
+        antikbBoolean = config.modules.antikbA.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antikb) {
-        return antikbHelp(player, prefix);
+        return antikbHelp(player, prefix, antikbBoolean);
     }
 
     let antikbscore = getScore("antikb", player);
 
     if (antikbscore <= 0) {
         // Allow
+        World.setDynamicProperty('antikb_b', true);
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
     } else if (antikbscore >= 1) {
         // Deny
+        World.setDynamicProperty('antikb_b', false);
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
     }
