@@ -78,6 +78,7 @@ function modulesHelp(player, prefix) {
     let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
     let flyABoolean = World.getDynamicProperty('flya_b');
     let crasherABoolean = World.getDynamicProperty('crashera_b');
+    let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -198,7 +199,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofB is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.bedrockValidate.enabled) {
+    if (bedrockValidateBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Bedrock Validate is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Bedrock Validate is currently §4DISABLED"}]}`);
