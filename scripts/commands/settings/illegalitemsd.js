@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function illegalItemsDHelp(player, prefix) {
+const World = world;
+
+function illegalItemsDHelp(player, prefix, illegalItemsDBoolean) {
     let commandStatus;
     if (!config.customcommands.illegalitemsd) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function illegalItemsDHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.illegalitemsD.enabled) {
+    if (illegalItemsDBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,23 +52,29 @@ export function illegalitemsD(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
+    if (illegalItemsDBoolean === undefined) {
+        illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.illegalitemsd) {
-        return illegalItemsDHelp(player, prefix);
+        return illegalItemsDHelp(player, prefix, illegalItemsDBoolean);
     }
 
-    if (config.modules.illegalitemsD.enabled === false) {
+    if (illegalItemsDBoolean === false) {
         // Allow
-        config.modules.illegalitemsD.enabled = true;
+        World.setDynamicProperty('illegalitemsd_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalItemsD§r!"}]}`);
         return;
-    } else if (config.modules.illegalitemsD.enabled === true) {
+    } else if (illegalItemsDBoolean === true) {
         // Deny
-        config.modules.illegalitemsD.enabled = false;
+        World.setDynamicProperty('illegalitemsd_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4IllegalItemsD§r!"}]}`);
         return;
     }
