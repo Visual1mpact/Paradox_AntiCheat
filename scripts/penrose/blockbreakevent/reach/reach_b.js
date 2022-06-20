@@ -6,8 +6,13 @@ import { crypto } from "../../../util.js";
 const World = world;
 
 function reachb(object) {
+    // Get Dynamic Property
+    let reachBBoolean = World.getDynamicProperty('reachb_b');
+    if (reachBBoolean === undefined) {
+        reachBBoolean = config.modules.reachB.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.reachB.enabled === false) {
+    if (reachBBoolean === false) {
         World.events.blockBreak.unsubscribe(reachb);
         return;
     }
