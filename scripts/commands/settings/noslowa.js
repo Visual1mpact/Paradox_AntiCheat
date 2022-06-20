@@ -1,5 +1,8 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
+
+const World = world;
 
 function noslowAHelp(player, prefix, noSlowBoolean) {
     let commandStatus;
