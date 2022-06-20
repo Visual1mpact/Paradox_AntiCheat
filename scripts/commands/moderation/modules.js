@@ -65,6 +65,7 @@ function modulesHelp(player, prefix) {
     let xrayaBoolean = World.getDynamicProperty('xraya_b');
     let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
     let opsBoolean = World.getDynamicProperty('ops_b');
+    let noSlowBoolean = World.getDynamicProperty('noslowa_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -215,7 +216,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r JesusA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.noslowA.enabled) {
+    if (noSlowBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NoSlowA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NoSlowA is currently §4DISABLED"}]}`);
