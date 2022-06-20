@@ -90,6 +90,9 @@ function registry(data) {
 
     // Define properties for illegalitemsb
     property.defineBoolean('illegalitemsb_b');
+
+    // Define properties for spammerd
+    property.defineBoolean('spammerd_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -252,6 +255,12 @@ function registry(data) {
     let illegalitemsb_b = World.getDynamicProperty('illegalitemsb_b');
     if (illegalitemsb_b === undefined) {
         World.setDynamicProperty('illegalitemsb_b', config.modules.illegalitemsB.enabled);
+    }
+
+    // Set properties for spammerd
+    let spammerd_b = World.getDynamicProperty('spammerd_b');
+    if (spammerd_b === undefined) {
+        World.setDynamicProperty('spammerd_b', config.modules.spammerD.enabled);
     }
 }
 

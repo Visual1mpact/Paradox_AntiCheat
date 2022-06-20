@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function spammerDHelp(player, prefix) {
+const World = world;
+
+function spammerDHelp(player, prefix, spammerDBoolean) {
     let commandStatus;
     if (!config.customcommands.spammerd) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function spammerDHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.spammerD.enabled) {
+    if (spammerDBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,23 +52,29 @@ export function spammerD(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let spammerDBoolean = World.getDynamicProperty('spammerd_b');
+    if (spammerDBoolean === undefined) {
+        spammerDBoolean = config.modules.spammerD.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.spammerd) {
-        return spammerDHelp(player, prefix);
+        return spammerDHelp(player, prefix, spammerDBoolean);
     }
 
-    if (config.modules.spammerD.enabled === false) {
+    if (spammerDBoolean === false) {
         // Allow
-        config.modules.spammerD.enabled = true;
+        World.setDynamicProperty('spammerd_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6SpammerD§r!"}]}`);
         return;
-    } else if (config.modules.spammerD.enabled === true) {
+    } else if (spammerDBoolean === true) {
         // Deny
-        config.modules.spammerD.enabled = false;
+        World.setDynamicProperty('spammerd_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4SpammerD§r!"}]}`);
         return;
     }
