@@ -5,8 +5,13 @@ import { crypto, flag } from "../../util.js";
 const World = world;
 
 function reachc(object) {
+    // Get Dynamic Property
+    let reachCBoolean = World.getDynamicProperty('reachc_b');
+    if (reachCBoolean === undefined) {
+        reachCBoolean = config.modules.reachC.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.reachC.enabled === false) {
+    if (reachCBoolean === false) {
         World.events.entityHit.unsubscribe(reachc);
         return;
     }
