@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function salvageHelp(player, prefix) {
+const World = world;
+
+function salvageHelp(player, prefix, salvageBoolean) {
     let commandStatus;
     if (!config.customcommands.salvage) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function salvageHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.salvage.enabled) {
+    if (salvageBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -49,23 +52,29 @@ export function salvage(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let salvageBoolean = World.getDynamicProperty('salvage_b');
+    if (salvageBoolean === undefined) {
+        salvageBoolean = config.modules.salvage.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.salvage) {
-        return salvageHelp(player, prefix);
+        return salvageHelp(player, prefix, salvageBoolean);
     }
 
-    if (config.modules.salvage.enabled === false) {
+    if (salvageBoolean === false) {
         // Allow
-        config.modules.salvage.enabled = true;
+        World.setDynamicProperty('salvage_b', true);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Salvage§r!"}]}`);
         return;
-    } else if (config.modules.salvage.enabled === true) {
+    } else if (salvageBoolean === true) {
         // Deny
-        config.modules.salvage.enabled = false;
+        World.setDynamicProperty('salvage_b', false);
         player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Salvage§r!"}]}`);
         return;
     }
