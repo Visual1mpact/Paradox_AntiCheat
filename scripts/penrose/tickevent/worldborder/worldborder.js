@@ -1,5 +1,5 @@
 import { BlockLocation, EntityQueryOptions, Location, world } from "mojang-minecraft";
-import { crypto, disabler, getScore } from "../../../util.js";
+import { crypto, disabler } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -23,8 +23,18 @@ function safetyProtocol(player, x, y, z) {
 }
 
 const worldborder = () => {
+    // Dynamic Properties for boolean
+    let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
+    if (worldBorderBoolean === undefined) {
+        worldBorderBoolean = config.modules.worldBorder.enabled;
+    }
+    // Dynamic Properties for number
+    let worldBorderNumber = World.getDynamicProperty('worldborder_n');
+    if (worldBorderNumber === undefined) {
+        worldBorderNumber = config.modules.worldBorder.bordersize;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.worldBorder.enabled === false) {
+    if (worldBorderBoolean === false) {
         World.events.tick.unsubscribe(worldborder);
         return;
     }
@@ -32,20 +42,9 @@ const worldborder = () => {
     excludeStaff.excludeTags = ['Hash:' + crypto];
     for (let player of World.getPlayers(excludeStaff)) {
         // What is it currently set to
-        let borderSize = getScore('worldborder', player);
-        // Are there differences between config and scoreboard
-        if (config.modules.worldBorder.bordersize !== 0 && borderSize !== config.modules.worldBorder.bordersize) {
-            // Respect config
-            borderSize = config.modules.worldBorder.bordersize;
-            // Make sure it's not a negative
-            if (borderSize < 0) {
-                borderSize = Math.abs(borderSize);
-            }
-            // Update scoreboard with config and set globally for initiation
-            player.runCommand(`scoreboard players set paradox:config worldborder ${borderSize}`);
-            player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
-        } else if (borderSize < 0) {
-            // Make sure it's not a negative
+        let borderSize = worldBorderNumber;
+        // Make sure it's not a negative
+        if (borderSize < 0) {
             borderSize = Math.abs(borderSize);
         }
         // Player coordinates

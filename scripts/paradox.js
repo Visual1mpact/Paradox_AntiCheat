@@ -56,12 +56,17 @@ import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 // Import EntityHit Events
 import { ReachC } from "./penrose/entityhitevent/reach_c.js";
+// Import WorldInitialize Events
+import { Registry } from "./penrose/worldinitializeevent/registry.js";
 
 // Self explanatory
 const World = world;
 
 // Define globally within script
 let hastag;
+
+// WorldInitialize Events
+Registry();
 
 // BeforeChat Events
 BadPackets1();

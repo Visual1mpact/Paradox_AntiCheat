@@ -1,5 +1,8 @@
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { getScore, disabler, getPrefix, crypto } from "../../util.js";
+
+const World = world;
 
 function modulesHelp(player, prefix) {
     let commandStatus;
@@ -52,11 +55,13 @@ function modulesHelp(player, prefix) {
     // scores
     let commandblocks = getScore('commandblocks', player);
     let cmds = getScore('cmds', player);
-    let worldborder = getScore('worldborder', player);
     let autoclicker = getScore('autoclicker', player);
     let encharmor = getScore('encharmor', player);
     let autoaura = getScore('autoaura', player);
     let antikb = getScore('antikb', player);
+
+    // Booleans
+    let worldborder = World.getDynamicProperty('worldborder_b');
 
     if (config.modules.adventureGM.enabled) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
@@ -90,7 +95,7 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OverideCommandBlocksEnabled is currently §4DISABLED"}]}`);
     }
     
-    if (worldborder > 0) {
+    if (worldborder) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a${worldborder}"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is currently §4DISABLED"}]}`);
