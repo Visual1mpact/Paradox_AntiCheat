@@ -12,7 +12,7 @@ function spammerCHelp(player, prefix, spammerCBoolean) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (spammerCBoolean) {
+    if (spammerCBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
