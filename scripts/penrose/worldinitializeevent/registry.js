@@ -78,6 +78,9 @@ function registry(data) {
 
     // Define properties for reacha
     property.defineBoolean('reacha_b');
+
+    // Define properties for illegalitemsc
+    property.defineBoolean('illegalitemsc_b');
     
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
@@ -216,6 +219,12 @@ function registry(data) {
     let reacha_b = World.getDynamicProperty('reacha_b');
     if (reacha_b === undefined) {
         World.setDynamicProperty('reacha_b', config.modules.reachA.enabled);
+    }
+
+    // Set properties for illegalitemsc
+    let illegalitemsc_b = World.getDynamicProperty('illegalitemsc_b');
+    if (illegalitemsc_b === undefined) {
+        World.setDynamicProperty('illegalitemsc_b', config.modules.illegalitemsC.enabled);
     }
 }
 
