@@ -60,6 +60,10 @@ function illegalitemsc(object) {
     if (illegalItemsCBoolean === undefined) {
         illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
     }
+    let salvageBoolean = World.getDynamicProperty('salvage_b');
+    if (salvageBoolean === undefined) {
+        salvageBoolean = config.modules.salvage.enabled;
+    }
     // Unsubscribe if disabled in-game
     if (illegalItemsCBoolean === false) {
         World.events.blockPlace.unsubscribe(illegalitemsc);
@@ -139,7 +143,7 @@ function illegalitemsc(object) {
                 continue;
             }
 
-            if (config.modules.salvage.enabled && !whitelist.includes(inventory_item.id)) {
+            if (salvageBoolean && !whitelist.includes(inventory_item.id)) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
