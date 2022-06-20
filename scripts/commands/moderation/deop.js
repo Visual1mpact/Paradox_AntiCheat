@@ -39,9 +39,17 @@ export function deop(message, args) {
     message.cancel = true;
 
     let player = message.sender;
+
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -73,18 +81,20 @@ export function deop(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
-    let getTags = member.getTags();
-    // This removes old tag stuff
-    getTags.forEach(t => {
-        if(t.startsWith("Hash:")) {
-            member.removeTag(t);
-        }
-    });
+    // Check for hash/salt and validate password from member
+    let memberHash = member.getDynamicProperty('hash');
+    let memberSalt = member.getDynamicProperty('salt');
+    let memberEncode;
+    try {
+        memberEncode = crypto(memberSalt, config.modules.encryption.password);
+    } catch (error) {}
 
-    if (member.hasTag('paradoxOpped')) {
+    if (memberHash !== undefined && memberHash === memberEncode) {
+        member.removeDynamicProperty('hash');
+        member.removeDynamicProperty('salt');
         member.removeTag('paradoxOpped');
         try {
-            player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer Paradox-Opped."}]}`);
+            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer Paradox-Opped."}]}`);
         } catch (error) {}
         return player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §7Your OP status has been revoked!"}]}`);
     }
