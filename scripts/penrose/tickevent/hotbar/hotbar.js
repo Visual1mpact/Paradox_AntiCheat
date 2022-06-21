@@ -25,7 +25,7 @@ function hotbar() {
 }
 
 const Hotbar = () => {
-    World.events.tick.subscribe(() => hotbar());
+    World.events.tick.subscribe(hotbar);
 };
 
 export { Hotbar };

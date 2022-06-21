@@ -66,7 +66,7 @@ function adventure() {
 }
 
 const Adventure = () => {
-    World.events.tick.subscribe(() => adventure());
+    World.events.tick.subscribe(adventure);
 };
 
 export { Adventure };

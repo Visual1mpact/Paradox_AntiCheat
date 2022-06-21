@@ -66,7 +66,7 @@ function survival() {
 }
 
 const Survival = () => {
-    World.events.tick.subscribe(() => survival());
+    World.events.tick.subscribe(survival);
 };
 
 export { Survival };

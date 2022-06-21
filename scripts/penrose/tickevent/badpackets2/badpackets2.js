@@ -26,7 +26,7 @@ function badpackets2() {
 }
 
 const BadPackets2 = () => {
-    World.events.tick.subscribe(() => badpackets2());
+    World.events.tick.subscribe(badpackets2);
 };
 
 export { BadPackets2 };
