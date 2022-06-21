@@ -1,20 +1,34 @@
-import { EntityQueryOptions, world } from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 import { flag, disabler, crypto } from "../../../util.js";
 import config from "../../../data/config.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 
 const World = world;
 
-function antiknockbacka() {
+function antiknockbacka(callback, id) {
+    // Get Dynamic Property
+    let antikbBoolean = World.getDynamicProperty('antikb_b');
+    if (antikbBoolean === undefined) {
+        antikbBoolean = config.modules.antikbA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.antikbA.enabled === false) {
-        World.events.tick.unsubscribe(antiknockbacka);
+    if (antikbBoolean === false) {
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
 
         let hand = player.selectedSlot;
 
@@ -48,7 +62,9 @@ function antiknockbacka() {
 
 const AntiKnockbackA = () => {
     // Executes every 2 seconds
-    setTickInterval(() => antiknockbacka(), 40);
+    let callback;
+    const id = setTickInterval(callback = () => antiknockbacka(callback, id), 40);
+    id();
 };
 
 export { AntiKnockbackA };

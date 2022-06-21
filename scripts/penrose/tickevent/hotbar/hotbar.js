@@ -4,8 +4,13 @@ import config from "../../../data/config.js";
 const World = world;
 
 function hotbar() {
+    // Get Dynamic Property
+    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
+    if (hotbarBoolean === undefined) {
+        hotbarBoolean = config.modules.hotbar.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.hotbar.enabled === false) {
+    if (hotbarBoolean === false) {
         World.events.tick.unsubscribe(hotbar);
         return;
     }

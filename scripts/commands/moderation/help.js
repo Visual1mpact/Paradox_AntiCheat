@@ -24,7 +24,14 @@ export function help(message) {
     
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
-    if (!player.hasTag('Hash:' + crypto)) {
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+    if (hash === undefined || encode !== hash) {
         return nonstaffhelp(message);
     }
 
@@ -438,10 +445,15 @@ export function help(message) {
 
     let chatrank0;
     let chatrank1;
-    if (config.modules.chatranks.enabled === true) {
+    // Get Dynamic Property Boolean
+    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+    if (chatRanksBoolean === undefined) {
+        chatRanksBoolean = config.modules.chatranks.enabled;
+    }
+    if (chatRanksBoolean === true) {
         chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Add ranks to username.`;
         chatrank1 = `§6${prefix}tag <username> reset§r - Remove rank to username.`;
-    } else if (config.modules.chatranks.enabled === false) {
+    } else if (chatRanksBoolean === false) {
         chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Command §4DISABLED§r.`;
         chatrank1 = `§6${prefix}tag <username> reset§r - Command §4DISABLED§r.`;
     }

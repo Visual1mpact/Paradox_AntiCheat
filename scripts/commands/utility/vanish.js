@@ -35,8 +35,15 @@ export function vanish(message, args) {
 
     let player = message.sender;
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -61,7 +68,7 @@ export function vanish(message, args) {
         player.runCommand(`event entity "${disabler(player.nameTag)}" unvanish`);
         player.runCommand(`effect "${disabler(player.nameTag)}" clear`);
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§4[§6Paradox§4] §rYou are no longer in vanish!"}]}`);
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is no longer vanished."}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is no longer vanished."}]}`);
     }
 
     if (!player.hasTag('novanish')) {
@@ -71,7 +78,7 @@ export function vanish(message, args) {
     if (player.hasTag('vanish') && !player.hasTag('novanish')) {
         player.runCommand(`event entity "${disabler(player.nameTag)}" vanish`);
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§4[§6Paradox§4] §rYou are now in vanish!"}]}`);
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is now vanished."}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" is now vanished."}]}`);
     }
 
     if (player.hasTag('novanish')) {

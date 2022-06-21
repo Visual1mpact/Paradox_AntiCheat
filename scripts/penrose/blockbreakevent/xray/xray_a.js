@@ -6,8 +6,13 @@ import config from "../../../data/config.js";
 const World = world;
 
 function xraya(object) {
+    // Get Dynamic Property
+    let xrayBoolean = World.getDynamicProperty('xraya_b');
+    if (xrayBoolean === undefined) {
+        xrayBoolean = config.modules.xrayA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.xrayA.enabled === false) {
+    if (xrayBoolean === false) {
         World.events.blockBreak.unsubscribe(xraya);
         return;
     }
@@ -15,8 +20,15 @@ function xraya(object) {
     // Properties from class
     let { player, brokenBlockPermutation } = object;
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // Return if player has op
-    if (player.hasTag('Hash:' + crypto)) {
+    if (hash !== undefined && encode === hash) {
         return;
     }
 

@@ -1,7 +1,11 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
+import { AntiTeleport } from "../../penrose/tickevent/teleport/antiteleport.js";
 
-function antiteleportHelp(player, prefix) {
+const World = world;
+
+function antiteleportHelp(player, prefix, antiTeleportBoolean) {
     let commandStatus;
     if (!config.customcommands.antiteleport) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +13,7 @@ function antiteleportHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.antiTeleport.enabled) {
+    if (antiTeleportBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,32 +45,44 @@ export function antiteleport(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
-    
+
+    // Get Dynamic Property Boolean
+    let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
+    if (antiTeleportBoolean === undefined) {
+        antiTeleportBoolean = config.modules.antiTeleport.enabled;
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antiteleport) {
-        return antiteleportHelp(player, prefix);
+        return antiteleportHelp(player, prefix, antiTeleportBoolean);
     }
 
-    if (config.modules.antiTeleport.enabled === false) {
+    if (antiTeleportBoolean === false) {
         // Allow
-        config.modules.antiTeleport.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Teleport§r!"}]}`);
+        World.setDynamicProperty('antiteleport_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Teleport§r!"}]}`);
+        AntiTeleport();
         return;
-    } else if (config.modules.antiTeleport.enabled === true) {
+    } else if (antiTeleportBoolean === true) {
         // Deny
-        config.modules.antiTeleport.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Teleport§r!"}]}`);
+        World.setDynamicProperty('antiteleport_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Teleport§r!"}]}`);
         return;
     }
 }

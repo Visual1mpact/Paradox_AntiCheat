@@ -1,20 +1,34 @@
-import { world, MinecraftEffectTypes, EntityQueryOptions } from "mojang-minecraft";
+import { world, MinecraftEffectTypes } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
-function invalidsprinta() {
+function invalidsprinta(callback, id) {
+    // Get Dynamic Property
+    let invalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
+    if (invalidSprintABoolean === undefined) {
+        invalidSprintABoolean = config.modules.invalidsprintA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.invalidsprintA.enabled === false) {
-        World.events.tick.unsubscribe(invalidsprinta);
+    if (invalidSprintABoolean === false) {
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         const speedcheck = player.getComponent('minecraft:movement');
         // Check the players current speed and see if it is equal or more than the value we have hardcoded
         // If they do have the effect for blindness and they are sprinting then we flag and reset their speed.
@@ -29,7 +43,9 @@ function invalidsprinta() {
 
 const InvalidSprintA = () => {
     // Executes every 2 seconds
-    setTickInterval(() => invalidsprinta(), 40);
+    let callback;
+    const id = setTickInterval(callback = () => invalidsprinta(callback, id), 40);
+    id();
 };
 
 export { InvalidSprintA };

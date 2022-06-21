@@ -50,8 +50,15 @@ export function kick(message, args) {
     let player = message.sender;
     let reason = args.slice(1).join(" ").replace("-s", "") || "No reason specified";
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -83,7 +90,7 @@ export function kick(message, args) {
 
     // make sure they dont kick themselves
     if (disabler(member.nameTag) === disabler(player.nameTag)) {
-        return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
     }
 
     try {
@@ -96,5 +103,5 @@ export function kick(message, args) {
         console.warn(`${new Date()} | ` + error);
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
     }
-    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has kicked ${disabler(member.nameTag)} (Silent:${isSilent}). Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has kicked ${disabler(member.nameTag)} (Silent:${isSilent}). Reason: ${reason}"}]}`);
 }

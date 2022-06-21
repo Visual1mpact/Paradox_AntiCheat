@@ -1,5 +1,5 @@
-import { world, Location, BlockLocation, EntityQueryOptions } from "mojang-minecraft";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { world, Location, BlockLocation } from "mojang-minecraft";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 
@@ -17,16 +17,30 @@ function timer(player, dimension, x, y, z) {
     _player.count = 0;
 }
 
-function jesusa(){
+function jesusa(callback, id){
+    // Get Dynamic Property
+    let jesusaBoolean = World.getDynamicProperty('jesusa_b');
+    if (jesusaBoolean === undefined) {
+        jesusaBoolean = config.modules.jesusA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.jesusA.enabled === false) {
-        World.events.tick.unsubscribe(jesusa);
+    if (jesusaBoolean === false) {
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         const x = Math.floor(player.location.x);
         const y = Math.floor(player.location.y);
         const z = Math.floor(player.location.z);
@@ -55,7 +69,9 @@ function jesusa(){
 
 const JesusA = () => {
     // Executes every 1 seconds
-    setTickInterval(() => jesusa(), 20);
+    let callback
+    const id = setTickInterval(callback = () => jesusa(callback, id), 20);
+    id();
 };
 
 export { JesusA };

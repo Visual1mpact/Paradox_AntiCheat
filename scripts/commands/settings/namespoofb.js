@@ -1,7 +1,11 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
+import { NamespoofB } from "../../penrose/tickevent/namespoof/namespoof_b.js";
 
-function namespoofBHelp(player, prefix) {
+const World = world;
+
+function namespoofBHelp(player, prefix, nameSpoofBoolean) {
     let commandStatus;
     if (!config.customcommands.namespoofb) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +13,7 @@ function namespoofBHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.namespoofB.enabled) {
+    if (nameSpoofBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,12 +45,23 @@ export function namespoofB(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Get Dynamic Property Boolean
+    let nameSpoofBoolean = World.getDynamicProperty('namespoofb_b');
+    if (nameSpoofBoolean === undefined) {
+        nameSpoofBoolean = config.modules.namespoofB.enabled;
     }
 
     // Check for custom prefix
@@ -55,18 +70,19 @@ export function namespoofB(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.namespoofb) {
-        return namespoofBHelp(player, prefix);
+        return namespoofBHelp(player, prefix, nameSpoofBoolean);
     }
 
-    if (config.modules.namespoofB.enabled === false) {
+    if (nameSpoofBoolean === false) {
         // Allow
-        config.modules.namespoofB.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NamespoofB§r!"}]}`);
+        World.setDynamicProperty('namespoofb_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NamespoofB§r!"}]}`);
+        NamespoofB();
         return;
-    } else if (config.modules.namespoofB.enabled === true) {
+    } else if (nameSpoofBoolean === true) {
         // Deny
-        config.modules.namespoofB.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4NamespoofB§r!"}]}`);
+        World.setDynamicProperty('namespoofb_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4NamespoofB§r!"}]}`);
         return;
     }
 }

@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function rbcrHelp(player, prefix) {
+const World = world;
+
+function rbcrHelp(player, prefix, rcbrBoolean) {
     let commandStatus;
     if (!config.customcommands.rbcr) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function rbcrHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.rbcr.enabled) {
+    if (rcbrBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,12 +44,23 @@ export function rbcr(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Get Dynamic Property Boolean
+    let rcbrBoolean = World.getDynamicProperty('rcbr_b');
+    if (rcbrBoolean === undefined) {
+        rcbrBoolean = config.modules.rbcr.enabled;
     }
 
     // Check for custom prefix
@@ -55,18 +69,18 @@ export function rbcr(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.reacha) {
-        return rbcrHelp(player, prefix);
+        return rbcrHelp(player, prefix, rcbrBoolean);
     }
 
-    if (config.modules.rbcr.enabled === false) {
+    if (rcbrBoolean === false) {
         // Allow
-        config.modules.rbcr.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Realm Bot Chat Relay§r!"}]}`);
+        World.setDynamicProperty('rcbr_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Realm Bot Chat Relay§r!"}]}`);
         return;
-    } else if (config.modules.rbcr.enabled === true) {
+    } else if (rcbrBoolean === true) {
         // Deny
-        config.modules.rbcr.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Realm Bot Chat Relay§r!"}]}`);
+        World.setDynamicProperty('rcbr_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Realm Bot Chat Relay§r!"}]}`);
         return;
     }
 }
