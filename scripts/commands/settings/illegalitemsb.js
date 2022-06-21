@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { IllegalItemsB } from "../../penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function illegalitemsB(message, args) {
         // Allow
         World.setDynamicProperty('illegalitemsb_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6IllegalItemsB§r!"}]}`);
+        IllegalItemsB();
         return;
     } else if (illegalItemsBBoolean === true) {
         // Deny

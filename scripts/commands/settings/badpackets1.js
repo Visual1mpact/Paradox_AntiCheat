@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { BadPackets1 } from "../../penrose/beforechatevent/spammer/badpackets_1.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function badpackets1(message, args) {
         // Allow
         World.setDynamicProperty('badpackets1_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Badpackets1§r!"}]}`);
+        BadPackets1();
         return;
     } else if (badPackets1Boolean === true) {
         // Deny

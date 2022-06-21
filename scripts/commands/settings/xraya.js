@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { XrayA } from "../../penrose/blockbreakevent/xray/xray_a.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function xrayA(message, args) {
         // Allow
         World.setDynamicProperty('xraya_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6XrayA§r!"}]}`);
+        XrayA();
         return;
     } else if (xrayBoolean === true) {
         // Deny

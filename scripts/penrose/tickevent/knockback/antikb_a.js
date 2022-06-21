@@ -5,7 +5,7 @@ import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js
 
 const World = world;
 
-function antiknockbacka(callback, id) {
+function antiknockbacka(id) {
     // Get Dynamic Property
     let antikbBoolean = World.getDynamicProperty('antikb_b');
     if (antikbBoolean === undefined) {
@@ -13,7 +13,6 @@ function antiknockbacka(callback, id) {
     }
     // Unsubscribe if disabled in-game
     if (antikbBoolean === false) {
-        World.events.tick.unsubscribe(callback);
         clearTickInterval(id);
         return;
     }
@@ -62,8 +61,7 @@ function antiknockbacka(callback, id) {
 
 const AntiKnockbackA = () => {
     // Executes every 2 seconds
-    let callback;
-    const id = setTickInterval(callback = () => antiknockbacka(callback, id), 40);
+    const id = setTickInterval(() => antiknockbacka(id), 40);
 };
 
 export { AntiKnockbackA };

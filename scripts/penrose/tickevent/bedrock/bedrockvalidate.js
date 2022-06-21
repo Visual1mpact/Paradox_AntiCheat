@@ -1,11 +1,11 @@
 import { world } from "mojang-minecraft";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 
 const World = world;
 
-function bedrockvalidate() {
+function bedrockvalidate(id) {
     // Get Dynamic Property
     let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
     if (bedrockValidateBoolean === undefined) {
@@ -13,7 +13,7 @@ function bedrockvalidate() {
     }
     // Unsubscribe if disabled in-game
     if (bedrockValidateBoolean === false) {
-        World.events.tick.unsubscribe(bedrockvalidate);
+        clearTickInterval(id);
         return;
     }
     // run as each player
@@ -53,7 +53,7 @@ function bedrockvalidate() {
 
 const BedrockValidate = () => {
     // Executes every 1 second
-    setTickInterval(() => bedrockvalidate(),20); 
+    const id = setTickInterval(() => bedrockvalidate(id), 20); 
 };
 
 export { BedrockValidate };

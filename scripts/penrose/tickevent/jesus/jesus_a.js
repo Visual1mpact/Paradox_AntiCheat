@@ -17,7 +17,7 @@ function timer(player, dimension, x, y, z) {
     _player.count = 0;
 }
 
-function jesusa(callback, id){
+function jesusa(id){
     // Get Dynamic Property
     let jesusaBoolean = World.getDynamicProperty('jesusa_b');
     if (jesusaBoolean === undefined) {
@@ -25,7 +25,6 @@ function jesusa(callback, id){
     }
     // Unsubscribe if disabled in-game
     if (jesusaBoolean === false) {
-        World.events.tick.unsubscribe(callback);
         clearTickInterval(id);
         return;
     }
@@ -69,8 +68,7 @@ function jesusa(callback, id){
 
 const JesusA = () => {
     // Executes every 1 seconds
-    let callback
-    const id = setTickInterval(callback = () => jesusa(callback, id), 20);
+    const id = setTickInterval(() => jesusa(id), 20);
 };
 
 export { JesusA };

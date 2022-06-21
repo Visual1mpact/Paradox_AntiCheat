@@ -29,7 +29,7 @@ function verifypermission() {
 }
 
 const VerifyPermission = () => {
-    World.events.tick.subscribe(() => verifypermission());
+    World.events.tick.subscribe(verifypermission);
 };
 
 export { VerifyPermission };

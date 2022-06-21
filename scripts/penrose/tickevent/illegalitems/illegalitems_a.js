@@ -327,7 +327,7 @@ function illegalitemsa() {
 }
 
 const IllegalItemsA = () => {
-    World.events.tick.subscribe(() => illegalitemsa());
+    World.events.tick.subscribe(illegalitemsa);
 };
 
 export { IllegalItemsA };

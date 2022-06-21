@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
+import { Hotbar } from "../../penrose/tickevent/hotbar/hotbar.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
@@ -78,7 +79,9 @@ export function hotbar(message, args) {
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         }
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Hotbar!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Hotbar!"}]}`);
+        Hotbar();
+        return;
     } else if (hotbarBoolean === true) {
         // Deny
         World.setDynamicProperty('hotbar_b', false);

@@ -5,7 +5,7 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function invalidsprinta(callback, id) {
+function invalidsprinta(id) {
     // Get Dynamic Property
     let invalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
     if (invalidSprintABoolean === undefined) {
@@ -13,7 +13,6 @@ function invalidsprinta(callback, id) {
     }
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
-        World.events.tick.unsubscribe(callback);
         clearTickInterval(id);
         return;
     }
@@ -43,8 +42,7 @@ function invalidsprinta(callback, id) {
 
 const InvalidSprintA = () => {
     // Executes every 2 seconds
-    let callback;
-    const id = setTickInterval(callback = () => invalidsprinta(callback, id), 40);
+    const id = setTickInterval(() => invalidsprinta(id), 40);
 };
 
 export { InvalidSprintA };

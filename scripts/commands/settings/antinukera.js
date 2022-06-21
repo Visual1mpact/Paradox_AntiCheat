@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function antinukerA(message, args) {
         // Allow
         World.setDynamicProperty('antinukera_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiNukerA§r!"}]}`);
+        NukerA();
         return;
     } else if (antiNukerABoolean === true) {
         // Deny

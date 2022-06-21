@@ -22,7 +22,7 @@ function safetyProtocol(player, x, y, z) {
     }
 }
 
-function worldborder(callback) {
+function worldborder() {
     // Dynamic Properties for boolean
     let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
     if (worldBorderBoolean === undefined) {
@@ -35,7 +35,7 @@ function worldborder(callback) {
     }
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
-        World.events.tick.unsubscribe(callback);
+        World.events.tick.unsubscribe(worldborder);
         return;
     }
     for (let player of World.getPlayers()) {
@@ -95,8 +95,7 @@ function worldborder(callback) {
 };
 
 const WorldBorder = () => {
-    let callback;
-    World.events.tick.subscribe(callback = () => worldborder(callback));
+    World.events.tick.subscribe(worldborder);
 };
 
 export { WorldBorder };

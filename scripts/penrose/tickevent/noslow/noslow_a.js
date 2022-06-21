@@ -5,15 +5,14 @@ import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js
 
 const World = world;
 
-function noslowa(callback, id) {
+function noslowa(id) {
     // Get Dynamic Property
     let noSlowBoolean = World.getDynamicProperty('noslowa_b');
     if (noSlowBoolean === undefined) {
         noSlowBoolean = config.modules.noslowA.enabled;
     }
     // Unsubscribe if disabled in-game
-    if (config.modules.noslowA.enabled === false) {
-        World.events.tick.unsubscribe(callback);
+    if (noSlowBoolean === false) {
         clearTickInterval(id);
         return;
     }
@@ -43,8 +42,7 @@ function noslowa(callback, id) {
 
 const NoSlowA = () => {
     // Executes every 2 seconds
-    let callback;
-    const id = setTickInterval(callback = () => noslowa(callback, id), 40);
+    const id = setTickInterval(() => noslowa(id), 40);
 };
 
 export { NoSlowA };

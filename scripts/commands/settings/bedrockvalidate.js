@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
+import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
@@ -72,13 +73,15 @@ export function bedrockvalidate(message, args) {
         return bedrockValidateHelp(player, prefix, bedrockValidateBoolean);
     }
 
-    if (config.modules.bedrockValidate.enabled === false) {
+    if (bedrockValidateBoolean === false) {
         // Allow
         World.setDynamicProperty('bedrockvalidate_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6BedrockValidate§r!"}]}`);
-    } else if (config.modules.bedrockValidate.enabled === true) {
+        BedrockValidate();
+        return;
+    } else if (bedrockValidateBoolean === true) {
         // Deny
         World.setDynamicProperty('bedrockvalidate_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BedrockValidate§r!"}]}`);
+        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BedrockValidate§r!"}]}`);
     }
 }

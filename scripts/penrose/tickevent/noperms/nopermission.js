@@ -44,7 +44,7 @@ function noperms() {
 }
 
 const NoPerms = () => {
-    World.events.tick.subscribe(() => noperms());
+    World.events.tick.subscribe(noperms);
 };
 
 export { NoPerms };

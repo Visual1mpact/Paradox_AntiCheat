@@ -1,5 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
+import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
+import { Survival } from "../../penrose/tickevent/gamemode/survival.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
@@ -87,9 +89,13 @@ export function allowgms(message, args) {
         // We will allow Adventure Mode in this case
         if (adventureGMBoolean === true && creativeGMBoolean === true) {
             World.setDynamicProperty('adventuregm_b', false);
-            return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled."}]}`);
+            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled."}]}`);
+            Adventure();
+            return;
         }
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 0 (Survival)§r to be used!"}]}`);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disallowed §4Gamemode 0 (Survival)§r to be used!"}]}`);
+        Survival();
+        return;
     } else if (survivalGMBoolean === true) {
         // Deny
         World.setDynamicProperty('survivalgm_b', true);

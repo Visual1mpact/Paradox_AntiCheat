@@ -1,13 +1,13 @@
 import { world, EntityQueryOptions, Location, BlockLocation} from "mojang-minecraft";
 import { getScore, disabler, flag, crypto } from "../../../util.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
 let playersOldCoordinates = new Map();
 
-function flya() {
+function flya(id) {
     // Get Dynamic Property
     let flyABoolean = World.getDynamicProperty('flya_b');
     if (flyABoolean === undefined) {
@@ -15,7 +15,7 @@ function flya() {
     }
     // Unsubscribe if disabled in-game
     if (flyABoolean === false) {
-        World.events.tick.unsubscribe(flya);
+        clearTickInterval(id);
         return;
     }
 
@@ -89,7 +89,7 @@ function flya() {
 
 const FlyA = () => {
     // Executes every 1 second
-    setTickInterval(() => flya(), 20);
+    const id = setTickInterval(() => flya(id), 20);
 };
 
 export { FlyA };

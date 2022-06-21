@@ -4,7 +4,7 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function antiteleport(callback) {
+function antiteleport() {
     // Get Dynamic Property
     let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
     if (antiTeleportBoolean === undefined) {
@@ -12,7 +12,7 @@ function antiteleport(callback) {
     }
     // Unsubscribe if disabled in-game
     if (antiTeleportBoolean === false) {
-        World.events.tick.unsubscribe(callback);
+        World.events.tick.unsubscribe(antiteleport);
         return;
     }
     // Check players who are not Opped
@@ -93,8 +93,7 @@ function antiteleport(callback) {
 }
 
 const AntiTeleport = () => {
-    let callback;
-    World.events.tick.subscribe(callback = () => antiteleport(callback));
+    World.events.tick.subscribe(antiteleport);
 };
 
 export { AntiTeleport };

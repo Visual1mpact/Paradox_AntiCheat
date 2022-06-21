@@ -5,7 +5,7 @@ import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js
 
 const World = world;
 
-function namespoofa(callback, id) {
+function namespoofa(id) {
     // Get Dynamic Property
     let nameSpoofBoolean = World.getDynamicProperty('namespoofa_b');
     if (nameSpoofBoolean === undefined) {
@@ -13,7 +13,6 @@ function namespoofa(callback, id) {
     }
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
-        World.events.tick.unsubscribe(callback);
         clearTickInterval(id);
         return;
     }
@@ -41,8 +40,7 @@ function namespoofa(callback, id) {
 
 const NamespoofA = () => {
     // Executes every 2 seconds
-    let callback;
-    const id = setTickInterval(callback = () => namespoofa(callback, id), 40);
+    const id = setTickInterval(() => namespoofa(id), 40);
 };
 
 export { NamespoofA };

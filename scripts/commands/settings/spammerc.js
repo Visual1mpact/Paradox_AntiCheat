@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { SpammerC } from "../../penrose/beforechatevent/spammer/spammer_c.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function spammerC(message, args) {
         // Allow
         World.setDynamicProperty('spammerc_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6SpammerC§r!"}]}`);
+        SpammerC();
         return;
     } else if (spammerCBoolean === true) {
         // Deny

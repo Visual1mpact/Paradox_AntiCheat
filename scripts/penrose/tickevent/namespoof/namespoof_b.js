@@ -29,7 +29,7 @@ function rip(player) {
     }
 }
 
-function namespoofb(callback, id) {
+function namespoofb(id) {
     // Get Dynamic Property
     let nameSpoofBoolean = World.getDynamicProperty('namespoofb_b');
     if (nameSpoofBoolean === undefined) {
@@ -37,7 +37,6 @@ function namespoofb(callback, id) {
     }
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
-        World.events.tick.unsubscribe(callback);
         clearTickInterval(id);
         return;
     }
@@ -65,8 +64,7 @@ function namespoofb(callback, id) {
 
 const NamespoofB = () => {
     // Executes every 2 seconds
-    let callback;
-    const id = setTickInterval(callback = () => namespoofb(callback, id), 40);
+    const id = setTickInterval(() => namespoofb(id), 40);
 };
 
 export { NamespoofB };
