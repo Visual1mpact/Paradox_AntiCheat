@@ -9,10 +9,10 @@ if (config.debug) {
             console.log(`Getting dynamic property '${id}' of ${this.constructor.name} \n${getStack()}`);
             try {
                 const v = oGet.call(this, id);
-                console.log(`Dynamic property '${id}' of ${this.constructor.name}: '${v}' (${typeof v}) \n${getStack()}`);
+                console.log(`Dynamic property '${id}' of ${this.constructor.name}: '${v}' (${typeof v})`);
                 return v;
             } catch(e) {
-                console.warn(`Get dynamic property '${id}' of ${this.constructor.name} FAILED: \n${e} \n${getStack()}`);
+                console.warn(`Get dynamic property '${id}' of ${this.constructor.name} FAILED: \n${e}`);
                 throw e;
             }
         };
@@ -23,7 +23,7 @@ if (config.debug) {
             try {
                 return oSet.call(this, id, v);
             } catch(e) {
-                console.warn(`Set dynamic property '${id}' of ${this.constructor.name} to '${v}' (${typeof v}) FAILED: \n${e} \n${getStack()}`);
+                console.warn(`Set dynamic property '${id}' of ${this.constructor.name} to '${v}' (${typeof v}) FAILED: \n${e}`);
                 throw e;
             }
         };
@@ -34,7 +34,7 @@ if (config.debug) {
             try {
                 return oDel.call(this, id);
             } catch(e) {
-                console.warn(`Delete dynamic property '${id}' of ${this.constructor.name} FAILED: \n${e} \n${getStack()}`);
+                console.warn(`Delete dynamic property '${id}' of ${this.constructor.name} FAILED: \n${e}`);
                 throw e;
             }
         };
@@ -47,7 +47,7 @@ if (config.debug) {
         try {
             regEnt.call(this, def, type);
         } catch(e) {
-            console.warn(`Register dynamic properties definition to entity type '${type.id}' FAILED: \n${e} \n${getStack()}`);
+            console.warn(`Register dynamic properties definition to entity type '${type.id}' FAILED: \n${e}`);
             throw e;
         }
     };
@@ -59,7 +59,7 @@ if (config.debug) {
         try {
             regWld.call(this, def);
         } catch(e) {
-            console.warn(`Register dynamic properties definition to world FAILED: \n${e} \n${getStack()}`);
+            console.warn(`Register dynamic properties definition to world FAILED: \n${e}`);
             throw e;
         }
     };
