@@ -71,7 +71,6 @@ const JesusA = () => {
     // Executes every 1 seconds
     let callback
     const id = setTickInterval(callback = () => jesusa(callback, id), 20);
-    id();
 };
 
 export { JesusA };

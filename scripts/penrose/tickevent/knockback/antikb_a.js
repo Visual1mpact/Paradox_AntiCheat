@@ -64,7 +64,6 @@ const AntiKnockbackA = () => {
     // Executes every 2 seconds
     let callback;
     const id = setTickInterval(callback = () => antiknockbacka(callback, id), 40);
-    id();
 };
 
 export { AntiKnockbackA };

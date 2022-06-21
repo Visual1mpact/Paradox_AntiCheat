@@ -32,7 +32,6 @@ function ops(callback) {
     // Run as each player
     for (let player of World.getPlayers(filter)) {
         const id = setTickTimeout(() => queueSleep(player, id, opsBoolean), 40);
-        id();
     }
 }
 

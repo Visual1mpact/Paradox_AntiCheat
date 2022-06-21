@@ -43,7 +43,6 @@ const NamespoofA = () => {
     // Executes every 2 seconds
     let callback;
     const id = setTickInterval(callback = () => namespoofa(callback, id), 40);
-    //id();
 };
 
 export { NamespoofA };

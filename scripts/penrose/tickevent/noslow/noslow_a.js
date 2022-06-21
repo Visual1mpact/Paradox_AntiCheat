@@ -45,7 +45,6 @@ const NoSlowA = () => {
     // Executes every 2 seconds
     let callback;
     const id = setTickInterval(callback = () => noslowa(callback, id), 40);
-    id();
 };
 
 export { NoSlowA };
