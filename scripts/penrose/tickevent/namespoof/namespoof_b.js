@@ -67,7 +67,6 @@ const NamespoofB = () => {
     // Executes every 2 seconds
     let callback;
     const id = setTickInterval(callback = () => namespoofb(callback, id), 40);
-    id();
 };
 
 export { NamespoofB };
