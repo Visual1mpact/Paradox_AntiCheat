@@ -1,11 +1,11 @@
 import { world, MinecraftEffectTypes } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
-function invalidsprinta() {
+function invalidsprinta(callback, id) {
     // Get Dynamic Property
     let invalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
     if (invalidSprintABoolean === undefined) {
@@ -13,7 +13,8 @@ function invalidsprinta() {
     }
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
-        World.events.tick.unsubscribe(invalidsprinta);
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
     // run as each player
@@ -42,7 +43,9 @@ function invalidsprinta() {
 
 const InvalidSprintA = () => {
     // Executes every 2 seconds
-    setTickInterval(() => invalidsprinta(), 40);
+    let callback;
+    const id = setTickInterval(callback = () => invalidsprinta(callback, id), 40);
+    id();
 };
 
 export { InvalidSprintA };

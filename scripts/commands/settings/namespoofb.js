@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { NamespoofB } from "../../penrose/tickevent/namespoof/namespoof_b.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function namespoofB(message, args) {
         // Allow
         World.setDynamicProperty('namespoofb_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NamespoofB§r!"}]}`);
+        NamespoofB();
         return;
     } else if (nameSpoofBoolean === true) {
         // Deny

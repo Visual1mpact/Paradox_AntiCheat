@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
+import { WorldBorder } from "../../penrose/tickevent/worldborder/worldborder.js";
 import { crypto, disabler, getPrefix } from "../../util.js";
 
 const World = world;
@@ -80,6 +81,7 @@ export function worldborders(message, args) {
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
         World.setDynamicProperty('worldborder_b', true);
         World.setDynamicProperty('worldborder_n', Math.abs(argCheck));
+        WorldBorder();
         return;
     } else if (argCheck === "disable") {
         // Disable Worldborder

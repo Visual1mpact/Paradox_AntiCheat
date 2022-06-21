@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { NoSlowA } from "../../penrose/tickevent/noslow/noslow_a.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function noslowA(message, args) {
         // Allow
         World.setDynamicProperty('noslowa_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NoSlowA§r!"}]}`);
+        NoSlowA();
         return;
     } else if (noSlowBoolean === true) {
         // Deny

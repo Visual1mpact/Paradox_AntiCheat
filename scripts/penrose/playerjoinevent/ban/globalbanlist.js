@@ -36,7 +36,7 @@ const GlobalBanList = () => {
         // Get the name of the player who is joining
         let player = loaded.player;
         // Subscribe tick event to the time function
-        let callback
+        let callback;
         tickEventCallback.subscribe(callback = () => banHammerTime(player, callback));
     });
 };

@@ -169,7 +169,7 @@ export default
             "enabled": false
         },
         "antikbA": {
-            "enabled": true,
+            "enabled": false,
             "magnitude": -0.078
         },
         "antiscaffoldA": {

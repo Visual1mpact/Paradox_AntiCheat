@@ -1,11 +1,11 @@
 import { world, MinecraftEffectTypes } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 
 const World = world;
 
-function noslowa() {
+function noslowa(callback, id) {
     // Get Dynamic Property
     let noSlowBoolean = World.getDynamicProperty('noslowa_b');
     if (noSlowBoolean === undefined) {
@@ -13,7 +13,8 @@ function noslowa() {
     }
     // Unsubscribe if disabled in-game
     if (config.modules.noslowA.enabled === false) {
-        World.events.tick.unsubscribe(noslowa);
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
     // run as each player
@@ -42,7 +43,9 @@ function noslowa() {
 
 const NoSlowA = () => {
     // Executes every 2 seconds
-    setTickInterval(() => noslowa(), 40);
+    let callback;
+    const id = setTickInterval(callback = () => noslowa(callback, id), 40);
+    id();
 };
 
 export { NoSlowA };

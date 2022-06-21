@@ -1,6 +1,7 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
+import { AntiTeleport } from "../../penrose/tickevent/teleport/antiteleport.js";
 
 const World = world;
 
@@ -76,6 +77,7 @@ export function antiteleport(message, args) {
         // Allow
         World.setDynamicProperty('antiteleport_b', true);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Teleport§r!"}]}`);
+        AntiTeleport();
         return;
     } else if (antiTeleportBoolean === true) {
         // Deny

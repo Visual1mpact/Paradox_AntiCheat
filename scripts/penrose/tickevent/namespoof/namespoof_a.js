@@ -1,11 +1,11 @@
 import { world } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 
 const World = world;
 
-function namespoofa() {
+function namespoofa(callback, id) {
     // Get Dynamic Property
     let nameSpoofBoolean = World.getDynamicProperty('namespoofa_b');
     if (nameSpoofBoolean === undefined) {
@@ -13,7 +13,8 @@ function namespoofa() {
     }
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
-        World.events.tick.unsubscribe(namespoofa);
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
     // run as each player
@@ -40,7 +41,9 @@ function namespoofa() {
 
 const NamespoofA = () => {
     // Executes every 2 seconds
-    setTickInterval(() => namespoofa(), 40);
+    let callback;
+    const id = setTickInterval(callback = () => namespoofa(callback, id), 40);
+    id();
 };
 
 export { NamespoofA };

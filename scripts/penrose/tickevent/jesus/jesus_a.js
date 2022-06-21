@@ -1,5 +1,5 @@
 import { world, Location, BlockLocation } from "mojang-minecraft";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 
@@ -17,7 +17,7 @@ function timer(player, dimension, x, y, z) {
     _player.count = 0;
 }
 
-function jesusa(){
+function jesusa(callback, id){
     // Get Dynamic Property
     let jesusaBoolean = World.getDynamicProperty('jesusa_b');
     if (jesusaBoolean === undefined) {
@@ -25,7 +25,8 @@ function jesusa(){
     }
     // Unsubscribe if disabled in-game
     if (jesusaBoolean === false) {
-        World.events.tick.unsubscribe(jesusa);
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
     // run as each player
@@ -68,7 +69,9 @@ function jesusa(){
 
 const JesusA = () => {
     // Executes every 1 seconds
-    setTickInterval(() => jesusa(), 20);
+    let callback
+    const id = setTickInterval(callback = () => jesusa(callback, id), 20);
+    id();
 };
 
 export { JesusA };

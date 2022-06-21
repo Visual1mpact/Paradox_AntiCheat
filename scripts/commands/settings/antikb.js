@@ -1,5 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
+import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
 import { crypto, disabler, getPrefix, getScore } from "../../util.js";
 
 const World = world;
@@ -79,6 +80,7 @@ export function antiknockback(message, args) {
         World.setDynamicProperty('antikb_b', true);
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
         player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
+        AntiKnockbackA();
     } else if (antikbscore >= 1) {
         // Deny
         World.setDynamicProperty('antikb_b', false);
