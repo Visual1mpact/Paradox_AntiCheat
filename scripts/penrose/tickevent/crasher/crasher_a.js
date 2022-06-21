@@ -42,7 +42,7 @@ function crashera() {
 }
 
 const CrasherA = () => {
-    World.events.tick.subscribe(() => crashera());
+    World.events.tick.subscribe(crashera);
 };
 
 export { CrasherA };

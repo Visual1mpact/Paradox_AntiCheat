@@ -66,7 +66,7 @@ function creative() {
 }
 
 const Creative = () => {
-    World.events.tick.subscribe(() => creative());
+    World.events.tick.subscribe(creative);
 };
 
 export { Creative };
