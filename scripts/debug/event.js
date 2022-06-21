@@ -1,5 +1,4 @@
 import { world } from 'mojang-minecraft'
-import config from '../data/config.js'
 import getStack from './stack.js'
 
 for (const k in world.events) {
@@ -8,7 +7,7 @@ for (const k in world.events) {
 
     OSubscribe((evd) => {
         let logtext = `Event ${k} triggered`
-        if (config.debug) console.log(logtext)
+        console.log(logtext)
         for (const [fn, {stack}] of fnList) {
             const fsource = `${fn.fileName}:${fn.lineNumber}`
 
@@ -19,17 +18,17 @@ for (const k in world.events) {
             const t1 = Date.now()
             logtext += `\n    ${fn.name || '(anonymous)'} (${fsource}): ${t1 - t0}ms`
         }
-        if (config.debug) console.log(logtext)
+        console.log(logtext)
     })
 
     const fnList = new Map()
 
     evSignal.subscribe = (fn) => {
-        if (config.debug) console.log(`Event ${k} subscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`)
+        console.log(`Event ${k} subscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`)
         fnList.set(fn, { stack: getStack() })
     }
     evSignal.unsubscribe = (fn) => {
-        if (config.debug) console.log(`Event ${k} unsubscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`)
+        console.log(`Event ${k} unsubscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`)
         if (!fnList.delete(fn)) console.warn(`Failed to unsubscribe ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) from event ${k}`)
     }
 }
