@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function flyaHelp(player, prefix) {
+const World = world;
+
+function flyaHelp(player, prefix, flyABoolean) {
     let commandStatus;
     if (!config.customcommands.flya) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function flyaHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.flyA.enabled) {
+    if (flyABoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,12 +44,23 @@ export function flyA(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Get Dynamic Property Boolean
+    let flyABoolean = World.getDynamicProperty('flya_b');
+    if (flyABoolean === undefined) {
+        flyABoolean = config.modules.flyA.enabled;
     }
 
     // Check for custom prefix
@@ -55,18 +69,18 @@ export function flyA(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.flya) {
-        return flyaHelp(player, prefix);
+        return flyaHelp(player, prefix, flyABoolean);
     }
 
-    if (config.modules.flyA.enabled === false) {
+    if (flyABoolean === false) {
         // Allow
-        config.modules.flyA.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6FlyA§r!"}]}`);
+        World.setDynamicProperty('flya_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6FlyA§r!"}]}`);
         return;
-    } else if (config.modules.flyA.enabled === true) {
+    } else if (flyABoolean === true) {
         // Deny
-        config.modules.flyA.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4FlyA§r!"}]}`);
+        World.setDynamicProperty('flya_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4FlyA§r!"}]}`);
         return;
     }
 }

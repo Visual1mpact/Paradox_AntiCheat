@@ -1,17 +1,33 @@
 import { world } from "mojang-minecraft";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
+import { crypto } from "../../../util.js";
 
 const World = world;
 
 function bedrockvalidate() {
+    // Get Dynamic Property
+    let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
+    if (bedrockValidateBoolean === undefined) {
+        bedrockValidateBoolean = config.modules.bedrockValidate.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.bedrockValidate.enabled === false) {
+    if (bedrockValidateBoolean === false) {
         World.events.tick.unsubscribe(bedrockvalidate);
         return;
     }
     // run as each player
     for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         // bedrock validation
         if (player.dimension === World.getDimension("overworld") && config.modules.bedrockValidate.overworld) {
             try {

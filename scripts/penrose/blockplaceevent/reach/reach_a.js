@@ -6,8 +6,13 @@ import { crypto } from "../../../util.js";
 const World = world;
 
 function reacha(object) {
+    // Get Dynamic Property
+    let reachABoolean = World.getDynamicProperty('reacha_b');
+    if (reachABoolean === undefined) {
+        reachABoolean = config.modules.reachA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.reachA.enabled === false) {
+    if (reachABoolean === false) {
         World.events.blockPlace.unsubscribe(reacha);
         return;
     }
@@ -15,8 +20,15 @@ function reacha(object) {
     // Properties from class
     let { block, player, dimension } = object;
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // Return if player has op
-    if (player.hasTag('Hash:' + crypto)) {
+    if (hash !== undefined && encode === hash) {
         return;
     }
     

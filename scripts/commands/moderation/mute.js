@@ -41,8 +41,15 @@ export function mute(message, args) {
     let player = message.sender;
     let reason = args.slice(1).join(" ") || "No reason specified";
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -72,14 +79,21 @@ export function mute(message, args) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
     }
 
+    // Check for hash/salt and validate password for members
+    let memberHash = member.getDynamicProperty('hash');
+    let memberSalt = member.getDynamicProperty('salt');
+    let memberEncode;
+    try {
+        memberEncode = crypto(memberSalt, config.modules.encryption.password);
+    } catch (error) {}
+
     // make sure they dont mute themselves
     if (disabler(member.nameTag) === disabler(player.nameTag)) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You cannot mute yourself."}]}`);
     }
 
     // make sure staff dont mute staff
-    let verify = member.hasTag('Hash:' + crypto);
-    if (verify) {
+    if (memberEncode === memberHash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You cannot mute staff members."}]}`);
     }
 
@@ -94,5 +108,5 @@ export function mute(message, args) {
         player.runCommand(`ability "${disabler(member.nameTag)}" mute true`);
     } catch (error) {}
     player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been muted. Reason: ${reason}"}]}`);
-    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has muted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has muted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
 }

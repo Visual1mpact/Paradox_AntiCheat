@@ -1,19 +1,32 @@
-import { EntityQueryOptions, world, BlockLocation, Location } from "mojang-minecraft";
+import { world, BlockLocation, Location } from "mojang-minecraft";
 import { crypto, getScore } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
-function antiteleport() {
+function antiteleport(callback) {
+    // Get Dynamic Property
+    let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
+    if (antiTeleportBoolean === undefined) {
+        antiTeleportBoolean = config.modules.antiTeleport.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.antiTeleport.enabled === false) {
-        World.events.tick.unsubscribe(antiteleport);
+    if (antiTeleportBoolean === false) {
+        World.events.tick.unsubscribe(callback);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // Check players who are not Opped
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         // player position that counts 20 ticks /per second
         let {x, y, z} = player.location;
 
@@ -80,7 +93,8 @@ function antiteleport() {
 }
 
 const AntiTeleport = () => {
-    World.events.tick.subscribe(() => antiteleport());
+    let callback;
+    World.events.tick.subscribe(callback = () => antiteleport(callback));
 };
 
 export { AntiTeleport };

@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function reachBHelp(player, prefix) {
+const World = world;
+
+function reachBHelp(player, prefix, reachBBoolean) {
     let commandStatus;
     if (!config.customcommands.reachb) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function reachBHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.reachB.enabled) {
+    if (reachBBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,12 +44,23 @@ export function reachB(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Get Dynamic Property Boolean
+    let reachBBoolean = World.getDynamicProperty('reachb_b');
+    if (reachBBoolean === undefined) {
+        reachBBoolean = config.modules.reachB.enabled;
     }
 
     // Check for custom prefix
@@ -55,18 +69,18 @@ export function reachB(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.reachb) {
-        return reachBHelp(player, prefix);
+        return reachBHelp(player, prefix, reachBBoolean);
     }
 
-    if (config.modules.reachB.enabled === false) {
+    if (reachBBoolean === false) {
         // Allow
-        config.modules.reachB.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ReachB§r!"}]}`);
+        World.setDynamicProperty('reachb_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6ReachB§r!"}]}`);
         return;
-    } else if (config.modules.reachB.enabled === true) {
+    } else if (reachBBoolean === true) {
         // Deny
-        config.modules.reachB.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ReachB§r!"}]}`);
+        World.setDynamicProperty('reachb_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4ReachB§r!"}]}`);
         return;
     }
 }

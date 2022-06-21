@@ -5,8 +5,13 @@ import config from "../../../data/config.js";
 const World = world;
 
 function crashera() {
+    // Get Dynamic Property
+    let crasherABoolean = World.getDynamicProperty('crashera_b');
+    if (crasherABoolean === undefined) {
+        crasherABoolean = config.modules.crasherA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.crasherA.enabled === false) {
+    if (crasherABoolean === false) {
         World.events.tick.unsubscribe(crashera);
         return;
     }

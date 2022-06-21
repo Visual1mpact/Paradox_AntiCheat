@@ -18,8 +18,13 @@ function timer() {
 }
 
 function antispam(msg) {
+    // Get Dynamic Property
+    let antiSpamBoolean = World.getDynamicProperty('antispam_b');
+    if (antiSpamBoolean === undefined) {
+        antiSpamBoolean = config.modules.antispam.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.antispam.enabled === false) {
+    if (antiSpamBoolean === false) {
         World.events.beforeChat.unsubscribe(antispam);
         return;
     }
@@ -27,9 +32,15 @@ function antispam(msg) {
     let player = msg.sender;
     let message = msg.message;
 
-    let tag = player.hasTag('Hash:' + crypto);
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
 
-    if (!tag) {
+    if (hash === undefined || encode !== hash) {
         // Increment
         _player.count++;
 

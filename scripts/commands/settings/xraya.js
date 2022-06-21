@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function xrayAHelp(player, prefix) {
+const World = world;
+
+function xrayAHelp(player, prefix, xrayBoolean) {
     let commandStatus;
     if (!config.customcommands.xraya) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function xrayAHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.xrayA.enabled) {
+    if (xrayBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,12 +44,23 @@ export function xrayA(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Get Dynamic Property Boolean
+    let xrayBoolean = World.getDynamicProperty('xraya_b');
+    if (xrayBoolean === undefined) {
+        xrayBoolean = config.modules.xrayA.enabled;
     }
 
     // Check for custom prefix
@@ -55,18 +69,18 @@ export function xrayA(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.xraya) {
-        return xrayAHelp(player, prefix);
+        return xrayAHelp(player, prefix, xrayBoolean);
     }
 
-    if (config.modules.xrayA.enabled === false) {
+    if (xrayBoolean === false) {
         // Allow
-        config.modules.xrayA.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6XrayA§r!"}]}`);
+        World.setDynamicProperty('xraya_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6XrayA§r!"}]}`);
         return;
-    } else if (config.modules.xrayA.enabled === true) {
+    } else if (xrayBoolean === true) {
         // Deny
-        config.modules.xrayA.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4XrayA§r!"}]}`);
+        World.setDynamicProperty('xraya_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4XrayA§r!"}]}`);
         return;
     }
 }

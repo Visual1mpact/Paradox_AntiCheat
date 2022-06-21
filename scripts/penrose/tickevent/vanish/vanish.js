@@ -1,4 +1,5 @@
 import { world, MinecraftEffectTypes, EntityQueryOptions } from "mojang-minecraft";
+import config from "../../../data/config.js";
 import { crypto, disabler } from "../../../util.js";
 
 const World = world;
@@ -9,9 +10,16 @@ function vanish() {
     filter.tags = ['vanish'];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
         // Grant them invisibility and night vision
         // 1728000 = 24 hours
-        if (player.hasTag('Hash:' + crypto)) {
+        if (hash !== undefined && encode === hash) {
             player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255, false);
             player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255, false);
             if (!player.hasTag('performance')) {
@@ -19,7 +27,7 @@ function vanish() {
             }
         }
         // Make sure they have permission to use Vanish
-        if (!player.hasTag('Hash:' + crypto)) {
+        if (hash === undefined || encode !== hash) {
             // They have been busted!
             player.removeTag('vanish');
             if (player.getEffect(MinecraftEffectTypes.invisibility) || player.getEffect(MinecraftEffectTypes.nightVision)) {

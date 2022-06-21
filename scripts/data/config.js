@@ -169,7 +169,7 @@ export default
             "enabled": false
         },
         "antikbA": {
-            "enabled": true,
+            "enabled": false,
             "magnitude": -0.078
         },
         "antiscaffoldA": {
@@ -262,8 +262,6 @@ export default
          * Change your password frequently and only share with trusted sources.
          */
         "encryption": {
-            "salt": "",
-            "optag": "",
             "password": ""
         }
     }

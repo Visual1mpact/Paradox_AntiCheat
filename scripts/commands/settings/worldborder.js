@@ -1,7 +1,11 @@
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix, getScore } from "../../util.js";
+import { WorldBorder } from "../../penrose/tickevent/worldborder/worldborder.js";
+import { crypto, disabler, getPrefix } from "../../util.js";
 
-function worldBorderHelp(player, prefix, worldBorderScore) {
+const World = world;
+
+function worldBorderHelp(player, prefix, worldBorderBoolean) {
     let commandStatus;
     if (!config.customcommands.worldborder) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +13,7 @@ function worldBorderHelp(player, prefix, worldBorderScore) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (worldBorderScore <= 0) {
+    if (worldBorderBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -44,12 +48,23 @@ export function worldborders(message, args) {
 
     let player = message.sender;
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
-    let worldBorderScore = getScore("worldborder", player);
+    // Get Dynamic Property Boolean
+    let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
+    if (worldBorderBoolean === undefined) {
+        worldBorderBoolean = config.modules.worldBorder.enabled;
+    }
 
     // Check for custom prefix
     let prefix = getPrefix(player);
@@ -57,24 +72,23 @@ export function worldborders(message, args) {
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.worldborder) {
-        return worldBorderHelp(player, prefix, worldBorderScore);
+        return worldBorderHelp(player, prefix, worldBorderBoolean);
     }
 
 
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
-        player.runCommand(`scoreboard players set paradox:config worldborder ${argCheck}`);
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
-        player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
-        config.modules.worldBorder.bordersize = argCheck;
-        return config.modules.worldBorder.enabled = true;
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
+        World.setDynamicProperty('worldborder_b', true);
+        World.setDynamicProperty('worldborder_n', Math.abs(argCheck));
+        WorldBorder();
+        return;
     } else if (argCheck === "disable") {
         // Disable Worldborder
-        player.runCommand(`scoreboard players set paradox:config worldborder 0`);
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
-        player.runCommand(`scoreboard players operation @a worldborder = paradox:config worldborder`);
-        config.modules.worldBorder.bordersize = 0;
-        return config.modules.worldBorder.enabled = false;
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
+        World.setDynamicProperty('worldborder_b', false);
+        World.setDynamicProperty('worldborder_n', 0);
+        return;
     } else {
         return worldBorderHelp(player, prefix);
     }

@@ -1,5 +1,8 @@
+import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { getScore, disabler, getPrefix, crypto } from "../../util.js";
+
+const World = world;
 
 function modulesHelp(player, prefix) {
     let commandStatus;
@@ -35,8 +38,15 @@ function modulesHelp(player, prefix) {
 
     let player = message.sender;
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!player.hasTag('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
@@ -52,25 +62,69 @@ function modulesHelp(player, prefix) {
     // scores
     let commandblocks = getScore('commandblocks', player);
     let cmds = getScore('cmds', player);
-    let worldborder = getScore('worldborder', player);
     let autoclicker = getScore('autoclicker', player);
     let encharmor = getScore('encharmor', player);
     let autoaura = getScore('autoaura', player);
     let antikb = getScore('antikb', player);
 
-    if (config.modules.adventureGM.enabled) {
+    // Booleans
+    let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
+    let xrayaBoolean = World.getDynamicProperty('xraya_b');
+    let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
+    let opsBoolean = World.getDynamicProperty('ops_b');
+    let noSlowBoolean = World.getDynamicProperty('noslowa_b');
+    let nameSpoofABoolean = World.getDynamicProperty('namespoofa_b');
+    let nameSpoofBBoolean = World.getDynamicProperty('namespoofb_b');
+    let jesusABoolean = World.getDynamicProperty('jesusa_b');
+    let InvalidSprintABoolean = World.getDynamicProperty('invalidsprinta_b');
+    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
+    let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
+    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
+    let adventureGMBoolean = World.getDynamicProperty('adventuregm_b');
+    let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
+    let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
+    let flyABoolean = World.getDynamicProperty('flya_b');
+    let crasherABoolean = World.getDynamicProperty('crashera_b');
+    let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
+    let reachCBoolean = World.getDynamicProperty('reachc_b');
+    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
+    let reachABoolean = World.getDynamicProperty('reacha_b');
+    let illegalItemsCBoolean = World.getDynamicProperty('illegalitemsc_b');
+    let reachBBoolean = World.getDynamicProperty('reachb_b');
+    let antiNukerABoolean = World.getDynamicProperty('antinukera_b');
+    let illegalItemsBBoolean = World.getDynamicProperty('illegalitemsb_b');
+    let spammerDBoolean = World.getDynamicProperty('spammerd_b');
+    let spammerCBoolean = World.getDynamicProperty('spammerc_b');
+    let spammerBBoolean = World.getDynamicProperty('spammerb_b');
+    let spammerABoolean = World.getDynamicProperty('spammera_b');
+    let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
+    let savageBoolean = World.getDynamicProperty('salvage_b');
+    let rcbrBoolean = World.getDynamicProperty('rcbr_b');
+    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
+    let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
+    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
+    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+    let stackBanBoolean = World.getDynamicProperty('stackban_b');
+    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
+    let antiSpamBoolean = World.getDynamicProperty('antispam_b');
+
+    // Numbers
+    let worldBorderNumber = World.getDynamicProperty('worldborder_n');
+
+    if (adventureGMBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Anti-GMA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.survivalGM.enabled) {
+    if (survivalGMBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMS is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.creativeGM.enabled) {
+    if (creativeGMBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-GMC is currently §4DISABLED"}]}`);
@@ -90,8 +144,8 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OverideCommandBlocksEnabled is currently §4DISABLED"}]}`);
     }
     
-    if (worldborder > 0) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a${worldborder}"}]}`);
+    if (worldBorderBoolean) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is set to §a${worldBorderNumber}"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r World Border is currently §4DISABLED"}]}`);
     }
@@ -120,111 +174,111 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Knockback is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.badpackets1.enabled) {
+    if (badPackets1Boolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets 1 is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.spammerA.enabled) {
+    if (spammerABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.spammerB.enabled) {
+    if (spammerBBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerB is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerB is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.spammerC.enabled) {
+    if (spammerCBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerC is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerC is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.spammerD.enabled) {
+    if (spammerDBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerD is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r SpammerD is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.antispam.enabled) {
+    if (antiSpamBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Spam is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Spam is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.crasherA.enabled) {
+    if (crasherABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r CrasherA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r CrasherA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.namespoofA.enabled) {
+    if (nameSpoofABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.namespoofB.enabled) {
+    if (nameSpoofBBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofB is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NamespoofB is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.bedrockValidate.enabled) {
+    if (bedrockValidateBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Bedrock Validate is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Bedrock Validate is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.reachA.enabled) {
+    if (reachABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.reachB.enabled) {
+    if (reachBBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachB is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachB is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.reachC.enabled) {
+    if (reachCBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachC is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ReachC is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.jesusA.enabled) {
+    if (jesusABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r JesusA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r JesusA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.noslowA.enabled) {
+    if (noSlowBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NoSlowA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r NoSlowA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.invalidsprintA.enabled) {
+    if (InvalidSprintABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r InvalidSprintA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r InvalidSprintA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.flyA.enabled) {
+    if (flyABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r FlyA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r FlyA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalitemsA.enabled) {
+    if (illegalItemsABoolean) {
         let verification;
-        if (config.modules.stackBan.enabled) {
+        if (stackBanBoolean) {
             verification = "§aENABLED§r";
         } else {
             verification = "§4DISABLED§r";
@@ -234,9 +288,9 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalitemsB.enabled) {
+    if (illegalItemsBBoolean) {
         let verification;
-        if (config.modules.stackBan.enabled) {
+        if (stackBanBoolean) {
             verification = "§aENABLED§r";
         } else {
             verification = "§4DISABLED§r";
@@ -246,9 +300,9 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsB is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalitemsC.enabled) {
+    if (illegalItemsCBoolean) {
         let verification;
-        if (config.modules.stackBan.enabled) {
+        if (stackBanBoolean) {
             verification = "§aENABLED§r";
         } else {
             verification = "§4DISABLED§r";
@@ -258,93 +312,93 @@ function modulesHelp(player, prefix) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsC is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalitemsD.enabled) {
-        let verification;
-        if (config.modules.stackBan.enabled) {
-            verification = "§aENABLED§r";
-        } else {
-            verification = "§4DISABLED§r";
-        }
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §aENABLED§r [Ban Illegal Stacks ${verification}]"}]}`);
+    if (illegalItemsDBoolean) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §aENABLED§r"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalItemsD is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalEnchantment.enabled) {
+    if (illegalEnchantmentBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalEnchantments is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalEnchantments is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.illegalLores.enabled) {
+    if (illegalLoresBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r IllegalLores is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.antikbA.enabled) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-KnockbackA is currently §aENABLED"}]}`);
-    } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-KnockbackA is currently §4DISABLED"}]}`);
-    }
-
-    if (config.modules.antiscaffoldA.enabled) {
+    if (antiScaffoldABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-ScaffoldA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-ScaffoldA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.antinukerA.enabled) {
+    if (antiNukerABoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-NukerA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-NukerA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.xrayA.enabled) {
+    if (xrayaBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r XrayA is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r XrayA is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.chatranks.enabled) {
+    if (chatRanksBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chat Ranks is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Chat Ranks is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.antishulker.enabled) {
+    if (antiShulkerBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Shulkers is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Shulkers is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.antiTeleport.enabled) {
+    if (antiTeleportBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Anti-Teleport is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.hotbar.enabled) {
+    if (hotbarBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Hotbar is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.ops.enabled) {
+    if (opsBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OPS is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r OPS is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.rbcr.enabled) {
+    if (rcbrBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r RBCR is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r RBCR is currently §4DISABLED"}]}`);
     }
 
-    if (config.modules.salvage.enabled) {
+    if (savageBoolean) {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Salvage is currently §aENABLED"}]}`);
     } else {
         player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Salvage is currently §4DISABLED"}]}`);
+    }
+
+    if (lockdownBoolean) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Lockdown is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Lockdown is currently §4DISABLED"}]}`);
+    }
+
+    if (badPackets2Boolean) {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets2 is currently §aENABLED"}]}`);
+    } else {
+        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Badpackets2 is currently §4DISABLED"}]}`);
     }
 }

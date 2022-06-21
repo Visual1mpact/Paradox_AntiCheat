@@ -6,7 +6,16 @@ const World = world;
 
 const ChatFilter = () => {
     World.events.beforeChat.subscribe(msg => {
-        if (config.modules.chatranks.enabled === true) {
+        // Get Dynamic Property
+        let rcbrBoolean = World.getDynamicProperty('rcbr_b');
+        if (rcbrBoolean === undefined) {
+            rcbrBoolean = config.modules.rbcr.enabled;
+        }
+        let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+        if (chatRanksBoolean === undefined) {
+            chatRanksBoolean = config.modules.chatranks.enabled;
+        }
+        if (chatRanksBoolean === true) {
             let message = msg.message;
             let player = msg.sender;
 
@@ -31,7 +40,7 @@ const ChatFilter = () => {
             // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
             // player.nameTag = nametag;
             if (!msg.cancel) {
-                if (config.modules.rbcr.enabled) {
+                if (rcbrBoolean) {
                     // Use try/catch in case this is enabled and they don't use chat relay as this would error
                     try {
                         player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message + '\'}'}]})}`);
@@ -48,7 +57,7 @@ const ChatFilter = () => {
             let message = msg.message;
             let player = msg.sender;
 
-            if (config.modules.rbcr.enabled) {
+            if (rcbrBoolean) {
                 // Use try/catch in case this is enabled and they don't use chat relay as this would error
                 try {
                     player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + player.name + ': ' + message + '\'}'}]})}`);

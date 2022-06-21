@@ -37,7 +37,6 @@ import { IllegalItemsD } from "./penrose/tickevent/illegalitems/illegalitems_d.j
 import { PerformanceTest } from "./penrose/tickevent/performance/performance.js";
 import { OPS } from "./penrose/tickevent/oneplayersleep/oneplayersleep.js";
 import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
-import { Random } from "./penrose/tickevent/random/random.js";
 import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.js";
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
 // Import BlockBreak Events
@@ -56,12 +55,17 @@ import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 // Import EntityHit Events
 import { ReachC } from "./penrose/entityhitevent/reach_c.js";
+// Import WorldInitialize Events
+import { Registry } from "./penrose/worldinitializeevent/registry.js";
 
 // Self explanatory
 const World = world;
 
 // Define globally within script
 let hastag;
+
+// WorldInitialize Events
+Registry();
 
 // BeforeChat Events
 BadPackets1();
@@ -76,9 +80,8 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
-// BadPackets2();
+BadPackets2();
 VerifyPermission();
-Random();
 OPS();
 Hotbar();
 PerformanceTest();

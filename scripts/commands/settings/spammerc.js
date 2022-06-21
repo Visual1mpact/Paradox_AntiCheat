@@ -1,7 +1,10 @@
 import { crypto, disabler, getPrefix } from "../../util.js";
 import config from "../../data/config.js";
+import { world } from "mojang-minecraft";
 
-function spammerCHelp(player, prefix) {
+const World = world;
+
+function spammerCHelp(player, prefix, spammerCBoolean) {
     let commandStatus;
     if (!config.customcommands.spammerc) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -9,7 +12,7 @@ function spammerCHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus;
-    if (!config.modules.spammerC.enabled) {
+    if (spammerCBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -41,16 +44,27 @@ export function spammerC(message, args) {
     message.cancel = true;
 
     let player = message.sender;
-
-    let tag = player.getTags();
     
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // make sure the user has permissions to run the command
-    if (!tag.includes('Hash:' + crypto)) {
+    if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
     }
 
+    // Get Dynamic Property Boolean
+    let spammerCBoolean = World.getDynamicProperty('spammerc_b');
+    if (spammerCBoolean === undefined) {
+        spammerCBoolean = config.modules.spammerC.enabled;
+    }
+
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    let prefix = getPrefix(player, spammerCBoolean);
 
     // Was help requested
     let argCheck = args[0];
@@ -58,15 +72,15 @@ export function spammerC(message, args) {
         return spammerCHelp(player, prefix);
     }
 
-    if (config.modules.spammerC.enabled === false) {
+    if (spammerCBoolean === false) {
         // Allow
-        config.modules.spammerC.enabled = true;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6SpammerC§r!"}]}`);
+        World.setDynamicProperty('spammerc_b', true);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6SpammerC§r!"}]}`);
         return;
-    } else if (config.modules.spammerC.enabled === true) {
+    } else if (spammerCBoolean === true) {
         // Deny
-        config.modules.spammerC.enabled = false;
-        player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4SpammerC§r!"}]}`);
+        World.setDynamicProperty('spammerc_b', false);
+        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4SpammerC§r!"}]}`);
         return;
     }
 }

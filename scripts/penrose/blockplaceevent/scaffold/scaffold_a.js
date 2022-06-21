@@ -2,13 +2,18 @@ import { world, BlockLocation, MinecraftBlockTypes } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { crypto, flag } from "../../../util.js";
 
-let World = world;
+const World = world;
 
 let blockTimer = new Map();
 
 function scaffolda(object) {
+    // Get Dynamic Property
+    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
+    if (antiScaffoldABoolean === undefined) {
+        antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.antiscaffoldA.enabled === false) {
+    if (antiScaffoldABoolean === false) {
         World.events.blockPlace.unsubscribe(scaffolda);
         return;
     }
@@ -16,8 +21,15 @@ function scaffolda(object) {
     // Properties from class
     let { block, player, dimension } = object;
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // Return if player has op
-    if (player.hasTag('Hash:' + crypto)) {
+    if (hash !== undefined && encode === hash) {
         return;
     }
 

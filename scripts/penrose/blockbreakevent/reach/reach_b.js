@@ -6,8 +6,13 @@ import { crypto } from "../../../util.js";
 const World = world;
 
 function reachb(object) {
+    // Get Dynamic Property
+    let reachBBoolean = World.getDynamicProperty('reachb_b');
+    if (reachBBoolean === undefined) {
+        reachBBoolean = config.modules.reachB.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.reachB.enabled === false) {
+    if (reachBBoolean === false) {
         World.events.blockBreak.unsubscribe(reachb);
         return;
     }
@@ -15,8 +20,15 @@ function reachb(object) {
     // Properties from class
     let { block, player, brokenBlockPermutation } = object;
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
     // Return if player has op
-    if (player.hasTag('Hash:' + crypto)) {
+    if (hash !== undefined && encode === hash) {
         return;
     }
 

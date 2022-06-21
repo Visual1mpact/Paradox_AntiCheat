@@ -1,7 +1,7 @@
-import { EntityQueryOptions, world } from "mojang-minecraft";
-import { crypto, disabler, flag } from "../../../util.js";
+import { world } from "mojang-minecraft";
+import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 
 const World = world;
 
@@ -29,16 +29,30 @@ function rip(player) {
     }
 }
 
-function namespoofb() {
+function namespoofb(callback, id) {
+    // Get Dynamic Property
+    let nameSpoofBoolean = World.getDynamicProperty('namespoofb_b');
+    if (nameSpoofBoolean === undefined) {
+        nameSpoofBoolean = config.modules.namespoofB.enabled;
+    }
     // Unsubscribe if disabled in-game
-    if (config.modules.namespoofB.enabled === false) {
-        World.events.tick.unsubscribe(namespoofb);
+    if (nameSpoofBoolean === false) {
+        World.events.tick.unsubscribe(callback);
+        clearTickInterval(id);
         return;
     }
-    let filter = new EntityQueryOptions();
-    filter.excludeTags = ['Hash:' + crypto];
     // run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (let player of World.getPlayers()) {
+        // Check for hash/salt and validate password
+        let hash = player.getDynamicProperty('hash');
+        let salt = player.getDynamicProperty('salt');
+        let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            continue;
+        }
         // Namespoof/B = regex check
         if (config.modules.namespoofB.banregex.test(player.name)) {
             rip(player);
@@ -51,7 +65,9 @@ function namespoofb() {
 
 const NamespoofB = () => {
     // Executes every 2 seconds
-    setTickInterval(() => namespoofb(), 40);
+    let callback;
+    const id = setTickInterval(callback = () => namespoofb(callback, id), 40);
+    id();
 };
 
 export { NamespoofB };

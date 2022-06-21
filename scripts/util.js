@@ -178,7 +178,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    return player.runCommand(`tellraw @a[tag=Hash:${crypto}] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
 }
 
 /**
@@ -225,16 +225,12 @@ export const titleCase = (s) =>
   s.replace (/^[-_]*(.)/, (_, c) => c.toUpperCase())
    .replace (/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 
-
-// Handler for encryption down below
-const { encryption } = config.modules;
-
 /**
- * @name crypt
+ * @name crypto
  * @param {string} salt - Hashes information
  * @param {string} text - String to be hashed
  */
-export const crypt = (salt = encryption.salt, text = encryption.optag) => {
+ export const crypto = (salt, text) => {
     const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
     const byteHex = (n) => ("0" + Number(n).toString(16)).substring(-2);
     const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
@@ -245,14 +241,4 @@ export const crypt = (salt = encryption.salt, text = encryption.optag) => {
         .map(applySaltToChar)
         .map(byteHex)
         .join("");
-};
-
-let cache = {
-    optag: encryption.optag,
-    salt: encryption.salt,
-    crypto: crypt()
-};
-
-export const crypto = {
-    [Symbol.toPrimitive]: () => encryption.salt == cache.salt && encryption.optag == cache.optag ? cache.crypto : ( cache.salt = encryption.salt, cache.optag = encryption.optag, cache.crypto = crypt() )
 };
