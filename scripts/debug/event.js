@@ -30,6 +30,6 @@ for (const k in world.events) {
     }
     evSignal.unsubscribe = (fn) => {
         if (config.debug) console.log(`Event ${k} unsubscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`)
-        fnList.delete(fn)
+        if (!fnList.delete(fn)) console.warn(`Failed to unsubscribe ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) from event ${k}`)
     }
 }
