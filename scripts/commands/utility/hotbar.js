@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { Hotbar } from "../../penrose/tickevent/hotbar/hotbar.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -18,17 +18,17 @@ function hotbarHelp(player, prefix, hotbarBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: hotbar
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: hotbar [optional]
-§4[§6Optional§4]§r: message, help
-§4[§6Description§4]§r: Displays a hotbar message for all player's currently online.
-§4[§6Examples§4]§r:
-    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843
-    ${prefix}hotbar help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: hotbar`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: hotbar [optional]`,
+        `§4[§6Optional§4]§r: message, help`,
+        `§4[§6Description§4]§r: Displays a hotbar message for all player's currently online.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843`,
+        `    ${prefix}hotbar help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function hotbar(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -79,12 +79,12 @@ export function hotbar(message, args) {
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         }
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Hotbar!"}]}`);
+        sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has enabled §6Hotbar`)
         Hotbar();
         return;
     } else if (hotbarBoolean === true) {
         // Deny
         World.setDynamicProperty('hotbar_b', false);
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Hotbar!"}]}`);
+        sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has disabled §6Hotbar`)
     }
 }

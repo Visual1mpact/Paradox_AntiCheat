@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function performanceHelp(player, prefix) {
     let commandStatus;
@@ -8,16 +8,16 @@ function performanceHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: performance
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: performance [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Shows TPS stats to evaluate performance with Paradox (Requires Debug).
-§4[§6Examples§4]§r:
-    ${prefix}performance
-    ${prefix}performance help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: performance`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: performance [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Shows TPS stats to evaluate performance with Paradox (Requires Debug).`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}performance`,
+        `    ${prefix}performance help`,
+    ])
 }
 
 /**
@@ -47,7 +47,7 @@ export function performance(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Was help requested
@@ -63,12 +63,12 @@ export function performance(message, args) {
     if (!player.hasTag('performance')) {
         // Allow
         player.addTag('performance');
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You have enabled §6Performance Testing§r!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled §4Performance Testing§r!`)
         return;
     } else if (player.hasTag('performance')) {
         // Deny
         player.removeTag('performance');
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You have disabled §4Performance Testing§r!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have disabled §4Performance Testing§r!`)
         return;
     }
 }

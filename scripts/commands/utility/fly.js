@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -13,32 +13,24 @@ function flyHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: fly
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: fly [optional]
-§4[§6Optional§4]§r: username, help
-§4[§6Description§4]§r: Will grant player the ability to fly.
-§4[§6Examples§4]§r:
-    ${prefix}fly ${disabler(player.nameTag)}
-    ${prefix}fly help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: fly`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: fly [optional]`,
+        `§4[§6Optional§4]§r: username, help`,
+        `§4[§6Description§4]§r: Will grant player the ability to fly.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}fly ${player.nameTag}`,
+        `    ${prefix}fly help`,
+    ])
 }
 
 function mayflydisable(player, member) {
-    if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for themselves."}]}`);
-    } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has disabled fly mode for ${disabler(member.nameTag)}."}]}`);
-    }
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`)
 }
 
 function mayflyenable(player, member) {
-    if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        return member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for themselves."}]}`);
-    } else if (disabler(player.nameTag) !== disabler(member.nameTag)) {
-        return member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has enabled fly mode for ${disabler(member.nameTag)}."}]}`);
-    }
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`)
 }
 
 /**
@@ -65,7 +57,7 @@ export function fly(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -88,18 +80,18 @@ export function fly(message, args) {
     }
     
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     let membertag = member.getTags();
 
     if (!membertag.includes('noflying') && !membertag.includes('flying')) {
         try {
-            member.runCommand(`ability "${disabler(member.nameTag)}" mayfly true`);
+            member.runCommand(`ability @s mayfly true`);
             member.addTag('flying');
             mayflyenable(player, member);
         } catch (Error) {
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Education Edition!"}]}`);
+            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
         }
         return;
     }
@@ -110,12 +102,12 @@ export function fly(message, args) {
 
     if (member.hasTag('noflying')) {
         try {
-            member.runCommand(`ability "${disabler(member.nameTag)}" mayfly false`);
+            member.runCommand(`ability @s mayfly false`);
             member.removeTag('flying');
             mayflydisable(player, member);
             member.removeTag('noflying');
         } catch (error) {
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Education Edition!"}]}`);
+            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
         }
         return;
     }

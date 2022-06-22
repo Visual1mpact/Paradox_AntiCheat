@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -11,17 +11,17 @@ function reportHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: report
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: report [optional]
-§4[§6Optional§4]§r: username, reason, help
-§4[§6Description§4]§r: Reports player's to online Staff for malicious activities.
-§4[§6Examples§4]§r:
-    ${prefix}report ${disabler(player.nameTag)}
-    ${prefix}report ${disabler(player.nameTag)} Caught hacking!
-    ${prefix}report help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: report`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: report [optional]`,
+        `§4[§6Optional§4]§r: username, reason, help`,
+        `§4[§6Description§4]§r: Reports player's to online Staff for malicious activities.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}report ${player.nameTag}`,
+        `    ${prefix}report ${player.nameTag} Caught hacking!`,
+        `    ${prefix}report help`,
+    ])
 }
 
 /**
@@ -58,27 +58,22 @@ export function report(message, args) {
     }
 
     if (!member) {
-        player.runCommand(`tellraw @s {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r !report <player> <reason>§r"}]}`);
-        return player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r !report <player> <reason>§r`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // Make sure they dont report themselves
-    if (disabler(member.nameTag) === disabler(player.nameTag)) {
-        return player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot report yourself."}]}`);
+    if (member === player) {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot report yourself.`);
     }
 
     // Prevent report spam
-    if (player.lastReport === disabler(member.nameTag)) {
-        return player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have already reported this player!"}]}`);
+    if (player.lastReport === member.nameTag) {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have already reported this player.`);
     }
-    player.lastReport = disabler(member.nameTag);
+    player.lastReport = member.nameTag;
 
-    player.runCommand(`tellraw @s {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have reported ${disabler(member.nameTag)} for: ${reason}."}]}`);
+    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Reported ${member.nameTag}§r with reason: ${reason}`);
 
-    // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    try {
-        return player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has reported ${disabler(member.nameTag)} for: ${reason}"}]}`);
-    } catch (error) {
-        return;
-    }
+    sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has reported ${member.nameTag}§r with reason: ${reason}`)
 }

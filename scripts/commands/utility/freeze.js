@@ -2,7 +2,7 @@
 import { world, MinecraftEffectTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -13,16 +13,16 @@ function freezeHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: freeze
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: freeze [optional]
-§4[§6Optional§4]§r: username, help
-§4[§6Description§4]§r: Will freeze or unfreeze the specified player.
-§4[§6Examples§4]§r:
-    ${prefix}freeze ${disabler(player.nameTag)}
-    ${prefix}freeze help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: freeze`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: freeze [optional]`,
+        `§4[§6Optional§4]§r: username, help`,
+        `§4[§6Description§4]§r: Will freeze or unfreeze the specified player.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}freeze ${player.nameTag}`,
+        `    ${prefix}freeze help`,
+    ])
 }
 
 /**
@@ -49,7 +49,7 @@ export function freeze(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -70,11 +70,11 @@ export function freeze(message, args) {
     }
     
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     if (member.hasTag('Hash:' + crypto)) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot freeze Staff Members!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze staff members.`);
     }
 
     if (member.hasTag('freeze')) {
@@ -84,9 +84,9 @@ export function freeze(message, args) {
         member.addTag('freeze');
     }
     if (member.hasTag('nofreeze')) {
-        member.runCommand(`effect "${disabler(member.nameTag)}" clear`);
-        member.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r You are no longer frozen!"}]}`);
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} is no longer frozen."}]}`);
+        member.runCommand(`effect @s clear`);
+        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`)
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`)
     }
 
     if (!member.hasTag('nofreeze')) {
@@ -102,7 +102,7 @@ export function freeze(message, args) {
 
     if (!member.hasTag('nofreeze')) {
         member.addTag('freeze');
-        member.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${disabler(member.nameTag)} has been frozen"}]}`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is now frozen.`)
         return TickFreeze(member);
     }
 

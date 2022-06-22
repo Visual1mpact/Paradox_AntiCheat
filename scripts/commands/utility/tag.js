@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { disabler, tagRank, resetTag, getPrefix, crypto } from "../../util.js";
+import { resetTag, getPrefix, crypto, sendMsgToPlayer, sendMsg } from "../../util.js";
 
 const World = world;
 
@@ -17,19 +17,19 @@ function tagHelp(player, prefix, chatRanksBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: tag
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: tag <username> [optional]
-§4[§6Optional§4]§r: Rank:tag, Rank:tag--tag, reset, help
-§4[§6Description§4]§r: Gives one or more ranks to a specified player or resets it.
-§4[§6Examples§4]§r:
-    ${prefix}tag ${disabler(player.nameTag)} Rank:Admin
-    ${prefix}tag ${disabler(player.nameTag)} Rank:Contributor--Mod
-    ${prefix}tag ${disabler(player.nameTag)} Rank:Staff--Mod--Helper
-    ${prefix}tag help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: tag`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: tag <username> [optional]`,
+        `§4[§6Optional§4]§r: Rank:tag, Rank:tag--tag, reset, help`,
+        `§4[§6Description§4]§r: Gives one or more ranks to a specified player or resets it.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}tag ${player.nameTag} Rank:Admin`,
+        `    ${prefix}tag ${player.nameTag} Rank:Contributor--Mod`,
+        `    ${prefix}tag ${player.nameTag} Rank:Staff--Mod--Helper`,
+        `    ${prefix}tag help`,
+    ])
 }
 
 /**
@@ -59,7 +59,7 @@ export function tag(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -86,7 +86,7 @@ export function tag(message, args) {
     }
 
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // check if array contains the string 'reset'
@@ -113,9 +113,9 @@ export function tag(message, args) {
         return tagHelp(player, prefix);
     }
 
-    if (disabler(player.nameTag) === disabler(member.nameTag)) {
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed their rank!"}]}`);
+    if (player === member) {
+        return sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed their rank`)
     }
 
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has changed the rank of ${member.name}!"}]}`);
+    sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed ${member.nameTag}'s rank!`)
 }
