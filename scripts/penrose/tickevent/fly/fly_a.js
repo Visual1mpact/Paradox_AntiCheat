@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, Location, BlockLocation} from "mojang-minecraft";
-import { getScore, disabler, flag, crypto } from "../../../util.js";
+import { getScore, flag, crypto } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -67,7 +67,7 @@ function flya(id) {
         if (xyVelocity != 0.0784 || zyVelocity != 0.0784) {
             if (!player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && !player.hasTag('swimming') && Block.type.id === "minecraft:air" && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
                 try {
-                    player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" fly_timer 1`);
+                    player.runCommand(`scoreboard players add @s fly_timer 1`);
                 } catch (error) {}
                 if (test >= 6) {
                     try {
@@ -80,7 +80,7 @@ function flya(id) {
                 }
             } else if (player.hasTag('ground')) {
                 try {
-                    player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" fly_timer 0`);
+                    player.runCommand(`scoreboard players set @s fly_timer 0`);
                 } catch (error) {}
             }
         }

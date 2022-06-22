@@ -1,6 +1,6 @@
 import { world, Location } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { getScore, disabler, crypto } from "../../../util.js";
+import { getScore, crypto, sendMsg } from "../../../util.js";
 
 const World = world;
 const tickEventCallback = World.events.tick;
@@ -36,23 +36,23 @@ function Freeze() {
         // Save which dimension they were in
         // realm 0 = overworld, realm 1 = nether, realm 2 = the end
         if (player.dimension.id === "minecraft:overworld") {
-            player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" realm 0`);
+            player.runCommand(`scoreboard players set @s realm 0`);
         } else if (player.dimension.id === "minecraft:nether") {
-            player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" realm 1`);
+            player.runCommand(`scoreboard players set @s realm 1`);
         } else if (player.dimension.id === "minecraft:the_end") {
-            player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" realm 2`);
+            player.runCommand(`scoreboard players set @s realm 2`);
         } else {
             player.removeTag('freezeactive');
             player.removeTag('freeze');
-            player.runCommand(`effect "${disabler(player.nameTag)}" clear`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine dimension for ${disabler(player.nameTag)}."}]}`);
+            player.runCommand(`effect 2s clear`);
+            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`)
             tickEventCallback.unsubscribe(Freeze);
             return;
         }
         // We just need this in case they log off and log back on
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" xPosFreeze ${Math.floor(posx)}`);
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" yPosFreeze ${Math.floor(posy)}`);
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" zPosFreeze ${Math.floor(posz)}`);
+        player.runCommand(`scoreboard players set @s xPosFreeze ${Math.floor(posx)}`);
+        player.runCommand(`scoreboard players set @s yPosFreeze ${Math.floor(posy)}`);
+        player.runCommand(`scoreboard players set @s zPosFreeze ${Math.floor(posz)}`);
         // Backup coords for returning home
         backx = Math.floor(posx);
         backy = Math.floor(posy);
@@ -73,9 +73,9 @@ function Freeze() {
         posy1 = player.location.y;
         posz1 = player.location.z;
         // We just need this in case they log off and log back on
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" xPos1 ${Math.floor(posx1)}`);
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" yPos1 ${Math.floor(posy1)}`);
-        player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" zPos1 ${Math.floor(posz1)}`);
+        player.runCommand(`scoreboard players set @s xPos1 ${Math.floor(posx1)}`);
+        player.runCommand(`scoreboard players set @s yPos1 ${Math.floor(posy1)}`);
+        player.runCommand(`scoreboard players set @s zPos1 ${Math.floor(posz1)}`);
         player.addTag('freezeactive');
     }
     // Since they could log off while frozen we store their coords and dimension as a score

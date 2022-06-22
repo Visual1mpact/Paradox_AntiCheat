@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { crypto, disabler } from "../../../util.js";
+import { crypto, sendMsg } from "../../../util.js";
 
 const World = world;
 
@@ -23,7 +23,7 @@ function verifypermission() {
         player.removeTag('paradoxOpped');
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} had unauthorized permissions. Permissions removed!"}]}`);
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions. Permissions removed!`)
         } catch (error) {}
     }
 }

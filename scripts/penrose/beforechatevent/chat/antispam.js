@@ -1,10 +1,10 @@
 import { world } from "mojang-minecraft";
-import { crypto, disabler } from "../../../util.js";
+import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
-const spamCheck = new Map();
+const spamCheck = new WeakMap();
 
 // Custom object and property
 const _player = {
@@ -49,14 +49,14 @@ function antispam(msg) {
             _player.check++;
         }
 
-        if (!spamCheck.get(disabler(player.nameTag))) {
-            spamCheck.set(disabler(player.nameTag), message);
+        if (!spamCheck.get(player)) {
+            spamCheck.set(player, message);
         } else {
-            let oldChat = spamCheck.get(disabler(player.nameTag));
+            let oldChat = spamCheck.get(player);
             if (oldChat === message && _player.count >= 2) {
                 _player.spam++;
                 try {
-                    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Do not spam chat!"}]}`);
+                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Do not spam the chat!`)
                 } catch (error) {}
                 msg.cancel = true;
             } else if (_player.check >= 2) {
@@ -85,13 +85,13 @@ function antispam(msg) {
                     player.triggerEvent('paradox:kick');
                 }
             }
-            spamCheck.set(disabler(player.nameTag), message);
+            spamCheck.set(player, message);
         }
 
         if (_player.count >= 2) {
             msg.cancel = true;
             try {
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You are sending too many messages! Please slow down!"}]}`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`)
             } catch (error) {}
             return;
         }
