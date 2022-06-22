@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { BadPackets2 } from "../../penrose/tickevent/badpackets2/badpackets2.js";

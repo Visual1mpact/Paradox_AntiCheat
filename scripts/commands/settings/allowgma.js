@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
-import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

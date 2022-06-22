@@ -1,6 +1,6 @@
-import { crypto, disabler, getPrefix, sendMsgToPlayer, tagRank } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { world, Location } from "mojang-minecraft";
+import { world } from "mojang-minecraft";
 
 const World = world;
 

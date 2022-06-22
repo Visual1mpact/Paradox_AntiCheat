@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { IllegalItemsB } from "../../penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";

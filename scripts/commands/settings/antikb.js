@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
-import { crypto, disabler, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

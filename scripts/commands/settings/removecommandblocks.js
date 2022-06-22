@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
 
 function removeCBEHelp(player, prefix, commandblocksscore) {
     let commandStatus;
