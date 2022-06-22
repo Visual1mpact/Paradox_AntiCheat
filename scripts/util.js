@@ -48,16 +48,16 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
     }
 
     try {
-        player.runCommand(`scoreboard players add "${disabler(player.nameTag)}" ${check.toLowerCase()}vl 1`);
+        player.runCommand(`scoreboard players add @s ${check.toLowerCase()}vl 1`);
     } catch(error) {}
 
     try {
         if(debug) {
-            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase(), player)}`)
         } else if (item && stack) {
-            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= ${getScore(check.toLowerCase(), player)}`)
         } else {
-            player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(${hackType}) §4${check}/${checkType} VL= "},{"score":{"name":"@s","objective":"${check.toLowerCase()}vl"}}]}`);
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase(), player)}`)
         }
     } catch(error) {}
 
@@ -109,20 +109,11 @@ export function banMessage(player) {
  */
 export function getScore(objective, player, { minimum, maximum } = {}) {
     try {
-        const data = player.runCommand(`scoreboard players test "${disabler(player.nameTag)}" ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
+        const data = player.runCommand(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
         return parseInt(data.statusMessage.match(/-?\d+/));
     } catch (error) {
         return;
     }
-}
-
-/**
- * @name disabler
- * @param {object} player - The player object
- */
-export function disabler(player) {
-    // fix a disabler method
-    return player.replace(/(\\|")/g, "");
 }
 
 /**
@@ -178,7 +169,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} has reset their rank"}]}`);
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag} has reset their rank`)
 }
 
 /**
