@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
-import { crypto, disabler, getPrefix, getScore } from "../../util.js";
+import { crypto, disabler, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -18,17 +18,17 @@ function antikbHelp(player, prefix, antikbBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: antikb
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: antikb [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles Anti Knockback for all players.
-§4[§6Examples§4]§r:
-    ${prefix}antikb
-    ${prefix}antikb help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: antikb`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: antikb [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Toggles Anti Knockback for all players.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}antikb`,
+        `    ${prefix}antikb help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function antiknockback(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -79,13 +79,13 @@ export function antiknockback(message, args) {
         // Allow
         World.setDynamicProperty('antikb_b', true);
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Knockback§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`)
         AntiKnockbackA();
     } else if (antikbscore >= 1) {
         // Deny
         World.setDynamicProperty('antikb_b', false);
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Knockback§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`)
     }
     return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

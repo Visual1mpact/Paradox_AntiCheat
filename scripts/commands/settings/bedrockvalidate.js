@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -18,17 +18,17 @@ function bedrockValidateHelp(player, prefix, bedrockValidateBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: bedrockvalidate
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: bedrockvalidate [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles checks for bedrock validations.
-§4[§6Examples§4]§r:
-    ${prefix}bedrockvalidate
-    ${prefix}bedrockvalidate help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: bedrockvalidate`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: bedrockvalidate [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Toggles checks for bedrock validations.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}bedrockvalidate`,
+        `    ${prefix}bedrockvalidate help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function bedrockvalidate(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -76,12 +76,12 @@ export function bedrockvalidate(message, args) {
     if (bedrockValidateBoolean === false) {
         // Allow
         World.setDynamicProperty('bedrockvalidate_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6BedrockValidate§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`)
         BedrockValidate();
         return;
     } else if (bedrockValidateBoolean === true) {
         // Deny
         World.setDynamicProperty('bedrockvalidate_b', false);
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4BedrockValidate§r!"}]}`);
+        return sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4BedrockValidate§r!`)
     }
 }

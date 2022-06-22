@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { SpammerC } from "../../penrose/beforechatevent/spammer/spammer_c.js";
@@ -18,17 +18,17 @@ function spammerCHelp(player, prefix, spammerCBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: spammerc
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: spammerc [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles checks for messages sent while using items.
-§4[§6Examples§4]§r:
-    ${prefix}spammerc
-    ${prefix}spammerc help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: spammerc`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: spammerc [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Toggles checks for messages sent while using items.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}spammerc`,
+        `    ${prefix}spammerc help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function spammerC(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -65,7 +65,7 @@ export function spammerC(message, args) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player, spammerCBoolean);
+    let prefix = getPrefix(player);
 
     // Was help requested
     let argCheck = args[0];
@@ -76,13 +76,13 @@ export function spammerC(message, args) {
     if (spammerCBoolean === false) {
         // Allow
         World.setDynamicProperty('spammerc_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6SpammerC§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerC§r!`)
         SpammerC();
         return;
     } else if (spammerCBoolean === true) {
         // Deny
         World.setDynamicProperty('spammerc_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4SpammerC§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerC§r!`)
         return;
     }
 }

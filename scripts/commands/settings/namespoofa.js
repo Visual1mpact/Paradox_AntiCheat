@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { NamespoofA } from "../../penrose/tickevent/namespoof/namespoof_a.js";
@@ -18,17 +18,17 @@ function namespoofAHelp(player, prefix, nameSpoofBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: namespoofa
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: namespoofa [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles checks for player's name exceeding character limitations.
-§4[§6Examples§4]§r:
-    ${prefix}namespoofa
-    ${prefix}namespoofa help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: namespoofa`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: namespoofa [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Toggles checks for player's name exceeding character limitations.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}namespoofa`,
+        `    ${prefix}namespoofa help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function namespoofA(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -76,13 +76,13 @@ export function namespoofA(message, args) {
     if (nameSpoofBoolean === false) {
         // Allow
         World.setDynamicProperty('namespoofa_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6NamespoofA§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofA§r!`)
         NamespoofA();
         return;
     } else if (nameSpoofBoolean === true) {
         // Deny
         World.setDynamicProperty('namespoofa_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4NamespoofA§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofA§r!`)
         return;
     }
 }
