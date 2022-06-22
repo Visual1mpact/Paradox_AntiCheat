@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world, ItemStack, MinecraftItemTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -82,7 +82,7 @@ export function punish(message, args) {
     }
 
     // Make sure they don't punish themselves
-    if (disabler(member.nameTag) === disabler(player.nameTag)) {
+    if (member === player) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot punish yourself.`);
     }
 
@@ -90,7 +90,7 @@ export function punish(message, args) {
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
         try {
-            player.runCommand(`replaceitem entity "${disabler(member.nameTag)}" slot.enderchest ${slot} air`);
+            player.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
         } catch (error) {}
     }
 

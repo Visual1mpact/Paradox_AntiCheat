@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -21,9 +21,9 @@ function kickHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, reason, help`,
         `§4[§6Description§4]§r: Kick the specified user and optionally gives a reason.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}kick ${disabler(player.nameTag)}`,
-        `    ${prefix}kick ${disabler(player.nameTag)} Hacker!`,
-        `    ${prefix}kick ${disabler(player.nameTag)} Stop trolling!`,
+        `    ${prefix}kick ${player.nameTag}`,
+        `    ${prefix}kick ${player.nameTag} Hacker!`,
+        `    ${prefix}kick ${player.nameTag} Stop trolling!`,
         `    ${prefix}kick help`,
     ])
 }
@@ -89,7 +89,7 @@ export function kick(message, args) {
     }
 
     // make sure they dont kick themselves
-    if (disabler(member.nameTag) === disabler(player.nameTag)) {
+    if (member === player) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot kick yourself.`);
     }
 

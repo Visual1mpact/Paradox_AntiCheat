@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { getScore, disabler, getPrefix, crypto, sendMsgToPlayer } from "../../util.js";
+import { getScore, getPrefix, crypto, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

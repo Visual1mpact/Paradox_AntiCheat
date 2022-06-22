@@ -1,6 +1,6 @@
 import { world, Location } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -73,7 +73,7 @@ export function gohome(message, args) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
     }
 
     let homex;
@@ -112,7 +112,7 @@ export function gohome(message, args) {
         let cooldownCalc;
         let activeTimer;
         // Get original time in milliseconds
-        let cooldownVerify = cooldownTimer.get(disabler(player.nameTag));
+        let cooldownVerify = cooldownTimer.get(player.nameTag);
         // Convert config settings to milliseconds so we can be sure the countdown is accurate
         let msSettings = (config.modules.goHome.days * 24 * 60 * 60 * 1000) + (config.modules.goHome.hours * 60 * 60 * 1000) + (config.modules.goHome.minutes * 60 * 1000) + (config.modules.goHome.seconds * 1000);
         if (cooldownVerify !== undefined) {
@@ -128,13 +128,13 @@ export function gohome(message, args) {
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || player.hasTag('Hash:' + crypto)) {
-            player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" teleport 25`);
+            player.runCommand(`scoreboard players set @s teleport 25`);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`)
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value
-            cooldownTimer.delete(disabler(player.nameTag));
+            cooldownTimer.delete(player.nameTag);
             // Create new key and value with current time in milliseconds
-            cooldownTimer.set(disabler(player.nameTag), new Date().getTime());
+            cooldownTimer.set(player.nameTag, new Date().getTime());
         } else {
             // Teleporting to fast
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Too fast! Please wait for ${activeTimer} before going home.`)
