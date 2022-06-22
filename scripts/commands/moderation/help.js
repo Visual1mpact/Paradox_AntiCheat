@@ -40,617 +40,94 @@ export function help(message) {
         config.customcommands.help === true;
     }
 
-    let banCommand;
-    if (config.customcommands.ban === true) {
-        banCommand = `§6${prefix}ban <username> <reason>§r - Ban the specified user.`;
-    } else if (config.customcommands.ban === false) {
-        banCommand = `§6${prefix}ban <username> <reason>§r - Command §4DISABLED§r.`;
-    }
-
-    let kickCommand;
-    if (config.customcommands.kick === true) {
-        kickCommand = `§6${prefix}kick <username> <reason>§r - Kick the specified user.`;
-    } else if (config.customcommands.kick === false) {
-        kickCommand = `§6${prefix}kick <username> <reason>§r - Command §4DISABLED§r.`;
-    }
-
-    let muteCommand;
-    if (config.customcommands.mute === true) {
-        muteCommand = `§6${prefix}mute <username> <reason>§r - Mute the specified user.`;
-    } else if (config.customcommands.mute === false) {
-        muteCommand = `§6${prefix}mute <username> <reason>§r - Command §4DISABLED§r.`;
-    }
-
-    let unmuteCommand;
-    if (config.customcommands.unmute === true) {
-        unmuteCommand = `§6${prefix}unmute <username> <reason>§r - Unmute the specified user.`;
-    } else if (config.customcommands.unmute === false) {
-        unmuteCommand = `§6${prefix}unmute <username> <reason>§r - Command §4DISABLED§r.`;
-    }
-
-    let notifyCommand;
-    if (config.customcommands.notify === true) {
-        notifyCommand = `§6${prefix}notify§r - Toggles cheat notifications.`;
-    } else if (config.customcommands.notify === false) {
-        notifyCommand = `§6${prefix}notify§r - Command §4DISABLED§r.`;
-    }
-
-    // Make sure credit command isn't disabled
-    if (config.customcommands.credits === false) {
-        config.customcommands.credits === true;
-    }
-
-    let opCommand;
-    if (config.customcommands.op === true) {
-        opCommand = `§6${prefix}op <username>§r - Op's player in Paradox AntiCheat features.`;
-    } else if (config.customcommands.op === false) {
-        opCommand = `§6${prefix}op <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let deopCommand;
-    if (config.customcommands.deop === true) {
-        deopCommand = `§6${prefix}deop <username>§r - Revokes Op player in Paradox AntiCheat features.`;
-    } else if (config.customcommands.deop === false) {
-        deopCommand = `§6${prefix}deop <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let modulesCommand;
-    if (config.customcommands.modules === true) {
-        modulesCommand = `§6${prefix}modules§r - View all enabled or disabled modules.`;
-    } else if (config.customcommands.modules === false) {
-        modulesCommand = `§6${prefix}modules§r - Command §4DISABLED§r.`;
-    }
-
-    let lockdownCommand;
-    if (config.customcommands.lockdown === true) {
-        lockdownCommand = `§6${prefix}lockdown§r - Kicks player's from server excluding Staff for maintenance.`;
-    } else if (config.customcommands.lockdown === false) {
-        lockdownCommand = `§6${prefix}lockdown§r - Command §4DISABLED§r.`;
-    }
-
-    let punishCommand;
-    if (config.customcommands.punish === true) {
-        punishCommand = `§6${prefix}punish <username>§r - Removes all items from player's inventory and ender chest.`;
-    } else if (config.customcommands.punish === false) {
-        punishCommand = `§6${prefix}punish <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let allowgmaCommand;
-    if (config.customcommands.allowgma === true) {
-        allowgmaCommand = `§6${prefix}allowgma§r - Toggles Gamemode 2(Adventure) to be used.`;
-    } else if (config.customcommands.allowgma === false) {
-        allowgmaCommand = `§6${prefix}allowgma§r - Command §4DISABLED§r.`;
-    }
-
-    let allowgmcCommand;
-    if (config.customcommands.allowgmc === true) {
-        allowgmcCommand = `§6${prefix}allowgmc§r - Toggles Gamemode 1(Creative) to be used.`;
-    } else if (config.customcommands.allowgmc === false) {
-        allowgmcCommand = `§6${prefix}allowgmc§r - Command §4DISABLED§r.`;
-    }
-
-    let allowgmsCommand;
-    if (config.customcommands.allowgms === true) {
-        allowgmsCommand = `§6${prefix}allowgms§r - Toggles Gamemode 0(Survival) to be used.`;
-    } else if (config.customcommands.allowgms === false) {
-        allowgmsCommand = `§6${prefix}allowgms§r - Command §4DISABLED§r.`;
-    }
-
-    let removecbCommand;
-    if (config.customcommands.removecommandblocks === true) {
-        removecbCommand = `§6${prefix}removecb§r - Toggles Anti Command Blocks (Clears all when enabled).`;
-    } else if (config.customcommands.removecommandblocks === false) {
-        removecbCommand = `§6${prefix}removecb§r - Command §4DISABLED§r.`;
-    }
-
-    let bedrockValidateCommand;
-    if (config.customcommands.bedrockvalidate === true) {
-        bedrockValidateCommand = `§6${prefix}bedrockvalidate§r - Checks validation of bedrock.`;
-    } else if (config.customcommands.bedrockvalidate === false) {
-        bedrockValidateCommand = `§6${prefix}bedrockvalidate§r - Command §4DISABLED§r.`;
-    }
-
-    let overridecbeCommand;
-    if (config.customcommands.overidecommandblocksenabled === true) {
-        overridecbeCommand = `§6${prefix}overridecbe§r - Forces the commandblocksenabled gamerule to be enabled or disabled at all times.`;
-    } else if (config.customcommands.overidecommandblocksenabled === false) {
-        overridecbeCommand = `§6${prefix}overridecbe§r - Command §4DISABLED§r.`;
-    }
-
-    let worldborderCommand;
-    if (config.customcommands.worldborder === true) {
-        worldborderCommand = `§6${prefix}worldborder <value>§r - Sets the World Border. Change value to disable to turn off.`;
-    } else if (config.customcommands.worldborder === false) {
-        worldborderCommand = `§6${prefix}worldborder <value>§r - Command §4DISABLED§r.`;
-    }
-
-    let autoclickerCommand;
-    if (config.customcommands.autoclicker === true) {
-        autoclickerCommand = `§6${prefix}autoclicker§r - Toggles Anti Autoclicker.`;
-    } else if (config.customcommands.autoclicker === false) {
-        autoclickerCommand = `§6${prefix}autoclicker§r - Command §4DISABLED§r.`;
-    }
-
-    let jesusaCommand;
-    if (config.customcommands.jesusa === true) {
-        jesusaCommand = `§6${prefix}jesusa§r - Checks if player's are walking on water and lava.`;
-    } else if (config.customcommands.jesusa === false) {
-        jesusaCommand = `§6${prefix}jesusa§r - Command §4DISABLED§r.`;
-    }
-
-    let enchantedArmorCommand;
-    if (config.customcommands.enchantedarmor === true) {
-        enchantedArmorCommand = `§6${prefix}enchantedarmor§r - Toggles Anti Enchanted Armor for all players.`;
-    } else if (config.customcommands.enchantedarmor === false) {
-        enchantedArmorCommand = `§6${prefix}enchantedarmor§r - Command §4DISABLED§r.`;
-    }
-
-    let autoauraCommand;
-    if (config.customcommands.autoaura === true) {
-        autoauraCommand = `§6${prefix}autoaura§r - Toggles Auto KillAura checks for all players.`;
-    } else if (config.customcommands.autoaura === false) {
-        autoauraCommand = `§6${prefix}autoaura§r - Command §4DISABLED§r.`;
-    }
-
-    let antikbCommand;
-    if (config.customcommands.antikb === true) {
-        antikbCommand = `§6${prefix}antikb§r - Toggles Anti Knockback for all players.`;
-    } else if (config.customcommands.antikb === false) {
-        antikbCommand = `§6${prefix}antikb§r - Command §4DISABLED§r.`;
-    }
-
-    let badpackets1Command;
-    if (config.customcommands.badpackets1 === true) {
-        badpackets1Command = `§6${prefix}badpackets1§r - Checks message length for each broadcast.`;
-    } else if (config.customcommands.badpackets1 === false) {
-        badpackets1Command = `§6${prefix}badpackets1§r - Command §4DISABLED§r.`;
-    }
-
-    let spammeraCommand;
-    if (config.customcommands.spammera === true) {
-        spammeraCommand = `§6${prefix}spammera§r - Checks if message is sent while moving.`;
-    } else if (config.customcommands.spammera === false) {
-        spammeraCommand = `§6${prefix}spammera§r - Command §4DISABLED§r.`;
-    }
-
-    let spammerbCommand;
-    if (config.customcommands.spammerb === true) {
-        spammerbCommand = `§6${prefix}spammerb§r - Checks if message is sent while swinging.`;
-    } else if (config.customcommands.spammerb === false) {
-        spammerbCommand = `§6${prefix}spammerb§r - Command §4DISABLED§r.`;
-    }
-
-    let spammercCommand;
-    if (config.customcommands.spammerc === true) {
-        spammercCommand = `§6${prefix}spammerc§r - Checks if message is sent while using items.`;
-    } else if (config.customcommands.spammerc === false) {
-        spammercCommand = `§6${prefix}spammerc§r - Command §4DISABLED§r.`;
-    }
-
-    let spammerdCommand;
-    if (config.customcommands.spammerd === true) {
-        spammerdCommand = `§6${prefix}spammerd§r - Checks if message is sent while GUI is open.`;
-    } else if (config.customcommands.spammerd === false) {
-        spammerdCommand = `§6${prefix}spammerd§r - Command §4DISABLED§r.`;
-    }
-
-    let antispamCommand;
-    if (config.customcommands.antispam === true) {
-        antispamCommand = `§6${prefix}antispam§r - Checks for spamming in chat with 2 second cooldown.`;
-    } else if (config.customcommands.antispam === false) {
-        antispamCommand = `§6${prefix}antispam§r - Command §4DISABLED§r.`;
-    }
-
-    let crasheraCommand;
-    if (config.customcommands.crashera === true) {
-        crasheraCommand = `§6${prefix}crashera§r - Prevents Horion crasher.`;
-    } else if (config.customcommands.crashera === false) {
-        crasheraCommand = `§6${prefix}crashera§r - Command §4DISABLED§r.`;
-    }
-
-    let namespoofaCommand;
-    if (config.customcommands.namespoofa === true) {
-        namespoofaCommand = `§6${prefix}namespoofa§r - Checks if player's name exceeds character limitations.`;
-    } else if (config.customcommands.namespoofa === false) {
-        namespoofaCommand = `§6${prefix}namespoofa§r - Command §4DISABLED§r.`;
-    }
-
-    let namespoofbCommand;
-    if (config.customcommands.namespoofb === true) {
-        namespoofbCommand = `§6${prefix}namespoofb§r - Checks if player's name has Non ASCII characters.`;
-    } else if (config.customcommands.namespoofb === false) {
-        namespoofbCommand = `§6${prefix}namespoofb§r - Command §4DISABLED§r.`;
-    }
-
-    let reachaCommand;
-    if (config.customcommands.reacha === true) {
-        reachaCommand = `§6${prefix}reacha§r - Checks if player's place blocks beyond reach.`;
-    } else if (config.customcommands.reacha === false) {
-        reachaCommand = `§6${prefix}reacha§r - Command §4DISABLED§r.`;
-    }
-
-    let reachbCommand;
-    if (config.customcommands.reachb === true) {
-        reachbCommand = `§6${prefix}reachb§r - Checks if player's break blocks beyond reach.`;
-    } else if (config.customcommands.reachb === false) {
-        reachbCommand = `§6${prefix}reachb§r - Command §4DISABLED§r.`;
-    }
-
-    let reachcCommand;
-    if (config.customcommands.reachc === true) {
-        reachcCommand = `§6${prefix}reachc§r - Checks if player's attack beyond reach.`;
-    } else if (config.customcommands.reachc === false) {
-        reachcCommand = `§6${prefix}reachc§r - Command §4DISABLED§r.`;
-    }
-
-    let noslowaCommand;
-    if (config.customcommands.noslowa === true) {
-        noslowaCommand = `§6${prefix}noslowa§r - Checks if player's are speed hacking.`;
-    } else if (config.customcommands.noslowa === false) {
-        noslowaCommand = `§6${prefix}noslowa§r - Command §4DISABLED§r.`;
-    }
-
-    let flyaCommand;
-    if (config.customcommands.flya === true) {
-        flyaCommand = `§6${prefix}flya§r - Checks if player's are flying in survival.`;
-    } else if (config.customcommands.flya === false) {
-        flyaCommand = `§6${prefix}flya§r - Command §4DISABLED§r.`;
-    }
-
-    let illegalitemsaCommand;
-    if (config.customcommands.illegalitemsa === true) {
-        illegalitemsaCommand = `§6${prefix}illegalitemsa§r - Checks if player's have illegal items in inventory.`;
-    } else if (config.customcommands.illegalitemsa === false) {
-        illegalitemsaCommand = `§6${prefix}illegalitemsa§r - Command §4DISABLED§r.`;
-    }
-
-    let illegalitemsbCommand;
-    if (config.customcommands.illegalitemsb === true) {
-        illegalitemsbCommand = `§6${prefix}illegalitemsb§r - Checks if player's use illegal items.`;
-    } else if (config.customcommands.illegalitemsb === false) {
-        illegalitemsbCommand = `§6${prefix}illegalitemsb§r - Command §4DISABLED§r.`;
-    }
-
-    let illegalitemscCommand;
-    if (config.customcommands.illegalitemsc === true) {
-        illegalitemscCommand = `§6${prefix}illegalitemsc§r - Checks if player's place illegal items.`;
-    } else if (config.customcommands.illegalitemsc === false) {
-        illegalitemscCommand = `§6${prefix}illegalitemsc§r - Command §4DISABLED§r.`;
-    }
-
-    let illegalItemsDCommand;
-    if (config.customcommands.illegalitemsd === true) {
-        illegalItemsDCommand = `§6${prefix}illegalitemsd§r - Checks for illegal dropped items in the world.`;
-    } else if (config.customcommands.illegalitemsd === false) {
-        illegalItemsDCommand = `§6${prefix}illegalitemsd§r - Command §4DISABLED§r.`;
-    }
-    let illegalLoresCommand;
-    if (config.customcommands.illegallores === true) {
-        illegalLoresCommand = `§6${prefix}illegallores§r - Checks for illegal lores in items.`;
-    } else if (config.customcommands.illegallores === false) {
-        illegalLoresCommand = `§6${prefix}illegalloresd§r - Command §4DISABLED§r.`;
-    }
-
-    let stackbanCommand;
-    if (config.customcommands.stackban === true) {
-        stackbanCommand = `§6${prefix}stackban§r - Checks if player's have illegal stacks over 64.`;
-    } else if (config.customcommands.stackban === false) {
-        stackbanCommand = `§6${prefix}stackban§r - Command §4DISABLED§r.`;
-    }
-
-    let antiscaffoldaCommand;
-    if (config.customcommands.antiscaffolda === true) {
-        antiscaffoldaCommand = `§6${prefix}antiscaffolda§r - Checks player's for illegal scaffolding.`;
-    } else if (config.customcommands.antiscaffolda === false) {
-        antiscaffoldaCommand = `§6${prefix}antiscaffolda§r - Command §4DISABLED§r.`;
-    }
-
-    let antinukeraCommand;
-    if (config.customcommands.antinukera === true) {
-        antinukeraCommand = `§6${prefix}antinukera§r - Checks player's for nuking blocks.`;
-    } else if (config.customcommands.antinukera === false) {
-        antinukeraCommand = `§6${prefix}antinukera§r - Command §4DISABLED§r.`;
-    }
-
-    let xrayaCommand;
-    if (config.customcommands.xraya === true) {
-        xrayaCommand = `§6${prefix}xraya§r - Notify's staff when and where player's mine specific ores.`;
-    } else if (config.customcommands.xraya === false) {
-        xrayaCommand = `§6${prefix}xraya§r - Command §4DISABLED§r.`;
-    }
-
-    let unbanCommand;
-    if (config.customcommands.unban === true) {
-        unbanCommand = `§6${prefix}unban <username>§r - Allows specified players to join if banned (Doesn't include global ban).`;
-    } else if (config.customcommands.unban === false) {
-        unbanCommand = `§6${prefix}unban <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let chatranksCommand;
-    if (config.customcommands.chatranks === true) {
-        chatranksCommand = `§6${prefix}chatranks§r - Toggles chat ranks.`;
-    } else if (config.customcommands.chatranks === false) {
-        chatranksCommand = `§6${prefix}chatranks§r - Command §4DISABLED§r.`;
-    }
-
-    let antishulkerCommand;
-    if (config.customcommands.antishulker === true) {
-        antishulkerCommand = `§6${prefix}antishulker§r - Toggles shulkers in the world.`;
-    } else if (config.customcommands.antishulker === false) {
-        antishulkerCommand = `§6${prefix}antishulker§r - Command §4DISABLED§r.`;
-    }
-
-    let auracheckCommand;
-    if (config.customcommands.auracheck === true) {
-        auracheckCommand = `§6${prefix}auracheck <username>§r - Manual test for KillAura.`;
-    } else if (config.customcommands.auracheck === false) {
-        auracheckCommand = `§6${prefix}auracheck <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let ecwipeCommand;
-    if (config.customcommands.ecwipe === true) {
-        ecwipeCommand = `§6${prefix}ecwipe <username>§r - Clears a players ender chest.`;
-    } else if (config.customcommands.ecwipe === false) {
-        ecwipeCommand = `§6${prefix}ecwipe <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let flyCommand;
-    if (config.customcommands.fly === true) {
-        flyCommand = `§6${prefix}fly <username>§r - Toggles fly mode in survival.`;
-    } else if (config.customcommands.fly === false) {
-        flyCommand = `§6${prefix}fly <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let freezeCommand;
-    if (config.customcommands.freeze === true) {
-        freezeCommand = `§6${prefix}freeze <username>§r - Freeze a player and make it so they cant move.`;
-    } else if (config.customcommands.freeze === false) {
-        freezeCommand = `§6${prefix}freeze <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let statsCommand;
-    if (config.customcommands.stats === true) {
-        statsCommand = `§6${prefix}stats <username>§r - View a specific players anticheat logs.`;
-    } else if (config.customcommands.stats === false) {
-        statsCommand = `§6${prefix}stats <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let fullreportCommand;
-    if (config.customcommands.fullreport === true) {
-        fullreportCommand = `§6${prefix}fullreport§r - View everyones anticheat logs.`;
-    } else if (config.customcommands.fullreport === false) {
-        fullreportCommand = `§6${prefix}fullreport§r - Command §4DISABLED§r.`;
-    }
-
-    let vanishCommand;
-    if (config.customcommands.vanish === true) {
-        vanishCommand = `§6${prefix}vanish§r - Toggles vanish (Used for spying on suspects).`;
-    } else if (config.customcommands.vanish === false) {
-        vanishCommand = `§6${prefix}vanish§r - Command §4DISABLED§r.`;
-    }
-
-    let clearchatCommand;
-    if (config.customcommands.clearchat === true) {
-        clearchatCommand = `§6${prefix}clearchat§r - Clears chat.`;
-    } else if (config.customcommands.clearchat === false) {
-        clearchatCommand = `§6${prefix}clearchat§r - Command §4DISABLED§r.`;
-    }
-
-    let invseeCommand;
-    if (config.customcommands.invsee === true) {
-        invseeCommand = `§6${prefix}invsee <username>§r - Lists all the items in the usernames inventory.`;
-    } else if (config.customcommands.invsee === false) {
-        invseeCommand = `§6${prefix}invsee <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let chatrank0;
-    let chatrank1;
-    // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
-    if (chatRanksBoolean === undefined) {
-        chatRanksBoolean = config.modules.chatranks.enabled;
-    }
-    if (chatRanksBoolean === true) {
-        chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Add ranks to username.`;
-        chatrank1 = `§6${prefix}tag <username> reset§r - Remove rank to username.`;
-    } else if (chatRanksBoolean === false) {
-        chatrank0 = `§6${prefix}tag <username> Rank:rank§r - Command §4DISABLED§r.`;
-        chatrank1 = `§6${prefix}tag <username> reset§r - Command §4DISABLED§r.`;
-    }
-
-    let sethomeCommand;
-    if (config.customcommands.sethome === true) {
-        sethomeCommand = `§6${prefix}sethome <name>§r - Saves current coordinates as home.`;
-    } else if (config.customcommands.sethome === false) {
-        sethomeCommand = `§6${prefix}sethome <name>§r - Command §4DISABLED§r.`;
-    }
-
-    let gohomeCommand;
-    if (config.customcommands.gohome === true) {
-        gohomeCommand = `§6${prefix}gohome <name>§r - Teleport back to saved home coordinates.`;
-    } else if (config.customcommands.gohome === false) {
-        gohomeCommand = `§6${prefix}gohome <name>§r - Command §4DISABLED§r.`;
-    }
-
-    let tpaCommand;
-    if (config.customcommands.tpa === true) {
-        tpaCommand = `§6${prefix}tpa <username>§r - Teleport to another player.`;
-    } else if (config.customcommands.tpa === false) {
-        tpaCommand = `§6${prefix}tpa <username>§r - Command §4DISABLED§r.`;
-    }
-
-    let antiTeleportCommand;
-    if (config.customcommands.antiteleport === true) {
-        antiTeleportCommand = `§6${prefix}antiteleport§r - Prevents player's from illegally teleporting.`;
-    } else if (config.customcommands.antiteleport === false) {
-        antiTeleportCommand = `§6${prefix}antiteleport§r - Command §4DISABLED§r.`;
-    }
-
-    let listHomeCommand;
-    if (config.customcommands.listhome === true) {
-        listHomeCommand = `§6${prefix}listhome§r - Shows your list of saved locations.`;
-    } else if (config.customcommands.listhome === false) {
-        listHomeCommand = `§6${prefix}listhome§r - Command §4DISABLED§r.`;
-    }
-
-    let delHomeCommand;
-    if (config.customcommands.delhome === true) {
-        delHomeCommand = `§6${prefix}delhome <name>§r - Deletes a saved location from list.`;
-    } else if (config.customcommands.delhome === false) {
-        delHomeCommand = `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`;
-    }
-
-    let illegalEnchantCommand;
-    if (config.customcommands.illegalenchant === true) {
-        illegalEnchantCommand = `§6${prefix}illegalenchant§r - Checks items for illegal enchants.`;
-    } else if (config.customcommands.illegalenchant === false) {
-        illegalEnchantCommand = `§6${prefix}illegalenchant§r - Command §4DISABLED§r.`;
-    }
-
-    let despawnCommand;
-    if (config.customcommands.despawn === true) {
-        despawnCommand = `§6${prefix}despawn <entityName>:all§r - Despawns all or specified entities if they exist.`;
-    } else if (config.customcommands.despawn === false) {
-        despawnCommand = `§6${prefix}despawn <entityName>:all§r - Command §4DISABLED§r.`;
-    }
-
-    let performanceCommand;
-    if (config.customcommands.performance === true) {
-        performanceCommand = `§6${prefix}performance§r - Shows TPS stats while running Paradox (Requires Debug).`;
-    } else if (config.customcommands.performance === false) {
-        performanceCommand = `§6${prefix}performance§r - Command §4DISABLED§r.`;
-    }
-
-    let hotbarCommand;
-    if (config.customcommands.hotbar === true) {
-        hotbarCommand = `§6${prefix}hotbar <optional>§r - Toggles hotbar message for all players. Optional: Message`;
-    } else if (config.customcommands.hotbar === false) {
-        hotbarCommand = `§6${prefix}hotbar <optional>§r - Command §4DISABLED§r.`;
-    }
-
-    let invalidSprintACommand;
-    if (config.customcommands.invalidsprinta === true) {
-        invalidSprintACommand = `§6${prefix}invalidsprinta§r - Toggles checks for illegal sprint with blindness.`;
-    } else if (config.customcommands.invalidsprinta === false) {
-        invalidSprintACommand = `§6${prefix}invalidsprinta§r - Command §4DISABLED§r.`;
-    }
-
-    let rbcrCommand;
-    if (config.customcommands.rbcr === true) {
-        rbcrCommand = `§6${prefix}rbcr§r - Toggles option to use Realm Bot Chat Relay.`;
-    } else if (config.customcommands.rbcr === false) {
-        rbcrCommand = `§6${prefix}rbcr§r - Command §4DISABLED§r.`;
-    }
-
-    let opsCommand;
-    if (config.customcommands.ops === true) {
-        opsCommand = `§6${prefix}ops§r - Toggles One Player Sleep (OPS) for all online players.`;
-    } else if (config.customcommands.ops === false) {
-        opsCommand = `§6${prefix}ops§r - Command §4DISABLED§r.`;
-    }
-
-    let salvageCommand;
-    if (config.customcommands.salvage === true) {
-        salvageCommand = `§6${prefix}salvage§r - Toggles new salvage system [Experimental].`;
-    } else if (config.customcommands.salvage === false) {
-        salvageCommand = `§6${prefix}salvage§r - Command §4DISABLED§r.`;
-    }
-
-    let badPackets2Command;
-    if (config.customcommands.badpackets2 === true) {
-        badPackets2Command = `§6${prefix}badpackets2§r - Toggles checks for invalid selected slots by player.`;
-    } else if (config.customcommands.badpackets2 === false) {
-        badPackets2Command = `§6${prefix}badpackets2§r - Command §4DISABLED§r.`;
-    }
+    const textDisabled = 'Command §4DISABLED§r.'
 
     return sendMsgToPlayer(player, [
         `§l§6[§4Paradox AntiCheat Command Help§6]§r`,
         ` `,
         `§l§6[§4Moderation Commands§6]§r`,
         `§6${prefix}help§r - Shows this help page.`,
-        banCommand,
-        unbanCommand,
-        kickCommand,
-        muteCommand,
-        unmuteCommand,
-        notifyCommand,
+        `§6${prefix}ban <username> <reason>§r - ${ config.customcommands.ban ? `Ban the specified user.` : textDisabled }`,
+        `§6${prefix}unban <username>§r - ${ config.customcommands.unban ? `Allows specified players to join if banned (Doesn't include global ban).` : textDisabled }`,
+        `§6${prefix}kick <username> <reason>§r - ${ config.customcommands.kick ? `Kick the specified user.` : textDisabled }`,
+        `§6${prefix}mute <username> <reason>§r - ${ config.customcommands.mute ? `Mute the specified user.` : textDisabled }`,
+        `§6${prefix}unmute <username> <reason>§r - ${ config.customcommands.unmute ? `Unmute the specified user.` : textDisabled }`,
+        `§6${prefix}notify§r - ${ config.customcommands.notify ? `Toggles cheat notifications.` : textDisabled }`,
         `§6${prefix}credits§r - Shows credits, thats it.`,
-        opCommand,
-        deopCommand,
-        modulesCommand,
+        `§6${prefix}op <username>§r - ${ config.customcommands.op ? `Op's player in Paradox AntiCheat features.` : textDisabled }`,
+        `§6${prefix}deop <username>§r - ${ config.customcommands.deop ? `Revokes Op player in Paradox AntiCheat features.` : textDisabled }`,
+        `§6${prefix}modules§r - ${ config.customcommands.modules ? `View all enabled or disabled modules.` : textDisabled }`,
         `§6${prefix}prefix <prefix>§r - Change the prefix for commands. Max is two characters.`,
         `§6${prefix}prefix reset§r - Reset the prefix for commands.`,
-        lockdownCommand,
-        punishCommand,
-        tpaCommand,
-        despawnCommand,
+        `§6${prefix}lockdown§r - ${ config.customcommands.lockdown ? `Kicks player's from server excluding Staff for maintenance.` : textDisabled }`,
+        `§6${prefix}punish <username>§r - ${ config.customcommands.punish ? `Removes all items from player's inventory and ender chest.` : textDisabled }`,
+        `§6${prefix}tpa <username>§r - ${ config.customcommands.tpa ? `Teleport to another player.` : textDisabled }`,
+        `§6${prefix}despawn <entityName>:all§r - ${ config.customcommands.despawn ? `Despawns all or specified entities if they exist.` : textDisabled }`,
         ` `,
         `§l§6[§4Optional Features§6]§r`,
-        allowgmaCommand,
-        allowgmcCommand,
-        allowgmsCommand,
-        removecbCommand,
-        bedrockValidateCommand,
-        overridecbeCommand,
-        worldborderCommand,
-        autoclickerCommand,
-        jesusaCommand,
-        enchantedArmorCommand,
-        autoauraCommand,
-        antikbCommand,
-        badpackets1Command,
-        spammeraCommand,
-        spammerbCommand,
-        spammercCommand,
-        spammerdCommand,
-        antispamCommand,
-        crasheraCommand,
-        namespoofaCommand,
-        namespoofbCommand,
-        reachaCommand,
-        reachbCommand,
-        reachcCommand,
-        noslowaCommand,
-        flyaCommand,
-        illegalitemsaCommand,
-        illegalitemsbCommand,
-        illegalitemscCommand,
-        illegalItemsDCommand,
-        illegalEnchantCommand,
-        illegalLoresCommand,
-        invalidSprintACommand,
-        stackbanCommand,
-        antiscaffoldaCommand,
-        antinukeraCommand,
-        xrayaCommand,
-        chatranksCommand,
-        antishulkerCommand,
-        antiTeleportCommand,
-        rbcrCommand,
-        opsCommand,
-        salvageCommand,
-        badPackets2Command,
+        `§6${prefix}allowgma§r - ${ config.customcommands.allowgma ? `Toggles Gamemode 2(Adventure) to be used.` : textDisabled }`,
+        `§6${prefix}allowgmc§r - ${ config.customcommands.allowgmc ? `Toggles Gamemode 1(Creative) to be used.` : textDisabled }`,
+        `§6${prefix}allowgms§r - ${ config.customcommands.allowgms ? `Toggles Gamemode 0(Survival) to be used.` : textDisabled }`,
+        `§6${prefix}removecb§r - ${ config.customcommands.removecommandblocks ? `Toggles Anti Command Blocks (Clears all when enabled).` : textDisabled }`,
+        `§6${prefix}bedrockvalidate§r - ${ config.customcommands.bedrockvalidate ? `Checks validation of bedrock.` : textDisabled }`,
+        `§6${prefix}overridecbe§r - ${ config.customcommands.overidecommandblocksenabled ? `Forces the commandblocksenabled gamerule to be enabled or disabled at all times.` : textDisabled }`,
+        `§6${prefix}worldborder <value>§r - ${ config.customcommands.worldborder ? `Sets the World Border. Change value to disable to turn off.` : textDisabled }`,
+        `§6${prefix}autoclicker§r - ${ config.customcommands.autoclicker ? `Toggles Anti Autoclicker.` : textDisabled }`,
+        `§6${prefix}jesusa§r - ${ config.customcommands.jesusa ? `Checks if player's are walking on water and lava.` : textDisabled }`,
+        `§6${prefix}enchantedarmor§r - ${ config.customcommands.enchantedarmor ? `Toggles Anti Enchanted Armor for all players.` : textDisabled }`,
+        `§6${prefix}autoaura§r - ${ config.customcommands.autoaura ? `Toggles Auto KillAura checks for all players.` : textDisabled }`,
+        `§6${prefix}antikb§r - ${ config.customcommands.antikb ? `Toggles Anti Knockback for all players.` : textDisabled }`,
+        `§6${prefix}badpackets1§r - ${ config.customcommands.badpackets1 ? `Checks message length for each broadcast.` : textDisabled }`,
+        `§6${prefix}spammera§r - ${ config.customcommands.spammera ? `Checks if message is sent while moving.` : textDisabled }`,
+        `§6${prefix}spammerb§r - ${ config.customcommands.spammerb ? `Checks if message is sent while swinging.` : textDisabled }`,
+        `§6${prefix}spammerc§r - ${ config.customcommands.spammerc ? `Checks if message is sent while using items.` : textDisabled }`,
+        `§6${prefix}spammerd§r - ${ config.customcommands.spammerd ? `Checks if message is sent while GUI is open.` : textDisabled }`,
+        `§6${prefix}antispam§r - ${ config.customcommands.antispam ? `Checks for spamming in chat with 2 second cooldown.` : textDisabled }`,
+        `§6${prefix}crashera§r - ${ config.customcommands.crashera ? `Prevents Horion crasher.` : textDisabled }`,
+        `§6${prefix}namespoofa§r - ${ config.customcommands.namespoofa ? `Checks if player's name exceeds character limitations.` : textDisabled }`,
+        `§6${prefix}namespoofb§r - ${ config.customcommands.namespoofb ? `Checks if player's name has Non ASCII characters.` : textDisabled }`,
+        `§6${prefix}reacha§r - ${ config.customcommands.reacha ? `Checks if player's place blocks beyond reach.` : textDisabled }`,
+        `§6${prefix}reachb§r - ${ config.customcommands.reachb ? `Checks if player's break blocks beyond reach.` : textDisabled }`,
+        `§6${prefix}reachc§r - ${ config.customcommands.reachc ? `Checks if player's attack beyond reach.` : textDisabled }`,
+        `§6${prefix}noslowa§r - ${ config.customcommands.noslowa ? `Checks if player's are speed hacking.` : textDisabled }`,
+        `§6${prefix}flya§r - ${ config.customcommands.flya ? `Checks if player's are flying in survival.` : textDisabled }`,
+        `§6${prefix}illegalitemsa§r - ${ config.customcommands.illegalitemsa ? `Checks if player's have illegal items in inventory.` : textDisabled }`,
+        `§6${prefix}illegalitemsb§r - ${ config.customcommands.illegalitemsb ? `Checks if player's use illegal items.` : textDisabled }`,
+        `§6${prefix}illegalitemsc§r - ${ config.customcommands.illegalitemsc ? `Checks if player's place illegal items.` : textDisabled }`,
+        `§6${prefix}illegalitemsd§r - ${ config.customcommands.illegalitemsd ? `Checks for illegal dropped items in the world.` : textDisabled }`,
+        `§6${prefix}illegalenchant§r - ${ config.customcommands.illegalenchant ? `Checks items for illegal enchants.` : textDisabled }`,
+        `§6${prefix}illegallores§r - ${ config.customcommands.illegallores ? `Checks for illegal lores in items.` : textDisabled }`,
+        `§6${prefix}invalidsprinta§r - ${ config.customcommands.invalidsprinta ? `Toggles checks for illegal sprint with blindness.` : textDisabled }`,
+        `§6${prefix}stackban§r - ${ config.customcommands.stackban ? `Checks if player's have illegal stacks over 64.` : textDisabled }`,
+        `§6${prefix}antiscaffolda§r - ${ config.customcommands.antiscaffolda ? `Checks player's for illegal scaffolding.` : textDisabled }`,
+        `§6${prefix}antinukera§r - ${ config.customcommands.antinukera ? `Checks player's for nuking blocks.` : textDisabled }`,
+        `§6${prefix}xraya§r - ${ config.customcommands.xraya ? `Notify's staff when and where player's mine specific ores.` : textDisabled }`,
+        `§6${prefix}chatranks§r - ${ config.customcommands.chatranks ? `Toggles chat ranks.` : textDisabled }`,
+        `§6${prefix}antishulker§r - ${ config.customcommands.antishulker ? `Toggles shulkers in the world.` : textDisabled }`,
+        `§6${prefix}antiteleport§r - ${ config.customcommands.antiteleport ? `Prevents player's from illegally teleporting.` : textDisabled }`,
+        `§6${prefix}rbcr§r - ${ config.customcommands.rbcr ? `Toggles option to use Realm Bot Chat Relay.` : textDisabled }`,
+        `§6${prefix}ops§r - ${ config.customcommands.ops ? `Toggles One Player Sleep (OPS) for all online players.` : textDisabled }`,
+        `§6${prefix}salvage§r - ${ config.customcommands.salvage ? `Toggles new salvage system [Experimental].` : textDisabled }`,
+        `§6${prefix}badpackets2§r - ${ config.customcommands.badpackets2 ? `Toggles checks for invalid selected slots by player.` : textDisabled }`,
         ` `,
         `§l§6[§4Tools and Utilites§6]§r`,
-        auracheckCommand,
-        ecwipeCommand,
-        flyCommand,
-        freezeCommand,
-        statsCommand,
-        fullreportCommand,
-        vanishCommand,
-        chatrank0,
-        chatrank1,
-        clearchatCommand,
-        invseeCommand,
-        sethomeCommand,
-        gohomeCommand,
-        listHomeCommand,
-        delHomeCommand,
-        performanceCommand,
-        hotbarCommand,,
+        `§6${prefix}auracheck <username>§r - ${ config.customcommands.auracheck ? `Manual test for KillAura.` : textDisabled }`,
+        `§6${prefix}ecwipe <username>§r - ${ config.customcommands.ecwipe ? `Clears a players ender chest.` : textDisabled }`,
+        `§6${prefix}fly <username>§r - ${ config.customcommands.fly ? `Toggles fly mode in survival.` : textDisabled }`,
+        `§6${prefix}freeze <username>§r - ${ config.customcommands.freeze ? `Freeze a player and make it so they cant move.` : textDisabled }`,
+        `§6${prefix}stats <username>§r - ${ config.customcommands.stats ? `View a specific players anticheat logs.` : textDisabled }`,
+        `§6${prefix}fullreport§r - ${ config.customcommands.fullreport ? `View everyones anticheat logs.` : textDisabled }`,
+        `§6${prefix}vanish§r - ${ config.customcommands.vanish ? `Toggles vanish (Used for spying on suspects).` : textDisabled }`,
+        `§6${prefix}chatranks§r - ${ config.customcommands.chatranks ? `Toggles chat ranks.` : textDisabled }`,
+        `§6${prefix}clearchat§r - ${ config.customcommands.clearchat ? `Clears chat.` : textDisabled }`,
+        `§6${prefix}invsee <username>§r - ${ config.customcommands.invsee ? `Lists all the items in the usernames inventory.` : textDisabled }`,
+        `§6${prefix}sethome <name>§r - ${ config.customcommands.sethome ? `Saves current coordinates as home.` : textDisabled }`,
+        `§6${prefix}gohome <name>§r - ${ config.customcommands.gohome ? `Teleport back to saved home coordinates.` : textDisabled }`,
+        `§6${prefix}listhome§r - ${ config.customcommands.listhome ? `Shows your list of saved locations.` : textDisabled }`,
+        `§6${prefix}delhome <name>§r - ${ config.customcommands.delhome ? `Deletes a saved location from list.` : textDisabled }`,
+        `§6${prefix}performance§r - ${ config.customcommands.performance ? `Shows TPS stats while running Paradox (Requires Debug).` : textDisabled }`,
+        `§6${prefix}hotbar <optional>§r - ${ config.customcommands.hotbar ? `Toggles hotbar message for all players. Optional: Message` : textDisabled }`,
         ` `,
         `§l§6[§4For more info execute the command with help§6]§r`,
-        ` `
     ])
 }
