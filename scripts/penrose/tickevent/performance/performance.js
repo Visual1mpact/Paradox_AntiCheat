@@ -1,4 +1,5 @@
 import { EntityQueryOptions, world } from 'mojang-minecraft';
+import config from '../../../data/config.js';
 
 const World = world;
 
@@ -16,6 +17,9 @@ let x = (function* () {
 
 const PerformanceTest = () => {
     World.events.tick.subscribe(({deltaTime}) => {
+        if (config.debug === false) {
+            return;
+        }
         const serverTime = x.next().value;
         let filter = new EntityQueryOptions();
         filter.tags = ['performance'];

@@ -13,7 +13,7 @@ function performanceHelp(player, prefix) {
 §4[§6Status§4]§r: ${commandStatus}
 §4[§6Usage§4]§r: performance [optional]
 §4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Shows TPS stats to evaluate performance with Paradox.
+§4[§6Description§4]§r: Shows TPS stats to evaluate performance with Paradox (Requires Debug).
 §4[§6Examples§4]§r:
     ${prefix}performance
     ${prefix}performance help
@@ -37,12 +37,6 @@ export function performance(message, args) {
 
     // Check for custom prefix
     let prefix = getPrefix(player);
-
-    // Was help requested
-    let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.performance) {
-        return performanceHelp(player, prefix);
-    }
     
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
@@ -54,6 +48,16 @@ export function performance(message, args) {
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+    }
+
+    // Was help requested
+    let argCheck = args[0];
+    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.performance) {
+        return performanceHelp(player, prefix);
+    }
+
+    if (config.debug === false) {
+        return performanceHelp(player, prefix);
     }
 
     if (!player.hasTag('performance')) {

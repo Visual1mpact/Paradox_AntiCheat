@@ -516,7 +516,7 @@ export function help(message) {
 
     let performanceCommand;
     if (config.customcommands.performance === true) {
-        performanceCommand = `§6${prefix}performance§r - Shows TPS stats while running Paradox (For testing).`;
+        performanceCommand = `§6${prefix}performance§r - Shows TPS stats while running Paradox (Requires Debug).`;
     } else if (config.customcommands.performance === false) {
         performanceCommand = `§6${prefix}performance§r - Command §4DISABLED§r.`;
     }
