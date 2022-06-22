@@ -76,5 +76,5 @@ export function stats(message, args) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    return player.runCommand(`execute @s ~~~ function tools/stats`);
+    return member.runCommand(`execute @s ~~~ function tools/stats`);
 }

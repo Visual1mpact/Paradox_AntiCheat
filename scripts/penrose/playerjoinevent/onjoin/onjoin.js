@@ -25,7 +25,7 @@ function onJoinTime() {
             let reason = "Under Maintenance! Sorry for the inconvenience.";
             try {
                 // Kick players from server
-                player.runCommand(`kick "${player.name}" ${reason}`);
+                player.runCommand(`kick ${JSON.stringify(player.name)} ${reason}`);
             } catch (error) {
                 // Despawn players from server
                 player.triggerEvent('paradox:kick');

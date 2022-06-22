@@ -169,7 +169,7 @@ function illegalitemsb(object) {
                 if (!illegalLoresBoolean) {
                     let loreData = item.getLore();
                     try {
-                        actualItemName.setLore([loreData])
+                        actualItemName.setLore(loreData)
                         source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName);
                     } catch (error) {}
                 } else if (illegalLoresBoolean) {
@@ -194,7 +194,7 @@ function illegalitemsb(object) {
                 loreData = item.getLore();
                 try {
                     const newItem = new ItemStack(Items.get(item.id), item.amount)
-                    newItem.setLore([loreData])
+                    newItem.setLore(loreData)
                     source.getComponent('minecraft:inventory').container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
@@ -209,7 +209,7 @@ function illegalitemsb(object) {
                 loreData = item.getLore();
                 try {
                     const newItem = new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data)
-                    newItem.setLore([loreData])
+                    newItem.setLore(loreData)
                     source.getComponent('minecraft:inventory').container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
@@ -224,7 +224,7 @@ function illegalitemsb(object) {
                 loreData = item.getLore();
                 try {
                     const newItem = new ItemStack(Items.get(item.id), item.amount, item.data)
-                    newItem.setLore([loreData])
+                    newItem.setLore(loreData)
                     source.getComponent('minecraft:inventory').container.setItem(hand, newItem);
                 } catch (error) {}
                 return;

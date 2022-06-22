@@ -53,17 +53,17 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
 
     try {
         if(debug) {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase(), player)}`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + 'vl', player)}`)
         } else if (item && stack) {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= ${getScore(check.toLowerCase(), player)}`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + 'vl', player)}`)
         } else {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase(), player)}`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + 'vl', player)}`)
         }
     } catch(error) {}
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick "${player.name}" §r§4[§6Paradox§4]§r Please use your real xbl name!`);
+            player.runCommand(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r Please use your real xbl name!`);
         }
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -93,7 +93,7 @@ export function banMessage(player) {
     });
 
     try {
-        player.runCommand(`kick "${player.name}" §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.runCommand(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch(error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");

@@ -4,7 +4,7 @@ import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
-let cooldownTimer = new Map();
+let cooldownTimer = new WeakMap();
 
 function dhms (ms) {
     const days = Math.floor(ms / (24*60*60*1000));
@@ -112,7 +112,7 @@ export function gohome(message, args) {
         let cooldownCalc;
         let activeTimer;
         // Get original time in milliseconds
-        let cooldownVerify = cooldownTimer.get(player.nameTag);
+        let cooldownVerify = cooldownTimer.get(player);
         // Convert config settings to milliseconds so we can be sure the countdown is accurate
         let msSettings = (config.modules.goHome.days * 24 * 60 * 60 * 1000) + (config.modules.goHome.hours * 60 * 60 * 1000) + (config.modules.goHome.minutes * 60 * 1000) + (config.modules.goHome.seconds * 1000);
         if (cooldownVerify !== undefined) {
@@ -132,9 +132,9 @@ export function gohome(message, args) {
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`)
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value
-            cooldownTimer.delete(player.nameTag);
+            cooldownTimer.delete(player);
             // Create new key and value with current time in milliseconds
-            cooldownTimer.set(player.nameTag, new Date().getTime());
+            cooldownTimer.set(player, new Date().getTime());
         } else {
             // Teleporting to fast
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Too fast! Please wait for ${activeTimer} before going home.`)

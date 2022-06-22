@@ -90,7 +90,7 @@ export function punish(message, args) {
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
         try {
-            player.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
+            member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
         } catch (error) {}
     }
 

@@ -165,7 +165,8 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         let loreData = inventory_item.getLore();
                         try {
-                            inventory.setItem(i, actualItemName.setLore([loreData]));
+                            actualItemName.setLore(loreData);
+                            inventory.setItem(i, actualItemName);
                         } catch (error) {}
                     } else if (illegalLoresBoolean) {
                         try {
@@ -189,7 +190,9 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
-                            inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount).setLore([loreData]));
+                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount)
+                            newItem.setLore(loreData)
+                            inventory.setItem(i, newItem);
                         } catch (error) {}
                         continue;
                     }
@@ -201,7 +204,9 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
-                            inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data).setLore([loreData]));
+                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount)
+                            newItem.setLore(loreData)
+                            inventory.setItem(i, newItem);
                         } catch (error) {}
                         continue;
                     }
@@ -214,7 +219,9 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
-                            inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data).setLore([loreData]));
+                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount)
+                            newItem.setLore(loreData)
+                            inventory.setItem(i, newItem);
                         } catch (error) {}
                         continue;
                     }
@@ -284,7 +291,7 @@ function illegalitemsa() {
                                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                             } catch {}
                             sendMsg('@a[tag=notify]', [
-                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
+                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                                 `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
                             ])
                             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
@@ -299,7 +306,7 @@ function illegalitemsa() {
                                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                             } catch {}
                             sendMsg('@a[tag=notify]', [
-                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
+                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                                 `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
                             ])
                             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)

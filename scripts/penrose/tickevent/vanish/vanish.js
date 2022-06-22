@@ -35,7 +35,7 @@ function vanish() {
             }
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions. Permissions removed!`)
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions for Vanish. Permissions removed!`)
             } catch (error) {}
         }
     }

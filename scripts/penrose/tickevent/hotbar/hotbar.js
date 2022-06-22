@@ -20,7 +20,7 @@ function hotbar() {
     // run as each player
     for (let player of World.getPlayers(filter)) {
         hotbarMessage = config.modules.hotbar.message;
-        player.runCommand(`titleraw @s actionbar {"rawtext":[{"text":"${hotbarMessage}"}]}`);
+        player.runCommand(`titleraw @s actionbar {"rawtext":[{"text":${JSON.stringify(hotbarMessage)}}]}`);
     }
 }
 
