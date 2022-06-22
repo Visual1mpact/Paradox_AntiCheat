@@ -1,5 +1,21 @@
 # Changelog
 
+## [v2.18.52](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.18.52) (2022-06-22)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.17.51...v2.18.52)
+
+**Closed issues:**
+
+- How to op people without going into the files [\#28](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/28)
+
+**Merged pull requests:**
+
+- Debug & bugfixes [\#33](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/33) ([frostice482](https://github.com/frostice482))
+- Fix to Chatrank not working [\#32](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/32) ([frostice482](https://github.com/frostice482))
+- Debug & stuff [\#31](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/31) ([frostice482](https://github.com/frostice482))
+- style fix [\#30](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/30) ([Mantou1233](https://github.com/Mantou1233))
+- Please add some colors. [\#29](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/29) ([Matwarey](https://github.com/Matwarey))
+
 ## [v2.17.51](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.17.51) (2022-06-10)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.17.50...v2.17.51)
