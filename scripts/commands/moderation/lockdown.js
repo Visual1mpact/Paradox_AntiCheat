@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

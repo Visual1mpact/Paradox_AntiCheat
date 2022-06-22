@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world, ItemStack, MinecraftItemTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, disabler, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

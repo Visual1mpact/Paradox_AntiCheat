@@ -37,7 +37,7 @@ export function help(message) {
 
     // Make sure the help command wasn't disabled
     if (config.customcommands.help === false) {
-        config.customcommands.help === true;
+        config.customcommands.help = true;
     }
 
     const textDisabled = 'Command §4DISABLED§r.'
