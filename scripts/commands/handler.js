@@ -1,5 +1,5 @@
 import config from "../data/config.js";
-import { disabler } from "../util.js";
+import { sendMsgToPlayer } from "../util.js";
 
 // import all our commands
 import { kick } from "./moderation/kick.js";
@@ -80,6 +80,86 @@ import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
 
+const commandDefinitions = Object.setPrototypeOf({
+    'kick': kick,
+    'tag': tag,
+    'ban': ban,
+    'notify': notify,
+    'vanish': vanish,
+    'fly': fly,
+    'mute': mute,
+    'unmute': unmute,
+    'invsee': invsee,
+    'ecwipe': ecwipe,
+    'freeze': freeze,
+    'stats': stats,
+    'fullreport': fullreport,
+    'allowgma': allowgma,
+    'allowgmc': allowgmc,
+    'allowgms': allowgms,
+    'bedrockvalidate': bedrockvalidate,
+    'modules': modules,
+    'overridecbe': overidecommandblocksenabled,
+    'removecb': removecommandblocks,
+    'worldborder': worldborders,
+    'help': help,
+    'credits': credits,
+    'op': op,
+    'deop': deop,
+    'clearchat': clearchat,
+    'autoclicker': autoclick,
+    'jesusa': jesusA,
+    'enchantedarmor': enchantedarmor,
+    'auracheck': auracheck,
+    'autoaura': autokillaura,
+    'antikb': antiknockback,
+    'report': report,
+    'badpackets1': badpackets1,
+    'spammera': spammerA,
+    'spammerb': spammerB,
+    'spammerc': spammerC,
+    'spammerd': spammerD,
+    'antispam': antispam,
+    'crashera': crasherA,
+    'namespoofa': namespoofA,
+    'namespoofb': namespoofB,
+    'reacha': reachA,
+    'reachb': reachB,
+    'noslowa': noslowA,
+    'invalidsprinta': invalidsprintA,
+    'flya': flyA,
+    'illegalitemsa': illegalitemsA,
+    'illegalitemsb': illegalitemsB,
+    'antiscaffolda': antiscaffoldA,
+    'antinukera': antinukerA,
+    'illegalitemsc': illegalitemsC,
+    'xraya': xrayA,
+    'unban': unban,
+    'prefix': prefix,
+    'chatranks': chatranks,
+    'antishulker': antishulker,
+    'stackban': stackban,
+    'lockdown': lockdown,
+    'punish': punish,
+    'sethome': sethome,
+    'gohome': gohome,
+    'tpa': tpa,
+    'antiteleport': antiteleport,
+    'illegalitemsd': illegalitemsD,
+    'listhome': listhome,
+    'delhome': delhome,
+    'illegalenchant': illegalEnchant,
+    'illegallores': illegalLores,
+    'despawn': despawn,
+    'reachc': reachC,
+    'performance': performance,
+    'hotbar': hotbar,
+    'rbcr': rbcr,
+    'ops': ops,
+    'salvage': salvage,
+    'badpackets2': badpackets2,
+}, null)
+
 /**
  * @name commandHandler
  * @param {object} player - The player that has sent the message
@@ -109,243 +189,12 @@ export function commandHandler(player, message) {
     const commandName = args.shift().toLowerCase();
 
     if (config.debug) {
-        console.warn(`${new Date()} | "${disabler(player.nameTag)}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
+        console.warn(`${new Date()} | "${player.name}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
     }
 
-    switch (true) {
-        case (commandName === "kick"):
-            kick(message, args);
-            break;
-        case (commandName === "tag"):
-            tag(message, args);
-            break;
-        case (commandName === "ban"):
-            ban(message, args);
-            break;
-        case (commandName === "notify"):
-            notify(message, args);
-            break;
-        case (commandName === "vanish"):
-            vanish(message, args);
-            break;
-        case (commandName === "fly"):
-            fly(message, args);
-            break;
-        case (commandName === "mute"):
-            mute(message, args);
-            break;
-        case (commandName === "unmute"):
-            unmute(message, args);
-            break;
-        case (commandName === "invsee"):
-            invsee(message, args);
-            break;
-        case (commandName === "ecwipe"):
-            ecwipe(message, args);
-            break;
-        case (commandName === "freeze"):
-            freeze(message, args);
-            break;
-        case (commandName === "stats"):
-            stats(message, args);
-            break;
-        case (commandName === "fullreport"):
-            fullreport(message, args);
-            break;
-        case (commandName === "allowgma"):
-            allowgma(message, args);
-            break;
-        case (commandName === "allowgmc"):
-            allowgmc(message, args);
-            break;
-        case (commandName === "allowgms"):
-            allowgms(message, args);
-            break;
-        case (commandName === "bedrockvalidate"):
-            bedrockvalidate(message, args);
-            break;
-        case (commandName === "modules"):
-            modules(message, args);
-            break;
-        case (commandName === "overridecbe"):
-            overidecommandblocksenabled(message, args);
-            break;
-        case (commandName === "removecb"):
-            removecommandblocks(message, args);
-            break;
-        case (commandName === "worldborder"):
-            worldborders(message, args);
-            break;
-        case (config.customcommands.help && commandName === "help"):
-            help(message);
-            break;
-        case (commandName === "credits"):
-            credits(message, args);
-            break;
-        case (commandName === "op"):
-            op(message, args);
-            break;
-        case (commandName === "deop"):
-            deop(message, args);
-            break;
-        case (commandName === "clearchat"):
-            clearchat(message, args);
-            break;
-        case (commandName === "autoclicker"):
-            autoclick(message, args);
-            break;
-        case (commandName === "jesusa"):
-            jesusA(message, args);
-            break;
-        case (commandName === "enchantedarmor"):
-            enchantedarmor(message, args);
-            break;
-        case (commandName === "auracheck"):
-            auracheck(message, args);
-            break;
-        case (commandName === "autoaura"):
-            autokillaura(message, args);
-            break;
-        case (commandName === "antikb"):
-            antiknockback(message, args);
-            break;
-        case (commandName === "report"):
-            report(message, args);
-            break;
-        case (commandName === "badpackets1"):
-            badpackets1(message, args);
-            break;
-        case (commandName === "spammera"):
-            spammerA(message, args);
-            break;
-        case (commandName === "spammerb"):
-            spammerB(message, args);
-            break;
-        case (commandName === "spammerc"):
-            spammerC(message, args);
-            break;
-        case (commandName === "spammerd"):
-            spammerD(message, args);
-            break;
-        case (commandName === "antispam"):
-            antispam(message, args);
-            break;
-        case (commandName === "crashera"):
-            crasherA(message, args);
-            break;
-        case (commandName === "namespoofa"):
-            namespoofA(message, args);
-            break;
-        case (commandName === "namespoofb"):
-            namespoofB(message, args);
-            break;
-        case (commandName === "reacha"):
-            reachA(message, args);
-            break;
-        case (commandName === "reachb"):
-            reachB(message, args);
-            break;
-        case (commandName === "noslowa"):
-            noslowA(message, args);
-            break;
-        case (commandName === "invalidsprinta"):
-            invalidsprintA(message, args);
-            break;
-        case (commandName === "flya"):
-            flyA(message, args);
-            break;
-        case (commandName === "illegalitemsa"):
-            illegalitemsA(message, args);
-            break;
-        case (commandName === "illegalitemsb"):
-            illegalitemsB(message, args);
-            break;
-        case (commandName === "antiscaffolda"):
-            antiscaffoldA(message, args);
-            break;
-        case (commandName === "antinukera"):
-            antinukerA(message, args);
-            break;
-        case (commandName === "illegalitemsc"):
-            illegalitemsC(message, args);
-            break;
-        case (commandName === "xraya"):
-            xrayA(message, args);
-            break;
-        case (commandName === "unban"):
-            unban(message, args);
-            break;
-        case (commandName === "prefix"):
-            prefix(message, args);
-            break;
-        case (commandName === "chatranks"):
-            chatranks(message, args);
-            break;
-        case (commandName === "antishulker"):
-            antishulker(message, args);
-            break;
-        case (commandName === "stackban"):
-            stackban(message, args);
-            break;
-        case (commandName === "lockdown"):
-            lockdown(message, args);
-            break;
-        case (commandName === "punish"):
-            punish(message, args);
-            break;
-        case (commandName === "sethome"):
-            sethome(message, args);
-            break;
-        case (commandName === "gohome"):
-            gohome(message, args);
-            break;
-        case (commandName === "tpa"):
-            tpa(message, args);
-            break;
-        case (commandName === "antiteleport"):
-            antiteleport(message, args);
-            break;
-        case (commandName === "illegalitemsd"):
-            illegalitemsD(message, args);
-            break;
-        case (commandName === "listhome"):
-            listhome(message, args);
-            break;
-        case (commandName === "delhome"):
-            delhome(message, args);
-            break;
-        case (commandName === "illegalenchant"):
-            illegalEnchant(message, args);
-            break;
-        case (commandName === "illegallores"):
-            illegalLores(message, args);
-            break;
-        case (commandName === "despawn"):
-            despawn(message, args);
-            break;
-        case (commandName === "reachc"):
-            reachC(message, args);
-            break;
-        case (commandName === "performance"):
-            performance(message, args);
-            break;
-        case (commandName === "hotbar"):
-            hotbar(message, args);
-            break;
-        case (commandName === "rbcr"):
-            rbcr(message, args);
-            break;
-        case (commandName === "ops"):
-            ops(message, args);
-            break;
-        case (commandName === "salvage"):
-            salvage(message, args);
-            break;
-        case (commandName === "badpackets2"):
-            badpackets2(message, args);
-            break;
-        default:
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"The command !${commandName} does not exist. Try again!"}]}`);
-            return message.cancel = true;
+    if (!(commandName in commandDefinitions)) {
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command !${commandName} does not exist. Try again!`);
+        return message.cancel = true;
     }
+    commandDefinitions[commandName](message, args)
 }
