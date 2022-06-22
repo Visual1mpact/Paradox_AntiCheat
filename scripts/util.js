@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { Location } from "mojang-minecraft";
+import { Location, world } from "mojang-minecraft";
 import config from "./data/config.js";
 
 /**
@@ -242,3 +242,15 @@ export const titleCase = (s) =>
         .map(byteHex)
         .join("");
 };
+
+const overworld = world.getDimension('overworld')
+
+export const sendMsg = (target, message) => {
+    try { overworld.runCommand(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${ JSON.stringify( Array.isArray(message) ? message.join('\n\u00a7r') : message ) }}]}`) }
+    catch {}
+}
+
+export const sendMsgToPlayer = (target, message) => {
+    try { target.runCommand(`tellraw @s {"rawtext":[{"text":${ JSON.stringify( Array.isArray(message) ? message.join('\n\u00a7r') : message ) }}]}`) }
+    catch {}
+}
