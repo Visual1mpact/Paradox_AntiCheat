@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
 import { EntityQueryOptions, world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -12,18 +12,18 @@ function despawnHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: despawn
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: despawn [optional]
-§4[§6Optional§4]§r: entity, all, help
-§4[§6Description§4]§r: Despawns all or specified entities if they exist.
-§4[§6Examples§4]§r:
-    ${prefix}despawn all
-    ${prefix}despawn iron_golem
-    ${prefix}despawn creeper
-    ${prefix}despawn help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: despawn`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: despawn [optional]`,
+        `§4[§6Optional§4]§r: entity, all, help`,
+        `§4[§6Description§4]§r: Despawns all or specified entities if they exist.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}despawn all`,
+        `    ${prefix}despawn iron_golem`,
+        `    ${prefix}despawn creeper`,
+        `    ${prefix}despawn help`,
+    ]);
 }
 
 /**
@@ -50,7 +50,7 @@ export function despawn(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -101,19 +101,20 @@ export function despawn(message, args) {
     }
     // Let player know how many of the specified entity were removed
     if (counter > 0 && verify === false) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Despawned ${requestedEntity} (x${counter})!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned ${requestedEntity} (x${counter})!`)
     }
     if (verify === true) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Despawned all Entities (x${counter})!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned all entities (x${counter})!`)
     }
     // If nothing then abort and let them know
     if (args[0] !== "all" && args.length > 0) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r This entity was not found in the world!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This entity was not found in the world!`)
     } else {
         // Need to give a parameter that is recognized
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r Please specify which entity or target all!"}]}`);
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem"}]}`);
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Example: ${prefix}despawn all"}]}`);
-        return;
+        return sendMsgToPlayer(player, [
+            `§r§4[§6Paradox§4]§r Please specify which entity or target all!`,
+            `§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem`,
+            `§r§4[§6Paradox§4]§r Example: ${prefix}despawn all`,
+        ]);
     }
 }

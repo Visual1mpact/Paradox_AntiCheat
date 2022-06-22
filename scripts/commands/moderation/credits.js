@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function creditsHelp(player, prefix) {
     let commandStatus;
@@ -8,16 +8,16 @@ function creditsHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: credits
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: credits [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Shows credits for Paradox Anti Cheat.
-§4[§6Examples§4]§r:
-    ${prefix}credits
-    ${prefix}credits help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: credits`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: credits [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Shows credits for Paradox Anti Cheat.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}credits`,
+        `    ${prefix}credits help`,
+    ]);
 }
 
 /**
@@ -44,7 +44,7 @@ export function credits(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -56,25 +56,27 @@ export function credits(message, args) {
         return creditsHelp(player, prefix);
     }
 
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6                    Based on Scythe AntiCheat"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§lGithub:§r https://https://github.com/MrDiamond64/Scythe-AntiCheat"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§lDeveloped and maintained by MrDiamond64"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§l§6                 Major Contributers For Scythe"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"Visual1mpact#1435 - Porting function-based commands to GameTest commands and finding many bugs"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n"}]}`);
-
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§l§6                        Paradox AntiCheat"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§lGithub:§r https://github.com/Visual1mpact/Paradox_AntiCheat"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§lParadox AntiCheat§r - a utility to fight against malicious hackers on Bedrock Edition."}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§lDeveloped and maintained by Visual1mpact"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§l§6                 Major Contributers For Paradox"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§l§4-----------------------------------------------------"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"Glitch#8024 - Implementing features and bug fixes"}]}`);
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n"}]}`);
+    sendMsgToPlayer(player, [
+        ` `,
+        `§l§6                    Based on Scythe AntiCheat`,
+        `§l§4-----------------------------------------------------`,
+        `§lGithub:§r https://https://github.com/MrDiamond64/Scythe-AntiCheat`,
+        `§lDeveloped and maintained by MrDiamond64`,
+        ` `,
+        `§l§6                 Major Contributers For Scythe`,
+        `§l§4-----------------------------------------------------`,
+        `Visual1mpact#1435 - Porting function-based commands to GameTest commands and finding many bugs`,
+        ` `,
+        `§l§6                        Paradox AntiCheat`,
+        `§l§4-----------------------------------------------------`,
+        `§lGithub:§r https://github.com/Visual1mpact/Paradox_AntiCheat`,
+        `§lParadox AntiCheat§r - a utility to fight against malicious hackers on Bedrock Edition.`,
+        `§lDeveloped and maintained by Visual1mpact`,
+        ` `,
+        `§l§6                 Major Contributers For Paradox`,
+        `§l§4-----------------------------------------------------`,
+        `Glitch#8024 - Implementing features and bug fixes`,
+        ` `,
+    ]);
     return;
 }

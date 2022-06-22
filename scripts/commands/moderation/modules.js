@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { getScore, disabler, getPrefix, crypto } from "../../util.js";
+import { getScore, disabler, getPrefix, crypto, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -11,16 +11,16 @@ function modulesHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: modules
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: modules [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Shows a list of modules that are enabled and disabled in Paradox.
-§4[§6Examples§4]§r:
-    ${prefix}modules
-    ${prefix}modules help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: modules`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: modules [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Shows a list of modules that are enabled and disabled in Paradox.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}modules`,
+        `    ${prefix}modules help`,
+    ])
 }
 
 /**
@@ -47,7 +47,7 @@ function modulesHelp(player, prefix) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix

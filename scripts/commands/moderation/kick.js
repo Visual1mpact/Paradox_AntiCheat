@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, disabler, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -14,18 +14,18 @@ function kickHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: kick
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: kick [optional]
-§4[§6Optional§4]§r: username, reason, help
-§4[§6Description§4]§r: Kick the specified user and optionally gives a reason.
-§4[§6Examples§4]§r:
-    ${prefix}kick ${disabler(player.nameTag)}
-    ${prefix}kick ${disabler(player.nameTag)} Hacker!
-    ${prefix}kick ${disabler(player.nameTag)} Stop trolling!
-    ${prefix}kick help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: kick`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: kick [optional]`,
+        `§4[§6Optional§4]§r: username, reason, help`,
+        `§4[§6Description§4]§r: Kick the specified user and optionally gives a reason.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}kick ${disabler(player.nameTag)}`,
+        `    ${prefix}kick ${disabler(player.nameTag)} Hacker!`,
+        `    ${prefix}kick ${disabler(player.nameTag)} Stop trolling!`,
+        `    ${prefix}kick help`,
+    ])
 }
 
 /**
@@ -59,7 +59,7 @@ export function kick(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -85,12 +85,12 @@ export function kick(message, args) {
     }
 
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // make sure they dont kick themselves
     if (disabler(member.nameTag) === disabler(player.nameTag)) {
-        return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You cannot kick yourself."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot kick yourself.`);
     }
 
     try {
@@ -101,7 +101,7 @@ export function kick(message, args) {
         }
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"I was unable to ban that player! Error: ${error}"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
     }
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has kicked ${disabler(member.nameTag)} (Silent:${isSilent}). Reason: ${reason}"}]}`);
+    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has kicked ${member.nameTag}§r. Reason: ${reason}`);
 }

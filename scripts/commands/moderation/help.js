@@ -1,6 +1,6 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";
 
 const World = world;
@@ -563,93 +563,94 @@ export function help(message) {
         badPackets2Command = `§6${prefix}badpackets2§r - Command §4DISABLED§r.`;
     }
 
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§l§6[§4Paradox AntiCheat Command Help§6]§r
-
-§l§6[§4Moderation Commands§6]§r
-§6${prefix}help§r - Shows this help page.
-${banCommand}
-${unbanCommand}
-${kickCommand}
-${muteCommand}
-${unmuteCommand}
-${notifyCommand}
-§6${prefix}credits§r - Shows credits, thats it.
-${opCommand}
-${deopCommand}
-${modulesCommand}
-§6${prefix}prefix <prefix>§r - Change the prefix for commands. Max is two characters.
-§6${prefix}prefix reset§r - Reset the prefix for commands.
-${lockdownCommand}
-${punishCommand}
-${tpaCommand}
-${despawnCommand}
-
-§l§6[§4Optional Features§6]§r
-${allowgmaCommand}
-${allowgmcCommand}
-${allowgmsCommand}
-${removecbCommand}
-${bedrockValidateCommand}
-${overridecbeCommand}
-${worldborderCommand}
-${autoclickerCommand}
-${jesusaCommand}
-${enchantedArmorCommand}
-${autoauraCommand}
-${antikbCommand}
-${badpackets1Command}
-${spammeraCommand}
-${spammerbCommand}
-${spammercCommand}
-${spammerdCommand}
-${antispamCommand}
-${crasheraCommand}
-${namespoofaCommand}
-${namespoofbCommand}
-${reachaCommand}
-${reachbCommand}
-${reachcCommand}
-${noslowaCommand}
-${flyaCommand}
-${illegalitemsaCommand}
-${illegalitemsbCommand}
-${illegalitemscCommand}
-${illegalItemsDCommand}
-${illegalEnchantCommand}
-${illegalLoresCommand}
-${invalidSprintACommand}
-${stackbanCommand}
-${antiscaffoldaCommand}
-${antinukeraCommand}
-${xrayaCommand}
-${chatranksCommand}
-${antishulkerCommand}
-${antiTeleportCommand}
-${rbcrCommand}
-${opsCommand}
-${salvageCommand}
-${badPackets2Command}
-
-§l§6[§4Tools and Utilites§6]§r
-${auracheckCommand}
-${ecwipeCommand}
-${flyCommand}
-${freezeCommand}
-${statsCommand}
-${fullreportCommand}
-${vanishCommand}
-${chatrank0}
-${chatrank1}
-${clearchatCommand}
-${invseeCommand}
-${sethomeCommand}
-${gohomeCommand}
-${listHomeCommand}
-${delHomeCommand}
-${performanceCommand}
-${hotbarCommand}
-
-§l§6[§4For more info execute the command with help§6]§r
-    "}]}`);
+    return sendMsgToPlayer(player, [
+        `§l§6[§4Paradox AntiCheat Command Help§6]§r`,
+        ` `,
+        `§l§6[§4Moderation Commands§6]§r`,
+        `§6${prefix}help§r - Shows this help page.`,
+        banCommand,
+        unbanCommand,
+        kickCommand,
+        muteCommand,
+        unmuteCommand,
+        notifyCommand,
+        `§6${prefix}credits§r - Shows credits, thats it.`,
+        opCommand,
+        deopCommand,
+        modulesCommand,
+        `§6${prefix}prefix <prefix>§r - Change the prefix for commands. Max is two characters.`,
+        `§6${prefix}prefix reset§r - Reset the prefix for commands.`,
+        lockdownCommand,
+        punishCommand,
+        tpaCommand,
+        despawnCommand,
+        ` `,
+        `§l§6[§4Optional Features§6]§r`,
+        allowgmaCommand,
+        allowgmcCommand,
+        allowgmsCommand,
+        removecbCommand,
+        bedrockValidateCommand,
+        overridecbeCommand,
+        worldborderCommand,
+        autoclickerCommand,
+        jesusaCommand,
+        enchantedArmorCommand,
+        autoauraCommand,
+        antikbCommand,
+        badpackets1Command,
+        spammeraCommand,
+        spammerbCommand,
+        spammercCommand,
+        spammerdCommand,
+        antispamCommand,
+        crasheraCommand,
+        namespoofaCommand,
+        namespoofbCommand,
+        reachaCommand,
+        reachbCommand,
+        reachcCommand,
+        noslowaCommand,
+        flyaCommand,
+        illegalitemsaCommand,
+        illegalitemsbCommand,
+        illegalitemscCommand,
+        illegalItemsDCommand,
+        illegalEnchantCommand,
+        illegalLoresCommand,
+        invalidSprintACommand,
+        stackbanCommand,
+        antiscaffoldaCommand,
+        antinukeraCommand,
+        xrayaCommand,
+        chatranksCommand,
+        antishulkerCommand,
+        antiTeleportCommand,
+        rbcrCommand,
+        opsCommand,
+        salvageCommand,
+        badPackets2Command,
+        ` `,
+        `§l§6[§4Tools and Utilites§6]§r`,
+        auracheckCommand,
+        ecwipeCommand,
+        flyCommand,
+        freezeCommand,
+        statsCommand,
+        fullreportCommand,
+        vanishCommand,
+        chatrank0,
+        chatrank1,
+        clearchatCommand,
+        invseeCommand,
+        sethomeCommand,
+        gohomeCommand,
+        listHomeCommand,
+        delHomeCommand,
+        performanceCommand,
+        hotbarCommand,,
+        ` `,
+        `§l§6[§4For more info execute the command with help§6]§r`,
+        ` `
+    ])
 }
