@@ -63,7 +63,7 @@ export default
         "chatranks": true,
         "antishulker": true,
         "stackban": true,
-        "lockdown": true,
+        "lockdown": false,
         "punish": true,
         "sethome": true,
         "gohome": true,
