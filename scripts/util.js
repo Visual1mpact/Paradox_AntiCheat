@@ -130,7 +130,7 @@ export function getScore(objective, player, { minimum, maximum } = {}) {
         }
     }
     if (!customprefix) {
-        return config.customcommands.prefix = config.customcommands.prefix;
+        return config.customcommands.prefix;
     }
 }
 
