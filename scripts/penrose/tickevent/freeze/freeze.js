@@ -46,6 +46,7 @@ function Freeze() {
             player.removeTag('freeze');
             player.runCommand(`effect "${disabler(player.nameTag)}" clear`);
             player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Cannot determine dimension for ${disabler(player.nameTag)}."}]}`);
+            playerLeaveEventCallback.unsubscribe(StopTickFreeze);
             tickEventCallback.unsubscribe(Freeze);
             return;
         }
@@ -117,6 +118,7 @@ function Freeze() {
         // Return them back to original coordinates
         player.teleport(new Location(backx, backy, backz), World.getDimension(realmID), 0, 0);
         player.removeTag('freezeactive');
+        playerLeaveEventCallback.unsubscribe(StopTickFreeze);
         tickEventCallback.unsubscribe(Freeze);
     }
 }
@@ -124,7 +126,6 @@ function Freeze() {
 // If they log off then unsubscribe Freeze
 function StopTickFreeze() {
     tickEventCallback.unsubscribe(Freeze);
-    playerLeaveEventCallback.unsubscribe(StopTickFreeze);
 }
 
 // Where the magic begins
