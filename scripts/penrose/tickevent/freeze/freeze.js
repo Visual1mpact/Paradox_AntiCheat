@@ -117,6 +117,7 @@ function Freeze() {
         // Return them back to original coordinates
         player.teleport(new Location(backx, backy, backz), World.getDimension(realmID), 0, 0);
         player.removeTag('freezeactive');
+        playerLeaveEventCallback.unsubscribe(StopTickFreeze);
         tickEventCallback.unsubscribe(Freeze);
     }
 }
@@ -124,7 +125,6 @@ function Freeze() {
 // If they log off then unsubscribe Freeze
 function StopTickFreeze() {
     tickEventCallback.unsubscribe(Freeze);
-    playerLeaveEventCallback.unsubscribe(StopTickFreeze);
 }
 
 // Where the magic begins
