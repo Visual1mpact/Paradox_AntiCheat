@@ -108,5 +108,5 @@ export function punish(message, args) {
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been punished for your behavior!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has punished ${member.nameTag}§r. Reason: ${reason}`);
+    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has punished ${member.nameTag}§r`);
 }
