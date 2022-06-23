@@ -273,6 +273,16 @@ export const enchantmentSlot = {
         'binding',
         'vanishing',
     ]),
+    // compass
+    524288: compatibles([
+        'binding',
+        'vanishing',
+    ]),
+    // warped fungus on a stick
+    1048576: compatibles([
+        'binding',
+        'vanishing',
+    ]),
     // All
     '-1': compatibles([
         'protection',

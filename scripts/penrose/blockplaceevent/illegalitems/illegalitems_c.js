@@ -1,7 +1,7 @@
 import { world, BlockLocation, MinecraftItemTypes, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
-import { flag, disabler, toCamelCase, crypto, titleCase } from "../../../util.js";
+import { flag, toCamelCase, crypto, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";
@@ -106,11 +106,8 @@ function illegalitemsc(object) {
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (antiShulkerBoolean && block.id === "minecraft:shulker_box" || antiShulkerBoolean && block.id === "minecraft:undyed_shulker_box") {
-        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-        try {
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${block.id.replace("minecraft:", "")} from ${disabler(player.nameTag)}."}]}`);
-        } catch (error) {}
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!"}]}`);
+        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${block.id.replace("minecraft:", "")} from ${player.nameTag}.`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`)
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
@@ -275,11 +272,8 @@ function illegalitemsc(object) {
             if (inventory_item.amount > config.modules.illegalitemsC.maxStack) {
                 // Item stacks over 64 we remove
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", block.id.replace('minecraft:', ""), false, false);
-                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                try {
-                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} detected with stacked items greater than x64."}]}`);
-                } catch (error) {}
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!"}]}`);
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x64.`)
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!`)
                 if (stackBanBoolean) {
                     return rip(player, inventory_item, false, false);
                 }
@@ -293,11 +287,8 @@ function illegalitemsc(object) {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
-                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                try {
-                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed ${inventory.id.replace("minecraft:", "")} with lore from ${disabler(player.nameTag)}."}]}`);
-                } catch (error) {}
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Items with illegal Lores are not allowed!"}]}`);
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`)
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`)
                 continue;
             }
             if (illegalEnchantmentBoolean) {
@@ -323,12 +314,11 @@ function illegalitemsc(object) {
                             try {
                                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                             } catch {}
-                            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                            try {
-                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(player.nameTag)}§4]§r §6=>§r §4[§f${block.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
-                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
-                            } catch (error) {}
-                            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                            sendMsg('@a[tag=notify]', [
+                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
+                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
+                            ])
+                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
                             rip(player, inventory_item, enchant_data, false);
                             break;
                         }
@@ -339,12 +329,11 @@ function illegalitemsc(object) {
                             try {
                                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                             } catch {}
-                            // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                            try {
-                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r §4[§f${disabler(player.nameTag)}§4]§r §6=>§r §4[§f${block.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r"}]}`);
-                                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${disabler(player.nameTag)}."}]}`);
-                            } catch (error) {}
-                            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!"}]}`);
+                            sendMsg('@a[tag=notify]', [
+                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
+                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
+                            ])
+                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
                             rip(player, inventory_item, enchant_data, false);
                             break;
                         }
@@ -357,11 +346,8 @@ function illegalitemsc(object) {
                 // Most items with a container should be empty when placing down
                 // If we detect items in the container when being placed then it is a hack
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.id.replace('minecraft:', ""), false, false);
-                // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-                try {
-                    player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${disabler(player.nameTag)} placed a nested chest at X=${x.toFixed(0)}, Y=${y.toFixed(0)}, Z=${z.toFixed(0)}. Chest has been cleared!"}]}`);
-                } catch (error) {}
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!"}]}`);
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} placed a nested chest at X=${x.toFixed(0)}, Y=${y.toFixed(0)}, Z=${z.toFixed(0)}. Chest has been cleared!`)
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!`)
                 // Clear this container from the world
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 continue;

@@ -1,5 +1,5 @@
 import { BlockLocation, Location, world } from "mojang-minecraft";
-import { crypto, disabler } from "../../../util.js";
+import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -75,7 +75,7 @@ function worldborder() {
         if (borderSize != 0) {
             // Make sure nobody climbs over the wall
             if (x > borderSize || x < -borderSize || z > borderSize || z < -borderSize) {
-                player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§4§lHey!§r You have reached the world border."}]}`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`)
                 if (x >= borderSize) {
                     let safe = safetyProtocol(player, borderSize - 3, y, z);
                     player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, 0);

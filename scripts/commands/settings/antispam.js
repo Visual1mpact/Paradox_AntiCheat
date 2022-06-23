@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
@@ -18,17 +18,17 @@ function antispamHelp(player, prefix, antiSpamBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: antispam
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: antispam [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Checks for spamming in chat with 2 second cooldown.
-§4[§6Examples§4]§r:
-    ${prefix}antispam
-    ${prefix}antispam help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: antispam`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: antispam [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Checks for spamming in chat with 2 second cooldown.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}antispam`,
+        `    ${prefix}antispam help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function antispam(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -76,13 +76,13 @@ export function antispam(message, args) {
     if (antiSpamBoolean === false) {
         // Allow
         World.setDynamicProperty('antispam_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6Anti Spam§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Spam§r!`)
         AntiSpam();
         return;
     } else if (antiSpamBoolean === true) {
         // Deny
         World.setDynamicProperty('antispam_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4Anti Spam§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Spam§r!`)
         return;
     }
 }

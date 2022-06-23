@@ -454,10 +454,5 @@ export default
         name: 'minecraft:sticky_piston',
         data: 0,
         nametag: 'sticky_piston'
-    },
-    'minecraft:lodestone_compass': {
-        name: 'minecraft:lodestone_compass',
-        data: 0,
-        nametag: 'lodestone_compass'
     }
 };

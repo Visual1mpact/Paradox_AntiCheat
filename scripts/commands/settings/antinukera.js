@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
@@ -18,17 +18,17 @@ function antinukeraHelp(player, prefix, antiNukerABoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: antinukera
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: antinukera [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Checks player's for nuking blocks.
-§4[§6Examples§4]§r:
-    ${prefix}antinukera
-    ${prefix}antinukera help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: antinukera`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: antinukera [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Checks player's for nuking blocks.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}antinukera`,
+        `    ${prefix}antinukera help`,
+    ])
 }
 
 /**
@@ -55,7 +55,7 @@ export function antinukerA(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -76,13 +76,13 @@ export function antinukerA(message, args) {
     if (antiNukerABoolean === false) {
         // Allow
         World.setDynamicProperty('antinukera_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6AntiNukerA§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`)
         NukerA();
         return;
     } else if (antiNukerABoolean === true) {
         // Deny
         World.setDynamicProperty('antinukera_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4AntiNukerA§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`)
         return;
     }
 }

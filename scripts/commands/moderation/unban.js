@@ -1,11 +1,11 @@
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 
 export const queueUnban = new Set();
 
 function listQueue(queue, player) {
     if (queue) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r ${queue} is queued to be unbanned!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${player.nameTag}§r is queued to be unbanned`);
     }
 }
 
@@ -16,17 +16,17 @@ function unbanHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: unban
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: unban [optional]
-§4[§6Optional§4]§r: username, list, help
-§4[§6Description§4]§r: Allows specified players to join if banned (Doesn't include global ban).
-§4[§6Examples§4]§r:
-    ${prefix}unban ${disabler(player.nameTag)}
-    ${prefix}unban list
-    ${prefix}unban help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: unban`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: unban [optional]`,
+        `§4[§6Optional§4]§r: username, list, help`,
+        `§4[§6Description§4]§r: Allows specified players to join if banned (Doesn't include global ban).`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}unban ${player.nameTag}`,
+        `    ${prefix}unban list`,
+        `    ${prefix}unban help`,
+    ])
 }
 
 /**
@@ -53,7 +53,7 @@ export function unban(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -71,5 +71,5 @@ export function unban(message, args) {
     // Add player to queue
     let regexp = /["'`]/g;
     queueUnban.add(args.join(" ").replace(regexp, ""));
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!"}]}`);
+    sendMsg('@a[tag=paradoxOpped', `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`)
 }

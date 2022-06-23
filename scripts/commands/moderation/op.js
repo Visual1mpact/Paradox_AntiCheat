@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, generateUUID, getPrefix } from "../../util.js";
+import { crypto, generateUUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -13,16 +13,16 @@ function opHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: op
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: op [optional]
-§4[§6Optional§4]§r: username, help
-§4[§6Description§4]§r: Grants permission to use Paradox AntiCheat features.
-§4[§6Examples§4]§r:
-    ${prefix}op ${disabler(player.nameTag)}
-    ${prefix}op help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: op`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: op [optional]`,
+        `§4[§6Optional§4]§r: username, help`,
+        `§4[§6Description§4]§r: Grants permission to use Paradox AntiCheat features.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}op ${player.nameTag}`,
+        `    ${prefix}op help`,
+    ])
 }
 
 /**
@@ -61,10 +61,13 @@ export function op(message, args) {
     }
     // Make sure the user has permissions to run the command
     if (hash === undefined || hash !== encode && args[0] !== config.modules.encryption.password) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     } else if (hash === encode && args[0] === config.modules.encryption.password) {
         // Old stuff that makes up for less than 5% of the project
-        return player.runCommand(`execute "${disabler(player.nameTag)}" ~~~ function op`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`)
+        player.addTag('paradoxOpped')
+        return
     }
 
     // Check for custom prefix
@@ -92,7 +95,7 @@ export function op(message, args) {
     }
     
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // Check for hash/salt and validate password
@@ -109,5 +112,7 @@ export function op(message, args) {
         member.setDynamicProperty('hash', encode);
         memberHash = member.getDynamicProperty('hash');
     }
-    return player.runCommand(`execute "${disabler(member.nameTag)}" ~~~ function op`);
+    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`)
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`)
+    member.addTag('paradoxOpped')
 }

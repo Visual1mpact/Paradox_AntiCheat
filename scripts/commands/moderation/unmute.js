@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -12,17 +12,17 @@ function unmuteHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: unmute
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: unmute [optional]
-§4[§6Optional§4]§r: username, reason, help
-§4[§6Description§4]§r: Unmutes the specified user and optionally gives a reason.
-§4[§6Examples§4]§r:
-    ${prefix}unmute ${disabler(player.nameTag)}
-    ${prefix}unmute ${disabler(player.nameTag)} You may chat
-    ${prefix}unmute help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: unmute`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: unmute [optional]`,
+        `§4[§6Optional§4]§r: username, reason, help`,
+        `§4[§6Description§4]§r: Unmutes the specified user and optionally gives a reason.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}unmute ${player.nameTag}`,
+        `    ${prefix}unmute ${player.nameTag} You may chat`,
+        `    ${prefix}unmute help`,
+    ])
 }
 
 /**
@@ -50,7 +50,7 @@ export function unmute(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -76,19 +76,19 @@ export function unmute(message, args) {
     }
     
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // If not already muted then tag
     if (member.hasTag('isMuted')) {
         member.removeTag('isMuted');
     } else {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(member.nameTag)} is already unmuted."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is not muted.`);
     }
     // If Education Edition is enabled then legitimately unmute
     try {
-        player.runCommand(`ability "${disabler(member.nameTag)}" mute false`);
+        member.runCommand(`ability @s mute false`);
     } catch (error) {}
-    player.runCommand(`tellraw "${disabler(member.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You have been unmuted."}]}`);
-    return player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has unmuted ${disabler(member.nameTag)}. Reason: ${reason}"}]}`);
+    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted.`)
+    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has unmuted ${member.nameTag}§r. Reason: ${reason}`);
 }

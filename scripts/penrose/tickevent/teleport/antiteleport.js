@@ -1,5 +1,5 @@
 import { world, BlockLocation, Location } from "mojang-minecraft";
-import { crypto, getScore } from "../../../util.js";
+import { crypto, getScore, sendMsg } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -84,7 +84,7 @@ function antiteleport() {
                     player.runCommand(`scoreboard players add @s tpvl 1`);
                     player.teleport(new Location(xScore, yScore, zScore), player.dimension, 0, 0);
                     try {
-                        player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has failed §7(Movement) §4Teleport/A. VL= "},{"score":{"name":"@s","objective":"tpvl"}}]}`);
+                        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(Movement) §4Teleport/A. VL= ${getScore('tpvl', player)}`);
                     } catch (e) {}
                 }
             }

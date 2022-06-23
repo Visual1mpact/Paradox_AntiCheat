@@ -1,10 +1,10 @@
 import { world, Location } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
-let cooldownTimer = new Map();
+let cooldownTimer = new WeakMap();
 
 function dhms (ms) {
     const days = Math.floor(ms / (24*60*60*1000));
@@ -35,16 +35,16 @@ function goHomeHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: gohome
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: gohome [optional]
-§4[§6Optional§4]§r: name, help
-§4[§6Description§4]§r: Return home to a specified saved location.
-§4[§6Examples§4]§r:
-    ${prefix}gohome barn
-    ${prefix}gohome help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: gohome`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: gohome [optional]`,
+        `§4[§6Optional§4]§r: name, help`,
+        `§4[§6Description§4]§r: Return home to a specified saved location.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}gohome barn`,
+        `    ${prefix}gohome help`,
+    ])
 }
 
 /**
@@ -73,7 +73,7 @@ export function gohome(message, args) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
     }
 
     let homex;
@@ -107,12 +107,12 @@ export function gohome(message, args) {
     }
 
     if (!homex || !homey || !homez || !dimension) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} does not exist!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`)
     } else {
         let cooldownCalc;
         let activeTimer;
         // Get original time in milliseconds
-        let cooldownVerify = cooldownTimer.get(disabler(player.nameTag));
+        let cooldownVerify = cooldownTimer.get(player);
         // Convert config settings to milliseconds so we can be sure the countdown is accurate
         let msSettings = (config.modules.goHome.days * 24 * 60 * 60 * 1000) + (config.modules.goHome.hours * 60 * 60 * 1000) + (config.modules.goHome.minutes * 60 * 1000) + (config.modules.goHome.seconds * 1000);
         if (cooldownVerify !== undefined) {
@@ -128,16 +128,16 @@ export function gohome(message, args) {
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || player.hasTag('Hash:' + crypto)) {
-            player.runCommand(`scoreboard players set "${disabler(player.nameTag)}" teleport 25`);
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Welcome back ${disabler(player.nameTag)}!"}]}`);
+            player.runCommand(`scoreboard players set @s teleport 25`);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`)
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value
-            cooldownTimer.delete(disabler(player.nameTag));
+            cooldownTimer.delete(player);
             // Create new key and value with current time in milliseconds
-            cooldownTimer.set(disabler(player.nameTag), new Date().getTime());
+            cooldownTimer.set(player, new Date().getTime());
         } else {
             // Teleporting to fast
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Please wait ${activeTimer} before going home!"}]}`);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Too fast! Please wait for ${activeTimer} before going home.`)
         }
     }
 }

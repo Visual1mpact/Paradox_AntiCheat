@@ -1,4 +1,4 @@
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 
@@ -17,17 +17,17 @@ function stackBanHelp(player, prefix, stackBanBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: stackban
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: stackban [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Toggles checks for player's with illegal stacks over 64.
-§4[§6Examples§4]§r:
-    ${prefix}stackban
-    ${prefix}stackban help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: stackban`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: stackban [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Toggles checks for player's with illegal stacks over 64.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}stackban`,
+        `    ${prefix}stackban help`,
+    ])
 }
 
 /**
@@ -54,7 +54,7 @@ export function stackban(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -91,18 +91,18 @@ export function stackban(message, args) {
         }
         // If illegal items are not enabled then let user know this feature is inaccessible
         // It will not work without one of them
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to enable Illegal Items to use this feature."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable Illegal Items to use this feature.`)
     }
 
     if (stackBanBoolean === false) {
         // Allow
         World.setDynamicProperty('stackban_b', true);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has enabled §6StackBans§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6StackBans§r!`)
         return;
     } else if (stackBanBoolean === true) {
         // Deny
         World.setDynamicProperty('stackban_b', false);
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled §4StackBans§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4StackBans§r!`)
         return;
     }
 }

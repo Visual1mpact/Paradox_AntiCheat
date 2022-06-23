@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { WorldBorder } from "../../penrose/tickevent/worldborder/worldborder.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -18,19 +18,19 @@ function worldBorderHelp(player, prefix, worldBorderBoolean) {
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: worldborder
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Module§4]§r: ${moduleStatus}
-§4[§6Usage§4]§r: worldborder <value> [optional]
-§4[§6Optional§4]§r: disable, help
-§4[§6Description§4]§r: Sets the world border and restricts players to that border.
-§4[§6Examples§4]§r:
-    ${prefix}worldborder 1000
-    ${prefix}worldborder 25689
-    ${prefix}worldborder disable
-    ${prefix}worldborder help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: worldborder`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Module§4]§r: ${moduleStatus}`,
+        `§4[§6Usage§4]§r: worldborder <value> [optional]`,
+        `§4[§6Optional§4]§r: disable, help`,
+        `§4[§6Description§4]§r: Sets the world border and restricts players to that border.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}worldborder 1000`,
+        `    ${prefix}worldborder 25689`,
+        `    ${prefix}worldborder disable`,
+        `    ${prefix}worldborder help`,
+    ])
 }
 
 /**
@@ -57,7 +57,7 @@ export function worldborders(message, args) {
     } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -78,14 +78,14 @@ export function worldborders(message, args) {
 
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has set the §6World Border§r to ${argCheck}!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r to ${argCheck}!`)
         World.setDynamicProperty('worldborder_b', true);
         World.setDynamicProperty('worldborder_n', Math.abs(argCheck));
         WorldBorder();
         return;
     } else if (argCheck === "disable") {
         // Disable Worldborder
-        player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" has disabled the §6World Border§r!"}]}`);
+        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled the §6World Border§r!`)
         World.setDynamicProperty('worldborder_b', false);
         World.setDynamicProperty('worldborder_n', 0);
         return;

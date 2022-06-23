@@ -1,3 +1,4 @@
 .*
+tsconfig.json
+types
 !.gitignore
-.vscode/

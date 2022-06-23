@@ -1,6 +1,6 @@
 import { world, Player, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { crypto } from "../../../util.js";
+import { crypto, sendMsg } from "../../../util.js";
 
 const World = world;
 
@@ -18,7 +18,7 @@ function noperms() {
         }
         // This covers a bug that exists in Minecraft where for a brief tick the player will not return as a player entity
         // This bug would essentially cause this script to remove permissions from staff unintentionally
-        if (playerArray.includes(entity.nameTag)) {
+        if (playerArray.includes(entity)) {
             // Skip to the next entity since this is a bug in Minecraft
             continue;
         }
@@ -38,7 +38,7 @@ function noperms() {
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
-            entity.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${entity.id} had unauthorized permissions. Permissions removed!"}]}`);
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
         } catch (error) {}
     }
 }

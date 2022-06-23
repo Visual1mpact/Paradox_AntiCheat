@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
-import { banMessage, disabler } from "../../../util.js";
+import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { setTickInterval } from "../../../timer/scheduling.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
@@ -10,7 +10,7 @@ function serverban() {
     filter.tags = ['isBanned'];
     // run as each player
     for (let player of World.getPlayers(filter)) {
-        if (queueUnban.has(disabler(player.nameTag))) {
+        if (queueUnban.has(player.nameTag)) {
             // Remove tag
             player.removeTag('isBanned');
 
@@ -27,11 +27,11 @@ function serverban() {
             });
 
             // Remove player from queue
-            queueUnban.delete(disabler(player.nameTag));
+            queueUnban.delete(player.nameTag);
 
             // Let staff and player know they are unbanned
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been unbanned."}]}`);
-            player.runCommand(`tellraw @a[tag=paradoxOpped] {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} has been unbanned."}]}`);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have been unbanned.`)
+            sendMsg(`@a[tag=paradoxOpped]`, `§r§4[§6Paradox§4]§r ${player.nameTag} has been unbanned.`)
             continue;
         }
         // Ban message

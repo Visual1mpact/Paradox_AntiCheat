@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
-import { disabler, getPrefix, getScore, tagRank } from "../../../util.js";
+import { getPrefix } from "../../../util.js";
 
 const World = world;
 
@@ -18,14 +18,14 @@ function onJoinTime() {
     }
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor @a[name=${disabler(player.nameTag)}]`);
+        player.runCommand(`testfor @s`);
 
         // Lock down the server if enabled
         if (lockdownBoolean) {
             let reason = "Under Maintenance! Sorry for the inconvenience.";
             try {
                 // Kick players from server
-                player.runCommand(`kick "${player.name}" ${reason}`);
+                player.runCommand(`kick ${JSON.stringify(player.name)} ${reason}`);
             } catch (error) {
                 // Despawn players from server
                 player.triggerEvent('paradox:kick');

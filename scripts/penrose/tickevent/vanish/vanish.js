@@ -1,6 +1,6 @@
 import { world, MinecraftEffectTypes, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { crypto, disabler } from "../../../util.js";
+import { crypto, sendMsg } from "../../../util.js";
 
 const World = world;
 
@@ -31,11 +31,11 @@ function vanish() {
             // They have been busted!
             player.removeTag('vanish');
             if (player.getEffect(MinecraftEffectTypes.invisibility) || player.getEffect(MinecraftEffectTypes.nightVision)) {
-                player.runCommand(`effect "${disabler(player.nameTag)}" clear`);
+                player.runCommand(`effect @s clear`);
             }
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {
-                player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"${disabler(player.nameTag)} had unauthorized permissions for Vanish. Permission removed!"}]}`);
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions for Vanish. Permissions removed!`)
             } catch (error) {}
         }
     }

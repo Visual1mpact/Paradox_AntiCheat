@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world, Location } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, disabler, getPrefix } from "../../util.js";
+import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -13,16 +13,16 @@ function tpaHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: tpa
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: tpa [optional]
-§4[§6Optional§4]§r: username, help
-§4[§6Description§4]§r: Teleport to another player.
-§4[§6Examples§4]§r:
-    ${prefix}tpa ${disabler(player.nameTag)}
-    ${prefix}tpa help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: tpa`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: tpa [optional]`,
+        `§4[§6Optional§4]§r: username, help`,
+        `§4[§6Description§4]§r: Teleport to another player.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}tpa ${player.nameTag}`,
+        `    ${prefix}tpa help`,
+    ])
 }
 
 /**
@@ -49,7 +49,7 @@ export function tpa(message, args) {
     } catch (error) {}
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You need to be Paradox-Opped to use this command."}]}`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -78,24 +78,12 @@ export function tpa(message, args) {
     
     // Are they online?
     if (!member) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"Couldnt find that player!"}]}`);
-    }
-
-    let currentDimension;
-    // Save which dimension they were in
-    if (member.dimension.id === "minecraft:overworld") {
-        currentDimension = "overworld";
-    }
-    if (member.dimension.id === "minecraft:nether") {
-        currentDimension = "nether";
-    }
-    if (member.dimension.id === "minecraft:the_end") {
-        currentDimension = "the end";
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // Let's teleport you to that player
-    player.teleport(new Location(member.location.x, member.location.y, member.location.z), World.getDimension(currentDimension), 0, 0);
+    player.teleport(new Location(member.location.x, member.location.y, member.location.z), member.dimension, 0, 0);
 
     // Let you know that you have been teleported
-    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have been teleported to ${disabler(member.nameTag)}."}]}`);
+    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported to ${member.nameTag}`);
 }

@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function listHomeHelp(player, prefix) {
     let commandStatus;
@@ -8,16 +8,16 @@ function listHomeHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: listhome
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: listhome [optional]
-§4[§6Optional§4]§r: help
-§4[§6Description§4]§r: Shows a list of saved home locations.
-§4[§6Examples§4]§r:
-    ${prefix}listhome
-    ${prefix}listhome help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: listhome`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: listhome [optional]`,
+        `§4[§6Optional§4]§r: help`,
+        `§4[§6Description§4]§r: Shows a list of saved home locations.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}listhome`,
+        `    ${prefix}listhome help`,
+    ])
 }
 
 /**
@@ -79,9 +79,9 @@ export function listhome(message, args) {
                 } else {
                     verify = true;
                     if (counter === 1) {
-                        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"§l§6[§4List Of Homes§6]§r"}]}`);
+                        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r §l§6[§4List Of Homes§6]§r.`);
                     }
-                    player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"§4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r"}]}`);
+                    sendMsgToPlayer(player, ` | §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r.`);
                     continue;
                 }
             }
@@ -90,7 +90,7 @@ export function listhome(message, args) {
         continue;
     }
     if (verify === false) {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"text":"You do not have any saved locations!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have none saved locations.`);
     }
     return;
 }

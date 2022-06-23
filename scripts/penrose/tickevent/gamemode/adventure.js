@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { crypto } from "../../../util.js";
+import { crypto, getScore, sendMsg } from "../../../util.js";
 
 const World = world;
 
@@ -58,10 +58,7 @@ function adventure() {
             player.runCommand(`gamemode s`);
         }
         player.runCommand(`scoreboard players add @s gamemodevl 1`);
-        // Use try/catch since it could report no target selector if no player is found with tag for notify
-        try {
-            player.runCommand(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§4[§6Paradox§4]§r "},{"selector":"@s"},{"text":" §6has tried to change their gamemode §7(Gamemode_A)§6.§4 VL= "},{"score":{"name":"@s","objective":"gamemodevl"}}]}`);
-        } catch (error) {}
+        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has tried to change their gamemode §7(Gamemode_A)§6.§4 VL= ${getScore('gamemodevl', player)}`);
     }
 }
 

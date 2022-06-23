@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { disabler, getPrefix } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function delhomeHelp(player, prefix) {
     let commandStatus;
@@ -8,16 +8,16 @@ function delhomeHelp(player, prefix) {
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
-    return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"
-§4[§6Command§4]§r: delhome
-§4[§6Status§4]§r: ${commandStatus}
-§4[§6Usage§4]§r: delhome [optional]
-§4[§6Optional§4]§r: name, help
-§4[§6Description§4]§r: Will delete specified saved home location.
-§4[§6Examples§4]§r:
-    ${prefix}delhome cave
-    ${prefix}delhome help
-"}]}`);
+    return sendMsgToPlayer(player, [
+        `§4[§6Command§4]§r: delhome`,
+        `§4[§6Status§4]§r: ${commandStatus}`,
+        `§4[§6Usage§4]§r: delhome [optional]`,
+        `§4[§6Optional§4]§r: name, help`,
+        `§4[§6Description§4]§r: Will delete specified saved home location.`,
+        `§4[§6Examples§4]§r:`,
+        `    ${prefix}delhome cave`,
+        `    ${prefix}delhome help`,
+    ])
 }
 
 /**
@@ -46,7 +46,7 @@ export function delhome(message, args) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        return player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"No spaces in names please!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
     }
 
     // Find and delete this saved home location
@@ -56,13 +56,13 @@ export function delhome(message, args) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
             player.removeTag(tags[i]);
-            player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"You have successfully deleted ${args[0]}!"}]}`);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${args[0]}'!`)
             break;
         }
     }
     if (verify === true) {
         return;
     } else {
-        player.runCommand(`tellraw "${disabler(player.nameTag)}" {"rawtext":[{"text":"\n§r§4[§6Paradox§4]§r "},{"text":"${args[0]} does not exist!"}]}`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`)
     }
 }
