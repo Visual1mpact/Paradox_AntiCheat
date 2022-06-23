@@ -81,7 +81,7 @@ export function freeze(message, args) {
         memberEncode = crypto(memberSalt, config.modules.encryption.password);
     } catch (error) {}
 
-    if (memberHash !== undefined && memberEncode === hash) {
+    if (memberHash !== undefined && memberEncode === memberHash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze staff members.`);
     }
 
