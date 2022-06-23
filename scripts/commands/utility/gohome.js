@@ -76,6 +76,14 @@ export function gohome(message, args) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
     }
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty('hash');
+    let salt = player.getDynamicProperty('salt');
+    let encode;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+
     let homex;
     let homey;
     let homez;
@@ -127,7 +135,7 @@ export function gohome(message, args) {
             cooldownCalc = msSettings;
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
-        if (cooldownCalc === msSettings || cooldownCalc <= 0 || player.hasTag('Hash:' + crypto)) {
+        if (cooldownCalc === msSettings || cooldownCalc <= 0 || hash !== undefined && encode === hash) {
             player.runCommand(`scoreboard players set @s teleport 25`);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`)
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
