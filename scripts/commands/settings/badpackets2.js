@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { BadPackets2 } from "../../penrose/tickevent/badpackets2/badpackets2.js";
@@ -76,13 +76,13 @@ export function badpackets2(message, args) {
     if (badPackets2Boolean === false) {
         // Allow
         World.setDynamicProperty('badpackets2_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets2§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets2§r!`)
         BadPackets2();
         return;
     } else if (badPackets2Boolean === true) {
         // Deny
         World.setDynamicProperty('badpackets2_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets2§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets2§r!`)
         return;
     }
 }

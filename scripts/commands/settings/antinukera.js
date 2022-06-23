@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
@@ -76,13 +76,13 @@ export function antinukerA(message, args) {
     if (antiNukerABoolean === false) {
         // Allow
         World.setDynamicProperty('antinukera_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`)
         NukerA();
         return;
     } else if (antiNukerABoolean === true) {
         // Deny
         World.setDynamicProperty('antinukera_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`)
         return;
     }
 }

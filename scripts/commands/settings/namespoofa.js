@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { NamespoofA } from "../../penrose/tickevent/namespoof/namespoof_a.js";
@@ -76,13 +76,13 @@ export function namespoofA(message, args) {
     if (nameSpoofBoolean === false) {
         // Allow
         World.setDynamicProperty('namespoofa_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofA§r!`)
         NamespoofA();
         return;
     } else if (nameSpoofBoolean === true) {
         // Deny
         World.setDynamicProperty('namespoofa_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofA§r!`)
         return;
     }
 }

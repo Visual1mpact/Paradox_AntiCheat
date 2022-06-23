@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { InvalidSprintA } from "../../penrose/tickevent/invalidsprint/invalidsprint_a.js";
@@ -76,13 +76,13 @@ export function invalidsprintA(message, args) {
     if (invalidSprintABoolean === false) {
         // Allow
         World.setDynamicProperty('invalidsprinta_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6InvalidSprintA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6InvalidSprintA§r!`)
         InvalidSprintA();
         return;
     } else if (invalidSprintABoolean === true) {
         // Deny
         World.setDynamicProperty('invalidsprinta_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4InvalidSprintA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4InvalidSprintA§r!`)
         return;
     }
 }

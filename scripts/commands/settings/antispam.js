@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
@@ -76,13 +76,13 @@ export function antispam(message, args) {
     if (antiSpamBoolean === false) {
         // Allow
         World.setDynamicProperty('antispam_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Spam§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Spam§r!`)
         AntiSpam();
         return;
     } else if (antiSpamBoolean === true) {
         // Deny
         World.setDynamicProperty('antispam_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Spam§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Spam§r!`)
         return;
     }
 }

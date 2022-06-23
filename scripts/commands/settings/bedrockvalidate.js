@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -76,12 +76,12 @@ export function bedrockvalidate(message, args) {
     if (bedrockValidateBoolean === false) {
         // Allow
         World.setDynamicProperty('bedrockvalidate_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`)
         BedrockValidate();
         return;
     } else if (bedrockValidateBoolean === true) {
         // Deny
         World.setDynamicProperty('bedrockvalidate_b', false);
-        return sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4BedrockValidate§r!`)
+        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4BedrockValidate§r!`)
     }
 }

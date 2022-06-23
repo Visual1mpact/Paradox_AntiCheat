@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { FlyA } from "../../penrose/tickevent/fly/fly_a.js";
@@ -76,13 +76,13 @@ export function flyA(message, args) {
     if (flyABoolean === false) {
         // Allow
         World.setDynamicProperty('flya_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6FlyA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6FlyA§r!`)
         FlyA();
         return;
     } else if (flyABoolean === true) {
         // Deny
         World.setDynamicProperty('flya_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4FlyA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4FlyA§r!`)
         return;
     }
 }

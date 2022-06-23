@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { crypto, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function enchantedArmorHelp(player, prefix, encharmorscore) {
     let commandStatus;
@@ -68,11 +68,11 @@ export function enchantedarmor(message, args) {
     if (encharmorscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config encharmor 1`);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Enchanted Armor§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Enchanted Armor§r!`)
     } else if (encharmorscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config encharmor 0`);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Enchanted Armor§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Enchanted Armor§r!`)
     }
     return player.runCommand(`scoreboard players operation @a encharmor = paradox:config encharmor`);
 }

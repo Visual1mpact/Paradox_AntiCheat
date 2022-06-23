@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 
@@ -75,12 +75,12 @@ export function rbcr(message, args) {
     if (rcbrBoolean === false) {
         // Allow
         World.setDynamicProperty('rcbr_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Realm Bot Chat Relay§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Realm Bot Chat Relay§r!`)
         return;
     } else if (rcbrBoolean === true) {
         // Deny
         World.setDynamicProperty('rcbr_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Realm Bot Chat Relay§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Realm Bot Chat Relay§r!`)
         return;
     }
 }

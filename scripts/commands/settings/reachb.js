@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
@@ -76,13 +76,13 @@ export function reachB(message, args) {
     if (reachBBoolean === false) {
         // Allow
         World.setDynamicProperty('reachb_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachB§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachB§r!`)
         ReachB();
         return;
     } else if (reachBBoolean === true) {
         // Deny
         World.setDynamicProperty('reachb_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachB§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachB§r!`)
         return;
     }
 }

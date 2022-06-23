@@ -1,7 +1,7 @@
 import { world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { WorldBorder } from "../../penrose/tickevent/worldborder/worldborder.js";
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -78,14 +78,14 @@ export function worldborders(message, args) {
 
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r to ${argCheck}!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r to ${argCheck}!`)
         World.setDynamicProperty('worldborder_b', true);
         World.setDynamicProperty('worldborder_n', Math.abs(argCheck));
         WorldBorder();
         return;
     } else if (argCheck === "disable") {
         // Disable Worldborder
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled the §6World Border§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled the §6World Border§r!`)
         World.setDynamicProperty('worldborder_b', false);
         World.setDynamicProperty('worldborder_n', 0);
         return;

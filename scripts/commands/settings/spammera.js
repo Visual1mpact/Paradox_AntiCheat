@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { SpammerA } from "../../penrose/beforechatevent/spammer/spammer_a.js";
@@ -76,13 +76,13 @@ export function spammerA(message, args) {
     if (spammerABoolean === false) {
         // Allow
         World.setDynamicProperty('spammera_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerA§r!`)
         SpammerA();
         return;
     } else if (spammerABoolean === true) {
         // Deny
         World.setDynamicProperty('spammera_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerA§r!`)
         return;
     }
 }

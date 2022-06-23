@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { crypto, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function removeCBEHelp(player, prefix, commandblocksscore) {
     let commandStatus;
@@ -68,11 +68,11 @@ export function removecommandblocks(message, args) {
     if (commandblocksscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Command Blocks§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Command Blocks§r!`)
     } else if (commandblocksscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Command Blocks§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Command Blocks§r!`)
     }
     return player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
 }

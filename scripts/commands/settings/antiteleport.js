@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { world } from "mojang-minecraft";
 import { AntiTeleport } from "../../penrose/tickevent/teleport/antiteleport.js";
@@ -76,13 +76,13 @@ export function antiteleport(message, args) {
     if (antiTeleportBoolean === false) {
         // Allow
         World.setDynamicProperty('antiteleport_b', true);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Teleport§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Teleport§r!`)
         AntiTeleport();
         return;
     } else if (antiTeleportBoolean === true) {
         // Deny
         World.setDynamicProperty('antiteleport_b', false);
-        sendMsgToPlayer('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Teleport§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Teleport§r!`)
         return;
     }
 }
