@@ -154,7 +154,7 @@ function modulesHelp(player, prefix) {
         `Salvage: ${status(savageBoolean)}`,
         `Lockdown: ${status(lockdownBoolean)}`,
         `Badpackets2: ${status(badPackets2Boolean)}`,
-        `OverideCommandBlocksEnabled: ${cmds == 1 ? '§aENABLED' : '§4DISABLED'}`,
+        `OverideCommandBlocksEnabled: ${status(cmds)}`,
         `RemoveCommandBlocks: ${status(commandblocks)}`,
         `Anti-Knockback: ${status(antikb)}`,
         `Autoaura: ${status(autoaura)}`,
