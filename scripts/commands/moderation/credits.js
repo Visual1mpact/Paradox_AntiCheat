@@ -76,6 +76,7 @@ export function credits(message, args) {
         `§l§6                 Major Contributers For Paradox`,
         `§l§4-----------------------------------------------------`,
         `Glitch#8024 - Implementing features and bug fixes`,
+        `FrostIce482#8139 - Implementing features, enhancing debugging, and bug fixes`,
         ` `,
     ]);
     return;
