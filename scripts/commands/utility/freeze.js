@@ -73,7 +73,15 @@ export function freeze(message, args) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    if (member.hasTag('Hash:' + crypto)) {
+    // Check for hash/salt and validate password
+    let memberHash = member.getDynamicProperty('hash');
+    let memberSalt = member.getDynamicProperty('salt');
+    let memberEncode;
+    try {
+        memberEncode = crypto(memberSalt, config.modules.encryption.password);
+    } catch (error) {}
+
+    if (memberHash !== undefined && memberEncode === hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze staff members.`);
     }
 
