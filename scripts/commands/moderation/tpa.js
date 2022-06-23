@@ -20,7 +20,7 @@ function tpaHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Teleport to another player.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}tpa ${player.nameTag}`,
+        `    ${prefix}tpa ${player.name}`,
         `    ${prefix}tpa help`,
     ])
 }

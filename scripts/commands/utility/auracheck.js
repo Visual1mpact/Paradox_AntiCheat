@@ -19,7 +19,7 @@ function auraCheckHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Will manually test player for killaura hack.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}auracheck ${player.nameTag}`,
+        `    ${prefix}auracheck ${player.name}`,
         `    ${prefix}auracheck help`,
     ])
 }

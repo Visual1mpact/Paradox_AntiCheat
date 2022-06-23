@@ -20,7 +20,7 @@ function deopHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Revokes permission to use Paradox AntiCheat features.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}deop ${player.nameTag}`,
+        `    ${prefix}deop ${player.name}`,
         `    ${prefix}deop help`,
     ])
 }

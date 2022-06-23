@@ -19,8 +19,8 @@ function muteHelp(player, prefix) {
         `§4[§6Optional§4]§r: mute, reason, help`,
         `§4[§6Description§4]§r: Mutes the specified user and optionally gives reason.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}mute ${player.nameTag}`,
-        `    ${prefix}mute ${player.nameTag} Stop spamming!`,
+        `    ${prefix}mute ${player.name}`,
+        `    ${prefix}mute ${player.name} Stop spamming!`,
         `    ${prefix}mute help`,
     ])
 }

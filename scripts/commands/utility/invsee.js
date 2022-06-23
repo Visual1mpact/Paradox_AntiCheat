@@ -19,7 +19,7 @@ function invseeHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Shows the entire inventory of the specified player.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}invsee ${player.nameTag}`,
+        `    ${prefix}invsee ${player.name}`,
         `    ${prefix}invsee help`,
     ])
 }

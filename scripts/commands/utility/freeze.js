@@ -20,7 +20,7 @@ function freezeHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Will freeze or unfreeze the specified player.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}freeze ${player.nameTag}`,
+        `    ${prefix}freeze ${player.name}`,
         `    ${prefix}freeze help`,
     ])
 }

@@ -20,7 +20,7 @@ function punishHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Removes all items from the player's inventory and ender chest.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}punish ${player.nameTag}`,
+        `    ${prefix}punish ${player.name}`,
         `    ${prefix}punish help`,
     ])
 }

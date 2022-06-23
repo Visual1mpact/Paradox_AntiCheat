@@ -20,7 +20,7 @@ function flyHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Will grant player the ability to fly.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}fly ${player.nameTag}`,
+        `    ${prefix}fly ${player.name}`,
         `    ${prefix}fly help`,
     ])
 }

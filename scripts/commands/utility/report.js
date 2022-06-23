@@ -18,8 +18,8 @@ function reportHelp(player, prefix) {
         `§4[§6Optional§4]§r: username, reason, help`,
         `§4[§6Description§4]§r: Reports player's to online Staff for malicious activities.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}report ${player.nameTag}`,
-        `    ${prefix}report ${player.nameTag} Caught hacking!`,
+        `    ${prefix}report ${player.name}`,
+        `    ${prefix}report ${player.name} Caught hacking!`,
         `    ${prefix}report help`,
     ])
 }
