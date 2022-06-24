@@ -1,6 +1,20 @@
 export default
 {
     "debug": false,
+    /**
+     * The temporary solution for dynamic property not working in BDS & Realms.
+     * See [issue #356 on MicrosoftDocs/minecraft-creator GitHub](https://github.com/MicrosoftDocs/minecraft-creator/issues/356)
+     */
+    "dynamicPropertyWrapper": {
+        /** It is recommended to set this to `true` if Paradox is used in BDS & Realms. */
+        "enabled": true,
+        /**
+         * The unique ID for storage.
+         * It is recommended to set this to something else.
+         * Can be anything. Maximum is 6 characters length.
+         */
+        "uniqueID": "3t6@XB"
+    },
     "customcommands": {
         "prefix": "!",
         "ban": true,

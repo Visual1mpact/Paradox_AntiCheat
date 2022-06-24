@@ -1,5 +1,6 @@
-// Import Customs
+import './misc/dpwrapper.js';
 import './debug/main.js';
+// Import Customs
 import { world } from "mojang-minecraft";
 import config from "./data/config.js";
 import { setTickInterval } from "./misc/scheduling.js";
