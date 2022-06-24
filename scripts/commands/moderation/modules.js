@@ -115,6 +115,7 @@ function modulesHelp(player, prefix) {
     const status = (b) => b ? '§aENABLED' : '§4DISABLED'
 
     sendMsgToPlayer(player, [
+        `§l§6[§4List Of Modules§6]§r`,
         `Anti-GMA: ${status(adventureGMBoolean)}`,
         `Anti-GMS: ${status(survivalGMBoolean)}`,
         `Anti-GMC: ${status(creativeGMBoolean)}`,
