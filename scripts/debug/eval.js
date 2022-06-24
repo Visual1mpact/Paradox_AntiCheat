@@ -17,7 +17,7 @@ export function evalCmd (evd, args, argFull) {
     evd.cancel = true
 
     // check for toggle
-    if (!( config.debug && enableEval )) return sendMsgToPlayer(player, `Eval is disabled.`)
+    if (!( config.debug && enableEval )) return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Eval is disabled.`)
     
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
