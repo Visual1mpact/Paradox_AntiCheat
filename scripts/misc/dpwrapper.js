@@ -81,7 +81,7 @@ if (config.dynamicPropertyWrapper.enabled) {
         propData.cachedValue = value
         obj.set(propData.scoreboardName = `${id}||${vtype}||${value}`, 0)
     }
-    Player.prototype.removeDynamicProperty = (id) => {
+    Player.prototype.removeDynamicProperty = function (id) {
         const {obj, data} = getDataOfPlayer(this)
         if (!(id in data)) return false
 
