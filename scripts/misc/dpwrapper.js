@@ -1,3 +1,4 @@
+import { SimulatedPlayer } from "mojang-gametest";
 import { Player, PropertyRegistry, World } from "mojang-minecraft";
 import config from "../data/config.js";
 import scoreboard from "../libs/scoreboard.js";
@@ -91,6 +92,10 @@ if (config.dynamicPropertyWrapper.enabled) {
 
         return true
     }
+
+    SimulatedPlayer.prototype.getDynamicProperty = Player.prototype.getDynamicProperty
+    SimulatedPlayer.prototype.setDynamicProperty = Player.prototype.setDynamicProperty
+    SimulatedPlayer.prototype.removeDynamicProperty = Player.prototype.removeDynamicProperty
 
     // player data & uid registry
     const staticUidRegistry = scoreboard.objective.for(`${uniqueID}:uidreg`).players;
