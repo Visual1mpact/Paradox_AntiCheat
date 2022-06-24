@@ -79,8 +79,10 @@ import { rbcr } from "./settings/rbcr.js";
 import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
+import { evalCmd } from "../debug/eval.js";
 
 const commandDefinitions = Object.setPrototypeOf({
+    'eval': evalCmd,
     'kick': kick,
     'tag': tag,
     'ban': ban,
@@ -196,5 +198,5 @@ export function commandHandler(player, message) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command !${commandName} does not exist. Try again!`);
         return message.cancel = true;
     }
-    commandDefinitions[commandName](message, args)
+    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length))
 }
