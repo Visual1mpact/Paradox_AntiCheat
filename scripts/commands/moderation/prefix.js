@@ -16,7 +16,7 @@ function resetPrefix(player) {
 
 function prefixHelp(player, prefix) {
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: prefix`,
+        `\n§4[§6Command§4]§r: prefix`,
         `§4[§6Usage§4]§r: prefix [optional]`,
         `§4[§6Optional§4]§r: prefix, help`,
         `§4[§6Description§4]§r: Changes the prefix for commands. Max is two characters.`,

@@ -9,7 +9,7 @@ function clearChatHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: clearchat`,
+        `\n§4[§6Command§4]§r: clearchat`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: clearchat [optional]`,
         `§4[§6Optional§4]§r: help`,

@@ -19,7 +19,7 @@ function antikbHelp(player, prefix, antikbBoolean) {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: antikb`,
+        `\n§4[§6Command§4]§r: antikb`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: antikb [optional]`,

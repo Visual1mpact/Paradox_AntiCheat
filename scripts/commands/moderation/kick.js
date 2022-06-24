@@ -15,7 +15,7 @@ function kickHelp(player, prefix) {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: kick`,
+        `\n§4[§6Command§4]§r: kick`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: kick [optional]`,
         `§4[§6Optional§4]§r: username, reason, help`,

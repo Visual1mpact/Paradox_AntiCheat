@@ -19,7 +19,7 @@ function badpackets2Help(player, prefix, badPackets2Boolean) {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: badpackets2`,
+        `\n§4[§6Command§4]§r: badpackets2`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: badpackets2 [optional]`,

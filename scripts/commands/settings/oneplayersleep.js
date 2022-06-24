@@ -19,7 +19,7 @@ function opsHelp(player, prefix, opsBoolean) {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: ops`,
+        `\n§4[§6Command§4]§r: ops`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: ops [optional]`,

@@ -15,7 +15,7 @@ function autoclickerHelp(player, prefix, autoclickerscore) {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: autoclicker`,
+        `\n§4[§6Command§4]§r: autoclicker`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: autoclicker [optional]`,

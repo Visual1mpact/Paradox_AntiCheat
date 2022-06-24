@@ -19,7 +19,7 @@ function hotbarHelp(player, prefix, hotbarBoolean) {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: hotbar`,
+        `\n§4[§6Command§4]§r: hotbar`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: hotbar [optional]`,

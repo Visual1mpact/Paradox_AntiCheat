@@ -19,7 +19,7 @@ function antispamHelp(player, prefix, antiSpamBoolean) {
         moduleStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `§4[§6Command§4]§r: antispam`,
+        `\n§4[§6Command§4]§r: antispam`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: antispam [optional]`,
