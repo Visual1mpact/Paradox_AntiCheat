@@ -118,7 +118,6 @@ function modulesHelp(player, prefix) {
         `Anti-GMA: ${status(adventureGMBoolean)}`,
         `Anti-GMS: ${status(survivalGMBoolean)}`,
         `Anti-GMC: ${status(creativeGMBoolean)}`,
-        `World: ${status(worldBorderBoolean)}`,
         `Badpackets: ${status(badPackets1Boolean)}`,
         `SpammerA: ${status(spammerABoolean)}`,
         `SpammerB: ${status(spammerBBoolean)}`,
