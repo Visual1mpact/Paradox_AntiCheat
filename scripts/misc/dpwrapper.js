@@ -22,7 +22,7 @@ if (config.dynamicPropertyWrapper.enabled) {
             // parse value
             const valueStr = name.substring(match.length),
                 value = type == 'number' ? +valueStr
-                    : type == 'boolean' ? !!+valueStr
+                    : type == 'boolean' ? valueStr == 'true'
                     : JSON.parse(`"${valueStr}"`)
             
             // add the value in property list

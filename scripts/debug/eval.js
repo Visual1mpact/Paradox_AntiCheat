@@ -14,6 +14,7 @@ const enableEval = false
 
 export function evalCmd (evd, args, argFull) {
     const {sender: player} = evd
+    evd.cancel = true
 
     // check for toggle
     if (!( config.debug && enableEval )) return sendMsgToPlayer(player, `Eval is disabled.`)
@@ -57,6 +58,9 @@ import { xrayblocks as xrayBlocks } from "../data/xray.js"
 import * as scheduling from '../misc/scheduling.js'
 import scoreboard from "../libs/scoreboard.js"
 import * as util from "../util.js"
+import { world } from "mojang-minecraft"
+import * as mc from 'mojang-minecraft'
+import * as gt from 'mojang-gametest'
 
 const objSelfProperty = new Proxy(
     Object.setPrototypeOf({
@@ -75,14 +79,20 @@ const objSelfProperty = new Proxy(
         util,
         viewobj,
 
+        world,
+        mc,
+        gt,
+
         get self() { return objSelfProperty },
-        [Symbol.unscopables]: {}
+        [Symbol.unscopables]: {},
+        [Symbol.toStringTag]: 'Self',
     }, null), {
         get: (t, p) => {
             if (p in t) return t[p]
             if (p in globalThis) return globalThis[p]
             throw new ReferenceError(`'${String(p)}' is not defined`)
         },
-        has: () => true
+        has: () => true,
+        ownKeys: () => []
     }
 )
