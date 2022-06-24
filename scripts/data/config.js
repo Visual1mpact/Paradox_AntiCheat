@@ -7,7 +7,7 @@ export default
      */
     "dynamicPropertyWrapper": {
         /** It is recommended to set this to `true` if Paradox is used in BDS & Realms. */
-        "enabled": true,
+        "enabled": false,
         /**
          * The unique ID for storage.
          * It is recommended to set this to something else.

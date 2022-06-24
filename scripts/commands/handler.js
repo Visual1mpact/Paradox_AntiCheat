@@ -198,5 +198,5 @@ export function commandHandler(player, message) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command !${commandName} does not exist. Try again!`);
         return message.cancel = true;
     }
-    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length))
+    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1))
 }
