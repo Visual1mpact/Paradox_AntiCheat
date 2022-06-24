@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
-import { setTickInterval } from "../../../timer/scheduling.js";
+import { setTickInterval } from "../../../misc/scheduling.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
 const World = world;

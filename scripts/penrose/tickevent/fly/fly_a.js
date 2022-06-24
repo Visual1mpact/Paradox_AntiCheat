@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions, Location, BlockLocation} from "mojang-minecraft";
 import { getScore, flag, crypto } from "../../../util.js";
-import { clearTickInterval, setTickInterval } from "../../../timer/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js";
 import config from "../../../data/config.js";
 
 const World = world;
