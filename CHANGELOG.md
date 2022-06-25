@@ -1,5 +1,22 @@
 # Changelog
 
+## [v2.19.53](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.19.53) (2022-06-25)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.18.52...v2.19.53)
+
+**Closed issues:**
+
+- Failed to import 'Unknown pack name' error manifest [\#36](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/36)
+
+**Merged pull requests:**
+
+- Apply fixes from CodeFactor [\#40](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/40) ([Visual1mpact](https://github.com/Visual1mpact))
+- Apply fixes from CodeFactor [\#39](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/39) ([Visual1mpact](https://github.com/Visual1mpact))
+- Fix illegal stack for some items [\#38](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/38) ([frostice482](https://github.com/frostice482))
+- Apply fixes from CodeFactor [\#37](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/37) ([Visual1mpact](https://github.com/Visual1mpact))
+- Temporary fix for dynamic properties & eval [\#35](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/35) ([frostice482](https://github.com/frostice482))
+- Compass 32k & disabler fixes [\#34](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/34) ([frostice482](https://github.com/frostice482))
+
 ## [v2.18.52](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.18.52) (2022-06-22)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.17.51...v2.18.52)
