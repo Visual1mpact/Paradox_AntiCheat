@@ -74,7 +74,7 @@ function worldborder() {
         // Execute if worldborder is not disabled
         if (borderSize != 0) {
             // Make sure nobody climbs over the wall
-            if (x > borderSize || x < -borderSize || z > borderSize || z < -borderSize) {
+            if (x > borderSize + 12 || x < -borderSize - 12 || z > borderSize + 12 || z < -borderSize - 12) {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
                 if (x >= borderSize) {
                     let safe = safetyProtocol(player, borderSize - 3, y, z);
