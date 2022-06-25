@@ -31,7 +31,7 @@ function rip(source, item, enchant_data) {
         }
     } else {
         try {
-            source.addTag('Reason:Illegal Item B (' + item.id.replace("minecraft:", "") + ':' + enchant_data.type.id + '=' + enchant_data.level + ')');
+            source.addTag('Reason:Illegal Item B (' + item.id.replace("minecraft:", "") + ': ' + enchant_data.type.id + '=' + enchant_data.level + ')');
             source.addTag('By:Paradox');
             source.addTag('isBanned');
         } catch (error) {
