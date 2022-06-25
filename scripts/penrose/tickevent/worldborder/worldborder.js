@@ -78,15 +78,19 @@ function worldborder() {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
                 if (x >= borderSize) {
                     let safe = safetyProtocol(player, borderSize - 3, y, z);
+                    player.runCommand(`scoreboard players set @s teleport 25`);
                     player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, 0);
                 } else if (x <= -borderSize) {
                     let safe = safetyProtocol(player, -borderSize + 3, y, z);
+                    player.runCommand(`scoreboard players set @s teleport 25`);
                     player.teleport(new Location(-borderSize + 3, safe, z), player.dimension, 0, 0);
                 } else if (z >= borderSize){
                     let safe = safetyProtocol(player, x, y, borderSize - 3);
+                    player.runCommand(`scoreboard players set @s teleport 25`);
                     player.teleport(new Location(x, safe, borderSize - 3), player.dimension, 0, 0);
                 } else if (z <= -borderSize) {
                     let safe = safetyProtocol(player, x, y, -borderSize + 3);
+                    player.runCommand(`scoreboard players set @s teleport 25`);
                     player.teleport(new Location(x, safe, -borderSize + 3), player.dimension, 0, 0);
                 }
             }
