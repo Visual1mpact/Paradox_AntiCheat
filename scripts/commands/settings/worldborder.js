@@ -75,6 +75,11 @@ export function worldborders(message, args) {
         return worldBorderHelp(player, prefix, worldBorderBoolean);
     }
 
+    // Are there arguements?
+    if (!args.length) {
+        return worldBorderHelp(player, prefix, worldBorderBoolean);
+    }
+
 
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
