@@ -5,6 +5,7 @@ import { crypto, flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";
+import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 
 const World = world;
 
@@ -244,11 +245,13 @@ function illegalitemsa() {
                 return rip(player, inventory_item, false);
             }
             // If player has illegal stack we clear it and ban if enabled
-            if (inventory_item.amount > config.modules.illegalitemsA.maxStack) {
-                // Item stacks over 64 we clear them
-                flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", inventory_item.id.replace('minecraft:', ""), false, false);
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x64.`);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!`);
+            const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack
+            if (inventory_item.amount < 0 || inventory_item.amount > maxStack) {
+                const itemId = inventory_item.id.replace('minecraft:', "")
+                // Item stacks over max allowed we clear them
+                flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", itemId, false, false);
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
                 if (stackBanBoolean) {
                     // Ban
                     return rip(player, inventory_item, false);
