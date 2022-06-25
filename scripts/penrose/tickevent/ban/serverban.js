@@ -35,7 +35,7 @@ function serverban() {
             continue;
         }
         // Ban message
-        banMessage(player);
+        else banMessage(player);
     }
 }
 

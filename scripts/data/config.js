@@ -164,20 +164,16 @@ export default
             "enabled": true
         },
         "illegalitemsA": {
-            "enabled": true,
-            "maxStack": 64
+            "enabled": true
         },
         "illegalitemsB": {
-            "enabled": true,
-            "maxStack": 64
+            "enabled": true
         },
         "illegalitemsC": {
-            "enabled": true,
-            "maxStack": 64
+            "enabled": true
         },
         "illegalitemsD": {
-            "enabled": true,
-            "maxStack": 64
+            "enabled": true
         },
         "stackBan": {
             "enabled": false

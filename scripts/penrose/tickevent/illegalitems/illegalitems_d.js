@@ -1,6 +1,7 @@
 import { EntityQueryOptions, world } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
+import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 
 const World = world;
 
@@ -50,7 +51,8 @@ function illegalitemsd() {
                 continue;
             }
             // If it is an illegal stack then remove it
-            if (itemName.amount > config.modules.illegalitemsD.maxStack) {
+            const maxStack = maxItemStack[itemName.id] ?? defaultMaxItemStack
+            if (itemName.amount < 0 || itemName.amount > maxStack) {
                 entity.kill();
                 continue;
             }
