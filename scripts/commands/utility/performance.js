@@ -63,7 +63,7 @@ export function performance(message, args) {
     if (!player.hasTag('performance')) {
         // Allow
         player.addTag('performance');
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled §4Performance Testing§r!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled §6Performance Testing§r!`)
         return;
     } else if (player.hasTag('performance')) {
         // Deny
