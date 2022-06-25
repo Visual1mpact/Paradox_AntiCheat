@@ -2,7 +2,7 @@
  * Imported from https://github.com/notbeer/Gametest-API-Wrapper/blob/main/src/library/utils/scheduling.ts
  */
 import { world } from "mojang-minecraft";
-import getStack from '../debug/stack.js'
+import getStack from '../debug/stack.js';
 
 const World = world;
 

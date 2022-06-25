@@ -21,7 +21,7 @@ function statsHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}stats ${player.name}`,
         `    ${prefix}stats help`,
-    ])
+    ]);
 }
 
 /**

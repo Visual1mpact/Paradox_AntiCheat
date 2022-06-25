@@ -20,7 +20,7 @@ function modulesHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}modules`,
         `    ${prefix}modules help`,
-    ])
+    ]);
 }
 
 /**
@@ -112,7 +112,7 @@ function modulesHelp(player, prefix) {
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
 
-    const status = (b) => b ? '§aENABLED' : '§4DISABLED'
+    const status = (b) => b ? '§aENABLED' : '§4DISABLED';
 
     sendMsgToPlayer(player, [
         `§l§6[§4List Of Modules§6]§r`,
@@ -161,5 +161,5 @@ function modulesHelp(player, prefix) {
         `Anti-Enchanted: ${status(encharmor)}`,
         `Autoclicker: ${status(autoclicker)}`,
         `World Border: ${worldBorderBoolean ? `§aENABLED§r (${worldBorderNumber})` : '§4DISABLED'}`,
-    ])
+    ]);
 }

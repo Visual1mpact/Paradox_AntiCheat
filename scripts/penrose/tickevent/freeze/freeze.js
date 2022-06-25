@@ -45,7 +45,7 @@ function Freeze() {
             player.removeTag('freezeactive');
             player.removeTag('freeze');
             player.runCommand(`effect @s clear`);
-            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`)
+            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`);
             tickEventCallback.unsubscribe(Freeze);
             return;
         }

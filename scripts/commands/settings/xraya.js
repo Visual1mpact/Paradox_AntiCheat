@@ -28,7 +28,7 @@ function xrayAHelp(player, prefix, xrayBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}xraya`,
         `    ${prefix}xraya help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function xrayA(message, args) {
     if (xrayBoolean === false) {
         // Allow
         World.setDynamicProperty('xraya_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6XrayA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6XrayA§r!`);
         XrayA();
         return;
     } else if (xrayBoolean === true) {
         // Deny
         World.setDynamicProperty('xraya_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4XrayA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4XrayA§r!`);
         return;
     }
 }

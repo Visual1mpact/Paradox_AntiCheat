@@ -1,6 +1,6 @@
 import { Entity, Player, World, PropertyRegistry } from 'mojang-minecraft';
 import getStack from './stack.js';
-import config from '../data/config.js'
+import config from '../data/config.js';
 
 if (config.debug) {
     for (const v of [ Entity, Player, World ]) {

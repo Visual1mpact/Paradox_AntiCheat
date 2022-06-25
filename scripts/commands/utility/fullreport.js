@@ -19,7 +19,7 @@ function fullReportHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}fullreport`,
         `    ${prefix}fullreport help`,
-    ])
+    ]);
 }
 
 /**

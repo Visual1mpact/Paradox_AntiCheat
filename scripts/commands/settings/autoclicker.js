@@ -24,7 +24,7 @@ function autoclickerHelp(player, prefix, autoclickerscore) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}autoclicker`,
         `    ${prefix}autoclicker help`,
-    ])
+    ]);
 }
 
 /**
@@ -68,11 +68,11 @@ export function autoclick(message, args) {
     if (autoclickerscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config autoclicker 1`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Autoclicker§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Autoclicker§r!`);
     } else if (autoclickerscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config autoclicker 0`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Autoclicker§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Autoclicker§r!`);
     }
     return player.runCommand(`scoreboard players operation @a autoclicker = paradox:config autoclicker`);
 }

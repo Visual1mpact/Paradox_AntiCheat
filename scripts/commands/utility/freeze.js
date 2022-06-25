@@ -22,7 +22,7 @@ function freezeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}freeze ${player.name}`,
         `    ${prefix}freeze help`,
-    ])
+    ]);
 }
 
 /**
@@ -93,8 +93,8 @@ export function freeze(message, args) {
     }
     if (member.hasTag('nofreeze')) {
         member.runCommand(`effect @s clear`);
-        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`)
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`)
+        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`);
     }
 
     if (!member.hasTag('nofreeze')) {
@@ -110,7 +110,7 @@ export function freeze(message, args) {
 
     if (!member.hasTag('nofreeze')) {
         member.addTag('freeze');
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is now frozen.`)
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is now frozen.`);
         return TickFreeze(member);
     }
 

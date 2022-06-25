@@ -22,7 +22,7 @@ function opHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}op ${player.name}`,
         `    ${prefix}op help`,
-    ])
+    ]);
 }
 
 /**
@@ -64,10 +64,10 @@ export function op(message, args) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     } else if (hash === encode && args[0] === config.modules.encryption.password) {
         // Old stuff that makes up for less than 5% of the project
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`)
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`)
-        player.addTag('paradoxOpped')
-        return
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
+        player.addTag('paradoxOpped');
+        return;
     }
 
     // Check for custom prefix
@@ -112,7 +112,7 @@ export function op(message, args) {
         member.setDynamicProperty('hash', encode);
         memberHash = member.getDynamicProperty('hash');
     }
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`)
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`)
-    member.addTag('paradoxOpped')
+    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);
+    member.addTag('paradoxOpped');
 }

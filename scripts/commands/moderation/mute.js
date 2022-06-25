@@ -22,7 +22,7 @@ function muteHelp(player, prefix) {
         `    ${prefix}mute ${player.name}`,
         `    ${prefix}mute ${player.name} Stop spamming!`,
         `    ${prefix}mute help`,
-    ])
+    ]);
 }
 
 /**
@@ -107,6 +107,6 @@ export function mute(message, args) {
     try {
         member.runCommand(`ability @s mute true`);
     } catch (error) {}
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`)
+    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`);
     return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has muted ${member.nameTag}§r. Reason: ${reason}`);
 }

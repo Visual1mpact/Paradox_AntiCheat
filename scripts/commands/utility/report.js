@@ -21,7 +21,7 @@ function reportHelp(player, prefix) {
         `    ${prefix}report ${player.name}`,
         `    ${prefix}report ${player.name} Caught hacking!`,
         `    ${prefix}report help`,
-    ])
+    ]);
 }
 
 /**
@@ -75,5 +75,5 @@ export function report(message, args) {
 
     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Reported ${member.nameTag}§r with reason: ${reason}`);
 
-    sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has reported ${member.nameTag}§r with reason: ${reason}`)
+    sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has reported ${member.nameTag}§r with reason: ${reason}`);
 }

@@ -24,7 +24,7 @@ function overrideCBEHelp(player, prefix, cmdsscore) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}overridecbe`,
         `    ${prefix}overridecbe help`,
-    ])
+    ]);
 }
 
 /**
@@ -68,15 +68,15 @@ export function overidecommandblocksenabled(message, args) {
     if (cmdsscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §6enabled§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §6enabled§r!`);
     } else if (cmdsscore === 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §4disabled§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §4disabled§r!`);
     } else if (cmdsscore >= 2) {
         // Force
         player.runCommand(`scoreboard players set paradox:config cmds 0`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has §etoggled§r Force-CommandBlocksEnabled!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has §etoggled§r Force-CommandBlocksEnabled!`);
     }
     return player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

@@ -100,8 +100,8 @@ function illegalitemsa() {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${player.nameTag}.`)
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`)
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${player.nameTag}.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
                 continue;
             }
 
@@ -190,8 +190,8 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
-                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount)
-                            newItem.setLore(loreData)
+                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
+                            newItem.setLore(loreData);
                             inventory.setItem(i, newItem);
                         } catch (error) {}
                         continue;
@@ -204,8 +204,8 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
-                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount)
-                            newItem.setLore(loreData)
+                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
+                            newItem.setLore(loreData);
                             inventory.setItem(i, newItem);
                         } catch (error) {}
                         continue;
@@ -219,8 +219,8 @@ function illegalitemsa() {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
-                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount)
-                            newItem.setLore(loreData)
+                            const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
+                            newItem.setLore(loreData);
                             inventory.setItem(i, newItem);
                         } catch (error) {}
                         continue;
@@ -247,8 +247,8 @@ function illegalitemsa() {
             if (inventory_item.amount > config.modules.illegalitemsA.maxStack) {
                 // Item stacks over 64 we clear them
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", inventory_item.id.replace('minecraft:', ""), false, false);
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x64.`)
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!`)
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x64.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!`);
                 if (stackBanBoolean) {
                     // Ban
                     return rip(player, inventory_item, false);
@@ -263,8 +263,8 @@ function illegalitemsa() {
                 try {
                     inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch {}
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`)
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`)
+                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
                 continue;
             }
             if (illegalEnchantmentBoolean) {
@@ -293,8 +293,8 @@ function illegalitemsa() {
                             sendMsg('@a[tag=notify]', [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                                 `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
-                            ])
-                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
+                            ]);
+                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                             rip(player, inventory_item, enchant_data);
                             break;
                         }
@@ -308,8 +308,8 @@ function illegalitemsa() {
                             sendMsg('@a[tag=notify]', [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                                 `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
-                            ])
-                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
+                            ]);
+                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                             rip(player, inventory_item, enchant_data);
                             break;
                         }

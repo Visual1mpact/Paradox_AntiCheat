@@ -56,7 +56,7 @@ function antispam(msg) {
             if (oldChat === message && _player.count >= 2) {
                 _player.spam++;
                 try {
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Do not spam the chat!`)
+                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Do not spam the chat!`);
                 } catch (error) {}
                 msg.cancel = true;
             } else if (_player.check >= 2) {
@@ -91,7 +91,7 @@ function antispam(msg) {
         if (_player.count >= 2) {
             msg.cancel = true;
             try {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`)
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
             } catch (error) {}
             return;
         }

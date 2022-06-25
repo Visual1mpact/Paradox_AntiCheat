@@ -11,7 +11,7 @@ function resetPrefix(player) {
             config.customcommands.prefix = "!";
         }
     }
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset!`)
+    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset!`);
 }
 
 function prefixHelp(player, prefix) {
@@ -25,7 +25,7 @@ function prefixHelp(player, prefix) {
         `    ${prefix}prefix @!`,
         `    ${prefix}prefix $`,
         `    ${prefix}prefix help`,
-    ])
+    ]);
 }
 
 /**
@@ -79,16 +79,16 @@ export function prefix(message, args) {
     }
 
     if (args[0][0] == '/') {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Using prefix '/' is not allowed!`)
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Using prefix '/' is not allowed!`);
     }
 
     // Change Prefix command under conditions
     if (args[0].length <= 2 && args[0].length >=1) {
         resetPrefix(player);
         config.customcommands.prefix = args[0];
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${args[0]}'!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${args[0]}'!`);
         return player.addTag('Prefix:' + args[0]);
     } else {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix length cannot be more than 2 characters!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix length cannot be more than 2 characters!`);
     }
 }

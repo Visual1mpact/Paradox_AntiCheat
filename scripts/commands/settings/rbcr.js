@@ -27,7 +27,7 @@ function rbcrHelp(player, prefix, rcbrBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}rbcr`,
         `    ${prefix}rbcr help`,
-    ])
+    ]);
 }
 
 /**
@@ -75,12 +75,12 @@ export function rbcr(message, args) {
     if (rcbrBoolean === false) {
         // Allow
         World.setDynamicProperty('rcbr_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Realm Bot Chat Relay§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Realm Bot Chat Relay§r!`);
         return;
     } else if (rcbrBoolean === true) {
         // Deny
         World.setDynamicProperty('rcbr_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Realm Bot Chat Relay§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Realm Bot Chat Relay§r!`);
         return;
     }
 }
