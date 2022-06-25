@@ -295,6 +295,30 @@ export default
         data: 0,
         nametag: 'double_plant'
     },
+    'minecraft:double_plant': {
+        name: 'minecraft:double_plant',
+        data: 1,
+        nametag: 'double_plant'
+    },
+    'minecraft:double_plant': {
+        name: 'minecraft:double_plant',
+        data: 2,
+        nametag: 'double_plant'
+    },'minecraft:double_plant': {
+        name: 'minecraft:double_plant',
+        data: 3,
+        nametag: 'double_plant'
+    },
+    'minecraft:double_plant': {
+        name: 'minecraft:double_plant',
+        data: 4,
+        nametag: 'double_plant'
+    },
+    'minecraft:double_plant': {
+        name: 'minecraft:double_plant',
+        data: 5,
+        nametag: 'double_plant'
+    },
     'minecraft:heart_of_the_sea': {
         name: 'minecraft:heart_of_the_sea',
         data: 0,
