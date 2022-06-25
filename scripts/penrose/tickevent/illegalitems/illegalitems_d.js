@@ -51,7 +51,7 @@ function illegalitemsd() {
                 continue;
             }
             // If it is an illegal stack then remove it
-            const maxStack = maxItemStack[itemName.id] ?? defaultMaxItemStack
+            const maxStack = maxItemStack[itemName.id] ?? defaultMaxItemStack;
             if (itemName.amount < 0 || itemName.amount > maxStack) {
                 entity.kill();
                 continue;

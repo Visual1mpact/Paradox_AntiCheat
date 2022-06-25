@@ -246,9 +246,9 @@ function illegalitemsb(object) {
         return rip(source, item, false);
     }
     // Check if item exceeds allowed stacks then remove and ban if enabled
-    const maxStack = maxItemStack[item.id] ?? defaultMaxItemStack
+    const maxStack = maxItemStack[item.id] ?? defaultMaxItemStack;
     if (item.amount < 0 || item.amount > maxStack) {
-        const itemId = item.id.replace('minecraft:', "")
+        const itemId = item.id.replace('minecraft:', "");
         object.cancel = true;
         // Item stacks over max allowed and we remove
         try {
