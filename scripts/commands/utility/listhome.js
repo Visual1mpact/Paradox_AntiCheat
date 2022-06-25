@@ -79,7 +79,7 @@ export function listhome(message, args) {
                 } else {
                     verify = true;
                     if (counter === 1) {
-                        sendMsgToPlayer(player, `§l§6[§4List Of Homes§6]§r.`);
+                        sendMsgToPlayer(player, `§l§6[§4List Of Homes§6]§r`);
                     }
                     sendMsgToPlayer(player, ` | §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`);
                     continue;
