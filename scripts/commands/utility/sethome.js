@@ -17,7 +17,7 @@ function setHomeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}sethome barn`,
         `    ${prefix}sethome help`,
-    ])
+    ]);
 }
 
 /**
@@ -55,7 +55,7 @@ export function sethome(message, args) {
     // Don't allow spaces
     if (args.length > 1 || args[0].trim().length === 0) {
         setHomeHelp(player, prefix);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
     }
 
     // Make sure this name doesn't exist already and it doesn't exceed limitations
@@ -65,7 +65,7 @@ export function sethome(message, args) {
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home with name '${args[0]}' already exists!`)
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home with name '${args[0]}' already exists!`);
             break;
         }
         if (tags[i].startsWith("LocationHome:")) {
@@ -73,7 +73,7 @@ export function sethome(message, args) {
         }
         if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
             verify = true;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You can only have ${config.modules.setHome.max} saved locations at a time!`)
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You can only have ${config.modules.setHome.max} saved locations at a time!`);
             break;
         }
     }
@@ -89,11 +89,11 @@ export function sethome(message, args) {
         currentDimension = "nether";
     }
     if (player.dimension.id === "minecraft:the_end") {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Not allowed to set home in this dimension!`)
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Not allowed to set home in this dimension!`);
     }
 
     // Store their new home coordinates
     player.addTag(`LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`);
 
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' has been set at ${homex} ${homey} ${homez}!`)
+    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' has been set at ${homex} ${homey} ${homez}!`);
 }

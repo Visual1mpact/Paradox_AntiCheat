@@ -25,7 +25,7 @@ function kickHelp(player, prefix) {
         `    ${prefix}kick ${player.name} Hacker!`,
         `    ${prefix}kick ${player.name} Stop trolling!`,
         `    ${prefix}kick help`,
-    ])
+    ]);
 }
 
 /**

@@ -28,7 +28,7 @@ function antispamHelp(player, prefix, antiSpamBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}antispam`,
         `    ${prefix}antispam help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function antispam(message, args) {
     if (antiSpamBoolean === false) {
         // Allow
         World.setDynamicProperty('antispam_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Spam§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Spam§r!`);
         AntiSpam();
         return;
     } else if (antiSpamBoolean === true) {
         // Deny
         World.setDynamicProperty('antispam_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Spam§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Spam§r!`);
         return;
     }
 }

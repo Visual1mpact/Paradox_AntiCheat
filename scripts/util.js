@@ -53,11 +53,11 @@ export function flag(player, check, checkType, hackType, item, stack, debugName,
 
     try {
         if(debug) {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + 'vl', player)}`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + 'vl', player)}`);
         } else if (item && stack) {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + 'vl', player)}`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace('minecraft:', "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + 'vl', player)}`);
         } else {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + 'vl', player)}`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + 'vl', player)}`);
         }
     } catch(error) {}
 
@@ -169,7 +169,7 @@ export function resetTag(player, member) {
             member.removeTag(tag);
         }
     }
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag} has reset their rank`)
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag} has reset their rank`);
 }
 
 /**
@@ -234,14 +234,14 @@ export const titleCase = (s) =>
         .join("");
 };
 
-const overworld = world.getDimension('overworld')
+const overworld = world.getDimension('overworld');
 
 export const sendMsg = (target, message) => {
-    try { overworld.runCommand(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${ JSON.stringify( Array.isArray(message) ? message.join('\n\u00a7r') : message ) }}]}`) }
+    try { overworld.runCommand(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${ JSON.stringify( Array.isArray(message) ? message.join('\n\u00a7r') : message ) }}]}`); }
     catch {}
-}
+};
 
 export const sendMsgToPlayer = (target, message) => {
-    try { target.runCommand(`tellraw @s {"rawtext":[{"text":${ JSON.stringify( Array.isArray(message) ? message.join('\n\u00a7r') : message ) }}]}`) }
+    try { target.runCommand(`tellraw @s {"rawtext":[{"text":${ JSON.stringify( Array.isArray(message) ? message.join('\n\u00a7r') : message ) }}]}`); }
     catch {}
-}
+};

@@ -21,7 +21,7 @@ function invseeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}invsee ${player.name}`,
         `    ${prefix}invsee help`,
-    ])
+    ]);
 }
 
 // found the inventory viewing scipt in the bedrock addons discord, unsure of the original owner (not my code)
@@ -79,9 +79,9 @@ export function invsee(message, args) {
         ` `,
         `§r§4[§6Paradox§4]§r ${member.nameTag}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
-            const item = container.getItem(i)
-            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.id.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r §6=>§r §4[§fData ${item.data}§4]§r` : '§7(empty)'}`
+            const item = container.getItem(i);
+            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.id.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r §6=>§r §4[§fData ${item.data}§4]§r` : '§7(empty)'}`;
         }),
         ` `
-    ])
+    ]);
 }

@@ -28,7 +28,7 @@ function antikbHelp(player, prefix, antikbBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}antikb`,
         `    ${prefix}antikb help`,
-    ])
+    ]);
 }
 
 /**
@@ -79,13 +79,13 @@ export function antiknockback(message, args) {
         // Allow
         World.setDynamicProperty('antikb_b', true);
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`);
         AntiKnockbackA();
     } else if (antikbscore >= 1) {
         // Deny
         World.setDynamicProperty('antikb_b', false);
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`);
     }
     return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

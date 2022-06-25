@@ -17,7 +17,7 @@ function clearChatHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}clearchat`,
         `    ${prefix}clearchat help`,
-    ])
+    ]);
 }
 
 /**
@@ -56,7 +56,7 @@ export function clearchat(message, args) {
         return clearChatHelp(player, prefix);
     }
 
-    for (let clear = 0; clear < 10; clear++) sendMsg('@a', '\n'.repeat(60))
+    for (let clear = 0; clear < 10; clear++) sendMsg('@a', '\n'.repeat(60));
 
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Chat has been cleared by ${player.nameTag}`)
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Chat has been cleared by ${player.nameTag}`);
 }

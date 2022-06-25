@@ -1,6 +1,6 @@
-import config from "../data/config.js"
-import { crypto, sendMsg, sendMsgToPlayer } from "../util.js"
-import viewobj from "./viewobj.js"
+import config from "../data/config.js";
+import { crypto, sendMsg, sendMsgToPlayer } from "../util.js";
+import viewobj from "./viewobj.js";
 
 /**
  * **CAUTION: EVAL IS DANGEROUS!**
@@ -10,14 +10,14 @@ import viewobj from "./viewobj.js"
  * 
  * **ENABLE AT YOUR OWN RISK!**
  */
-const enableEval = false
+const enableEval = false;
 
 export function evalCmd (evd, args, argFull) {
-    const {sender: player} = evd
-    evd.cancel = true
+    const {sender: player} = evd;
+    evd.cancel = true;
 
     // check for toggle
-    if (!( config.debug && enableEval )) return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Eval is disabled.`)
+    if (!( config.debug && enableEval )) return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Eval is disabled.`);
     
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
@@ -33,34 +33,34 @@ export function evalCmd (evd, args, argFull) {
     }
 
     // tells staff
-    player.addTag('evalSelf')
-    sendMsg('@a[tag=paradoxOpped, tag=!evalSelf]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r is using §6Eval§r: ${argFull}`)
-    player.removeTag('evalSelf')
+    player.addTag('evalSelf');
+    sendMsg('@a[tag=paradoxOpped, tag=!evalSelf]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r is using §6Eval§r: ${argFull}`);
+    player.removeTag('evalSelf');
 
     // execute the eval
-    let v
+    let v;
     try {
-        sendMsgToPlayer(player, `> ${argFull}`)
-        v = Function( `context`, `with (context) return eval(${JSON.stringify(argFull)})` )(objSelfProperty)
+        sendMsgToPlayer(player, `> ${argFull}`);
+        v = Function( `context`, `with (context) return eval(${JSON.stringify(argFull)})` )(objSelfProperty);
     } catch (e) {
-        return sendMsgToPlayer(player, 'Uncaught ' + ( e instanceof Error ? `${e}\n${e.stack}` : viewobj(e) ) )
+        return sendMsgToPlayer(player, 'Uncaught ' + ( e instanceof Error ? `${e}\n${e.stack}` : viewobj(e) ) );
     }
-    sendMsgToPlayer(player, viewobj(v))
+    sendMsgToPlayer(player, viewobj(v));
 }
 
-import { enchantmentSlot as enchantments } from "../data/enchantments.js"
-import { GlobalBanList as globalBan } from "../penrose/playerjoinevent/ban/globalbanlist.js"
-import { illegalitems as illegalItems } from "../data/itemban.js"
-import { onJoinData } from "../data/onjoindata.js"
-import salvageable from "../data/salvageable.js"
-import { whitelist as whitelistItems } from "../data/whitelistitems.js"
-import { xrayblocks as xrayBlocks } from "../data/xray.js"
-import * as scheduling from '../misc/scheduling.js'
-import scoreboard from "../libs/scoreboard.js"
-import * as util from "../util.js"
-import { world } from "mojang-minecraft"
-import * as mc from 'mojang-minecraft'
-import * as gt from 'mojang-gametest'
+import { enchantmentSlot as enchantments } from "../data/enchantments.js";
+import { GlobalBanList as globalBan } from "../penrose/playerjoinevent/ban/globalbanlist.js";
+import { illegalitems as illegalItems } from "../data/itemban.js";
+import { onJoinData } from "../data/onjoindata.js";
+import salvageable from "../data/salvageable.js";
+import { whitelist as whitelistItems } from "../data/whitelistitems.js";
+import { xrayblocks as xrayBlocks } from "../data/xray.js";
+import * as scheduling from '../misc/scheduling.js';
+import scoreboard from "../libs/scoreboard.js";
+import * as util from "../util.js";
+import { world } from "mojang-minecraft";
+import * as mc from 'mojang-minecraft';
+import * as gt from 'mojang-gametest';
 
 const objSelfProperty = new Proxy(
     Object.setPrototypeOf({
@@ -83,16 +83,16 @@ const objSelfProperty = new Proxy(
         mc,
         gt,
 
-        get self() { return objSelfProperty },
+        get self() { return objSelfProperty; },
         [Symbol.unscopables]: {},
         [Symbol.toStringTag]: 'Self',
     }, null), {
         get: (t, p) => {
-            if (p in t) return t[p]
-            if (p in globalThis) return globalThis[p]
-            throw new ReferenceError(`'${String(p)}' is not defined`)
+            if (p in t) return t[p];
+            if (p in globalThis) return globalThis[p];
+            throw new ReferenceError(`'${String(p)}' is not defined`);
         },
         has: () => true,
         ownKeys: () => []
     }
-)
+);

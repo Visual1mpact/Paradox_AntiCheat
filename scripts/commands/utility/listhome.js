@@ -17,7 +17,7 @@ function listHomeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}listhome`,
         `    ${prefix}listhome help`,
-    ])
+    ]);
 }
 
 /**

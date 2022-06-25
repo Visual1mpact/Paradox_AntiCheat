@@ -103,8 +103,8 @@ function illegalitemsb(object) {
     if (antiShulkerBoolean && item.id === "minecraft:shulker_box" || antiShulkerBoolean && item.id === "minecraft:undyed_shulker_box") {
         object.cancel = true;
         source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
-        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} from ${source.nameTag}.`)
-        sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`)
+        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} from ${source.nameTag}.`);
+        sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
         return;
     }
 
@@ -169,7 +169,7 @@ function illegalitemsb(object) {
                 if (!illegalLoresBoolean) {
                     let loreData = item.getLore();
                     try {
-                        actualItemName.setLore(loreData)
+                        actualItemName.setLore(loreData);
                         source.getComponent('minecraft:inventory').container.setItem(hand, actualItemName);
                     } catch (error) {}
                 } else if (illegalLoresBoolean) {
@@ -193,8 +193,8 @@ function illegalitemsb(object) {
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
-                    const newItem = new ItemStack(Items.get(item.id), item.amount)
-                    newItem.setLore(loreData)
+                    const newItem = new ItemStack(Items.get(item.id), item.amount);
+                    newItem.setLore(loreData);
                     source.getComponent('minecraft:inventory').container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
@@ -208,8 +208,8 @@ function illegalitemsb(object) {
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
-                    const newItem = new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data)
-                    newItem.setLore(loreData)
+                    const newItem = new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data);
+                    newItem.setLore(loreData);
                     source.getComponent('minecraft:inventory').container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
@@ -223,8 +223,8 @@ function illegalitemsb(object) {
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
-                    const newItem = new ItemStack(Items.get(item.id), item.amount, item.data)
-                    newItem.setLore(loreData)
+                    const newItem = new ItemStack(Items.get(item.id), item.amount, item.data);
+                    newItem.setLore(loreData);
                     source.getComponent('minecraft:inventory').container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
@@ -250,8 +250,8 @@ function illegalitemsb(object) {
         // Item stacks over 64 we remove
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${source.nameTag}§r detected with stacked items greater than x64.`)
-            sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!`)
+            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${source.nameTag}§r detected with stacked items greater than x64.`);
+            sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Stacked items cannot exceed x64!`);
         } catch (error) {}
         if (stackBanBoolean) {
             // Ban
@@ -266,8 +266,8 @@ function illegalitemsb(object) {
         try {
             source.getComponent('minecraft:inventory').container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         } catch {}
-        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} with lore from ${source.nameTag}.`)
-        sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`)
+        sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} with lore from ${source.nameTag}.`);
+        sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
         return;
     }
     if (illegalEnchantmentBoolean) {
@@ -295,8 +295,8 @@ function illegalitemsb(object) {
                     sendMsg('@a[tag=notify]', [
                         `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                         `§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`
-                    ])
-                    sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
+                    ]);
+                    sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                     rip(source, item, enchant_data);
                     break;
                 }
@@ -309,8 +309,8 @@ function illegalitemsb(object) {
                     sendMsg('@a[tag=notify]', [
                         `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                         `§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`
-                    ])
-                    sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`)
+                    ]);
+                    sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                     rip(source, item, enchant_data);
                     break;
                 }

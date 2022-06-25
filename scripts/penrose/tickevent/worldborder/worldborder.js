@@ -75,7 +75,7 @@ function worldborder() {
         if (borderSize != 0) {
             // Make sure nobody climbs over the wall
             if (x > borderSize || x < -borderSize || z > borderSize || z < -borderSize) {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`)
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
                 if (x >= borderSize) {
                     let safe = safetyProtocol(player, borderSize - 3, y, z);
                     player.teleport(new Location(borderSize - 3, safe, z), player.dimension, 0, 0);
@@ -92,7 +92,7 @@ function worldborder() {
             }
         }
     }
-};
+}
 
 const WorldBorder = () => {
     World.events.tick.subscribe(worldborder);

@@ -28,7 +28,7 @@ function allowgmaHelp(player, prefix, adventureGMBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}allowgma`,
         `    ${prefix}allowgma help`,
-    ])
+    ]);
 }
 
 /**
@@ -88,15 +88,15 @@ export function allowgma(message, args) {
         // We will allow Adventure Mode in this case
         if (survivalGMBoolean === true && creativeGMBoolean === true) {
             World.setDynamicProperty('adventuregm_b', false);
-            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`)
+            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
             return;
         }
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 2 (Adventure)§r to be used!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 2 (Adventure)§r to be used!`);
         Adventure();
     } else if (adventureGMBoolean === true) {
         // Deny
         World.setDynamicProperty('adventuregm_b', false);
-        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`)
+        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`);
     }
 }

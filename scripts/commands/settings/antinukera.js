@@ -28,7 +28,7 @@ function antinukeraHelp(player, prefix, antiNukerABoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}antinukera`,
         `    ${prefix}antinukera help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function antinukerA(message, args) {
     if (antiNukerABoolean === false) {
         // Allow
         World.setDynamicProperty('antinukera_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`);
         NukerA();
         return;
     } else if (antiNukerABoolean === true) {
         // Deny
         World.setDynamicProperty('antinukera_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`);
         return;
     }
 }

@@ -29,7 +29,7 @@ function lockdownHelp(player, prefix, lockdownBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}lockdown`,
         `    ${prefix}lockdown help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,7 +76,7 @@ export function lockdown(message, args) {
 
     // If already locked down then unlock the server
     if (lockdownBoolean) {
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Server is no longer in lockdown!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Server is no longer in lockdown!`);
         return World.setDynamicProperty('lockdown_b', false);
     }
 
@@ -104,6 +104,6 @@ export function lockdown(message, args) {
         }
     }
     // Shutting it down
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Server is in lockdown!`)
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Server is in lockdown!`);
     return World.setDynamicProperty('lockdown_b', true);
 }

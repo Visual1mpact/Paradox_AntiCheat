@@ -17,7 +17,7 @@ function delhomeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}delhome cave`,
         `    ${prefix}delhome help`,
-    ])
+    ]);
 }
 
 /**
@@ -46,7 +46,7 @@ export function delhome(message, args) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
     }
 
     // Find and delete this saved home location
@@ -56,13 +56,13 @@ export function delhome(message, args) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
             player.removeTag(tags[i]);
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${args[0]}'!`)
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${args[0]}'!`);
             break;
         }
     }
     if (verify === true) {
         return;
     } else {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`);
     }
 }

@@ -22,7 +22,7 @@ function deopHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}deop ${player.name}`,
         `    ${prefix}deop help`,
-    ])
+    ]);
 }
 
 /**
@@ -93,7 +93,7 @@ export function deop(message, args) {
         member.removeDynamicProperty('hash');
         member.removeDynamicProperty('salt');
         member.removeTag('paradoxOpped');
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your OP status has been revoked!`);
     }
     return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.nameTag} never had permission to use Paradox.`);

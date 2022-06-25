@@ -22,7 +22,7 @@ function unmuteHelp(player, prefix) {
         `    ${prefix}unmute ${player.name}`,
         `    ${prefix}unmute ${player.name} You may chat`,
         `    ${prefix}unmute help`,
-    ])
+    ]);
 }
 
 /**
@@ -89,6 +89,6 @@ export function unmute(message, args) {
     try {
         member.runCommand(`ability @s mute false`);
     } catch (error) {}
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted.`)
+    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted.`);
     return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has unmuted ${member.nameTag}§r. Reason: ${reason}`);
 }

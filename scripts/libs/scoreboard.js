@@ -13,12 +13,12 @@ const execCmd = (command, source = dim, ignoreError = false) => {
         catch { throw new Error(e); }
 
         if (ignoreError) return r;
-        else throw r
+        else throw r;
     }
 };
 
 import { Dimension, ScoreboardIdentityType, world } from 'mojang-minecraft';
-const dim = world.getDimension('overworld')
+const dim = world.getDimension('overworld');
 const auth = Symbol();
 export default class scoreboard {
     static get display() { return display; }
@@ -55,10 +55,8 @@ class objective {
                 throw new TypeError(`Objective with ID '${id}' already exists.`);
             execCmd(`scoreboard objectives add ${execid} dummy ${execDisplay}`);
         }
-        else {
-            if (!exist)
+        else if (!exist)
                 throw new ReferenceError(`Objective with ID '${id}' not found.`);
-        }
         this.id = id;
         this.execId = execid;
         this.#data = world.scoreboard.getObjective(id);

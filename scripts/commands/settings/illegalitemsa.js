@@ -28,7 +28,7 @@ function illegalItemsAHelp(player, prefix, illegalItemsABoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}illegalitemsa`,
         `    ${prefix}illegalitemsa help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function illegalitemsA(message, args) {
     if (illegalItemsABoolean === false) {
         // Allow
         World.setDynamicProperty('illegalitemsa_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`);
         IllegalItemsA();
         return;
     } else if (illegalItemsABoolean === true) {
         // Deny
         World.setDynamicProperty('illegalitemsa_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`);
         return;
     }
 }
