@@ -29,7 +29,7 @@ function tagHelp(player, prefix, chatRanksBoolean) {
         `    ${prefix}tag ${player.name} Rank:Contributor--Mod`,
         `    ${prefix}tag ${player.name} Rank:Staff--Mod--Helper`,
         `    ${prefix}tag help`,
-    ])
+    ]);
 }
 
 /**
@@ -114,8 +114,8 @@ export function tag(message, args) {
     }
 
     if (player === member) {
-        return sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed their rank`)
+        return sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed their rank`);
     }
 
-    sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed ${member.nameTag}'s rank!`)
+    sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed ${member.nameTag}'s rank!`);
 }

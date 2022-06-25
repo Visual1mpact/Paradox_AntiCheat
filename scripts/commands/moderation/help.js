@@ -37,7 +37,7 @@ export function help(message) {
         config.customcommands.help = true;
     }
 
-    const textDisabled = 'Command §4DISABLED§r.'
+    const textDisabled = 'Command §4DISABLED§r.';
 
     return sendMsgToPlayer(player, [
         `§l§6[§4Paradox AntiCheat Command Help§6]§r`,
@@ -126,5 +126,5 @@ export function help(message) {
         `§6${prefix}hotbar <optional>§r - ${ config.customcommands.hotbar ? `Toggles hotbar message for all players. Optional: Message` : textDisabled }`,
         ` `,
         `§l§6[§4For more info execute the command with help§6]§r`,
-    ])
+    ]);
 }

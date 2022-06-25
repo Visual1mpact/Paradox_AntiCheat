@@ -44,7 +44,7 @@ function goHomeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}gohome barn`,
         `    ${prefix}gohome help`,
-    ])
+    ]);
 }
 
 /**
@@ -73,7 +73,7 @@ export function gohome(message, args) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
     }
 
     // Check for hash/salt and validate password
@@ -115,7 +115,7 @@ export function gohome(message, args) {
     }
 
     if (!homex || !homey || !homez || !dimension) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`);
     } else {
         let cooldownCalc;
         let activeTimer;
@@ -137,7 +137,7 @@ export function gohome(message, args) {
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || hash !== undefined && encode === hash) {
             player.runCommand(`scoreboard players set @s teleport 25`);
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`)
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value
             cooldownTimer.delete(player);
@@ -145,7 +145,7 @@ export function gohome(message, args) {
             cooldownTimer.set(player, new Date().getTime());
         } else {
             // Teleporting to fast
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Too fast! Please wait for ${activeTimer} before going home.`)
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Too fast! Please wait for ${activeTimer} before going home.`);
         }
     }
 }

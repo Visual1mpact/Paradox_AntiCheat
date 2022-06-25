@@ -28,7 +28,7 @@ function antiscaffoldaHelp(player, prefix, antiScaffoldABoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}antiscaffolda`,
         `    ${prefix}antiscaffolda help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function antiscaffoldA(message, args) {
     if (antiScaffoldABoolean === false) {
         // Allow
         World.setDynamicProperty('antiscaffolda_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`);
         ScaffoldA();
         return;
     } else if (antiScaffoldABoolean === true) {
         // Deny
         World.setDynamicProperty('antiscaffolda_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`);
         return;
     }
 }

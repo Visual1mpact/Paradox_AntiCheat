@@ -101,14 +101,14 @@ export function despawn(message, args) {
     }
     // Let player know how many of the specified entity were removed
     if (counter > 0 && verify === false) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned ${requestedEntity} (x${counter})!`)
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned ${requestedEntity} (x${counter})!`);
     }
     if (verify === true) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned all entities (x${counter})!`)
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned all entities (x${counter})!`);
     }
     // If nothing then abort and let them know
     if (args[0] !== "all" && args.length > 0) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This entity was not found in the world!`)
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This entity was not found in the world!`);
     } else {
         // Need to give a parameter that is recognized
         return sendMsgToPlayer(player, [

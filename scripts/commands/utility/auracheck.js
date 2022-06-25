@@ -21,7 +21,7 @@ function auraCheckHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}auracheck ${player.name}`,
         `    ${prefix}auracheck help`,
-    ])
+    ]);
 }
 
 /**

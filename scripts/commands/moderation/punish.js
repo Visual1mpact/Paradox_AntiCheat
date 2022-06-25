@@ -22,7 +22,7 @@ function punishHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}punish ${player.name}`,
         `    ${prefix}punish help`,
-    ])
+    ]);
 }
 
 /**

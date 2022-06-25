@@ -28,7 +28,7 @@ function badpackets1Help(player, prefix, badPackets1Boolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}badpackets1`,
         `    ${prefix}badpackets1 help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function badpackets1(message, args) {
     if (badPackets1Boolean === false) {
         // Allow
         World.setDynamicProperty('badpackets1_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets1§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets1§r!`);
         BadPackets1();
         return;
     } else if (badPackets1Boolean === true) {
         // Deny
         World.setDynamicProperty('badpackets1_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets1§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets1§r!`);
         return;
     }
 }

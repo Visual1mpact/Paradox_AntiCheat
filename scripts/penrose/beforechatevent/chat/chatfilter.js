@@ -21,7 +21,7 @@ const ChatFilter = () => {
 
             // Kill their broadcast if muted
             if (player.hasTag('isMuted')) {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are currently muted.`)
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are currently muted.`);
                 msg.cancel = true;
                 return;
             }

@@ -1,4 +1,4 @@
-//https://github.com/frostice482/server-expansion/blob/main/dev/src/libcore/misc.ts#L7
+// https://github.com/frostice482/server-expansion/blob/main/dev/src/libcore/misc.ts#L7
 // transpiled from typescript to javascript
 
 const viewObj = (() => {
@@ -144,4 +144,4 @@ const viewObj = (() => {
     };
     return (o, tab = ' §8:§r ', tabSeparator = ' ') => exec(o, [], tab, 0, tabSeparator);
 })();
-export default viewObj
+export default viewObj;

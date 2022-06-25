@@ -29,7 +29,7 @@ function allowgmcHelp(player, prefix, creativeGMBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}allowgmc`,
         `    ${prefix}allowgmc help`,
-    ])
+    ]);
 }
 
 /**
@@ -89,16 +89,16 @@ export function allowgmc(message, args) {
         // We will allow Adventure Mode in this case
         if (adventureGMBoolean === true && survivalGMBoolean === true) {
             World.setDynamicProperty('adventuregm_b', false);
-            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`)
+            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
             return;
         }
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 1 (Creative)§r to be used!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 1 (Creative)§r to be used!`);
         Creative();
         return;
     } else if (creativeGMBoolean === true) {
         // Deny
         World.setDynamicProperty('creativegm_b', false);
-        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 1 (Creative)§r to be used!`)
+        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 1 (Creative)§r to be used!`);
     }
 }

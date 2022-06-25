@@ -28,7 +28,7 @@ function namespoofBHelp(player, prefix, nameSpoofBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}namespoofb`,
         `    ${prefix}namespoofb help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function namespoofB(message, args) {
     if (nameSpoofBoolean === false) {
         // Allow
         World.setDynamicProperty('namespoofb_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofB§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofB§r!`);
         NamespoofB();
         return;
     } else if (nameSpoofBoolean === true) {
         // Deny
         World.setDynamicProperty('namespoofb_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofB§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofB§r!`);
         return;
     }
 }

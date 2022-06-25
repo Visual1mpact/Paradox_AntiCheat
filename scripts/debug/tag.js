@@ -1,6 +1,6 @@
 import { Player } from 'mojang-minecraft';
 import getStack from './stack.js';
-import config from '../data/config.js'
+import config from '../data/config.js';
 
 const { addTag: { value: OAddTag }, removeTag: { value: ORemoveTag } } = Object.getOwnPropertyDescriptors(Player.prototype);
 

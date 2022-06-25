@@ -22,7 +22,7 @@ function tpaHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}tpa ${player.name}`,
         `    ${prefix}tpa help`,
-    ])
+    ]);
 }
 
 /**

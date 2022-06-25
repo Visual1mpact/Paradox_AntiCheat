@@ -28,7 +28,7 @@ function reachCHelp(player, prefix, reachCBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}reachc`,
         `    ${prefix}reachc help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function reachC(message, args) {
     if (reachCBoolean === false) {
         // Allow
         World.setDynamicProperty('reachc_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachC§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachC§r!`);
         ReachC();
         return;
     } else if (reachCBoolean === true) {
         // Deny
         World.setDynamicProperty('reachc_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachC§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachC§r!`);
         return;
     }
 }

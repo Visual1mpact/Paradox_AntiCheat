@@ -28,7 +28,7 @@ function hotbarHelp(player, prefix, hotbarBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843`,
         `    ${prefix}hotbar help`,
-    ])
+    ]);
 }
 
 /**
@@ -79,12 +79,12 @@ export function hotbar(message, args) {
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         }
-        sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has enabled §6Hotbar`)
+        sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has enabled §6Hotbar`);
         Hotbar();
         return;
     } else if (hotbarBoolean === true) {
         // Deny
         World.setDynamicProperty('hotbar_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has disabled §6Hotbar`)
+        sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has disabled §6Hotbar`);
     }
 }

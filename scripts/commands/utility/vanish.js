@@ -17,7 +17,7 @@ function vanishHelp(player, prefix) {
     `§4[§6Examples§4]§r:`,
     `    ${prefix}vanish`,
     `    ${prefix}vanish help`,
-    ])
+    ]);
 }
 
 /**
@@ -67,8 +67,8 @@ export function vanish(message, args) {
     if (player.hasTag('novanish')) {
         player.runCommand(`event entity @s unvanish`);
         player.runCommand(`effect @s clear`);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are no longer vanished.`)
-        sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is no longer in vanish.`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is no longer in vanish.`);
     }
 
     if (!player.hasTag('novanish')) {
@@ -77,8 +77,8 @@ export function vanish(message, args) {
 
     if (player.hasTag('vanish') && !player.hasTag('novanish')) {
         player.runCommand(`event entity @s vanish`);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now vanished!`)
-        sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is now vanished!`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now vanished!`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is now vanished!`);
     }
 
     if (player.hasTag('novanish')) {

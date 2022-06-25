@@ -27,7 +27,7 @@ function chatRanksHelp(player, prefix, chatRanksBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}chatranks`,
         `    ${prefix}chatranks help`,
-    ])
+    ]);
 }
 
 /**
@@ -84,7 +84,7 @@ export function chatranks(message, args) {
             pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
         }
         */
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`);
         return;
     } else if (chatRanksBoolean === true) {
         // Deny
@@ -98,7 +98,7 @@ export function chatranks(message, args) {
             pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
         }
         */
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`);
         return;
     }
 }

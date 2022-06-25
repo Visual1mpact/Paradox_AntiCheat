@@ -28,7 +28,7 @@ function spammerAHelp(player, prefix, spammerABoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}spammera`,
         `    ${prefix}spammera help`,
-    ])
+    ]);
 }
 
 /**
@@ -76,13 +76,13 @@ export function spammerA(message, args) {
     if (spammerABoolean === false) {
         // Allow
         World.setDynamicProperty('spammera_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerA§r!`);
         SpammerA();
         return;
     } else if (spammerABoolean === true) {
         // Deny
         World.setDynamicProperty('spammera_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerA§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerA§r!`);
         return;
     }
 }

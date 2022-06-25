@@ -27,7 +27,7 @@ function stackBanHelp(player, prefix, stackBanBoolean) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}stackban`,
         `    ${prefix}stackban help`,
-    ])
+    ]);
 }
 
 /**
@@ -91,18 +91,18 @@ export function stackban(message, args) {
         }
         // If illegal items are not enabled then let user know this feature is inaccessible
         // It will not work without one of them
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable Illegal Items to use this feature.`)
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable Illegal Items to use this feature.`);
     }
 
     if (stackBanBoolean === false) {
         // Allow
         World.setDynamicProperty('stackban_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6StackBans§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6StackBans§r!`);
         return;
     } else if (stackBanBoolean === true) {
         // Deny
         World.setDynamicProperty('stackban_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4StackBans§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4StackBans§r!`);
         return;
     }
 }

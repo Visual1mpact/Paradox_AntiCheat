@@ -21,7 +21,7 @@ function ecWipeHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}ecwipe ${player.name}`,
         `    ${prefix}ecwipe help`,
-    ])
+    ]);
 }
 
 /**

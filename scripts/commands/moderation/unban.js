@@ -26,7 +26,7 @@ function unbanHelp(player, prefix) {
         `    ${prefix}unban ${player.name}`,
         `    ${prefix}unban list`,
         `    ${prefix}unban help`,
-    ])
+    ]);
 }
 
 /**
@@ -71,5 +71,5 @@ export function unban(message, args) {
     // Add player to queue
     let regexp = /["'`]/g;
     queueUnban.add(args.join(" ").replace(regexp, ""));
-    sendMsg('@a[tag=paradoxOpped', `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`)
+    sendMsg('@a[tag=paradoxOpped', `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`);
 }

@@ -44,6 +44,6 @@ export function nonstaffhelp(message) {
             config.customcommands.delhome
                 ? `§6${prefix}delhome <name>§r - Deletes a saved location from list.`
                 : `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`,
-        ])
+        ]);
     }
 }

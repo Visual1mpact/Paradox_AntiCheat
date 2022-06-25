@@ -30,7 +30,7 @@ function worldBorderHelp(player, prefix, worldBorderBoolean) {
         `    ${prefix}worldborder 25689`,
         `    ${prefix}worldborder disable`,
         `    ${prefix}worldborder help`,
-    ])
+    ]);
 }
 
 /**
@@ -78,14 +78,14 @@ export function worldborders(message, args) {
 
     if (argCheck !== "disable" && isNaN(argCheck) === false) {
         // Build the wall
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r to ${argCheck}!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r to ${argCheck}!`);
         World.setDynamicProperty('worldborder_b', true);
         World.setDynamicProperty('worldborder_n', Math.abs(argCheck));
         WorldBorder();
         return;
     } else if (argCheck === "disable") {
         // Disable Worldborder
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled the §6World Border§r!`)
+        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled the §6World Border§r!`);
         World.setDynamicProperty('worldborder_b', false);
         World.setDynamicProperty('worldborder_n', 0);
         return;

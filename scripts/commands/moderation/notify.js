@@ -17,7 +17,7 @@ function notifyHelp(player, prefix) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}notify`,
         `    ${prefix}notify help`,
-    ])
+    ]);
 }
 
 /**
@@ -65,7 +65,7 @@ export function notify(message, args) {
     }
 
     if (player.hasTag('nonotify')) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have disabled cheat notifications.`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have disabled cheat notifications.`);
     }
 
     if (!player.hasTag('nonotify')) {
@@ -73,7 +73,7 @@ export function notify(message, args) {
     }
 
     if (player.hasTag('notify') && !player.hasTag('nonotify')) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled cheat notifications.`)
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled cheat notifications.`);
     }
 
     if (player.hasTag('nonotify')) {
