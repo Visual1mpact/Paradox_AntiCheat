@@ -245,9 +245,9 @@ function illegalitemsa() {
                 return rip(player, inventory_item, false);
             }
             // If player has illegal stack we clear it and ban if enabled
-            const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack
+            const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack;
             if (inventory_item.amount < 0 || inventory_item.amount > maxStack) {
-                const itemId = inventory_item.id.replace('minecraft:', "")
+                const itemId = inventory_item.id.replace('minecraft:', "");
                 // Item stacks over max allowed we clear them
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", itemId, false, false);
                 sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
