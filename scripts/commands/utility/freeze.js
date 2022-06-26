@@ -89,7 +89,7 @@ export function freeze(message, args) {
         member.addTag('nofreeze');
     }
     if (member.hasTag('nofreeze')) {
-        member.addTag('freeze');
+        member.removeTag('freeze');
     }
     if (member.hasTag('nofreeze')) {
         member.runCommand(`effect @s clear`);
@@ -115,7 +115,7 @@ export function freeze(message, args) {
     }
 
     if (member.hasTag('nofreeze')) {
-        member.addTag('nofreeze');
+        member.removeTag('nofreeze');
         return TickFreeze(member);
     }
 }
