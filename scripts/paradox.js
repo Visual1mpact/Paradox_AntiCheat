@@ -2,7 +2,6 @@ import './misc/dpwrapper.js';
 import './debug/main.js';
 // Import Customs
 import { world } from "mojang-minecraft";
-import config from "./data/config.js";
 import { setTickInterval } from "./misc/scheduling.js";
 import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
 // Import BeforeChat Events
@@ -75,8 +74,6 @@ SpammerB();
 SpammerC();
 SpammerD();
 AntiSpam();
-// For AntiSpam
-setTickInterval(timer, config.modules.antispam.cooldown);
 PrefixCommand();
 ChatFilter();
 

@@ -1,6 +1,7 @@
 import { world } from "mojang-minecraft";
 import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
+import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js";
 
 const World = world;
 
@@ -13,7 +14,17 @@ const _player = {
     check: 0
 };
 
-function timer() {
+function timer(id) {
+    // Get Dynamic Property
+    let antiSpamBoolean = World.getDynamicProperty('antispam_b');
+    if (antiSpamBoolean === undefined) {
+        antiSpamBoolean = config.modules.antispam.enabled;
+    }
+    // Unsubscribe if disabled in-game
+    if (antiSpamBoolean === false) {
+        clearTickInterval(id);
+        return;
+    }
     _player.count = 0;
 }
 
@@ -99,6 +110,7 @@ function antispam(msg) {
 }
 
 const AntiSpam = () => {
+    const id = setTickInterval(() => timer(id), config.modules.antispam.cooldown);
     World.events.beforeChat.subscribe(antispam);
 };
 
