@@ -58,7 +58,7 @@ export function help(message) {
         `§6${prefix}prefix reset§r - Reset the prefix for commands.`,
         `§6${prefix}lockdown§r - ${ config.customcommands.lockdown ? `Kicks player's from server excluding Staff for maintenance.` : textDisabled }`,
         `§6${prefix}punish <username>§r - ${ config.customcommands.punish ? `Removes all items from player's inventory and ender chest.` : textDisabled }`,
-        `§6${prefix}tpa <username>§r - ${ config.customcommands.tpa ? `Teleport to another player.` : textDisabled }`,
+        `§6${prefix}tpa <username>§r - ${ config.customcommands.tpa ? `Teleport to a player or vice versa.` : textDisabled }`,
         `§6${prefix}despawn <entityName>:all§r - ${ config.customcommands.despawn ? `Despawns all or specified entities if they exist.` : textDisabled }`,
         ` `,
         `§l§6[§4Optional Features§6]§r`,

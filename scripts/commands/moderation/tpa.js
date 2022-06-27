@@ -18,9 +18,10 @@ function tpaHelp(player, prefix) {
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: tpa [optional]`,
         `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Teleport to another player.`,
+        `§4[§6Description§4]§r: Teleport to a player or vice versa.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}tpa ${player.name}`,
+        `    ${prefix}tpa ${player.name} Steve`,
+        `    ${prefix}tpa Steve ${player.name}`,
         `    ${prefix}tpa help`,
     ]);
 }
@@ -65,20 +66,22 @@ export function tpa(message, args) {
     if (!args.length) {
         return tpaHelp(player, prefix);
     }
-    
-    // Try to find the player requested
+
     let member;
-    if (args.length) {
+    // Check if teleporting to them or vice versa then set it up
+    if (args[0].replace(/"|\\|@/g, "") === player.name && args[1] || args[0].replace(/"|\\|@/g, "") !== player.name && args[1]) {
+        // Try to find the player requested
         for (let pl of World.getPlayers()) {
-            if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.nameTag.toLowerCase().includes(args[1].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }
         }
-    }
-    
-    // Are they online?
-    if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        // Are they online?
+        if (!member) {
+            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player! Try '${prefix}tpa help' for more info.`);
+        }
+    } else {
+        return tpaHelp(player, prefix);
     }
 
     // Let's teleport you to that player
