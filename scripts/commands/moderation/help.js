@@ -123,6 +123,7 @@ export function help(message) {
         `§6${prefix}gohome <name>§r - ${ config.customcommands.gohome ? `Teleport back to saved home coordinates.` : textDisabled }`,
         `§6${prefix}listhome§r - ${ config.customcommands.listhome ? `Shows your list of saved locations.` : textDisabled }`,
         `§6${prefix}delhome <name>§r - ${ config.customcommands.delhome ? `Deletes a saved location from list.` : textDisabled }`,
+        `§6${prefix}tpr <username>§r - ${ config.customcommands.tpr ? `Sends a request to teleport to a player.` : textDisabled }`,
         `§6${prefix}performance§r - ${ config.customcommands.performance ? `Shows TPS stats while running Paradox (Requires Debug).` : textDisabled }`,
         `§6${prefix}hotbar <optional>§r - ${ config.customcommands.hotbar ? `Toggles hotbar message for all players. Optional: Message` : textDisabled }`,
         ` `,

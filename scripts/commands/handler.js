@@ -81,6 +81,7 @@ import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
 import { evalCmd } from "../debug/eval.js";
 import { crasherB } from "./settings/crasherb.js";
+import { tpr } from "./utility/tpr.js";
 
 const commandDefinitions = Object.setPrototypeOf({
     'eval': evalCmd,
@@ -148,6 +149,7 @@ const commandDefinitions = Object.setPrototypeOf({
     'sethome': sethome,
     'gohome': gohome,
     'tpa': tpa,
+    'tpr': tpr,
     'antiteleport': antiteleport,
     'illegalitemsd': illegalitemsD,
     'listhome': listhome,
