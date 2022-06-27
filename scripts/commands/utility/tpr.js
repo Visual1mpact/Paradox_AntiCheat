@@ -57,7 +57,7 @@ function tprHelp(player, prefix) {
 export function tpr(message, args) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/tpa.js:30)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/tpr.js:54)");
     }
 
     message.cancel = true;
