@@ -8,7 +8,7 @@ const World = world;
 
 function tpaHelp(player, prefix) {
     let commandStatus;
-    if (!config.customcommands.antinukera) {
+    if (!config.customcommands.tpa) {
         commandStatus = "§6[§4DISABLED§6]§r";
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
