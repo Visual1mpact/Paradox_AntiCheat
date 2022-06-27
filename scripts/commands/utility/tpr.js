@@ -137,6 +137,7 @@ export function tpr(message, args) {
             if (!player.hasTag('tpr:' + member.name)) {
                 player.addTag('tpr:' + member.name);
             }
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! Your teleport request has been sent to ${member.name}.`);
             return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Hello ${member.name}! ${player.name} is requesting to teleport to your location! Type yes or no.`);
         } else {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} is pending a request. Try again later.`);
@@ -144,6 +145,7 @@ export function tpr(message, args) {
     } else {
         member.addTag('tpr');
         player.addTag('tpr:' + member.name);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! Your teleport request has been sent to ${member.name}.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Hello ${member.name}! ${player.name} is requesting to teleport to your location! Type yes or no.`);
     }
 }
