@@ -41,10 +41,12 @@ function tprHelp(player, prefix) {
         `\n§4[§6Command§4]§r: tpr`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: tpr [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Sends a request to teleport to a player.`,
+        `§4[§6Optional§4]§r: username, block, unblock, help`,
+        `§4[§6Description§4]§r: Sends a request to teleport to a player or blocks/unblocks requests.`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}tpr ${player.name}`,
+        `    ${prefix}tpr block`,
+        `    ${prefix}tpr unblock`,
         `    ${prefix}tpr help`,
     ]);
 }
@@ -73,6 +75,18 @@ export function tpr(message, args) {
         return tprHelp(player, prefix);
     }
 
+    /**
+     * Verify if they are blocking all future
+     * requests or unblocking all future requests
+     */
+    if (argCheck && args[0].toLowerCase() === "block") {
+        player.addTag('tprblock');
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have blocked all future teleport requests!`);
+    } else if (argCheck && args[0].toLowerCase() === "unblock") {
+        player.removeTag('tprblock');
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have unblocked all future teleport requests!`);
+    }
+
     // Are there arguements
     if (!args.length) {
         return tprHelp(player, prefix);
@@ -91,6 +105,11 @@ export function tpr(message, args) {
     // Are they online?
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+    }
+    
+    // If they block requests then cancel the request
+    if (member.hasTag('tprblock')) {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player has all teleport requests blocked!`);
     }
 
     /**

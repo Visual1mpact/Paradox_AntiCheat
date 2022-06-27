@@ -45,7 +45,7 @@ export function nonstaffhelp(message) {
                 ? `§6${prefix}delhome <name>§r - Deletes a saved location from list.`
                 : `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`,
             config.customcommands.tpr
-                ? `§6${prefix}tpr <username>§r - Sends a request to teleport to a player.`
+                ? `§6${prefix}tpr <username>§r - Sends a request to teleport to a player or blocks/unblocks requests.`
                 : `§6${prefix}tpr <username>§r - Command §4DISABLED§r.`,
         ]);
     }
