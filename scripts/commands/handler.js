@@ -82,6 +82,7 @@ import { badpackets2 } from "./settings/badpackets2.js";
 import { evalCmd } from "../debug/eval.js";
 import { crasherB } from "./settings/crasherb.js";
 import { tpr } from "./utility/tpr.js";
+import { give } from "./utility/give.js";
 
 const commandDefinitions = Object.setPrototypeOf({
     'eval': evalCmd,
@@ -164,6 +165,7 @@ const commandDefinitions = Object.setPrototypeOf({
     'ops': ops,
     'salvage': salvage,
     'badpackets2': badpackets2,
+    'give': give,
 }, null);
 
 /**

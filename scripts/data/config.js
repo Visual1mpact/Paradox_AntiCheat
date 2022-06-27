@@ -95,7 +95,8 @@ export default
         "rbcr": true,
         "ops": true,
         "salvage": true,
-        "badpackets2": true
+        "badpackets2": true,
+        "give": true
     },
     "modules": {
         "badpackets1": {

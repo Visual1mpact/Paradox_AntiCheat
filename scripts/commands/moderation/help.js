@@ -109,6 +109,7 @@ export function help(message) {
         `§6${prefix}badpackets2§r - ${ config.customcommands.badpackets2 ? `Toggles checks for invalid selected slots by player.` : textDisabled }`,
         ` `,
         `§l§6[§4Tools and Utilites§6]§r`,
+        `§6${prefix}give <username> <item> <amount>§r - ${ config.customcommands.hotbar ? `Gives player items.` : textDisabled }`,
         `§6${prefix}auracheck <username>§r - ${ config.customcommands.auracheck ? `Manual test for KillAura.` : textDisabled }`,
         `§6${prefix}ecwipe <username>§r - ${ config.customcommands.ecwipe ? `Clears a players ender chest.` : textDisabled }`,
         `§6${prefix}fly <username>§r - ${ config.customcommands.fly ? `Toggles fly mode in survival.` : textDisabled }`,
