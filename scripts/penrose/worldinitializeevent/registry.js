@@ -139,6 +139,9 @@ function registry(data) {
     // Define properties for antispam
     property.defineBoolean('antispam_b');
 
+    // Define properties for crasherb
+    property.defineBoolean('crasherb_b');
+
     // Define properties for hash
     personal.defineString('hash', 200);
 
@@ -399,6 +402,12 @@ function registry(data) {
     let antispam_b = World.getDynamicProperty('antispam_b');
     if (antispam_b === undefined) {
         World.setDynamicProperty('antispam_b', config.modules.antispam.enabled);
+    }
+
+    // Set properties for crasherb
+    let crasherb_b = World.getDynamicProperty('crasherb_b');
+    if (crasherb_b === undefined) {
+        World.setDynamicProperty('crasherb_b', config.modules.crasherB.enabled);
     }
 }
 

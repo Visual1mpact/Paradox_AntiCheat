@@ -80,6 +80,7 @@ import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
 import { evalCmd } from "../debug/eval.js";
+import { crasherB } from "./settings/crasherb.js";
 
 const commandDefinitions = Object.setPrototypeOf({
     'eval': evalCmd,
@@ -123,6 +124,7 @@ const commandDefinitions = Object.setPrototypeOf({
     'spammerd': spammerD,
     'antispam': antispam,
     'crashera': crasherA,
+    'crasherb': crasherB,
     'namespoofa': namespoofA,
     'namespoofb': namespoofB,
     'reacha': reachA,

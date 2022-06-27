@@ -81,6 +81,7 @@ export function help(message) {
         `§6${prefix}spammerd§r - ${ config.customcommands.spammerd ? `Checks if message is sent while GUI is open.` : textDisabled }`,
         `§6${prefix}antispam§r - ${ config.customcommands.antispam ? `Checks for spamming in chat with 2 second cooldown.` : textDisabled }`,
         `§6${prefix}crashera§r - ${ config.customcommands.crashera ? `Prevents Horion crasher.` : textDisabled }`,
+        `§6${prefix}crasherb§r - ${ config.customcommands.crasherb ? `Prevents Arrow crasher.` : textDisabled }`,
         `§6${prefix}namespoofa§r - ${ config.customcommands.namespoofa ? `Checks if player's name exceeds character limitations.` : textDisabled }`,
         `§6${prefix}namespoofb§r - ${ config.customcommands.namespoofb ? `Checks if player's name has Non ASCII characters.` : textDisabled }`,
         `§6${prefix}reacha§r - ${ config.customcommands.reacha ? `Checks if player's place blocks beyond reach.` : textDisabled }`,

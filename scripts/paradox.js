@@ -57,6 +57,8 @@ import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illeg
 import { ReachC } from "./penrose/entityhitevent/reach_c.js";
 // Import WorldInitialize Events
 import { Registry } from "./penrose/worldinitializeevent/registry.js";
+// Import EntityCreate Events
+import { CrasherB } from './penrose/entitycreateevent/crasher_b.js';
 
 // Self explanatory
 const World = world;
@@ -136,5 +138,8 @@ ReachA();
 // BeforeItemUseOn Events
 IllegalItemsB();
 
-// EntityHit Event
+// EntityHit Events
 ReachC();
+
+// EntityCreate Events
+CrasherB();

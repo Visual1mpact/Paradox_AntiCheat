@@ -58,6 +58,7 @@ export default
         "spammerd": true,
         "antispam": true,
         "crashera": true,
+        "crasherb": true,
         "namespoofa": true,
         "namespoofb": true,
         "reacha": true,
@@ -118,6 +119,9 @@ export default
             "cooldown": 40
         },
         "crasherA": {
+            "enabled": true
+        },
+        "crasherB": {
             "enabled": true
         },
         "namespoofA": {

@@ -85,6 +85,7 @@ function modulesHelp(player, prefix) {
     let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
     let flyABoolean = World.getDynamicProperty('flya_b');
     let crasherABoolean = World.getDynamicProperty('crashera_b');
+    let crasherBBoolean = World.getDynamicProperty('crasherb_b');
     let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
     let reachCBoolean = World.getDynamicProperty('reachc_b');
     let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
@@ -126,6 +127,7 @@ function modulesHelp(player, prefix) {
         `SpammerD: ${status(spammerDBoolean)}`,
         `Anti-Spam: ${status(antiSpamBoolean)}`,
         `CrasherA: ${status(crasherABoolean)}`,
+        `CrasherB: ${status(crasherBBoolean)}`,
         `NamespoofA: ${status(nameSpoofABoolean)}`,
         `NamespoofB: ${status(nameSpoofBBoolean)}`,
         `Bedrock: ${status(bedrockValidateBoolean)}`,
