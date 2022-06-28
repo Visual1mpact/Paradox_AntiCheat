@@ -102,6 +102,12 @@ export function give(message, args) {
         }
     }
     if (confirmItem) {
+        if (isNaN(args[2])) {
+            /**
+             * This parameter is invalid so we will remove it and add a default value of 1.
+             */
+            args.splice(2, 1, '1')
+        }
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
         if (maxStack >= args[2]) {
             let inv = member.getComponent('inventory').container
