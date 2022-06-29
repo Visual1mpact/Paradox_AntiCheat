@@ -142,6 +142,9 @@ function registry(data) {
     // Define properties for crasherb
     property.defineBoolean('crasherb_b');
 
+    // Define properties for clearlag
+    property.defineBoolean('clearlag_b');
+
     // Define properties for hash
     personal.defineString('hash', 200);
 
@@ -408,6 +411,12 @@ function registry(data) {
     let crasherb_b = World.getDynamicProperty('crasherb_b');
     if (crasherb_b === undefined) {
         World.setDynamicProperty('crasherb_b', config.modules.crasherB.enabled);
+    }
+
+    // Set properties for clearlag
+    let clearlag_b = World.getDynamicProperty('clearlag_b');
+    if (clearlag_b === undefined) {
+        World.setDynamicProperty('clearlag_b', config.modules.clearLag.enabled);
     }
 }
 

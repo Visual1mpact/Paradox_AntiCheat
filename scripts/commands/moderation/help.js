@@ -107,6 +107,7 @@ export function help(message) {
         `§6${prefix}ops§r - ${ config.customcommands.ops ? `Toggles One Player Sleep (OPS) for all online players.` : textDisabled }`,
         `§6${prefix}salvage§r - ${ config.customcommands.salvage ? `Toggles new salvage system [Experimental].` : textDisabled }`,
         `§6${prefix}badpackets2§r - ${ config.customcommands.badpackets2 ? `Toggles checks for invalid selected slots by player.` : textDisabled }`,
+        `§6${prefix}clearlag§r - ${ config.customcommands.clearlag ? `Clears items and entities with timer.` : textDisabled }`,
         ` `,
         `§l§6[§4Tools and Utilites§6]§r`,
         `§6${prefix}give <username> <item> <amount>§r - ${ config.customcommands.hotbar ? `Gives player items.` : textDisabled }`,

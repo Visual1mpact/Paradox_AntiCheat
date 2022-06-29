@@ -109,6 +109,7 @@ function modulesHelp(player, prefix) {
     let stackBanBoolean = World.getDynamicProperty('stackban_b');
     let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
     let antiSpamBoolean = World.getDynamicProperty('antispam_b');
+    let clearLagBoolean = World.getDynamicProperty('clearlag_b');
 
     // Numbers
     let worldBorderNumber = World.getDynamicProperty('worldborder_n');
@@ -163,5 +164,6 @@ function modulesHelp(player, prefix) {
         `Anti-Enchanted: ${status(encharmor)}`,
         `Autoclicker: ${status(autoclicker)}`,
         `World Border: ${worldBorderBoolean ? `§aENABLED§r (${worldBorderNumber})` : '§4DISABLED'}`,
+        `ClearLag: ${status(clearLagBoolean)}`,
     ]);
 }

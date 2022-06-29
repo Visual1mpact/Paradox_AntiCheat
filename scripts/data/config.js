@@ -96,7 +96,8 @@ export default
         "ops": true,
         "salvage": true,
         "badpackets2": true,
-        "give": true
+        "give": true,
+        "clearlag": true
     },
     "modules": {
         "badpackets1": {
@@ -239,6 +240,13 @@ export default
         "goHome": {
             "seconds": 0,
             "minutes": 5,
+            "hours": 0,
+            "days": 0
+        },
+        "clearLag": {
+            "enabled": false,
+            "seconds": 0,
+            "minutes": 10,
             "hours": 0,
             "days": 0
         },
