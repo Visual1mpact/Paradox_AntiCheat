@@ -69,6 +69,11 @@ export function tpr(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
+    // Are there arguements
+    if (!args.length) {
+        return tprHelp(player, prefix);
+    }
+
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tpr) {
@@ -85,11 +90,6 @@ export function tpr(message, args) {
     } else if (argCheck && args[0].toLowerCase() === "unblock") {
         player.removeTag('tprblock');
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have unblocked all future teleport requests!`);
-    }
-
-    // Are there arguements
-    if (!args.length) {
-        return tprHelp(player, prefix);
     }
     
     // Try to find the player requested

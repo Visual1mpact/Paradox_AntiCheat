@@ -43,6 +43,11 @@ export function report(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
+    // Are there arguements
+    if (!args.length) {
+        return reportHelp(player, prefix);
+    }
+
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.report) {

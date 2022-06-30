@@ -23,9 +23,10 @@ function hotbarHelp(player, prefix, hotbarBoolean) {
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: hotbar [optional]`,
-        `§4[§6Optional§4]§r: message, help`,
+        `§4[§6Optional§4]§r: message, disable, help`,
         `§4[§6Description§4]§r: Displays a hotbar message for all player's currently online.`,
         `§4[§6Examples§4]§r:`,
+        `    ${prefix}hotbar disable`,
         `    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843`,
         `    ${prefix}hotbar help`,
     ]);
@@ -67,6 +68,11 @@ export function hotbar(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
+    // Are there arguements
+    if (!args.length) {
+        return hotbarHelp(player, prefix, hotbarBoolean);
+    }
+
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.hotbar) {
@@ -82,9 +88,11 @@ export function hotbar(message, args) {
         sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has enabled §6Hotbar`);
         Hotbar();
         return;
-    } else if (hotbarBoolean === true) {
+    } else if (hotbarBoolean === true && args[0].toLowerCase() === "disable") {
         // Deny
         World.setDynamicProperty('hotbar_b', false);
         sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has disabled §6Hotbar`);
+    } else {
+        return hotbarHelp(player, prefix, hotbarBoolean);
     }
 }

@@ -63,6 +63,11 @@ export function fly(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
+    // Are there arguements
+    if (!args.length) {
+        return flyHelp(player, prefix);
+    }
+
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.fly) {

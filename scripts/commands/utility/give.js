@@ -39,7 +39,7 @@ function giveHelp(player, prefix) {
 export function give(message, args) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/give.js:32)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/give.js:36)");
     }
     
     message.cancel = true;
@@ -69,7 +69,7 @@ export function give(message, args) {
 
     // Are there arguements
     if (!args.length) {
-        return tprHelp(player, prefix);
+        return giveHelp(player, prefix);
     }
     
     // Try to find the player requested

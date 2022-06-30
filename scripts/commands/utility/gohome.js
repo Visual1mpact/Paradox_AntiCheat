@@ -65,6 +65,11 @@ export function gohome(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
+    // Are there arguements
+    if (!args.length) {
+        return goHomeHelp(player, prefix);
+    }
+
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.gohome) {

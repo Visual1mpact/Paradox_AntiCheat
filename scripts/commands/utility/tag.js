@@ -71,6 +71,11 @@ export function tag(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
+    // Are there arguements
+    if (!args.length) {
+        return tagHelp(player, prefix, chatRanksBoolean);
+    }
+
     // Was help requested
     let argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
