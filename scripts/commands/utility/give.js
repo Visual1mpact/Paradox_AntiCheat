@@ -21,12 +21,13 @@ function giveHelp(player, prefix) {
         `\n§4[§6Command§4]§r: give`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: give [optional]`,
-        `§4[§6Optional§4]§r: username item amount, help`,
+        `§4[§6Optional§4]§r: username item amount data, help`,
         `§4[§6Description§4]§r: Gives player items.`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}give ${player.name} diamond 64`,
         `    ${prefix}give ${player.name} iron_ore 64`,
         `    ${prefix}give ${player.name} tropical_fish 64`,
+        `    ${prefix}give ${player.name} log2 64 1`,
         `    ${prefix}give help`,
     ]);
 }
@@ -92,6 +93,7 @@ export function give(message, args) {
      * args[0] = username
      * args[1] = item
      * args[2] = amount
+     * args[3] = data (optional)
      */
     let confirmItem = false;
     let itemStringConvert = toCamelCase(args[1])
@@ -106,12 +108,18 @@ export function give(message, args) {
             /**
              * This parameter is invalid so we will remove it and add a default value of 1.
              */
-            args.splice(2, 1, '1')
+            args.splice(2, 1, '1');
+        }
+        if (isNaN(args[3])) {
+            /**
+             * This parameter is invalid
+             */
+             args.splice(3, 1, '0');
         }
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
         if (maxStack >= args[2]) {
-            let inv = member.getComponent('inventory').container
-            let item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]));
+            let inv = member.getComponent('inventory').container;
+            let item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
             inv.addItem(item);
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} was given ${args[1]} x${args[2]}.`);
         } else {
