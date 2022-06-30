@@ -4,16 +4,15 @@ import { clearTickTimeout, setTickTimeout } from "../../../misc/scheduling.js";
 
 const World = world;
 
-function queueSleep(player, opsBoolean, id) {
-    // Unsubscribe if disabled in-game
-    if (!opsBoolean) {
-        clearTickTimeout(id);
-        return;
-    }
+function queueSleep(player, id) {
     player.runCommand(`time set sunrise`);
     player.runCommand(`time add 2000`);
     player.runCommand(`weather clear`);
-    player.runCommand(`title @s actionbar Good Morning`);
+    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
+    if (!hotbarBoolean) {
+        player.runCommand(`title @a[tag=!vanish] actionbar Good Morning`);
+    }
+    clearTickTimeout(id);
 }
 
 function ops() {
@@ -31,7 +30,7 @@ function ops() {
     filter.tags = ['sleeping'];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
-        const id = setTickTimeout(() => queueSleep(player, opsBoolean, id), 40);
+        const id = setTickTimeout(() => queueSleep(player, id), 40);
     }
 }
 
