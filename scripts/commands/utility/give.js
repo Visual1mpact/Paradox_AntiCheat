@@ -2,7 +2,6 @@
 
 import { world } from "mojang-minecraft";
 import { ItemStack } from "mojang-minecraft";
-import { Items } from "mojang-minecraft";
 import { MinecraftItemTypes } from "mojang-minecraft";
 import config from "../../data/config.js";
 import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
