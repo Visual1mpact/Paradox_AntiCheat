@@ -1,7 +1,6 @@
 import { world, EntityQueryOptions } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { clearTickTimeout, setTickTimeout } from "../../../misc/scheduling.js";
-import { sendMsg } from "../../../util.js";
 
 const World = world;
 
@@ -14,7 +13,7 @@ function queueSleep(player, opsBoolean, id) {
     player.runCommand(`time set sunrise`);
     player.runCommand(`time add 2000`);
     player.runCommand(`weather clear`);
-    sendMsg('@a', `§r§4[§6Paradox§4]§r Good Morning!`);
+    player.runCommand(`title @s actionbar Good Morning`);
 }
 
 function ops() {
