@@ -73,7 +73,6 @@ import { illegalEnchant } from "./settings/illegalenchant.js";
 import { illegalLores } from "./settings/illegallores.js";
 import { despawn } from "./moderation/despawn.js";
 import { reachC } from "./settings/reachc.js";
-import { performance } from "./utility/performance.js";
 import { hotbar } from "./utility/hotbar.js";
 import { rbcr } from "./settings/rbcr.js";
 import { ops } from "./settings/oneplayersleep.js";
@@ -160,7 +159,6 @@ const commandDefinitions = Object.setPrototypeOf({
     'illegallores': illegalLores,
     'despawn': despawn,
     'reachc': reachC,
-    'performance': performance,
     'hotbar': hotbar,
     'rbcr': rbcr,
     'ops': ops,

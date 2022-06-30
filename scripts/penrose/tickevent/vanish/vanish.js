@@ -22,9 +22,7 @@ function vanish() {
         if (hash !== undefined && encode === hash) {
             player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255, false);
             player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255, false);
-            if (!player.hasTag('performance')) {
-                player.runCommand(`title @s actionbar §6YOU ARE VANISHED!`);
-            }
+            player.runCommand(`title @s actionbar §6YOU ARE VANISHED!`);
         }
         // Make sure they have permission to use Vanish
         if (hash === undefined || encode !== hash) {

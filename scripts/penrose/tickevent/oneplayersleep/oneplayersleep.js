@@ -9,7 +9,7 @@ function queueSleep(player, id) {
     player.runCommand(`time add 2000`);
     player.runCommand(`weather clear`);
     let hotbarBoolean = World.getDynamicProperty('hotbar_b');
-    if (!hotbarBoolean) {
+    if (hotbarBoolean === undefined || hotbarBoolean === false) {
         player.runCommand(`title @a[tag=!vanish] actionbar Good Morning`);
     }
     clearTickTimeout(id);

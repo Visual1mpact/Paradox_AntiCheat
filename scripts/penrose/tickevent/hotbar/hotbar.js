@@ -16,7 +16,7 @@ function hotbar() {
     }
     let hotbarMessage;
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['performance', 'vanish'];
+    filter.excludeTags = ['vanish'];
     // run as each player
     for (let player of World.getPlayers(filter)) {
         hotbarMessage = config.modules.hotbar.message;

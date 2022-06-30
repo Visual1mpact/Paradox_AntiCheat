@@ -90,7 +90,6 @@ export default
         "illegalenchant": true,
         "illegallores": true,
         "despawn": true,
-        "performance": true,
         "hotbar": true,
         "rbcr": true,
         "ops": true,
