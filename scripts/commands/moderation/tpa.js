@@ -68,24 +68,26 @@ export function tpa(message, args) {
     }
 
     let member;
-    // Check if teleporting to them or vice versa then set it up
-    if (args[0].replace(/"|\\|@/g, "") === player.name && args[1] || args[0].replace(/"|\\|@/g, "") !== player.name && args[1]) {
-        // Try to find the player requested
-        for (let pl of World.getPlayers()) {
-            if (pl.nameTag.toLowerCase().includes(args[1].toLowerCase().replace(/"|\\|@/g, ""))) {
-                member = pl;
-            }
+    
+    // Try to find the player requested
+    for (let pl of World.getPlayers()) {
+        if (pl.nameTag.toLowerCase().includes(args[1].toLowerCase().replace(/"|\\|@/g, ""))) {
+            member = pl;
         }
-        // Are they online?
-        if (!member) {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player! Try '${prefix}tpa help' for more info.`);
-        }
-    } else {
-        return tpaHelp(player, prefix);
+    }
+    // Are they online?
+    if (!member) {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player! Try '${prefix}tpa help' for more info.`);
     }
 
-    // Let's teleport you to that player
-    player.teleport(new Location(member.location.x, member.location.y, member.location.z), member.dimension, 0, 0);
+    // Check if teleporting to them or vice versa then set it up
+    if (args[0].replace(/"|\\|@/g, "") === player.name && args[1]) {
+        // Let's teleport you to that player
+        player.teleport(new Location(member.location.x, member.location.y, member.location.z), member.dimension, 0, 0);
+    } else if (args[0].replace(/"|\\|@/g, "") !== player.name && args[1]) {
+        // Let's teleport them to you
+        member.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
+    }
 
     // Let you know that you have been teleported
     return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported to ${member.nameTag}`);
