@@ -28,7 +28,10 @@ function listHomeHelp(player, prefix) {
 export function listhome(message, args) {
     // Validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/listhome.js:8)");
+        return console.warn(
+            `${new Date()} | ` +
+                "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/listhome.js:8)"
+        );
     }
 
     message.cancel = true;
@@ -38,14 +41,9 @@ export function listhome(message, args) {
     // Check for custom prefix
     let prefix = getPrefix(player);
 
-    // Are there arguements
-    if (!args.length) {
-        return listHomeHelp(player, prefix);
-    }
-
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.listhome) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.listhome) {
         return listHomeHelp(player, prefix);
     }
 
@@ -55,7 +53,7 @@ export function listhome(message, args) {
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith("LocationHome:")) {
             // Split string into array
-            let coordinatesArray = tags[i].split(' ');
+            let coordinatesArray = tags[i].split(" ");
             let home;
             let homex;
             let homey;
@@ -86,7 +84,10 @@ export function listhome(message, args) {
                     if (counter === 1) {
                         sendMsgToPlayer(player, `§l§6[§4List Of Homes§6]§r`);
                     }
-                    sendMsgToPlayer(player, ` | §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`);
+                    sendMsgToPlayer(
+                        player,
+                        ` | §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`
+                    );
                     continue;
                 }
             }
