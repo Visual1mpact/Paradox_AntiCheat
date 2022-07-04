@@ -33,25 +33,38 @@ function dhms(ms: number) {
     }
 }
 
-function execution() {
+function executionItem() {
     // Find them all and take them out
     let filter = new EntityQueryOptions();
-    filter.families = ['monster'];
     filter.type = "item";
     for (let entity of World.getDimension('overworld').getEntities(filter)) {
-        // Check if entity object returns undefined
+        // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
         }
 
+        // Kill dropped items
         if (entity.id === "minecraft:item") {
             entity.kill();
-        } else {
-            // Despawn this entity
-            entity.triggerEvent('paradox:kick');
         }
     }
-    return;
+    return World.events.tick.unsubscribe(executionItem);
+}
+
+function executionEntity() {
+    // Find them all and take them out
+    let filter = new EntityQueryOptions();
+    filter.families = ['monster'];
+    for (let entity of World.getDimension('overworld').getEntities(filter)) {
+        // Check if entity object returns undefined and skip it
+        if (entity === undefined) {
+            continue;
+        }
+
+        // Despawn this entity
+        entity.triggerEvent('paradox:kick');
+    }
+    return World.events.tick.unsubscribe(executionEntity);
 }
 
 function clearlag(id: number) {
@@ -99,7 +112,8 @@ function clearlag(id: number) {
         // Delete old key and value
         cooldownTimer.delete(object);
         // Clear entities and items
-        execution();
+        World.events.tick.subscribe(executionItem);
+        World.events.tick.subscribe(executionEntity);
         // Notify that it has been cleared
         sendMsg('@a', `§r§4[§6Paradox§4]§r Server has been cleared to reduce lag!`);
     } else {
