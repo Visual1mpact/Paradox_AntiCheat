@@ -2,8 +2,7 @@
     "compileOnSave": false,
     "compilerOptions": {
         "lib": [
-            "esnext",
-            "DOM"
+            "esnext"
         ],
         "target": "esnext",
         "module": "esnext",
