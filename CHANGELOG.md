@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.1) (2022-07-04)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v3.0.0...v3.0.1)
+
+**Merged pull requests:**
+
+- Apply fixes from CodeFactor [\#43](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/43) ([Visual1mpact](https://github.com/Visual1mpact))
+
 ## [v3.0.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.0) (2022-07-04)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.19.54...v3.0.0)
