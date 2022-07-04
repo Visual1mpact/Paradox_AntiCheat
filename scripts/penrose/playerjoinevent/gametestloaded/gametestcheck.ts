@@ -1,11 +1,11 @@
-import { world } from "mojang-minecraft";
+import { Player, world } from "mojang-minecraft";
 
 const World = world;
 
 const tickEventCallback = World.events.tick;
 
 // This is to allow passing between functions
-let player;
+let player: Player;
 let isChecked = false;
 
 // This function will be called when tick event is triggered from the playerloaded function
@@ -21,8 +21,8 @@ function time() {
             player.runCommand(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
             tickEventCallback.unsubscribe(time);
-        } catch (error) {}
-    } catch (error) {}
+        } catch (error) { }
+    } catch (error) { }
 }
 
 // This function will be called when playerJoin event is triggered
