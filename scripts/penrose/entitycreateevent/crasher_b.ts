@@ -1,4 +1,4 @@
-import { Entity, EntityCreateEvent, EntityItemComponent, EntityQueryOptions, ItemStack, Player, world } from "mojang-minecraft";
+import { Entity, EntityCreateEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
 
@@ -50,11 +50,11 @@ function crasherb(object: EntityCreateEvent) {
     // Event property
     let { entity } = object;
 
-    if(entity.id === "minecraft:item") {
+    if (entity.id === "minecraft:item") {
         let itemComponent = entity.getComponent("item") as unknown as EntityItemComponent;
         let itemObject = itemComponent.itemStack;
 
-        if(itemObject.id === "minecraft:arrow" && itemObject.data > 43) {
+        if (itemObject.id === "minecraft:arrow" && itemObject.data > 43) {
             flag(nearestPlayer(entity), "Crasher", "B", "Exploit", null, null, "item", `${itemObject.id.replace("minecraft:", "")}: data=${itemObject.data}`, false, null);
             entity.kill();
         }

@@ -1,8 +1,7 @@
 /* eslint no-var: "off"*/
 
 import { BeforeChatEvent, EntityInventoryComponent, Player, world } from "mojang-minecraft";
-import { ItemStack } from "mojang-minecraft";
-import { MinecraftItemTypes } from "mojang-minecraft";
+import { MinecraftItemTypes, ItemStack } from "mojang-minecraft";
 import config from "../../data/config.js";
 import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
 import { crypto, getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
@@ -41,18 +40,18 @@ export function give(message: BeforeChatEvent, args: string[]) {
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/give.js:36)");
     }
-    
+
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
     let salt = player.getDynamicProperty('salt');
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -71,7 +70,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return giveHelp(player, prefix);
     }
-    
+
     // Try to find the player requested
     let member: Player;
     if (args.length) {
@@ -81,7 +80,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
             }
         }
     }
-    
+
     // Are they online?
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
@@ -113,7 +112,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
             /**
              * This parameter is invalid
              */
-             args.splice(3, 1, '0');
+            args.splice(3, 1, '0');
         }
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
         if (maxStack >= args[2]) {

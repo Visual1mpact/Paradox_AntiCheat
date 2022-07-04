@@ -12,7 +12,7 @@ import { SpammerC } from "./penrose/beforechatevent/spammer/spammer_c.js";
 import { SpammerD } from "./penrose/beforechatevent/spammer/spammer_d.js";
 import { PrefixCommand } from "./penrose/beforechatevent/chat/prefixcommand.js";
 import { ChatFilter } from "./penrose/beforechatevent/chat/chatfilter.js";
-import { AntiSpam, timer } from "./penrose/beforechatevent/chat/antispam.js";
+import { AntiSpam } from "./penrose/beforechatevent/chat/antispam.js";
 // Import Tick Events
 import { ServerBan } from "./penrose/tickevent/ban/serverban.js";
 import { CrasherA } from "./penrose/tickevent/crasher/crasher_a.js";
@@ -110,7 +110,7 @@ setTickInterval(() => {
     for (let player of World.getPlayers()) {
         try {
             hastag = player.hasTag('freeze');
-        } catch (error) {}
+        } catch (error) { }
         if (hastag) {
             TickFreeze(player);
             hastag = null;

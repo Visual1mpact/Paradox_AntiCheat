@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityItemComponent, EntityInventoryComponent } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
@@ -39,14 +39,14 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
     let salt = player.getDynamicProperty('salt');
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -65,7 +65,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return punishHelp(player, prefix);
     }
-    
+
     // Try to find the player requested
     let member: Player;
     if (args.length) {
@@ -75,7 +75,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
             }
         }
     }
-    
+
     // Are they online?
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
@@ -91,7 +91,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     for (let slot = 0; slot < 30; slot++) {
         try {
             member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        } catch (error) { }
     }
 
     // Get requested player's inventory so we can wipe it out
@@ -104,7 +104,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
         }
         try {
             inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
-        } catch {}
+        } catch { }
     }
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been punished for your behavior!`);
