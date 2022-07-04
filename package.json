@@ -17,6 +17,6 @@
     "mkdirs": "mkdir -p build",
     "copy:assets": "cp -R animation_controllers/ animations entities/ functions/ CHANGELOG.md LICENSE manifest.json pack_icon.png README.md build",
     "build": "tsc -p tsconfig.json && npm run copy:assets",
-    "dist": "npm run clean && npm run build && cd build; zip -0 -r paradox_anticheat.zip ../build ."
+    "dist": "npm run clean && npm run build && cd build; zip -0 -r Paradox-AntiCheat-v${npm_package_version}.zip ../build ."
   }
 }
