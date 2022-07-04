@@ -10,7 +10,7 @@
         "sourceMap": false,
         "moduleResolution": "node",
         "outDir": "build/scripts",
-        "removeComments": true,
+        "removeComments": false,
         "allowJs": true,
         "checkJs": false,
         "useDefineForClassFields": true
