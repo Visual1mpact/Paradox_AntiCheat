@@ -15,6 +15,12 @@ function onJoinTime(player: Player, callback: any) {
     if (lockdownBoolean === undefined) {
         lockdownBoolean = config.modules.lockDown.enabled;
     }
+    // Get Dynamic Property
+    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
+    if (illegalItemsABoolean === undefined) {
+        illegalItemsABoolean = config.modules.illegalitemsA.enabled;
+    }
+
     try {
         // Loop until player is detected in the world
         player.runCommand(`testfor @s`);
@@ -33,18 +39,29 @@ function onJoinTime(player: Player, callback: any) {
         }
 
         // We execute each command in the list
-        for (let i=0; i < onJoinData.length; i++) {
+        for (let i = 0; i < onJoinData.length; i++) {
             try {
                 player.runCommand(`${onJoinData[i]}`);
-            } catch (error) {}
+            } catch (error) { }
         }
+
+        // Unsubscribe if disabled in-game
+        if (illegalItemsABoolean === false) {
+            let allPlayers = [...World.getPlayers()];
+            for (let player of allPlayers) {
+                if (player.hasTag('illegalitemsA')) {
+                    player.removeTag('illegalitemsA');
+                }
+            }
+        }
+
         // Set up custom tag
         // tagRank(player);
         // Set up custom prefix
         getPrefix(player);
         check = true;
 
-    } catch (error) {}
+    } catch (error) { }
     if (check) {
         check = false;
         return tickEventCallback.unsubscribe(callback);

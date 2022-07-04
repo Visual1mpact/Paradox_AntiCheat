@@ -15,10 +15,10 @@ function rip(player: Player, inventory_item: ItemStack, enchant_data: Enchantmen
 
     // This removes old ban tags
     tags.forEach(t => {
-        if(t.startsWith("Reason:")) {
+        if (t.startsWith("Reason:")) {
             player.removeTag(t);
         }
-        if(t.startsWith("By:")) {
+        if (t.startsWith("By:")) {
             player.removeTag(t);
         }
     });
@@ -29,7 +29,7 @@ function rip(player: Player, inventory_item: ItemStack, enchant_data: Enchantmen
             player.addTag('Reason:Illegal Item A (' + inventory_item.id.replace("minecraft:", "") + '=' + inventory_item.amount + ')');
             player.addTag('By:Paradox');
             player.addTag('isBanned');
-        // Despawn if we cannot kick the player
+            // Despawn if we cannot kick the player
         } catch (error) {
             player.triggerEvent('paradox:kick');
         }
@@ -39,7 +39,7 @@ function rip(player: Player, inventory_item: ItemStack, enchant_data: Enchantmen
             player.addTag('Reason:Illegal Item A (' + inventory_item.id.replace("minecraft:", "") + ': ' + enchant_data.type.id + '=' + enchant_data.level + ')');
             player.addTag('By:Paradox');
             player.addTag('isBanned');
-        // Despawn if we cannot kick the player
+            // Despawn if we cannot kick the player
         } catch (error) {
             player.triggerEvent('paradox:kick');
         }
@@ -72,20 +72,30 @@ function illegalitemsa() {
     if (stackBanBoolean === undefined) {
         stackBanBoolean = config.modules.stackBan.enabled;
     }
+
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
+        let allPlayers = [...World.getPlayers()];
+        for (let player of allPlayers) {
+            if (player.hasTag('illegalitemsA')) {
+                player.removeTag('illegalitemsA');
+            }
+        }
         World.events.tick.unsubscribe(illegalitemsa);
         return;
     }
 
     for (let player of World.getPlayers()) {
+        if (!player.hasTag('illegalitemsA') && illegalItemsABoolean) {
+            player.addTag('illegalitemsA');
+        }
         // Check for hash/salt and validate password
         let hash = player.getDynamicProperty('hash');
         let salt = player.getDynamicProperty('salt');
-        let encode;
+        let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
+        } catch (error) { }
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -101,7 +111,7 @@ function illegalitemsa() {
             if (antiShulkerBoolean && inventory_item.id === "minecraft:shulker_box" || antiShulkerBoolean && inventory_item.id === "minecraft:undyed_shulker_box") {
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch {}
+                } catch { }
                 sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
                 continue;
@@ -140,12 +150,12 @@ function illegalitemsa() {
                             let enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]);
                             // Is this item allowed to have this enchantment and does it not exceed level limitations
                             let enchantLevel = enchantedSlot[enchants];
-                            if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level  >= 0) {
+                            if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level >= 0) {
                                 // Save this enchantment and level for new item
                                 let changeCase = toCamelCase(enchants);
                                 enchantArray.push(changeCase);
                                 enchantLevelArray.push(enchant_data.level);
-                                
+
                             }
                         }
                     }
@@ -169,11 +179,11 @@ function illegalitemsa() {
                         try {
                             actualItemName.setLore(loreData);
                             container.setItem(i, actualItemName);
-                        } catch (error) {}
+                        } catch (error) { }
                     } else if (illegalLoresBoolean) {
                         try {
                             container.setItem(i, actualItemName);
-                        } catch (error) {}
+                        } catch (error) { }
                     }
                     if (config.debug) {
                         console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/A)!`);
@@ -195,12 +205,12 @@ function illegalitemsa() {
                             const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
                             newItem.setLore(loreData);
                             container.setItem(i, newItem);
-                        } catch (error) {}
+                        } catch (error) { }
                         continue;
                     }
                     try {
                         container.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                    } catch (error) {}
+                    } catch (error) { }
                     continue;
                 } else if (salvageable[inventory_item.id] && salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
                     if (!illegalLoresBoolean) {
@@ -209,13 +219,13 @@ function illegalitemsa() {
                             const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
                             newItem.setLore(loreData);
                             container.setItem(i, newItem);
-                        } catch (error) {}
+                        } catch (error) { }
                         continue;
                     }
                     // Reset item to data type of equal data if they do not match
                     try {
                         container.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                    } catch (error) {}
+                    } catch (error) { }
                     continue;
                 } else if (salvageable[inventory_item.id]) {
                     if (!illegalLoresBoolean) {
@@ -224,13 +234,13 @@ function illegalitemsa() {
                             const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
                             newItem.setLore(loreData);
                             container.setItem(i, newItem);
-                        } catch (error) {}
+                        } catch (error) { }
                         continue;
                     }
                     // Reset item to data type of equal data because we take no chances
                     try {
                         container.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                    } catch (error) {}
+                    } catch (error) { }
                     continue;
                 }
             }
@@ -241,7 +251,7 @@ function illegalitemsa() {
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch {}
+                } catch { }
                 // Ban
                 return rip(player, inventory_item, null);
             }
@@ -259,14 +269,14 @@ function illegalitemsa() {
                 }
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch {}
+                } catch { }
                 continue;
             }
             // Check items for illegal lores
             if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch {}
+                } catch { }
                 sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
                 continue;
@@ -294,7 +304,7 @@ function illegalitemsa() {
                             // Remove this item immediately
                             try {
                                 container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                            } catch {}
+                            } catch { }
                             sendMsg('@a[tag=notify]', [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                                 `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
@@ -309,7 +319,7 @@ function illegalitemsa() {
                             // Remove this item immediately
                             try {
                                 container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                            } catch {}
+                            } catch { }
                             sendMsg('@a[tag=notify]', [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${enchant_data.type.id}=${enchant_data.level}§r`,
                                 `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
