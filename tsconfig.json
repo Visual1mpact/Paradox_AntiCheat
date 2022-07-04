@@ -1,0 +1,24 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "lib": [
+            "esnext",
+            "DOM"
+        ],
+        "target": "esnext",
+        "module": "esnext",
+        "sourceMap": false,
+        "moduleResolution": "node",
+        "outDir": "build/scripts",
+        "removeComments": true,
+        "allowJs": true,
+        "checkJs": false,
+        "useDefineForClassFields": true
+    },
+    "include": [
+        "scripts/**/*",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

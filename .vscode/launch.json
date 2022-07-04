@@ -1,0 +1,12 @@
+{
+  "version": "0.3.0",
+  "configurations": [
+    {
+      "type": "minecraft-js",
+      "request": "attach",
+      "name": "Attach to Minecraft Bedrock Dedicated Server",
+      "localRoot": "${workspaceFolder}/",
+      "port": 19144
+    }
+  ]
+}

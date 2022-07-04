@@ -1,0 +1,32 @@
+{
+    "name": "@types/mojang-gametest",
+    "version": "0.1.5",
+    "description": "TypeScript definitions for Minecraft Bedrock Edition script APIs (experimental)",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mojang-gametest",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jake Shirley",
+            "url": "https://github.com/JakeShirley",
+            "githubUsername": "JakeShirley"
+        },
+        {
+            "name": "Mike Ammerlaan",
+            "url": "https://github.com/mammerla",
+            "githubUsername": "mammerla"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/mojang-gametest"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/mojang-minecraft": "*"
+    },
+    "typesPublisherContentHash": "84adaf7b4d9ef1c424240c158b1ee8ff7fb4965fa0531187d79cd7a8db4fbc6b",
+    "typeScriptVersion": "3.9"
+}
