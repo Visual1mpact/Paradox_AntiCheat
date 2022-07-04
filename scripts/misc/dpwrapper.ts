@@ -4,37 +4,34 @@ import config from "../data/config.js";
 import scoreboard from "../libs/scoreboard.js";
 import { crypto } from "../util.js";
 
+type scoreboardObjectiveDummies = typeof scoreboard.objective.prototype.dummies
+
 if (config.dynamicPropertyWrapper.enabled) {
     // cancel registration
-    PropertyRegistry.prototype.registerEntityTypeDynamicProperties = () => {};
-    PropertyRegistry.prototype.registerWorldDynamicProperties = () => {};
+    PropertyRegistry.prototype.registerEntityTypeDynamicProperties = () => { };
+    PropertyRegistry.prototype.registerWorldDynamicProperties = () => { };
 
     // thing?
     const dpw = config.dynamicPropertyWrapper.uniqueID.slice(0, 6);
     const pw = config.modules.encryption.password;
     // If they didn't change it then we will change it for them
-    let uniqueID;
-    if (dpw === "3t6@XB") {
-        uniqueID = String(crypto(dpw, pw)).slice(0, 6);
-    } else {
-        uniqueID = dpw;
-    }
+    const uniqueID = dpw === "3t6@XB" ? String(crypto(dpw, pw)).slice(0, 6) : dpw;
 
-    const getPropertyDatas = (scoreObj) => {
-        const data = Object.create(null);
+    const getPropertyDatas = (scoreObj: scoreboardObjectiveDummies) => {
+        const data: Record<string, { cachedValue: string | number | boolean, scoreboardName: string }> = Object.create(null);
         for (const [name] of scoreObj.getScores()) {
             // parse the saved value
             const [match, id, type] = name.match(/(.*?)\|\|(string|number|boolean)\|\|/) ?? [];
-    
+
             // skip if match is undefined (misformatted)
             if (typeof match == 'undefined') continue;
-    
+
             // parse value
             const valueStr = name.substring(match.length),
                 value = type == 'number' ? +valueStr
                     : type == 'boolean' ? valueStr == 'true'
-                    : JSON.parse(`"${valueStr}"`);
-            
+                        : JSON.parse(`"${valueStr}"`);
+
             // add the value in property list
             data[JSON.parse(`"${id}"`)] = {
                 cachedValue: value,
@@ -56,7 +53,7 @@ if (config.dynamicPropertyWrapper.enabled) {
         if (vtype != 'string' && vtype != 'number' && vtype != 'boolean') throw new TypeError(`Unexpected value type ${vtype}`);
 
         // delete existing
-        const propData = worldPropertyList[id] ??= {};
+        const propData = worldPropertyList[id] ??= { cachedValue: undefined, scoreboardName: undefined };
         if (propData.scoreboardName !== undefined) worldObj.delete(propData.scoreboardName);
 
         // set
@@ -74,14 +71,14 @@ if (config.dynamicPropertyWrapper.enabled) {
     };
 
     // player dynamic property
-    Player.prototype.getDynamicProperty = function(id) {
+    Player.prototype.getDynamicProperty = function (id) {
         return getDataOfPlayer(this).data[id]?.cachedValue;
     };
-    Player.prototype.setDynamicProperty = function(id, value) {
+    Player.prototype.setDynamicProperty = function (id, value) {
         const vtype = typeof value;
         if (vtype != 'string' && vtype != 'number' && vtype != 'boolean') throw new TypeError(`Unexpected value type ${vtype}`);
 
-        const {obj, data} = getDataOfPlayer(this);
+        const { obj, data } = getDataOfPlayer(this);
 
         // delete existing
         const propData = data[id] ??= {};
@@ -92,7 +89,7 @@ if (config.dynamicPropertyWrapper.enabled) {
         obj.set(propData.scoreboardName = `${id}||${vtype}||${value}`, 0);
     };
     Player.prototype.removeDynamicProperty = function (id) {
-        const {obj, data} = getDataOfPlayer(this);
+        const { obj, data } = getDataOfPlayer(this);
         if (!(id in data)) return false;
 
         // delete
@@ -109,7 +106,7 @@ if (config.dynamicPropertyWrapper.enabled) {
     // player data & uid registry
     const staticUidRegistry = scoreboard.objective.for(`${uniqueID}:uidreg`).players;
     const dataList = new WeakMap();
-    const getDataOfPlayer = (plr) => {
+    const getDataOfPlayer = (plr: Player) => {
         // return if player data has already been set
         if (dataList.has(plr)) return dataList.get(plr);
 
