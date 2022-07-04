@@ -103,7 +103,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     if (antiShulkerBoolean && item.id === "minecraft:shulker_box" || antiShulkerBoolean && item.id === "minecraft:undyed_shulker_box") {
         object.cancel = true;
-        let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent
+        let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
         invContainer.container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
         sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} from ${source.nameTag}.`);
         sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
