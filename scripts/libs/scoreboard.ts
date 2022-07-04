@@ -1,8 +1,10 @@
 // https://github.com/frostice482/server-expansion/blob/main/dev/src/libcore/scoreboard.ts
-// transpiled from typescript to javascript
+import { ScoreboardIdentityType, ScoreboardObjective, world } from 'mojang-minecraft'
+import { Dimension, Player } from 'mojang-minecraft'
+const overworld = world.getDimension('overworld')
 
 // https://github.com/frostice482/server-expansion/blob/main/dev/src/libcore/mc.ts#L33
-const execCmd = (command: string, source: Dimension = dim, ignoreError = false): { statusCode: number; statusMessage: string; } => {
+const execCmd = (command: string, source: Dimension | Player = overworld, ignoreError = false): { statusCode: number; statusMessage: string; } => {
     try { return source.runCommand(command); }
     catch (e) {
         if (e instanceof Error) throw e;
@@ -15,9 +17,6 @@ const execCmd = (command: string, source: Dimension = dim, ignoreError = false):
         else throw r;
     }
 };
-
-import { ScoreboardIdentityType, ScoreboardObjective, world } from 'mojang-minecraft'
-import { Player } from 'mojang-minecraft'
 
 const auth = Symbol()
 
@@ -46,7 +45,7 @@ class objective {
             return true
         }
     }
-    static readonly delete = (id: string) => !execCmd(`scoreboard objectives remove ${toExecutable(id)}`, dim.o, true).statusCode
+    static readonly delete = (id: string) => !execCmd(`scoreboard objectives remove ${toExecutable(id)}`, undefined, true).statusCode
     static readonly getList = () => world.scoreboard.getObjectives().map(v => this.edit(v.id))
 
     constructor(id: string, displayName = id, create = true) {
@@ -93,11 +92,11 @@ class players {
     #obj: objective
     #data: ScoreboardObjective
 
-    readonly 'set' = (plr: Player, score: number) => ( void execCmd(`scoreboard players set @s ${this.#obj.execId} ${score}`, plr, true), this )
-    readonly add = (plr: Player, score: number) => ( void execCmd(`scoreboard players add @s ${this.#obj.execId} ${score}`, plr, true), this )
+    readonly 'set' = (plr: Player, score: number) => (void execCmd(`scoreboard players set @s ${this.#obj.execId} ${score}`, plr, true), this)
+    readonly add = (plr: Player, score: number) => (void execCmd(`scoreboard players add @s ${this.#obj.execId} ${score}`, plr, true), this)
     readonly 'get' = (plr: Player) => {
         const r = execCmd(`scoreboard players test @s ${this.#obj.execId} * *`, plr, true)
-        if (r.statusCode) return 
+        if (r.statusCode) return
         return +r.statusMessage.match(/-?\d+/)?.[0]
     }
 
@@ -124,16 +123,16 @@ class dummies {
     #obj: objective
     #data: ScoreboardObjective
 
-    readonly 'set' = (name: string, score: number) => ( void execCmd(`scoreboard players set ${toExecutable(name)} ${this.#obj.execId} ${score}`, dim.o, true), this )
-    readonly add = (name: string, score: number) => ( void execCmd(`scoreboard players add ${toExecutable(name)} ${this.#obj.execId} ${score}`, dim.o, true), this )
+    readonly 'set' = (name: string, score: number) => (void execCmd(`scoreboard players set ${toExecutable(name)} ${this.#obj.execId} ${score}`, undefined, true), this)
+    readonly add = (name: string, score: number) => (void execCmd(`scoreboard players add ${toExecutable(name)} ${this.#obj.execId} ${score}`, undefined, true), this)
     readonly 'get' = (name: string) => {
-        const r = execCmd(`scoreboard players test ${toExecutable(name)} ${this.#obj.execId} * *`, dim.o, true)
-        if (r.statusCode) return 
+        const r = execCmd(`scoreboard players test ${toExecutable(name)} ${this.#obj.execId} * *`, undefined, true)
+        if (r.statusCode) return
         return +r.statusMessage.match(/-?\d+/)?.[0]
     }
 
-    readonly exist = (name: string) => !execCmd(`scoreboard players test ${toExecutable(name)} ${this.#obj.execId} * *`, dim.o, true).statusCode
-    readonly delete = (name: string) => !execCmd(`scoreboard players reset ${toExecutable(name)} ${this.#obj.execId}`, dim.o, true).statusCode
+    readonly exist = (name: string) => !execCmd(`scoreboard players test ${toExecutable(name)} ${this.#obj.execId} * *`, undefined, true).statusCode
+    readonly delete = (name: string) => !execCmd(`scoreboard players reset ${toExecutable(name)} ${this.#obj.execId}`, undefined, true).statusCode
     readonly getScores = (() => {
         const t = this
         return function* () {
@@ -145,8 +144,8 @@ class dummies {
 }
 
 class display {
-    static readonly setDisplay = (displaySlot: displaySlot, scoreboard: objective | string) => !execCmd(`scoreboard objectives setdisplay ${displaySlot} ${scoreboard instanceof objective ? scoreboard.execId : toExecutable(scoreboard)}`, dim.o, true).statusCode
-    static readonly clearDisplay = (displaySlot: displaySlot) => !execCmd(`scoreboard objectives setdisplay ${displaySlot}`, dim.o, true).statusCode
+    static readonly setDisplay = (displaySlot: displaySlot, scoreboard: objective | string) => !execCmd(`scoreboard objectives setdisplay ${displaySlot} ${scoreboard instanceof objective ? scoreboard.execId : toExecutable(scoreboard)}`, undefined, true).statusCode
+    static readonly clearDisplay = (displaySlot: displaySlot) => !execCmd(`scoreboard objectives setdisplay ${displaySlot}`, undefined, true).statusCode
 
     constructor(key: typeof auth, obj: objective) {
         if (key !== auth) throw new TypeError('Class is not constructable')
@@ -155,6 +154,6 @@ class display {
 
     #obj: objective
 
-    readonly setDisplay = (displaySlot: displaySlot) => !execCmd(`scoreboard objectives setdisplay ${displaySlot} ${this.#obj.execId}`, dim.o, true).statusCode
+    readonly setDisplay = (displaySlot: displaySlot) => !execCmd(`scoreboard objectives setdisplay ${displaySlot} ${this.#obj.execId}`, undefined, true).statusCode
     readonly clearDisplay = display.clearDisplay
 }
