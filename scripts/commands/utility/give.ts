@@ -1,7 +1,6 @@
 /* eslint no-var: "off"*/
 
-import { BeforeChatEvent, EntityInventoryComponent, Player, world } from "mojang-minecraft";
-import { MinecraftItemTypes, ItemStack } from "mojang-minecraft";
+import { BeforeChatEvent, EntityInventoryComponent, Player, world, MinecraftItemTypes, ItemStack } from "mojang-minecraft";
 import config from "../../data/config.js";
 import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
 import { crypto, getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
