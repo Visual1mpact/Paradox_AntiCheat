@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.0) (2022-07-04)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.19.54...v3.0.0)
+
+**Closed issues:**
+
+- like every command throws an error if you dont give args [\#41](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/41)
+
 ## [v2.19.54](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.19.54) (2022-06-26)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.19.53...v2.19.54)
