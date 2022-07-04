@@ -14,7 +14,7 @@ function hotbar() {
         World.events.tick.unsubscribe(hotbar);
         return;
     }
-    let hotbarMessage;
+    let hotbarMessage: string;
     let filter = new EntityQueryOptions();
     filter.excludeTags = ['vanish'];
     // run as each player
