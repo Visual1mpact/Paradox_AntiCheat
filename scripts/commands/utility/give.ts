@@ -95,7 +95,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
      * args[3] = data (optional)
      */
     let confirmItem = false;
-    let itemStringConvert = toCamelCase(args[1])
+    let itemStringConvert = toCamelCase(args[1]);
     for (let itemValidate in MinecraftItemTypes) {
         if (itemStringConvert === itemValidate) {
             confirmItem = true;

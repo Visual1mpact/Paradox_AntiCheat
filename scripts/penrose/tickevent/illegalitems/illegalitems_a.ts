@@ -283,7 +283,7 @@ function illegalitemsa() {
             }
             if (illegalEnchantmentBoolean) {
                 // We get a list of enchantments on this item
-                let enchantContainer = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent
+                let enchantContainer = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
                 let item_enchants = enchantContainer.enchantments;
                 // List of allowed enchantments on item
                 let enchantedSlot = enchantmentSlot[item_enchants.slot];
