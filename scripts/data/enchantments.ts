@@ -40,10 +40,9 @@ const maxLevel = {
     quickCharge: 3,
     soulSpeed: 3,
     swiftSneak: 3,
-};
+} as const;
 
-/** @type { <L extends ( keyof typeof maxLevel)[]>(compatibles: L ) => { [K in L[number]]: typeof maxLevel[K] } } */
-const compatibles = (compatibleEnchantments = []) => {
+const compatibles = <List extends (keyof typeof maxLevel)[]>(compatibleEnchantments: List): { [K in List[number]]: typeof maxLevel[K] } => {
     const obj = Object.create(null);
     for (const ench of compatibleEnchantments) obj[ench] = maxLevel[ench];
     return obj;
@@ -52,7 +51,7 @@ const compatibles = (compatibleEnchantments = []) => {
 // Compatible enchantments per enchantment slot.
 export const enchantmentSlot = {
     // None
-    0: compatibles(),
+    0: compatibles([] as []),
     // armorHead
     1: compatibles([
         'protection',
@@ -214,7 +213,7 @@ export const enchantmentSlot = {
         'vanishing',
     ]),
     // fishingRod
-    4096: compatibles([ 
+    4096: compatibles([
         'unbreaking',
         'luckOfTheSea',
         'lure',
@@ -222,13 +221,13 @@ export const enchantmentSlot = {
         'vanishing',
     ]),
     // carrotStick
-    8192: compatibles([ 
+    8192: compatibles([
         'unbreaking',
         'mending',
         'vanishing',
     ]),
     // elytra
-    16384: compatibles([ 
+    16384: compatibles([
         'unbreaking',
         'mending',
         'binding',
@@ -325,3 +324,5 @@ export const enchantmentSlot = {
         'swiftSneak'
     ])
 };
+
+Object.setPrototypeOf(enchantmentSlot, null)

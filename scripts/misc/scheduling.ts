@@ -18,7 +18,7 @@ let tickTimeoutID = 0, tickIntervalID = 0;
  * @param {any[]} args Function parameters for your handler
  * @returns {number}
  */
-function setTickTimeout(handler: any, timeout: number, ...args: any[]) {
+function setTickTimeout(handler: any, timeout: number, ...args: any[]): number {
     const tickTimeout = { callback: handler, tick: timeout, args };
     tickTimeoutID++;
     tickTimeoutMap.set(tickTimeoutID, tickTimeout);
@@ -33,7 +33,7 @@ function setTickTimeout(handler: any, timeout: number, ...args: any[]) {
  * @param {any[]} args Function parameters for your handler
  * @returns {number}
  */
-function setTickInterval(handler: any, timeout: number, ...args: any[]) {
+function setTickInterval(handler: any, timeout: number, ...args: any[]): number {
     const tickInterval = { callback: handler, tick: timeout, args };
     tickIntervalID++;
     tickIntervalMap.set(tickIntervalID, tickInterval);
@@ -60,15 +60,15 @@ function clearTickInterval(handle: number) {
 }
 
 World.events.tick.subscribe((data) => {
-    for(const [ID, tickTimeout] of tickTimeoutMap) {
+    for (const [ID, tickTimeout] of tickTimeoutMap) {
         tickTimeout.tick--;
-        if(tickTimeout.tick <= 0) {
+        if (tickTimeout.tick <= 0) {
             tickTimeout.callback(...tickTimeout.args);
             tickTimeoutMap.delete(ID);
         }
     }
-    for(const [, tickInterval] of tickIntervalMap) {
-        if(data.currentTick % tickInterval.tick === 0) tickInterval.callback(...tickInterval.args);
+    for (const [, tickInterval] of tickIntervalMap) {
+        if (data.currentTick % tickInterval.tick === 0) tickInterval.callback(...tickInterval.args);
     }
 });
 

@@ -85,7 +85,7 @@ import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { BeforeChatEvent, Player } from "mojang-minecraft";
 
-const commandDefinitions = Object.setPrototypeOf({
+const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf({
     'eval': evalCmd,
     'kick': kick,
     'tag': tag,

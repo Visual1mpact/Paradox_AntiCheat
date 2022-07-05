@@ -2,7 +2,7 @@
 export const defaultMaxItemStack = 64;
 
 // Maximum stack per items.
-const maxItemStack = {
+const maxItemStack: Record<string, number> = {
     '': 0,
     'minecraft:apple': 64,
     'minecraft:golden_apple': 64,
@@ -1137,3 +1137,5 @@ const maxItemStack = {
     'minecraft:gravel': 64
 };
 export default maxItemStack;
+
+Object.setPrototypeOf(maxItemStack, null)
