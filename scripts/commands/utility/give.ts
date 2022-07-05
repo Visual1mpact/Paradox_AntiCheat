@@ -114,7 +114,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
             args.splice(3, 1, '0');
         }
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
-        if (maxStack >= args[2]) {
+        if (maxStack >= Number(args[2])) {
             let invContainer = member.getComponent('inventory') as EntityInventoryComponent;
             let inv = invContainer.container;
             let item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
