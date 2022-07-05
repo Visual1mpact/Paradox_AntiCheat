@@ -66,7 +66,7 @@
 							"command_block_minecart": "query.get_equipped_item_name == 'command_block_minecart' || query.get_equipped_item_name('off_hand') == 'command_block_minecart'"
 						},
 						{
-							"repeating_command_block": "query.get_equipped_item_name == 'repeating_command_block' || query.get_equipped_item_name('off_hand') == 'repeating_command_block'"
+							"Repeating_command_block": "query.get_equipped_item_name == 'repeating_command_block' || query.get_equipped_item_name('off_hand') == 'repeating_command_block'"
 						},
 						{
 							"spawn_egg": "query.get_equipped_item_name == 'spawn_egg' || query.get_equipped_item_name('off_hand') == 'spawn_egg'"
@@ -87,13 +87,13 @@
 							"info_update2": "query.get_equipped_item_name == 'info_update2' || query.get_equipped_item_name('off_hand') == 'info_update2'"
 						},
 						{
-							"reserved3": "query.get_equipped_item_name == 'reserved3' || query.get_equipped_item_name('off_hand') == 'reserved3'"
+							"Reserved3": "query.get_equipped_item_name == 'reserved3' || query.get_equipped_item_name('off_hand') == 'reserved3'"
 						},
 						{
-							"reserved4": "query.get_equipped_item_name == 'reserved4' || query.get_equipped_item_name('off_hand') == 'reserved4'"
+							"Reserved4": "query.get_equipped_item_name == 'reserved4' || query.get_equipped_item_name('off_hand') == 'reserved4'"
 						},
 						{
-							"reserved6": "query.get_equipped_item_name == 'reserved6' || query.get_equipped_item_name('off_hand') == 'reserved6'"
+							"Reserved6": "query.get_equipped_item_name == 'reserved6' || query.get_equipped_item_name('off_hand') == 'reserved6'"
 						},
 						{
 							"movingblock": "query.get_equipped_item_name == 'movingblock' || query.get_equipped_item_name('off_hand') == 'movingblock'"
@@ -179,10 +179,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] light_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (light_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (light_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(light_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(light_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -194,10 +194,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] lit_smoker",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (lit_smoker)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (lit_smoker)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_smoker)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_smoker)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -209,10 +209,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] daylight_detector_inverted",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (daylight_detector_inverted)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (daylight_detector_inverted)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(daylight_detector_inverted)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(daylight_detector_inverted)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -224,10 +224,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] unpowered_comparator",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (unpowered_comparator)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (unpowered_comparator)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unpowered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unpowered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -239,10 +239,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] powered_comparator",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (powered_comparator)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (powered_comparator)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(powered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(powered_comparator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -254,10 +254,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] lit_blast_furnace",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (lit_blast_furnace)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (lit_blast_furnace)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_blast_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_blast_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -269,10 +269,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] lit_furnace",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (lit_furnace)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (lit_furnace)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(lit_furnace)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -284,10 +284,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] camera",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (camera)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (camera)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(camera)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(camera)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -299,10 +299,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] end_gateway",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (end_gateway)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (end_gateway)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(end_gateway)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(end_gateway)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -314,10 +314,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] fire",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (fire)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (fire)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(fire)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(fire)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -329,10 +329,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] soul_fire",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (soul_fire)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (soul_fire)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(soul_fire)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(soul_fire)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -344,10 +344,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] frosted_ice",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (frosted_ice)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (frosted_ice)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(frosted_ice)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(frosted_ice)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -359,10 +359,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] flowing_lava",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (flowing_lava)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (flowing_lava)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(flowing_lava)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(flowing_lava)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -374,10 +374,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] unknown",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (unknown)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (unknown)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unknown)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(unknown)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -389,10 +389,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] flowing_water",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (flowing_water)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (flowing_water)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(flowing_water)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(flowing_water)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -404,10 +404,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] barrier",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (barrier)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (barrier)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(barrier)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(barrier)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -419,10 +419,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] command_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (command_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (command_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -434,10 +434,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] chemistry_table",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (chemistry_table)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (chemistry_table)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chemistry_table)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chemistry_table)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -449,10 +449,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] debug_stick",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (debug_stick)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (debug_stick)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(debug_stick)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(debug_stick)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -464,10 +464,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] command_block_minecart",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (command_block_minecart)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (command_block_minecart)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(command_block_minecart)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(command_block_minecart)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -479,10 +479,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] repeating_command_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (repeating_command_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (repeating_command_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(repeating_command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(repeating_command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -494,10 +494,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] spawn_egg",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (spawn_egg)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (spawn_egg)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(spawn_egg)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(spawn_egg)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -509,10 +509,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] spawner",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (spawner)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (spawner)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(spawner)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(spawner)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -524,10 +524,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] structure_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (structure_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (structure_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(structure_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(structure_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -539,10 +539,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] structure_void",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (structure_void)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (structure_void)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(structure_void)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(structure_void)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -554,10 +554,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] info_update",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (info_update)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (info_update)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(info_update)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(info_update)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -569,10 +569,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] info_update2",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (info_update2)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (info_update2)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(info_update2)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(info_update2)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -584,10 +584,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] reserved3",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (reserved3)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (reserved3)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved3)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved3)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -599,10 +599,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] reserved4",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (reserved4)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (reserved4)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved4)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved4)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -614,10 +614,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] reserved6",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (reserved6)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (reserved6)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved6)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(reserved6)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -629,10 +629,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] movingblock",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (movingblock)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (movingblock)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(movingblock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(movingblock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -644,10 +644,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] moving_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (moving_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (moving_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(moving_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(moving_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -659,10 +659,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] movingBlock",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (movingBlock)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (movingBlock)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(movingBlock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(movingBlock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -674,10 +674,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] invisiblebedrock",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (invisiblebedrock)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (invisiblebedrock)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(invisiblebedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(invisiblebedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -689,10 +689,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] invisible_bedrock",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (invisible_bedrock)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (invisible_bedrock)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(invisible_bedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(invisible_bedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -704,10 +704,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] bedrock",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (bedrock)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (bedrock)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(bedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(bedrock)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -719,10 +719,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] glowingobsidian",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (glowingobsidian)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (glowingobsidian)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(glowingobsidian)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(glowingobsidian)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -734,10 +734,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] compoundcreator",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (compoundcreator)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (compoundcreator)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(compoundcreator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(compoundcreator)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -749,10 +749,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] underwater_torch",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (underwater_torch)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (underwater_torch)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(underwater_torch)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(underwater_torch)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -764,10 +764,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] chemical_heat",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (chemical_heat)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (chemical_heat)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chemical_heat)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chemical_heat)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -779,10 +779,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] end_portal",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (end_portal)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (end_portal)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(end_portal)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(end_portal)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -794,10 +794,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] colored_torch",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (colored_torch)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (colored_torch)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(colored_torch)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(colored_torch)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -809,10 +809,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] hard_stained_glass_pane",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (hard_stained_glass_pane)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (hard_stained_glass_pane)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(hard_stained_glass_pane)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(hard_stained_glass_pane)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -824,10 +824,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] hard_glass_pane",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (hard_glass_pane)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (hard_glass_pane)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(hard_glass_pane)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(hard_glass_pane)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -839,10 +839,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] allow",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (allow)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (allow)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(allow)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(allow)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -854,10 +854,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] chain_command_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (chain_command_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (chain_command_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chain_command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(chain_command_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -869,10 +869,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] client_request_placeholder_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (client_request_placeholder_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (client_request_placeholder_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(client_request_placeholder_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(client_request_placeholder_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -884,10 +884,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] deny",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (deny)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (deny)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(deny)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(deny)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -899,10 +899,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] npc_spawn",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (npc_spawn)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (npc_spawn)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(npc_spawn)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(npc_spawn)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -914,10 +914,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] stickyPistonArmCollision",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (stickyPistonArmCollision)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (stickyPistonArmCollision)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(stickyPistonArmCollision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(stickyPistonArmCollision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -929,10 +929,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] sticky_piston_arm_collision",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (sticky_piston_arm_collision)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (sticky_piston_arm_collision)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(sticky_piston_arm_collision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(sticky_piston_arm_collision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -944,10 +944,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] piston_arm_collision",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (piston_arm_collision)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (piston_arm_collision)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(piston_arm_collision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(piston_arm_collision)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -959,10 +959,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] netherreactor",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (netherreactor)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (netherreactor)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(netherreactor)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(netherreactor)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -974,10 +974,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] mob_spawner",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (mob_spawner)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (mob_spawner)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(mob_spawner)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(mob_spawner)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -989,10 +989,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] border_block",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (border_block)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (border_block)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(border_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(border_block)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -1004,10 +1004,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] bubble_column",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (bubble_column)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (bubble_column)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(bubble_column)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(bubble_column)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -1019,10 +1019,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] jigsaw",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (jigsaw)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (jigsaw)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(jigsaw)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(jigsaw)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
@@ -1034,10 +1034,10 @@
 					"on_entry": [
 						"/clear @s[tag=!paradoxOpped,tag=illegalitemsA] portal",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add By:Paradox",
-						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add "Reason:Illegal Item A (portal)"",
+						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add 'Reason:Illegal Item A (portal)'",
 						"/tag @s[tag=!paradoxOpped,tag=illegalitemsA] add isBanned",
 						"/scoreboard players add @s[tag=!paradoxOpped,tag=illegalitemsA] illegalitemsvl 1",
-						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(portal)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
+						"/execute @s[tag=!paradoxOpped,tag=illegalitemsA] ~~~ tellraw @a[tag=notify] {'Rawtext\":[{\"text\":\"§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Exploit) §4IllegalItems/A §7(portal)§4 VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"illegalitemsvl\"}}]}"
 					],
 					"transitions": [
 						{
