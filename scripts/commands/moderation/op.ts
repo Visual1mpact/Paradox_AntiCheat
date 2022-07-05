@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { BeforeChatEvent, Player, world } from "mojang-minecraft";
 import config from "../../data/config.js";
-import { crypto, generateUUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
@@ -46,7 +46,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     let encode: string;
     // If no salt then create one
     if (salt === undefined && args[0] === config.modules.encryption.password) {
-        player.setDynamicProperty('salt', generateUUID());
+        player.setDynamicProperty('salt', UUID.generate());
         salt = player.getDynamicProperty('salt');
     }
     // If no hash then create one
@@ -57,7 +57,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     } else {
         try {
             encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
+        } catch (error) { }
     }
     // Make sure the user has permissions to run the command
     if (hash === undefined || hash !== encode && args[0] !== config.modules.encryption.password) {
@@ -83,7 +83,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return opHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     if (args.length) {
@@ -93,7 +93,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
             }
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
@@ -103,7 +103,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     let memberSalt = member.getDynamicProperty('salt');
     // If no salt then create one
     if (memberSalt === undefined) {
-        member.setDynamicProperty('salt', generateUUID());
+        member.setDynamicProperty('salt', UUID.generate());
         memberSalt = member.getDynamicProperty('salt');
     }
     // If no hash then create one
