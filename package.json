@@ -20,6 +20,7 @@
     "dist": "npm run clean && npm run build && cd build; zip -0 -r Paradox-AntiCheat-v${npm_package_version}.zip ../build .",
     "//": " --- BUILD (Windows) --- ",
     "build_win": "(if exist build (rd /s /q build) || mkdir build) && tsc -p tsconfig.json && powershell Copy-Item -Path ^(\\\"animation_controllers\\\",\\\"animations\\\",\\\"entities\\\",\\\"functions\\\",\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
+    "build_win_noscript": "(if exist build (rd /s /q build) || mkdir build) && powershell Copy-Item -Path ^(\\\"animation_controllers\\\",\\\"animations\\\",\\\"entities\\\",\\\"functions\\\",\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
     "zip_win": "powershell Compress-Archive -Path \\\"build\\*\\\" -DestinationPath \\\"Paradox-AntiCheat-v%npm_package_version%.zip\\\" -Force",
     "dist_win": "npm run build_win && npm run zip_win"
   }
