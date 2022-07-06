@@ -1,6 +1,6 @@
 import { Location, world } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { sendMsgToPlayer } from "../../../util.js";
+import { sendMsg, sendMsgToPlayer } from "../../../util.js";
 
 const World = world;
 
@@ -26,7 +26,7 @@ const ChatFilter = () => {
                      */
                     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! ${msg.sender.name} has approved your request to teleport to their location!`);
                     sendMsgToPlayer(msg.sender, `§r§4[§6Paradox§4]§r You have approved a teleport request from ${player.name}!`);
-                    player.teleport(new Location(msg.sender.location.x, msg.sender.location.y, msg.sender.location.z), msg.sender.dimension, 0, 0);
+                    player.teleport(msg.sender.location, msg.sender.dimension, 0, 0);
                     player.removeTag('tpr:' + msg.sender.name);
                     msg.sender.removeTag('tpr');
                     break;
@@ -73,35 +73,17 @@ const ChatFilter = () => {
             // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
             // player.nameTag = nametag;
             if (!msg.cancel) {
-                if (rcbrBoolean) {
-                    // Use try/catch in case this is enabled and they don't use chat relay as this would error
-                    try {
-                        player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message + '\'}'}]})}`);
-                    } catch (error) {
-                        player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message } ] } )}`);
-                        msg.cancel = true;
-                    }
-                } else {
-                    player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: '§4[§6' + rank + '§4]§r §7' + player.name + ':§r ' + message } ] } )}`);
-                    msg.cancel = true;
-                }
+                if (rcbrBoolean) sendMsg('RealmBot', 'RB_COMMAND' + `{content:'[§6${rank}§4]§r §7${player.name}: ${message}'}`)
+                sendMsg('@a', `§4[§6${rank}§4]§r §7${player.name}: ${message}`)
+                msg.cancel = true;
             }
         } else if (!msg.cancel) {
             let message = msg.message;
             let player = msg.sender;
 
-            if (rcbrBoolean) {
-                // Use try/catch in case this is enabled and they don't use chat relay as this would error
-                try {
-                    player.runCommand(`tellraw RealmBot ${JSON.stringify({rawtext:[{text:'RB_COMMAND' + '{content:\'' + player.name + ': ' + message + '\'}'}]})}`);
-                } catch (error) {
-                    player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: player.name + ': ' + message } ] } )}`);
-                    msg.cancel = true;
-                }
-            } else {
-                player.runCommand(`tellraw @a ${JSON.stringify( { rawtext: [ { text: player.name + ': ' + message } ] } )}`);
-                msg.cancel = true;
-            }
+            if (rcbrBoolean) sendMsg('RealmBot', 'RB_COMMAND' + `{content:'${player.name}: ${message}'}`)
+            sendMsg('@a', `${player.name}: ${message}`)
+            msg.cancel = true;
         }
     });
 };
