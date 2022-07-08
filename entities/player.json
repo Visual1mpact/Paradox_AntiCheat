@@ -336,8 +336,7 @@
 				]
 			},
 			"minecraft:block_climber": {},
-			"minecraft:conditional_bandwidth_optimization": {
-			},
+			"minecraft:conditional_bandwidth_optimization": {},
 			"minecraft:environment_sensor": {
 				"triggers": [
 					{
@@ -476,6 +475,26 @@
 				"add": {
 					"component_groups": [
 						"paradox:kick"
+					]
+				},
+				"remove": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
+			},
+			"minecraft:entity_spawned": {
+				"add": {
+					"component_groups": [
+						"paradox:reset_skinid",
+						"paradox:reset_variant"
+					]
+				},
+				"remove": {
+					"component_groups": [
+						"paradox:illegal",
+						"paradox:gui",
+						"paradox:onAttack"
 					]
 				}
 			},
