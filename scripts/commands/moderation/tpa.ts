@@ -40,14 +40,14 @@ export function tpa(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
     let salt = player.getDynamicProperty('salt');
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -67,12 +67,19 @@ export function tpa(message: BeforeChatEvent, args: string[]) {
         return tpaHelp(player, prefix);
     }
 
+    let artificalPlayer: Player;
     let member: Player;
-    
+
     // Try to find the player requested
     for (let pl of World.getPlayers()) {
+        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            artificalPlayer = pl;
+        }
         if (pl.nameTag.toLowerCase().includes(args[1].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
+        }
+        if (artificalPlayer && member) {
+            break;
         }
     }
     // Are they online?
@@ -81,14 +88,14 @@ export function tpa(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check if teleporting to them or vice versa then set it up
-    if (args[0].replace(/"|\\|@/g, "") === player.name && args[1]) {
+    if (args[0] && args[1]) {
         // Let's teleport you to that player
-        player.teleport(new Location(member.location.x, member.location.y, member.location.z), member.dimension, 0, 0);
-    } else if (args[0].replace(/"|\\|@/g, "") !== player.name && args[1]) {
-        // Let's teleport them to you
-        member.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
+        artificalPlayer.teleport(member.location, member.dimension, 0, 0);
+        // Let you know that you have been teleported
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${artificalPlayer.name} to ${member.name}`);
+    } else {
+        // Need to specify who
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You forgot to mention 'from' and 'who' to teleport.`);
+        return tpaHelp(player, prefix);
     }
-
-    // Let you know that you have been teleported
-    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported to ${member.nameTag}`);
 }
