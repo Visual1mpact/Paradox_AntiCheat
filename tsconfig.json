@@ -12,7 +12,9 @@
         "removeComments": false,
         "allowJs": true,
         "checkJs": false,
-        "useDefineForClassFields": true
+        "useDefineForClassFields": true,
+        "noImplicitReturns": true,
+        // "noImplicitAny": true
     },
     "include": [
         "scripts/**/*",

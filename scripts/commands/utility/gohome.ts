@@ -6,13 +6,13 @@ const World = world;
 
 let cooldownTimer = new WeakMap();
 
-function dhms (ms: number) {
-    const days = Math.floor(ms / (24*60*60*1000));
-    const daysms = ms % (24*60*60*1000);
-    const hours = Math.floor(daysms / (60*60*1000));
-    const hoursms = ms % (60*60*1000);
-    const minutes = Math.floor(hoursms / (60*1000));
-    const minutesms = ms % (60*1000);
+function dhms(ms: number) {
+    const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+    const daysms = ms % (24 * 60 * 60 * 1000);
+    const hours = Math.floor(daysms / (60 * 60 * 1000));
+    const hoursms = ms % (60 * 60 * 1000);
+    const minutes = Math.floor(hoursms / (60 * 1000));
+    const minutesms = ms % (60 * 1000);
     const sec = Math.floor(minutesms / 1000);
     if (days !== 0) {
         return days + " Days : " + hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
@@ -23,9 +23,7 @@ function dhms (ms: number) {
     if (minutes !== 0) {
         return minutes + " Minutes : " + sec + " Seconds";
     }
-    if (sec !== 0) {
-        return sec + " Seconds";
-    }
+    return sec + " Seconds";
 }
 
 function goHomeHelp(player: Player, prefix: string) {
@@ -87,7 +85,7 @@ export function gohome(message: BeforeChatEvent, args: string[]) {
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
 
     let homex: number;
     let homey: number;

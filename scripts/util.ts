@@ -109,7 +109,7 @@ export function getScore(objective: string, player: Player, { minimum, maximum }
         const data = player.runCommand(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
         return parseInt(data.statusMessage.match(/-?\d+/));
     } catch (error) {
-        return;
+        return undefined;
     }
 }
 
@@ -126,9 +126,7 @@ export function getPrefix(player: Player) {
             return config.customcommands.prefix = customprefix;
         }
     }
-    if (!customprefix) {
-        return config.customcommands.prefix;
-    }
+    return config.customcommands.prefix;
 }
 
 /**

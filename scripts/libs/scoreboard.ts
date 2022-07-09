@@ -96,7 +96,7 @@ class players {
     readonly add = (plr: Player, score: number) => (void execCmd(`scoreboard players add @s ${this.#obj.execId} ${score}`, plr, true), this)
     readonly 'get' = (plr: Player) => {
         const r = execCmd(`scoreboard players test @s ${this.#obj.execId} * *`, plr, true)
-        if (r.statusCode) return
+        if (r.statusCode) return undefined
         return +r.statusMessage.match(/-?\d+/)?.[0]
     }
 
@@ -127,7 +127,7 @@ class dummies {
     readonly add = (name: string, score: number) => (void execCmd(`scoreboard players add ${toExecutable(name)} ${this.#obj.execId} ${score}`, undefined, true), this)
     readonly 'get' = (name: string) => {
         const r = execCmd(`scoreboard players test ${toExecutable(name)} ${this.#obj.execId} * *`, undefined, true)
-        if (r.statusCode) return
+        if (r.statusCode) return undefined
         return +r.statusMessage.match(/-?\d+/)?.[0]
     }
 

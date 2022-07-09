@@ -6,7 +6,7 @@ const World = world;
 
 function nearestPlayer(entity: Entity) {
     if (!entity) {
-        return;
+        return undefined;
     }
 
     const allPlayers = World.getPlayers();
