@@ -1,6 +1,5 @@
 import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { enchantmentSlot } from "../../../data/enchantments.js";
 import { crypto, flag } from "../../../util.js";
 
 const World = world;
