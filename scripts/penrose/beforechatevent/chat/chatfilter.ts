@@ -88,15 +88,16 @@ const ChatFilter = () => {
                         player.removeTag('tpr:' + msg.sender.name);
                         msg.sender.removeTag('tpr');
                         continue;
+                    } else {
+                        /**
+                         * Authorization has been denied so notify them
+                         */
+                        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! ${msg.sender.name} has denied your request to teleport to their location!`);
+                        sendMsgToPlayer(msg.sender, `§r§4[§6Paradox§4]§r You have denied a teleport request from ${player.name}!`);
+                        player.removeTag('tpr:' + msg.sender.name);
+                        msg.sender.removeTag('tpr');
+                        break;
                     }
-                    /**
-                     * Authorization has been denied so notify them
-                     */
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! ${msg.sender.name} has denied your request to teleport to their location!`);
-                    sendMsgToPlayer(msg.sender, `§r§4[§6Paradox§4]§r You have denied a teleport request from ${player.name}!`);
-                    player.removeTag('tpr:' + msg.sender.name);
-                    msg.sender.removeTag('tpr');
-                    break;
                 }
             }
         }
