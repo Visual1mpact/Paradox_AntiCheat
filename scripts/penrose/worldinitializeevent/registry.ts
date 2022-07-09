@@ -17,6 +17,7 @@ function registry(data: WorldInitializeEvent) {
 
     // Define properties for World Border
     property.defineNumber('worldborder_n');
+    property.defineNumber('worldborder_nether_n');
     property.defineBoolean('worldborder_b');
 
     // Define properties for xray
@@ -150,7 +151,7 @@ function registry(data: WorldInitializeEvent) {
 
     // Define properties for hash
     personal.defineString('salt', 200);
-    
+
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
 
@@ -160,7 +161,11 @@ function registry(data: WorldInitializeEvent) {
     // Set properties for world border
     let worldborder_n = World.getDynamicProperty('worldborder_n');
     if (worldborder_n === undefined) {
-        World.setDynamicProperty('worldborder_n', config.modules.worldBorder.bordersize);
+        World.setDynamicProperty('worldborder_n', config.modules.worldBorder.overworld);
+    }
+    let worldborderNether_n = World.getDynamicProperty('worldborder_nether_n');
+    if (worldborderNether_n === undefined) {
+        World.setDynamicProperty('worldborder_nether_n', config.modules.worldBorder.nether);
     }
     let worldborder_b = World.getDynamicProperty('worldborder_b');
     if (worldborder_b === undefined) {

@@ -28,7 +28,7 @@ function modulesHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
- export function modules(message: BeforeChatEvent, args: string[]) {
+export function modules(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/modules.js:28)");
@@ -37,14 +37,14 @@ function modulesHelp(player: Player, prefix: string) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
     let salt = player.getDynamicProperty('salt');
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -112,7 +112,8 @@ function modulesHelp(player: Player, prefix: string) {
     let clearLagBoolean = World.getDynamicProperty('clearlag_b');
 
     // Numbers
-    let worldBorderNumber = World.getDynamicProperty('worldborder_n');
+    let worldBorderOverworldNumber = World.getDynamicProperty('worldborder_n');
+    let worldBorderNetherNumber = World.getDynamicProperty('worldborder_nether_n');
 
     const status = (b: string | number | boolean) => b ? '§aENABLED' : '§4DISABLED';
 
@@ -163,7 +164,7 @@ function modulesHelp(player: Player, prefix: string) {
         `Autoaura: ${status(autoaura)}`,
         `Anti-Enchanted: ${status(encharmor)}`,
         `Autoclicker: ${status(autoclicker)}`,
-        `World Border: ${worldBorderBoolean ? `§aENABLED§r (${worldBorderNumber})` : '§4DISABLED'}`,
+        `World Border: ${worldBorderBoolean ? `§aENABLED§r (Overworld: ${worldBorderOverworldNumber} Nether: ${worldBorderNetherNumber})` : '§4DISABLED'}`,
         `ClearLag: ${status(clearLagBoolean)}`,
     ]);
 }
