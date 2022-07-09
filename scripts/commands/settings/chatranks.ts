@@ -44,14 +44,14 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty('hash');
     let salt = player.getDynamicProperty('salt');
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -81,7 +81,7 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
             Restore their custom nametag
             tagRank(pl);
             This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
+            pl.teleport(pl.location, dimension, 0, 0);
         }
         */
         sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`);
@@ -95,7 +95,7 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
             Reset their nametag to its original name
             pl.nameTag = pl.name;
             This refreshes the nameTag in the World for everyone online
-            pl.teleport(new Location(pl.location.x, pl.location.y, pl.location.z), dimension, 0, 0);
+            pl.teleport(pl.location, dimension, 0, 0);
         }
         */
         sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`);

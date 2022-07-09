@@ -151,7 +151,7 @@ export function tagRank(player: Player) {
     player.nameTag = nametag;
     const dimension = player.dimension;
     // This refreshes the nameTag in the World
-    player.teleport(new Location(player.location.x, player.location.y, player.location.z), dimension, 0, 0);
+    player.teleport(player.location, dimension, 0, 0);
 }
 
 /**
