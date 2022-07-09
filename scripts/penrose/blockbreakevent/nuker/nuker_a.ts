@@ -1,5 +1,6 @@
-import { world, BlockLocation, BlockBreakEvent } from "mojang-minecraft";
+import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
 import config from "../../../data/config.js";
+import { enchantmentSlot } from "../../../data/enchantments.js";
 import { crypto, flag } from "../../../util.js";
 
 const World = world;
@@ -28,10 +29,25 @@ function nukera(object: BlockBreakEvent) {
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // Return if player has op
     if (hash !== undefined && encode === hash) {
         return;
+    }
+
+    // Get the slot number in their possession
+    let hand = player.selectedSlot;
+
+    // Get the type of item from the slot number in their possession
+    let invContainer = player.getComponent('minecraft:inventory') as EntityInventoryComponent;
+    let item = invContainer.container.getItem(hand) as ItemStack;
+
+    // We get enchantment on this item
+    let enchantComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+    let item_enchants = enchantComponent.enchantments;
+    let enchantment: Enchantment;
+    if (item_enchants.hasEnchantment(MinecraftEnchantmentTypes.efficiency)) {
+        enchantment = item_enchants.getEnchantment(MinecraftEnchantmentTypes.efficiency);
     }
 
     let timer: Date[];
@@ -110,6 +126,10 @@ function nukera(object: BlockBreakEvent) {
         "minecraft:weeping_vines"
     ];
 
+    if (enchantment && enchantment.level >= MinecraftEnchantmentTypes.efficiency.maxLevel && tiktok.length < config.modules.antinukerA.max + 2) {
+        return undefined;
+    }
+
     // Flag and salvage broken blocks to their original forms
     if (tiktok.length >= config.modules.antinukerA.max && vegetation.indexOf(brokenBlockPermutation.type.id) === -1) {
         flag(player, "Nuker", "A", "Break", null, null, null, null, false, null);
@@ -117,7 +137,7 @@ function nukera(object: BlockBreakEvent) {
         try {
             // Remove dropped items after nuking because it will leave a mess of entities in the world
             player.runCommand(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
-        } catch (error) {}
+        } catch (error) { }
 
         /* let tags = player.getTags();
 
