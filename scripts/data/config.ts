@@ -156,7 +156,7 @@ export default
                 "reach": 7
             },
             "jesusA": {
-                "enabled": true
+                "enabled": false
             },
             "noslowA": {
                 "enabled": true,
