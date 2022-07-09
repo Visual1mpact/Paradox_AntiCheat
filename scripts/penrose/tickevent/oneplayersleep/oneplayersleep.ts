@@ -28,9 +28,9 @@ function ops() {
     }
     let filter = new EntityQueryOptions();
     filter.tags = ['sleeping'];
-    // Run as each player
-    for (let player of World.getPlayers(filter)) {
-        const id = setTickTimeout(() => queueSleep(player, id), 40);
+    let filterPlayers = [...World.getPlayers(filter)];
+    if (filterPlayers.length) {
+        const id = setTickTimeout(() => queueSleep(filterPlayers[0], id), 40);
     }
 }
 
