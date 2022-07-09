@@ -6,29 +6,7 @@ import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
-let cooldownTimer = new WeakMap();
-
-function dhms (ms: number) {
-    const days = Math.floor(ms / (24*60*60*1000));
-    const daysms = ms % (24*60*60*1000);
-    const hours = Math.floor(daysms / (60*60*1000));
-    const hoursms = ms % (60*60*1000);
-    const minutes = Math.floor(hoursms / (60*1000));
-    const minutesms = ms % (60*1000);
-    const sec = Math.floor(minutesms / 1000);
-    if (days !== 0) {
-        return days + " Days : " + hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
-    }
-    if (hours !== 0) {
-        return hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
-    }
-    if (minutes !== 0) {
-        return minutes + " Minutes : " + sec + " Seconds";
-    }
-    if (sec !== 0) {
-        return sec + " Seconds";
-    }
-}
+export let cooldownTimer = new WeakMap();
 
 function tprHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -91,7 +69,7 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
         player.removeTag('tprblock');
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have unblocked all future teleport requests!`);
     }
-    
+
     // Try to find the player requested
     let member: Player;
     if (args.length) {
@@ -101,12 +79,12 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
             }
         }
     }
-    
+
     // Are they online?
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
-    
+
     // If they block requests then cancel the request
     if (member.hasTag('tprblock')) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player has all teleport requests blocked!`);
@@ -130,7 +108,6 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
          * to allow a request be sent and recieved.
          */
         let cooldownCalc: number;
-        let activeTimer: string;
         // Get original time in milliseconds
         let cooldownVerify = cooldownTimer.get(member);
         // Convert config settings to milliseconds so we can be sure the countdown is accurate
@@ -140,8 +117,6 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
             let bigBrain = new Date().getTime() - cooldownVerify;
             // Subtract realtime clock from countdown in configuration to get difference
             cooldownCalc = msSettings - bigBrain;
-            // Convert difference to clock format D : H : M : S
-            activeTimer = dhms(cooldownCalc);
         } else {
             // First time executed so we default to configuration in milliseconds
             cooldownCalc = msSettings;
