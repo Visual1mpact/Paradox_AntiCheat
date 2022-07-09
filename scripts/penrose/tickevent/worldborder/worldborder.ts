@@ -39,7 +39,7 @@ function worldborder() {
     }
     let worldBorderNetherNumber = World.getDynamicProperty('worldborder_nether_n');
     if (worldBorderNetherNumber === undefined) {
-        worldBorderNetherNumber = config.modules.worldBorder.overworld;
+        worldBorderNetherNumber = config.modules.worldBorder.nether;
     }
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
