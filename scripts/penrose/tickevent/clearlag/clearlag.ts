@@ -1,7 +1,8 @@
 import config from "../../../data/config.js";
-import { world, EntityQueryOptions } from "mojang-minecraft";
+import { world, EntityQueryOptions, ItemStack, EntityItemComponent } from "mojang-minecraft";
 import { sendMsg } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js";
+import { clearItems } from "../../../data/clearlag.js";
 
 const World = world;
 
@@ -10,27 +11,9 @@ let cooldownTimer = new WeakMap();
 let object = { "cooldown": "String" };
 
 function dhms(ms: number) {
-    const days = Math.floor(ms / (24 * 60 * 60 * 1000));
-    const daysms = ms % (24 * 60 * 60 * 1000);
-    const hours = Math.floor(daysms / (60 * 60 * 1000));
-    const hoursms = ms % (60 * 60 * 1000);
-    const minutes = Math.floor(hoursms / (60 * 1000));
     const minutesms = ms % (60 * 1000);
     const sec = Math.floor(minutesms / 1000);
-    /*
-    if (days !== 0) {
-        return days + " Days : " + hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
-    }
-    if (hours !== 0) {
-        return hours + " Hours : " + minutes + " Minutes : " + sec + " Seconds";
-    }
-    if (minutes !== 0) {
-        return minutes + " Minutes : " + sec + " Seconds";
-    }
-    */
-    if (sec !== 0) {
-        return sec;
-    }
+    return sec;
 }
 
 function executionItem() {
@@ -43,8 +26,14 @@ function executionItem() {
             continue;
         }
 
+        let itemName: ItemStack;
+        // Get component of itemStack for dropped item
+        try {
+            let itemContainer = entity.getComponent('item') as unknown as EntityItemComponent;
+            itemName = itemContainer.itemStack;
+        } catch (error) { }
         // Kill dropped items
-        if (entity.id === "minecraft:item") {
+        if (clearItems.includes(itemName.id)) {
             entity.kill();
         }
     }
@@ -96,6 +85,16 @@ function clearlag(id: number) {
         cooldownCalc = msSettings - bigBrain;
         // Convert difference to clock format D : H : M : S
         activeTimer = dhms(cooldownCalc);
+    }
+    // Give advance warning
+    if (activeTimer === 60) {
+        // Notify 10 seconds in advance
+        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
+    }
+    // Give advance warning
+    if (activeTimer === 30) {
+        // Notify 10 seconds in advance
+        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 30 seconds!`);
     }
     // Give advance warning
     if (activeTimer === 10) {
