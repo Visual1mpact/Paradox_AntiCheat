@@ -6,6 +6,7 @@ import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
+import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 
 const World = world;
 
@@ -141,7 +142,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
         blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
-    if (illegalitems.includes(block.type.id)) {
+    if (illegalitems.includes(block.type.id) && !iicWhitelist.includes(block.type.id)) {
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
