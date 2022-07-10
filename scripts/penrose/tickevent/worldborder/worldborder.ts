@@ -113,7 +113,7 @@ function worldborder() {
         if (player.dimension.id === "minecraft:overworld") {
             // Make sure nobody climbs over the wall
             if (player.location.x > overworldSize || player.location.x < -overworldSize || player.location.z > overworldSize || player.location.z < -overworldSize) {
-                //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
                 // Positives
                 if (player.location.x >= overworldSize && player.location.z >= overworldSize) {
                     if (antiTeleportBoolean) {
