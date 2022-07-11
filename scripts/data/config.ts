@@ -85,7 +85,7 @@ export default
             "listhome": true,
             "delhome": true,
             "tpa": true,
-            "tpr": true,
+            "tpr": false, // Broke. Do Not Enable.
             "antiteleport": true,
             "illegalenchant": true,
             "illegallores": true,
