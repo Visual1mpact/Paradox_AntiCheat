@@ -11,9 +11,23 @@ let cooldownTimer = new WeakMap();
 let object = { "cooldown": "String" };
 
 function dhms(ms: number) {
+    const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+    const daysms = ms % (24 * 60 * 60 * 1000);
+    const hours = Math.floor(daysms / (60 * 60 * 1000));
+    const hoursms = ms % (60 * 60 * 1000);
+    const minutes = Math.floor(hoursms / (60 * 1000));
     const minutesms = ms % (60 * 1000);
     const sec = Math.floor(minutesms / 1000);
-    return sec;
+    if (days !== 0) {
+        return [days, hours, minutes, sec, "days"];
+    }
+    if (hours !== 0) {
+        return [hours, minutes, sec, "hours"];
+    }
+    if (minutes !== 0) {
+        return [minutes, sec, "minutes"];
+    }
+    return [sec, "seconds"];
 }
 
 function executionItem() {
@@ -73,7 +87,7 @@ function clearlag(id: number) {
      * If timer has expired then we will clear the items and entities
      */
     let cooldownCalc: number;
-    let activeTimer: number;
+    let activeTimer = [];
     // Get original time in milliseconds
     let cooldownVerify = cooldownTimer.get(object);
     // Convert config settings to milliseconds so we can be sure the countdown is accurate
@@ -87,27 +101,37 @@ function clearlag(id: number) {
         activeTimer = dhms(cooldownCalc);
     }
     // Give advance warning
-    if (activeTimer === 60) {
+    if (activeTimer[0] === 1 && activeTimer[2] === "minutes" && activeTimer[1] <= 0) {
         // Notify 10 seconds in advance
         sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
     }
     // Give advance warning
-    if (activeTimer === 30) {
+    if (activeTimer[0] === 5 && activeTimer[1] === "seconds") {
         // Notify 10 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 30 seconds!`);
+        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 5`);
     }
     // Give advance warning
-    if (activeTimer === 10) {
+    if (activeTimer[0] === 4 && activeTimer[1] === "seconds") {
         // Notify 10 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 10 seconds!`);
+        sendMsg('@a', `§r§4[§6Paradox§4]§r 4`);
     }
     // Give advance warning
-    if (activeTimer === 5) {
+    if (activeTimer[0] === 3 && activeTimer[1] === "seconds") {
         // Notify 5 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 5 seconds!`);
+        sendMsg('@a', `§r§4[§6Paradox§4]§r 3`);
+    }
+    // Give advance warning
+    if (activeTimer[0] === 2 && activeTimer[1] === "seconds") {
+        // Notify 5 seconds in advance
+        sendMsg('@a', `§r§4[§6Paradox§4]§r 2`);
+    }
+    // Give advance warning
+    if (activeTimer[0] === 1 && activeTimer[1] === "seconds") {
+        // Notify 5 seconds in advance
+        sendMsg('@a', `§r§4[§6Paradox§4]§r 1`);
     }
     // If timer doesn't exist or has expired then set the countdown
-    if (activeTimer <= 0) {
+    if (activeTimer[0] <= 0) {
         // Delete old key and value
         cooldownTimer.delete(object);
         // Clear entities and items
