@@ -142,7 +142,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
         blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
-    if (illegalitems.includes(block.type.id) && !iicWhitelist.includes(block.type.id)) {
+    if (block.type.id in illegalitems && block.type.id in iicWhitelist === false) {
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
@@ -267,7 +267,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
             }
 
             // Check if item found inside the container is illegal
-            if (illegalitems.includes(inventory_item.id)) {
+            if (inventory_item.id in illegalitems) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                 inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 return rip(player, inventory_item, null, null);

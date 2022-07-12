@@ -33,7 +33,7 @@ function illegalitemsd() {
         try {
             let itemContainer = entity.getComponent('item') as unknown as EntityItemComponent;
             itemName = itemContainer.itemStack;
-        } catch (error) {}
+        } catch (error) { }
 
         // Check if object returns undefined and skip if it does
         if (itemName === undefined) {
@@ -47,7 +47,7 @@ function illegalitemsd() {
                 continue;
             }
             // If it is an illegal item then remove it
-            if (illegalitems.includes(itemName.id)) {
+            if (itemName.id in illegalitems) {
                 entity.kill();
                 continue;
             }

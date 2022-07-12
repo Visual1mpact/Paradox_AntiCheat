@@ -247,7 +247,7 @@ function illegalitemsa() {
 
             // If player has an illegal item we kick them
             // If we cannot kick them then we despawn them (no mercy)
-            if (illegalitems.includes(inventory_item.id)) {
+            if (inventory_item.id in illegalitems) {
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));

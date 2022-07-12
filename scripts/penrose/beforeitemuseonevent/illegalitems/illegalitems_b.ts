@@ -247,7 +247,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
     }
 
     // If somehow they bypass illegalitems/A then snag them when they use the item
-    if (illegalitems.includes(item.id)) {
+    if (item.id in illegalitems) {
         object.cancel = true;
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, null, null, false, null);
         let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
