@@ -118,7 +118,7 @@ const ChatFilter = () => {
             for (const tag of tags) {
                 if (tag.startsWith('Rank:')) {
                     rank = tag.replace('Rank:', '');
-                    rank = rank.replaceAll('--', '§4]§r§4[§6');
+                    rank = rank.replaceAll('--', '§4§r]§r§4[§6');
                 }
             }
             if (!rank) {
@@ -127,8 +127,8 @@ const ChatFilter = () => {
             // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
             // player.nameTag = nametag;
             if (!msg.cancel) {
-                if (rcbrBoolean) sendMsg('RealmBot', 'RB_COMMAND' + `{content:'[§6${rank}§4]§r §7${player.name}: ${message}'}`)
-                sendMsg('@a', `§4[§6${rank}§4]§r §7${player.name}: ${message}`)
+                if (rcbrBoolean) sendMsg('RealmBot', 'RB_COMMAND' + `{content:'[§6${rank}§4§r] §7${player.name}: §r${message}'}`)
+                sendMsg('@a', `§4[§6${rank}§4§r] §7${player.name}: §r${message}`)
                 msg.cancel = true;
             }
         } else if (!msg.cancel) {
