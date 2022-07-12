@@ -10,7 +10,7 @@ if (config.debug) {
         OSubscribe((evd) => {
             let logtext = `Event ${k} triggered`;
             console.log(logtext);
-            for (const [fn, {stack}] of fnList) {
+            for (const [fn, { stack }] of fnList) {
                 const fsource = `${fn.fileName}:${fn.lineNumber}`;
 
                 const t0 = Date.now();
@@ -26,10 +26,12 @@ if (config.debug) {
         const fnList = new Map();
 
         evSignal.subscribe = (fn) => {
+            if (!fn) return console.warn(`Event ${k} - 'fn' argument not passed`)
             console.log(`Event ${k} subscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`);
             fnList.set(fn, { stack: getStack() });
         };
         evSignal.unsubscribe = (fn) => {
+            if (!fn) return console.warn(`Event ${k} - 'fn' argument not passed`)
             console.log(`Event ${k} unsubscribe \n    ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) \n${getStack()}`);
             if (!fnList.delete(fn)) console.warn(`Failed to unsubscribe ${fn.name || '(anonymous)'} (${fn.fileName}:${fn.lineNumber}) from event ${k}`);
         };

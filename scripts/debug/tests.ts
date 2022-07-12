@@ -32,7 +32,7 @@ if (config.debug) gt.register("paradox", "stresstest", (test) => {
     let c = 0;
     const aa = world.events.tick.subscribe(({ deltaTime }) => c += deltaTime);
 
-    const duration = 200;
+    const duration = 40;
 
     test.startSequence()
         .thenIdle(duration)
