@@ -26,11 +26,11 @@ function flyHelp(player: Player, prefix: string | number | boolean) {
 }
 
 function mayflydisable(player: Player, member: Player) {
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`);
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`);
 }
 
 function mayflyenable(player: Player, member: Player) {
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`);
+    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`);
 }
 
 /**
@@ -54,7 +54,7 @@ export function fly(message: BeforeChatEvent, args: string[]) {
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -73,17 +73,17 @@ export function fly(message: BeforeChatEvent, args: string[]) {
     if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.fly) {
         return flyHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
-    if(args.length) {
+    if (args.length) {
         for (let pl of World.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
