@@ -21,17 +21,14 @@ function antiteleport() {
         let hash = player.getDynamicProperty('hash');
         let salt = player.getDynamicProperty('salt');
         let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) { }
         if (hash !== undefined && encode === hash) {
             continue;
         }
         // player position that counts 20 ticks /per second
-        let {x, y, z} = player.location;
-
-        // Teleport score
-        let teleportScore: number;
+        let { x, y, z } = player.location;
 
         // Check distance based on location/
         // objective is counted once per second
@@ -41,51 +38,56 @@ function antiteleport() {
         let xPos = x - xScore;
         // let yPos = parseInt(y - yScore);
         let zPos = z - zScore;
-        
-        // Location of portal block
-        let portal0 = player.dimension.getBlock(new BlockLocation(x, y - 1, z));
-        let portal1 = player.dimension.getBlock(new BlockLocation(x, y - 1, z + 1));
-        let portal2 = player.dimension.getBlock(new BlockLocation(x, y - 1, z - 1));
-        let portal3 = player.dimension.getBlock(new BlockLocation(x + 1, y - 1, z));
-        let portal4 = player.dimension.getBlock(new BlockLocation(x - 1, y - 1, z));
-        let portal5 = player.dimension.getBlock(new BlockLocation(x, y, z));
-        let portal6 = player.dimension.getBlock(new BlockLocation(x, y, z + 1));
-        let portal7 = player.dimension.getBlock(new BlockLocation(x, y, z - 1));
-        let portal8 = player.dimension.getBlock(new BlockLocation(x + 1, y, z));
-        let portal9 = player.dimension.getBlock(new BlockLocation(x - 1, y, z));
 
-        // Extract conditions to array
-        let portalArray = [portal0, portal1, portal2, portal3, portal4, portal5, portal6, portal7, portal8, portal9];
+        // Location of portal block using player location with new instance of BlockLocation
+        let test = new BlockLocation(x, y, z);
+
+        // Offset location from player for actual block locations and return string
+        let portals = [
+            player.dimension.getBlock(test.offset(0, -1, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, -1, 1)).type.id,
+            player.dimension.getBlock(test.offset(0, -1, -1)).type.id,
+            player.dimension.getBlock(test.offset(1, -1, 0)).type.id,
+            player.dimension.getBlock(test.offset(-1, -1, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, 0, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, 0, 1)).type.id,
+            player.dimension.getBlock(test.offset(0, 0, -1)).type.id,
+            player.dimension.getBlock(test.offset(1, 0, 0)).type.id,
+            player.dimension.getBlock(test.offset(-1, 0, 0)).type.id
+        ];
 
         // Get score
-        teleportScore = getScore('teleport', player);
+        let teleportScore = getScore('teleport', player);
 
         // Verify if the player is in a portal so we don't flag when moving between dimensions
-        portalArray.forEach(t => {
-            if (t.type.id === "minecraft:portal" || t.type.id === "minecraft:end_portal" || t.type.id === "minecraft:end_gateway") {
-                player.runCommand(`scoreboard players set @s teleport 25`);
-            } else if (teleportScore >= 1) {
-                try {
-                    player.runCommand(`scoreboard players remove @s teleport 1`);
-                } catch (e) {}
-            }
-        });
+        if (portals.includes(("minecraft:portal" || "minecraft:end_portal" || "minecraft:end_gateway"))) {
+            player.runCommand(`scoreboard players set @s teleport 25`);
+        }
 
-        try {
+        if (teleportScore >= 1) {
+            try {
+                player.runCommand(`scoreboard players remove @s teleport 1`);
+            } catch (e) { }
+        }
+
+        if (player.hasTag('dead')) {
             player.runCommand(`scoreboard players set @s[tag=dead] teleport 25`);
+        }
+
+        if (player.hasTag('dead') && player.hasTag('moving')) {
             player.runCommand(`tag @s[tag=dead,tag=moving] remove dead`);
-        } catch (e) {}
+        }
 
         // Only check x and z coordinates for now. If they teleport then its extremely likely one of those two will change.
         if (xPos > config.modules.antiTeleport.constraint || zPos > config.modules.antiTeleport.constraint || xPos < -config.modules.antiTeleport.constraint || zPos < -config.modules.antiTeleport.constraint) {
-            if (portal5.type.id === "minecraft:air") {
+            if (portals[5] === "minecraft:air") {
                 teleportScore = getScore('teleport', player);
                 if (teleportScore === 0) {
                     player.runCommand(`scoreboard players add @s tpvl 1`);
                     player.teleport(new Location(xScore, yScore, zScore), player.dimension, 0, 0);
                     try {
                         sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(Movement) §4Teleport/A. VL= ${getScore('tpvl', player)}`);
-                    } catch (e) {}
+                    } catch (e) { }
                 }
             }
         }
