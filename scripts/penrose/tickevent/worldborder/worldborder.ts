@@ -79,34 +79,30 @@ function worldborder() {
             continue;
         }
 
-        let portalArray: string[];
+        // Location of portal block using player location with new instance of BlockLocation
+        let test = new BlockLocation(player.location.x, player.location.y, player.location.z);
 
-        if (!portalArray) {
-            // Location of portal block
-            let portal0 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-            let portal1 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z + 1));
-            let portal2 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z - 1));
-            let portal3 = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z));
-            let portal4 = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z));
-            let portal5 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y, player.location.z));
-            let portal6 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y, player.location.z + 1));
-            let portal7 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y, player.location.z - 1));
-            let portal8 = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y, player.location.z));
-            let portal9 = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y, player.location.z));
-
-            // Extract conditions to array
-            portalArray = [portal0.id, portal1.id, portal2.id, portal3.id, portal4.id, portal5.id, portal6.id, portal7.id, portal8.id, portal9.id];
-        }
+        // Offset location from player for actual block locations and return string
+        let portals = [
+            player.dimension.getBlock(test.offset(0, -1, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, -1, 1)).type.id,
+            player.dimension.getBlock(test.offset(0, -1, -1)).type.id,
+            player.dimension.getBlock(test.offset(1, -1, 0)).type.id,
+            player.dimension.getBlock(test.offset(-1, -1, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, 0, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, 0, 1)).type.id,
+            player.dimension.getBlock(test.offset(0, 0, -1)).type.id,
+            player.dimension.getBlock(test.offset(1, 0, 0)).type.id,
+            player.dimension.getBlock(test.offset(-1, 0, 0)).type.id
+        ];
 
         /**
          * Ignore until they move away from the portal.
          * This will prevent a loop caused by a conflict with Mojang's proprietary code.
          * I literally can't think of any other solution to work around this problem for now.
          */
-        if (portalArray.includes(MinecraftBlockTypes.portal.id) || portalArray[0] === MinecraftBlockTypes.air.id) {
+        if (portals.includes(MinecraftBlockTypes.portal.id) || portals[0] === MinecraftBlockTypes.air.id) {
             continue;
-        } else {
-            portalArray = undefined;
         }
 
         // Overworld
