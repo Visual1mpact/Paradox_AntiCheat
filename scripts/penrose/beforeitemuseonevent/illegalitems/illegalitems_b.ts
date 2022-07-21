@@ -14,10 +14,10 @@ function rip(source: Player, item: ItemStack, enchant_data: Enchantment) {
 
     // This removes old ban tags
     tags.forEach(t => {
-        if(t.startsWith("Reason:")) {
+        if (t.startsWith("Reason:")) {
             source.removeTag(t);
         }
-        if(t.startsWith("By:")) {
+        if (t.startsWith("By:")) {
             source.removeTag(t);
         }
     });
@@ -75,13 +75,18 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
     // Properties from class
     let { item, source } = object;
 
+    // Used for getting some info on the item
+    if (config.debug) {
+        source.runCommand(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`);
+    }
+
     // Check for hash/salt and validate password
     let hash = source.getDynamicProperty('hash');
     let salt = source.getDynamicProperty('salt');
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    } catch (error) { }
     // Return if player is OP
     if (hash !== undefined && encode === hash) {
         return;
@@ -90,11 +95,6 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
     // Only fire if entity is a Player
     if (!(source instanceof Player)) {
         return;
-    }
-
-    // Used for getting some info on the item
-    if (config.debug) {
-        source.runCommand(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`);
     }
 
     let hand = source.selectedSlot;
@@ -144,12 +144,12 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                         let enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]);
                         // Is this item allowed to have this enchantment and does it not exceed level limitations
                         let enchantLevel = enchantedSlot[enchants];
-                        if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level  >= 0) {
+                        if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level >= 0) {
                             // Save this enchantment and level for new item
                             let changeCase = toCamelCase(enchants);
                             enchantArray.push(changeCase);
                             enchantLevelArray.push(enchant_data.level);
-                            
+
                         }
                     }
                 }
@@ -174,18 +174,18 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                         actualItemName.setLore(loreData);
                         let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                         invContainer.container.setItem(hand, actualItemName);
-                    } catch (error) {}
+                    } catch (error) { }
                 } else if (illegalLoresBoolean) {
                     try {
                         let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                         invContainer.container.setItem(hand, actualItemName);
-                    } catch (error) {}
+                    } catch (error) { }
                 }
                 if (config.debug) {
                     console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/B)!`);
                 }
             }
-        } catch (error) {}
+        } catch (error) { }
     } else {
         // Used to contain data about Lores
         let loreData;
@@ -201,13 +201,13 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                     newItem.setLore(loreData);
                     let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                     invContainer.container.setItem(hand, newItem);
-                } catch (error) {}
+                } catch (error) { }
                 return;
             }
             try {
                 let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                 invContainer.container.setItem(hand, new ItemStack(Items.get(item.id), item.amount));
-            } catch (error) {}
+            } catch (error) { }
             return;
         } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
             // Reset item to data type of equal data if they do not match
@@ -218,13 +218,13 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                     newItem.setLore(loreData);
                     let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                     invContainer.container.setItem(hand, newItem);
-                } catch (error) {}
+                } catch (error) { }
                 return;
             }
             try {
                 let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                 invContainer.container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, salvageable[item.id].data));
-            } catch (error) {}
+            } catch (error) { }
             return;
         } else if (salvageable[item.id]) {
             // Reset item to data type of equal data because we take no chances
@@ -235,13 +235,13 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                     newItem.setLore(loreData);
                     let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                     invContainer.container.setItem(hand, newItem);
-                } catch (error) {}
+                } catch (error) { }
                 return;
             }
             try {
                 let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
                 invContainer.container.setItem(hand, new ItemStack(Items.get(item.id), item.amount, item.data));
-            } catch (error) {}
+            } catch (error) { }
             return;
         }
     }
@@ -266,7 +266,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
             invContainer.container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
             sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${source.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
             sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
-        } catch (error) {}
+        } catch (error) { }
         if (stackBanBoolean) {
             // Ban
             return rip(source, item, null);
@@ -280,7 +280,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
         try {
             let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
             invContainer.container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
-        } catch {}
+        } catch { }
         sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} with lore from ${source.nameTag}.`);
         sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
         return;
