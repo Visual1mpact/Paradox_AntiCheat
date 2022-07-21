@@ -449,5 +449,10 @@ export default
             name: 'minecraft:sticky_piston',
             data: 0,
             nametag: 'sticky_piston'
+        },
+        'minecraft:stick': {
+            name: 'minecraft:stick',
+            data: 0,
+            nametag: 'stick'
         }
     } as Record<string, { name: string, data: number, nametag: string }>;
