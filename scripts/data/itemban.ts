@@ -39,6 +39,7 @@ export const illegalitems = [
   'minecraft:underwater_torch',
   'minecraft:chemical_heat',
   'minecraft:end_portal',
+  'minecraft:end_portal_frame',
   'minecraft:colored_torch',
   'minecraft:hard_stained_glass_pane',
   'minecraft:hard_glass_pane',
