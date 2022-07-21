@@ -108,7 +108,8 @@ function illegalitemsa() {
             }
             // If shulker boxes are not allowed in the server then we handle this here
             // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-            if (antiShulkerBoolean && inventory_item.id === "minecraft:shulker_box" || antiShulkerBoolean && inventory_item.id === "minecraft:undyed_shulker_box") {
+            const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
+            if (antiShulkerBoolean && inventory_item.id in shulkerItems) {
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
                 } catch { }
@@ -117,7 +118,7 @@ function illegalitemsa() {
                 continue;
             }
 
-            if (salvageBoolean && !whitelist.includes(inventory_item.id)) {
+            if (salvageBoolean && inventory_item.id in whitelist === false) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */

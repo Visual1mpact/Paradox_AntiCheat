@@ -2,7 +2,7 @@
  * List of items to be cleared with clearlag. Remove or add items here
  * if you want those items to be cleared or not cleared.
  */
-export const clearItems = [
+const clear = [
     "minecraft:apple",
     "minecraft:porkchop",
     "minecraft:cod",
@@ -474,3 +474,5 @@ export const clearItems = [
     "minecraft:stripped_mangrove_log",
     "minecraft:gravel"
 ];
+
+export const clearItems = Object.setPrototypeOf(Object.fromEntries(clear.map(v => [v, ''] as [string, ''])), null);

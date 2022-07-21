@@ -42,7 +42,8 @@ function illegalitemsd() {
         if (entity.id === "minecraft:item") {
 
             // If shulker boxes are not allowed in the server then we handle this here
-            if (antiShulkerBoolean && (itemName.id === "minecraft:shulker_box" || itemName.id === "minecraft:undyed_shulker_box")) {
+            const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
+            if (antiShulkerBoolean && itemName.id in shulkerItems) {
                 entity.kill();
                 continue;
             }

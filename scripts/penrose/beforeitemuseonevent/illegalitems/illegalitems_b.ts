@@ -101,7 +101,8 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
 
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
-    if (antiShulkerBoolean && item.id === "minecraft:shulker_box" || antiShulkerBoolean && item.id === "minecraft:undyed_shulker_box") {
+    const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
+    if (antiShulkerBoolean && item.id in shulkerItems) {
         object.cancel = true;
         let invContainer = source.getComponent('minecraft:inventory') as EntityInventoryComponent;
         invContainer.container.setItem(hand, new ItemStack(MinecraftItemTypes.air, 0));
@@ -110,7 +111,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
         return;
     }
 
-    if (salvageBoolean && !whitelist.includes(item.id)) {
+    if (salvageBoolean && item.id in whitelist === false) {
         /**
          * Salvage System to mitigate NBT's on every item in the game
          */

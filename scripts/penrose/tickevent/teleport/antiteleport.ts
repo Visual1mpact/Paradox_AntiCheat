@@ -60,7 +60,7 @@ function antiteleport() {
         let teleportScore = getScore('teleport', player);
 
         // Verify if the player is in a portal so we don't flag when moving between dimensions
-        if (portals.includes(("minecraft:portal" || "minecraft:end_portal" || "minecraft:end_gateway"))) {
+        if (("minecraft:portal" || "minecraft:end_portal" || "minecraft:end_gateway") in portals) {
             player.runCommand(`scoreboard players set @s teleport 25`);
         }
 

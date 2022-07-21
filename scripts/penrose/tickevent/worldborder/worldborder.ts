@@ -101,7 +101,7 @@ function worldborder() {
          * This will prevent a loop caused by a conflict with Mojang's proprietary code.
          * I literally can't think of any other solution to work around this problem for now.
          */
-        if (portals.includes(MinecraftBlockTypes.portal.id) || portals[0] === MinecraftBlockTypes.air.id) {
+        if (MinecraftBlockTypes.portal.id in portals || portals[0] === MinecraftBlockTypes.air.id) {
             continue;
         }
 
