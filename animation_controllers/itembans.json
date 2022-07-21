@@ -228,7 +228,7 @@
 							"double_stone_slab": "query.get_equipped_item_name == 'double_stone_slab' || query.get_equipped_item_name('off_hand') == 'double_stone_slab'"
 						},
 						{
-							"double_wood_slab": "query.get_equipped_item_name == 'double_wooden_slab' || query.get_equipped_item_name('off_hand') == 'double_wooden_slab'"
+							"double_wooden_slab": "query.get_equipped_item_name == 'double_wooden_slab' || query.get_equipped_item_name('off_hand') == 'double_wooden_slab'"
 						},
 						{
 							"monster_egg": "query.get_equipped_item_name == 'monster_egg' || query.get_equipped_item_name('off_hand') == 'monster_egg'"
