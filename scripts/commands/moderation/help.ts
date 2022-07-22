@@ -129,6 +129,9 @@ export function help(message: BeforeChatEvent) {
         `§6${prefix}tpr <username>§r - ${config.customcommands.tpr ? `Sends a request to teleport to a player or blocks/unblocks requests.` : textDisabled}`,
         `§6${prefix}hotbar <optional>§r - ${config.customcommands.hotbar ? `Toggles hotbar message for all players. Optional: Message` : textDisabled}`,
         ` `,
+        `§l§6[§4Debugging Utilites§6]§r`,
+        `§6${prefix}listitems§r - ${config.debug ? `Prints every item in the game and their max stack.` : textDisabled}`,
+        ` `,
         `§l§6[§4For more info execute the command with help§6]§r`,
     ]);
 }

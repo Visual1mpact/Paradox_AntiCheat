@@ -84,6 +84,7 @@ import { tpr } from "./utility/tpr.js";
 import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { BeforeChatEvent, Player } from "mojang-minecraft";
+import { listitems } from "./debug_commands/listitems.js";
 
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf({
     'eval': evalCmd,
@@ -166,7 +167,8 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
     'salvage': salvage,
     'badpackets2': badpackets2,
     'give': give,
-    'clearlag': clearlag
+    'clearlag': clearlag,
+    'listitems': listitems
 }, null);
 
 /**
