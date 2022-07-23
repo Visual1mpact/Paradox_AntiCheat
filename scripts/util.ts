@@ -16,29 +16,13 @@ import config from "./data/config.js";
  * @param {BeforeChatEvent} message - The message object, used to cancel the message.
  */
 export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
-    // validate that required params are defined
-    if (!player) {
-        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:8)");
-    }
-    if (!check) {
-        return console.warn(`${new Date()} | ` + "Error: ${check} isnt defined. Did you forget to pass it? (./util.js:9)");
-    }
-    if (!check) {
-        return console.warn(`${new Date()} | ` + "Error: ${checkType} isnt defined. Did you forget to pass it? (./util.js:10)");
-    }
-    if (!hackType) {
-        return console.warn(`${new Date()} | ` + "Error: ${hackType} isnt defined. Did you forget to pass it? (./util.js:11)");
-    }
-
     // make sure the vl objective exists
     try {
         player.runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
-    } catch (error) {}
+    } catch {}
 
     // cancel the message
-    if (message) {
-        message.cancel = true;
-    }
+    if (message) message.cancel = true;
 
     if (shouldTP && check !== "Crasher") {
         player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
@@ -48,7 +32,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
 
     try {
         player.runCommand(`scoreboard players add @s ${check.toLowerCase()}vl 1`);
-    } catch (error) {}
+    } catch {}
 
     try {
         if (debug) {
@@ -58,7 +42,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
         } else {
             sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
         }
-    } catch (error) {}
+    } catch {}
 
     try {
         if (check === "Namespoof") {
@@ -75,11 +59,6 @@ export function flag(player: Player, check: string, checkType: string, hackType:
  * @param {Player} player - The player object
  */
 export function banMessage(player: Player) {
-    // validate that required params are defined
-    if (!player) {
-        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:78)");
-    }
-
     let tags = player.getTags();
 
     var reason: string;
