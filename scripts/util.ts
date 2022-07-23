@@ -12,7 +12,7 @@ import config from "./data/config.js";
  * @param {number} stack - Item object stack.
  * @param {string} debugName - Name for the debug value.
  * @param {string} debug - Debug info.
- * @param {boolean} shouldTP - Whever to tp the player to itself.
+ * @param {boolean} shouldTP - Where to tp the player to itself.
  * @param {BeforeChatEvent} message - The message object, used to cancel the message.
  */
 export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
@@ -48,7 +48,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r Please use your real xbl name!`);
+            player.runCommand(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r Please use your real Xbox Profile name!`);
         }
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -61,21 +61,11 @@ export function flag(player: Player, check: string, checkType: string, hackType:
  * @param {Player} player - The player object
  */
 export function banMessage(player: Player) {
-    // validate that required params are defined
-    if (!player) {
-        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:78)");
-    }
 
     let tags = player.getTags();
 
     var reason: string;
     var by: string;
-
-    // this removes old ban stuff
-    tags.forEach(t => {
-        if (t.startsWith("By:")) by = t.slice(3);
-        if (t.startsWith("Reason:")) reason = t.slice(7);
-    });
 
     try {
         player.runCommand(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
@@ -143,7 +133,7 @@ export function tagRank(player: Player) {
  * @param {Player} player - The player object
  * @param {Player} member - The other player object
  */
-export function resetTag(player: Player, member: Player) {
+export function resetTag( member: Player) {
     let sanitize = member.getTags();
     for (let tag of sanitize) {
         if (tag.startsWith('Rank:')) {
