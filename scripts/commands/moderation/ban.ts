@@ -86,18 +86,6 @@ export function ban(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot ban yourself.`);
     }
 
-    let tags = player.getTags();
-
-    // this removes old ban stuff
-    tags.forEach((t) => {
-        if (t.startsWith("Reason:")) {
-            member.removeTag(t);
-        }
-        if (t.startsWith("By:")) {
-            member.removeTag(t);
-        }
-    });
-
     try {
         member.addTag("Reason:" + reason);
         member.addTag("By:" + player.nameTag);

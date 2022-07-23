@@ -138,17 +138,7 @@ function nukera(object: BlockBreakEvent) {
             player.runCommand(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
         } catch (error) {}
 
-        /* let tags = player.getTags();
-
-        // This removes old ban tags
-        tags.forEach(t => {
-            if(t.startsWith("Reason:")) {
-                player.removeTag(t);
-            }
-            if(t.startsWith("By:")) {
-                player.removeTag(t);
-            }
-        });
+        /*
         try {
             player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
             player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);

@@ -51,17 +51,7 @@ function scaffolda(object: BlockPlaceEvent) {
     if (tiktok.length >= config.modules.antiscaffoldA.max) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
         flag(player, "Scaffold", "A", "Placement", null, null, null, null, false, null);
-        /* let tags = player.getTags();
-
-        // This removes old ban tags
-        tags.forEach(t => {
-            if(t.startsWith("Reason:")) {
-                player.removeTag(t);
-            }
-            if(t.startsWith("By:")) {
-                player.removeTag(t);
-            }
-        });
+        /*
         try {
             player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Scaffolding"`);
             player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);

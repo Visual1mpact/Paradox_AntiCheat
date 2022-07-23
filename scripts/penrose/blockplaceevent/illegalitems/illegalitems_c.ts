@@ -13,7 +13,6 @@ import {
     BlockInventoryComponent,
     BlockInventoryComponentContainer,
     ItemEnchantsComponent,
-    EntityInventoryComponent,
 } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";

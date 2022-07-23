@@ -68,16 +68,6 @@ function antispam(msg: BeforeChatEvent) {
 
         // check if the spam counter goes above the threshold
         if (spamData.spamCounter > 12) {
-            let tags = player.getTags();
-            // This removes old ban tags
-            tags.forEach((t) => {
-                if (t.startsWith("Reason:")) {
-                    player.removeTag(t);
-                }
-                if (t.startsWith("By:")) {
-                    player.removeTag(t);
-                }
-            });
             try {
                 player.addTag("Reason:Spamming");
                 player.addTag("By:Paradox");

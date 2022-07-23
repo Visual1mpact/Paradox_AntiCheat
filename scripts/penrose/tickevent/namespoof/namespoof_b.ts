@@ -6,18 +6,6 @@ import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js"
 const World = world;
 
 function rip(player: Player) {
-    // Get all tags
-    let tags = player.getTags();
-
-    // This removes old ban tags
-    tags.forEach((t) => {
-        if (t.startsWith("Reason:")) {
-            player.removeTag(t);
-        }
-        if (t.startsWith("By:")) {
-            player.removeTag(t);
-        }
-    });
     // Tag with reason and by who
     try {
         player.addTag("Reason:Namespoof B (Disabler)");
