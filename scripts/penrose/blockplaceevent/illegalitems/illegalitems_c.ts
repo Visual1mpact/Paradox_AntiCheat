@@ -11,18 +11,6 @@ import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 const World = world;
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string, level: number }, block: Block) {
-    // Get all tags
-    let tags = player.getTags();
-
-    // This removes old ban tags
-    tags.forEach(t => {
-        if (t.startsWith("Reason:")) {
-            player.removeTag(t);
-        }
-        if (t.startsWith("By:")) {
-            player.removeTag(t);
-        }
-    });
     if (!enchData && !block) {
         // Tag with reason and by who
         try {

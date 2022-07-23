@@ -10,18 +10,6 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 const World = world;
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string, level: number }) {
-    // Get all tags
-    let tags = player.getTags();
-
-    // This removes old ban tags
-    tags.forEach(t => {
-        if (t.startsWith("Reason:")) {
-            player.removeTag(t);
-        }
-        if (t.startsWith("By:")) {
-            player.removeTag(t);
-        }
-    });
     // If enchanted then show it otherwise ignore
     if (!enchData) {
         // Tag with reason and by who

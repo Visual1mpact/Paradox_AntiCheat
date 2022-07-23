@@ -86,90 +86,96 @@ import { clearlag } from "./settings/lagclear.js";
 import { BeforeChatEvent, Player } from "mojang-minecraft";
 import { listitems } from "./debug_commands/listitems.js";
 
-const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf({
-    'eval': evalCmd,
-    'kick': kick,
-    'tag': tag,
-    'ban': ban,
-    'notify': notify,
-    'vanish': vanish,
-    'fly': fly,
-    'mute': mute,
-    'unmute': unmute,
-    'invsee': invsee,
-    'ecwipe': ecwipe,
-    'freeze': freeze,
-    'stats': stats,
-    'fullreport': fullreport,
-    'allowgma': allowgma,
-    'allowgmc': allowgmc,
-    'allowgms': allowgms,
-    'bedrockvalidate': bedrockvalidate,
-    'modules': modules,
-    'overridecbe': overidecommandblocksenabled,
-    'removecb': removecommandblocks,
-    'worldborder': worldborders,
-    'help': help,
-    'credits': credits,
-    'op': op,
-    'deop': deop,
-    'clearchat': clearchat,
-    'autoclicker': autoclick,
-    'jesusa': jesusA,
-    'enchantedarmor': enchantedarmor,
-    'auracheck': auracheck,
-    'autoaura': autokillaura,
-    'antikb': antiknockback,
-    'report': report,
-    'badpackets1': badpackets1,
-    'spammera': spammerA,
-    'spammerb': spammerB,
-    'spammerc': spammerC,
-    'spammerd': spammerD,
-    'antispam': antispam,
-    'crashera': crasherA,
-    'crasherb': crasherB,
-    'namespoofa': namespoofA,
-    'namespoofb': namespoofB,
-    'reacha': reachA,
-    'reachb': reachB,
-    'noslowa': noslowA,
-    'invalidsprinta': invalidsprintA,
-    'flya': flyA,
-    'illegalitemsa': illegalitemsA,
-    'illegalitemsb': illegalitemsB,
-    'antiscaffolda': antiscaffoldA,
-    'antinukera': antinukerA,
-    'illegalitemsc': illegalitemsC,
-    'xraya': xrayA,
-    'unban': unban,
-    'prefix': prefix,
-    'chatranks': chatranks,
-    'antishulker': antishulker,
-    'stackban': stackban,
-    'lockdown': lockdown,
-    'punish': punish,
-    'sethome': sethome,
-    'gohome': gohome,
-    'tpa': tpa,
-    'tpr': tpr,
-    'antiteleport': antiteleport,
-    'illegalitemsd': illegalitemsD,
-    'listhome': listhome,
-    'delhome': delhome,
-    'illegalenchant': illegalEnchant,
-    'illegallores': illegalLores,
-    'despawn': despawn,
-    'reachc': reachC,
-    'hotbar': hotbar,
-    'rbcr': rbcr,
-    'ops': ops,
-    'salvage': salvage,
-    'badpackets2': badpackets2,
-    'give': give,
-    'clearlag': clearlag,
-    'listitems': listitems
-}, null);
+const commandDefinitions: Record<
+	string,
+	(data: BeforeChatEvent, args: string[], fullArgs: string) => void
+> = Object.setPrototypeOf(
+	{
+		eval: evalCmd,
+		kick: kick,
+		tag: tag,
+		ban: ban,
+		notify: notify,
+		vanish: vanish,
+		fly: fly,
+		mute: mute,
+		unmute: unmute,
+		invsee: invsee,
+		ecwipe: ecwipe,
+		freeze: freeze,
+		stats: stats,
+		fullreport: fullreport,
+		allowgma: allowgma,
+		allowgmc: allowgmc,
+		allowgms: allowgms,
+		bedrockvalidate: bedrockvalidate,
+		modules: modules,
+		overridecbe: overidecommandblocksenabled,
+		removecb: removecommandblocks,
+		worldborder: worldborders,
+		help: help,
+		credits: credits,
+		op: op,
+		deop: deop,
+		clearchat: clearchat,
+		autoclicker: autoclick,
+		jesusa: jesusA,
+		enchantedarmor: enchantedarmor,
+		auracheck: auracheck,
+		autoaura: autokillaura,
+		antikb: antiknockback,
+		report: report,
+		badpackets1: badpackets1,
+		spammera: spammerA,
+		spammerb: spammerB,
+		spammerc: spammerC,
+		spammerd: spammerD,
+		antispam: antispam,
+		crashera: crasherA,
+		crasherb: crasherB,
+		namespoofa: namespoofA,
+		namespoofb: namespoofB,
+		reacha: reachA,
+		reachb: reachB,
+		noslowa: noslowA,
+		invalidsprinta: invalidsprintA,
+		flya: flyA,
+		illegalitemsa: illegalitemsA,
+		illegalitemsb: illegalitemsB,
+		antiscaffolda: antiscaffoldA,
+		antinukera: antinukerA,
+		illegalitemsc: illegalitemsC,
+		xraya: xrayA,
+		unban: unban,
+		prefix: prefix,
+		chatranks: chatranks,
+		antishulker: antishulker,
+		stackban: stackban,
+		lockdown: lockdown,
+		punish: punish,
+		sethome: sethome,
+		gohome: gohome,
+		tpa: tpa,
+		tpr: tpr,
+		antiteleport: antiteleport,
+		illegalitemsd: illegalitemsD,
+		listhome: listhome,
+		delhome: delhome,
+		illegalenchant: illegalEnchant,
+		illegallores: illegalLores,
+		despawn: despawn,
+		reachc: reachC,
+		hotbar: hotbar,
+		rbcr: rbcr,
+		ops: ops,
+		salvage: salvage,
+		badpackets2: badpackets2,
+		give: give,
+		clearlag: clearlag,
+		listitems: listitems,
+	},
+	null
+);
 
 /**
  * @name commandHandler
@@ -178,34 +184,37 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
  */
 
 export function commandHandler(player: Player, message: BeforeChatEvent) {
-    // validate that required params are defined
-    if (!player) {
-        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./commands/handler.js:174)");
-    }
-    if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/handler.js:175)");
-    }
+	// checks if the message starts with our prefix, if not exit
+	if (!message.message.startsWith(config.customcommands.prefix)) {
+		return;
+	}
 
-    if (config.debug) {
-        console.warn(`${new Date()} | ` + "did run command handler");
-    }
+	let args = message.message
+		.slice(config.customcommands.prefix.length)
+		.split(/ +/);
 
-    // checks if the message starts with our prefix, if not exit
-    if (!message.message.startsWith(config.customcommands.prefix)) {
-        return;
-    }
+	const commandName = args.shift().toLowerCase();
 
-    let args = message.message.slice(config.customcommands.prefix.length).split(/ +/);
+	if (config.debug) {
+		console.warn(
+			`${new Date()} | "${player.name}" used the command: ${
+				config.customcommands.prefix
+			}${commandName} ${args.join(" ")}`
+		);
+	}
 
-    const commandName = args.shift().toLowerCase();
-
-    if (config.debug) {
-        console.warn(`${new Date()} | "${player.name}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
-    }
-
-    if (!(commandName in commandDefinitions)) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command !${commandName} does not exist. Try again!`);
-        return message.cancel = true;
-    }
-    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1));
+	if (!(commandName in commandDefinitions)) {
+		sendMsgToPlayer(
+			player,
+			`§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`
+		);
+		return (message.cancel = true);
+	}
+	commandDefinitions[commandName](
+		message,
+		args,
+		message.message.slice(
+			config.customcommands.prefix.length + commandName.length + 1
+		)
+	);
 }
