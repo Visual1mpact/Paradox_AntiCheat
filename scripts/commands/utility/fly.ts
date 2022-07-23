@@ -26,11 +26,11 @@ function flyHelp(player: Player, prefix: string | number | boolean) {
 }
 
 function mayflydisable(player: Player, member: Player) {
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? "themselves" : member.nameTag}.`);
 }
 
 function mayflyenable(player: Player, member: Player) {
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? 'themselves' : member.nameTag}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? "themselves" : member.nameTag}.`);
 }
 
 /**
@@ -49,12 +49,12 @@ export function fly(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
+    } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -70,7 +70,7 @@ export function fly(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.fly) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.fly) {
         return flyHelp(player, prefix);
     }
 
@@ -90,10 +90,10 @@ export function fly(message: BeforeChatEvent, args: string[]) {
 
     let membertag = member.getTags();
 
-    if (!membertag.includes('noflying') && !membertag.includes('flying')) {
+    if (!membertag.includes("noflying") && !membertag.includes("flying")) {
         try {
             member.runCommand(`ability @s mayfly true`);
-            member.addTag('flying');
+            member.addTag("flying");
             mayflyenable(player, member);
         } catch (Error) {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
@@ -101,16 +101,16 @@ export function fly(message: BeforeChatEvent, args: string[]) {
         return;
     }
 
-    if (membertag.includes('flying')) {
-        member.addTag('noflying');
+    if (membertag.includes("flying")) {
+        member.addTag("noflying");
     }
 
-    if (member.hasTag('noflying')) {
+    if (member.hasTag("noflying")) {
         try {
             member.runCommand(`ability @s mayfly false`);
-            member.removeTag('flying');
+            member.removeTag("flying");
             mayflydisable(player, member);
-            member.removeTag('noflying');
+            member.removeTag("noflying");
         } catch (error) {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
         }

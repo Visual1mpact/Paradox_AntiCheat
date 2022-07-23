@@ -44,10 +44,10 @@ export function unban(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -67,9 +67,9 @@ export function unban(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.unban) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.unban) {
         return unbanHelp(player, prefix);
-    } else if (argCheck && args[0].toLowerCase() === "list" || !config.customcommands.unban) {
+    } else if ((argCheck && args[0].toLowerCase() === "list") || !config.customcommands.unban) {
         queueUnban.forEach((queue: string) => listQueue(queue, player));
         return;
     }
@@ -77,5 +77,5 @@ export function unban(message: BeforeChatEvent, args: string[]) {
     // Add player to queue
     let regexp = /["'`]/g;
     queueUnban.add(args.join(" ").replace(regexp, ""));
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`);
 }

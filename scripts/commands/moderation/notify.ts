@@ -35,10 +35,10 @@ export function notify(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -53,31 +53,31 @@ export function notify(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.notify) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.notify) {
         return notifyHelp(player, prefix);
     }
 
-    if (player.hasTag('notify')) {
-        player.addTag('nonotify');
+    if (player.hasTag("notify")) {
+        player.addTag("nonotify");
     }
 
-    if (player.hasTag('nonotify')) {
-        player.removeTag('notify');
+    if (player.hasTag("nonotify")) {
+        player.removeTag("notify");
     }
 
-    if (player.hasTag('nonotify')) {
+    if (player.hasTag("nonotify")) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have disabled cheat notifications.`);
     }
 
-    if (!player.hasTag('nonotify')) {
-        player.addTag('notify');
+    if (!player.hasTag("nonotify")) {
+        player.addTag("notify");
     }
 
-    if (player.hasTag('notify') && !player.hasTag('nonotify')) {
+    if (player.hasTag("notify") && !player.hasTag("nonotify")) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled cheat notifications.`);
     }
 
-    if (player.hasTag('nonotify')) {
-        player.removeTag('nonotify');
+    if (player.hasTag("nonotify")) {
+        player.removeTag("nonotify");
     }
 }

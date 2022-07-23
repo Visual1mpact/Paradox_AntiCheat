@@ -51,8 +51,8 @@ export function kick(message: BeforeChatEvent, args: string[]) {
     let reason = args.slice(1).join(" ").replace("-s", "") || "No reason specified";
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -67,7 +67,7 @@ export function kick(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.kick) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.kick) {
         return kickHelp(player, prefix);
     }
 
@@ -75,7 +75,7 @@ export function kick(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return kickHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -97,11 +97,11 @@ export function kick(message: BeforeChatEvent, args: string[]) {
         if (!isSilent) {
             player.runCommand(`kick ${JSON.stringify(member.name)} ${reason}`);
         } else {
-            member.triggerEvent('paradox:kick');
+            member.triggerEvent("paradox:kick");
         }
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
     }
-    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has kicked ${member.nameTag}§r. Reason: ${reason}`);
+    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has kicked ${member.nameTag}§r. Reason: ${reason}`);
 }

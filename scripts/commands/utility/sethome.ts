@@ -46,12 +46,12 @@ export function sethome(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.sethome) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.sethome) {
         return setHomeHelp(player, prefix);
     }
 
     // Get current location
-    let {x, y, z} = player.location;
+    let { x, y, z } = player.location;
 
     let homex = x.toFixed(0);
     let homey = y.toFixed(0);

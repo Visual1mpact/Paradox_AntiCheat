@@ -7,7 +7,7 @@ const World = world;
 
 function namespoofa(id: number) {
     // Get Dynamic Property
-    let nameSpoofBoolean = World.getDynamicProperty('namespoofa_b');
+    let nameSpoofBoolean = World.getDynamicProperty("namespoofa_b");
     if (nameSpoofBoolean === undefined) {
         nameSpoofBoolean = config.modules.namespoofA.enabled;
     }
@@ -19,12 +19,12 @@ function namespoofa(id: number) {
     // run as each player
     for (let player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -33,7 +33,7 @@ function namespoofa(id: number) {
             if (player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength) {
                 flag(player, "Namespoof", "A", "Exploit", null, null, "nameLength", String(player.name.length), false, null);
             }
-        } catch(error) {}
+        } catch (error) {}
     }
     return;
 }

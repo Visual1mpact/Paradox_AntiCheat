@@ -6,7 +6,7 @@ const World = world;
 
 function crashera() {
     // Get Dynamic Property
-    let crasherABoolean = World.getDynamicProperty('crashera_b');
+    let crasherABoolean = World.getDynamicProperty("crashera_b");
     if (crasherABoolean === undefined) {
         crasherABoolean = config.modules.crasherA.enabled;
     }
@@ -22,20 +22,20 @@ function crashera() {
             flag(player, "Crasher", "A", "Exploit", null, null, null, null, true, null);
             let tags = player.getTags();
             // This removes old ban tags
-            tags.forEach(t => {
-                if(t.startsWith("Reason:")) {
+            tags.forEach((t) => {
+                if (t.startsWith("Reason:")) {
                     player.removeTag(t);
                 }
-                if(t.startsWith("By:")) {
+                if (t.startsWith("By:")) {
                     player.removeTag(t);
                 }
             });
             try {
-                player.addTag('Reason:Crasher');
-                player.addTag('By:Paradox');
-                player.addTag('isBanned');
+                player.addTag("Reason:Crasher");
+                player.addTag("By:Paradox");
+                player.addTag("isBanned");
             } catch (error) {
-                player.triggerEvent('paradox:kick');
+                player.triggerEvent("paradox:kick");
             }
         }
     }

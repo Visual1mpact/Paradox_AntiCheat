@@ -34,14 +34,14 @@ export function stats(message: BeforeChatEvent, args: string[]) {
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/stats.js:29)");
     }
-    
+
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -61,22 +61,22 @@ export function stats(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.stats) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.stats) {
         return statsHelp(player, prefix);
     }
 
-    if (!player.hasTag('notify')) {
+    if (!player.hasTag("notify")) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-            member = pl; 
+            member = pl;
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }

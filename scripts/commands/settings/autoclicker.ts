@@ -42,10 +42,10 @@ export function autoclick(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -62,18 +62,18 @@ export function autoclick(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.autoclicker) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.autoclicker) {
         return autoclickerHelp(player, prefix, autoclickerscore);
     }
 
     if (autoclickerscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config autoclicker 1`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Autoclicker§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Autoclicker§r!`);
     } else if (autoclickerscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config autoclicker 0`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Autoclicker§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Autoclicker§r!`);
     }
     return player.runCommand(`scoreboard players operation @a autoclicker = paradox:config autoclicker`);
 }

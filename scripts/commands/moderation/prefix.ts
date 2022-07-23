@@ -7,7 +7,7 @@ import { BeforeChatEvent, Player } from "mojang-minecraft";
 function resetPrefix(player: Player) {
     let sanitize = player.getTags();
     for (let tag of sanitize) {
-        if (tag.startsWith('Prefix:')) {
+        if (tag.startsWith("Prefix:")) {
             player.removeTag(tag);
             config.customcommands.prefix = "!";
         }
@@ -43,10 +43,10 @@ export function prefix(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -61,7 +61,7 @@ export function prefix(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.prefix) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.prefix) {
         return prefixHelp(player, prefix);
     }
 
@@ -71,7 +71,7 @@ export function prefix(message: BeforeChatEvent, args: string[]) {
     }
 
     // check if array contains the string 'reset'
-    let argcheck = args.includes('reset');
+    let argcheck = args.includes("reset");
 
     // reset prefix
     if (argcheck === true) {
@@ -79,16 +79,16 @@ export function prefix(message: BeforeChatEvent, args: string[]) {
         return;
     }
 
-    if (args[0][0] == '/') {
+    if (args[0][0] == "/") {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Using prefix '/' is not allowed!`);
     }
 
     // Change Prefix command under conditions
-    if (args[0].length <= 2 && args[0].length >=1) {
+    if (args[0].length <= 2 && args[0].length >= 1) {
         resetPrefix(player);
         config.customcommands.prefix = args[0];
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${args[0]}'!`);
-        return player.addTag('Prefix:' + args[0]);
+        return player.addTag("Prefix:" + args[0]);
     } else {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix length cannot be more than 2 characters!`);
     }

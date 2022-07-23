@@ -4,12 +4,12 @@ import config from "../data/config.js";
 import scoreboard from "../libs/scoreboard.js";
 import { crypto } from "../util.js";
 
-type scoreboardObjectiveDummies = typeof scoreboard.objective.prototype.dummies
+type scoreboardObjectiveDummies = typeof scoreboard.objective.prototype.dummies;
 
 if (config.dynamicPropertyWrapper.enabled) {
     // cancel registration
-    PropertyRegistry.prototype.registerEntityTypeDynamicProperties = () => { };
-    PropertyRegistry.prototype.registerWorldDynamicProperties = () => { };
+    PropertyRegistry.prototype.registerEntityTypeDynamicProperties = () => {};
+    PropertyRegistry.prototype.registerWorldDynamicProperties = () => {};
 
     // thing?
     const dpw = config.dynamicPropertyWrapper.uniqueID.slice(0, 6);
@@ -18,24 +18,22 @@ if (config.dynamicPropertyWrapper.enabled) {
     const uniqueID = dpw === "3t6@XB" ? String(crypto(dpw, pw)).slice(0, 6) : dpw;
 
     const getPropertyDatas = (scoreObj: scoreboardObjectiveDummies) => {
-        const data: Record<string, { cachedValue: string | number | boolean, scoreboardName: string }> = Object.create(null);
+        const data: Record<string, { cachedValue: string | number | boolean; scoreboardName: string }> = Object.create(null);
         for (const [name] of scoreObj.getScores()) {
             // parse the saved value
             const [match, id, type] = name.match(/(.*?)\|\|(string|number|boolean)\|\|/) ?? [];
 
             // skip if match is undefined (misformatted)
-            if (typeof match == 'undefined') continue;
+            if (typeof match == "undefined") continue;
 
             // parse value
             const valueStr = name.substring(match.length),
-                value = type == 'number' ? +valueStr
-                    : type == 'boolean' ? valueStr == 'true'
-                        : JSON.parse(`"${valueStr}"`);
+                value = type == "number" ? +valueStr : type == "boolean" ? valueStr == "true" : JSON.parse(`"${valueStr}"`);
 
             // add the value in property list
             data[JSON.parse(`"${id}"`)] = {
                 cachedValue: value,
-                scoreboardName: `${id}||${type}||${value}`
+                scoreboardName: `${id}||${type}||${value}`,
             };
         }
         return data;
@@ -50,15 +48,15 @@ if (config.dynamicPropertyWrapper.enabled) {
     };
     World.prototype.setDynamicProperty = (id, value) => {
         const vtype = typeof value;
-        if (vtype != 'string' && vtype != 'number' && vtype != 'boolean') throw new TypeError(`Unexpected value type ${vtype}`);
+        if (vtype != "string" && vtype != "number" && vtype != "boolean") throw new TypeError(`Unexpected value type ${vtype}`);
 
         // delete existing
-        const propData = worldPropertyList[id] ??= { cachedValue: undefined, scoreboardName: undefined };
+        const propData = (worldPropertyList[id] ??= { cachedValue: undefined, scoreboardName: undefined });
         if (propData.scoreboardName !== undefined) worldObj.delete(propData.scoreboardName);
 
         // set
         propData.cachedValue = value;
-        worldObj.set(propData.scoreboardName = `${id}||${vtype}||${value}`, 0);
+        worldObj.set((propData.scoreboardName = `${id}||${vtype}||${value}`), 0);
     };
     World.prototype.removeDynamicProperty = (id) => {
         if (!(id in worldPropertyList)) return false;
@@ -76,17 +74,17 @@ if (config.dynamicPropertyWrapper.enabled) {
     };
     Player.prototype.setDynamicProperty = function (id, value) {
         const vtype = typeof value;
-        if (vtype != 'string' && vtype != 'number' && vtype != 'boolean') throw new TypeError(`Unexpected value type ${vtype}`);
+        if (vtype != "string" && vtype != "number" && vtype != "boolean") throw new TypeError(`Unexpected value type ${vtype}`);
 
         const { obj, data } = getDataOfPlayer(this);
 
         // delete existing
-        const propData = data[id] ??= {};
+        const propData = (data[id] ??= {});
         if (propData.scoreboardName !== undefined) obj.delete(propData.scoreboardName);
 
         // set
         propData.cachedValue = value;
-        obj.set(propData.scoreboardName = `${id}||${vtype}||${value}`, 0);
+        obj.set((propData.scoreboardName = `${id}||${vtype}||${value}`), 0);
     };
     Player.prototype.removeDynamicProperty = function (id) {
         const { obj, data } = getDataOfPlayer(this);

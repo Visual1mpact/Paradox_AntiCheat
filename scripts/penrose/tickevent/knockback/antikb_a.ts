@@ -7,7 +7,7 @@ const World = world;
 
 function antiknockbacka(id: number) {
     // Get Dynamic Property
-    let antikbBoolean = World.getDynamicProperty('antikb_b');
+    let antikbBoolean = World.getDynamicProperty("antikb_b");
     if (antikbBoolean === undefined) {
         antikbBoolean = config.modules.antikbA.enabled;
     }
@@ -19,12 +19,12 @@ function antiknockbacka(id: number) {
     // run as each player
     for (let player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) { }
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -47,13 +47,13 @@ function antiknockbacka(id: number) {
 
         // antikb/a = checks for anti knockback and flags it
         if (Number((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3)) <= config.modules.antikbA.magnitude) {
-            if (player.hasTag('attacked') && !player.hasTag('dead') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('flying')) {
+            if (player.hasTag("attacked") && !player.hasTag("dead") && !player.hasTag("gliding") && !player.hasTag("levitating") && !player.hasTag("flying")) {
                 try {
                     // Make sure Anti Knockback is turned on
                     player.runCommand(`testfor @s[scores={antikb=1..}]`);
                     flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, null);
                     player.runCommand(`scoreboard players add @s velocityvl 1`);
-                } catch (error) { }
+                } catch (error) {}
             }
         }
     }

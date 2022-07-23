@@ -45,10 +45,10 @@ export function allowgma(message: BeforeChatEvent, args: string) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,15 +59,15 @@ export function allowgma(message: BeforeChatEvent, args: string) {
     }
 
     // Get Dynamic Property Boolean
-    let adventureGMBoolean = World.getDynamicProperty('adventuregm_b');
+    let adventureGMBoolean = World.getDynamicProperty("adventuregm_b");
     if (adventureGMBoolean === undefined) {
         adventureGMBoolean = config.modules.adventureGM.enabled;
     }
-    let creativeGMBoolean = World.getDynamicProperty('creativegm_b');
+    let creativeGMBoolean = World.getDynamicProperty("creativegm_b");
     if (creativeGMBoolean === undefined) {
         creativeGMBoolean = config.modules.creativeGM.enabled;
     }
-    let survivalGMBoolean = World.getDynamicProperty('survivalgm_b');
+    let survivalGMBoolean = World.getDynamicProperty("survivalgm_b");
     if (survivalGMBoolean === undefined) {
         survivalGMBoolean = config.modules.survivalGM.enabled;
     }
@@ -77,26 +77,26 @@ export function allowgma(message: BeforeChatEvent, args: string) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.allowgma) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.allowgma) {
         return allowgmaHelp(player, prefix, adventureGMBoolean);
     }
 
     if (adventureGMBoolean === false) {
         // Allow
-        World.setDynamicProperty('adventuregm_b', true);
+        World.setDynamicProperty("adventuregm_b", true);
         // Make sure at least one is allowed since this could cause serious issues if all were locked down
         // We will allow Adventure Mode in this case
         if (survivalGMBoolean === true && creativeGMBoolean === true) {
-            World.setDynamicProperty('adventuregm_b', false);
-            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
+            World.setDynamicProperty("adventuregm_b", false);
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
             return;
         }
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 2 (Adventure)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 2 (Adventure)§r to be used!`);
         Adventure();
     } else if (adventureGMBoolean === true) {
         // Deny
-        World.setDynamicProperty('adventuregm_b', false);
-        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`);
+        World.setDynamicProperty("adventuregm_b", false);
+        return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`);
     }
 }

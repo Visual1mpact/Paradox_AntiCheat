@@ -45,10 +45,10 @@ export function antiknockback(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function antiknockback(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antikbBoolean = World.getDynamicProperty('antikb_b');
+    let antikbBoolean = World.getDynamicProperty("antikb_b");
     if (antikbBoolean === undefined) {
         antikbBoolean = config.modules.antikbA.enabled;
     }
@@ -69,7 +69,7 @@ export function antiknockback(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antikb) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antikb) {
         return antikbHelp(player, prefix, antikbBoolean);
     }
 
@@ -77,15 +77,15 @@ export function antiknockback(message: BeforeChatEvent, args: string[]) {
 
     if (antikbscore <= 0) {
         // Allow
-        World.setDynamicProperty('antikb_b', true);
+        World.setDynamicProperty("antikb_b", true);
         player.runCommand(`scoreboard players set paradox:config antikb 1`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`);
         AntiKnockbackA();
     } else if (antikbscore >= 1) {
         // Deny
-        World.setDynamicProperty('antikb_b', false);
+        World.setDynamicProperty("antikb_b", false);
         player.runCommand(`scoreboard players set paradox:config antikb 0`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`);
     }
     return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

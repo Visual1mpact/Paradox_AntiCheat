@@ -7,7 +7,7 @@ const World = world;
 
 function xraya(object: BlockBreakEvent) {
     // Get Dynamic Property
-    let xrayBoolean = World.getDynamicProperty('xraya_b');
+    let xrayBoolean = World.getDynamicProperty("xraya_b");
     if (xrayBoolean === undefined) {
         xrayBoolean = config.modules.xrayA.enabled;
     }
@@ -21,12 +21,12 @@ function xraya(object: BlockBreakEvent) {
     let { player, brokenBlockPermutation } = object;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
+    } catch (error) {}
     // Return if player has op
     if (hash !== undefined && encode === hash) {
         return;

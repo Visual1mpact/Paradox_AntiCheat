@@ -18,10 +18,10 @@ export function nonstaffhelp(message: BeforeChatEvent) {
 
     // Check for custom prefix
     let prefix = getPrefix(player);
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -30,24 +30,12 @@ export function nonstaffhelp(message: BeforeChatEvent) {
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, [
             `§l§6[§4Non-Staff Commands§6]§r`,
-            config.customcommands.report
-                ? `§6${prefix}report <username>§r - Report suspicious players to staff.`
-                : `§6${prefix}report <username>§r - Command §4DISABLED§r.`,
-            config.customcommands.sethome
-                ? `§6${prefix}sethome <name>§r - Saves current coordinates as home.`
-                : `§6${prefix}sethome <name>§r - Command §4DISABLED§r.`,
-            config.customcommands.gohome
-                ? `§6${prefix}gohome <name>§r - Teleport back to saved home coordinates.`
-                : `§6${prefix}gohome <name>§r - Command §4DISABLED§r.`,
-            config.customcommands.listhome
-                ? `§6${prefix}listhome§r - Shows your list of saved locations.`
-                : `§6${prefix}listhome§r - Command §4DISABLED§r.`,
-            config.customcommands.delhome
-                ? `§6${prefix}delhome <name>§r - Deletes a saved location from list.`
-                : `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`,
-            config.customcommands.tpr
-                ? `§6${prefix}tpr <username>§r - Sends a request to teleport to a player or blocks/unblocks requests.`
-                : `§6${prefix}tpr <username>§r - Command §4DISABLED§r.`,
+            config.customcommands.report ? `§6${prefix}report <username>§r - Report suspicious players to staff.` : `§6${prefix}report <username>§r - Command §4DISABLED§r.`,
+            config.customcommands.sethome ? `§6${prefix}sethome <name>§r - Saves current coordinates as home.` : `§6${prefix}sethome <name>§r - Command §4DISABLED§r.`,
+            config.customcommands.gohome ? `§6${prefix}gohome <name>§r - Teleport back to saved home coordinates.` : `§6${prefix}gohome <name>§r - Command §4DISABLED§r.`,
+            config.customcommands.listhome ? `§6${prefix}listhome§r - Shows your list of saved locations.` : `§6${prefix}listhome§r - Command §4DISABLED§r.`,
+            config.customcommands.delhome ? `§6${prefix}delhome <name>§r - Deletes a saved location from list.` : `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`,
+            config.customcommands.tpr ? `§6${prefix}tpr <username>§r - Sends a request to teleport to a player or blocks/unblocks requests.` : `§6${prefix}tpr <username>§r - Command §4DISABLED§r.`,
         ]);
     }
 }

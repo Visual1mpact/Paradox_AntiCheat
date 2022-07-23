@@ -44,10 +44,10 @@ export function illegalEnchant(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function illegalEnchant(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
+    let illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b");
     if (illegalEnchantmentBoolean === undefined) {
         illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
     }
@@ -68,19 +68,19 @@ export function illegalEnchant(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.illegalenchant) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.illegalenchant) {
         return illegalEnchantHelp(player, prefix, illegalEnchantmentBoolean);
     }
 
     if (illegalEnchantmentBoolean === false) {
         // Allow
-        World.setDynamicProperty('illegalenchantment_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalEnchantments§r!`);
+        World.setDynamicProperty("illegalenchantment_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalEnchantments§r!`);
         return;
     } else if (illegalEnchantmentBoolean === true) {
         // Deny
-        World.setDynamicProperty('illegalenchantment_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalEnchantments§r!`);
+        World.setDynamicProperty("illegalenchantment_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalEnchantments§r!`);
         return;
     }
 }

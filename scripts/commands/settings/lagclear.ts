@@ -45,10 +45,10 @@ export function clearlag(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function clearlag(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let clearLagBoolean = World.getDynamicProperty('clearlag_b');
+    let clearLagBoolean = World.getDynamicProperty("clearlag_b");
     if (clearLagBoolean === undefined) {
         clearLagBoolean = config.modules.clearLag.enabled;
     }
@@ -69,20 +69,20 @@ export function clearlag(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.clearlag) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.clearlag) {
         return clearlagHelp(player, prefix, clearLagBoolean);
     }
 
     if (clearLagBoolean === false) {
         // Allow
-        World.setDynamicProperty('clearlag_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ClearLag§r!`);
+        World.setDynamicProperty("clearlag_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ClearLag§r!`);
         ClearLag();
         return;
     } else if (clearLagBoolean === true) {
         // Deny
-        World.setDynamicProperty('clearlag_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ClearLag§r!`);
+        World.setDynamicProperty("clearlag_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ClearLag§r!`);
         return;
     }
 }

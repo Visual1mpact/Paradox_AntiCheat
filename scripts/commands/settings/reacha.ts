@@ -45,10 +45,10 @@ export function reachA(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function reachA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let reachABoolean = World.getDynamicProperty('reacha_b');
+    let reachABoolean = World.getDynamicProperty("reacha_b");
     if (reachABoolean === undefined) {
         reachABoolean = config.modules.reachA.enabled;
     }
@@ -69,20 +69,20 @@ export function reachA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.reacha) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.reacha) {
         return reachAHelp(player, prefix, reachABoolean);
     }
 
     if (reachABoolean === false) {
         // Allow
-        World.setDynamicProperty('reacha_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachA§r!`);
+        World.setDynamicProperty("reacha_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachA§r!`);
         ReachA();
         return;
     } else if (reachABoolean === true) {
         // Deny
-        World.setDynamicProperty('reacha_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachA§r!`);
+        World.setDynamicProperty("reacha_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachA§r!`);
         return;
     }
 }

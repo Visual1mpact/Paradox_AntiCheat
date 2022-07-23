@@ -42,8 +42,8 @@ export function mute(message: BeforeChatEvent, args: string[]) {
     let reason = args.slice(1).join(" ") || "No reason specified";
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function mute(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.mute) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.mute) {
         return muteHelp(player, prefix);
     }
 
@@ -66,7 +66,7 @@ export function mute(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return muteHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -80,8 +80,8 @@ export function mute(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for hash/salt and validate password for members
-    let memberHash = member.getDynamicProperty('hash');
-    let memberSalt = member.getDynamicProperty('salt');
+    let memberHash = member.getDynamicProperty("hash");
+    let memberSalt = member.getDynamicProperty("salt");
     let memberEncode: string;
     try {
         memberEncode = crypto(memberSalt, config.modules.encryption.password);
@@ -98,8 +98,8 @@ export function mute(message: BeforeChatEvent, args: string[]) {
     }
 
     // If not already muted then tag
-    if (!member.hasTag('isMuted')) {
-        member.addTag('isMuted');
+    if (!member.hasTag("isMuted")) {
+        member.addTag("isMuted");
     } else {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is already muted.`);
     }
@@ -108,5 +108,5 @@ export function mute(message: BeforeChatEvent, args: string[]) {
         member.runCommand(`ability @s mute true`);
     } catch (error) {}
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`);
-    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has muted ${member.nameTag}§r. Reason: ${reason}`);
+    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has muted ${member.nameTag}§r. Reason: ${reason}`);
 }

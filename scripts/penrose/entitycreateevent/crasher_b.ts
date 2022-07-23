@@ -37,7 +37,7 @@ function nearestPlayer(entity: Entity) {
 
 function crasherb(object: EntityCreateEvent) {
     // Get Dynamic Property
-    let crasherBBoolean = World.getDynamicProperty('crasherb_b');
+    let crasherBBoolean = World.getDynamicProperty("crasherb_b");
     if (crasherBBoolean === undefined) {
         crasherBBoolean = config.modules.crasherB.enabled;
     }

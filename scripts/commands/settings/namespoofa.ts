@@ -45,10 +45,10 @@ export function namespoofA(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function namespoofA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let nameSpoofBoolean = World.getDynamicProperty('namespoofa_b');
+    let nameSpoofBoolean = World.getDynamicProperty("namespoofa_b");
     if (nameSpoofBoolean === undefined) {
         nameSpoofBoolean = config.modules.namespoofA.enabled;
     }
@@ -69,20 +69,20 @@ export function namespoofA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.namespoofa) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.namespoofa) {
         return namespoofAHelp(player, prefix, nameSpoofBoolean);
     }
 
     if (nameSpoofBoolean === false) {
         // Allow
-        World.setDynamicProperty('namespoofa_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofA§r!`);
+        World.setDynamicProperty("namespoofa_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofA§r!`);
         NamespoofA();
         return;
     } else if (nameSpoofBoolean === true) {
         // Deny
-        World.setDynamicProperty('namespoofa_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofA§r!`);
+        World.setDynamicProperty("namespoofa_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofA§r!`);
         return;
     }
 }

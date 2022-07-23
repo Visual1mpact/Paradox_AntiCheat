@@ -9,12 +9,12 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 
 const World = world;
 
-function rip(player: Player, inventory_item: ItemStack, enchData: { id: string, level: number }) {
+function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }) {
     // Get all tags
     let tags = player.getTags();
 
     // This removes old ban tags
-    tags.forEach(t => {
+    tags.forEach((t) => {
         if (t.startsWith("Reason:")) {
             player.removeTag(t);
         }
@@ -26,49 +26,49 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string, 
     if (!enchData) {
         // Tag with reason and by who
         try {
-            player.addTag('Reason:Illegal Item A (' + inventory_item.id.replace("minecraft:", "") + '=' + inventory_item.amount + ')');
-            player.addTag('By:Paradox');
-            player.addTag('isBanned');
+            player.addTag("Reason:Illegal Item A (" + inventory_item.id.replace("minecraft:", "") + "=" + inventory_item.amount + ")");
+            player.addTag("By:Paradox");
+            player.addTag("isBanned");
             // Despawn if we cannot kick the player
         } catch (error) {
-            player.triggerEvent('paradox:kick');
+            player.triggerEvent("paradox:kick");
         }
     } else {
         // Tag with reason and by who
         try {
-            player.addTag('Reason:Illegal Item A (' + inventory_item.id.replace("minecraft:", "") + ': ' + enchData.id + '=' + enchData.level + ')');
-            player.addTag('By:Paradox');
-            player.addTag('isBanned');
+            player.addTag("Reason:Illegal Item A (" + inventory_item.id.replace("minecraft:", "") + ": " + enchData.id + "=" + enchData.level + ")");
+            player.addTag("By:Paradox");
+            player.addTag("isBanned");
             // Despawn if we cannot kick the player
         } catch (error) {
-            player.triggerEvent('paradox:kick');
+            player.triggerEvent("paradox:kick");
         }
     }
 }
 
 function illegalitemsa() {
     // Get Dynamic Property
-    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
+    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
     if (illegalItemsABoolean === undefined) {
         illegalItemsABoolean = config.modules.illegalitemsA.enabled;
     }
-    let salvageBoolean = World.getDynamicProperty('salvage_b');
+    let salvageBoolean = World.getDynamicProperty("salvage_b");
     if (salvageBoolean === undefined) {
         salvageBoolean = config.modules.salvage.enabled;
     }
-    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
+    let illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
     if (illegalLoresBoolean === undefined) {
         illegalLoresBoolean = config.modules.illegalLores.enabled;
     }
-    let illegalEnchantmentBoolean = World.getDynamicProperty('illegalenchantment_b');
+    let illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b");
     if (illegalEnchantmentBoolean === undefined) {
         illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
     }
-    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    let antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
     if (antiShulkerBoolean === undefined) {
         antiShulkerBoolean = config.modules.antishulker.enabled;
     }
-    let stackBanBoolean = World.getDynamicProperty('stackban_b');
+    let stackBanBoolean = World.getDynamicProperty("stackban_b");
     if (stackBanBoolean === undefined) {
         stackBanBoolean = config.modules.stackBan.enabled;
     }
@@ -77,8 +77,8 @@ function illegalitemsa() {
     if (illegalItemsABoolean === false) {
         let allPlayers = [...World.getPlayers()];
         for (let player of allPlayers) {
-            if (player.hasTag('illegalitemsA')) {
-                player.removeTag('illegalitemsA');
+            if (player.hasTag("illegalitemsA")) {
+                player.removeTag("illegalitemsA");
             }
         }
         World.events.tick.unsubscribe(illegalitemsa);
@@ -86,20 +86,20 @@ function illegalitemsa() {
     }
 
     for (let player of World.getPlayers()) {
-        if (!player.hasTag('illegalitemsA') && illegalItemsABoolean) {
-            player.addTag('illegalitemsA');
+        if (!player.hasTag("illegalitemsA") && illegalItemsABoolean) {
+            player.addTag("illegalitemsA");
         }
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) { }
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
-        let inventory = player.getComponent('minecraft:inventory') as EntityInventoryComponent;
+        let inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent;
         let container = inventory.container;
         for (let i = 0; i < container.size; i++) {
             let inventory_item = container.getItem(i);
@@ -112,8 +112,8 @@ function illegalitemsa() {
             if (antiShulkerBoolean && inventory_item.id in shulkerItems) {
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch { }
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${player.nameTag}.`);
+                } catch {}
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
                 continue;
             }
@@ -156,7 +156,6 @@ function illegalitemsa() {
                                 let changeCase = toCamelCase(enchants);
                                 enchantArray.push(changeCase);
                                 enchantLevelArray.push(enchant_data.level);
-
                             }
                         }
                     }
@@ -180,11 +179,11 @@ function illegalitemsa() {
                         try {
                             actualItemName.setLore(loreData);
                             container.setItem(i, actualItemName);
-                        } catch (error) { }
+                        } catch (error) {}
                     } else if (illegalLoresBoolean) {
                         try {
                             container.setItem(i, actualItemName);
-                        } catch (error) { }
+                        } catch (error) {}
                     }
                     if (config.debug) {
                         console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/A)!`);
@@ -206,12 +205,12 @@ function illegalitemsa() {
                             const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
                             newItem.setLore(loreData);
                             container.setItem(i, newItem);
-                        } catch (error) { }
+                        } catch (error) {}
                         continue;
                     }
                     try {
                         container.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
-                    } catch (error) { }
+                    } catch (error) {}
                     continue;
                 } else if (salvageable[inventory_item.id] && salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
                     if (!illegalLoresBoolean) {
@@ -220,13 +219,13 @@ function illegalitemsa() {
                             const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
                             newItem.setLore(loreData);
                             container.setItem(i, newItem);
-                        } catch (error) { }
+                        } catch (error) {}
                         continue;
                     }
                     // Reset item to data type of equal data if they do not match
                     try {
                         container.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
-                    } catch (error) { }
+                    } catch (error) {}
                     continue;
                 } else if (salvageable[inventory_item.id]) {
                     if (!illegalLoresBoolean) {
@@ -235,13 +234,13 @@ function illegalitemsa() {
                             const newItem = new ItemStack(Items.get(inventory_item.id), inventory_item.amount);
                             newItem.setLore(loreData);
                             container.setItem(i, newItem);
-                        } catch (error) { }
+                        } catch (error) {}
                         continue;
                     }
                     // Reset item to data type of equal data because we take no chances
                     try {
                         container.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
-                    } catch (error) { }
+                    } catch (error) {}
                     continue;
                 }
             }
@@ -252,17 +251,17 @@ function illegalitemsa() {
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch { }
+                } catch {}
                 // Ban
                 return rip(player, inventory_item, null);
             }
             // If player has illegal stack we clear it and ban if enabled
             const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack;
             if (inventory_item.amount < 0 || inventory_item.amount > maxStack) {
-                const itemId = inventory_item.id.replace('minecraft:', "");
+                const itemId = inventory_item.id.replace("minecraft:", "");
                 // Item stacks over max allowed we clear them
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", itemId, false, null);
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
                 if (stackBanBoolean) {
                     // Ban
@@ -270,15 +269,15 @@ function illegalitemsa() {
                 }
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch { }
+                } catch {}
                 continue;
             }
             // Check items for illegal lores
             if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
                     container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch { }
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
+                } catch {}
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
                 continue;
             }
@@ -290,17 +289,20 @@ function illegalitemsa() {
                 let enchantedSlot = enchantmentSlot[item_enchants.slot];
                 // Check if enchantment is illegal on item
                 if (item_enchants) {
-                    for (let { level, type: { id } } of item_enchants) {
+                    for (let {
+                        level,
+                        type: { id },
+                    } of item_enchants) {
                         let enchantLevel = enchantedSlot[id];
                         if (!enchantLevel) {
                             flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                             // Remove this item immediately
                             try {
                                 container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                            } catch { }
-                            sendMsg('@a[tag=notify]', [
+                            } catch {}
+                            sendMsg("@a[tag=notify]", [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
+                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
                             ]);
                             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                             rip(player, inventory_item, { id, level });
@@ -312,10 +314,10 @@ function illegalitemsa() {
                             // Remove this item immediately
                             try {
                                 container.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                            } catch { }
-                            sendMsg('@a[tag=notify]', [
+                            } catch {}
+                            sendMsg("@a[tag=notify]", [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`
+                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
                             ]);
                             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                             rip(player, inventory_item, { id, level });

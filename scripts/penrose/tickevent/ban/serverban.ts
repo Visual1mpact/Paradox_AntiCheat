@@ -7,21 +7,21 @@ const World = world;
 
 function serverban() {
     let filter = new EntityQueryOptions();
-    filter.tags = ['isBanned'];
+    filter.tags = ["isBanned"];
     // run as each player
     for (let player of World.getPlayers(filter)) {
         if (queueUnban.has(player.nameTag)) {
             // Remove tag
-            player.removeTag('isBanned');
+            player.removeTag("isBanned");
 
             let tags = player.getTags();
 
             // This removes old ban stuff
-            tags.forEach(t => {
-                if(t.startsWith("Reason:")) {
+            tags.forEach((t) => {
+                if (t.startsWith("Reason:")) {
                     player.removeTag(t);
                 }
-                if(t.startsWith("By:")) {
+                if (t.startsWith("By:")) {
                     player.removeTag(t);
                 }
             });

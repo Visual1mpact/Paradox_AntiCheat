@@ -5,7 +5,7 @@ const World = world;
 
 function hotbar() {
     // Get Dynamic Property
-    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
+    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined) {
         hotbarBoolean = config.modules.hotbar.enabled;
     }
@@ -16,7 +16,7 @@ function hotbar() {
     }
     let hotbarMessage: string;
     let filter = new EntityQueryOptions();
-    filter.excludeTags = ['vanish'];
+    filter.excludeTags = ["vanish"];
     // run as each player
     for (let player of World.getPlayers(filter)) {
         hotbarMessage = config.modules.hotbar.message;

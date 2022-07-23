@@ -47,8 +47,8 @@ export function antiscaffoldA(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function antiscaffoldA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
+    let antiScaffoldABoolean = World.getDynamicProperty("antiscaffolda_b");
     if (antiScaffoldABoolean === undefined) {
         antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
     }
@@ -69,20 +69,20 @@ export function antiscaffoldA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antiscaffolda) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antiscaffolda) {
         return antiscaffoldaHelp(player, prefix, antiScaffoldABoolean);
     }
 
     if (antiScaffoldABoolean === false) {
         // Allow
-        World.setDynamicProperty('antiscaffolda_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`);
+        World.setDynamicProperty("antiscaffolda_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`);
         ScaffoldA();
         return;
     } else if (antiScaffoldABoolean === true) {
         // Deny
-        World.setDynamicProperty('antiscaffolda_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`);
+        World.setDynamicProperty("antiscaffolda_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`);
         return;
     }
 }

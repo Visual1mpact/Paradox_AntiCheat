@@ -8,7 +8,7 @@ let blockTimer = new Map();
 
 function nukera(object: BlockBreakEvent) {
     // Get Dynamic Property
-    let antiNukerABoolean = World.getDynamicProperty('antinukera_b');
+    let antiNukerABoolean = World.getDynamicProperty("antinukera_b");
     if (antiNukerABoolean === undefined) {
         antiNukerABoolean = config.modules.antinukerA.enabled;
     }
@@ -23,12 +23,12 @@ function nukera(object: BlockBreakEvent) {
     let { x, y, z } = block.location;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
+    } catch (error) {}
     // Return if player has op
     if (hash !== undefined && encode === hash) {
         return;
@@ -38,7 +38,7 @@ function nukera(object: BlockBreakEvent) {
     let hand = player.selectedSlot;
 
     // Get the type of item from the slot number in their possession
-    let invContainer = player.getComponent('minecraft:inventory') as EntityInventoryComponent;
+    let invContainer = player.getComponent("minecraft:inventory") as EntityInventoryComponent;
     let item = invContainer.container.getItem(hand) as ItemStack;
 
     // We get enchantment on this item
@@ -58,7 +58,7 @@ function nukera(object: BlockBreakEvent) {
 
     timer.push(new Date());
 
-    let tiktok = timer.filter(time => time.getTime() > new Date().getTime() - 100);
+    let tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
     blockTimer.set(player.nameTag, tiktok);
 
     // Get the properties of the blocks being destroyed
@@ -122,7 +122,7 @@ function nukera(object: BlockBreakEvent) {
         "minecraft:crimson_roots",
         "minecraft:warped_roots",
         "minecraft:twisting_vines",
-        "minecraft:weeping_vines"
+        "minecraft:weeping_vines",
     ];
 
     if (enchantment && enchantment.level >= MinecraftEnchantmentTypes.efficiency.maxLevel && tiktok.length < config.modules.antinukerA.max + 2) {
@@ -136,7 +136,7 @@ function nukera(object: BlockBreakEvent) {
         try {
             // Remove dropped items after nuking because it will leave a mess of entities in the world
             player.runCommand(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
-        } catch (error) { }
+        } catch (error) {}
 
         /* let tags = player.getTags();
 

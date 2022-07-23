@@ -35,10 +35,10 @@ export function clearchat(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -53,11 +53,11 @@ export function clearchat(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.clearchat) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.clearchat) {
         return clearChatHelp(player, prefix);
     }
 
-    for (let clear = 0; clear < 10; clear++) sendMsg('@a', '\n'.repeat(60));
+    for (let clear = 0; clear < 10; clear++) sendMsg("@a", "\n".repeat(60));
 
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Chat has been cleared by ${player.nameTag}`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Chat has been cleared by ${player.nameTag}`);
 }

@@ -50,10 +50,10 @@ export function report(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.report) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.report) {
         return reportHelp(player, prefix);
     }
-    
+
     // Try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -74,5 +74,5 @@ export function report(message: BeforeChatEvent, args: string[]) {
 
     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Reported ${member.nameTag}§r with reason: ${reason}`);
 
-    sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has reported ${member.nameTag}§r with reason: ${reason}`);
+    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has reported ${member.nameTag}§r with reason: ${reason}`);
 }

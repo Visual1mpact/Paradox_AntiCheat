@@ -23,12 +23,12 @@ export function help(message: BeforeChatEvent) {
     // make sure the user has permissions to run the command
     // if not then show them non staff commands
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
+    } catch (error) {}
     if (hash === undefined || encode !== hash) {
         return nonstaffhelp(message);
     }
@@ -38,7 +38,7 @@ export function help(message: BeforeChatEvent) {
         config.customcommands.help = true;
     }
 
-    const textDisabled = 'Command §4DISABLED§r.';
+    const textDisabled = "Command §4DISABLED§r.";
 
     return sendMsgToPlayer(player, [
         `§l§6[§4Paradox AntiCheat Command Help§6]§r`,

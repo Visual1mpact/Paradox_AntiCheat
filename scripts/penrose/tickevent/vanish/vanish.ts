@@ -7,12 +7,12 @@ const World = world;
 function vanish() {
     // Filter for only players who are vanished
     let filter = new EntityQueryOptions();
-    filter.tags = ['vanish'];
+    filter.tags = ["vanish"];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
@@ -27,13 +27,13 @@ function vanish() {
         // Make sure they have permission to use Vanish
         if (hash === undefined || encode !== hash) {
             // They have been busted!
-            player.removeTag('vanish');
+            player.removeTag("vanish");
             if (player.getEffect(MinecraftEffectTypes.invisibility) || player.getEffect(MinecraftEffectTypes.nightVision)) {
                 player.runCommand(`effect @s clear`);
             }
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {
-                sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions for Vanish. Permissions removed!`);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions for Vanish. Permissions removed!`);
             } catch (error) {}
         }
     }

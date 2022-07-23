@@ -45,10 +45,10 @@ export function antinukerA(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function antinukerA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antiNukerABoolean = World.getDynamicProperty('antinukera_b');
+    let antiNukerABoolean = World.getDynamicProperty("antinukera_b");
     if (antiNukerABoolean === undefined) {
         antiNukerABoolean = config.modules.antinukerA.enabled;
     }
@@ -69,20 +69,20 @@ export function antinukerA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.antinukera) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antinukera) {
         return antinukeraHelp(player, prefix, antiNukerABoolean);
     }
 
     if (antiNukerABoolean === false) {
         // Allow
-        World.setDynamicProperty('antinukera_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`);
+        World.setDynamicProperty("antinukera_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`);
         NukerA();
         return;
     } else if (antiNukerABoolean === true) {
         // Deny
-        World.setDynamicProperty('antinukera_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`);
+        World.setDynamicProperty("antinukera_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`);
         return;
     }
 }

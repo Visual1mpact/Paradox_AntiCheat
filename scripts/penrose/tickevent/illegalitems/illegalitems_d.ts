@@ -7,11 +7,11 @@ const World = world;
 
 function illegalitemsd() {
     // Get Dynamic Property
-    let illegalItemsDBoolean = World.getDynamicProperty('illegalitemsd_b');
+    let illegalItemsDBoolean = World.getDynamicProperty("illegalitemsd_b");
     if (illegalItemsDBoolean === undefined) {
         illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
     }
-    let antiShulkerBoolean = World.getDynamicProperty('antishulker_b');
+    let antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
     if (antiShulkerBoolean === undefined) {
         antiShulkerBoolean = config.modules.antishulker.enabled;
     }
@@ -22,7 +22,7 @@ function illegalitemsd() {
     }
     let filter = new EntityQueryOptions();
     filter.type = "item";
-    for (let entity of World.getDimension('overworld').getEntities(filter)) {
+    for (let entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
@@ -31,16 +31,15 @@ function illegalitemsd() {
         let itemName: ItemStack;
         // Get component of itemStack for dropped item
         try {
-            let itemContainer = entity.getComponent('item') as unknown as EntityItemComponent;
+            let itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
             itemName = itemContainer.itemStack;
-        } catch (error) { }
+        } catch (error) {}
 
         // Check if object returns undefined and skip if it does
         if (itemName === undefined) {
             continue;
         }
         if (entity.id === "minecraft:item") {
-
             // If shulker boxes are not allowed in the server then we handle this here
             const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
             if (antiShulkerBoolean && itemName.id in shulkerItems) {

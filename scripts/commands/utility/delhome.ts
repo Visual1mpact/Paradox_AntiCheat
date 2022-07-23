@@ -46,7 +46,7 @@ export function delhome(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.delhome) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.delhome) {
         return delhomeHelp(player, prefix);
     }
 

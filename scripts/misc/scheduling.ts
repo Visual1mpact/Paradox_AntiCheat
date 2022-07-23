@@ -2,13 +2,14 @@
  * Imported from https://github.com/notbeer/Gametest-API-Wrapper/blob/main/src/library/utils/scheduling.ts
  */
 import { world } from "mojang-minecraft";
-import getStack from '../debug/stack.js';
+import getStack from "../debug/stack.js";
 
 const World = world;
 
 const tickTimeoutMap = new Map();
 const tickIntervalMap = new Map();
-let tickTimeoutID = 0, tickIntervalID = 0;
+let tickTimeoutID = 0,
+    tickIntervalID = 0;
 
 /**
  * Delay executing a function
@@ -22,7 +23,7 @@ function setTickTimeout(handler: any, timeout: number, ...args: any[]): number {
     const tickTimeout = { callback: handler, tick: timeout, args };
     tickTimeoutID++;
     tickTimeoutMap.set(tickTimeoutID, tickTimeout);
-    console.log(`Set tick timeout for ${handler.name || '(anonymous)'} (${handler.fileName}:${handler.lineNumber}) (ID: ${tickTimeoutID}) \n${getStack()}`);
+    console.log(`Set tick timeout for ${handler.name || "(anonymous)"} (${handler.fileName}:${handler.lineNumber}) (ID: ${tickTimeoutID}) \n${getStack()}`);
     return tickTimeoutID;
 }
 /**
@@ -37,7 +38,7 @@ function setTickInterval(handler: any, timeout: number, ...args: any[]): number 
     const tickInterval = { callback: handler, tick: timeout, args };
     tickIntervalID++;
     tickIntervalMap.set(tickIntervalID, tickInterval);
-    console.log(`Set tick interval for ${handler.name || '(anonymous)'} (${handler.fileName}:${handler.lineNumber}) (ID: ${tickIntervalID}) \n${getStack()}`);
+    console.log(`Set tick interval for ${handler.name || "(anonymous)"} (${handler.fileName}:${handler.lineNumber}) (ID: ${tickIntervalID}) \n${getStack()}`);
     return tickIntervalID;
 }
 /**
@@ -47,7 +48,7 @@ function setTickInterval(handler: any, timeout: number, ...args: any[]): number 
  */
 function clearTickTimeout(handle: number) {
     console.log(`Clear tick timeout with ID ${handle} \n${getStack()}`);
-    if (!(tickTimeoutMap.delete(handle))) console.warn(`Failed to clear tick timeout with ID ${handle}: the ID doesn't exist`);
+    if (!tickTimeoutMap.delete(handle)) console.warn(`Failed to clear tick timeout with ID ${handle}: the ID doesn't exist`);
 }
 /**
  * Delete a clearTickInterval
@@ -56,7 +57,7 @@ function clearTickTimeout(handle: number) {
  */
 function clearTickInterval(handle: number) {
     console.log(`Clear tick interval with ID ${handle} \n${getStack()}`);
-    if (!(tickIntervalMap.delete(handle))) console.warn(`Failed to clear tick interval with ID ${handle}: the ID doesn't exist`);
+    if (!tickIntervalMap.delete(handle)) console.warn(`Failed to clear tick interval with ID ${handle}: the ID doesn't exist`);
 }
 
 World.events.tick.subscribe((data) => {

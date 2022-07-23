@@ -7,7 +7,7 @@ const World = world;
 
 function bedrockvalidate(id: number) {
     // Get Dynamic Property
-    let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
+    let bedrockValidateBoolean = World.getDynamicProperty("bedrockvalidate_b");
     if (bedrockValidateBoolean === undefined) {
         bedrockValidateBoolean = config.modules.bedrockValidate.enabled;
     }
@@ -19,12 +19,12 @@ function bedrockvalidate(id: number) {
     // run as each player
     for (let player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -36,24 +36,24 @@ function bedrockvalidate(id: number) {
         }
 
         if (player.dimension === World.getDimension("nether") && config.modules.bedrockValidate.nether) {
-                try {
-                    player.runCommand(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
-                } catch (error) {}
+            try {
+                player.runCommand(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
+            } catch (error) {}
 
-                try {
-                    player.runCommand(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
-                } catch (error) {}
+            try {
+                player.runCommand(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
+            } catch (error) {}
 
-                try {
-                    player.runCommand(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
-                } catch (error) {}
+            try {
+                player.runCommand(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
+            } catch (error) {}
         }
     }
 }
 
 const BedrockValidate = () => {
     // Executes every 1 second
-    const id = setTickInterval(() => bedrockvalidate(id), 20); 
+    const id = setTickInterval(() => bedrockvalidate(id), 20);
 };
 
 export { BedrockValidate };

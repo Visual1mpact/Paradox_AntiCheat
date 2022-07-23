@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, Location, BlockLocation, Block} from "mojang-minecraft";
+import { world, EntityQueryOptions, Location, BlockLocation, Block } from "mojang-minecraft";
 import { getScore, flag, crypto } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js";
 import config from "../../../data/config.js";
@@ -9,7 +9,7 @@ let playersOldCoordinates = new Map();
 
 function flya(id: number) {
     // Get Dynamic Property
-    let flyABoolean = World.getDynamicProperty('flya_b');
+    let flyABoolean = World.getDynamicProperty("flya_b");
     if (flyABoolean === undefined) {
         flyABoolean = config.modules.flyA.enabled;
     }
@@ -25,12 +25,12 @@ function flya(id: number) {
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -52,20 +52,30 @@ function flya(id: number) {
         } catch (error) {}
 
         let oldX: number, oldY: number, oldZ: number;
-        if (player.hasTag('ground')) {
+        if (player.hasTag("ground")) {
             let playerX = Math.trunc(player.location.x);
             let playerY = Math.trunc(player.location.y);
             let playerZ = Math.trunc(player.location.z);
-            playersOldCoordinates.set((player.name), { x: playerX, y: playerY, z: playerZ });
+            playersOldCoordinates.set(player.name, { x: playerX, y: playerY, z: playerZ });
         }
         let playerCoords = playersOldCoordinates.get(player.name);
         try {
             // Use try/catch because this will return undefined when player is loading in
-            oldX = playerCoords.x, oldY = playerCoords.y, oldZ = playerCoords.z;
+            (oldX = playerCoords.x), (oldY = playerCoords.y), (oldZ = playerCoords.z);
         } catch (error) {}
-        
+
         if (Number(xyVelocity) != 0.0784 || Number(zyVelocity) != 0.0784) {
-            if (!player.hasTag('ground') && !player.hasTag('gliding') && !player.hasTag('levitating') && !player.hasTag('riding') && !player.hasTag('flying') && !player.hasTag('swimming') && Block.type.id === "minecraft:air" && Block1.type.id === "minecraft:air" && Block2.type.id === "minecraft:air") {
+            if (
+                !player.hasTag("ground") &&
+                !player.hasTag("gliding") &&
+                !player.hasTag("levitating") &&
+                !player.hasTag("riding") &&
+                !player.hasTag("flying") &&
+                !player.hasTag("swimming") &&
+                Block.type.id === "minecraft:air" &&
+                Block1.type.id === "minecraft:air" &&
+                Block2.type.id === "minecraft:air"
+            ) {
                 try {
                     player.runCommand(`scoreboard players add @s fly_timer 1`);
                 } catch (error) {}
@@ -78,7 +88,7 @@ function flya(id: number) {
                     } catch (error) {}
                     flag(player, "Fly", "A", "Exploit", null, null, null, null, false, null);
                 }
-            } else if (player.hasTag('ground')) {
+            } else if (player.hasTag("ground")) {
                 try {
                     player.runCommand(`scoreboard players set @s fly_timer 0`);
                 } catch (error) {}

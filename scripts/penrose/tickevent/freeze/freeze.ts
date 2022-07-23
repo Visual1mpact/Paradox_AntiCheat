@@ -30,7 +30,7 @@ function Freeze() {
     } catch (error) {}
 
     try {
-        hastag = player.hasTag('freezeactive');
+        hastag = player.hasTag("freezeactive");
     } catch (error) {}
 
     if (!hastag) {
@@ -43,10 +43,10 @@ function Freeze() {
         } else if (player.dimension.id === "minecraft:the_end") {
             player.runCommand(`scoreboard players set @s realm 2`);
         } else {
-            player.removeTag('freezeactive');
-            player.removeTag('freeze');
+            player.removeTag("freezeactive");
+            player.removeTag("freeze");
             player.runCommand(`effect @s clear`);
-            sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`);
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`);
             tickEventCallback.unsubscribe(Freeze);
             return;
         }
@@ -64,7 +64,7 @@ function Freeze() {
         posy = Math.floor(245);
         posz = Math.floor(posz);
         // TP them at the new location in the overworld
-        player.teleport(new Location(posx, posy, posz), World.getDimension('overworld'), 0, 0);
+        player.teleport(new Location(posx, posy, posz), World.getDimension("overworld"), 0, 0);
         // Create prison around player
         try {
             player.runCommand(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier 0 hollow`);
@@ -77,7 +77,7 @@ function Freeze() {
         player.runCommand(`scoreboard players set @s xPos1 ${Math.floor(posx1)}`);
         player.runCommand(`scoreboard players set @s yPos1 ${Math.floor(posy1)}`);
         player.runCommand(`scoreboard players set @s zPos1 ${Math.floor(posz1)}`);
-        player.addTag('freezeactive');
+        player.addTag("freezeactive");
     }
     // Since they could log off while frozen we store their coords and dimension as a score
     // Then we use this to insure we know their last location when we unfreeze
@@ -88,12 +88,12 @@ function Freeze() {
     if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
         // If they move then tp them back
         try {
-            player.teleport(new Location(posx1, posy1, posz1), World.getDimension('overworld'), 0, 0);
+            player.teleport(new Location(posx1, posy1, posz1), World.getDimension("overworld"), 0, 0);
         } catch (error) {}
     }
 
     try {
-        hastag = player.hasTag('freeze');
+        hastag = player.hasTag("freeze");
     } catch (error) {}
 
     // Check if they no longer have the tag freeze
@@ -117,7 +117,7 @@ function Freeze() {
         player.runCommand(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air 0 hollow`);
         // Return them back to original coordinates
         player.teleport(new Location(backx, backy, backz), World.getDimension(realmIDString), 0, 0);
-        player.removeTag('freezeactive');
+        player.removeTag("freezeactive");
         playerLeaveEventCallback.unsubscribe(StopTickFreeze);
         tickEventCallback.unsubscribe(Freeze);
     }
@@ -132,8 +132,8 @@ function StopTickFreeze() {
 function TickFreeze(data) {
     player = data;
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);

@@ -33,14 +33,14 @@ export function fullreport(message: BeforeChatEvent, args: string[]) {
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fullreport.js:28)");
     }
-    
+
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -55,11 +55,11 @@ export function fullreport(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.fullreport) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.fullreport) {
         return fullReportHelp(player, prefix);
     }
 
-    if (!player.hasTag('notify')) {
+    if (!player.hasTag("notify")) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
     }
 

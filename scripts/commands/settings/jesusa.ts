@@ -45,10 +45,10 @@ export function jesusA(message: BeforeChatEvent, args: string) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function jesusA(message: BeforeChatEvent, args: string) {
     }
 
     // Get Dynamic Property Boolean
-    let jesusaBoolean = World.getDynamicProperty('jesusa_b');
+    let jesusaBoolean = World.getDynamicProperty("jesusa_b");
     if (jesusaBoolean === undefined) {
         jesusaBoolean = config.modules.jesusA.enabled;
     }
@@ -69,20 +69,20 @@ export function jesusA(message: BeforeChatEvent, args: string) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.jesusa) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.jesusa) {
         return jesusAHelp(player, prefix, jesusaBoolean);
     }
 
     if (jesusaBoolean === false) {
         // Allow
-        World.setDynamicProperty('jesusa_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6JesusA§r!`);
+        World.setDynamicProperty("jesusa_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6JesusA§r!`);
         JesusA();
         return;
     } else if (jesusaBoolean === true) {
         // Deny
-        World.setDynamicProperty('jesusa_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4JesusA§r!`);
+        World.setDynamicProperty("jesusa_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4JesusA§r!`);
         return;
     }
 }

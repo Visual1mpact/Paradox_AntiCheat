@@ -39,10 +39,10 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -62,10 +62,10 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.freeze) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.freeze) {
         return freezeHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -73,14 +73,14 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
             member = pl;
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // Check for hash/salt and validate password
-    let memberHash = member.getDynamicProperty('hash');
-    let memberSalt = member.getDynamicProperty('salt');
+    let memberHash = member.getDynamicProperty("hash");
+    let memberSalt = member.getDynamicProperty("salt");
     let memberEncode;
     try {
         memberEncode = crypto(memberSalt, config.modules.encryption.password);
@@ -90,19 +90,19 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze staff members.`);
     }
 
-    if (member.hasTag('freeze')) {
-        member.addTag('nofreeze');
+    if (member.hasTag("freeze")) {
+        member.addTag("nofreeze");
     }
-    if (member.hasTag('nofreeze')) {
-        member.removeTag('freeze');
+    if (member.hasTag("nofreeze")) {
+        member.removeTag("freeze");
     }
-    if (member.hasTag('nofreeze')) {
+    if (member.hasTag("nofreeze")) {
         member.runCommand(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`);
     }
 
-    if (!member.hasTag('nofreeze')) {
+    if (!member.hasTag("nofreeze")) {
         // Blindness
         member.addEffect(MinecraftEffectTypes.blindness, 1000000, 255);
         // Mining Fatigue
@@ -113,14 +113,14 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
         member.addEffect(MinecraftEffectTypes.slowness, 1000000, 255);
     }
 
-    if (!member.hasTag('nofreeze')) {
-        member.addTag('freeze');
+    if (!member.hasTag("nofreeze")) {
+        member.addTag("freeze");
         sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is now frozen.`);
         return TickFreeze(member);
     }
 
-    if (member.hasTag('nofreeze')) {
-        member.removeTag('nofreeze');
+    if (member.hasTag("nofreeze")) {
+        member.removeTag("nofreeze");
         return TickFreeze(member);
     }
 }

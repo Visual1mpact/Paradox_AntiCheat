@@ -51,8 +51,8 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     player.nameTag = player.name;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -63,7 +63,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
+    let chatRanksBoolean = World.getDynamicProperty("chatranks_b");
     if (chatRanksBoolean === undefined) {
         chatRanksBoolean = config.modules.chatranks.enabled;
     }
@@ -78,7 +78,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
         return tagHelp(player, prefix, chatRanksBoolean);
     }
 
@@ -86,7 +86,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     let member: Player;
     for (let pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-            member = pl; 
+            member = pl;
         }
     }
 
@@ -95,7 +95,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // check if array contains the string 'reset'
-    let argcheck = args.includes('reset');
+    let argcheck = args.includes("reset");
 
     // reset rank
     if (argcheck === true) {
@@ -105,12 +105,12 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     let custom;
-    args.forEach(t => {
-        if(t.startsWith('Rank:')) {
+    args.forEach((t) => {
+        if (t.startsWith("Rank:")) {
             custom = t;
         }
     });
-    if (custom.startsWith('Rank:')) {
+    if (custom.startsWith("Rank:")) {
         resetTag(player, member);
         member.addTag(`${custom}`);
         // tagRank(member);
@@ -119,8 +119,8 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     if (player === member) {
-        return sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed their rank`);
+        return sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has changed their rank`);
     }
 
-    sendMsg('@a[tag=paradoxOpped]', `${player.nameTag} has changed ${member.nameTag}'s rank!`);
+    sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has changed ${member.nameTag}'s rank!`);
 }

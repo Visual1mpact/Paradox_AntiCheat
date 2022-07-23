@@ -6,12 +6,12 @@ const World = world;
 
 function noperms() {
     let filter = new EntityQueryOptions();
-    filter.tags = ['paradoxOpped'];
+    filter.tags = ["paradoxOpped"];
     // We need a list of players for checking behind a bug in Minecraft
     let playerArray = [...World.getPlayers(filter)];
     // Let's check the entities for illegal permissions
     // Apparently all dimensions are checked even though we target overworld
-    for (let entity of World.getDimension('overworld').getEntities(filter)) {
+    for (let entity of World.getDimension("overworld").getEntities(filter)) {
         // If it's a player then ignore
         if (entity instanceof Player) {
             continue;
@@ -23,22 +23,22 @@ function noperms() {
             continue;
         }
         // Check for hash/salt and validate password
-        let hash = entity.getDynamicProperty('hash');
-        let salt = entity.getDynamicProperty('salt');
+        let hash = entity.getDynamicProperty("hash");
+        let salt = entity.getDynamicProperty("salt");
         let encode;
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch (error) {}
-        if (entity.hasTag('paradoxOpped')) {
-            entity.removeTag('paradoxOpped');
+        if (entity.hasTag("paradoxOpped")) {
+            entity.removeTag("paradoxOpped");
         }
         if (hash !== undefined && encode === hash) {
-            entity.removeDynamicProperty('hash');
-            entity.removeDynamicProperty('salt');
+            entity.removeDynamicProperty("hash");
+            entity.removeDynamicProperty("salt");
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
-            sendMsg('@a[tag=notify]', `§r§4[§6Paradox§4]§r ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
+            sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
         } catch (error) {}
     }
 }

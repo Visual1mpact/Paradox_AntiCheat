@@ -45,10 +45,10 @@ export function spammerC(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function spammerC(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let spammerCBoolean = World.getDynamicProperty('spammerc_b');
+    let spammerCBoolean = World.getDynamicProperty("spammerc_b");
     if (spammerCBoolean === undefined) {
         spammerCBoolean = config.modules.spammerC.enabled;
     }
@@ -69,20 +69,20 @@ export function spammerC(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.spammerc) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.spammerc) {
         return spammerCHelp(player, prefix, spammerCBoolean);
     }
 
     if (spammerCBoolean === false) {
         // Allow
-        World.setDynamicProperty('spammerc_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerC§r!`);
+        World.setDynamicProperty("spammerc_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerC§r!`);
         SpammerC();
         return;
     } else if (spammerCBoolean === true) {
         // Deny
-        World.setDynamicProperty('spammerc_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerC§r!`);
+        World.setDynamicProperty("spammerc_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerC§r!`);
         return;
     }
 }

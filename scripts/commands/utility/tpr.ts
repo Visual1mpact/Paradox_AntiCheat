@@ -54,7 +54,7 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.tpr) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.tpr) {
         return tprHelp(player, prefix);
     }
 
@@ -63,10 +63,10 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
      * requests or unblocking all future requests
      */
     if (argCheck && args[0].toLowerCase() === "block") {
-        player.addTag('tprblock');
+        player.addTag("tprblock");
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have blocked all future teleport requests!`);
     } else if (argCheck && args[0].toLowerCase() === "unblock") {
-        player.removeTag('tprblock');
+        player.removeTag("tprblock");
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have unblocked all future teleport requests!`);
     }
 
@@ -86,7 +86,7 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
     }
 
     // If they block requests then cancel the request
-    if (member.hasTag('tprblock')) {
+    if (member.hasTag("tprblock")) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player has all teleport requests blocked!`);
     }
 
@@ -101,7 +101,7 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
      * If the requestee already has a pending request then cancel it.
      * Only one request per person is authorized at any given time.
      */
-    if (member.hasTag('tpr')) {
+    if (member.hasTag("tpr")) {
         /**
          * Check if timer has expired for past pending requests.
          * If timer has expired then we will clear the requester and requestee
@@ -111,7 +111,7 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
         // Get original time in milliseconds
         let cooldownVerify = cooldownTimer.get(member);
         // Convert config settings to milliseconds so we can be sure the countdown is accurate
-        let msSettings = (config.modules.tpr.days * 24 * 60 * 60 * 1000) + (config.modules.tpr.hours * 60 * 60 * 1000) + (config.modules.tpr.minutes * 60 * 1000) + (config.modules.tpr.seconds * 1000);
+        let msSettings = config.modules.tpr.days * 24 * 60 * 60 * 1000 + config.modules.tpr.hours * 60 * 60 * 1000 + config.modules.tpr.minutes * 60 * 1000 + config.modules.tpr.seconds * 1000;
         if (cooldownVerify !== undefined) {
             // Determine difference between new and original times in milliseconds
             let bigBrain = new Date().getTime() - cooldownVerify;
@@ -128,8 +128,8 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
             // Create new key and value with current time in milliseconds
             cooldownTimer.set(member, new Date().getTime());
             // Set up the request
-            if (!player.hasTag('tpr:' + member.name)) {
-                player.addTag('tpr:' + member.name);
+            if (!player.hasTag("tpr:" + member.name)) {
+                player.addTag("tpr:" + member.name);
             }
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! Your teleport request has been sent to ${member.name}.`);
             return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Hello ${member.name}! ${player.name} is requesting to teleport to your location! Type yes or no.`);
@@ -137,8 +137,8 @@ export function tpr(message: BeforeChatEvent, args: string[]) {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} is pending a request. Try again later.`);
         }
     } else {
-        member.addTag('tpr');
-        player.addTag('tpr:' + member.name);
+        member.addTag("tpr");
+        player.addTag("tpr:" + member.name);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Hello ${player.name}! Your teleport request has been sent to ${member.name}.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Hello ${member.name}! ${player.name} is requesting to teleport to your location! Type yes or no.`);
     }
