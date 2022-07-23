@@ -10,15 +10,16 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "zoglin_baby": {
         "minecraft:type_family": {
-          "family": ["zoglin", "zoglin_baby", "undead", "mob"]
+          "family": [ "zoglin", "zoglin_baby", "undead", "mob" ]
         },
-        "minecraft:is_baby": {},
+        "minecraft:is_baby": {
+        },
         "minecraft:attack": {
           "damage": 0.5
         },
@@ -34,14 +35,14 @@
             {
               "width": 1.0,
               "height": 0.85,
-              "pivot": [0, 0.5, 0]
+              "pivot": [ 0, 0.5, 0 ]
             }
           ]
         }
       },
       "zoglin_adult": {
         "minecraft:type_family": {
-          "family": ["zoglin", "zoglin_adult", "undead", "mob"]
+          "family": [ "zoglin", "zoglin_adult", "undead", "mob" ]
         },
         "minecraft:collision_box": {
           "width": 0.9,
@@ -52,22 +53,24 @@
             {
               "width": 2.0,
               "height": 1.75,
-              "pivot": [0, 1, 0]
+              "pivot": [ 0, 1, 0 ]
             }
           ]
         },
         "minecraft:behavior.hurt_by_target": {
           "priority": 1
-        },
+        },                
         "minecraft:attack": {
-          "damage": [3, 8]
+          "damage": [ 3, 8 ]
         }
       }
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
-      "minecraft:nameable": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
+      "minecraft:nameable": {
+      },
       "minecraft:loot": {
         "table": "loot_tables/entities/zoglin.json"
       },
@@ -127,16 +130,21 @@
         "avoid_water": true,
         "avoid_damage_blocks": true
       },
-      "minecraft:movement.basic": {},
-      "minecraft:jump.static": {},
-      "minecraft:can_climb": {},
-      "minecraft:fire_immune": {},
+      "minecraft:movement.basic": {
+      },
+      "minecraft:jump.static": {
+      },
+      "minecraft:can_climb": {
+      },
+      "minecraft:fire_immune": {
+      },
       "minecraft:leashable": {
         "soft_distance": 4.0,
         "hard_distance": 6.0,
         "max_distance": 10.0
       },
-      "minecraft:balloonable": {},
+      "minecraft:balloonable": {
+      },
       "minecraft:despawn": {
         "filters": {
           "any_of": [
@@ -190,19 +198,23 @@
         "look_distance": 6.0,
         "probability": 0.02
       },
-      "minecraft:physics": {},
+      "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {}
+      "minecraft:conditional_bandwidth_optimization": {
+      }
     },
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:entity_transformed": {
         "sequence": [
@@ -213,7 +225,9 @@
               "value": "minecraft:is_baby"
             },
             "add": {
-              "component_groups": ["zoglin_baby"]
+              "component_groups": [
+                "zoglin_baby"
+              ]
             }
           },
           {
@@ -224,7 +238,9 @@
               "value": "minecraft:is_baby"
             },
             "add": {
-              "component_groups": ["zoglin_adult"]
+              "component_groups": [
+                "zoglin_adult"
+              ]
             }
           }
         ]
@@ -234,13 +250,17 @@
           {
             "weight": 95,
             "add": {
-              "component_groups": ["zoglin_adult"]
+              "component_groups": [
+                "zoglin_adult"
+              ]
             }
           },
           {
             "weight": 5,
             "add": {
-              "component_groups": ["zoglin_baby"]
+              "component_groups": [
+                "zoglin_baby"
+              ]
             }
           }
         ]
@@ -248,12 +268,16 @@
 
       "minecraft:as_adult": {
         "add": {
-          "component_groups": ["zoglin_adult"]
+          "component_groups": [
+            "zoglin_adult"
+          ]
         }
       },
       "minecraft:as_baby": {
         "add": {
-          "component_groups": ["zoglin_baby"]
+          "component_groups": [
+            "zoglin_baby"
+          ]
         }
       }
     }

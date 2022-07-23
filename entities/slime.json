@@ -9,10 +9,10 @@
     },
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "minecraft:slime_large": {
         "minecraft:variant": {
           "value": 4
@@ -78,23 +78,24 @@
 
       "minecraft:slime_calm": {
         "minecraft:movement.jump": {
-          "jump_delay": [0.5, 1.5]
+          "jump_delay": [ 0.5, 1.5 ]
         }
       },
       "minecraft:slime_aggressive": {
         "minecraft:movement.jump": {
-          "jump_delay": [0.16, 0.5]
+          "jump_delay": [ 0.16, 0.5 ]
         }
       }
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? query.variant : 0"
       },
       "minecraft:type_family": {
-        "family": ["slime", "monster", "mob"]
+        "family": [ "slime", "monster", "mob" ]
       },
       "minecraft:breathable": {
         "total_supply": 15,
@@ -104,24 +105,21 @@
         "can_path_over_water": true,
         "avoid_water": true
       },
-      "minecraft:jump.static": {},
-      "minecraft:can_climb": {},
+      "minecraft:jump.static": {
+      },
+      "minecraft:can_climb": {
+      },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
             "cause": "lava",
             "damage_per_tick": 4
           }
         ]
       },
       "minecraft:movement.jump": {
-        "jump_delay": [0.5, 1.5]
+        "jump_delay": [ 0.5, 1.5 ]
       },
       "minecraft:on_target_acquired": {
         "event": "minecraft:become_aggressive",
@@ -131,7 +129,8 @@
         "event": "minecraft:become_calm",
         "target": "self"
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+      },
       "minecraft:despawn": {
         "despawn_from_distance": {}
       },
@@ -181,19 +180,23 @@
         ],
         "must_see": true
       },
-      "minecraft:physics": {},
+      "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {}
+      "minecraft:conditional_bandwidth_optimization": {
+      }
     },
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:entity_spawned": {
         "randomize": [
@@ -213,27 +216,40 @@
       },
       "spawn_small": {
         "add": {
-          "component_groups": ["minecraft:slime_small", "minecraft:slime_calm"]
+          "component_groups": [
+            "minecraft:slime_small",
+            "minecraft:slime_calm"
+          ]
         }
       },
       "spawn_medium": {
         "add": {
-          "component_groups": ["minecraft:slime_medium", "minecraft:slime_calm"]
+          "component_groups": [
+            "minecraft:slime_medium",
+            "minecraft:slime_calm"
+          ]
         }
       },
       "spawn_large": {
         "add": {
-          "component_groups": ["minecraft:slime_large", "minecraft:slime_calm"]
+          "component_groups": [
+            "minecraft:slime_large",
+            "minecraft:slime_calm"
+          ]
         }
       },
       "minecraft:become_calm": {
         "add": {
-          "component_groups": ["minecraft:slime_calm"]
+          "component_groups": [
+            "minecraft:slime_calm"
+          ]
         }
       },
       "minecraft:become_aggressive": {
         "add": {
-          "component_groups": ["minecraft:slime_aggressive"]
+          "component_groups": [
+            "minecraft:slime_aggressive"
+          ]
         }
       }
     }

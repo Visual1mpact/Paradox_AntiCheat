@@ -9,10 +9,10 @@
     },
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      }
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			}
     },
     "components": {
       "minecraft:collision_box": {
@@ -26,7 +26,7 @@
             "damage": 3,
             "knockback": true
           },
-          "remove_on_hit": {},
+          "remove_on_hit": { },
           "particle_on_hit": {
             "particle_type": "snowballpoof",
             "num_particles": 6,
@@ -38,9 +38,10 @@
         "power": 1.5,
         "gravity": 0.03,
         "angle_offset": 0.0,
-        "offset": [0, -0.1, 0]
+        "offset": [ 0, -0.1, 0 ]
       },
-      "minecraft:physics": {},
+	    "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
@@ -55,9 +56,11 @@
     },
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       }
     }
   }

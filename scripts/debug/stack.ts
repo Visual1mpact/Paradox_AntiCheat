@@ -1,2 +1,2 @@
-const getStack = () => Error().stack.replace(/^.*\n?(.*\n?)?/, "");
+const getStack = () => Error().stack.replace(/^.*\n?(.*\n?)?/, '');
 export default getStack;

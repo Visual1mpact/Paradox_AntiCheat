@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "minecraft:primed_tnt": {
         "minecraft:explode": {
           "fuse_length": 4,
@@ -21,8 +21,12 @@
           "power": 3,
           "causes_fire": false
         },
-        "minecraft:rail_sensor": {},
-        "minecraft:is_ignited": {}
+        "minecraft:rail_sensor": {
+          
+        
+        },
+        "minecraft:is_ignited": {
+        }
       },
       "minecraft:instant_explode_tnt": {
         "minecraft:explode": {
@@ -31,12 +35,17 @@
           "power": 3,
           "causes_fire": false
         },
-        "minecraft:rail_sensor": {},
-        "minecraft:is_ignited": {}
+        "minecraft:rail_sensor": {
+          
+        
+        },
+        "minecraft:is_ignited": {
+        }
       },
       "minecraft:inactive": {
         "minecraft:rail_sensor": {
           "on_activate": {
+
             "filters": {
               "all_of": [
                 {
@@ -49,6 +58,7 @@
             },
             "event": "minecraft:on_prime"
           }
+          
         },
         "minecraft:interact": {
           "interactions": [
@@ -56,12 +66,7 @@
               "on_interact": {
                 "filters": {
                   "any_of": [
-                    {
-                      "test": "has_equipment",
-                      "subject": "other",
-                      "domain": "hand",
-                      "value": "fireball:0"
-                    },
+                    {"test": "has_equipment", "subject": "other", "domain": "hand", "value": "fireball:0"},
                     {
                       "test": "has_equipment",
                       "subject": "other",
@@ -70,17 +75,8 @@
                     }
                   ],
                   "all_of": [
-                    {
-                      "test": "is_family",
-                      "subject": "other",
-                      "value": "player"
-                    },
-                    {
-                      "test": "is_game_rule",
-                      "domain": "tntexplodes",
-                      "operator": "==",
-                      "value": true
-                    }
+                    {"test": "is_family", "subject": "other", "value": "player"},
+                    {"test": "is_game_rule", "domain": "tntexplodes", "operator": "==", "value": true}
                   ]
                 },
                 "event": "minecraft:on_prime",
@@ -122,15 +118,18 @@
 
     "components": {
       "minecraft:type_family": {
-        "family": ["minecart", "inanimate"]
+        "family": [ "minecart", "inanimate" ]
       },
       "minecraft:collision_box": {
         "width": 0.98,
         "height": 0.7
       },
-      "minecraft:rail_movement": {},
-      "minecraft:is_stackable": {},
-      "minecraft:physics": {},
+      "minecraft:rail_movement": {
+      },
+      "minecraft:is_stackable": {
+      },
+      "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
@@ -146,12 +145,7 @@
             "max_optimized_distance": 0.0,
             "max_dropped_ticks": 0,
             "conditional_values": [
-              {
-                "test": "is_moving",
-                "subject": "self",
-                "operator": "==",
-                "value": true
-              }
+              { "test": "is_moving", "subject": "self", "operator": "==", "value": true}
             ]
           }
         ]
@@ -160,31 +154,44 @@
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:entity_spawned": {
         "add": {
-          "component_groups": ["minecraft:inactive"]
+          "component_groups": [
+            "minecraft:inactive"
+          ]
         }
       },
       "minecraft:on_prime": {
         "remove": {
-          "component_groups": ["minecraft:inactive"]
+          "component_groups": [
+            "minecraft:inactive"
+          ]
         },
         "add": {
-          "component_groups": ["minecraft:primed_tnt"]
+          "component_groups": [
+            "minecraft:primed_tnt"
+          ]
         }
       },
       "minecraft:on_instant_prime": {
         "remove": {
-          "component_groups": ["minecraft:inactive"]
+          "component_groups": [
+            "minecraft:inactive"
+          ]
         },
         "add": {
-          "component_groups": ["minecraft:instant_explode_tnt"]
+          "component_groups": [
+            "minecraft:instant_explode_tnt"
+          ]
         }
       }
     }
+
   }
 }

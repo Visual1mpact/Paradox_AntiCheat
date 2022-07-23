@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "dragon_sitting": {
         "minecraft:behavior.dragonlanding": {
           "priority": 0
@@ -51,9 +51,10 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:type_family": {
-        "family": ["dragon", "mob"]
+        "family": [ "dragon", "mob" ]
       },
       "minecraft:health": {
         "value": 200,
@@ -99,7 +100,8 @@
         "event": "minecraft:start_death",
         "target": "self"
       },
-      "minecraft:persistent": {},
+      "minecraft:persistent": {
+      },
       "minecraft:physics": {
         "has_gravity": false,
         "has_collision": false
@@ -108,38 +110,56 @@
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:entity_spawned": {
-        "remove": {},
+        "remove": {
+        },
         "add": {
-          "component_groups": ["dragon_flying"]
+          "component_groups": [
+            "dragon_flying"
+          ]
         }
       },
       "minecraft:start_land": {
         "remove": {
-          "component_groups": ["dragon_flying"]
+          "component_groups": [
+            "dragon_flying"
+          ]
         },
         "add": {
-          "component_groups": ["dragon_sitting"]
+          "component_groups": [
+            "dragon_sitting"
+          ]
         }
       },
       "minecraft:start_fly": {
         "remove": {
-          "component_groups": ["dragon_sitting"]
+          "component_groups": [
+            "dragon_sitting"
+          ]
         },
         "add": {
-          "component_groups": ["dragon_flying"]
+          "component_groups": [
+            "dragon_flying"
+          ]
         }
       },
       "minecraft:start_death": {
         "remove": {
-          "component_groups": ["dragon_sitting", "dragon_flying"]
+          "component_groups": [
+            "dragon_sitting",
+            "dragon_flying"
+          ]
         },
         "add": {
-          "component_groups": ["dragon_death"]
+          "component_groups": [
+            "dragon_death"
+          ]
         }
       }
     }

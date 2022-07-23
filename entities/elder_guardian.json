@@ -9,13 +9,14 @@
     },
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      }
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			}
     },
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? 10 : 0"
       },
@@ -23,7 +24,8 @@
         "width": 1.99,
         "height": 1.99
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+      },
       "minecraft:loot": {
         "table": "loot_tables/entities/elder_guardian.json"
       },
@@ -34,8 +36,10 @@
         "can_walk": false,
         "can_breach": true
       },
-      "minecraft:movement.sway": {},
-      "minecraft:jump.static": {},
+      "minecraft:movement.sway": {
+      },
+      "minecraft:jump.static": {
+      },
       "minecraft:health": {
         "value": 80,
         "max": 80
@@ -43,12 +47,7 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -77,12 +76,12 @@
         "priority": 1,
         "entity_types": [
           {
-            "filters": {
-              "any_of": [
-                { "test": "is_family", "subject": "other", "value": "player" },
-                { "test": "is_family", "subject": "other", "value": "squid" },
-                { "test": "is_family", "subject": "other", "value": "axolotl" }
-              ]
+            "filters": {  
+                "any_of": [
+                  { "test" :  "is_family", "subject" : "other", "value" :  "player"},
+                  { "test" :  "is_family", "subject" : "other", "value" :  "squid"},
+                  { "test" :  "is_family", "subject" : "other", "value" :  "axolotl"}
+                ] 
             },
             "max_dist": 16
           }
@@ -111,20 +110,24 @@
         "priority": 9
       },
       "minecraft:type_family": {
-        "family": ["guardian_elder", "monster", "mob"]
+        "family": [ "guardian_elder", "monster", "mob" ]
       },
-      "minecraft:physics": {},
+	    "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {}
+      "minecraft:conditional_bandwidth_optimization": {
+      }
     },
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       }
     }
   }

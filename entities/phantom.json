@@ -1,6 +1,7 @@
 {
   "format_version": "1.16.0",
   "minecraft:entity": {
+
     "description": {
       "identifier": "minecraft:phantom",
       "is_spawnable": true,
@@ -10,24 +11,27 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      }
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			}
+
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? 5 : 0"
       },
       "minecraft:type_family": {
-        "family": ["phantom", "undead", "monster", "mob"]
+        "family": [ "phantom", "undead", "monster", "mob" ]
       },
       "minecraft:loot": {
         "table": "loot_tables/entities/phantom.json"
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+      },
       "minecraft:health": {
         "value": 20,
         "max": 20
@@ -35,12 +39,7 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -53,7 +52,8 @@
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:conditional_bandwidth_optimization": {
+      },
       "minecraft:attack": {
         "damage": 6
       },
@@ -74,7 +74,8 @@
         "start_speed": 0.1,
         "speed_when_turning": 0.2
       },
-      "minecraft:burns_in_daylight": {},
+      "minecraft:burns_in_daylight": {
+      },
       "minecraft:follow_range": {
         "value": 64,
         "max": 64
@@ -108,11 +109,7 @@
 
         "entity_types": [
           {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "player"
-            },
+            "filters": { "test": "is_family", "subject": "other", "value": "player" },
             "max_dist": 64
           }
         ]
@@ -121,7 +118,7 @@
         "priority": 2,
         "damage_reach": 0.2,
         "speed_multiplier": 1.0,
-        "delay_range": [10.0, 20.0]
+        "delay_range": [ 10.0, 20.0 ]
       },
       "minecraft:behavior.circle_around_anchor": {
         "priority": 3,
@@ -130,16 +127,18 @@
         "height_adjustment_chance": 0.002857,
         "goal_radius": 1.0,
         "angle_change": 15.0,
-        "radius_range": [5.0, 15.0],
-        "height_offset_range": [-4.0, 5.0],
-        "height_above_target_range": [20.0, 40.0]
+        "radius_range": [ 5.0, 15.0 ],
+        "height_offset_range": [ -4.0, 5.0 ],
+        "height_above_target_range": [ 20.0, 40.0 ]
       }
     },
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       }
     }
   }

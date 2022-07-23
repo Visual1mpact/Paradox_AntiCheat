@@ -9,10 +9,10 @@
     },
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "minecraft:exploding": {
         "minecraft:explode": {
           "fuse_length": 1.5,
@@ -23,7 +23,8 @@
         }
       },
       "minecraft:charged_creeper": {
-        "minecraft:is_charged": {}
+        "minecraft:is_charged": {
+        }
       },
       "minecraft:charged_exploding": {
         "minecraft:explode": {
@@ -35,7 +36,8 @@
         }
       },
       "minecraft:forced_exploding": {
-        "minecraft:target_nearby_sensor": {},
+        "minecraft:target_nearby_sensor": {
+        },
         "minecraft:explode": {
           "fuse_length": 1.5,
           "fuse_lit": true,
@@ -43,10 +45,12 @@
           "causes_fire": false,
           "destroy_affected_by_griefing": true
         },
-        "minecraft:on_target_escape": {}
+        "minecraft:on_target_escape": {
+        }
       },
       "minecraft:forced_charged_exploding": {
-        "minecraft:target_nearby_sensor": {},
+        "minecraft:target_nearby_sensor": {
+        },
         "minecraft:explode": {
           "fuse_length": 1.5,
           "fuse_lit": true,
@@ -54,23 +58,26 @@
           "causes_fire": false,
           "destroy_affected_by_griefing": true
         },
-        "minecraft:on_target_escape": {}
+        "minecraft:on_target_escape": {
+        }
       }
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? 5 : 0"
       },
       "minecraft:type_family": {
-        "family": ["creeper", "monster", "mob"]
+        "family": [ "creeper", "monster", "mob" ]
       },
       "minecraft:breathable": {
         "total_supply": 15,
         "suffocate_time": 0
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+      },
       "minecraft:collision_box": {
         "width": 0.6,
         "height": 1.8
@@ -79,11 +86,15 @@
         "value": 0.2
       },
       "minecraft:navigation.walk": {
-        "can_path_over_water": true
+      "can_path_over_water": true
       },
-      "minecraft:movement.basic": {},
-      "minecraft:jump.static": {},
-      "minecraft:can_climb": {},
+      "minecraft:movement.basic": {
+
+      },
+      "minecraft:jump.static": {
+      },
+      "minecraft:can_climb": {
+      },
       "minecraft:loot": {
         "table": "loot_tables/entities/creeper.json"
       },
@@ -94,12 +105,7 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -111,10 +117,7 @@
       "minecraft:damage_sensor": {
         "triggers": {
           "on_damage": {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "lightning"
+            "filters": { "test": "is_family", "subject": "other", "value": "lightning"
             },
             "event": "minecraft:become_charged"
           },
@@ -134,8 +137,8 @@
           "target": "self"
         },
         "on_vision_lost_inside_range": {
-          "event": "minecraft:stop_exploding",
-          "target": "self"
+            "event": "minecraft:stop_exploding",
+            "target": "self"
         }
       },
       "minecraft:interact": {
@@ -144,21 +147,12 @@
             "filters": {
               "all_of": [
                 { "test": "is_family", "subject": "other", "value": "player" },
-                {
-                  "test": "has_equipment",
-                  "domain": "hand",
-                  "subject": "other",
-                  "value": "flint_and_steel"
-                },
-                {
-                  "test": "has_component",
-                  "operator": "!=",
-                  "value": "minecraft:explode"
-                }
+                { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "flint_and_steel" },
+                { "test": "has_component", "operator": "!=", "value": "minecraft:explode" }
               ]
             },
-            "event": "minecraft:start_exploding_forced",
-            "target": "self"
+          "event": "minecraft:start_exploding_forced",
+          "target": "self"
           },
           "hurt_item": 1,
           "swing": true,
@@ -181,7 +175,7 @@
         "priority": 4,
         "speed_multiplier": 1.25,
         "track_target": false,
-        "reach_multiplier": 0.0 // this prevents creepers from ocasionally performing melee attacks while using this goal to chase
+        "reach_multiplier":  0.0 // this prevents creepers from ocasionally performing melee attacks while using this goal to chase
       },
       "minecraft:behavior.avoid_mob_type": {
         "priority": 3,
@@ -189,8 +183,8 @@
           {
             "filters": {
               "any_of": [
-                { "test": "is_family", "subject": "other", "value": "ocelot" },
-                { "test": "is_family", "subject": "other", "value": "cat" }
+                { "test" :  "is_family", "subject" : "other", "value" :  "ocelot"},
+                { "test" :  "is_family", "subject" : "other", "value" :  "cat"}
               ]
             },
             "max_dist": 6,
@@ -227,7 +221,8 @@
       "minecraft:behavior.hurt_by_target": {
         "priority": 2
       },
-      "minecraft:physics": {},
+      "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
@@ -236,14 +231,17 @@
         "event": "minecraft:stop_exploding",
         "target": "self"
       },
-      "minecraft:conditional_bandwidth_optimization": {}
+      "minecraft:conditional_bandwidth_optimization": {
+      }
     },
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:start_exploding_forced": {
         "sequence": [
@@ -254,7 +252,9 @@
               "value": "minecraft:is_charged"
             },
             "add": {
-              "component_groups": ["minecraft:forced_exploding"]
+              "component_groups": [
+                "minecraft:forced_exploding"
+              ]
             }
           },
           {
@@ -263,7 +263,9 @@
               "value": "minecraft:is_charged"
             },
             "add": {
-              "component_groups": ["minecraft:forced_charged_exploding"]
+              "component_groups": [
+                "minecraft:forced_charged_exploding"
+              ]
             }
           }
         ]
@@ -277,7 +279,9 @@
               "value": "minecraft:is_charged"
             },
             "add": {
-              "component_groups": ["minecraft:exploding"]
+              "component_groups": [
+                "minecraft:exploding"
+              ]
             }
           },
           {
@@ -286,22 +290,30 @@
               "value": "minecraft:is_charged"
             },
             "add": {
-              "component_groups": ["minecraft:charged_exploding"]
+              "component_groups": [
+                "minecraft:charged_exploding"
+              ]
             }
           }
         ]
       },
       "minecraft:stop_exploding": {
         "remove": {
-          "component_groups": ["minecraft:exploding"]
+          "component_groups": [
+            "minecraft:exploding"
+          ]
         }
       },
       "minecraft:become_charged": {
         "remove": {
-          "component_groups": ["minecraft:exploding"]
+          "component_groups": [
+            "minecraft:exploding"
+          ]
         },
         "add": {
-          "component_groups": ["minecraft:charged_creeper"]
+          "component_groups": [
+            "minecraft:charged_creeper"
+          ]
         }
       }
     }

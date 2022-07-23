@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "from_explosion": {
         "minecraft:explode": {
           "fuse_length": {
@@ -26,10 +26,10 @@
         }
       }
     },
-
+	
     "components": {
       "minecraft:type_family": {
-        "family": ["tnt", "inanimate"]
+        "family": [ "tnt", "inanimate" ]
       },
       "minecraft:collision_box": {
         "width": 0.98,
@@ -42,7 +42,8 @@
         "power": 4,
         "causes_fire": false
       },
-      "minecraft:physics": {},
+	    "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": false,
         "is_pushable_by_piston": true
@@ -55,16 +56,20 @@
         }
       }
     },
-
+    
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "from_explosion": {
         "add": {
-          "component_groups": ["from_explosion"]
+          "component_groups": [
+            "from_explosion"
+          ]
         }
       }
     }

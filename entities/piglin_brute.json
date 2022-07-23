@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "zombification_sensor": {
         "minecraft:environment_sensor": {
           "triggers": {
@@ -53,7 +53,7 @@
       "become_zombie": {
         "minecraft:transformation": {
           "into": "minecraft:zombie_pigman",
-          "transformation_sound": "converted_to_zombified",
+          "transformation_sound" : "converted_to_zombified",
           "keep_level": true,
           "preserve_equipment": true
         }
@@ -122,7 +122,7 @@
                 "value": "player"
               },
               "max_dist": 12,
-              "priority": 0
+              "priority":  0
             },
             {
               "filters": {
@@ -169,20 +169,28 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:collision_box": {
         "width": 0.6,
         "height": 1.9
       },
       "minecraft:type_family": {
-        "family": ["piglin", "adult_piglin", "piglin_brute", "monster"]
+        "family": [
+          "piglin",
+          "adult_piglin",
+          "piglin_brute",
+          "monster"
+        ]
       },
-      "minecraft:home": {},
-      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:home": {
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+      },
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? 20 : 0"
       },
-
+      
       "minecraft:on_target_acquired": {
         "event": "become_angry_event",
         "target": "self"
@@ -219,7 +227,8 @@
         "can_path_over_water": true,
         "can_open_doors": true
       },
-      "minecraft:annotation.open_door": {},
+      "minecraft:annotation.open_door": {
+      },
       "minecraft:movement.basic": {},
       "minecraft:jump.static": {},
       "minecraft:nameable": {},
@@ -290,9 +299,11 @@
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:entity_spawned": {
         "add": {
@@ -306,49 +317,71 @@
       },
       "stop_zombification_event": {
         "add": {
-          "component_groups": ["zombification_sensor"]
+          "component_groups": [
+            "zombification_sensor"
+          ]
         },
         "remove": {
-          "component_groups": ["start_zombification"]
+          "component_groups": [
+            "start_zombification"
+          ]
         }
       },
       "start_zombification_event": {
         "add": {
-          "component_groups": ["start_zombification"]
+          "component_groups": [
+            "start_zombification"
+          ]
         },
         "remove": {
-          "component_groups": ["zombification_sensor"]
+          "component_groups": [
+            "zombification_sensor"
+          ]
         }
       },
       "become_angry_event": {
         "add": {
-          "component_groups": ["angry"]
+          "component_groups": [
+            "angry"
+          ]
         }
       },
       "become_calm_event": {
         "remove": {
-          "component_groups": ["angry"]
+          "component_groups": [
+            "angry"
+          ]
         },
         "add": {
-          "component_groups": ["alert_for_attack_targets"]
+          "component_groups": [
+            "alert_for_attack_targets"
+          ]
         }
       },
       "become_zombie_event": {
         "add": {
-          "component_groups": ["become_zombie"]
+          "component_groups": [
+            "become_zombie"
+          ]
         }
       },
       "important_block_destroyed_event": {
         "remove": {
-          "component_groups": ["alert_for_attack_targets"]
+          "component_groups": [
+            "alert_for_attack_targets"
+          ]
         },
         "add": {
-          "component_groups": ["take_target_as_response_to_block_break"]
+          "component_groups": [
+            "take_target_as_response_to_block_break"
+          ]
         }
       },
       "go_back_to_spawn_failed": {
         "remove": {
-          "component_groups": ["go_back_to_spawn"]
+          "component_groups": [
+            "go_back_to_spawn"
+          ]
         }
       }
     }

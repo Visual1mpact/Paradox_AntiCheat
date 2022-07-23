@@ -1,104 +1,121 @@
 {
-  "format_version": "1.16.0",
-  "minecraft:entity": {
-    "description": {
-      "identifier": "paradox:killaura",
-      "is_spawnable": false,
-      "is_summonable": true,
-      "is_experimental": false,
-      "scripts": {
-        "animate": ["execute_commands"]
-      },
-      "animations": {
-        "execute_commands": "controller.animation.killaura.execute_commands"
-      }
-    },
-    "component_groups": {
-      "despawn": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": false
-        }
-      },
-      "execute_command_id_1": {
-        "minecraft:skin_id": {
-          "value": 1
-        }
-      },
-      "execute_no_command": {
-        "minecraft:skin_id": {
-          "value": 0
-        }
-      }
-    },
-    "components": {
-      "minecraft:collision_box": {
-        "width": 0.6,
-        "height": 1.8
-      },
-      "minecraft:physics": {
-        "has_gravity": false
-      },
-      "minecraft:health": {
-        "value": 20,
-        "max": 20
-      },
-      "minecraft:type_family": {
-        "family": ["player"]
-      },
-      "minecraft:damage_sensor": {
-        "triggers": [
-          {
-            "deals_damage": true,
-            "on_damage": {
-              "target": "self",
-              "event": "failed",
-              "filters": {
-                "test": "has_damage",
-                "subject": "self",
-                "value": "attack"
-              }
-            },
-            "cause": "entity_attack"
-          }
-        ]
-      },
-      "minecraft:timer": {
-        "looping": false,
-        "time_down_event": {
-          "event": "timer up"
-        },
-        "time": [1.9, 1.9]
-      },
-      "minecraft:conditional_bandwidth_optimization": {}
-    },
-    "events": {
-      "failed": {
-        "sequence": [
-          {
-            "add": {
-              "component_groups": ["execute_command_id_1"]
-            }
-          },
-          {
-            "add": {
-              "component_groups": ["despawn"]
-            }
-          }
-        ]
-      },
-      "timer up": {
-        "add": {
-          "component_groups": ["despawn"]
-        }
-      },
-      "remove_command_id_1": {
-        "add": {
-          "component_groups": ["execute_no_command"]
-        },
-        "remove": {
-          "component_groups": ["execute_command_id_1"]
-        }
-      }
-    }
-  }
+	"format_version": "1.16.0",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "paradox:killaura",
+			"is_spawnable": false,
+			"is_summonable": true,
+			"is_experimental": false,
+			"scripts": {
+				"animate": [
+					"execute_commands"
+				]
+			},
+			"animations": {
+				"execute_commands": "controller.animation.killaura.execute_commands"
+			}
+		},
+		"component_groups": {
+			"despawn": {
+				"minecraft:instant_despawn": {
+					"remove_child_entities": false
+				}
+			},
+			"execute_command_id_1": {
+				"minecraft:skin_id": {
+					"value": 1
+				}
+			},
+			"execute_no_command": {
+				"minecraft:skin_id": {
+					"value": 0
+				}
+			}
+		},
+		"components": {
+			"minecraft:collision_box": {
+				"width": 0.6,
+				"height": 1.8
+			},
+			"minecraft:physics": {
+				"has_gravity": false
+			},
+			"minecraft:health": {
+				"value": 20,
+				"max": 20
+			},
+			"minecraft:type_family": {
+				"family": [
+					"player"
+				]
+			},
+			"minecraft:damage_sensor": {
+				"triggers": [
+					{
+						"deals_damage": true,
+						"on_damage": {
+							"target": "self",
+							"event": "failed",
+							"filters": {
+								"test": "has_damage",
+								"subject": "self",
+								"value": "attack"
+							}
+						},
+						"cause": "entity_attack"
+					}
+				]
+			},
+			"minecraft:timer": {
+				"looping": false,
+				"time_down_event": {
+					"event": "timer up"
+				},
+				"time": [
+					1.9,
+					1.9
+				]
+			},
+			"minecraft:conditional_bandwidth_optimization": {}
+		},
+		"events": {
+			"failed": {
+				"sequence": [
+					{
+						"add": {
+							"component_groups": [
+								"execute_command_id_1"
+							]
+						}
+					},
+					{
+						"add": {
+							"component_groups": [
+								"despawn"
+							]
+						}
+					}
+				]
+			},
+			"timer up": {
+				"add": {
+					"component_groups": [
+						"despawn"
+					]
+				}
+			},
+			"remove_command_id_1": {
+				"add": {
+					"component_groups": [
+						"execute_no_command"
+					]
+				},
+				"remove": {
+					"component_groups": [
+						"execute_command_id_1"
+					]
+				}
+			}
+		}
+	}
 }

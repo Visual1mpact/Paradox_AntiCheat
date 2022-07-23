@@ -9,10 +9,10 @@
     },
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "minecraft:celebrate": {
         "minecraft:behavior.celebrate": {
           "priority": 5,
@@ -196,7 +196,8 @@
         }
       },
       "stunned": {
-        "minecraft:is_stunned": {},
+        "minecraft:is_stunned": {
+        },
         "minecraft:timer": {
           "looping": false,
           "time": 2,
@@ -234,7 +235,8 @@
       }
     },
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? 20 : 0"
       },
@@ -275,12 +277,7 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -303,12 +300,14 @@
         "can_path_over_water": true,
         "can_sink": false
       },
-      "minecraft:physics": {},
+      "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:conditional_bandwidth_optimization": {
+      },
       "minecraft:despawn": {
         "despawn_from_distance": {}
       },
@@ -353,24 +352,37 @@
       },
       "minecraft:rideable": {
         "seat_count": 1,
-        "family_types": ["pillager", "vindicator", "evocation_illager"],
+        "family_types": [
+          "pillager",
+          "vindicator",
+          "evocation_illager"
+        ],
         "seats": {
-          "position": [0.0, 2.1, -0.3]
+          "position": [ 0.0, 2.1, -0.3 ]
         }
       },
       "minecraft:type_family": {
-        "family": ["monster", "illager", "ravager", "mob"]
+        "family": [
+          "monster",
+          "illager",
+          "ravager", 
+          "mob"
+        ]
       }
     },
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
       "minecraft:entity_spawned": {
         "add": {
-          "component_groups": ["minecraft:hostile"]
+          "component_groups": [
+            "minecraft:hostile"
+          ]
         }
       },
       "minecraft:spawn_for_raid": {
@@ -404,7 +416,10 @@
       },
       "minecraft:spawn_with_pillager_rider": {
         "add": {
-          "component_groups": ["minecraft:hostile", "minecraft:pillager_rider"]
+          "component_groups": [
+            "minecraft:hostile",
+            "minecraft:pillager_rider"
+          ]
         }
       },
       "minecraft:spawn_with_pillager_captain_rider": {
@@ -433,48 +448,59 @@
       },
       "minecraft:become_stunned": {
         "add": {
-          "component_groups": ["stunned"]
+          "component_groups": [
+            "stunned"
+          ]
         },
         "remove": {
-          "component_groups": ["minecraft:hostile"]
+          "component_groups": [
+            "minecraft:hostile"
+          ]
         }
       },
       "minecraft:start_roar": {
         "add": {
-          "component_groups": ["roaring"]
+          "component_groups": [
+            "roaring"
+          ]
         },
         "remove": {
-          "component_groups": ["stunned"]
+          "component_groups": [
+            "stunned"
+          ]
         }
       },
       "minecraft:end_roar": {
         "add": {
-          "component_groups": ["minecraft:hostile"]
+          "component_groups": [
+            "minecraft:hostile"
+          ]
         },
         "remove": {
-          "component_groups": ["roaring"]
+          "component_groups": [
+            "roaring"
+          ]
         }
       },
-      "minecraft:start_celebrating": {
-        // Event must be called exactly this for village to fire it when a raid is lost
+      "minecraft:start_celebrating": { // Event must be called exactly this for village to fire it when a raid is lost
         "sequence": [
           {
-            "add": { "component_groups": ["minecraft:celebrate"] }
+            "add": { "component_groups": [ "minecraft:celebrate" ] }
           },
           {
             "filters": { "test": "has_nametag", "value": false },
-            "remove": { "component_groups": ["minecraft:raid_persistence"] }
+            "remove": { "component_groups": [ "minecraft:raid_persistence" ] }
           }
         ]
       },
       "minecraft:stop_celebrating": {
-        "remove": { "component_groups": ["minecraft:celebrate"] }
+        "remove": { "component_groups": [ "minecraft:celebrate" ] }
       },
       "minecraft:raid_expired": {
         "sequence": [
           {
             "filters": { "test": "has_nametag", "value": false },
-            "remove": { "component_groups": ["minecraft:raid_persistence"] }
+            "remove": { "component_groups": [ "minecraft:raid_persistence" ] }
           }
         ]
       }

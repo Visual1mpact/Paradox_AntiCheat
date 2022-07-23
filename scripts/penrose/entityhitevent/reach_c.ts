@@ -5,68 +5,57 @@ import { crypto, flag } from "../../util.js";
 const World = world;
 
 function reachc(object: EntityHitEvent) {
-  // Get Dynamic Property
-  let reachCBoolean = World.getDynamicProperty("reachc_b");
-  if (reachCBoolean === undefined) {
-    reachCBoolean = config.modules.reachC.enabled;
-  }
-  // Unsubscribe if disabled in-game
-  if (reachCBoolean === false) {
-    World.events.entityHit.unsubscribe(reachc);
-    return;
-  }
+    // Get Dynamic Property
+    let reachCBoolean = World.getDynamicProperty('reachc_b');
+    if (reachCBoolean === undefined) {
+        reachCBoolean = config.modules.reachC.enabled;
+    }
+    // Unsubscribe if disabled in-game
+    if (reachCBoolean === false) {
+        World.events.entityHit.unsubscribe(reachc);
+        return;
+    }
 
-  // Properties from class
-  let { hitEntity, hitBlock, entity } = object;
+    // Properties from class
+    let { hitEntity, hitBlock, entity } = object;
 
-  // If it's not a player then ignore
-  if (!(entity instanceof Player)) {
-    return;
-  }
+    // If it's not a player then ignore
+    if (!(entity instanceof Player)) {
+        return;
+    }
 
-  // If a block is hit then ignore
-  if (hitBlock) {
-    return;
-  }
+    // If a block is hit then ignore
+    if (hitBlock) {
+        return;
+    }
 
-  // Check for hash/salt and validate password
-  let hash = entity.getDynamicProperty("hash");
-  let salt = entity.getDynamicProperty("salt");
-  let encode: string;
-  try {
-    encode = crypto(salt, config.modules.encryption.password);
-  } catch (error) {}
-  // Return if player has op
-  if (hash !== undefined && encode === hash) {
-    return;
-  }
+    // Check for hash/salt and validate password
+    let hash = entity.getDynamicProperty('hash');
+    let salt = entity.getDynamicProperty('salt');
+    let encode: string;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+    // Return if player has op
+    if (hash !== undefined && encode === hash) {
+        return;
+    }
 
-  // Entity coordinates
-  let { x, y, z } = hitEntity.location;
-  // Player coordinates
-  let { x: x1, y: y1, z: z1 } = entity.location;
+    // Entity coordinates
+    let { x, y, z } = hitEntity.location;
+    // Player coordinates
+    let { x: x1, y: y1, z: z1 } = entity.location;
+    
+    // Calculate the distance between the player and the entity being hit
+    let reach = Math.sqrt((x - x1)**2 + (y - y1)**2 + (z - z1)**2);
 
-  // Calculate the distance between the player and the entity being hit
-  let reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
-
-  if (reach > config.modules.reachC.reach) {
-    flag(
-      entity,
-      "Reach",
-      "C",
-      "Attack",
-      null,
-      null,
-      "reach",
-      reach.toFixed(3),
-      false,
-      null
-    );
-  }
+    if(reach > config.modules.reachC.reach) {
+        flag(entity, "Reach", "C", "Attack", null, null, "reach", reach.toFixed(3), false, null);
+    }
 }
 
 const ReachC = () => {
-  World.events.entityHit.subscribe(reachc);
+    World.events.entityHit.subscribe(reachc);
 };
 
 export { ReachC };

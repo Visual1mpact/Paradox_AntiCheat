@@ -10,18 +10,23 @@
 
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      },
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			},
       "baby": {
-        "minecraft:is_baby": {},
+        "minecraft:is_baby": {
+        },
         "minecraft:scale": {
-          "value": 0.4
+          "value":0.4
         },
         "minecraft:ageable": {
           "duration": 1200,
-          "feed_items": ["golden_carrot", "carrot", "yellow_flower"],
+          "feed_items": [
+            "golden_carrot",
+            "carrot",
+            "yellow_flower"
+          ],
           "grow_up": {
             "event": "grow_up",
             "target": "self"
@@ -49,7 +54,11 @@
           "speed_multiplier": 1.0
         },
         "minecraft:breedable": {
-          "breed_items": ["golden_carrot", "carrot", "yellow_flower"],
+          "breed_items": [
+            "golden_carrot",
+            "carrot",
+            "yellow_flower"
+          ],
           "breeds_with": {
             "mate_type": "minecraft:rabbit",
             "baby_type": "minecraft:rabbit"
@@ -79,19 +88,22 @@
       "coat_salt": {
         "minecraft:variant": { "value": 5 }
       }
+
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:is_hidden_when_invisible": {
+      },
       "minecraft:type_family": {
-        "family": ["rabbit", "lightweight", "mob"]
+        "family":["rabbit", "lightweight", "mob"]
       },
 
       "minecraft:breathable": {
         "total_supply": 15,
         "suffocate_time": 0
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+      },
       "minecraft:health": {
         "value": 3,
         "max": 3
@@ -102,12 +114,7 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
+            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -124,13 +131,16 @@
         "can_path_over_water": true,
         "avoid_water": true
       },
-      "minecraft:movement.skip": {},
-      "minecraft:jump.dynamic": {},
-      "minecraft:can_climb": {},
+      "minecraft:movement.skip": {
+      },
+      "minecraft:jump.dynamic": {
+      },
+      "minecraft:can_climb": {
+      },
       "minecraft:leashable": {
         "soft_distance": 4.0,
         "hard_distance": 6.0,
-        "max_distance": 10.0
+        "max_distance":  10.0
       },
       "minecraft:balloonable": {
         "mass": 0.4
@@ -141,39 +151,27 @@
       "minecraft:behavior.float": {
         "priority": 0
       },
-      "minecraft:behavior.panic": {
+      "minecraft:behavior.panic" : {
         "priority": 1,
         "speed_multiplier": 2.2
       },
       "minecraft:behavior.avoid_mob_type": {
         "priority": 4,
-        "entity_types": [
+        "entity_types":[
           {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "player"
-            },
+            "filters": { "test" :  "is_family", "subject" : "other", "value" :  "player"},
             "max_dist": 8,
             "walk_speed_multiplier": 1.5,
             "sprint_speed_multiplier": 1.8
           },
           {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "wolf"
-            },
+            "filters": { "test" :  "is_family", "subject" : "other", "value" :  "wolf"},
             "max_dist": 4,
             "walk_speed_multiplier": 1.5,
             "sprint_speed_multiplier": 1.8
           },
           {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "monster"
-            },
+            "filters": { "test" :  "is_family", "subject" : "other", "value" :  "monster"},
             "max_dist": 4,
             "walk_speed_multiplier": 1.5,
             "sprint_speed_multiplier": 1.5
@@ -187,11 +185,17 @@
       "minecraft:behavior.tempt": {
         "priority": 3,
         "speed_multiplier": 1,
-        "items": ["golden_carrot", "carrot", "yellow_flower"]
+        "items": [
+          "golden_carrot",
+          "carrot",
+          "yellow_flower"
+        ]
       },
       "minecraft:behavior.raid_garden": {
         "priority": 5,
-        "blocks": ["minecraft:carrots"],
+        "blocks": [
+          "minecraft:carrots"
+        ],
         "search_range": 16,
         "goal_radius": 0.8
       },
@@ -204,33 +208,38 @@
       "minecraft:behavior.look_at_player": {
         "priority": 11
       },
-      "minecraft:physics": {},
+        "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {},
-      "minecraft:block_climber": {}
+      "minecraft:conditional_bandwidth_optimization": {
+      },
+      "minecraft:block_climber": {
+      }
     },
 
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       },
 
-      "in_desert": { "add": { "component_groups": ["coat_desert"] } },
+      "in_desert": { "add": { "component_groups": [ "coat_desert" ] } },
 
       "in_snow": {
         "randomize": [
           {
             "weight": 80,
-            "add": { "component_groups": ["coat_white"] }
+            "add": { "component_groups": [ "coat_white" ] }
           },
           {
             "weight": 20,
-            "add": { "component_groups": ["coat_splotched"] }
+            "add": { "component_groups": [ "coat_splotched" ] }
           }
         ]
       },
@@ -241,49 +250,45 @@
             "randomize": [
               {
                 "weight": 3,
-                "add": { "component_groups": ["adult"] }
+                "add": { "component_groups": [ "adult" ] }
               },
               {
                 "weight": 1,
-                "add": { "component_groups": ["baby"] }
+                "add": { "component_groups": [ "baby" ] }
               }
             ]
           },
           {
-            "filters": {
-              "test": "has_component",
-              "operator": "!=",
-              "value": "minecraft:variant"
-            },
+            "filters": { "test" :  "has_component", "operator": "!=", "value" :  "minecraft:variant"},
             "randomize": [
               {
                 "weight": 50,
-                "add": { "component_groups": ["coat_brown"] }
+                "add": { "component_groups": [ "coat_brown" ] }
               },
               {
                 "weight": 40,
-                "add": { "component_groups": ["coat_black"] }
+                "add": { "component_groups": [ "coat_black" ] }
               },
               {
                 "weight": 10,
-                "add": { "component_groups": ["coat_salt"] }
+                "add": { "component_groups": [ "coat_salt" ] }
               }
             ]
           },
           {
             "filters": { "test": "is_biome", "value": "desert" },
-            "add": { "component_groups": ["coat_desert"] }
+            "add": { "component_groups": [ "coat_desert" ] }
           },
           {
             "filters": { "test": "is_snow_covered", "value": true },
             "randomize": [
               {
                 "weight": 80,
-                "add": { "component_groups": ["coat_white"] }
+                "add": { "component_groups": [ "coat_white" ] }
               },
               {
                 "weight": 20,
-                "add": { "component_groups": ["coat_splotched"] }
+                "add": { "component_groups": [ "coat_splotched" ] }
               }
             ]
           }
@@ -292,42 +297,38 @@
 
       "minecraft:entity_born": {
         "sequence": [
-          { "add": { "component_groups": ["baby"] } },
+          { "add": { "component_groups": [ "baby" ] } },
           {
-            "filters": {
-              "test": "has_component",
-              "operator": "!=",
-              "value": "minecraft:variant"
-            },
+            "filters": { "test" :  "has_component", "operator": "!=", "value" :  "minecraft:variant"},
             "randomize": [
               {
                 "weight": 50,
-                "add": { "component_groups": ["coat_brown"] }
+                "add": { "component_groups": [ "coat_brown" ] }
               },
               {
                 "weight": 40,
-                "add": { "component_groups": ["coat_black"] }
+                "add": { "component_groups": [ "coat_black" ] }
               },
               {
                 "weight": 10,
-                "add": { "component_groups": ["coat_salt"] }
+                "add": { "component_groups": [ "coat_salt" ] }
               }
             ]
           },
           {
             "filters": { "test": "is_biome", "value": "desert" },
-            "add": { "component_groups": ["coat_desert"] }
+            "add": { "component_groups": [ "coat_desert" ] }
           },
           {
             "filters": { "test": "is_snow_covered", "value": true },
             "randomize": [
               {
                 "weight": 80,
-                "add": { "component_groups": ["coat_white"] }
+                "add": { "component_groups": [ "coat_white" ] }
               },
               {
                 "weight": 20,
-                "add": { "component_groups": ["coat_splotched"] }
+                "add": { "component_groups": [ "coat_splotched" ] }
               }
             ]
           }
@@ -335,8 +336,8 @@
       },
 
       "grow_up": {
-        "remove": { "component_groups": ["baby"] },
-        "add": { "component_groups": ["adult"] }
+        "remove": { "component_groups": [ "baby" ] },
+        "add": { "component_groups": [ "adult" ] }
       }
     }
   }

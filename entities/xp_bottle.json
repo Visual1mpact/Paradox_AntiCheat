@@ -9,10 +9,10 @@
     },
     "component_groups": {
       "paradox:kick": {
-        "minecraft:instant_despawn": {
-          "remove_child_entities": true
-        }
-      }
+				"minecraft:instant_despawn": {
+					"remove_child_entities": true
+				}
+			}
     },
 
     "components": {
@@ -21,19 +21,20 @@
         "height": 0.25
       },
       "minecraft:projectile": {
-        "on_hit": {
-          "grant_xp": {
-            "minXP": 3,
-            "maxXP": 11
-          },
-          "remove_on_hit": {}
+       "on_hit": {
+        "grant_xp": {
+          "minXP": 3,
+          "maxXP": 11
         },
+        "remove_on_hit": { }
+       },
         "power": 0.5,
         "gravity": 0.05,
         "angle_offset": -20.0,
         "hit_sound": "glass"
       },
-      "minecraft:physics": {},
+	    "minecraft:physics": {
+      },
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
@@ -48,9 +49,11 @@
     },
     "events": {
       "paradox:kick": {
-        "add": {
-          "component_groups": ["paradox:kick"]
-        }
+				"add": {
+					"component_groups": [
+						"paradox:kick"
+					]
+				}
       }
     }
   }

@@ -1,19 +1,25 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "lib": ["esnext"],
-    "target": "esnext",
-    "module": "esnext",
-    "sourceMap": false,
-    "moduleResolution": "node",
-    "outDir": "build/scripts",
-    "removeComments": false,
-    "allowJs": true,
-    "checkJs": false,
-    "useDefineForClassFields": true,
-    "noImplicitReturns": true
-    // "noImplicitAny": true
-  },
-  "include": ["scripts/**/*"],
-  "exclude": ["node_modules"]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "lib": [
+            "esnext"
+        ],
+        "target": "esnext",
+        "module": "esnext",
+        "sourceMap": false,
+        "moduleResolution": "node",
+        "outDir": "build/scripts",
+        "removeComments": false,
+        "allowJs": true,
+        "checkJs": false,
+        "useDefineForClassFields": true,
+        "noImplicitReturns": true,
+        // "noImplicitAny": true
+    },
+    "include": [
+        "scripts/**/*",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }
