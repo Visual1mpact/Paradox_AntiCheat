@@ -30,7 +30,7 @@
         "clean_win": "rd /s /q build>nul 2>&1|echo.>nul",
         "mkdir_win": "@if exist build (rd /s /q build && mkdir build) else (mkdir build)",
         "copy_assets_win": "@powershell Copy-Item -Path ^(\\\"animation_controllers\\\",\\\"animations\\\",\\\"entities\\\",\\\"functions\\\",\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
-        "build_win": "npm run mkdir_win 1>nul && tsc -p tsconfig.json && npm run copy_assets_win 1>nul",
+        "build_win": "npm run mkdir_win 1>nul && node node_modules\\typescript\\bin\\tsc -p tsconfig.json && npm run copy_assets_win 1>nul",
         "build_win_noscript": "npm run mkdir_win 1>nul && npm run copy_assets_win 1>nul",
         "zip_win": "@powershell Compress-Archive -Path \\\"build\\*\\\" -DestinationPath \\\"build\\Paradox-AntiCheat-v%npm_package_version%.zip\\\" -Force",
         "dist_win": "npm run clean_win && npm run build_win 1>nul && npm run zip_win 1>nul"
