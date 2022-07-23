@@ -1,3 +1,4 @@
+import { BeforeChatEvent, Player } from "mojang-minecraft";
 import config from "../data/config.js";
 import { sendMsgToPlayer } from "../util.js";
 
@@ -83,7 +84,6 @@ import { crasherB } from "./settings/crasherb.js";
 import { tpr } from "./utility/tpr.js";
 import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
-import { BeforeChatEvent, Player } from "mojang-minecraft";
 import { listitems } from "./debug_commands/listitems.js";
 
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
@@ -199,4 +199,5 @@ export function commandHandler(player: Player, message: BeforeChatEvent) {
         return (message.cancel = true);
     }
     commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1));
+    return void 0;
 }
