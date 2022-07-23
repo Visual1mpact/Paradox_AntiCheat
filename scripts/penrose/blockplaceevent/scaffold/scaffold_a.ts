@@ -8,7 +8,7 @@ let blockTimer = new Map();
 
 function scaffolda(object: BlockPlaceEvent) {
     // Get Dynamic Property
-    let antiScaffoldABoolean = World.getDynamicProperty('antiscaffolda_b');
+    let antiScaffoldABoolean = World.getDynamicProperty("antiscaffolda_b");
     if (antiScaffoldABoolean === undefined) {
         antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
     }
@@ -22,8 +22,8 @@ function scaffolda(object: BlockPlaceEvent) {
     let { block, player, dimension } = object;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -45,7 +45,7 @@ function scaffolda(object: BlockPlaceEvent) {
 
     timer.push(new Date());
 
-    let tiktok = timer.filter(time => time.getTime() > new Date().getTime() - 100);
+    let tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
     blockTimer.set(player.nameTag, tiktok);
 
     if (tiktok.length >= config.modules.antiscaffoldA.max) {

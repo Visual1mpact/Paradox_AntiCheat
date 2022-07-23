@@ -1,9 +1,7 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "lib": [
-            "esnext"
-        ],
+        "lib": ["esnext"],
         "target": "esnext",
         "module": "esnext",
         "sourceMap": false,
@@ -13,13 +11,9 @@
         "allowJs": true,
         "checkJs": false,
         "useDefineForClassFields": true,
-        "noImplicitReturns": true,
+        "noImplicitReturns": true
         // "noImplicitAny": true
     },
-    "include": [
-        "scripts/**/*",
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "include": ["scripts/**/*"],
+    "exclude": ["node_modules"]
 }

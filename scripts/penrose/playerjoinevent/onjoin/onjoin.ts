@@ -11,12 +11,12 @@ let check = false;
 
 function onJoinTime(player: Player, callback: any) {
     // Get Dynamic Property
-    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
+    let lockdownBoolean = World.getDynamicProperty("lockdown_b");
     if (lockdownBoolean === undefined) {
         lockdownBoolean = config.modules.lockDown.enabled;
     }
     // Get Dynamic Property
-    let illegalItemsABoolean = World.getDynamicProperty('illegalitemsa_b');
+    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
     if (illegalItemsABoolean === undefined) {
         illegalItemsABoolean = config.modules.illegalitemsA.enabled;
     }
@@ -33,7 +33,7 @@ function onJoinTime(player: Player, callback: any) {
                 player.runCommand(`kick ${JSON.stringify(player.name)} ${reason}`);
             } catch (error) {
                 // Despawn players from server
-                player.triggerEvent('paradox:kick');
+                player.triggerEvent("paradox:kick");
             }
             return tickEventCallback.unsubscribe(callback);
         }
@@ -42,15 +42,15 @@ function onJoinTime(player: Player, callback: any) {
         for (let i = 0; i < onJoinData.length; i++) {
             try {
                 player.runCommand(`${onJoinData[i]}`);
-            } catch (error) { }
+            } catch (error) {}
         }
 
         // Unsubscribe if disabled in-game
         if (illegalItemsABoolean === false) {
             let allPlayers = [...World.getPlayers()];
             for (let player of allPlayers) {
-                if (player.hasTag('illegalitemsA')) {
-                    player.removeTag('illegalitemsA');
+                if (player.hasTag("illegalitemsA")) {
+                    player.removeTag("illegalitemsA");
                 }
             }
         }
@@ -60,8 +60,7 @@ function onJoinTime(player: Player, callback: any) {
         // Set up custom prefix
         getPrefix(player);
         check = true;
-
-    } catch (error) { }
+    } catch (error) {}
     if (check) {
         check = false;
         return tickEventCallback.unsubscribe(callback);
@@ -69,12 +68,12 @@ function onJoinTime(player: Player, callback: any) {
 }
 
 const onJoin = () => {
-    World.events.playerJoin.subscribe(loaded => {
+    World.events.playerJoin.subscribe((loaded) => {
         // Get the name of the player who is joining
         let player = loaded.player;
         let callback: any;
         // Subscribe tick event to the time function
-        tickEventCallback.subscribe(callback = () => onJoinTime(player, callback));
+        tickEventCallback.subscribe((callback = () => onJoinTime(player, callback)));
     });
 };
 

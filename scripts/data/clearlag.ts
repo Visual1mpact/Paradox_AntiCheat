@@ -472,7 +472,7 @@ const clear = [
     "minecraft:gray_glazed_terracotta",
     "minecraft:lodestone",
     "minecraft:stripped_mangrove_log",
-    "minecraft:gravel"
+    "minecraft:gravel",
 ];
 
-export const clearItems = Object.setPrototypeOf(Object.fromEntries(clear.map(v => [v, ''] as [string, ''])), null);
+export const clearItems = Object.setPrototypeOf(Object.fromEntries(clear.map((v) => [v, ""] as [string, ""])), null);

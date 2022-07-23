@@ -12,7 +12,7 @@ const PlayerPosition = () => {
                 player.runCommand(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
                 player.runCommand(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
                 player.runCommand(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
-            } catch(e) {}
+            } catch (e) {}
         }
     }, 20); // Executes every 1 seconds
 };

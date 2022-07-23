@@ -18,26 +18,26 @@ function safetyProtocol(player: Player, x: number, y: number, z: number) {
     if (safe) {
         return safe;
     } else {
-        return safe = y;
+        return (safe = y);
     }
 }
 
 function worldborder() {
     // Dynamic Properties for boolean
-    let worldBorderBoolean = World.getDynamicProperty('worldborder_b');
+    let worldBorderBoolean = World.getDynamicProperty("worldborder_b");
     if (worldBorderBoolean === undefined) {
         worldBorderBoolean = config.modules.worldBorder.enabled;
     }
-    let antiTeleportBoolean = World.getDynamicProperty('antiteleport_b');
+    let antiTeleportBoolean = World.getDynamicProperty("antiteleport_b");
     if (antiTeleportBoolean === undefined) {
         antiTeleportBoolean = config.modules.antiTeleport.enabled;
     }
     // Dynamic Properties for number
-    let worldBorderOverworldNumber = World.getDynamicProperty('worldborder_n');
+    let worldBorderOverworldNumber = World.getDynamicProperty("worldborder_n");
     if (worldBorderOverworldNumber === undefined) {
         worldBorderOverworldNumber = config.modules.worldBorder.overworld;
     }
-    let worldBorderNetherNumber = World.getDynamicProperty('worldborder_nether_n');
+    let worldBorderNetherNumber = World.getDynamicProperty("worldborder_nether_n");
     if (worldBorderNetherNumber === undefined) {
         worldBorderNetherNumber = config.modules.worldBorder.nether;
     }
@@ -48,12 +48,12 @@ function worldborder() {
     }
     for (let player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty('hash');
-        let salt = player.getDynamicProperty('salt');
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) { }
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -93,7 +93,7 @@ function worldborder() {
             player.dimension.getBlock(test.offset(0, 0, 1)).type.id,
             player.dimension.getBlock(test.offset(0, 0, -1)).type.id,
             player.dimension.getBlock(test.offset(1, 0, 0)).type.id,
-            player.dimension.getBlock(test.offset(-1, 0, 0)).type.id
+            player.dimension.getBlock(test.offset(-1, 0, 0)).type.id,
         ];
 
         /**

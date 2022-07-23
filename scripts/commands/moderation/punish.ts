@@ -41,12 +41,12 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
+    } catch (error) {}
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -57,7 +57,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.punish) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.punish) {
         return punishHelp(player, prefix);
     }
 
@@ -91,11 +91,11 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     for (let slot = 0; slot < 30; slot++) {
         try {
             member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) { }
+        } catch (error) {}
     }
 
     // Get requested player's inventory so we can wipe it out
-    let inventoryContainer = member.getComponent('minecraft:inventory') as EntityInventoryComponent;
+    let inventoryContainer = member.getComponent("minecraft:inventory") as EntityInventoryComponent;
     let inventory = inventoryContainer.container;
     for (let i = 0; i < inventory.size; i++) {
         let inventory_item = inventory.getItem(i);
@@ -104,10 +104,10 @@ export function punish(message: BeforeChatEvent, args: string[]) {
         }
         try {
             inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
-        } catch { }
+        } catch {}
     }
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been punished for your behavior!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has punished ${member.nameTag}§r`);
+    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has punished ${member.nameTag}§r`);
 }

@@ -22,7 +22,7 @@ function banHelp(player: Player, prefix: string) {
         `    ${prefix}ban ${player.name}`,
         `    ${prefix}ban ${player.name} Hacker!`,
         `    ${prefix}ban ${player.name} Caught exploiting!`,
-        `    ${prefix}ban help`
+        `    ${prefix}ban help`,
     ]);
 }
 
@@ -43,8 +43,8 @@ export function ban(message: BeforeChatEvent, args: string[]) {
     let reason = args.slice(1).join(" ") || "No reason specified";
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -64,10 +64,10 @@ export function ban(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.ban) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.ban) {
         return banHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -89,21 +89,21 @@ export function ban(message: BeforeChatEvent, args: string[]) {
     let tags = player.getTags();
 
     // this removes old ban stuff
-    tags.forEach(t => {
-        if(t.startsWith("Reason:")) {
+    tags.forEach((t) => {
+        if (t.startsWith("Reason:")) {
             member.removeTag(t);
         }
-        if(t.startsWith("By:")) {
+        if (t.startsWith("By:")) {
             member.removeTag(t);
         }
     });
 
     try {
-        member.addTag('Reason:' + reason);
-        member.addTag('By:' + player.nameTag);
-        member.addTag('isBanned');
+        member.addTag("Reason:" + reason);
+        member.addTag("By:" + player.nameTag);
+        member.addTag("isBanned");
     } catch (error) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to ban that player! Error: ${error}`);
     }
-    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has banned ${member.nameTag}§r. Reason: ${reason}`);
+    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has banned ${member.nameTag}§r. Reason: ${reason}`);
 }

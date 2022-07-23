@@ -38,10 +38,10 @@ export function auracheck(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -61,10 +61,10 @@ export function auracheck(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.auracheck) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.auracheck) {
         return auraCheckHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -72,7 +72,7 @@ export function auracheck(message: BeforeChatEvent, args: string[]) {
             member = pl;
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }

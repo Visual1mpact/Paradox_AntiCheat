@@ -47,8 +47,8 @@ export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let bedrockValidateBoolean = World.getDynamicProperty('bedrockvalidate_b');
+    let bedrockValidateBoolean = World.getDynamicProperty("bedrockvalidate_b");
     if (bedrockValidateBoolean === undefined) {
         bedrockValidateBoolean = config.modules.bedrockValidate.enabled;
     }
@@ -69,19 +69,19 @@ export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.bedrockvalidate) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.bedrockvalidate) {
         return bedrockValidateHelp(player, prefix, bedrockValidateBoolean);
     }
 
     if (bedrockValidateBoolean === false) {
         // Allow
-        World.setDynamicProperty('bedrockvalidate_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`);
+        World.setDynamicProperty("bedrockvalidate_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`);
         BedrockValidate();
         return;
     } else if (bedrockValidateBoolean === true) {
         // Deny
-        World.setDynamicProperty('bedrockvalidate_b', false);
-        return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4BedrockValidate§r!`);
+        World.setDynamicProperty("bedrockvalidate_b", false);
+        return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4BedrockValidate§r!`);
     }
 }

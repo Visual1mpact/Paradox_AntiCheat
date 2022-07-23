@@ -44,10 +44,10 @@ export function illegalLores(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function illegalLores(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let illegalLoresBoolean = World.getDynamicProperty('illegallores_b');
+    let illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
     if (illegalLoresBoolean === undefined) {
         illegalLoresBoolean = config.modules.illegalLores.enabled;
     }
@@ -68,19 +68,19 @@ export function illegalLores(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.illegallores) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.illegallores) {
         return illegalLoresHelp(player, prefix, illegalLoresBoolean);
     }
 
     if (illegalLoresBoolean === false) {
         // Allow
-        World.setDynamicProperty('illegallores_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalLores§r!`);
+        World.setDynamicProperty("illegallores_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalLores§r!`);
         return;
     } else if (illegalLoresBoolean === true) {
         // Deny
-        World.setDynamicProperty('illegallores_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalLores§r!`);
+        World.setDynamicProperty("illegallores_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalLores§r!`);
         return;
     }
 }

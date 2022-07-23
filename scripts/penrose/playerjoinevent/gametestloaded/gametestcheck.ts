@@ -21,13 +21,13 @@ function time() {
             player.runCommand(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
             tickEventCallback.unsubscribe(time);
-        } catch (error) { }
-    } catch (error) { }
+        } catch (error) {}
+    } catch (error) {}
 }
 
 // This function will be called when playerJoin event is triggered
 const GametestCheck = () => {
-    World.events.playerJoin.subscribe(loaded => {
+    World.events.playerJoin.subscribe((loaded) => {
         if (isChecked === false) {
             // Get the name of the player who is joining
             player = loaded.player;

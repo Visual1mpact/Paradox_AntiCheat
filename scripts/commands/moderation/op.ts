@@ -41,32 +41,32 @@ export function op(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     // If no salt then create one
     if (salt === undefined && args[0] === config.modules.encryption.password) {
-        player.setDynamicProperty('salt', UUID.generate());
-        salt = player.getDynamicProperty('salt');
+        player.setDynamicProperty("salt", UUID.generate());
+        salt = player.getDynamicProperty("salt");
     }
     // If no hash then create one
     if (hash === undefined && args[0] === config.modules.encryption.password) {
         encode = crypto(salt, config.modules.encryption.password);
-        player.setDynamicProperty('hash', encode);
-        hash = player.getDynamicProperty('hash');
+        player.setDynamicProperty("hash", encode);
+        hash = player.getDynamicProperty("hash");
     } else {
         try {
             encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) { }
+        } catch (error) {}
     }
     // Make sure the user has permissions to run the command
-    if (hash === undefined || hash !== encode && args[0] !== config.modules.encryption.password) {
+    if (hash === undefined || (hash !== encode && args[0] !== config.modules.encryption.password)) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     } else if (hash === encode && args[0] === config.modules.encryption.password) {
         // Old stuff that makes up for less than 5% of the project
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
-        player.addTag('paradoxOpped');
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
+        player.addTag("paradoxOpped");
         return;
     }
 
@@ -75,7 +75,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.op) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.op) {
         return opHelp(player, prefix);
     }
 
@@ -99,20 +99,20 @@ export function op(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for hash/salt and validate password
-    let memberHash = member.getDynamicProperty('hash');
-    let memberSalt = member.getDynamicProperty('salt');
+    let memberHash = member.getDynamicProperty("hash");
+    let memberSalt = member.getDynamicProperty("salt");
     // If no salt then create one
     if (memberSalt === undefined) {
-        member.setDynamicProperty('salt', UUID.generate());
-        memberSalt = member.getDynamicProperty('salt');
+        member.setDynamicProperty("salt", UUID.generate());
+        memberSalt = member.getDynamicProperty("salt");
     }
     // If no hash then create one
     if (memberHash === undefined) {
         let encode = crypto(memberSalt, config.modules.encryption.password);
-        member.setDynamicProperty('hash', encode);
-        memberHash = member.getDynamicProperty('hash');
+        member.setDynamicProperty("hash", encode);
+        memberHash = member.getDynamicProperty("hash");
     }
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);
-    member.addTag('paradoxOpped');
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);
+    member.addTag("paradoxOpped");
 }

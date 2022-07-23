@@ -42,10 +42,10 @@ export function overidecommandblocksenabled(message: BeforeChatEvent, args: stri
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -62,22 +62,22 @@ export function overidecommandblocksenabled(message: BeforeChatEvent, args: stri
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.overidecommandblocksenabled) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.overidecommandblocksenabled) {
         return overrideCBEHelp(player, prefix, cmdsscore);
     }
 
     if (cmdsscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §6enabled§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §6enabled§r!`);
     } else if (cmdsscore === 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §4disabled§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §4disabled§r!`);
     } else if (cmdsscore >= 2) {
         // Force
         player.runCommand(`scoreboard players set paradox:config cmds 0`);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has §etoggled§r Force-CommandBlocksEnabled!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has §etoggled§r Force-CommandBlocksEnabled!`);
     }
     return player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

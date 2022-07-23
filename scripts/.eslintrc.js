@@ -1,15 +1,15 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "node": true,
-        "es2021": true
+    env: {
+        browser: true,
+        node: true,
+        es2021: true,
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": 13,
-        "sourceType": "module"
+    extends: "eslint:recommended",
+    parserOptions: {
+        ecmaVersion: 13,
+        sourceType: "module",
     },
-    "rules": {
+    rules: {
         "no-compare-neg-zero": "error",
         "no-const-assign": "error",
         "no-dupe-args": "error",
@@ -31,8 +31,8 @@ module.exports = {
         "no-regex-spaces": "error",
         "no-useless-escape": "error",
         "spaced-comment": "warn",
-        "yoda": "error",
-        "semi": "warn",
-        "no-control-regex": "off"
-    }
+        yoda: "error",
+        semi: "warn",
+        "no-control-regex": "off",
+    },
 };

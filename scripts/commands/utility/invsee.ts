@@ -41,8 +41,8 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -62,10 +62,10 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.invsee) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.invsee) {
         return invseeHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     for (let pl of World.getPlayers()) {
@@ -73,21 +73,21 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
             member = pl;
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    let inv = member.getComponent('inventory') as EntityInventoryComponent;
+    let inv = member.getComponent("inventory") as EntityInventoryComponent;
     let container = inv.container;
-    
+
     sendMsgToPlayer(player, [
         ` `,
         `§r§4[§6Paradox§4]§r ${member.nameTag}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
             const item = container.getItem(i);
-            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.id.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r §6=>§r §4[§fData ${item.data}§4]§r` : '§7(empty)'}`;
+            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.id.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r §6=>§r §4[§fData ${item.data}§4]§r` : "§7(empty)"}`;
         }),
-        ` `
+        ` `,
     ]);
 }

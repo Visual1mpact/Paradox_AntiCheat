@@ -42,8 +42,8 @@ export function unmute(message: BeforeChatEvent, args: string[]) {
     let reason = args.slice(1).join(" ") || "No reason specified";
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function unmute(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.unmute) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.unmute) {
         return unmuteHelp(player, prefix);
     }
 
@@ -74,14 +74,14 @@ export function unmute(message: BeforeChatEvent, args: string[]) {
             member = pl;
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // If not already muted then tag
-    if (member.hasTag('isMuted')) {
-        member.removeTag('isMuted');
+    if (member.hasTag("isMuted")) {
+        member.removeTag("isMuted");
     } else {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is not muted.`);
     }
@@ -90,5 +90,5 @@ export function unmute(message: BeforeChatEvent, args: string[]) {
         member.runCommand(`ability @s mute false`);
     } catch (error) {}
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted.`);
-    return sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has unmuted ${member.nameTag}§r. Reason: ${reason}`);
+    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has unmuted ${member.nameTag}§r. Reason: ${reason}`);
 }

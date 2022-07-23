@@ -8,7 +8,7 @@ const World = world;
 
 let cooldownTimer = new WeakMap();
 // Just a dummy object to use with set/get
-let object = { "cooldown": "String" };
+let object = { cooldown: "String" };
 
 function dhms(ms: number) {
     const days = Math.floor(ms / (24 * 60 * 60 * 1000));
@@ -34,7 +34,7 @@ function executionItem() {
     // Find them all and take them out
     let filter = new EntityQueryOptions();
     filter.type = "item";
-    for (let entity of World.getDimension('overworld').getEntities(filter)) {
+    for (let entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
@@ -43,9 +43,9 @@ function executionItem() {
         let itemName: ItemStack;
         // Get component of itemStack for dropped item
         try {
-            let itemContainer = entity.getComponent('item') as unknown as EntityItemComponent;
+            let itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
             itemName = itemContainer.itemStack;
-        } catch (error) { }
+        } catch (error) {}
         // Kill dropped items
         if (itemName.id in clearItems) {
             entity.kill();
@@ -57,22 +57,22 @@ function executionItem() {
 function executionEntity() {
     // Find them all and take them out
     let filter = new EntityQueryOptions();
-    filter.families = ['monster'];
-    for (let entity of World.getDimension('overworld').getEntities(filter)) {
+    filter.families = ["monster"];
+    for (let entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
         }
 
         // Despawn this entity
-        entity.triggerEvent('paradox:kick');
+        entity.triggerEvent("paradox:kick");
     }
     return World.events.tick.unsubscribe(executionEntity);
 }
 
 function clearlag(id: number) {
     // Get Dynamic Property
-    let clearLagBoolean = World.getDynamicProperty('clearlag_b');
+    let clearLagBoolean = World.getDynamicProperty("clearlag_b");
     if (clearLagBoolean === undefined) {
         clearLagBoolean = config.modules.clearLag.enabled;
     }
@@ -91,7 +91,7 @@ function clearlag(id: number) {
     // Get original time in milliseconds
     let cooldownVerify = cooldownTimer.get(object);
     // Convert config settings to milliseconds so we can be sure the countdown is accurate
-    let msSettings = (config.modules.clearLag.days * 24 * 60 * 60 * 1000) + (config.modules.clearLag.hours * 60 * 60 * 1000) + (config.modules.clearLag.minutes * 60 * 1000) + (config.modules.clearLag.seconds * 1000);
+    let msSettings = config.modules.clearLag.days * 24 * 60 * 60 * 1000 + config.modules.clearLag.hours * 60 * 60 * 1000 + config.modules.clearLag.minutes * 60 * 1000 + config.modules.clearLag.seconds * 1000;
     if (cooldownVerify !== undefined) {
         // Determine difference between new and original times in milliseconds
         let bigBrain = new Date().getTime() - cooldownVerify;
@@ -103,32 +103,32 @@ function clearlag(id: number) {
     // Give advance warning
     if (activeTimer[0] === 1 && activeTimer[2] === "minutes" && activeTimer[1] <= 0) {
         // Notify 10 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
     }
     // Give advance warning
     if (activeTimer[0] === 5 && activeTimer[1] === "seconds") {
         // Notify 10 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r Server lag will be cleared in 5`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 5`);
     }
     // Give advance warning
     if (activeTimer[0] === 4 && activeTimer[1] === "seconds") {
         // Notify 10 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r 4`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r 4`);
     }
     // Give advance warning
     if (activeTimer[0] === 3 && activeTimer[1] === "seconds") {
         // Notify 5 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r 3`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r 3`);
     }
     // Give advance warning
     if (activeTimer[0] === 2 && activeTimer[1] === "seconds") {
         // Notify 5 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r 2`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r 2`);
     }
     // Give advance warning
     if (activeTimer[0] === 1 && activeTimer[1] === "seconds") {
         // Notify 5 seconds in advance
-        sendMsg('@a', `§r§4[§6Paradox§4]§r 1`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r 1`);
     }
     // If timer doesn't exist or has expired then set the countdown
     if (activeTimer[0] <= 0) {
@@ -138,7 +138,7 @@ function clearlag(id: number) {
         World.events.tick.subscribe(executionItem);
         World.events.tick.subscribe(executionEntity);
         // Notify that it has been cleared
-        sendMsg('@a', `§r§4[§6Paradox§4]§r Server has been cleared to reduce lag!`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server has been cleared to reduce lag!`);
     } else {
         // Create new key and value with current time in milliseconds
         if (cooldownTimer.get(object) === undefined) {

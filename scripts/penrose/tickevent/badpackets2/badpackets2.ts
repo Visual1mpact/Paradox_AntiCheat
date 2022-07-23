@@ -6,7 +6,7 @@ const World = world;
 
 function badpackets2() {
     // Get Dynamic Property
-    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
+    let badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
     if (badPackets2Boolean === undefined) {
         badPackets2Boolean = config.modules.badpackets2.enabled;
     }
@@ -18,7 +18,7 @@ function badpackets2() {
     // run as each player
     for (let player of World.getPlayers()) {
         // Invalid slot
-        if(player.selectedSlot < 0 || player.selectedSlot > 8) {
+        if (player.selectedSlot < 0 || player.selectedSlot > 8) {
             flag(player, "BadPackets", "2", "Exploit", null, null, "selectedSlot", `${player.selectedSlot}`, false, null);
             player.selectedSlot = 0;
         }

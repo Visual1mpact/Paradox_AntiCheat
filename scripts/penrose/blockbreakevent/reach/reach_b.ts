@@ -7,7 +7,7 @@ const World = world;
 
 function reachb(object: BlockBreakEvent) {
     // Get Dynamic Property
-    let reachBBoolean = World.getDynamicProperty('reachb_b');
+    let reachBBoolean = World.getDynamicProperty("reachb_b");
     if (reachBBoolean === undefined) {
         reachBBoolean = config.modules.reachB.enabled;
     }
@@ -21,8 +21,8 @@ function reachb(object: BlockBreakEvent) {
     let { block, player, brokenBlockPermutation } = object;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -41,9 +41,9 @@ function reachb(object: BlockBreakEvent) {
     let blockID = brokenBlockPermutation.clone();
 
     // Calculate the distance between the player and the block being destroyed
-    let reach = Math.sqrt((x - x1)**2 + (y - y1)**2 + (z - z1)**2);
+    let reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
 
-    if(reach > config.modules.reachB.reach) {
+    if (reach > config.modules.reachB.reach) {
         block.setPermutation(blockID);
         // flag(player, "Reach", "B", "Break", false, false, "reach", reach.toFixed(3), false, false);
     }

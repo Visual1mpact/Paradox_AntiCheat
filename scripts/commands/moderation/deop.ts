@@ -41,13 +41,13 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
     } catch (error) {}
-    
+
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -58,7 +58,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.deop) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.deop) {
         return deopHelp(player, prefix);
     }
 
@@ -66,7 +66,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return deopHelp(player, prefix);
     }
-    
+
     // try to find the player requested
     let member: Player;
     if (args.length) {
@@ -76,24 +76,24 @@ export function deop(message: BeforeChatEvent, args: string[]) {
             }
         }
     }
-    
+
     if (!member) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
     // Check for hash/salt and validate password from member
-    let memberHash = member.getDynamicProperty('hash');
-    let memberSalt = member.getDynamicProperty('salt');
+    let memberHash = member.getDynamicProperty("hash");
+    let memberSalt = member.getDynamicProperty("salt");
     let memberEncode: string;
     try {
         memberEncode = crypto(memberSalt, config.modules.encryption.password);
     } catch (error) {}
 
     if (memberHash !== undefined && memberHash === memberEncode) {
-        member.removeDynamicProperty('hash');
-        member.removeDynamicProperty('salt');
-        member.removeTag('paradoxOpped');
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`);
+        member.removeDynamicProperty("hash");
+        member.removeDynamicProperty("salt");
+        member.removeTag("paradoxOpped");
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your OP status has been revoked!`);
     }
     return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.nameTag} never had permission to use Paradox.`);

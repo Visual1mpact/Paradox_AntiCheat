@@ -45,10 +45,10 @@ export function xrayA(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function xrayA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let xrayBoolean = World.getDynamicProperty('xraya_b');
+    let xrayBoolean = World.getDynamicProperty("xraya_b");
     if (xrayBoolean === undefined) {
         xrayBoolean = config.modules.xrayA.enabled;
     }
@@ -69,20 +69,20 @@ export function xrayA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.xraya) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.xraya) {
         return xrayAHelp(player, prefix, xrayBoolean);
     }
 
     if (xrayBoolean === false) {
         // Allow
-        World.setDynamicProperty('xraya_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6XrayA§r!`);
+        World.setDynamicProperty("xraya_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6XrayA§r!`);
         XrayA();
         return;
     } else if (xrayBoolean === true) {
         // Deny
-        World.setDynamicProperty('xraya_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4XrayA§r!`);
+        World.setDynamicProperty("xraya_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4XrayA§r!`);
         return;
     }
 }

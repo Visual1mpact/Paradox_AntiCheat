@@ -29,10 +29,7 @@ function listHomeHelp(player: Player, prefix: string) {
 export function listhome(message: BeforeChatEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
-        return console.warn(
-            `${new Date()} | ` +
-                "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/listhome.js:26)"
-        );
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/listhome.js:26)");
     }
 
     message.cancel = true;

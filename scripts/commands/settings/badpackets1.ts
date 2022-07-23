@@ -45,10 +45,10 @@ export function badpackets1(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function badpackets1(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
+    let badPackets1Boolean = World.getDynamicProperty("badpackets1_b");
     if (badPackets1Boolean === undefined) {
         badPackets1Boolean = config.modules.badpackets1.enabled;
     }
@@ -69,20 +69,20 @@ export function badpackets1(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.badpackets1) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.badpackets1) {
         return badpackets1Help(player, prefix, badPackets1Boolean);
     }
 
     if (badPackets1Boolean === false) {
         // Allow
-        World.setDynamicProperty('badpackets1_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets1§r!`);
+        World.setDynamicProperty("badpackets1_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets1§r!`);
         BadPackets1();
         return;
     } else if (badPackets1Boolean === true) {
         // Deny
-        World.setDynamicProperty('badpackets1_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets1§r!`);
+        World.setDynamicProperty("badpackets1_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets1§r!`);
         return;
     }
 }

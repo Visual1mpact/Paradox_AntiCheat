@@ -44,10 +44,10 @@ export function salvage(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function salvage(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let salvageBoolean = World.getDynamicProperty('salvage_b');
+    let salvageBoolean = World.getDynamicProperty("salvage_b");
     if (salvageBoolean === undefined) {
         salvageBoolean = config.modules.salvage.enabled;
     }
@@ -68,19 +68,19 @@ export function salvage(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.salvage) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.salvage) {
         return salvageHelp(player, prefix, salvageBoolean);
     }
 
     if (salvageBoolean === false) {
         // Allow
-        World.setDynamicProperty('salvage_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Salvage§r!`);
+        World.setDynamicProperty("salvage_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Salvage§r!`);
         return;
     } else if (salvageBoolean === true) {
         // Deny
-        World.setDynamicProperty('salvage_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Salvage§r!`);
+        World.setDynamicProperty("salvage_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Salvage§r!`);
         return;
     }
 }

@@ -6,7 +6,7 @@ const World = world;
 
 function spammerb(msg: BeforeChatEvent) {
     // Get Dynamic Property
-    let spammerBBoolean = World.getDynamicProperty('spammerb_b');
+    let spammerBBoolean = World.getDynamicProperty("spammerb_b");
     if (spammerBBoolean === undefined) {
         spammerBBoolean = config.modules.spammerB.enabled;
     }
@@ -18,8 +18,8 @@ function spammerb(msg: BeforeChatEvent) {
     const player = msg.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -30,7 +30,7 @@ function spammerb(msg: BeforeChatEvent) {
     }
 
     // Spammer/B = checks if someone sends a message while swinging their hand
-    if (player.hasTag('left')) {
+    if (player.hasTag("left")) {
         flag(player, "Spammer", "B", "Combat", null, null, null, null, false, msg);
     }
 }

@@ -6,7 +6,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
-function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number| boolean) {
+function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.lockdown) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -48,8 +48,8 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -60,7 +60,7 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let lockdownBoolean = World.getDynamicProperty('lockdown_b');
+    let lockdownBoolean = World.getDynamicProperty("lockdown_b");
     if (lockdownBoolean === undefined) {
         lockdownBoolean = config.modules.lockDown.enabled;
     }
@@ -70,14 +70,14 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.lockdown) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.lockdown) {
         return lockdownHelp(player, prefix, lockdownBoolean);
     }
 
     // If already locked down then unlock the server
     if (lockdownBoolean) {
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Server is no longer in lockdown!`);
-        return World.setDynamicProperty('lockdown_b', false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is no longer in lockdown!`);
+        return World.setDynamicProperty("lockdown_b", false);
     }
 
     // Default reason for locking it down
@@ -86,12 +86,12 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
     // Lock it down
     for (let pl of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = pl.getDynamicProperty('hash');
-        let salt = pl.getDynamicProperty('salt');
+        let hash = pl.getDynamicProperty("hash");
+        let salt = pl.getDynamicProperty("salt");
         let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
         }
@@ -100,10 +100,10 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
             pl.runCommand(`lockdown ${JSON.stringify(pl.name)} ${reason}`);
         } catch (error) {
             // Despawn players from server
-            pl.triggerEvent('paradox:lockdown');
+            pl.triggerEvent("paradox:lockdown");
         }
     }
     // Shutting it down
-    sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r Server is in lockdown!`);
-    return World.setDynamicProperty('lockdown_b', true);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is in lockdown!`);
+    return World.setDynamicProperty("lockdown_b", true);
 }

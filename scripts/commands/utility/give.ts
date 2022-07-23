@@ -45,12 +45,12 @@ export function give(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
+    } catch (error) {}
     // make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -61,7 +61,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.give) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.give) {
         return giveHelp(player, prefix);
     }
 
@@ -105,17 +105,17 @@ export function give(message: BeforeChatEvent, args: string[]) {
             /**
              * This parameter is invalid so we will remove it and add a default value of 1.
              */
-            args.splice(2, 1, '1');
+            args.splice(2, 1, "1");
         }
         if (isNaN(Number(args[3]))) {
             /**
              * This parameter is invalid
              */
-            args.splice(3, 1, '0');
+            args.splice(3, 1, "0");
         }
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
         if (maxStack >= Number(args[2])) {
-            let invContainer = member.getComponent('inventory') as EntityInventoryComponent;
+            let invContainer = member.getComponent("inventory") as EntityInventoryComponent;
             let inv = invContainer.container;
             let item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
             inv.addItem(item);

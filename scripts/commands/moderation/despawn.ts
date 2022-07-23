@@ -42,8 +42,8 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.despawn) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.despawn) {
         return despawnHelp(player, prefix);
     }
 
@@ -66,36 +66,36 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     if (!args.length) {
         return despawnHelp(player, prefix);
     }
-    
+
     // try to find the entity or despawn them all if requested
     let counter = 0;
     let verify = false;
     let filteredEntity: string;
     let requestedEntity: string;
     let filter = new EntityQueryOptions();
-    filter.excludeTypes = ['player'];
+    filter.excludeTypes = ["player"];
     // Specified entity
     if (args[0] !== "all" && args.length > 0) {
-        for (let entity of World.getDimension('overworld').getEntities(filter)) {
+        for (let entity of World.getDimension("overworld").getEntities(filter)) {
             filteredEntity = entity.id.replace("minecraft:", "");
             requestedEntity = args[0].replace("minecraft:", "");
             // If an entity was specified then handle it here
             if (filteredEntity === requestedEntity || filteredEntity === args[0]) {
                 counter = ++counter;
                 // Despawn this entity
-                entity.triggerEvent('paradox:kick');
+                entity.triggerEvent("paradox:kick");
                 continue;
-            // If all entities were specified then handle this here
-            } 
+                // If all entities were specified then handle this here
+            }
         }
     }
     // All entities
     if (args[0] === "all") {
-        for (let entity of World.getDimension('overworld').getEntities(filter)) {
+        for (let entity of World.getDimension("overworld").getEntities(filter)) {
             counter = ++counter;
             verify = true;
             // Despawn this entity
-            entity.triggerEvent('paradox:kick');
+            entity.triggerEvent("paradox:kick");
             continue;
         }
     }
@@ -111,10 +111,6 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This entity was not found in the world!`);
     } else {
         // Need to give a parameter that is recognized
-        return sendMsgToPlayer(player, [
-            `§r§4[§6Paradox§4]§r Please specify which entity or target all!`,
-            `§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem`,
-            `§r§4[§6Paradox§4]§r Example: ${prefix}despawn all`,
-        ]);
+        return sendMsgToPlayer(player, [`§r§4[§6Paradox§4]§r Please specify which entity or target all!`, `§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem`, `§r§4[§6Paradox§4]§r Example: ${prefix}despawn all`]);
     }
 }

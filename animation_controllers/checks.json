@@ -1,142 +1,124 @@
 {
-	"format_version": "1.10.0",
-	"animation_controllers": {
-		"controller.animation.autototem": {
-			"states": {
-				"autototem": {
-					"transitions": [
-						{
-							"totem": "query.is_item_name_any('slot.weapon.offhand',0,'minecraft:bow','minecraft:crossbow','minecraft:arrows','minecraft:totem')"
-						}
-					]
-				},
-				"totem": {
-					"on_entry": [
-						"/execute @s[tag=moving,tag=ground] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Combat) §4AutoTotem/A VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"autototemvl\"}}]}",
-						"/scoreboard players add @s[tag=moving,tag=ground] autototemvl 1",
-						"/execute @s[tag=right] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Combat) §4AutoTotem/B VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"autototemvl\"}}]}",
-						"/scoreboard players add @s[tag=right] autototemvl 1",
-						"/execute @s[tag=left] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Combat) §4AutoTotem/C VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"autototemvl\"}}]}",
-						"/scoreboard players add @s[tag=left] autototemvl 1"
-					],
-					"transitions": [
-						{
-							"autototem": "!query.is_item_name_any('slot.weapon.offhand',0,'minecraft:bow','minecraft:crossbow','minecraft:arrows','minecraft:totem')"
-						}
-					]
-				}
-			}
-		},
-		"controller.animation.invmove": {
-			"states": {
-				"default": {
-					"transitions": [
-						{
-							"invmove": "query.variant == 1"
-						}
-					],
-					"on_entry": [
-						"/tag @s remove hasGUIopen",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6OpenChest§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"
-					]
-				},
-				"invmove": {
-					"transitions": [
-						{
-							"default": "query.variant != 1"
-						}
-					],
-					"on_entry": [
-						"/tag @s add hasGUIopen",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6OpenChest§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"
-					]
-				}
-			}
-		},
-		"controller.animation.sprint": {
-			"states": {
-				"default": {
-					"transitions": [
-						{
-							"sprint": "query.is_sprinting"
-						}
-					],
-					"on_entry": [
-						"/tag @s remove sprint",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SPRINT§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"
-					]
-				},
-				"sprint": {
-					"transitions": [
-						{
-							"default": "!query.is_sprinting"
-						}
-					],
-					"on_entry": [
-						"/tag @s add sprint",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SPRINT§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"
-					]
-				}
-			}
-		},
-		"controller.animation.noswing": {
-			"states": {
-				"default": {
-					"transitions": [
-						{
-							"noswing": "query.skin_id == 1"
-						}
-					],
-					"on_entry": [
-						"/tag @s remove attack",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6ATTACK§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}",
-						"@s paradox:reset_skinid"
-					]
-				},
-				"noswing": {
-					"transitions": [
-						{
-							"default": "query.skin_id != 1"
-						}
-					],
-					"on_entry": [
-						"/tag @s add attack",
-						"/scoreboard players add @s attacks 1",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6ATTACK§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}",
-						"/scoreboard players add @s[tag=hasGUIopen] invmovevl 1",
-						"/execute @s[tag=hasGUIopen] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Movement) §4InventoryMods/D §7(is_attacking)§4. VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"invmovevl\"}}]}",
-						"/execute @s[tag=right,scores={right=3..}] ~~~ function checks/alerts/interactuse",
-						"/scoreboard players add @s last_attack 1",
-						"@s paradox:reset_skinid"
-					]
-				}
-			}
-		},
-		"controller.animation.attacked": {
-			"states": {
-				"default": {
-					"transitions": [
-						{
-							"attacked": "query.mark_variant == 1"
-						}
-					],
-					"on_entry": [
-						"@s paradox:reset_mark_variant"
-					]
-				},
-				"attacked": {
-					"transitions": [
-						{
-							"default": "query.mark_variant != 1"
-						}
-					],
-					"on_entry": [
-						"@s paradox:reset_mark_variant",
-						"/tag @s add attacked",
-						"/scoreboard players set @s[tag=attacked] atcd 0"
-					]
-				}
-			}
-		}
-	}
+    "format_version": "1.10.0",
+    "animation_controllers": {
+        "controller.animation.autototem": {
+            "states": {
+                "autototem": {
+                    "transitions": [
+                        {
+                            "totem": "query.is_item_name_any('slot.weapon.offhand',0,'minecraft:bow','minecraft:crossbow','minecraft:arrows','minecraft:totem')"
+                        }
+                    ]
+                },
+                "totem": {
+                    "on_entry": [
+                        "/execute @s[tag=moving,tag=ground] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Combat) §4AutoTotem/A VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"autototemvl\"}}]}",
+                        "/scoreboard players add @s[tag=moving,tag=ground] autototemvl 1",
+                        "/execute @s[tag=right] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Combat) §4AutoTotem/B VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"autototemvl\"}}]}",
+                        "/scoreboard players add @s[tag=right] autototemvl 1",
+                        "/execute @s[tag=left] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Combat) §4AutoTotem/C VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"autototemvl\"}}]}",
+                        "/scoreboard players add @s[tag=left] autototemvl 1"
+                    ],
+                    "transitions": [
+                        {
+                            "autototem": "!query.is_item_name_any('slot.weapon.offhand',0,'minecraft:bow','minecraft:crossbow','minecraft:arrows','minecraft:totem')"
+                        }
+                    ]
+                }
+            }
+        },
+        "controller.animation.invmove": {
+            "states": {
+                "default": {
+                    "transitions": [
+                        {
+                            "invmove": "query.variant == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove hasGUIopen", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6OpenChest§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"]
+                },
+                "invmove": {
+                    "transitions": [
+                        {
+                            "default": "query.variant != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add hasGUIopen", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6OpenChest§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
+                }
+            }
+        },
+        "controller.animation.sprint": {
+            "states": {
+                "default": {
+                    "transitions": [
+                        {
+                            "sprint": "query.is_sprinting"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove sprint", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SPRINT§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"]
+                },
+                "sprint": {
+                    "transitions": [
+                        {
+                            "default": "!query.is_sprinting"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add sprint", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SPRINT§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
+                }
+            }
+        },
+        "controller.animation.noswing": {
+            "states": {
+                "default": {
+                    "transitions": [
+                        {
+                            "noswing": "query.skin_id == 1"
+                        }
+                    ],
+                    "on_entry": [
+                        "/tag @s remove attack",
+                        "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6ATTACK§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}",
+                        "@s paradox:reset_skinid"
+                    ]
+                },
+                "noswing": {
+                    "transitions": [
+                        {
+                            "default": "query.skin_id != 1"
+                        }
+                    ],
+                    "on_entry": [
+                        "/tag @s add attack",
+                        "/scoreboard players add @s attacks 1",
+                        "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6ATTACK§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}",
+                        "/scoreboard players add @s[tag=hasGUIopen] invmovevl 1",
+                        "/execute @s[tag=hasGUIopen] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Movement) §4InventoryMods/D §7(is_attacking)§4. VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"invmovevl\"}}]}",
+                        "/execute @s[tag=right,scores={right=3..}] ~~~ function checks/alerts/interactuse",
+                        "/scoreboard players add @s last_attack 1",
+                        "@s paradox:reset_skinid"
+                    ]
+                }
+            }
+        },
+        "controller.animation.attacked": {
+            "states": {
+                "default": {
+                    "transitions": [
+                        {
+                            "attacked": "query.mark_variant == 1"
+                        }
+                    ],
+                    "on_entry": ["@s paradox:reset_mark_variant"]
+                },
+                "attacked": {
+                    "transitions": [
+                        {
+                            "default": "query.mark_variant != 1"
+                        }
+                    ],
+                    "on_entry": ["@s paradox:reset_mark_variant", "/tag @s add attacked", "/scoreboard players set @s[tag=attacked] atcd 0"]
+                }
+            }
+        }
+    }
 }

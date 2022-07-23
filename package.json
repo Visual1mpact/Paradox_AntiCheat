@@ -1,30 +1,37 @@
 {
-  "name": "paradox-anticheat",
-  "version": "3.0.4",
-  "productName": "Paradox-AntiCheat",
-  "description": "A utility to fight against malicious hackers on Bedrock Edition",
-  "private": true,
-  "devDependencies": {
-    "@types/mojang-gametest": "^0.1.5",
-    "@types/mojang-minecraft": "^0.1.6",
-    "typescript": "^4.7.4"
-  },
-  "scripts": {
-    "enablemcloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
-    "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476",
-    "linux//": " --- BUILD (Linux) --- ",
-    "clean": "rm -rf build/",
-    "mkdirs": "mkdir -p build",
-    "copy:assets": "cp -R animation_controllers/ animations entities/ functions/ CHANGELOG.md LICENSE manifest.json pack_icon.png README.md build",
-    "build": "tsc -p tsconfig.json && npm run copy:assets",
-    "dist": "npm run clean && npm run build && cd build; zip -0 -r Paradox-AntiCheat-v${npm_package_version}.zip ../build .",
-    "windows//": " --- BUILD (Windows) --- ",
-    "clean_win": "rd /s /q build>nul 2>&1|echo.>nul",
-    "mkdir_win": "@if exist build (rd /s /q build && mkdir build) else (mkdir build)",
-    "copy_assets_win": "@powershell Copy-Item -Path ^(\\\"animation_controllers\\\",\\\"animations\\\",\\\"entities\\\",\\\"functions\\\",\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
-    "build_win": "npm run mkdir_win 1>nul && tsc -p tsconfig.json && npm run copy_assets_win 1>nul",
-    "build_win_noscript": "npm run mkdir_win 1>nul && npm run copy_assets_win 1>nul",
-    "zip_win": "@powershell Compress-Archive -Path \\\"build\\*\\\" -DestinationPath \\\"build\\Paradox-AntiCheat-v%npm_package_version%.zip\\\" -Force",
-    "dist_win": "npm run clean_win && npm run build_win 1>nul && npm run zip_win 1>nul"
-  }
+    "name": "paradox-anticheat",
+    "version": "3.0.4",
+    "productName": "Paradox-AntiCheat",
+    "description": "A utility to fight against malicious hackers on Bedrock Edition",
+    "private": true,
+    "devDependencies": {
+        "@types/mojang-gametest": "^0.1.5",
+        "@types/mojang-minecraft": "^0.1.6",
+        "typescript": "^4.7.4"
+    },
+    "prettier": {
+        "trailingComma": "es5",
+        "tabWidth": 4,
+        "useTabs": false,
+        "semi": true,
+        "printWidth": 250
+    },
+    "scripts": {
+        "enablemcloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
+        "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476",
+        "linux//": " --- BUILD (Linux) --- ",
+        "clean": "rm -rf build/",
+        "mkdirs": "mkdir -p build",
+        "copy:assets": "cp -R animation_controllers/ animations entities/ functions/ CHANGELOG.md LICENSE manifest.json pack_icon.png README.md build",
+        "build": "tsc -p tsconfig.json && npm run copy:assets",
+        "dist": "npm run clean && npm run build && cd build; zip -0 -r Paradox-AntiCheat-v${npm_package_version}.zip ../build .",
+        "windows//": " --- BUILD (Windows) --- ",
+        "clean_win": "rd /s /q build>nul 2>&1|echo.>nul",
+        "mkdir_win": "@if exist build (rd /s /q build && mkdir build) else (mkdir build)",
+        "copy_assets_win": "@powershell Copy-Item -Path ^(\\\"animation_controllers\\\",\\\"animations\\\",\\\"entities\\\",\\\"functions\\\",\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
+        "build_win": "npm run mkdir_win 1>nul && tsc -p tsconfig.json && npm run copy_assets_win 1>nul",
+        "build_win_noscript": "npm run mkdir_win 1>nul && npm run copy_assets_win 1>nul",
+        "zip_win": "@powershell Compress-Archive -Path \\\"build\\*\\\" -DestinationPath \\\"build\\Paradox-AntiCheat-v%npm_package_version%.zip\\\" -Force",
+        "dist_win": "npm run clean_win && npm run build_win 1>nul && npm run zip_win 1>nul"
+    }
 }

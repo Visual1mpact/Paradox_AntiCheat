@@ -44,10 +44,10 @@ export function rbcr(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,7 +58,7 @@ export function rbcr(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let rcbrBoolean = World.getDynamicProperty('rcbr_b');
+    let rcbrBoolean = World.getDynamicProperty("rcbr_b");
     if (rcbrBoolean === undefined) {
         rcbrBoolean = config.modules.rbcr.enabled;
     }
@@ -68,19 +68,19 @@ export function rbcr(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.reacha) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.reacha) {
         return rbcrHelp(player, prefix, rcbrBoolean);
     }
 
     if (rcbrBoolean === false) {
         // Allow
-        World.setDynamicProperty('rcbr_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Realm Bot Chat Relay§r!`);
+        World.setDynamicProperty("rcbr_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Realm Bot Chat Relay§r!`);
         return;
     } else if (rcbrBoolean === true) {
         // Deny
-        World.setDynamicProperty('rcbr_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Realm Bot Chat Relay§r!`);
+        World.setDynamicProperty("rcbr_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Realm Bot Chat Relay§r!`);
         return;
     }
 }

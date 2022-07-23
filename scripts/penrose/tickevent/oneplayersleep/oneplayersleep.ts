@@ -8,7 +8,7 @@ function queueSleep(player: Player, id: number) {
     player.runCommand(`time set sunrise`);
     player.runCommand(`time add 2000`);
     player.runCommand(`weather clear`);
-    let hotbarBoolean = World.getDynamicProperty('hotbar_b');
+    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
         player.runCommand(`title @a[tag=!vanish] actionbar Good Morning`);
     }
@@ -17,7 +17,7 @@ function queueSleep(player: Player, id: number) {
 
 function ops() {
     // Get Dynamic Property
-    let opsBoolean = World.getDynamicProperty('ops_b');
+    let opsBoolean = World.getDynamicProperty("ops_b");
     if (opsBoolean === undefined) {
         opsBoolean = config.modules.ops.enabled;
     }
@@ -27,7 +27,7 @@ function ops() {
         return;
     }
     let filter = new EntityQueryOptions();
-    filter.tags = ['sleeping'];
+    filter.tags = ["sleeping"];
     let filterPlayers = [...World.getPlayers(filter)];
     if (filterPlayers.length) {
         const id = setTickTimeout(() => queueSleep(filterPlayers[0], id), 40);

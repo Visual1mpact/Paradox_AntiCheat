@@ -1,6 +1,3 @@
 {
-  "recommendations": [
-    "blockceptionltd.blockceptionvscodeminecraftbedrockdevelopmentextension",
-    "mojang-studios.minecraft-debugger"
-  ]
+    "recommendations": ["blockceptionltd.blockceptionvscodeminecraftbedrockdevelopmentextension", "mojang-studios.minecraft-debugger"]
 }

@@ -6,7 +6,7 @@ const World = world;
 
 function badpackets1(msg: BeforeChatEvent) {
     // Get Dynamic Property
-    let badPackets1Boolean = World.getDynamicProperty('badpackets1_b');
+    let badPackets1Boolean = World.getDynamicProperty("badpackets1_b");
     if (badPackets1Boolean === undefined) {
         badPackets1Boolean = config.modules.badpackets1.enabled;
     }
@@ -19,8 +19,8 @@ function badpackets1(msg: BeforeChatEvent) {
     const message = msg.message.toLowerCase();
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);

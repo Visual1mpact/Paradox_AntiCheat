@@ -45,10 +45,10 @@ export function noslowA(message: BeforeChatEvent, args: string[]) {
     message.cancel = true;
 
     let player = message.sender;
-    
+
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,7 +59,7 @@ export function noslowA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let noSlowBoolean = World.getDynamicProperty('noslowa_b');
+    let noSlowBoolean = World.getDynamicProperty("noslowa_b");
     if (noSlowBoolean === undefined) {
         noSlowBoolean = config.modules.noslowA.enabled;
     }
@@ -69,20 +69,20 @@ export function noslowA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.noslowa) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.noslowa) {
         return noslowAHelp(player, prefix, noSlowBoolean);
     }
 
     if (noSlowBoolean === false) {
         // Allow
-        World.setDynamicProperty('noslowa_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NoSlowA§r!`);
+        World.setDynamicProperty("noslowa_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NoSlowA§r!`);
         NoSlowA();
         return;
     } else if (noSlowBoolean === true) {
         // Deny
-        World.setDynamicProperty('noslowa_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NoSlowA§r!`);
+        World.setDynamicProperty("noslowa_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NoSlowA§r!`);
         return;
     }
 }
