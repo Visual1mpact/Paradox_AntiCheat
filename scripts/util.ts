@@ -48,7 +48,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r Please use your real Xbox Profile name!`);
+            player.runCommand(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r Please use your real Xbox profile name!`);
         }
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
