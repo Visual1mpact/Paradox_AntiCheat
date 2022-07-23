@@ -27,22 +27,10 @@ import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 const World = world;
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }, block: Block) {
-    // Get all tags
-    let tags = player.getTags();
-
-    // This removes old ban tags
-    tags.forEach((t) => {
-        if (t.startsWith("Reason:")) {
-            player.removeTag(t);
-        }
-        if (t.startsWith("By:")) {
-            player.removeTag(t);
-        }
-    });
     if (!enchData && !block) {
         // Tag with reason and by who
         try {
-            player.addTag("Reason:Illegal Item C (" + inventory_item.id.replace("minecraft:", "") + "=" + inventory_item.amount + ")");
+            player.addTag(`Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
@@ -52,7 +40,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     } else if (!block) {
         // Tag with reason and by who
         try {
-            player.addTag("Reason:Illegal Item C (" + inventory_item.id.replace("minecraft:", "") + ": " + enchData.id + "=" + enchData.level + ")");
+            player.addTag(`Reason:Illegal Item C (${inventory_item.id.replace("minecraft:", "")}: ${enchData.id}=${enchData.level})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
@@ -62,7 +50,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     } else {
         // Tag with reason and by who
         try {
-            player.addTag("Reason:Illegal Item C (" + block.type.id.replace("minecraft:", "") + ")");
+            player.addTag(`Reason:Illegal Item C (${block.type.id.replace("minecraft:", "")})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
