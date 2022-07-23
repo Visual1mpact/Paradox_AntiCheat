@@ -10,15 +10,15 @@
 
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			}
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      }
     },
 
     "components": {
       "minecraft:type_family": {
-        "family":["lightning"]          
+        "family": ["lightning"]
       },
       "minecraft:conditional_bandwidth_optimization": {
         "default_values": {
@@ -31,11 +31,9 @@
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       }
     }
   }

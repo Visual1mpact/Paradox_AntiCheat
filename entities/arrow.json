@@ -9,24 +9,23 @@
     },
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      },
       "minecraft:hard_arrow": {
         "minecraft:projectile": {
           "on_hit": {
             "impact_damage": {
-              "damage": [ 1, 5 ],
+              "damage": [1, 5],
               "knockback": true,
               "semi_random_diff_damage": false,
               "destroy_on_hit": true
             },
             "stick_in_ground": {
-              "shake_time" : 0.35
+              "shake_time": 0.35
             },
-            "arrow_effect": {
-            }
+            "arrow_effect": {}
           },
           "hit_sound": "bow.hit",
           "power": 1.6,
@@ -35,7 +34,7 @@
           "uncertainty_multiplier": 4,
           "anchor": 1,
           "should_bounce": true,
-          "offset": [ 0, -0.1, 0 ]
+          "offset": [0, -0.1, 0]
         }
       },
 
@@ -52,10 +51,9 @@
               "power_multiplier": 0.97
             },
             "stick_in_ground": {
-              "shake_time" : 0.35
+              "shake_time": 0.35
             },
-            "arrow_effect": {
-            }
+            "arrow_effect": {}
           },
           "hit_sound": "bow.hit",
           "power": 5.0,
@@ -64,7 +62,7 @@
           "uncertainty_multiplier": 0,
           "anchor": 1,
           "should_bounce": true,
-          "offset": [ 0, -0.1, 0 ]
+          "offset": [0, -0.1, 0]
         }
       },
 
@@ -72,7 +70,7 @@
         "minecraft:projectile": {
           "on_hit": {
             "impact_damage": {
-              "damage": [ 3, 6 ],
+              "damage": [3, 6],
               "knockback": true,
               "semi_random_diff_damage": false,
               "destroy_on_hit": true
@@ -80,8 +78,7 @@
             "stick_in_ground": {
               "shake_time": 0.35
             },
-            "arrow_effect": {
-            }
+            "arrow_effect": {}
           },
           "hit_sound": "bow.hit",
           "power": 1.6,
@@ -90,7 +87,7 @@
           "uncertainty_multiplier": 4,
           "anchor": 1,
           "should_bounce": true,
-          "offset": [ 0, -0.1, 0 ]
+          "offset": [0, -0.1, 0]
         }
       }
     },
@@ -103,7 +100,12 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -112,16 +114,15 @@
       "minecraft:projectile": {
         "on_hit": {
           "impact_damage": {
-            "damage": [ 1, 4 ],
+            "damage": [1, 4],
             "knockback": true,
             "semi_random_diff_damage": false,
             "destroy_on_hit": true
           },
           "stick_in_ground": {
-            "shake_time" : 0.35
+            "shake_time": 0.35
           },
-          "arrow_effect": {
-          }
+          "arrow_effect": {}
         },
         "hit_sound": "bow.hit",
         "power": 1.6,
@@ -130,10 +131,9 @@
         "uncertainty_multiplier": 4,
         "anchor": 1,
         "should_bounce": true,
-        "offset": [ 0, -0.1, 0 ]
+        "offset": [0, -0.1, 0]
       },
-      "minecraft:physics": {
-      },
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": false,
         "is_pushable_by_piston": true
@@ -149,35 +149,40 @@
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
-			},
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
+      },
       "minecraft:entity_spawned": {
         "sequence": [
           {
-            "filters": {"test": "is_difficulty", "value": "hard"},
+            "filters": { "test": "is_difficulty", "value": "hard" },
             "add": {
-              "component_groups": [ "minecraft:hard_arrow" ]
+              "component_groups": ["minecraft:hard_arrow"]
             }
           },
           {
-            "filters": {"test": "is_family", "subject": "other", "value": "player"},
+            "filters": {
+              "test": "is_family",
+              "subject": "other",
+              "value": "player"
+            },
             "add": {
-              "component_groups" : [ "minecraft:player_arrow" ]
+              "component_groups": ["minecraft:player_arrow"]
             }
           },
           {
-            "filters": {"test": "is_family", "subject": "other", "value": "pillager"},
+            "filters": {
+              "test": "is_family",
+              "subject": "other",
+              "value": "pillager"
+            },
             "add": {
-              "component_groups": [ "minecraft:pillager_arrow" ]
+              "component_groups": ["minecraft:pillager_arrow"]
             }
           }
         ]
       }
     }
-
   }
 }

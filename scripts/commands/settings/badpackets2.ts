@@ -5,30 +5,34 @@ import { BadPackets2 } from "../../penrose/tickevent/badpackets2/badpackets2.js"
 
 const World = world;
 
-function badpackets2Help(player: Player, prefix: string, badPackets2Boolean: string | number | boolean) {
-    let commandStatus: string;
-    if (!config.customcommands.badpackets2) {
-        commandStatus = "§6[§4DISABLED§6]§r";
-    } else {
-        commandStatus = "§6[§aENABLED§6]§r";
-    }
-    let moduleStatus: string;
-    if (badPackets2Boolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
-    } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
-    }
-    return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: badpackets2`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: badpackets2 [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for invalid selected slots by player.`,
-        `§4[§6Examples§4]§r:`,
-        `    ${prefix}badpackets2`,
-        `    ${prefix}badpackets2 help`,
-    ]);
+function badpackets2Help(
+  player: Player,
+  prefix: string,
+  badPackets2Boolean: string | number | boolean
+) {
+  let commandStatus: string;
+  if (!config.customcommands.badpackets2) {
+    commandStatus = "§6[§4DISABLED§6]§r";
+  } else {
+    commandStatus = "§6[§aENABLED§6]§r";
+  }
+  let moduleStatus: string;
+  if (badPackets2Boolean === false) {
+    moduleStatus = "§6[§4DISABLED§6]§r";
+  } else {
+    moduleStatus = "§6[§aENABLED§6]§r";
+  }
+  return sendMsgToPlayer(player, [
+    `\n§4[§6Command§4]§r: badpackets2`,
+    `§4[§6Status§4]§r: ${commandStatus}`,
+    `§4[§6Module§4]§r: ${moduleStatus}`,
+    `§4[§6Usage§4]§r: badpackets2 [optional]`,
+    `§4[§6Optional§4]§r: help`,
+    `§4[§6Description§4]§r: Toggles checks for invalid selected slots by player.`,
+    `§4[§6Examples§4]§r:`,
+    `    ${prefix}badpackets2`,
+    `    ${prefix}badpackets2 help`,
+  ]);
 }
 
 /**
@@ -37,52 +41,67 @@ function badpackets2Help(player: Player, prefix: string, badPackets2Boolean: str
  * @param {string[]} args - Additional arguments provided (optional).
  */
 export function badpackets2(message: BeforeChatEvent, args: string[]) {
-    // validate that required params are defined
-    if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets2.js:36)");
-    }
+  // validate that required params are defined
+  if (!message) {
+    return console.warn(
+      `${new Date()} | ` +
+        "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets2.js:36)"
+    );
+  }
 
-    message.cancel = true;
+  message.cancel = true;
 
-    let player = message.sender;
-    
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
-    }
+  let player = message.sender;
 
-    // Get Dynamic Property Boolean
-    let badPackets2Boolean = World.getDynamicProperty('badpackets2_b');
-    if (badPackets2Boolean === undefined) {
-        badPackets2Boolean = config.modules.badpackets2.enabled;
-    }
+  // Check for hash/salt and validate password
+  let hash = player.getDynamicProperty("hash");
+  let salt = player.getDynamicProperty("salt");
+  let encode: string;
+  try {
+    encode = crypto(salt, config.modules.encryption.password);
+  } catch (error) {}
+  // make sure the user has permissions to run the command
+  if (hash === undefined || encode !== hash) {
+    return sendMsgToPlayer(
+      player,
+      `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`
+    );
+  }
 
-    // Check for custom prefix
-    let prefix = getPrefix(player);
+  // Get Dynamic Property Boolean
+  let badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
+  if (badPackets2Boolean === undefined) {
+    badPackets2Boolean = config.modules.badpackets2.enabled;
+  }
 
-    // Was help requested
-    let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.badpackets2) {
-        return badpackets2Help(player, prefix, badPackets2Boolean);
-    }
+  // Check for custom prefix
+  let prefix = getPrefix(player);
 
-    if (badPackets2Boolean === false) {
-        // Allow
-        World.setDynamicProperty('badpackets2_b', true);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets2§r!`);
-        BadPackets2();
-        return;
-    } else if (badPackets2Boolean === true) {
-        // Deny
-        World.setDynamicProperty('badpackets2_b', false);
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets2§r!`);
-        return;
-    }
+  // Was help requested
+  let argCheck = args[0];
+  if (
+    (argCheck && args[0].toLowerCase() === "help") ||
+    !config.customcommands.badpackets2
+  ) {
+    return badpackets2Help(player, prefix, badPackets2Boolean);
+  }
+
+  if (badPackets2Boolean === false) {
+    // Allow
+    World.setDynamicProperty("badpackets2_b", true);
+    sendMsg(
+      "@a[tag=paradoxOpped]",
+      `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets2§r!`
+    );
+    BadPackets2();
+    return;
+  } else if (badPackets2Boolean === true) {
+    // Deny
+    World.setDynamicProperty("badpackets2_b", false);
+    sendMsg(
+      "@a[tag=paradoxOpped]",
+      `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets2§r!`
+    );
+    return;
+  }
 }

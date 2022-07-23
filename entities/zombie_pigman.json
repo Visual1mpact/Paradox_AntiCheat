@@ -9,16 +9,15 @@
     },
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      },
       "minecraft:pig_zombie_baby": {
         "minecraft:experience_reward": {
           "on_death": "query.last_hit_by_player ? 12 + (query.equipment_count * Math.Random(1,3)) : 0"
         },
-        "minecraft:is_baby": {
-        },
+        "minecraft:is_baby": {},
         "minecraft:scale": {
           "value": 0.5
         }
@@ -27,11 +26,9 @@
       "minecraft:pig_zombie_adult": {
         "minecraft:rideable": {
           "seat_count": 1,
-          "family_types": [
-            "zombie"
-          ],
+          "family_types": ["zombie"],
           "seats": {
-            "position": [ 0.0, 1.1, -0.35 ],
+            "position": [0.0, 1.1, -0.35],
             "lock_rider_rotation": 0
           }
         },
@@ -64,21 +61,18 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
       "minecraft:breathable": {
         "total_supply": 15,
         "suffocate_time": 0,
         "breathes_water": true
       },
-      "minecraft:equip_item": {
-      },
+      "minecraft:equip_item": {},
       "minecraft:collision_box": {
         "width": 0.6,
         "height": 1.9
       },
-      "minecraft:nameable": {
-      },
+      "minecraft:nameable": {},
       "minecraft:navigation.walk": {
         "is_amphibious": true,
         "can_pass_doors": true,
@@ -86,16 +80,12 @@
         "avoid_water": true,
         "avoid_portals": true
       },
-      "minecraft:movement.basic": {
-      },
-      "minecraft:jump.static": {
-      },
-      "minecraft:can_climb": {
-      },
-      "minecraft:fire_immune": {
-      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:fire_immune": {},
       "minecraft:type_family": {
-        "family": [ "zombie_pigman", "undead", "monster", "mob" ]
+        "family": ["zombie_pigman", "undead", "monster", "mob"]
       },
       "minecraft:loot": {
         "table": "loot_tables/entities/zombie_pigman.json"
@@ -368,24 +358,19 @@
       "minecraft:behavior.random_look_around": {
         "priority": 9
       },
-      "minecraft:physics": {
-      },
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {
-      }
+      "minecraft:conditional_bandwidth_optimization": {}
     },
-
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:entity_transformed": {
         "sequence": [
@@ -424,8 +409,7 @@
         "randomize": [
           {
             "weight": 95,
-            "remove": {
-            },
+            "remove": {},
             "add": {
               "component_groups": [
                 "minecraft:pig_zombie_adult",
@@ -435,47 +419,35 @@
           },
           {
             "weight": 5,
-            "remove": {
-            },
+            "remove": {},
             "add": {
               "component_groups": [
                 "minecraft:pig_zombie_baby",
                 "minecraft:pig_zombie_calm"
               ]
-
             }
           }
         ]
       },
       "minecraft:on_calm": {
         "remove": {
-          "component_groups": [
-            "minecraft:pig_zombie_angry"
-          ]
+          "component_groups": ["minecraft:pig_zombie_angry"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:pig_zombie_calm"
-          ]
+          "component_groups": ["minecraft:pig_zombie_calm"]
         }
       },
       "minecraft:become_angry": {
         "remove": {
-          "component_groups": [
-            "minecraft:pig_zombie_calm"
-          ]
+          "component_groups": ["minecraft:pig_zombie_calm"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:pig_zombie_angry"
-          ]
+          "component_groups": ["minecraft:pig_zombie_angry"]
         }
       },
       "minecraft:spawn_as_strider_jockey": {
         "add": {
-          "component_groups": [
-            "minecraft:strider_jockey"
-          ]
+          "component_groups": ["minecraft:strider_jockey"]
         }
       }
     }

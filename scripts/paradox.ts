@@ -1,5 +1,5 @@
-import './misc/dpwrapper.js';
-import './debug/main.js';
+import "./misc/dpwrapper.js";
+import "./debug/main.js";
 // Import Customs
 import { world } from "mojang-minecraft";
 import { setTickInterval } from "./misc/scheduling.js";
@@ -38,7 +38,7 @@ import { OPS } from "./penrose/tickevent/oneplayersleep/oneplayersleep.js";
 import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
 import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.js";
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
-import { ClearLag } from './penrose/tickevent/clearlag/clearlag.js';
+import { ClearLag } from "./penrose/tickevent/clearlag/clearlag.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -58,7 +58,7 @@ import { ReachC } from "./penrose/entityhitevent/reach_c.js";
 // Import WorldInitialize Events
 import { Registry } from "./penrose/worldinitializeevent/registry.js";
 // Import EntityCreate Events
-import { CrasherB } from './penrose/entitycreateevent/crasher_b.js';
+import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 
 // Self explanatory
 const World = world;
@@ -105,17 +105,17 @@ AntiTeleport();
 
 // Freeze Check
 setTickInterval(() => {
-    let hastag: boolean;
-    // run as each player
-    for (let player of World.getPlayers()) {
-        try {
-            hastag = player.hasTag('freeze');
-        } catch (error) { }
-        if (hastag) {
-            TickFreeze(player);
-            hastag = null;
-        }
+  let hastag: boolean;
+  // run as each player
+  for (let player of World.getPlayers()) {
+    try {
+      hastag = player.hasTag("freeze");
+    } catch (error) {}
+    if (hastag) {
+      TickFreeze(player);
+      hastag = null;
     }
+  }
 }, 60); // Executes every 3 seconds
 
 // BlockBreak Events

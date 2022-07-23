@@ -9,17 +9,15 @@
     },
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
-      "minecraft:skeleton_horse_r5_upgrade": {
-        "minecraft:rideable": {
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
         }
       },
+      "minecraft:skeleton_horse_r5_upgrade": {
+        "minecraft:rideable": {}
+      },
       "minecraft:skeleton_horse_baby": {
-        "minecraft:is_baby": {
-        },
+        "minecraft:is_baby": {},
         "minecraft:scale_by_age": {
           "start_scale": 0.5,
           "end_scale": 1.0
@@ -49,14 +47,10 @@
         },
         "minecraft:rideable": {
           "seat_count": 1,
-          "family_types": [
-            "player",
-            "skeleton",
-            "zombie"
-          ],
+          "family_types": ["player", "skeleton", "zombie"],
           "interact_text": "action.interact.ride.horse",
           "seats": {
-            "position": [ 0.0, 1.2, -0.2 ]
+            "position": [0.0, 1.2, -0.2]
           }
         }
       },
@@ -86,10 +80,9 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
       "minecraft:type_family": {
-        "family": [ "skeletonhorse", "undead", "mob" ]
+        "family": ["skeletonhorse", "undead", "mob"]
       },
       "minecraft:breathable": {
         "total_supply": 15,
@@ -103,7 +96,12 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -119,12 +117,9 @@
         "is_amphibious": true,
         "avoid_water": true
       },
-      "minecraft:movement.basic": {
-      },
-      "minecraft:jump.static": {
-      },
-      "minecraft:nameable": {
-      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:nameable": {},
       "minecraft:horse.jump_strength": {
         "value": {
           "range_min": 0.4,
@@ -138,14 +133,10 @@
       },
       "minecraft:rideable": {
         "seat_count": 1,
-        "family_types": [
-          "player",
-          "skeleton",
-          "zombie"
-        ],
+        "family_types": ["player", "skeleton", "zombie"],
         "interact_text": "action.interact.ride.horse",
         "seats": {
-          "position": [ 0.0, 1.2, -0.2 ]
+          "position": [0.0, 1.2, -0.2]
         }
       },
       "minecraft:despawn": {
@@ -157,14 +148,10 @@
         "target_dist": 4.0,
         "track_target": true
       },
-      "minecraft:behavior.player_ride_tamed": {
-      },
-      "minecraft:input_ground_controlled": {
-      },
-      "minecraft:can_power_jump": {
-      },
-      "minecraft:balloonable": {
-      },
+      "minecraft:behavior.player_ride_tamed": {},
+      "minecraft:input_ground_controlled": {},
+      "minecraft:can_power_jump": {},
+      "minecraft:balloonable": {},
       "minecraft:behavior.panic": {
         "priority": 1,
         "speed_multiplier": 1.2
@@ -181,58 +168,57 @@
       "minecraft:behavior.random_look_around": {
         "priority": 8
       },
-      "minecraft:is_tamed": {
-      },
-      "minecraft:physics": {
-      },
+      "minecraft:is_tamed": {},
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {
-      }
+      "minecraft:conditional_bandwidth_optimization": {}
     },
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:entity_spawned": {
         "randomize": [
           {
             "weight": 36,
             "add": {
-              "component_groups": [
-                "minecraft:skeleton_horse_adult"
-              ]
+              "component_groups": ["minecraft:skeleton_horse_adult"]
             }
           },
           {
             "weight": 9,
             "remove": {
-              "component_groups": [
-                "minecraft:skeleton_horse_r5_upgrade"
-              ]
+              "component_groups": ["minecraft:skeleton_horse_r5_upgrade"]
             },
             "add": {
-              "component_groups": [
-                "minecraft:skeleton_horse_baby"
-              ]
+              "component_groups": ["minecraft:skeleton_horse_baby"]
             }
           }
         ]
       },
 
       "minecraft:set_trap": {
-        "add": { "component_groups": [ "minecraft:skeleton_trap", "minecraft:lightning_immune" ] }
+        "add": {
+          "component_groups": [
+            "minecraft:skeleton_trap",
+            "minecraft:lightning_immune"
+          ]
+        }
       },
 
       "minecraft:spring_trap": {
-        "add": { "component_groups": [ "minecraft:skeleton_horse_adult", "minecraft:lightning_immune" ] }
+        "add": {
+          "component_groups": [
+            "minecraft:skeleton_horse_adult",
+            "minecraft:lightning_immune"
+          ]
+        }
       }
     }
   }

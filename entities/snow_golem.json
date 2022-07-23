@@ -10,28 +10,25 @@
 
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
-      "minecraft:snowman_sheared": {
-        "minecraft:is_sheared": {
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
         }
+      },
+      "minecraft:snowman_sheared": {
+        "minecraft:is_sheared": {}
       }
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
       "minecraft:type_family": {
-        "family": [ "snowgolem", "mob" ]
+        "family": ["snowgolem", "mob"]
       },
       "minecraft:breathable": {
         "total_supply": 15,
         "suffocate_time": 0
       },
-      "minecraft:nameable": {
-      },
+      "minecraft:nameable": {},
       "minecraft:collision_box": {
         "width": 0.4,
         "height": 1.8
@@ -49,12 +46,9 @@
       "minecraft:navigation.walk": {
         "avoid_water": true
       },
-      "minecraft:movement.basic": {
-      },
-      "minecraft:jump.static": {
-      },
-      "minecraft:can_climb": {
-      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
       "minecraft:attack": {
         "damage": 2
       },
@@ -67,17 +61,30 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
             "cause": "lava",
             "damage_per_tick": 4
           },
           {
-            "filters": { "test": "is_temperature_value", "operator": ">", "value": 1.0 },
+            "filters": {
+              "test": "is_temperature_value",
+              "operator": ">",
+              "value": 1.0
+            },
             "cause": "temperature",
             "damage_per_tick": 1
           },
           {
-            "filters": { "test": "in_contact_with_water", "operator": "==", "value": true },
+            "filters": {
+              "test": "in_contact_with_water",
+              "operator": "==",
+              "value": true
+            },
             "cause": "drowning",
             "damage_per_tick": 1
           }
@@ -89,15 +96,30 @@
             "cooldown": 2.5,
             "use_item": false,
             "hurt_item": 1,
-            "spawn_items": { "table": "loot_tables/entities/snow_golem_shear.json" },
+            "spawn_items": {
+              "table": "loot_tables/entities/snow_golem_shear.json"
+            },
             "play_sounds": "shear",
             "interact_text": "action.interact.shear",
             "on_interact": {
               "filters": {
                 "all_of": [
-                  { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "shears"},
-                  { "test": "is_family", "subject": "other", "value": "player"},
-                  { "test": "has_component", "operator": "!=", "value": "minecraft:is_sheared"}
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "value": "shears"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "test": "has_component",
+                    "operator": "!=",
+                    "value": "minecraft:is_sheared"
+                  }
                 ]
               },
               "event": "minecraft:on_sheared",
@@ -111,8 +133,7 @@
         "hard_distance": 6.0,
         "max_distance": 10.0
       },
-      "minecraft:balloonable": {
-      },
+      "minecraft:balloonable": {},
       "minecraft:behavior.ranged_attack": {
         "priority": 1,
         "speed_multiplier": 1.25,
@@ -124,7 +145,11 @@
       },
       "minecraft:trail": {
         "block_type": "minecraft:snow_layer",
-        "spawn_filter": { "test": "is_temperature_value", "operator": "<", "value": 0.81 }
+        "spawn_filter": {
+          "test": "is_temperature_value",
+          "operator": "<",
+          "value": 0.81
+        }
       },
       "minecraft:behavior.random_stroll": {
         "priority": 2,
@@ -141,38 +166,34 @@
         "priority": 1,
         "entity_types": [
           {
-            "filters": { "test" :  "is_family", "subject" : "other", "value" :  "monster"},
+            "filters": {
+              "test": "is_family",
+              "subject": "other",
+              "value": "monster"
+            },
             "within_default": 6
           }
         ]
       },
-      "minecraft:persistent": {
-      },
-      "minecraft:physics": {
-      },
+      "minecraft:persistent": {},
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {
-      }
+      "minecraft:conditional_bandwidth_optimization": {}
     },
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:on_sheared": {
-        "remove": {
-        },
+        "remove": {},
         "add": {
-          "component_groups": [
-            "minecraft:snowman_sheared"
-          ]
+          "component_groups": ["minecraft:snowman_sheared"]
         }
       }
     }

@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      },
       "minecraft:celebrate": {
         "minecraft:behavior.celebrate": {
           "priority": 5,
@@ -54,7 +54,12 @@
             {
               "filters": {
                 "all_of": [
-                  { "test": "is_family", "subject": "other", "operator": "!=", "value": "illager" }
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "illager"
+                  }
                 ]
               },
               "max_dist": 12
@@ -73,10 +78,26 @@
             {
               "filters": {
                 "any_of": [
-                  { "test": "is_family", "subject": "other", "value": "player" },
-                  { "test": "is_family", "subject": "other", "value": "snowgolem" },
-                  { "test": "is_family", "subject": "other", "value": "irongolem" },
-                  { "test": "is_family", "subject": "other", "value": "wandering_trader" }
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "snowgolem"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "irongolem"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "wandering_trader"
+                  }
                 ]
               },
               "max_dist": 12
@@ -84,8 +105,17 @@
             {
               "filters": {
                 "all_of": [
-                  { "test": "is_family", "subject": "other", "value": "villager" },
-                  { "test": "has_component", "subject": "other", "operator": "!=", "value": "minecraft:is_baby" }
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "villager"
+                  },
+                  {
+                    "test": "has_component",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "minecraft:is_baby"
+                  }
                 ]
               },
               "max_dist": 12
@@ -135,8 +165,7 @@
         }
       },
       "minecraft:illager_squad_captain": {
-        "minecraft:is_illager_captain": {
-        },
+        "minecraft:is_illager_captain": {},
         "minecraft:variant": {
           "value": 1
         },
@@ -172,8 +201,7 @@
         }
       },
       "minecraft:patrol_captain": {
-        "minecraft:is_illager_captain": {
-        },
+        "minecraft:is_illager_captain": {},
         "minecraft:variant": {
           "value": 1
         },
@@ -225,13 +253,11 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
       "minecraft:experience_reward": {
         "on_death": "query.last_hit_by_player ? (query.is_baby ? 12 : 5) + (Math.die_roll(query.equipment_count,1,3)) : 0"
       },
-      "minecraft:conditional_bandwidth_optimization": {
-      },
+      "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:nameable": {
         "default_trigger": {
           "event": "minecraft:stop_johnny",
@@ -250,7 +276,7 @@
 
       // vindicator Components
       "minecraft:type_family": {
-        "family": [ "vindicator", "monster", "illager", "mob" ]
+        "family": ["vindicator", "monster", "illager", "mob"]
       },
       "minecraft:variant": {
         "value": 0
@@ -270,7 +296,12 @@
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -285,10 +316,8 @@
       "minecraft:navigation.walk": {
         "can_path_over_water": true
       },
-      "minecraft:movement.basic": {
-      },
-      "minecraft:jump.static": {
-      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
       "minecraft:follow_range": {
         "value": 64
       },
@@ -326,8 +355,7 @@
         "event": "minecraft:stop_aggro",
         "target": "self"
       },
-      "minecraft:physics": {
-      },
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
@@ -336,17 +364,13 @@
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:entity_spawned": {
         "add": {
-          "component_groups": [
-            "minecraft:default_targeting"
-          ]
+          "component_groups": ["minecraft:default_targeting"]
         }
       },
       "minecraft:spawn_as_patrol_follower": {
@@ -359,35 +383,25 @@
       },
       "minecraft:become_aggro": {
         "add": {
-          "component_groups": [
-            "minecraft:vindicator_aggro"
-          ]
+          "component_groups": ["minecraft:vindicator_aggro"]
         }
       },
       "minecraft:stop_aggro": {
         "remove": {
-          "component_groups": [
-            "minecraft:vindicator_aggro"
-          ]
+          "component_groups": ["minecraft:vindicator_aggro"]
         }
       },
       "minecraft:start_johnny": {
         "add": {
-          "component_groups": [
-            "minecraft:vindicator_johnny"
-          ]
+          "component_groups": ["minecraft:vindicator_johnny"]
         }
       },
       "minecraft:stop_johnny": {
         "remove": {
-          "component_groups": [
-            "minecraft:vindicator_johnny"
-          ]
+          "component_groups": ["minecraft:vindicator_johnny"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:default_targeting"
-          ]
+          "component_groups": ["minecraft:default_targeting"]
         }
       },
       "minecraft:spawn_for_raid": {
@@ -402,54 +416,45 @@
       },
       "minecraft:spawn_as_illager_captain": {
         "add": {
-          "component_groups": [
-            "minecraft:illager_squad_captain"
-          ]
+          "component_groups": ["minecraft:illager_squad_captain"]
         }
       },
       "minecraft:promote_to_illager_captain": {
         "add": {
-          "component_groups": [
-            "minecraft:illager_squad_captain"
-          ]
+          "component_groups": ["minecraft:illager_squad_captain"]
         },
         "remove": {
-          "component_groups": [
-            "minecraft:patrol_follower"
-          ]
+          "component_groups": ["minecraft:patrol_follower"]
         }
       },
       "minecraft:promote_to_patrol_captain": {
         "add": {
-          "component_groups": [
-            "minecraft:patrol_captain"
-          ]
+          "component_groups": ["minecraft:patrol_captain"]
         },
         "remove": {
-          "component_groups": [
-            "minecraft:patrol_follower"
-          ]
+          "component_groups": ["minecraft:patrol_follower"]
         }
       },
-      "minecraft:start_celebrating": { // Event must be called exactly this for village to fire it when a raid is lost
+      "minecraft:start_celebrating": {
+        // Event must be called exactly this for village to fire it when a raid is lost
         "sequence": [
           {
-            "add": { "component_groups": [ "minecraft:celebrate" ] }
+            "add": { "component_groups": ["minecraft:celebrate"] }
           },
           {
             "filters": { "test": "has_nametag", "value": false },
-            "remove": { "component_groups": [ "minecraft:raid_persistence" ] }
+            "remove": { "component_groups": ["minecraft:raid_persistence"] }
           }
         ]
       },
       "minecraft:stop_celebrating": {
-        "remove": { "component_groups": [ "minecraft:celebrate" ] }
+        "remove": { "component_groups": ["minecraft:celebrate"] }
       },
       "minecraft:raid_expired": {
         "sequence": [
           {
             "filters": { "test": "has_nametag", "value": false },
-            "remove": { "component_groups": [ "minecraft:raid_persistence" ] }
+            "remove": { "component_groups": ["minecraft:raid_persistence"] }
           }
         ]
       }

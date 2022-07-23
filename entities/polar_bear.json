@@ -10,13 +10,12 @@
 
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      },
       "minecraft:baby": {
-        "minecraft:is_baby": {
-        },
+        "minecraft:is_baby": {},
         "minecraft:scale": {
           "value": 0.5
         },
@@ -43,7 +42,11 @@
           "priority": 4,
           "entity_types": [
             {
-              "filters": { "test" :  "is_family", "subject" : "other", "value" :  "player"},
+              "filters": {
+                "test": "is_family",
+                "subject": "other",
+                "value": "player"
+              },
               "max_dist": 16
             }
           ]
@@ -121,24 +124,27 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
       "minecraft:type_family": {
-        "family": [ "polarbear", "mob" ]
+        "family": ["polarbear", "mob"]
       },
       "minecraft:breathable": {
         "total_supply": 15,
         "suffocate_time": 0
       },
-      "minecraft:nameable": {
-      },
+      "minecraft:nameable": {},
       "minecraft:health": {
         "value": 30
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
           {
-            "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
             "cause": "lava",
             "damage_per_tick": 4
           }
@@ -158,13 +164,9 @@
         "can_path_over_water": true,
         "avoid_damage_blocks": true
       },
-      "minecraft:movement.basic": {
-
-      },
-      "minecraft:jump.static": {
-      },
-      "minecraft:can_climb": {
-      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
       "minecraft:follow_range": {
         "value": 48
       },
@@ -188,8 +190,7 @@
       "minecraft:behavior.random_look_around": {
         "priority": 7
       },
-      "minecraft:physics": {
-      },
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
@@ -203,38 +204,28 @@
         "hard_distance": 6.0,
         "max_distance": 10.0
       },
-      "minecraft:balloonable": {
-      },
-      "minecraft:conditional_bandwidth_optimization": {
-      }
+      "minecraft:balloonable": {},
+      "minecraft:conditional_bandwidth_optimization": {}
     },
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:entity_spawned": {
         "randomize": [
           {
             "weight": 9,
             "add": {
-              "component_groups": [
-                "minecraft:adult",
-                "minecraft:adult_wild"
-              ]
+              "component_groups": ["minecraft:adult", "minecraft:adult_wild"]
             }
           },
           {
             "weight": 1,
             "add": {
-              "component_groups": [
-                "minecraft:baby",
-                "minecraft:baby_wild"
-              ]
+              "component_groups": ["minecraft:baby", "minecraft:baby_wild"]
             }
           }
         ]
@@ -242,10 +233,7 @@
 
       "minecraft:entity_born": {
         "add": {
-          "component_groups": [
-            "minecraft:baby",
-            "minecraft:baby_wild"
-          ]
+          "component_groups": ["minecraft:baby", "minecraft:baby_wild"]
         }
       },
 
@@ -258,62 +246,43 @@
           ]
         },
         "add": {
-          "component_groups": [
-            "minecraft:adult",
-            "minecraft:adult_wild"
-          ]
+          "component_groups": ["minecraft:adult", "minecraft:adult_wild"]
         }
       },
 
       "minecraft:on_calm": {
         "remove": {
-          "component_groups": [
-            "minecraft:adult_hostile"
-          ]
+          "component_groups": ["minecraft:adult_hostile"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:adult_wild"
-          ]
+          "component_groups": ["minecraft:adult_wild"]
         }
       },
 
       "minecraft:on_anger": {
         "remove": {
-          "component_groups": [
-            "minecraft:adult_wild"
-          ]
+          "component_groups": ["minecraft:adult_wild"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:adult_hostile"
-          ]
+          "component_groups": ["minecraft:adult_hostile"]
         }
       },
 
       "minecraft:baby_on_calm": {
         "remove": {
-          "component_groups": [
-            "minecraft:baby_scared"
-          ]
+          "component_groups": ["minecraft:baby_scared"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:baby_wild"
-          ]
+          "component_groups": ["minecraft:baby_wild"]
         }
       },
 
       "minecraft:on_scared": {
         "remove": {
-          "component_groups": [
-            "minecraft:baby_wild"
-          ]
+          "component_groups": ["minecraft:baby_wild"]
         },
         "add": {
-          "component_groups": [
-            "minecraft:baby_scared"
-          ]
+          "component_groups": ["minecraft:baby_scared"]
         }
       }
     }

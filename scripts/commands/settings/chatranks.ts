@@ -4,30 +4,34 @@ import { BeforeChatEvent, Player, world } from "mojang-minecraft";
 
 const World = world;
 
-function chatRanksHelp(player: Player, prefix: string, chatRanksBoolean: string | number | boolean) {
-    let commandStatus: string;
-    if (!config.customcommands.chatranks) {
-        commandStatus = "§6[§4DISABLED§6]§r";
-    } else {
-        commandStatus = "§6[§aENABLED§6]§r";
-    }
-    let moduleStatus: string;
-    if (chatRanksBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
-    } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
-    }
-    return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: chatranks`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: chatranks [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles chat ranks.`,
-        `§4[§6Examples§4]§r:`,
-        `    ${prefix}chatranks`,
-        `    ${prefix}chatranks help`,
-    ]);
+function chatRanksHelp(
+  player: Player,
+  prefix: string,
+  chatRanksBoolean: string | number | boolean
+) {
+  let commandStatus: string;
+  if (!config.customcommands.chatranks) {
+    commandStatus = "§6[§4DISABLED§6]§r";
+  } else {
+    commandStatus = "§6[§aENABLED§6]§r";
+  }
+  let moduleStatus: string;
+  if (chatRanksBoolean === false) {
+    moduleStatus = "§6[§4DISABLED§6]§r";
+  } else {
+    moduleStatus = "§6[§aENABLED§6]§r";
+  }
+  return sendMsgToPlayer(player, [
+    `\n§4[§6Command§4]§r: chatranks`,
+    `§4[§6Status§4]§r: ${commandStatus}`,
+    `§4[§6Module§4]§r: ${moduleStatus}`,
+    `§4[§6Usage§4]§r: chatranks [optional]`,
+    `§4[§6Optional§4]§r: help`,
+    `§4[§6Description§4]§r: Toggles chat ranks.`,
+    `§4[§6Examples§4]§r:`,
+    `    ${prefix}chatranks`,
+    `    ${prefix}chatranks help`,
+  ]);
 }
 
 /**
@@ -36,46 +40,55 @@ function chatRanksHelp(player: Player, prefix: string, chatRanksBoolean: string 
  * @param {string[]} args - Additional arguments provided (optional).
  */
 export function chatranks(message: BeforeChatEvent, args: string[]) {
-    // validate that required params are defined
-    if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/chatranks.js:35)");
-    }
+  // validate that required params are defined
+  if (!message) {
+    return console.warn(
+      `${new Date()} | ` +
+        "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/chatranks.js:35)"
+    );
+  }
 
-    message.cancel = true;
+  message.cancel = true;
 
-    let player = message.sender;
+  let player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty('hash');
-    let salt = player.getDynamicProperty('salt');
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) { }
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
-    }
+  // Check for hash/salt and validate password
+  let hash = player.getDynamicProperty("hash");
+  let salt = player.getDynamicProperty("salt");
+  let encode: string;
+  try {
+    encode = crypto(salt, config.modules.encryption.password);
+  } catch (error) {}
+  // make sure the user has permissions to run the command
+  if (hash === undefined || encode !== hash) {
+    return sendMsgToPlayer(
+      player,
+      `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`
+    );
+  }
 
-    // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty('chatranks_b');
-    if (chatRanksBoolean === undefined) {
-        chatRanksBoolean = config.modules.chatranks.enabled;
-    }
+  // Get Dynamic Property Boolean
+  let chatRanksBoolean = World.getDynamicProperty("chatranks_b");
+  if (chatRanksBoolean === undefined) {
+    chatRanksBoolean = config.modules.chatranks.enabled;
+  }
 
-    // Check for custom prefix
-    let prefix = getPrefix(player);
+  // Check for custom prefix
+  let prefix = getPrefix(player);
 
-    // Was help requested
-    let argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help" || !config.customcommands.chatranks) {
-        return chatRanksHelp(player, prefix, chatRanksBoolean);
-    }
+  // Was help requested
+  let argCheck = args[0];
+  if (
+    (argCheck && args[0].toLowerCase() === "help") ||
+    !config.customcommands.chatranks
+  ) {
+    return chatRanksHelp(player, prefix, chatRanksBoolean);
+  }
 
-    if (chatRanksBoolean === false) {
-        // Allow
-        World.setDynamicProperty('chatranks_b', true);
-        /*
+  if (chatRanksBoolean === false) {
+    // Allow
+    World.setDynamicProperty("chatranks_b", true);
+    /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
             Restore their custom nametag
@@ -84,12 +97,15 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
             pl.teleport(pl.location, dimension, 0, 0);
         }
         */
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`);
-        return;
-    } else if (chatRanksBoolean === true) {
-        // Deny
-        World.setDynamicProperty('chatranks_b', false);
-        /*
+    sendMsg(
+      "@a[tag=paradoxOpped]",
+      `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`
+    );
+    return;
+  } else if (chatRanksBoolean === true) {
+    // Deny
+    World.setDynamicProperty("chatranks_b", false);
+    /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
             Reset their nametag to its original name
@@ -98,7 +114,10 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
             pl.teleport(pl.location, dimension, 0, 0);
         }
         */
-        sendMsg('@a[tag=paradoxOpped]', `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`);
-        return;
-    }
+    sendMsg(
+      "@a[tag=paradoxOpped]",
+      `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`
+    );
+    return;
+  }
 }

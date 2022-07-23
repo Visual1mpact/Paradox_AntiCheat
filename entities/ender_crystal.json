@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      },
       "crystal_exploding": {
         "minecraft:explode": {
           "fuse_length": 0,
@@ -39,34 +39,26 @@
         "event": "minecraft:crystal_explode",
         "target": "self"
       },
-	    "minecraft:physics": {
-      },
+      "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:conditional_bandwidth_optimization": {
-      }
+      "minecraft:conditional_bandwidth_optimization": {}
     },
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:crystal_explode": {
-        "remove": {
-        },
+        "remove": {},
         "add": {
-          "component_groups": [
-            "crystal_exploding"
-          ]
+          "component_groups": ["crystal_exploding"]
         }
       }
     }
-
   }
 }

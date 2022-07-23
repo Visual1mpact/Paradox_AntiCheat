@@ -156,10 +156,7 @@
           "knockback_height": 0.04,
           "pre_ram_sound": "pre_ram",
           "ram_impact_sound": "ram_impact",
-          "cooldown_range": [
-            30,
-            300
-          ],
+          "cooldown_range": [30, 300],
           "on_start": [
             {
               "event": "start_event",
@@ -179,10 +176,7 @@
           "knockback_height": 0.04,
           "pre_ram_sound": "pre_ram.screamer",
           "ram_impact_sound": "ram_impact.screamer",
-          "cooldown_range": [
-            5,
-            15
-          ],
+          "cooldown_range": [5, 15],
           "on_start": [
             {
               "event": "start_event",
@@ -193,10 +187,7 @@
       },
       "attack_cooldown": {
         "minecraft:attack_cooldown": {
-          "attack_cooldown_time": [
-            30,
-            40
-          ],
+          "attack_cooldown_time": [30, 40],
           "attack_cooldown_complete_event": {
             "event": "attack_cooldown_complete_event",
             "target": "self"
@@ -205,8 +196,7 @@
       }
     },
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
       "minecraft:behavior.jump_to_block": {
         "priority": 8,
         "search_width": 10,
@@ -214,10 +204,7 @@
         "minimum_path_length": 8,
         "minimum_distance": 1,
         "scale_factor": 0.6,
-        "cooldown_range": [
-          30,
-          60
-        ]
+        "cooldown_range": [30, 60]
       },
       "minecraft:genetics": {
         "mutation_rate": 0.02,
@@ -255,10 +242,7 @@
         ]
       },
       "minecraft:type_family": {
-        "family": [
-          "goat",
-          "animal"
-        ]
+        "family": ["goat", "animal"]
       },
       "minecraft:breathable": {
         "total_supply": 15,
@@ -316,9 +300,7 @@
       "minecraft:behavior.tempt": {
         "priority": 4,
         "speed_multiplier": 0.75,
-        "items": [
-          "wheat"
-        ]
+        "items": ["wheat"]
       },
       "minecraft:behavior.nearest_attackable_target": {
         "priority": 6,
@@ -370,8 +352,7 @@
         "hard_distance": 6,
         "max_distance": 10
       },
-      "minecraft:balloonable": {
-      },
+      "minecraft:balloonable": {},
       "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
@@ -380,37 +361,29 @@
     },
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:entity_spawned": {
         "randomize": [
           {
             "weight": 95,
             "add": {
-              "component_groups": [
-                "goat_adult"
-              ]
+              "component_groups": ["goat_adult"]
             }
           },
           {
             "weight": 5,
             "add": {
-              "component_groups": [
-                "goat_baby"
-              ]
+              "component_groups": ["goat_baby"]
             }
           }
         ]
       },
       "minecraft:entity_born": {
         "add": {
-          "component_groups": [
-            "goat_baby"
-          ]
+          "component_groups": ["goat_baby"]
         }
       },
       "minecraft:born_default": {
@@ -433,28 +406,20 @@
       },
       "minecraft:ageable_grow_up": {
         "remove": {
-          "component_groups": [
-            "goat_baby"
-          ]
+          "component_groups": ["goat_baby"]
         },
         "add": {
-          "component_groups": [
-            "goat_adult"
-          ]
+          "component_groups": ["goat_adult"]
         }
       },
       "start_event": {
         "add": {
-          "component_groups": [
-            "attack_cooldown"
-          ]
+          "component_groups": ["attack_cooldown"]
         }
       },
       "attack_cooldown_complete_event": {
         "remove": {
-          "component_groups": [
-            "attack_cooldown"
-          ]
+          "component_groups": ["attack_cooldown"]
         }
       }
     }

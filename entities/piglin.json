@@ -10,10 +10,10 @@
 
     "component_groups": {
       "paradox:kick": {
-				"minecraft:instant_despawn": {
-					"remove_child_entities": true
-				}
-			},
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      },
       "zombification_sensor": {
         "minecraft:environment_sensor": {
           "triggers": {
@@ -53,7 +53,7 @@
       "become_zombie": {
         "minecraft:transformation": {
           "into": "minecraft:zombie_pigman",
-          "transformation_sound" : "converted_to_zombified",
+          "transformation_sound": "converted_to_zombified",
           "keep_level": true,
           "drop_inventory": true,
           "preserve_equipment": true
@@ -75,9 +75,7 @@
         },
         "minecraft:behavior.charge_held_item": {
           "priority": 3,
-          "items": [
-            "minecraft:arrow"
-          ]
+          "items": ["minecraft:arrow"]
         },
         "minecraft:equipment": {
           "table": "loot_tables/entities/piglin_gear_ranged.json"
@@ -144,7 +142,7 @@
 
       "attack_cooldown": {
         "minecraft:attack_cooldown": {
-          "attack_cooldown_time": [ 30.0, 120.0 ],
+          "attack_cooldown_time": [30.0, 120.0],
           "attack_cooldown_complete_event": {
             "event": "attack_cooldown_complete_event",
             "target": "self"
@@ -277,20 +275,13 @@
 
       "hunter": {
         "minecraft:type_family": {
-          "family": [
-            "piglin",
-            "piglin_hunter",
-            "monster"
-          ]
+          "family": ["piglin", "piglin_hunter", "monster"]
         }
       },
 
       "not_hunter": {
         "minecraft:type_family": {
-          "family": [
-            "piglin",
-            "monster"
-          ]
+          "family": ["piglin", "monster"]
         }
       },
 
@@ -426,10 +417,8 @@
     },
 
     "components": {
-      "minecraft:is_hidden_when_invisible": {
-      },
-      "minecraft:equip_item": {
-      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:equip_item": {},
       "minecraft:admire_item": {
         "duration": 8,
         "cooldown_after_being_attacked": 20
@@ -471,8 +460,7 @@
         "can_path_over_water": true,
         "can_open_doors": true
       },
-      "minecraft:annotation.open_door": {
-      },
+      "minecraft:annotation.open_door": {},
       "minecraft:movement.basic": {},
       "minecraft:jump.static": {},
       "minecraft:nameable": {},
@@ -504,8 +492,7 @@
       "minecraft:behavior.barter": {
         "priority": 3
       },
-      "minecraft:conditional_bandwidth_optimization": {
-      },
+      "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:behavior.avoid_mob_type": {
         "priority": 4,
         "remove_target": true,
@@ -980,11 +967,9 @@
 
     "events": {
       "paradox:kick": {
-				"add": {
-					"component_groups": [
-						"paradox:kick"
-					]
-				}
+        "add": {
+          "component_groups": ["paradox:kick"]
+        }
       },
       "minecraft:entity_spawned": {
         "randomize": [
@@ -1104,33 +1089,23 @@
       },
       "stop_zombification_event": {
         "add": {
-          "component_groups": [
-            "zombification_sensor"
-          ]
+          "component_groups": ["zombification_sensor"]
         },
         "remove": {
-          "component_groups": [
-            "start_zombification"
-          ]
+          "component_groups": ["start_zombification"]
         }
       },
       "start_zombification_event": {
         "add": {
-          "component_groups": [
-            "start_zombification"
-          ]
+          "component_groups": ["start_zombification"]
         },
         "remove": {
-          "component_groups": [
-            "zombification_sensor"
-          ]
+          "component_groups": ["zombification_sensor"]
         }
       },
       "become_angry_event": {
         "add": {
-          "component_groups": [
-            "angry"
-          ]
+          "component_groups": ["angry"]
         }
       },
       "become_calm_event": {
@@ -1141,50 +1116,35 @@
           ]
         },
         "add": {
-          "component_groups": [
-            "alert_for_attack_targets",
-            "attack_cooldown"
-          ]
+          "component_groups": ["alert_for_attack_targets", "attack_cooldown"]
         }
       },
       "attack_cooldown_complete_event": {
         "remove": {
-          "component_groups": [
-            "attack_cooldown"
-          ]
+          "component_groups": ["attack_cooldown"]
         }
       },
       "become_zombie_event": {
         "add": {
-          "component_groups": [
-            "become_zombie"
-          ]
+          "component_groups": ["become_zombie"]
         }
       },
       "important_block_destroyed_event": {
         "remove": {
-          "component_groups": [
-            "alert_for_attack_targets"
-          ]
+          "component_groups": ["alert_for_attack_targets"]
         },
         "add": {
-          "component_groups": [
-            "take_target_as_response_to_block_break"
-          ]
+          "component_groups": ["take_target_as_response_to_block_break"]
         }
       },
       "admire_item_started_event": {
         "remove": {
-          "component_groups": [
-            "interactable_piglin"
-          ]
+          "component_groups": ["interactable_piglin"]
         }
       },
       "admire_item_stopped_event": {
         "add": {
-          "component_groups": [
-            "interactable_piglin"
-          ]
+          "component_groups": ["interactable_piglin"]
         }
       }
     }
