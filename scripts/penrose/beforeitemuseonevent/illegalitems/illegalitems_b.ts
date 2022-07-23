@@ -9,33 +9,26 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 
 const World = world;
 
-function rip(source: Player, item: ItemStack, enchData: { id: string; level: number }) {
-    let tags = source.getTags();
-
-    // This removes old ban tags
-    tags.forEach((t) => {
-        if (t.startsWith("Reason:")) {
-            source.removeTag(t);
-        }
-        if (t.startsWith("By:")) {
-            source.removeTag(t);
-        }
-    });
+function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }) {
     if (!enchData) {
+        // Tag with reason and by who
         try {
-            source.addTag("Reason:Illegal Item B (" + item.id.replace("minecraft:", "") + "=" + item.amount + ")");
-            source.addTag("By:Paradox");
-            source.addTag("isBanned");
+            player.addTag(`Reason:Illegal Item B (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})`);
+            player.addTag("By:Paradox");
+            player.addTag("isBanned");
+            // Despawn if we cannot kick the player
         } catch (error) {
-            source.triggerEvent("paradox:kick");
+            player.triggerEvent("paradox:kick");
         }
     } else {
+        // Tag with reason and by who
         try {
-            source.addTag("Reason:Illegal Item B (" + item.id.replace("minecraft:", "") + ": " + enchData.id + "=" + enchData.level + ")");
-            source.addTag("By:Paradox");
-            source.addTag("isBanned");
+            player.addTag(`Reason:Illegal Item B (${inventory_item.id.replace("minecraft:", "")}: ${enchData.id}=${enchData.level})`);
+            player.addTag("By:Paradox");
+            player.addTag("isBanned");
+            // Despawn if we cannot kick the player
         } catch (error) {
-            source.triggerEvent("paradox:kick");
+            player.triggerEvent("paradox:kick");
         }
     }
 }
@@ -43,29 +36,23 @@ function rip(source: Player, item: ItemStack, enchData: { id: string; level: num
 function illegalitemsb(object: BeforeItemUseOnEvent) {
     // Get Dynamic Property
     let illegalItemsBBoolean = World.getDynamicProperty("illegalitemsb_b");
-    if (illegalItemsBBoolean === undefined) {
-        illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
-    }
+    if (illegalItemsBBoolean === undefined) illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
+
     let salvageBoolean = World.getDynamicProperty("salvage_b");
-    if (salvageBoolean === undefined) {
-        salvageBoolean = config.modules.salvage.enabled;
-    }
+    if (salvageBoolean === undefined) salvageBoolean = config.modules.salvage.enabled;
+
     let illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
-    if (illegalLoresBoolean === undefined) {
-        illegalLoresBoolean = config.modules.illegalLores.enabled;
-    }
+    if (illegalLoresBoolean === undefined) illegalLoresBoolean = config.modules.illegalLores.enabled;
+
     let illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b");
-    if (illegalEnchantmentBoolean === undefined) {
-        illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
-    }
+    if (illegalEnchantmentBoolean === undefined) illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
+
     let antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
-    if (antiShulkerBoolean === undefined) {
-        antiShulkerBoolean = config.modules.antishulker.enabled;
-    }
+    if (antiShulkerBoolean === undefined) antiShulkerBoolean = config.modules.antishulker.enabled;
+
     let stackBanBoolean = World.getDynamicProperty("stackban_b");
-    if (stackBanBoolean === undefined) {
-        stackBanBoolean = config.modules.stackBan.enabled;
-    }
+    if (stackBanBoolean === undefined) stackBanBoolean = config.modules.stackBan.enabled;
+
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
         World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
