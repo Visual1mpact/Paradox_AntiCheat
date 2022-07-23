@@ -16,20 +16,6 @@ import config from "./data/config.js";
  * @param {BeforeChatEvent} message - The message object, used to cancel the message.
  */
 export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
-    // validate that required params are defined
-    if (!player) {
-        return console.warn(`${new Date()} | ` + "Error: ${player} isnt defined. Did you forget to pass it? (./util.js:8)");
-    }
-    if (!check) {
-        return console.warn(`${new Date()} | ` + "Error: ${check} isnt defined. Did you forget to pass it? (./util.js:9)");
-    }
-    if (!check) {
-        return console.warn(`${new Date()} | ` + "Error: ${checkType} isnt defined. Did you forget to pass it? (./util.js:10)");
-    }
-    if (!hackType) {
-        return console.warn(`${new Date()} | ` + "Error: ${hackType} isnt defined. Did you forget to pass it? (./util.js:11)");
-    }
-
     // make sure the vl objective exists
     try {
         player.runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
@@ -203,7 +189,7 @@ export function toCamelCase(str: string) {
 /**
  * @name titleCase
  * @param {*} s - Takes snakeCase and converts it to titleCase
- * @returns 
+ * @returns
  */
 export const titleCase = (s: string) =>
     s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
