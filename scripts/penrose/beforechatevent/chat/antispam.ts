@@ -25,9 +25,7 @@ function antispam(msg: BeforeChatEvent) {
     let hash = player.getDynamicProperty("hash");
     let salt = player.getDynamicProperty("salt");
     let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    encode = crypto(salt, config.modules.encryption.password) ?? null;
 
     if (hash === undefined || encode !== hash) {
         // gets current time
@@ -40,7 +38,7 @@ function antispam(msg: BeforeChatEvent) {
         let check = true;
 
         // resets spam data
-        if (currentTime - spamData.lastSendTime >= config.modules.antispam.cooldown * 50) {
+        if (spamData?.lastSendTime !== undefined && currentTime - spamData.lastSendTime >= config.modules.antispam.cooldown * 50) {
             check = false;
             spamData.lastMessage = message;
             spamData.lastSendTime = currentTime;
@@ -48,11 +46,11 @@ function antispam(msg: BeforeChatEvent) {
         }
 
         // Specific to Horion
-        if (message.includes("the best minecraft bedrock utility mod")) {
+        if (spamData && message.includes("the best minecraft bedrock utility mod")) {
             spamData.spamCounter = Infinity;
         }
 
-        if (check) {
+        if (check && spamData) {
             // check if the player sends the same message with the previous one, otherwise resets the spam counter
             if (spamData.lastMessage === message) {
                 spamData.spamCounter++;
@@ -67,7 +65,7 @@ function antispam(msg: BeforeChatEvent) {
         }
 
         // check if the spam counter goes above the threshold
-        if (spamData.spamCounter > 12) {
+        if (spamData && spamData.spamCounter > 12) {
             try {
                 player.addTag("Reason:Spamming");
                 player.addTag("By:Paradox");
