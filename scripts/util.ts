@@ -15,7 +15,7 @@ import config from "./data/config.js";
  * @param {boolean} shouldTP - Whever to tp the player to itself.
  * @param {BeforeChatEvent} message - The message object, used to cancel the message.
  */
-export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
+export function flag(player: Player, check: string, checkType: string, hackType: string, item: string | null, stack: number | null, debugName: string | null, debug: string | null, shouldTP: boolean | null, message: BeforeChatEvent | null) {
     // make sure the vl objective exists
     try {
         player.runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
