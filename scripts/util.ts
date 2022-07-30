@@ -61,8 +61,8 @@ export function flag(player: Player, check: string, checkType: string, hackType:
 export function banMessage(player: Player) {
     let tags = player.getTags();
 
-    var reason: string;
-    var by: string;
+    let reason: string = "N/A";
+    let by: string = "N/A";
 
     // this removes old ban stuff
     tags.forEach((t) => {
@@ -71,7 +71,7 @@ export function banMessage(player: Player) {
     });
 
     try {
-        player.runCommand(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.runCommand(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by}\n§bReason:§r ${reason}`);
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
         player.triggerEvent("paradox:kick");
@@ -114,15 +114,12 @@ export function getPrefix(player: Player) {
  */
 export function tagRank(player: Player) {
     let tags = player.getTags();
-    let rank: string;
+    let rank: string = "Member";
     for (const tag of tags) {
         if (tag.startsWith("Rank:")) {
             rank = tag.replace("Rank:", "");
             rank = rank.replaceAll("--", "§4]§r§4[§6");
         }
-    }
-    if (!rank) {
-        rank = "Member";
     }
     let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
     player.nameTag = nametag;
@@ -154,7 +151,7 @@ export function resetTag(player: Player, member: Player) {
  **/
 export const UUID = (function () {
     const self = { generate: this };
-    const lut = [];
+    const lut: string[] = [];
     for (var i = 0; i < 256; i++) {
         lut[i] = (i < 16 ? "0" : "") + i.toString(16);
     }
