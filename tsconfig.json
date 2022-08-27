@@ -10,7 +10,6 @@
         "removeComments": false,
         "allowJs": true,
         "checkJs": false,
-        "strict": true,
         "useDefineForClassFields": true,
         "noImplicitReturns": true
         // "noImplicitAny": true
