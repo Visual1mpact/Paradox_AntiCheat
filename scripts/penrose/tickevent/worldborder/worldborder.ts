@@ -28,10 +28,6 @@ function worldborder() {
     if (worldBorderBoolean === undefined) {
         worldBorderBoolean = config.modules.worldBorder.enabled;
     }
-    let antiTeleportBoolean = World.getDynamicProperty("antiteleport_b");
-    if (antiTeleportBoolean === undefined) {
-        antiTeleportBoolean = config.modules.antiTeleport.enabled;
-    }
     // Dynamic Properties for number
     let worldBorderOverworldNumber = World.getDynamicProperty("worldborder_n");
     if (worldBorderOverworldNumber === undefined) {
@@ -112,9 +108,6 @@ function worldborder() {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
                 // Positives
                 if (player.location.x >= overworldSize && player.location.z >= overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(overworldSize - 3, player.location.y, overworldSize - 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, overworldSize - 3, player.location.y, overworldSize - 3);
                     player.teleport(new Location(overworldSize - 3, safe, overworldSize - 3), player.dimension, 0, 0);
@@ -122,9 +115,6 @@ function worldborder() {
                 }
                 // Negatives
                 if (player.location.x <= -overworldSize && player.location.z <= -overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(-overworldSize + 3, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, -overworldSize + 3, player.location.y, -overworldSize + 3);
                     player.teleport(new Location(-overworldSize + 3, safe, -overworldSize + 3), player.dimension, 0, 0);
@@ -132,9 +122,6 @@ function worldborder() {
                 }
                 // Postive x and negative z
                 if (player.location.x >= overworldSize && player.location.z <= -overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(overworldSize - 3, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, overworldSize - 3, player.location.y, -overworldSize + 3);
                     player.teleport(new Location(overworldSize - 3, safe, -overworldSize + 3), player.dimension, 0, 0);
@@ -142,9 +129,6 @@ function worldborder() {
                 }
                 // Negative x and positive z
                 if (player.location.x <= -overworldSize && player.location.z >= overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(-overworldSize + 3, player.location.y, overworldSize - 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, -overworldSize + 3, player.location.y, overworldSize - 3);
                     player.teleport(new Location(-overworldSize + 3, safe, overworldSize - 3), player.dimension, 0, 0);
@@ -152,9 +136,6 @@ function worldborder() {
                 }
                 // Postive x
                 if (player.location.x >= overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(overworldSize - 3, player.location.y, player.location.z), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, overworldSize - 3, player.location.y, player.location.z);
                     player.teleport(new Location(overworldSize - 3, safe, player.location.z), player.dimension, 0, 0);
@@ -162,9 +143,6 @@ function worldborder() {
                 }
                 // Positive z
                 if (player.location.z >= overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(player.location.x, player.location.y, overworldSize - 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, player.location.x, player.location.y, overworldSize - 3);
                     player.teleport(new Location(player.location.x, safe, overworldSize - 3), player.dimension, 0, 0);
@@ -172,9 +150,6 @@ function worldborder() {
                 }
                 // Negative x
                 if (player.location.x <= -overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(-overworldSize + 3, player.location.y, player.location.z), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, -overworldSize + 3, player.location.y, player.location.z);
                     player.teleport(new Location(-overworldSize + 3, safe, player.location.z), player.dimension, 0, 0);
@@ -182,9 +157,6 @@ function worldborder() {
                 }
                 // Negative z
                 if (player.location.z <= -overworldSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(player.location.x, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, player.location.x, player.location.y, -overworldSize + 3);
                     player.teleport(new Location(player.location.x, safe, -overworldSize + 3), player.dimension, 0, 0);
@@ -200,9 +172,6 @@ function worldborder() {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
                 // Positives
                 if (player.location.x >= netherSize && player.location.z >= netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(netherSize - 3, player.location.y, netherSize - 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, netherSize - 3, player.location.y, netherSize - 3);
                     player.teleport(new Location(netherSize - 3, safe, netherSize - 3), player.dimension, 0, 0);
@@ -210,9 +179,6 @@ function worldborder() {
                 }
                 // Negatives
                 if (player.location.x <= -netherSize && player.location.z <= -netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(-netherSize + 3, player.location.y, -netherSize + 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, -netherSize + 3, player.location.y, -netherSize + 3);
                     player.teleport(new Location(-netherSize + 3, safe, -netherSize + 3), player.dimension, 0, 0);
@@ -220,9 +186,6 @@ function worldborder() {
                 }
                 // Postive x and negative z
                 if (player.location.x >= netherSize && player.location.z <= -netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(netherSize - 3, player.location.y, -netherSize + 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, netherSize - 3, player.location.y, -netherSize + 3);
                     player.teleport(new Location(netherSize - 3, safe, -netherSize + 3), player.dimension, 0, 0);
@@ -230,9 +193,6 @@ function worldborder() {
                 }
                 // Negative x and positive z
                 if (player.location.x <= -netherSize && player.location.z >= netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(-netherSize + 3, player.location.y, netherSize - 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, -netherSize + 3, player.location.y, netherSize - 3);
                     player.teleport(new Location(-netherSize + 3, safe, netherSize - 3), player.dimension, 0, 0);
@@ -240,9 +200,6 @@ function worldborder() {
                 }
                 // Postive x
                 if (player.location.x >= netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(netherSize - 3, player.location.y, player.location.z), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, netherSize - 3, player.location.y, player.location.z);
                     player.teleport(new Location(netherSize - 3, safe, player.location.z), player.dimension, 0, 0);
@@ -250,9 +207,6 @@ function worldborder() {
                 }
                 // Positive z
                 if (player.location.z >= netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(player.location.x, player.location.y, netherSize - 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, player.location.x, player.location.y, netherSize - 3);
                     player.teleport(new Location(player.location.x, safe, netherSize - 3), player.dimension, 0, 0);
@@ -260,9 +214,6 @@ function worldborder() {
                 }
                 // Negative x
                 if (player.location.x <= -netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(-netherSize + 3, player.location.y, player.location.z), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, -netherSize + 3, player.location.y, player.location.z);
                     player.teleport(new Location(-netherSize + 3, safe, player.location.z), player.dimension, 0, 0);
@@ -270,9 +221,6 @@ function worldborder() {
                 }
                 // Negative z
                 if (player.location.z <= -netherSize) {
-                    if (antiTeleportBoolean) {
-                        player.runCommand(`scoreboard players set @s teleport 25`);
-                    }
                     player.teleport(new Location(player.location.x, player.location.y, -netherSize + 3), player.dimension, 0, 0);
                     let safe = safetyProtocol(player, player.location.x, player.location.y, -netherSize + 3);
                     player.teleport(new Location(player.location.x, safe, -netherSize + 3), player.dimension, 0, 0);

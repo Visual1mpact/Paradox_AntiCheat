@@ -70,7 +70,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     // Booleans
     let worldBorderBoolean = World.getDynamicProperty("worldborder_b");
     let xrayaBoolean = World.getDynamicProperty("xraya_b");
-    let antiTeleportBoolean = World.getDynamicProperty("antiteleport_b");
     let opsBoolean = World.getDynamicProperty("ops_b");
     let noSlowBoolean = World.getDynamicProperty("noslowa_b");
     let nameSpoofABoolean = World.getDynamicProperty("namespoofa_b");
@@ -151,7 +150,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `XrayA: ${status(xrayaBoolean)}`,
         `Chat: ${status(chatRanksBoolean)}`,
         `Anti-Shulkers: ${status(antiShulkerBoolean)}`,
-        `Anti-Teleport: ${status(antiTeleportBoolean)}`,
         `Hotbar: ${status(hotbarBoolean)}`,
         `OPS: ${status(opsBoolean)}`,
         `RBCR: ${status(rcbrBoolean)}`,

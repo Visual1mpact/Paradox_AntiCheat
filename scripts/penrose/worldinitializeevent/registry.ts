@@ -23,9 +23,6 @@ function registry(data: WorldInitializeEvent) {
     // Define properties for xray
     property.defineBoolean("xraya_b");
 
-    // Define properties for antiteleport
-    property.defineBoolean("antiteleport_b");
-
     // Define properties for ops
     property.defineBoolean("ops_b");
 
@@ -176,12 +173,6 @@ function registry(data: WorldInitializeEvent) {
     let xraya_b = World.getDynamicProperty("xraya_b");
     if (xraya_b === undefined) {
         World.setDynamicProperty("xraya_b", config.modules.xrayA.enabled);
-    }
-
-    // Set properties for antiteleport
-    let antiteleport_b = World.getDynamicProperty("antiteleport_b");
-    if (antiteleport_b === undefined) {
-        World.setDynamicProperty("antiteleport_b", config.modules.antiTeleport.enabled);
     }
 
     // Set properties for ops

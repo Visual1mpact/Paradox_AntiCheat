@@ -66,7 +66,6 @@ import { punish } from "./moderation/punish.js";
 import { sethome } from "./utility/sethome.js";
 import { gohome } from "./utility/gohome.js";
 import { tpa } from "./moderation/tpa.js";
-import { antiteleport } from "./settings/antiteleport.js";
 import { illegalitemsD } from "./settings/illegalitemsd.js";
 import { listhome } from "./utility/listhome.js";
 import { delhome } from "./utility/delhome.js";
@@ -152,7 +151,6 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         sethome: sethome,
         gohome: gohome,
         tpa: tpa,
-        antiteleport: antiteleport,
         illegalitemsd: illegalitemsD,
         listhome: listhome,
         delhome: delhome,

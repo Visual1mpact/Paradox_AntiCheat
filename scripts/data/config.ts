@@ -84,7 +84,6 @@ export default {
         listhome: true,
         delhome: true,
         tpa: true,
-        antiteleport: true,
         illegalenchant: true,
         illegallores: true,
         despawn: true,
