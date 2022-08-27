@@ -59,7 +59,7 @@ import { Registry } from "./penrose/worldinitializeevent/registry.js";
 // Import EntityCreate Events
 import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
-import { WatchDog } from "./penrose/watchdogevent/watchdog.js";
+import { WatchDog } from "./penrose/systemevent/watchdog.js";
 
 // Self explanatory
 const World = world;
