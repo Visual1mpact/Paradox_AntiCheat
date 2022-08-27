@@ -58,6 +58,8 @@ import { ReachC } from "./penrose/entityhitevent/reach_c.js";
 import { Registry } from "./penrose/worldinitializeevent/registry.js";
 // Import EntityCreate Events
 import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
+// Import System Events
+import { WatchDog } from "./penrose/watchdogevent/watchdog.js";
 
 // Self explanatory
 const World = world;
@@ -139,3 +141,6 @@ ReachC();
 
 // EntityCreate Events
 CrasherB();
+
+// System Events
+WatchDog;
