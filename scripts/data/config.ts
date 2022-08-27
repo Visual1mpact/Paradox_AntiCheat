@@ -84,7 +84,6 @@ export default {
         listhome: true,
         delhome: true,
         tpa: true,
-        tpr: false, // Broke. Do Not Enable.
         antiteleport: true,
         illegalenchant: true,
         illegallores: true,
@@ -228,12 +227,6 @@ export default {
         setHome: {
             enabled: true,
             max: 5,
-        },
-        tpr: {
-            seconds: 20,
-            minutes: 0,
-            hours: 0,
-            days: 0,
         },
         goHome: {
             seconds: 0,
