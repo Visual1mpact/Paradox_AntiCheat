@@ -12,7 +12,7 @@
             "minecraft:type_family": {
                 "family": ["tripodcamera", "inanimate", "mob"]
             },
-            "minecraft:instant_despawn": {
+            "minecraft:despawn": {
                 "remove_child_entities": true
             }
         }

@@ -8,7 +8,7 @@
             "is_experimental": false
         },
         "paradox:kick": {
-            "minecraft:instant_despawn": {
+            "minecraft:despawn": {
                 "remove_child_entities": true
             }
         },

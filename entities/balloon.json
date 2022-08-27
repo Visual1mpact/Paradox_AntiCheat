@@ -8,7 +8,7 @@
             "is_experimental": false
         },
         "components": {
-            "minecraft:instant_despawn": {
+            "minecraft:despawn": {
                 "remove_child_entities": true
             }
         }

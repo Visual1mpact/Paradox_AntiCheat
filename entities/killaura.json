@@ -15,7 +15,7 @@
         },
         "component_groups": {
             "despawn": {
-                "minecraft:instant_despawn": {
+                "minecraft:despawn": {
                     "remove_child_entities": false
                 }
             },
