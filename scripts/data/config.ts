@@ -131,9 +131,9 @@ export default {
         namespoofB: {
             enabled: true,
             banregex: /("|\\)/,
-            // .-ßüäö are not msa-gamertags but to be sure they are excluded
+            // Deny any invalid character not within the scope of this regex
             // Only kick because playstation and switch consoles are able to rename themselves
-            kickregex: /[^A-Za-z0-9_.\- ßöäü]/,
+            kickregex: /[^A-Za-z0-9_\-() ]/,
         },
         bedrockValidate: {
             enabled: true,
