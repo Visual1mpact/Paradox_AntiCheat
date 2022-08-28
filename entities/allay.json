@@ -8,6 +8,11 @@
             "is_experimental": false
         },
         "component_groups": {
+            "paradox:kick": {
+                "minecraft:despawn": {
+                    "remove_child_entities": true
+                }
+            },
             "pickup_item_delay": {
                 "minecraft:timer": {
                     "looping": false,
@@ -17,15 +22,10 @@
                     }
                 }
             },
-            "paradox:kick": {
-                "minecraft:despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "pickup_item": {
                 "minecraft:behavior.pickup_items": {
                     "priority": 2,
-                    "max_dist": 64,
+                    "max_dist": 32,
                     "search_height": 32,
                     "goal_radius": 2.2,
                     "speed_multiplier": 6,
@@ -143,6 +143,9 @@
             },
             "minecraft:vibration_listener": {},
             "minecraft:conditional_bandwidth_optimization": {},
+            "minecraft:game_event_movement_tracking": {
+                "emit_flap": true
+            },
             "minecraft:inventory": {
                 "inventory_size": 1
             },

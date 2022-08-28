@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:phantom",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -49,6 +49,9 @@
                 "is_pushable_by_piston": true
             },
             "minecraft:conditional_bandwidth_optimization": {},
+            "minecraft:game_event_movement_tracking": {
+                "emit_flap": true
+            },
             "minecraft:attack": {
                 "damage": 6
             },

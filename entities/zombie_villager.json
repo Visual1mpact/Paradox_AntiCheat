@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:zombie_villager",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -59,6 +59,10 @@
                     "priority": 1,
                     "within_radius": 16
                 }
+            },
+
+            "can_break_doors": {
+                "minecraft:annotation.break_door": {}
             },
 
             "from_abandoned_village": {
@@ -216,7 +220,6 @@
                 "can_break_doors": true,
                 "avoid_sun": false
             },
-            "minecraft:annotation.break_door": {},
             "minecraft:movement.basic": {},
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
@@ -697,6 +700,19 @@
                             {
                                 "weight": 10,
                                 "add": { "component_groups": ["leatherworker"] }
+                            }
+                        ]
+                    },
+                    {
+                        "randomize": [
+                            {
+                                "weight": 10,
+                                "add": {
+                                    "component_groups": ["can_break_doors"]
+                                }
+                            },
+                            {
+                                "weight": 90
                             }
                         ]
                     }

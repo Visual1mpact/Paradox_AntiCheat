@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:bee",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -29,7 +29,8 @@
                         "minecraft:double_plant:4", // Rose Bush
                         "minecraft:double_plant:5", // Peony
                         "minecraft:flowering_azalea", //Flowering Azalea
-                        "minecraft:azalea_leaves_flowered" //Flowering Azalea leaves
+                        "minecraft:azalea_leaves_flowered", //Flowering Azalea leaves
+                        "minecraft:mangrove_propagule"
                     ],
                     "grow_up": {
                         "event": "minecraft:ageable_grow_up",
@@ -69,7 +70,8 @@
                         "minecraft:double_plant:4", // Rose Bush
                         "minecraft:double_plant:5", // Peony
                         "minecraft:flowering_azalea", //Flowering Azalea
-                        "minecraft:azalea_leaves_flowered" //Flowering Azalea leaves
+                        "minecraft:azalea_leaves_flowered", //Flowering Azalea leaves
+                        "minecraft:mangrove_propagule"
                     ]
                 }
             },
@@ -185,6 +187,7 @@
                     "stay_duration": 20.0,
                     "target_selection_method": "random",
                     "target_offset": [0, 0.25, 0],
+                    "target_block_filters": { "test": "is_waterlogged", "subject": "block", "operator": "==", "value": false },
                     "target_blocks": [
                         "minecraft:red_flower", // All small flowers except Dandelion
                         "minecraft:yellow_flower", // Dandelion
@@ -194,7 +197,8 @@
                         "minecraft:double_plant:12", // Rose Bush top
                         "minecraft:double_plant:13", // Peony top
                         "minecraft:flowering_azalea", //Flowering azalea
-                        "minecraft:azalea_leaves_flowered" //Flowering Azalea leaves
+                        "minecraft:azalea_leaves_flowered", //Flowering Azalea leaves
+                        "minecraft:mangrove_propagule"
                     ],
                     "on_stay_completed": [
                         {
@@ -396,7 +400,8 @@
                     "minecraft:double_plant:4", // Rose Bush
                     "minecraft:double_plant:5", // Peony
                     "minecraft:flowering_azalea", //Flowering azalea
-                    "minecraft:azalea_leaves_flowered" //Flowering Azalea leaves
+                    "minecraft:azalea_leaves_flowered", //Flowering Azalea leaves
+                    "minecraft:mangrove_propagule"
                 ]
             },
             "minecraft:behavior.move_towards_home_restriction": {
@@ -437,6 +442,9 @@
                 "height": 0.5
             },
             "minecraft:conditional_bandwidth_optimization": {},
+            "minecraft:game_event_movement_tracking": {
+                "emit_flap": true
+            },
             "minecraft:home": {
                 "restriction_radius": 22,
                 "home_block_list": ["minecraft:bee_nest", "minecraft:beehive"]

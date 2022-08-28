@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:pufferfish",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -153,8 +153,8 @@
                 "value": 1.2
             },
             "minecraft:health": {
-                "value": 6,
-                "max": 6
+                "value": 3,
+                "max": 3
             },
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [

@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:wolf",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -205,10 +205,6 @@
                 "minecraft:sittable": {},
                 "minecraft:is_dyeable": {
                     "interact_text": "action.interact.dye"
-                },
-
-                "minecraft:balloonable": {
-                    "mass": 0.8
                 }
             }
         },
@@ -226,6 +222,9 @@
                     "event": "minecraft:on_unleash",
                     "target": "self"
                 }
+            },
+            "minecraft:balloonable": {
+                "mass": 0.8
             },
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:nameable": {},
@@ -264,7 +263,7 @@
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
             "minecraft:attack": {
-                "damage": 4
+                "damage": 3
             },
             "minecraft:healable": {
                 "items": [

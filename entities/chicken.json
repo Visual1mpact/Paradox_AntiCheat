@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:chicken",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -169,7 +169,10 @@
                 "is_pushable": true,
                 "is_pushable_by_piston": true
             },
-            "minecraft:conditional_bandwidth_optimization": {}
+            "minecraft:conditional_bandwidth_optimization": {},
+            "minecraft:game_event_movement_tracking": {
+                "emit_flap": true
+            }
         },
 
         "events": {

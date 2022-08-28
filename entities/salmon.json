@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:salmon",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -18,11 +18,6 @@
                 "minecraft:scale": {
                     "value": 0.5
                 },
-
-                "minecraft:health": {
-                    "value": 6,
-                    "max": 6
-                },
                 "minecraft:loot": {
                     "table": "loot_tables/entities/salmon_normal.json"
                 }
@@ -30,11 +25,6 @@
             "scale_normal": {
                 "minecraft:scale": {
                     "value": 1
-                },
-
-                "minecraft:health": {
-                    "value": 6,
-                    "max": 6
                 },
                 "minecraft:loot": {
                     "table": "loot_tables/entities/salmon_normal.json"
@@ -44,10 +34,6 @@
             "scale_large": {
                 "minecraft:scale": {
                     "value": 1.5
-                },
-                "minecraft:health": {
-                    "value": 6,
-                    "max": 6
                 },
                 "minecraft:loot": {
                     "table": "loot_tables/entities/salmon_large.json"
@@ -72,6 +58,10 @@
                 "suffocate_time": 0,
                 "breathes_air": false,
                 "breathes_water": true
+            },
+            "minecraft:health": {
+                "value": 3,
+                "max": 3
             },
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [

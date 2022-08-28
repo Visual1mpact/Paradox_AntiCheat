@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:pillager",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -82,7 +82,7 @@
                     "update_interval_base": 60,
                     "update_interval_variant": 40,
                     "can_find_poi": false,
-                    "can_migrate": false,
+                    "can_migrate": true,
                     "first_founding_reward": 0
                 },
                 "minecraft:behavior.move_to_village": {
@@ -424,7 +424,7 @@
             },
             "minecraft:spawn_as_patrol_follower": {
                 "add": {
-                    "component_groups": ["minecraft:patrol_follower"]
+                    "component_groups": ["minecraft:ranged_attack", "minecraft:patrol_follower"]
                 }
             },
             "minecraft:spawn_as_illager_captain": {
@@ -434,7 +434,7 @@
             },
             "minecraft:promote_to_illager_captain": {
                 "add": {
-                    "component_groups": ["minecraft:illager_squad_captain"]
+                    "component_groups": ["minecraft:ranged_attack", "minecraft:illager_squad_captain"]
                 },
                 "remove": {
                     "component_groups": ["minecraft:patrol_follower"]
@@ -442,7 +442,7 @@
             },
             "minecraft:promote_to_patrol_captain": {
                 "add": {
-                    "component_groups": ["minecraft:patrol_captain"]
+                    "component_groups": ["minecraft:ranged_attack", "minecraft:patrol_captain"]
                 },
                 "remove": {
                     "component_groups": ["minecraft:patrol_follower"]

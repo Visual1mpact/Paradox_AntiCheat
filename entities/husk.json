@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "description": {
             "identifier": "minecraft:husk",
-            "is_spawnable": true,
+            "is_spawnable": false,
             "is_summonable": false,
             "is_experimental": false
         },
@@ -116,6 +116,9 @@
                     "priority": 1,
                     "within_radius": 16
                 }
+            },
+            "minecraft:can_break_doors": {
+                "minecraft:annotation.break_door": {}
             }
         },
 
@@ -177,7 +180,6 @@
                 "can_break_doors": true,
                 "avoid_portals": false
             },
-            "minecraft:annotation.break_door": {},
             "minecraft:movement.basic": {},
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
@@ -524,27 +526,44 @@
                 }
             },
             "minecraft:entity_spawned": {
-                "randomize": [
+                "sequence": [
                     {
-                        "weight": 9500,
-                        "remove": {},
-                        "add": {
-                            "component_groups": ["minecraft:zombie_husk_adult"]
-                        }
+                        "randomize": [
+                            {
+                                "weight": 9500,
+                                "remove": {},
+                                "add": {
+                                    "component_groups": ["minecraft:zombie_husk_adult"]
+                                }
+                            },
+                            {
+                                "weight": 425,
+                                "remove": {},
+                                "add": {
+                                    "component_groups": ["minecraft:zombie_husk_baby"]
+                                }
+                            },
+                            {
+                                "weight": 75,
+                                "remove": {},
+                                "add": {
+                                    "component_groups": ["minecraft:zombie_husk_baby", "minecraft:zombie_husk_jockey"]
+                                }
+                            }
+                        ]
                     },
                     {
-                        "weight": 425,
-                        "remove": {},
-                        "add": {
-                            "component_groups": ["minecraft:zombie_husk_baby"]
-                        }
-                    },
-                    {
-                        "weight": 75,
-                        "remove": {},
-                        "add": {
-                            "component_groups": ["minecraft:zombie_husk_baby", "minecraft:zombie_husk_jockey"]
-                        }
+                        "randomize": [
+                            {
+                                "weight": 10,
+                                "add": {
+                                    "component_groups": ["minecraft:can_break_doors"]
+                                }
+                            },
+                            {
+                                "weight": 90
+                            }
+                        ]
                     }
                 ]
             },
