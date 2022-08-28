@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.0.5](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.5) (2022-08-28)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v3.0.4...v3.0.5)
+
+**Closed issues:**
+
+- Memory Leak? [\#44](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/44)
+
+**Merged pull requests:**
+
+- Solved by typescript and other misc code. [\#46](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/46) ([minerj101](https://github.com/minerj101))
+
 ## [v3.0.4](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.4) (2022-07-11)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v3.0.3...v3.0.4)
@@ -14,7 +26,7 @@
 
 **Closed issues:**
 
--   Can't op myself [\#42](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/42)
+- Can't op myself  [\#42](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/42)
 
 ## [v3.0.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.1) (2022-07-04)
 
@@ -22,7 +34,7 @@
 
 **Merged pull requests:**
 
--   Apply fixes from CodeFactor [\#43](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/43) ([Visual1mpact](https://github.com/Visual1mpact))
+- Apply fixes from CodeFactor [\#43](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/43) ([Visual1mpact](https://github.com/Visual1mpact))
 
 ## [v3.0.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.0) (2022-07-04)
 
@@ -30,7 +42,7 @@
 
 **Closed issues:**
 
--   like every command throws an error if you dont give args [\#41](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/41)
+- like every command throws an error if you dont give args [\#41](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/41)
 
 ## [v2.19.54](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.19.54) (2022-06-26)
 
@@ -42,16 +54,16 @@
 
 **Closed issues:**
 
--   Failed to import 'Unknown pack name' error manifest [\#36](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/36)
+- Failed to import 'Unknown pack name' error manifest [\#36](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/36)
 
 **Merged pull requests:**
 
--   Apply fixes from CodeFactor [\#40](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/40) ([Visual1mpact](https://github.com/Visual1mpact))
--   Apply fixes from CodeFactor [\#39](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/39) ([Visual1mpact](https://github.com/Visual1mpact))
--   Fix illegal stack for some items [\#38](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/38) ([frostice482](https://github.com/frostice482))
--   Apply fixes from CodeFactor [\#37](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/37) ([Visual1mpact](https://github.com/Visual1mpact))
--   Temporary fix for dynamic properties & eval [\#35](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/35) ([frostice482](https://github.com/frostice482))
--   Compass 32k & disabler fixes [\#34](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/34) ([frostice482](https://github.com/frostice482))
+- Apply fixes from CodeFactor [\#40](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/40) ([Visual1mpact](https://github.com/Visual1mpact))
+- Apply fixes from CodeFactor [\#39](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/39) ([Visual1mpact](https://github.com/Visual1mpact))
+- Fix illegal stack for some items [\#38](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/38) ([frostice482](https://github.com/frostice482))
+- Apply fixes from CodeFactor [\#37](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/37) ([Visual1mpact](https://github.com/Visual1mpact))
+- Temporary fix for dynamic properties & eval [\#35](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/35) ([frostice482](https://github.com/frostice482))
+- Compass 32k & disabler fixes [\#34](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/34) ([frostice482](https://github.com/frostice482))
 
 ## [v2.18.52](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.18.52) (2022-06-22)
 
@@ -59,15 +71,15 @@
 
 **Closed issues:**
 
--   How to op people without going into the files [\#28](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/28)
+- How to op people without going into the files [\#28](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/28)
 
 **Merged pull requests:**
 
--   Debug & bugfixes [\#33](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/33) ([frostice482](https://github.com/frostice482))
--   Fix to Chatrank not working [\#32](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/32) ([frostice482](https://github.com/frostice482))
--   Debug & stuff [\#31](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/31) ([frostice482](https://github.com/frostice482))
--   style fix [\#30](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/30) ([Mantou1233](https://github.com/Mantou1233))
--   Please add some colors. [\#29](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/29) ([Matwarey](https://github.com/Matwarey))
+- Debug & bugfixes [\#33](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/33) ([frostice482](https://github.com/frostice482))
+- Fix to Chatrank not working [\#32](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/32) ([frostice482](https://github.com/frostice482))
+- Debug & stuff [\#31](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/31) ([frostice482](https://github.com/frostice482))
+- style fix [\#30](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/30) ([Mantou1233](https://github.com/Mantou1233))
+- Please add some colors. [\#29](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/29) ([Matwarey](https://github.com/Matwarey))
 
 ## [v2.17.51](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.17.51) (2022-06-10)
 
@@ -83,7 +95,7 @@
 
 **Closed issues:**
 
--   Anti cheat doesn't work on 1.18 versions [\#27](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/27)
+- Anti cheat doesn't work on 1.18 versions  [\#27](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/27)
 
 ## [v2.16.48](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.16.48) (2022-06-03)
 
@@ -91,7 +103,7 @@
 
 **Merged pull requests:**
 
--   disabler fix [\#26](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/26) ([LegoDori](https://github.com/LegoDori))
+- disabler fix [\#26](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/26) ([LegoDori](https://github.com/LegoDori))
 
 ## [v2.15.47](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.15.47) (2022-05-24)
 
@@ -119,9 +131,9 @@
 
 **Closed issues:**
 
--   Crash [\#25](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/25)
--   Modules still gets reset when everyone left a realm [\#24](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/24)
--   paradox is a virus [\#23](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/23)
+- Crash [\#25](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/25)
+- Modules still gets reset when everyone left a realm [\#24](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/24)
+- paradox is a virus [\#23](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/23)
 
 ## [v2.13.41](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.13.41) (2022-05-02)
 
@@ -133,7 +145,7 @@
 
 **Closed issues:**
 
--   Modules turn on/off on realms on its own [\#22](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/22)
+- Modules turn on/off on realms on its own [\#22](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/22)
 
 ## [v2.12.39](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.12.39) (2022-04-25)
 
@@ -193,7 +205,7 @@
 
 **Closed issues:**
 
--   anti xray toggle [\#19](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/19)
+- anti xray toggle [\#19](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/19)
 
 ## [v2.5.25](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.5.25) (2022-03-08)
 
@@ -205,8 +217,8 @@
 
 **Closed issues:**
 
--   Flag Report \(broken\) // Commands Not Working [\#21](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/21)
--   you should lower the aura check [\#20](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/20)
+- Flag Report \(broken\) // Commands Not Working [\#21](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/21)
+- you should lower the aura check [\#20](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/20)
 
 ## [v2.4.23](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.4.23) (2022-02-27)
 
@@ -218,7 +230,7 @@
 
 **Closed issues:**
 
--   killaura check b flags [\#18](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/18)
+- killaura check b flags [\#18](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/18)
 
 ## [v2.3.21](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.21) (2022-02-24)
 
@@ -226,8 +238,8 @@
 
 **Closed issues:**
 
--   meme [\#17](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/17)
--   Make chat filter optional [\#16](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/16)
+- meme [\#17](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/17)
+- Make chat filter optional [\#16](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/16)
 
 ## [v2.3.20](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.20) (2022-02-20)
 
@@ -247,7 +259,7 @@
 
 **Closed issues:**
 
--   Minecraft 1.18.10 is released and Gametest is broken in Paradox [\#14](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/14)
+- Minecraft 1.18.10 is released and Gametest is broken in Paradox [\#14](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/14)
 
 ## [v2.2.14](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.2.14) (2022-02-08)
 
@@ -263,8 +275,8 @@
 
 **Closed issues:**
 
--   test [\#13](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/13)
--   test [\#12](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/12)
+- test [\#13](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/13)
+- test [\#12](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/12)
 
 ## [v2.1.11](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.1.11) (2022-02-05)
 
@@ -276,7 +288,7 @@
 
 **Merged pull requests:**
 
--   Update README.md [\#1](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/1) ([GlitchyTurtle](https://github.com/GlitchyTurtle))
+- Update README.md [\#1](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/1) ([GlitchyTurtle](https://github.com/GlitchyTurtle))
 
 ## [v2.0.0-beta9](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.0.0-beta9) (2022-01-16)
 
@@ -350,4 +362,6 @@
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/b174b2960af08a4dbfab838f818df6e75e631811...0.1.0)
 
-\* _This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)_
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
