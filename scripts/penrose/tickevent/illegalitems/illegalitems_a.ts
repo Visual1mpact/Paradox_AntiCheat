@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer } from "mojang-minecraft";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { crypto, flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
@@ -8,6 +8,8 @@ import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 
 const World = world;
+
+const storage = new Map();
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }) {
     if (!enchData) {
@@ -77,7 +79,13 @@ function illegalitemsa() {
 
         let inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent,
             container = inventory.container;
-        for (let i = 0; i < container.size; i++) {
+        storage.set(player, container);
+    }
+    let player: Player;
+    let container: InventoryComponentContainer;
+    for ([player, container] of storage.entries()) {
+        let i = container.size;
+        while (i--) {
             let inventory_item = container.getItem(i);
             if (!inventory_item) continue;
 
