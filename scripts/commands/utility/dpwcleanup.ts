@@ -30,6 +30,18 @@ export async function dpwcleanup(message: BeforeChatEvent, args: string[]) {
 
     let player = message.sender;
 
+    // Check for hash/salt and validate password
+    let hash = player.getDynamicProperty("hash");
+    let salt = player.getDynamicProperty("salt");
+    let encode: string;
+    try {
+        encode = crypto(salt, config.modules.encryption.password);
+    } catch (error) {}
+    // make sure the user has permissions to run the command
+    if (hash === undefined || encode !== hash) {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+    }
+
     // Check for custom prefix
     let prefix = getPrefix(player);
 
