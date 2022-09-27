@@ -1,8 +1,4 @@
 <div align="center">
-This project is archived and currently not maintained by the original Developer.
-<div align="center">
-
-<div align="center">
 <img src="https://i.imgur.com/ZS38i7c.png" border="0">
 <div align="center">
   
