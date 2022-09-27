@@ -192,15 +192,14 @@ export function commandHandler(player: Player, message: BeforeChatEvent) {
 
     if (config.debug) console.warn(`${new Date()} | "${player.name}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
 
-    if (!(commandName in commandDefinitions)) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
-        return (message.cancel = true);
-    }
-    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1));
-
     message.cancel = true;
     message.targets = [];
     message.sendToTargets = true;
+
+    if (!(commandName in commandDefinitions)) return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
+
+    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1));
+
     message.message = "";
 
     return void 0;
