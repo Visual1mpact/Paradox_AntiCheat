@@ -83,6 +83,7 @@ import { crasherB } from "./settings/crasherb.js";
 import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
+import { dpwcleanup } from "./utility/dpwcleanup.js";
 
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
@@ -166,6 +167,7 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         give: give,
         clearlag: clearlag,
         listitems: listitems,
+        dpwcleanup: dpwcleanup,
     },
     null
 );
