@@ -1,7 +1,7 @@
 import "./debug/main.js";
 // Import Customs
 import { world } from "mojang-minecraft";
-import { setTickInterval } from "./misc/scheduling.js";
+import { setTickInterval } from "./libs/scheduling.js";
 import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
 // Import BeforeChat Events
 import { BadPackets1 } from "./penrose/beforechatevent/spammer/badpackets_1.js";

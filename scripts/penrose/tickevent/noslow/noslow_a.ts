@@ -1,7 +1,7 @@
 import { world, MinecraftEffectTypes, EntityMovementComponent } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 
 const World = world;
 

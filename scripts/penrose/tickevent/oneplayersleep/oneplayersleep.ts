@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions, Player } from "mojang-minecraft";
 import config from "../../../data/config.js";
-import { clearTickTimeout, setTickTimeout } from "../../../misc/scheduling.js";
+import { clearTickTimeout, setTickTimeout } from "../../../libs/scheduling.js";
 
 const World = world;
 

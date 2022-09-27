@@ -1,5 +1,5 @@
 import { world, Location, BlockLocation, Block, Player, Dimension } from "mojang-minecraft";
-import { clearTickInterval, setTickInterval } from "../../../misc/scheduling.js";
+import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 

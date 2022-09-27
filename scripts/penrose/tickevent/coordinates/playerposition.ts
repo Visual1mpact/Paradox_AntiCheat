@@ -1,5 +1,5 @@
 import { world } from "mojang-minecraft";
-import { setTickInterval } from "../../../misc/scheduling.js";
+import { setTickInterval } from "../../../libs/scheduling.js";
 
 const World = world;
 
