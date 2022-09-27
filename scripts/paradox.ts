@@ -1,4 +1,3 @@
-import "./misc/dpwrapper.js";
 import "./debug/main.js";
 // Import Customs
 import { world } from "mojang-minecraft";
