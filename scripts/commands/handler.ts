@@ -195,5 +195,11 @@ export function commandHandler(player: Player, message: BeforeChatEvent) {
         return (message.cancel = true);
     }
     commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1));
+
+    message.cancel = true;
+    message.targets = [];
+    message.sendToTargets = true;
+    message.message = "";
+
     return void 0;
 }
