@@ -1,7 +1,7 @@
 import { SimulatedPlayer } from "mojang-gametest";
 import { Player, PropertyRegistry, World } from "mojang-minecraft";
 import config from "../data/config.js";
-import scoreboard from "../libs/scoreboard.js";
+import scoreboard from "../libs/scoreboardnew.js";
 import { crypto } from "../util.js";
 
 type scoreboardObjectiveDummies = typeof scoreboard.objective.prototype.dummies;
@@ -52,7 +52,7 @@ if (config.dynamicPropertyWrapper.enabled) {
 
         // delete existing
         const propData = (worldPropertyList[id] ??= { cachedValue: undefined, scoreboardName: undefined });
-        if (propData.scoreboardName !== undefined) worldObj.delete(propData.scoreboardName);
+        if (propData.scoreboardName !== undefined) worldObj.reset(propData.scoreboardName);
 
         // set
         propData.cachedValue = value;
@@ -62,7 +62,7 @@ if (config.dynamicPropertyWrapper.enabled) {
         if (!(id in worldPropertyList)) return false;
 
         // delete
-        worldObj.delete(worldPropertyList[id].scoreboardName);
+        worldObj.reset(worldPropertyList[id].scoreboardName);
         delete worldPropertyList[id];
 
         return true;

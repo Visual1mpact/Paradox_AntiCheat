@@ -7,3 +7,8 @@ declare var console: {
 
 declare class InternalError extends Error {}
 declare var __date_clock: () => number;
+
+interface Function {
+    fileName?: string;
+    lineNumber?: number;
+}

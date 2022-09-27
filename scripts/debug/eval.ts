@@ -56,7 +56,7 @@ import salvageable from "../data/salvageable.js";
 import { whitelist as whitelistItems } from "../data/whitelistitems.js";
 import { xrayblocks as xrayBlocks } from "../data/xray.js";
 import * as scheduling from "../misc/scheduling.js";
-import scoreboard from "../libs/scoreboard.js";
+import scoreboard from "../libs/scoreboardnew.js";
 import * as util from "../util.js";
 import { world } from "mojang-minecraft";
 import * as mc from "mojang-minecraft";
