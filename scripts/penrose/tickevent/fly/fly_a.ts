@@ -20,7 +20,7 @@ function flya(id: number) {
     }
 
     // Exclude creative gamemode
-    let gm = new EntityQueryOptions();
+    let gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [1];
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {

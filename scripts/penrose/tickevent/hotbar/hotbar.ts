@@ -15,7 +15,7 @@ function hotbar() {
         return;
     }
     let hotbarMessage: string;
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.excludeTags = ["vanish"];
     // run as each player
     for (let player of World.getPlayers(filter)) {

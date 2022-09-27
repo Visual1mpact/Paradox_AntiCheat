@@ -12,7 +12,7 @@ function nearestPlayer(entity: Entity) {
     const allPlayers = World.getPlayers();
 
     // Query new EntityQueryOptions class for searching
-    const query = new EntityQueryOptions();
+    const query = new Object() as EntityQueryOptions;
     // Set query to find the closest player, and only one of them
     query.closest = 1;
     // Closest player

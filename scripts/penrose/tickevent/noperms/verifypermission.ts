@@ -5,7 +5,7 @@ import { crypto, sendMsg } from "../../../util.js";
 const World = world;
 
 function verifypermission() {
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.tags = ["paradoxOpped"];
     // Let's check the players for illegal permissions
     for (let player of World.getPlayers(filter)) {

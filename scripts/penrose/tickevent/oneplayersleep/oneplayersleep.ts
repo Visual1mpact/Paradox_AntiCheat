@@ -26,7 +26,7 @@ function ops() {
         World.events.tick.unsubscribe(ops);
         return;
     }
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.tags = ["sleeping"];
     let filterPlayers = [...World.getPlayers(filter)];
     if (filterPlayers.length) {

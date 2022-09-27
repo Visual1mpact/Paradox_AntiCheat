@@ -23,7 +23,7 @@ function survival() {
         World.events.tick.unsubscribe(survival);
         return;
     }
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     // 0 = survival
     filter.gameMode = 0;
     // Run as each player

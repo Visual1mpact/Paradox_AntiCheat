@@ -23,7 +23,7 @@ function adventure() {
         World.events.tick.unsubscribe(adventure);
         return;
     }
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     // 2 = adventure
     filter.gameMode = 2;
     // Run as each player

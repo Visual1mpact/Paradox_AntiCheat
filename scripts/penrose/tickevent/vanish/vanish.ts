@@ -6,7 +6,7 @@ const World = world;
 
 function vanish() {
     // Filter for only players who are vanished
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.tags = ["vanish"];
     // Run as each player
     for (let player of World.getPlayers(filter)) {

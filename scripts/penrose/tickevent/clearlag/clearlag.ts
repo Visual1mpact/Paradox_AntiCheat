@@ -32,7 +32,7 @@ function dhms(ms: number) {
 
 function executionItem() {
     // Find them all and take them out
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.type = "item";
     for (let entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
@@ -56,7 +56,7 @@ function executionItem() {
 
 function executionEntity() {
     // Find them all and take them out
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.families = ["monster"];
     for (let entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it

@@ -5,7 +5,7 @@ import { crypto, sendMsg } from "../../../util.js";
 const World = world;
 
 function noperms() {
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.tags = ["paradoxOpped"];
     // We need a list of players for checking behind a bug in Minecraft
     let playerArray = [...World.getPlayers(filter)];

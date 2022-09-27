@@ -72,7 +72,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     let verify = false;
     let filteredEntity: string;
     let requestedEntity: string;
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.excludeTypes = ["player"];
     // Specified entity
     if (args[0] !== "all" && args.length > 0) {

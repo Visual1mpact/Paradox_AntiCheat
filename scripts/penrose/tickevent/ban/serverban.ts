@@ -6,7 +6,7 @@ import { queueUnban } from "../../../commands/moderation/unban.js";
 const World = world;
 
 function serverban() {
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     filter.tags = ["isBanned"];
     // run as each player
     for (let player of World.getPlayers(filter)) {

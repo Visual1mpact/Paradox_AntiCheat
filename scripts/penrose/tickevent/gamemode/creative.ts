@@ -23,7 +23,7 @@ function creative() {
         World.events.tick.unsubscribe(creative);
         return;
     }
-    let filter = new EntityQueryOptions();
+    let filter = new Object() as EntityQueryOptions;
     // 1 = creative
     filter.gameMode = 1;
     // Run as each player
