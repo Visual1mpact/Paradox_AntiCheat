@@ -8,7 +8,7 @@ function dpwcleanupHelp(player: Player, prefix: string) {
         `\n§4[§6Command§4]§r: dpwcleanup`,
         `§4[§6Usage§4]§r: dpwcleanup [optional]`,
         `§4[§6Optional§4]§r: id`,
-        `§4[§6Description§4]§r: Cleanuup leftover dynamic property wrapper data.`,
+        `§4[§6Description§4]§r: Cleanup leftover dynamic property wrapper data.`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}dpwcleanup 3t6@XB`,
         `    ${prefix}dpwcleanup help`,
