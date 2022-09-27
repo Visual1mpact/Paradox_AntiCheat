@@ -10,7 +10,7 @@ function safetyProtocol(player: Player, x: number, y: number, z: number) {
     let safe: number;
     for (let i = blockVerification; i < blockVerification + 100; i++) {
         let testAir = player.dimension.getBlock(new BlockLocation(x, i, z));
-        if (testAir.isEmpty) {
+        if (testAir.id == "minecraft:air") {
             safe = testAir.y;
             break;
         }

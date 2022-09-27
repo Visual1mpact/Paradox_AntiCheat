@@ -26,7 +26,6 @@ if (config.debug)
         const spawnLoc = new BlockLocation(1, 2, 1);
         for (let i = 0; i < 40; i++) {
             const plr = test.spawnSimulatedPlayer(spawnLoc, `Dummy${i}-${(100000000000 + Math.floor(Math.random() * 900000000000)).toString(36)}`);
-            //@ts-expect-error
             const c = plr.getComponent("inventory").container;
             for (let i = 0, m = c.size; i < m; i++) c.setItem(i, dirt);
         }

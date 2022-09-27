@@ -78,7 +78,7 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    let inv = member.getComponent("inventory") as EntityInventoryComponent;
+    let inv = member.getComponent("inventory");
     let container = inv.container;
 
     sendMsgToPlayer(player, [

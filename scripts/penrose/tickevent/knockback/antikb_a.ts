@@ -31,7 +31,7 @@ function antiknockbacka(id: number) {
 
         let hand = player.selectedSlot;
 
-        let invContainer = player.getComponent("inventory") as EntityInventoryComponent;
+        let invContainer = player.getComponent("inventory");
         let inventory = invContainer.container;
         let equippedItem = inventory.getItem(hand);
 

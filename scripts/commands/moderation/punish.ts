@@ -95,7 +95,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get requested player's inventory so we can wipe it out
-    let inventoryContainer = member.getComponent("minecraft:inventory") as EntityInventoryComponent;
+    let inventoryContainer = member.getComponent("minecraft:inventory");
     let inventory = inventoryContainer.container;
     for (let i = 0; i < inventory.size; i++) {
         let inventory_item = inventory.getItem(i);

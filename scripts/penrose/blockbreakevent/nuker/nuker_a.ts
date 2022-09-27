@@ -38,7 +38,7 @@ function nukera(object: BlockBreakEvent) {
     let hand = player.selectedSlot;
 
     // Get the type of item from the slot number in their possession
-    let invContainer = player.getComponent("minecraft:inventory") as EntityInventoryComponent;
+    let invContainer = player.getComponent("minecraft:inventory");
     let item = invContainer.container.getItem(hand) as ItemStack;
 
     // We get enchantment on this item

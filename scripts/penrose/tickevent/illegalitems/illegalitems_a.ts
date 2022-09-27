@@ -77,7 +77,7 @@ function illegalitemsa() {
         } catch {}
         if (hash !== undefined && encode === hash) continue;
 
-        let inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent,
+        let inventory = player.getComponent("minecraft:inventory"),
             container = inventory.container;
         storage.set(player, container);
     }
