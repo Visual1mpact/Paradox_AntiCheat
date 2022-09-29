@@ -76,7 +76,10 @@ function illegalitemsa() {
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch {}
-        if (hash !== undefined && encode === hash) continue;
+        if (hash !== undefined && encode === hash) {
+            storage.delete(player);
+            continue;
+        }
 
         let inventory = player.getComponent("minecraft:inventory"),
             container = inventory.container;
