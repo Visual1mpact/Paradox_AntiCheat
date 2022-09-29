@@ -5,8 +5,6 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 
-let isSilent;
-
 function kickHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.kick) {
@@ -40,12 +38,6 @@ export function kick(message: BeforeChatEvent, args: string[]) {
     }
 
     message.cancel = true;
-
-    if (args[1] === "-s") {
-        isSilent = true;
-    } else {
-        isSilent = false;
-    }
 
     let player = message.sender;
     let reason = args.slice(1).join(" ").replace("-s", "") || "No reason specified";
@@ -94,11 +86,7 @@ export function kick(message: BeforeChatEvent, args: string[]) {
     }
 
     try {
-        if (!isSilent) {
-            player.runCommand(`kick ${JSON.stringify(member.name)} ${reason}`);
-        } else {
-            member.triggerEvent("paradox:kick");
-        }
+        player.runCommand(`kick ${JSON.stringify(member.name)} ${reason}`);
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
