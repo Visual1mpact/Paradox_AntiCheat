@@ -1,10 +1,11 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items } from "mojang-minecraft";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
+const empty = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function punishHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -103,7 +104,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
             continue;
         }
         try {
-            inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 1));
+            inventory.setItem(i, empty);
         } catch {}
     }
     // Notify staff and player that punishment has taken place
