@@ -1,6 +1,7 @@
 import { BeforeChatEvent, Player, world } from "mojang-minecraft";
 import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
@@ -73,6 +74,7 @@ function antispam(msg: BeforeChatEvent) {
                 player.addTag("By:Paradox");
                 player.addTag("isBanned");
             } catch (error) {
+                kickablePlayers.add(player);
                 player.triggerEvent("paradox:kick");
             }
         }

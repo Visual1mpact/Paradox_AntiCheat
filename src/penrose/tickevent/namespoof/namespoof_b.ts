@@ -2,6 +2,7 @@ import { Player, world } from "mojang-minecraft";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
@@ -13,6 +14,7 @@ function rip(player: Player) {
         player.addTag("isBanned");
         // Despawn if we cannot kick the player
     } catch (error) {
+        kickablePlayers.add(player);
         player.triggerEvent("paradox:kick");
     }
 }

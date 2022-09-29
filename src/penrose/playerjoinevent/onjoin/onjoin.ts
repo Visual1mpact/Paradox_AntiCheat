@@ -2,6 +2,7 @@ import { Player, world } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { getPrefix } from "../../../util.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
@@ -33,6 +34,7 @@ function onJoinTime(player: Player, callback: any) {
                 player.runCommand(`kick ${JSON.stringify(player.name)} ${reason}`);
             } catch (error) {
                 // Despawn players from server
+                kickablePlayers.add(player);
                 player.triggerEvent("paradox:kick");
             }
             return tickEventCallback.unsubscribe(callback);

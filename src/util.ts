@@ -1,6 +1,7 @@
 /* eslint no-var: "off"*/
 import { BeforeChatEvent, Location, Player, world } from "mojang-minecraft";
 import config from "./data/config.js";
+import { kickablePlayers } from "./kickcheck.js";
 
 /**
  * @name flag
@@ -50,6 +51,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
         }
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
+        kickablePlayers.add(player);
         player.triggerEvent("paradox:kick");
     }
 }
@@ -74,6 +76,7 @@ export function banMessage(player: Player) {
         player.runCommand(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
+        kickablePlayers.add(player);
         player.triggerEvent("paradox:kick");
     }
 }

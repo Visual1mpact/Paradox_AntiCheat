@@ -3,6 +3,7 @@ import { world, EntityQueryOptions, ItemStack, EntityItemComponent } from "mojan
 import { sendMsg } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import { clearItems } from "../../../data/clearlag.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
@@ -65,6 +66,7 @@ function executionEntity() {
         }
 
         // Despawn this entity
+        kickablePlayers.add(entity);
         entity.triggerEvent("paradox:kick");
     }
     return World.events.tick.unsubscribe(executionEntity);

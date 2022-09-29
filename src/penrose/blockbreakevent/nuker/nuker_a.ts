@@ -1,6 +1,7 @@
 import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
 import config from "../../../data/config.js";
 import { crypto, flag } from "../../../util.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
@@ -144,7 +145,7 @@ function nukera(object: BlockBreakEvent) {
             player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
             player.addTag('isBanned');
         } catch (error) {
-            player.triggerEvent('paradox:kick');
+            kickablePlayers.add(player); player.triggerEvent('paradox:kick');
         } */
     }
 }

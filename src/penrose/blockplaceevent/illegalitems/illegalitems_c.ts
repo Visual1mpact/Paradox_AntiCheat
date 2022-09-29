@@ -22,6 +22,7 @@ import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
@@ -35,6 +36,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
         } catch (error) {
+            kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         }
     } else if (!block) {
@@ -45,6 +47,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
         } catch (error) {
+            kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         }
     } else {
@@ -55,6 +58,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
         } catch (error) {
+            kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         }
     }

@@ -1,6 +1,7 @@
 import { world } from "mojang-minecraft";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
+import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
@@ -25,6 +26,7 @@ function crashera() {
                 player.addTag("By:Paradox");
                 player.addTag("isBanned");
             } catch (error) {
+                kickablePlayers.add(player);
                 player.triggerEvent("paradox:kick");
             }
         }
