@@ -178,8 +178,12 @@
                 }
             },
             "paradox:kick": {
-                "minecraft:despawn": {
-                    "remove_child_entities": true
+                "minecraft:explode": {
+                    "fuse_length": 0,
+                    "fuse_lit": true,
+                    "power": 0,
+                    "causes_fire": false,
+                    "breaks_blocks": false
                 }
             }
         },
