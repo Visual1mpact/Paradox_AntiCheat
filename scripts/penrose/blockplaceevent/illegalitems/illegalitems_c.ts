@@ -24,6 +24,7 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 
 const World = world;
+const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }, block: Block) {
     if (!enchData && !block) {
@@ -167,6 +168,104 @@ function illegalitemsc(object: BlockPlaceEvent) {
                 continue;
             }
 
+            const itemType = Items.get(inventory_item.id);
+
+            // Check if item found inside the container is illegal
+            if (!itemType || inventory_item.id in illegalitems) {
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
+                inventory.setItem(i, emptyItem);
+                return rip(player, inventory_item, null, null);
+            }
+            // Check if item found inside container exceeds allowed stacks
+            const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack;
+            if (inventory_item.amount < 0 || inventory_item.amount > maxStack) {
+                const itemId = inventory_item.id.replace("minecraft:", "");
+                // Item stacks over max allowed we remove
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", block.type.id.replace("minecraft:", ""), false, null);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
+                if (stackBanBoolean) {
+                    return rip(player, inventory_item, null, null);
+                }
+                try {
+                    inventory.setItem(i, emptyItem);
+                } catch (error) {}
+                continue;
+            }
+            // Check items for illegal lores
+            if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
+                try {
+                    inventory.setItem(i, emptyItem);
+                } catch {}
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.type.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
+                continue;
+            }
+            if (illegalEnchantmentBoolean) {
+                // We get a list of enchantments on this item
+                let enchantComponent = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+                let item_enchants = enchantComponent.enchantments;
+                // List of allowed enchantments on item
+                let enchantedSlot = enchantmentSlot[item_enchants.slot];
+                // Check if enchantment is illegal on item
+                if (item_enchants) {
+                    for (let {
+                        level,
+                        type: { id },
+                    } of item_enchants) {
+                        let enchantLevel = enchantedSlot[id];
+                        if (!enchantLevel) {
+                            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
+                            // Remove this item immediately
+                            try {
+                                inventory.setItem(i, emptyItem);
+                            } catch {}
+                            sendMsg("@a[tag=notify]", [
+                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.type.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace(
+                                    "minecraft:",
+                                    ""
+                                )}§4]§r §6Enchanted: §4${id}=${level}§r`,
+                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
+                            ]);
+                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
+                            rip(player, inventory_item, { id, level }, null);
+                            break;
+                        }
+                        // Does the enchantment type exceed or break vanilla levels
+                        if (level > enchantLevel || level < 0) {
+                            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
+                            // Remove this item immediately
+                            try {
+                                inventory.setItem(i, emptyItem);
+                            } catch {}
+                            sendMsg("@a[tag=notify]", [
+                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.type.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace(
+                                    "minecraft:",
+                                    ""
+                                )}§4]§r §6Enchanted: §4${id}=${level}§r`,
+                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
+                            ]);
+                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
+                            rip(player, inventory_item, { id, level }, null);
+                            break;
+                        }
+                    }
+                    continue;
+                }
+            }
+            // Check if item container is not empty
+            const whitelistChest = ["minecraft:shulker_box", "minecraft:undyed_shulker_box", "minecraft:ender_chest"];
+            if (block.type.id in whitelistChest) {
+                // Most items with a container should be empty when placing down
+                // If we detect items in the container when being placed then it is a hack
+                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.type.id.replace("minecraft:", ""), false, null);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} placed a nested chest at X=${x.toFixed(0)}, Y=${y.toFixed(0)}, Z=${z.toFixed(0)}. Chest has been cleared!`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!`);
+                // Clear this container from the world
+                inventory.setItem(i, emptyItem);
+                continue;
+            }
+
             if (salvageBoolean && inventory_item.id in whitelist === false) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
@@ -175,7 +274,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
                 let enchantLevelArray = [];
                 let verifiedItemName = inventory_item.nameTag;
                 let newNameTag = titleCase(inventory_item.id.replace("minecraft:", ""));
-                let actualItemName = new ItemStack(Items.get(inventory_item.id));
+                let actualItemName = new ItemStack(itemType);
                 actualItemName.data = inventory_item.data;
                 actualItemName.amount = inventory_item.amount;
                 actualItemName.nameTag = newNameTag;
@@ -248,118 +347,22 @@ function illegalitemsc(object: BlockPlaceEvent) {
                 if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
                     // Reset item to data type of 0
                     try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount));
+                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount));
                     } catch (error) {}
                     continue;
                 } else if (salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
                     // Reset item to data type of equal data if they do not match
                     try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, salvageable[inventory_item.id].data));
+                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount, salvageable[inventory_item.id].data));
                     } catch (error) {}
                     continue;
                 } else if (salvageable[inventory_item.id]) {
                     // Reset item to data type of equal data because we take no chances
                     try {
-                        inventory.setItem(i, new ItemStack(Items.get(inventory_item.id), inventory_item.amount, inventory_item.data));
+                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount, inventory_item.data));
                     } catch (error) {}
                     continue;
                 }
-            }
-
-            // Check if item found inside the container is illegal
-            if (inventory_item.id in illegalitems) {
-                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                return rip(player, inventory_item, null, null);
-            }
-            // Check if item found inside container exceeds allowed stacks
-            const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack;
-            if (inventory_item.amount < 0 || inventory_item.amount > maxStack) {
-                const itemId = inventory_item.id.replace("minecraft:", "");
-                // Item stacks over max allowed we remove
-                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", block.type.id.replace("minecraft:", ""), false, null);
-                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
-                if (stackBanBoolean) {
-                    return rip(player, inventory_item, null, null);
-                }
-                try {
-                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch (error) {}
-                continue;
-            }
-            // Check items for illegal lores
-            if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
-                try {
-                    inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                } catch {}
-                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.type.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
-                continue;
-            }
-            if (illegalEnchantmentBoolean) {
-                // We get a list of enchantments on this item
-                let enchantComponent = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
-                let item_enchants = enchantComponent.enchantments;
-                // List of allowed enchantments on item
-                let enchantedSlot = enchantmentSlot[item_enchants.slot];
-                // Check if enchantment is illegal on item
-                if (item_enchants) {
-                    for (let {
-                        level,
-                        type: { id },
-                    } of item_enchants) {
-                        let enchantLevel = enchantedSlot[id];
-                        if (!enchantLevel) {
-                            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
-                            // Remove this item immediately
-                            try {
-                                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                            } catch {}
-                            sendMsg("@a[tag=notify]", [
-                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.type.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace(
-                                    "minecraft:",
-                                    ""
-                                )}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
-                            ]);
-                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
-                            rip(player, inventory_item, { id, level }, null);
-                            break;
-                        }
-                        // Does the enchantment type exceed or break vanilla levels
-                        if (level > enchantLevel || level < 0) {
-                            flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
-                            // Remove this item immediately
-                            try {
-                                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                            } catch {}
-                            sendMsg("@a[tag=notify]", [
-                                `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.type.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace(
-                                    "minecraft:",
-                                    ""
-                                )}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                                `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
-                            ]);
-                            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
-                            rip(player, inventory_item, { id, level }, null);
-                            break;
-                        }
-                    }
-                    continue;
-                }
-            }
-            // Check if item container is not empty
-            const whitelistChest = ["minecraft:shulker_box", "minecraft:undyed_shulker_box", "minecraft:ender_chest"];
-            if (block.type.id in whitelistChest) {
-                // Most items with a container should be empty when placing down
-                // If we detect items in the container when being placed then it is a hack
-                flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, "Container", block.type.id.replace("minecraft:", ""), false, null);
-                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} placed a nested chest at X=${x.toFixed(0)}, Y=${y.toFixed(0)}, Z=${z.toFixed(0)}. Chest has been cleared!`);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!`);
-                // Clear this container from the world
-                inventory.setItem(i, new ItemStack(MinecraftItemTypes.air, 0));
-                continue;
             }
         }
     }
