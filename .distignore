@@ -1,0 +1,11 @@
+.github
+.vscode
+src
+types
+.distignore
+.gitignore
+.mcattributes
+.prettierrc
+dist.bat
+sync.bat
+tsconfig.json

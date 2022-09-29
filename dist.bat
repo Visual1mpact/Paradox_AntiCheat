@@ -16,28 +16,16 @@ if "%ver%" == "null" goto loopver
 set TEMPPATH="%temp%\%PACK_NAME%_temp"
 
 cls
-echo Cloning to %TEMPPATH% ^(temporary^)
 
-setlocal
+echo Cloning to %TEMPPATH% ^(temporary^)
 if exist %TPATH% rd /s /q md %TEMPPATH%
 md %TEMPPATH%
-xcopy /e /c /i /q /y %PACK_DIR% %TEMPPATH%
-cd /d %TEMPPATH%
-rd /s /q .github
-rd /s /q .vscode
-del .gitignore
-del .mcattributes
-del sync.bat
-del tsconfig.json
-del *.zip
-endlocal
+xcopy /e /c /i /q /y /EXCLUDE:.distignore %PACK_DIR% %TEMPPATH%
 
 echo Zipping
-
 cmd /c powershell Compress-Archive -Path \"%TEMPPATH%\" -DestinationPath \"Paradox-AntiCheat-v%ver%.zip\" -Force
 
 echo Removing temporary folder...
-
 rd /s /q %TEMPPATH%
 
 echo Finished.

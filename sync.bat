@@ -33,7 +33,7 @@ if exist %TPATH% (
 )
 
 echo Copying to %TPATH%
-xcopy /e /c /i /q /y %PACK_DIR% %TPATH%
+xcopy /e /c /i /q /y /EXCLUDE:.distignore %PACK_DIR% %TPATH%
 
 echo Sync ^(%target%^) completed
 choice /n /c yn /m "Redo? [YN] "
