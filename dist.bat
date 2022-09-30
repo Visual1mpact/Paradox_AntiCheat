@@ -23,7 +23,10 @@ md %TEMPPATH%
 xcopy /e /c /i /q /y /EXCLUDE:.distignore %PACK_DIR% %TEMPPATH%
 
 echo Zipping
-cmd /c powershell Compress-Archive -Path \"%TEMPPATH%\" -DestinationPath \"Paradox-AntiCheat-v%ver%.zip\" -Force
+cmd /c powershell Compress-Archive -Path \"%TEMPPATH%\*\" -DestinationPath \"Paradox-AntiCheat-v%ver%.zip\" -Force
+
+echo Renaming
+ren "Paradox-AntiCheat-v%ver%.zip" "Paradox-AntiCheat-v%ver%.mcpack"
 
 echo Removing temporary folder...
 rd /s /q %TEMPPATH%
