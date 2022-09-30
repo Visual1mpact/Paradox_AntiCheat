@@ -72,9 +72,9 @@ function flya(id: number) {
                 !player.hasTag("riding") &&
                 !player.hasTag("flying") &&
                 !player.hasTag("swimming") &&
-                Block.type.id === "minecraft:air" &&
-                Block1.type.id === "minecraft:air" &&
-                Block2.type.id === "minecraft:air"
+                (Block?.type.id === "minecraft:air" ?? true) &&
+                (Block1?.type.id === "minecraft:air" ?? true) &&
+                (Block2?.type.id === "minecraft:air" ?? true)
             ) {
                 try {
                     player.runCommand(`scoreboard players add @s fly_timer 1`);

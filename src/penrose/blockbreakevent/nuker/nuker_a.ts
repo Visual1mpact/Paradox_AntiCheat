@@ -43,11 +43,13 @@ function nukera(object: BlockBreakEvent) {
     let item = invContainer.container.getItem(hand) as ItemStack;
 
     // We get enchantment on this item
-    let enchantComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
-    let item_enchants = enchantComponent.enchantments;
     let enchantment: Enchantment;
-    if (item_enchants.hasEnchantment(MinecraftEnchantmentTypes.efficiency)) {
-        enchantment = item_enchants.getEnchantment(MinecraftEnchantmentTypes.efficiency);
+    if (item) {
+        let enchantComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+        let item_enchants = enchantComponent.enchantments;
+        if (item_enchants.hasEnchantment(MinecraftEnchantmentTypes.efficiency)) {
+            enchantment = item_enchants.getEnchantment(MinecraftEnchantmentTypes.efficiency);
+        }
     }
 
     let timer: Date[];
