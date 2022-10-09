@@ -2,7 +2,7 @@
 
 // Maximum enchantment level per enchantments.
 const maxLevel = {
-    protection: 2,
+    protection: 4,
     fireProtection: 4,
     featherFalling: 4,
     blastProtection: 4,
