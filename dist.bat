@@ -59,7 +59,7 @@ if "%errorlevel%" NEQ "0" (
 
 set 7zILoc=!7-ZipILoc!
 
-if !7zILoc! NEQ null (
+if !7zILoc! == null (
     if "%WinRARILoc%" == null (
         echo Zipping ^(Using powershell Compress-Archive^)
         if exist %ZIPNAME% del %ZIPNAME%
