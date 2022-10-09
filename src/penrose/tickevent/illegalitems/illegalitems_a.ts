@@ -100,7 +100,7 @@ function illegalitemsa() {
 
             // If player has an illegal item we kick them
             // If we cannot kick them then we despawn them (no mercy)
-            if (!itemType || inventory_item.id in illegalitems) {
+            if (inventory_item.id in illegalitems) {
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                 try {
                     container.setItem(i, emptyItem);
@@ -182,7 +182,7 @@ function illegalitemsa() {
                 continue;
             }
 
-            if (salvageBoolean && inventory_item.id in whitelist === false) {
+            if (itemType && salvageBoolean && inventory_item.id in whitelist === false) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */

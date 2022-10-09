@@ -104,7 +104,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
 
     const itemType = Items.get(item.id);
     // Check if item is in illegal item list
-    if (!itemType || item.id in illegalitems) {
+    if (item.id in illegalitems) {
         object.cancel = true;
         flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, null, null, false, null);
         let invContainer = source.getComponent("minecraft:inventory");
@@ -192,7 +192,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
         }
     }
 
-    if (salvageBoolean && item.id in whitelist === false) {
+    if (itemType && salvageBoolean && item.id in whitelist === false) {
         /**
          * Salvage System to mitigate NBT's on every item in the game
          */

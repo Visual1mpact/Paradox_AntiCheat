@@ -175,7 +175,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
             const itemType = Items.get(inventory_item.id);
 
             // Check if item found inside the container is illegal
-            if (!itemType || inventory_item.id in illegalitems) {
+            if (inventory_item.id in illegalitems) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
                 inventory.setItem(i, emptyItem);
                 return rip(player, inventory_item, null, null);
@@ -270,7 +270,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
                 continue;
             }
 
-            if (salvageBoolean && inventory_item.id in whitelist === false) {
+            if (itemType && salvageBoolean && inventory_item.id in whitelist === false) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
