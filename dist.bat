@@ -67,6 +67,7 @@ if !7zILoc! == null (
     ) else (
         echo Zipping ^(Using WinRAR^)
         echo.%WinRARILoc%
+        
         setlocal
         cd /d "%TEMPPATH%\*"
         "%WinRARILoc%\WinRAR.exe" a -afzip -r %ZIPNAME%
@@ -76,7 +77,12 @@ if !7zILoc! == null (
 ) else (
     echo Zipping ^(Using 7-Zip^)
     echo.!7zILoc!
+    
+    setlocal
+    cd /d "%TEMPPATH%\*"
     "!7zILoc!\7z.exe" a -tzip %ZIPNAME% 
+    endlocal
+    move "%TEMPPATH%\%ZIPNAME%" .
 )
 
 rem ----------------------------------------------------------------------------------------------------
