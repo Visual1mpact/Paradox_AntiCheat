@@ -244,4 +244,5 @@ export const banplayer = [
     { name: "QP chandayo" },
     { name: "Fe3rees" },
     { name: "DullHz" },
+    { name: "Frostice482" },
 ];
