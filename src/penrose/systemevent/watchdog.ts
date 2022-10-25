@@ -1,5 +1,5 @@
 // @ts-ignore
-import { system } from "mojang-minecraft";
+import { system } from "@minecraft/server";
 
 function watchdog(terminator) {
     // Cancel watchdog from shutting down server/realm

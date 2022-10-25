@@ -1,4 +1,4 @@
-import { EntityInventoryComponent, world } from "mojang-minecraft";
+import { EntityInventoryComponent, world } from "@minecraft/server";
 import { flag, crypto } from "../../../util.js";
 import config from "../../../data/config.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";

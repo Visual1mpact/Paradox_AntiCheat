@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 

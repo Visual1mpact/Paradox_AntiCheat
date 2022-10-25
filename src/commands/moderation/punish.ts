@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items } from "mojang-minecraft";
+import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 

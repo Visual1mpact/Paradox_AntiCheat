@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";

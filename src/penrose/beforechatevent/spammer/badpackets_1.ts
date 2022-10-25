@@ -1,4 +1,4 @@
-import { BeforeChatEvent, world } from "mojang-minecraft";
+import { BeforeChatEvent, world } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 

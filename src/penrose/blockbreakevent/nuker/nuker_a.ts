@@ -1,4 +1,4 @@
-import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
+import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, flag } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";

@@ -1,5 +1,5 @@
-import { BlockLocation, ItemStack, MinecraftBlockTypes, MinecraftItemTypes, world } from "mojang-minecraft";
-import * as gt from "mojang-gametest";
+import { BlockLocation, ItemStack, MinecraftBlockTypes, MinecraftItemTypes, world } from "@minecraft/server";
+import * as gt from "@minecraft/server-gametest";
 import config from "../data/config.js";
 
 const fakePlayerCount = 3; // number of fake players to be spawned

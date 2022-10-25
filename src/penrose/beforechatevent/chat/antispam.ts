@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";

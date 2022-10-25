@@ -1,4 +1,4 @@
-import { EntityItemComponent, EntityQueryOptions, ItemStack, world } from "mojang-minecraft";
+import { EntityItemComponent, EntityQueryOptions, ItemStack, world } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";

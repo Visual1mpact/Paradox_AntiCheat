@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, Player } from "mojang-minecraft";
+import { world, EntityQueryOptions, Player } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { clearTickTimeout, setTickTimeout } from "../../../libs/scheduling.js";
 

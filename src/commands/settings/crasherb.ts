@@ -1,6 +1,6 @@
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { CrasherB } from "../../penrose/entitycreateevent/crasher_b.js";
 
 const World = world;

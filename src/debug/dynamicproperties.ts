@@ -1,4 +1,4 @@
-import { Entity, Player, World, PropertyRegistry } from "mojang-minecraft";
+import { Entity, Player, World, PropertyRegistry } from "@minecraft/server";
 import getStack from "./stack.js";
 import config from "../data/config.js";
 

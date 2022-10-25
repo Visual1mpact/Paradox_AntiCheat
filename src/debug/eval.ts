@@ -58,9 +58,9 @@ import { xrayblocks as xrayBlocks } from "../data/xray.js";
 import * as scheduling from "../libs/scheduling.js";
 import scoreboard from "../libs/scoreboardnew.js";
 import * as util from "../util.js";
-import { world } from "mojang-minecraft";
-import * as mc from "mojang-minecraft";
-import * as gt from "mojang-gametest";
+import { world } from "@minecraft/server";
+import * as mc from "@minecraft/server";
+import * as gt from "@minecraft/server-gametest";
 
 const objSelfProperty = new Proxy(
     Object.setPrototypeOf(

@@ -1,4 +1,4 @@
-import { Entity, EntityCreateEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "mojang-minecraft";
+import { Entity, EntityCreateEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
 

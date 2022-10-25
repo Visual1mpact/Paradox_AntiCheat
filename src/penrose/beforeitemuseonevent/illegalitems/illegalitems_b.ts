@@ -1,4 +1,4 @@
-import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes, Enchantment, BeforeItemUseOnEvent, EntityInventoryComponent, ItemEnchantsComponent } from "mojang-minecraft";
+import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes, Enchantment, BeforeItemUseOnEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import { crypto, flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
 import config from "../../../data/config.js";

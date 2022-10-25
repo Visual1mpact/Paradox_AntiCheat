@@ -1,4 +1,4 @@
-import { BlockBreakEvent, world } from "mojang-minecraft";
+import { BlockBreakEvent, world } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 // import { flag } from "../../../util.js";

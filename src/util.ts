@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Location, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Location, Player, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 

@@ -1,4 +1,4 @@
-import { world, BlockLocation, MinecraftBlockTypes, BlockPlaceEvent } from "mojang-minecraft";
+import { world, BlockLocation, MinecraftBlockTypes, BlockPlaceEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 // import { flag } from "../../../util.js";

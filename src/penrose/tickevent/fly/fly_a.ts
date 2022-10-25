@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, Location, BlockLocation, Block } from "mojang-minecraft";
+import { world, EntityQueryOptions, Location, BlockLocation, Block } from "@minecraft/server";
 import { getScore, flag, crypto } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import config from "../../../data/config.js";

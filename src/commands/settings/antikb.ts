@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
 import { crypto, getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";

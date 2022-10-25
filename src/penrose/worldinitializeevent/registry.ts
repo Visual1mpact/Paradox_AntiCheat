@@ -1,4 +1,4 @@
-import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeEvent } from "mojang-minecraft";
+import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 
 const World = world;

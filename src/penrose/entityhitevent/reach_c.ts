@@ -1,4 +1,4 @@
-import { world, Player, EntityHitEvent } from "mojang-minecraft";
+import { world, Player, EntityHitEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, flag } from "../../util.js";
 

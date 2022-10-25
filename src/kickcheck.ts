@@ -1,4 +1,4 @@
-import { Entity, world } from "mojang-minecraft";
+import { Entity, world } from "@minecraft/server";
 
 export const kickablePlayers = new WeakSet<Entity>();
 

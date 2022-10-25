@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions } from "mojang-minecraft";
+import { world, EntityQueryOptions } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 

@@ -1,4 +1,4 @@
-import { BeforeChatEvent } from "mojang-minecraft";
+import { BeforeChatEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";

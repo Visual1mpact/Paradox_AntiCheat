@@ -1,4 +1,4 @@
-import { Dimension, Entity, Player, world } from "mojang-minecraft";
+import { Dimension, Entity, Player, world } from "@minecraft/server";
 import { getStack } from "./misc.js";
 
 const overworld = world.getDimension("overworld");

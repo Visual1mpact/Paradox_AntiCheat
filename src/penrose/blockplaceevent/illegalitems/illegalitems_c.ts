@@ -13,7 +13,7 @@ import {
     BlockInventoryComponent,
     BlockInventoryComponentContainer,
     ItemEnchantsComponent,
-} from "mojang-minecraft";
+} from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, toCamelCase, crypto, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";

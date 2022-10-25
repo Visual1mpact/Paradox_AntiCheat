@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { world } from "@minecraft/server";
 import { setTickInterval } from "../../../libs/scheduling.js";
 
 const World = world;

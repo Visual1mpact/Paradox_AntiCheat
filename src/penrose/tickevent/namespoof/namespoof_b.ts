@@ -1,4 +1,4 @@
-import { Player, world } from "mojang-minecraft";
+import { Player, world } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";

@@ -1,4 +1,4 @@
-import { Player } from "mojang-minecraft";
+import { Player } from "@minecraft/server";
 import getStack from "./stack.js";
 import config from "../data/config.js";
 

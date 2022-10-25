@@ -1,4 +1,4 @@
-import { BlockBreakEvent, world } from "mojang-minecraft";
+import { BlockBreakEvent, world } from "@minecraft/server";
 import { xrayblocks } from "../../../data/xray.js";
 import { crypto, sendMsg } from "../../../util.js";
 import config from "../../../data/config.js";

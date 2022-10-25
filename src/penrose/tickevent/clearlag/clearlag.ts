@@ -1,5 +1,5 @@
 import config from "../../../data/config.js";
-import { world, EntityQueryOptions, ItemStack, EntityItemComponent } from "mojang-minecraft";
+import { world, EntityQueryOptions, ItemStack, EntityItemComponent } from "@minecraft/server";
 import { sendMsg } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import { clearItems } from "../../../data/clearlag.js";

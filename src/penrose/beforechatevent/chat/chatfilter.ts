@@ -1,4 +1,4 @@
-import { Location, world } from "mojang-minecraft";
+import { Location, world } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { sendMsg, sendMsgToPlayer } from "../../../util.js";
 

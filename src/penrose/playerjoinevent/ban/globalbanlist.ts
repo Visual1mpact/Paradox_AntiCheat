@@ -1,4 +1,4 @@
-import { Player, world } from "mojang-minecraft";
+import { Player, world } from "@minecraft/server";
 import { banplayer } from "../../../data/globalban.js";
 import { banMessage } from "../../../util.js";
 

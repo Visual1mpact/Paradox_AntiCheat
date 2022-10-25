@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions } from "mojang-minecraft";
+import { world, EntityQueryOptions } from "@minecraft/server";
 import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { setTickInterval } from "../../../libs/scheduling.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";

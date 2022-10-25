@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { WorldBorder } from "../../penrose/tickevent/worldborder/worldborder.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";

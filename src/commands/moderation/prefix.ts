@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player } from "mojang-minecraft";
+import { BeforeChatEvent, Player } from "@minecraft/server";
 
 function resetPrefix(player: Player) {
     let sanitize = player.getTags();

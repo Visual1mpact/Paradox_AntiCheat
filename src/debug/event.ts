@@ -1,4 +1,4 @@
-import { world } from "mojang-minecraft";
+import { world } from "@minecraft/server";
 import getStack from "./stack.js";
 import config from "../data/config.js";
 

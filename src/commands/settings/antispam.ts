@@ -1,6 +1,6 @@
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "mojang-minecraft";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
 
 const World = world;

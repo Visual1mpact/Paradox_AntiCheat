@@ -1,4 +1,4 @@
-import { BeforeChatEvent, world } from "mojang-minecraft";
+import { BeforeChatEvent, world } from "@minecraft/server";
 import { commandHandler } from "../../../commands/handler.js";
 
 const World = world;

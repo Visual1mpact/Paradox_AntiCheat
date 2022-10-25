@@ -1,4 +1,4 @@
-import { Player, world } from "mojang-minecraft";
+import { Player, world } from "@minecraft/server";
 
 const World = world;
 

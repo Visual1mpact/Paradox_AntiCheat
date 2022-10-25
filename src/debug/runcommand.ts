@@ -1,4 +1,4 @@
-import { Dimension, Entity, Player } from "mojang-minecraft";
+import { Dimension, Entity, Player } from "@minecraft/server";
 import getStack from "./stack.js";
 import config from "../data/config.js";
 

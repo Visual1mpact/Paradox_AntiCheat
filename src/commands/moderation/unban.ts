@@ -1,6 +1,6 @@
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player } from "mojang-minecraft";
+import { BeforeChatEvent, Player } from "@minecraft/server";
 
 export const queueUnban = new Set();
 

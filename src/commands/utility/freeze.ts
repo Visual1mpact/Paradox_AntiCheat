@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { world, MinecraftEffectTypes, Player, BeforeChatEvent } from "mojang-minecraft";
+import { world, MinecraftEffectTypes, Player, BeforeChatEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
