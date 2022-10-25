@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions } from "@minecraft/server";
+import { world, EntityQueryOptions, GameMode } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, getScore, sendMsg } from "../../../util.js";
 
@@ -25,7 +25,7 @@ function adventure() {
     }
     let filter = new Object() as EntityQueryOptions;
     // 2 = adventure
-    filter.gameMode = 2;
+    filter.gameMode = GameMode.adventure;
     // Run as each player
     for (let player of World.getPlayers(filter)) {
         // Check for hash/salt and validate password

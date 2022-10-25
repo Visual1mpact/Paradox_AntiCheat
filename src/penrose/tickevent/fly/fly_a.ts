@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, Location, BlockLocation, Block } from "@minecraft/server";
+import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode } from "@minecraft/server";
 import { getScore, flag, crypto } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import config from "../../../data/config.js";
@@ -21,7 +21,7 @@ function flya(id: number) {
 
     // Exclude creative gamemode
     let gm = new Object() as EntityQueryOptions;
-    gm.excludeGameModes = [1];
+    gm.excludeGameModes = [GameMode.creative];
     // run as each player who are in survival
     for (let player of World.getPlayers(gm)) {
         // Check for hash/salt and validate password
