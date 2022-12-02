@@ -9,9 +9,9 @@ const PlayerPosition = () => {
         for (let player of World.getPlayers()) {
             // player position
             try {
-                player.runCommand(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
-                player.runCommand(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
-                player.runCommand(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
+                player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
+                player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
+                player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
             } catch (e) {}
         }
     }, 20); // Executes every 1 seconds

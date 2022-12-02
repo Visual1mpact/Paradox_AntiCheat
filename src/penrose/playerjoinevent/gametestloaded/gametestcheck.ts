@@ -14,11 +14,11 @@ function time() {
         // We loop testfor until it returns true so we know the
         // player is in the world because playerJoin triggers
         // too quickly while player is in loading screen
-        player.runCommand(`testfor @s`);
+        player.runCommandAsync(`testfor @s`);
         try {
             // (1..) Set gametestapi to 1
-            player.runCommand(`scoreboard players set paradox:config gametestapi 1`);
-            player.runCommand(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
+            player.runCommandAsync(`scoreboard players set paradox:config gametestapi 1`);
+            player.runCommandAsync(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
             tickEventCallback.unsubscribe(time);
         } catch (error) {}

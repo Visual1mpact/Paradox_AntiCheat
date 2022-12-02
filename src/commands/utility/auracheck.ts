@@ -77,5 +77,5 @@ export function auracheck(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    return member.runCommand(`summon paradox:killaura ^ ^ ^-3`);
+    return member.runCommandAsync(`summon paradox:killaura ^ ^ ^-3`);
 }

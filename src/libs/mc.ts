@@ -14,7 +14,7 @@ const overworld = world.getDimension("overworld");
  */
 export function execCmd(command: string, source: Dimension | Entity | Player = overworld, ignoreError = false): commandResponse {
     try {
-        return source.runCommand(command);
+        return source.runCommandAsync(command);
     } catch (e) {
         if (typeof e != "string") throw e;
         const data: commandResponse = JSON.parse(e);

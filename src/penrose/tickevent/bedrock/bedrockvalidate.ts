@@ -31,21 +31,21 @@ function bedrockvalidate(id: number) {
         // bedrock validation
         if (player.dimension === World.getDimension("overworld") && config.modules.bedrockValidate.overworld) {
             try {
-                player.runCommand(`fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
+                player.runCommandAsync(`fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
             } catch (error) {}
         }
 
         if (player.dimension === World.getDimension("nether") && config.modules.bedrockValidate.nether) {
             try {
-                player.runCommand(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
+                player.runCommandAsync(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
             } catch (error) {}
 
             try {
-                player.runCommand(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
+                player.runCommandAsync(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
             } catch (error) {}
 
             try {
-                player.runCommand(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
+                player.runCommandAsync(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
             } catch (error) {}
         }
     }

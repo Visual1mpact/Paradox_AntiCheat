@@ -77,7 +77,7 @@ function flya(id: number) {
                 (Block2?.type.id === "minecraft:air" ?? true)
             ) {
                 try {
-                    player.runCommand(`scoreboard players add @s fly_timer 1`);
+                    player.runCommandAsync(`scoreboard players add @s fly_timer 1`);
                 } catch (error) {}
                 if (test >= 6) {
                     try {
@@ -90,7 +90,7 @@ function flya(id: number) {
                 }
             } else if (player.hasTag("ground")) {
                 try {
-                    player.runCommand(`scoreboard players set @s fly_timer 0`);
+                    player.runCommandAsync(`scoreboard players set @s fly_timer 0`);
                 } catch (error) {}
             }
         }

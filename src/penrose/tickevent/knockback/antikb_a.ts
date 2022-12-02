@@ -50,9 +50,9 @@ function antiknockbacka(id: number) {
             if (player.hasTag("attacked") && !player.hasTag("dead") && !player.hasTag("gliding") && !player.hasTag("levitating") && !player.hasTag("flying")) {
                 try {
                     // Make sure Anti Knockback is turned on
-                    player.runCommand(`testfor @s[scores={antikb=1..}]`);
+                    player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);
                     flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, null);
-                    player.runCommand(`scoreboard players add @s velocityvl 1`);
+                    player.runCommandAsync(`scoreboard players add @s velocityvl 1`);
                 } catch (error) {}
             }
         }

@@ -92,7 +92,7 @@ export function fly(message: BeforeChatEvent, args: string[]) {
 
     if (!membertag.includes("noflying") && !membertag.includes("flying")) {
         try {
-            member.runCommand(`ability @s mayfly true`);
+            member.runCommandAsync(`ability @s mayfly true`);
             member.addTag("flying");
             mayflyenable(player, member);
         } catch (Error) {
@@ -107,7 +107,7 @@ export function fly(message: BeforeChatEvent, args: string[]) {
 
     if (member.hasTag("noflying")) {
         try {
-            member.runCommand(`ability @s mayfly false`);
+            member.runCommandAsync(`ability @s mayfly false`);
             member.removeTag("flying");
             mayflydisable(player, member);
             member.removeTag("noflying");

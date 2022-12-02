@@ -63,5 +63,5 @@ export function fullreport(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
     }
 
-    return player.runCommand(`execute @a ~~~ function tools/stats`);
+    return player.runCommandAsync(`execute @a ~~~ function tools/stats`);
 }

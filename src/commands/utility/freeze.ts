@@ -97,7 +97,7 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
         member.removeTag("freeze");
     }
     if (member.hasTag("nofreeze")) {
-        member.runCommand(`effect @s clear`);
+        member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`);
     }

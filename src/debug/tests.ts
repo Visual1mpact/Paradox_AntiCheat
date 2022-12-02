@@ -40,7 +40,7 @@ if (config.debug)
             .thenExecute(() => {
                 world.events.tick.unsubscribe(aa);
                 try {
-                    world.getDimension("overworld").runCommand(`tellraw @a {"rawtext":[{"text":"${(duration / c).toFixed(2)} tps"}]}`);
+                    world.getDimension("overworld").runCommandAsync(`tellraw @a {"rawtext":[{"text":"${(duration / c).toFixed(2)} tps"}]}`);
                 } catch (e) {
                     console.warn(e);
                 }

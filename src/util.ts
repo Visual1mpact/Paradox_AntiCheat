@@ -19,7 +19,7 @@ import { kickablePlayers } from "./kickcheck.js";
 export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
     // make sure the vl objective exists
     try {
-        player.runCommand(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
+        player.runCommandAsync(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
     } catch {}
 
     // cancel the message
@@ -32,7 +32,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
     }
 
     try {
-        player.runCommand(`scoreboard players add @s ${check.toLowerCase()}vl 1`);
+        player.runCommandAsync(`scoreboard players add @s ${check.toLowerCase()}vl 1`);
     } catch {}
 
     try {
@@ -47,7 +47,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
 
     try {
         if (check === "Namespoof") {
-            player.runCommand(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r You have illegal characters in your name!`);
+            player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r You have illegal characters in your name!`);
         }
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -73,7 +73,7 @@ export function banMessage(player: Player) {
     });
 
     try {
-        player.runCommand(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
         kickablePlayers.add(player);
@@ -88,7 +88,7 @@ export function banMessage(player: Player) {
  */
 export function getScore(objective: string, player: Player, { minimum, maximum } = { minimum: 0, maximum: 0 }) {
     try {
-        const data = player.runCommand(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
+        const data = player.runCommandAsync(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
         return parseInt(data.statusMessage.match(/-?\d+/));
     } catch (error) {
         return undefined;
@@ -227,12 +227,12 @@ const overworld = world.getDimension("overworld");
 
 export const sendMsg = (target: string, message: string | string[]) => {
     try {
-        overworld.runCommand(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
+        overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
     } catch {}
 };
 
 export const sendMsgToPlayer = (target: Player, message: string | string[]) => {
     try {
-        target.runCommand(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
+        target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
     } catch {}
 };

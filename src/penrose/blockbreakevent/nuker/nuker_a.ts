@@ -138,13 +138,13 @@ function nukera(object: BlockBreakEvent) {
         blockLoc.setPermutation(blockID);
         try {
             // Remove dropped items after nuking because it will leave a mess of entities in the world
-            player.runCommand(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
+            player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
         } catch (error) {}
 
         /*
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
+            player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
             player.addTag('isBanned');
         } catch (error) {
             kickablePlayers.add(player); player.triggerEvent('paradox:kick');

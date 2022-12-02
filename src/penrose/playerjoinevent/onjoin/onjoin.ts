@@ -24,14 +24,14 @@ function onJoinTime(player: Player, callback: any) {
 
     try {
         // Loop until player is detected in the world
-        player.runCommand(`testfor @s`);
+        player.runCommandAsync(`testfor @s`);
 
         // Lock down the server if enabled
         if (lockdownBoolean) {
             let reason = "Under Maintenance! Sorry for the inconvenience.";
             try {
                 // Kick players from server
-                player.runCommand(`kick ${JSON.stringify(player.name)} ${reason}`);
+                player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
             } catch (error) {
                 // Despawn players from server
                 kickablePlayers.add(player);
@@ -43,7 +43,7 @@ function onJoinTime(player: Player, callback: any) {
         // We execute each command in the list
         for (let i = 0; i < onJoinData.length; i++) {
             try {
-                player.runCommand(`${onJoinData[i]}`);
+                player.runCommandAsync(`${onJoinData[i]}`);
             } catch (error) {}
         }
 

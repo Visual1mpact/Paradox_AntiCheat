@@ -66,8 +66,8 @@ export function vanish(message: BeforeChatEvent, args: string[]) {
     }
 
     if (player.hasTag("novanish")) {
-        player.runCommand(`event entity @s unvanish`);
-        player.runCommand(`effect @s clear`);
+        player.runCommandAsync(`event entity @s unvanish`);
+        player.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is no longer in vanish.`);
     }
@@ -77,7 +77,7 @@ export function vanish(message: BeforeChatEvent, args: string[]) {
     }
 
     if (player.hasTag("vanish") && !player.hasTag("novanish")) {
-        player.runCommand(`event entity @s vanish`);
+        player.runCommandAsync(`event entity @s vanish`);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now vanished!`);
         sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is now vanished!`);
     }

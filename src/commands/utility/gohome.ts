@@ -139,7 +139,7 @@ export function gohome(message: BeforeChatEvent, args: string[]) {
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || (hash !== undefined && encode === hash)) {
-            player.runCommand(`scoreboard players set @s teleport 25`);
+            player.runCommandAsync(`scoreboard players set @s teleport 25`);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value

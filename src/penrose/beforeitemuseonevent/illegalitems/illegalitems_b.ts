@@ -68,7 +68,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
 
     // Used for getting some info on the item
     if (config.debug) {
-        source.runCommand(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`);
+        source.runCommandAsync(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`);
     }
 
     // Check for hash/salt and validate password

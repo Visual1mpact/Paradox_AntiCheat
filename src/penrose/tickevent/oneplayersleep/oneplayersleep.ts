@@ -5,12 +5,12 @@ import { clearTickTimeout, setTickTimeout } from "../../../libs/scheduling.js";
 const World = world;
 
 function queueSleep(player: Player, id: number) {
-    player.runCommand(`time set sunrise`);
-    player.runCommand(`time add 2000`);
-    player.runCommand(`weather clear`);
+    player.runCommandAsync(`time set sunrise`);
+    player.runCommandAsync(`time add 2000`);
+    player.runCommandAsync(`weather clear`);
     let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
-        player.runCommand(`title @a[tag=!vanish] actionbar Good Morning`);
+        player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
     }
     clearTickTimeout(id);
 }
