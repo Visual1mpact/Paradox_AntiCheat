@@ -17,10 +17,10 @@ Check the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki).
 <div align="left">
   
 <div align="center">
-  <img src="https://www.codefactor.io/repository/github/visual1mpact/paradox_anticheat/badge/main" alt="Grade"/>
-  <img src="https://img.shields.io/github/downloads/Visual1mpact/Paradox_AntiCheat/total?style=plastic&logo=appveyor" alt="Downloads"/>
-  <img src="https://img.shields.io/github/commit-activity/m/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Commits Per Month"/>
-  <img src="https://img.shields.io/github/last-commit/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Last Commit"/>
+  <img src="https://www.codefactor.io/repository/github/pete9xi/paradox_anticheat/badge/main" alt="Grade"/>
+  <img src="https://img.shields.io/github/downloads/Pete9xi/Paradox_AntiCheat/total?style=plastic&logo=appveyor" alt="Downloads"/>
+  <img src="https://img.shields.io/github/commit-activity/m/Pete9xi/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Commits Per Month"/>
+  <img src="https://img.shields.io/github/last-commit/Pete9xi/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Last Commit"/>
   <img src="https://img.shields.io/github/license/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="License"/>
 </div>
   
