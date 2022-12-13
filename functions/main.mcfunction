@@ -3,20 +3,22 @@ gamerule randomtickspeed 1
 
 # Run all the checks
 function checks/others
-execute @s[scores={autoaura=1..}] ~~~ function checks/killaura
+
+execute as @s[scores={autoaura=1..}] at @s run /function checks/killaura
 
 # Specific criteria checks
-execute @s[type=player,scores={attacks=1..,autoclicker=1..}] ~~~ function checks/autoclicker
+
+execute as @s[type=player,scores={attacks=1..,autoclicker=1..}] at @s run /function checks/autoclicker
 
 # Optional checks
-execute @s[scores={commandblocks=1..}] ~~~ function checks/optional/nocommandblocks
-execute @s[scores={cmds=1..}] ~~~ function checks/optional/overridecommandblocksenabled
+execute as @s[scores={commandblocks=1..}] positioned as @s run function checks/optional/nocommandblocks
+execute as @s[scores={cmds=1..}] at @s run /function checks/optional/overridecommandblocksenabled
 
 # Armor system
-execute @s[scores={ench_helmet=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
-execute @s[scores={ench_chest=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
-execute @s[scores={ench_legs=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
-execute @s[scores={ench_boots=1,encharmor=1..}] ~~~ function checks/optional/armorNBT
+execute as @s[scores={ench_helmet=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
+execute as @s[scores={ench_chest=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
+execute as @s[scores={ench_legs=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
+execute as @s[scores={ench_boots=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
 
 #Anti-KB
 event entity @s[tag=attacked,scores={atcd=12..,antikb=1..}] paradox:reset_mark_variant

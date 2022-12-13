@@ -81,5 +81,5 @@ export function stats(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    return member.runCommandAsync(`execute @s ~~~ function tools/stats`);
+    return member.runCommandAsync(`execute as @s at @s run function tools/stats`);
 }

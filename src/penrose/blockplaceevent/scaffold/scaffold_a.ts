@@ -54,7 +54,8 @@ function scaffolda(object: BlockPlaceEvent) {
         flag(player, "Scaffold", "A", "Placement", null, null, null, null, false, null);
         /*
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Scaffolding"`);
+            player.runCommand(`tag "${disabler(player.nameTag)}" add "
+            :Illegal Scaffolding"`);
             player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
             player.addTag('isBanned');
         } catch (error) {

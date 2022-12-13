@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.github\\ISSUE_TEMPLATE",
+    "\\functions\\checks",
+    "\\functions\\checks\\optional",
+    "\\src",
+    "\\src\\commands",
+    "\\src\\commands\\debug_commands",
+    "\\src\\commands\\settings",
+    "\\src\\penrose",
+    "\\src\\penrose\\playerjoinevent"
+  ],
+  "SelectedNode": "\\src\\penrose\\playerjoinevent\\onjoin\\onjoin.ts",
+  "PreviewInSolutionExplorer": false
+}

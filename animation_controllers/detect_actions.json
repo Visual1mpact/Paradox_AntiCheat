@@ -188,7 +188,7 @@
                         "/tag @s add right",
                         "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6RIGHT§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start,ticks=0)\"}]}",
                         "/scoreboard players add @s[tag=hasGUIopen] invmovevl 1",
-                        "/execute @s[tag=hasGUIopen] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Movement) §4InventoryMods/C §7(is_using)§4. VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"invmovevl\"}}]}"
+                        "/execute as @s[tag=hasGUIopen] at @s run tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§4[§6Paradox§4]§r \"},{\"selector\":\"@s\"},{\"text\":\" §6has failed §7(Movement) §4InventoryMods/C §7(is_using)§4. VL= \"},{\"score\":{\"name\":\"@s\",\"objective\":\"invmovevl\"}}]}"
                     ]
                 }
             }
