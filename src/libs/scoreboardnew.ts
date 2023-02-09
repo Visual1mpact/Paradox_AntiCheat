@@ -1,4 +1,4 @@
-import { ObjectiveSortOrder, Player, ScoreboardIdentityType, ScoreboardObjective as MCSO, ScoreboardObjectiveDisplayOptions, world } from "@minecraft/server";
+import { ObjectiveSortOrder, Player, ScoreboardIdentityType, ScoreboardObjective as MCSO, world } from "@minecraft/server";
 import { execCmd } from "./mc.js";
 
 export default class scoreboard {

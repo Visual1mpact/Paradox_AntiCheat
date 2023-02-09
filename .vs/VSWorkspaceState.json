@@ -1,16 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\.github\\ISSUE_TEMPLATE",
-    "\\functions\\checks",
-    "\\functions\\checks\\optional",
     "\\src",
-    "\\src\\commands",
-    "\\src\\commands\\debug_commands",
-    "\\src\\commands\\settings",
-    "\\src\\penrose",
-    "\\src\\penrose\\playerjoinevent"
+    "\\src\\commands"
   ],
-  "SelectedNode": "\\src\\penrose\\playerjoinevent\\onjoin\\onjoin.ts",
+  "SelectedNode": "\\src\\commands\\moderation\\unban.ts",
   "PreviewInSolutionExplorer": false
 }

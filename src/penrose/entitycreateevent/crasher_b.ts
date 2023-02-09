@@ -65,4 +65,4 @@ const CrasherB = () => {
     World.events.entityCreate.subscribe(crasherb);
 };
 
-export { CrasherB };
+export { CrasherB }; //Patched out by mojang.
