@@ -53,7 +53,6 @@ function crasherb(object: EntityCreateEvent) {
     if (entity.id === "minecraft:item") {
         let itemComponent = entity.getComponent("item") as unknown as EntityItemComponent;
         let itemObject = itemComponent.itemStack;
-
         if (itemObject.id === "minecraft:arrow" && itemObject.data > 43) {
             flag(nearestPlayer(entity), "Crasher", "B", "Exploit", null, null, "item", `${itemObject.id.replace("minecraft:", "")}: data=${itemObject.data}`, false, null);
             entity.kill();
