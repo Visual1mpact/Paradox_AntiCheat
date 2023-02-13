@@ -1,4 +1,4 @@
-import { Entity, EntityCreateEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
+import { Entity, EntitySpawnEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
 
@@ -35,7 +35,7 @@ function nearestPlayer(entity: Entity) {
     return foundPlayer;
 }
 
-function crasherb(object: EntityCreateEvent) {
+function crasherb(object: EntitySpawnEvent) {
     // Get Dynamic Property
     let crasherBBoolean = World.getDynamicProperty("crasherb_b");
     if (crasherBBoolean === undefined) {
@@ -43,7 +43,7 @@ function crasherb(object: EntityCreateEvent) {
     }
     // Unsubscribe if disabled in-game
     if (crasherBBoolean === false) {
-        World.events.entityCreate.unsubscribe(crasherb);
+        World.events.entitySpawn.unsubscribe(crasherb);
         return;
     }
 
@@ -61,7 +61,7 @@ function crasherb(object: EntityCreateEvent) {
 }
 
 const CrasherB = () => {
-    World.events.entityCreate.subscribe(crasherb);
+    World.events.entitySpawn.subscribe(crasherb);
 };
 
-export { CrasherB }; //Patched out by mojang.
+export { CrasherB };
