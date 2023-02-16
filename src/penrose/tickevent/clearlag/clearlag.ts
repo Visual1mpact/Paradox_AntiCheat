@@ -48,7 +48,7 @@ function executionItem() {
             itemName = itemContainer.itemStack;
         } catch (error) {}
         // Kill dropped items
-        if (itemName.id in clearItems) {
+        if (itemName.typeId in clearItems) {
             entity.kill();
         }
     }

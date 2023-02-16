@@ -70,7 +70,7 @@ function onJoinTime(player: Player, callback: any) {
 }
 
 const onJoin = () => {
-    World.events.playerJoin.subscribe((loaded) => {
+    World.events.playerSpawn.subscribe((loaded) => {
         // Get the name of the player who is joining
         let player = loaded.player;
         let callback: any;
