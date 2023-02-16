@@ -130,7 +130,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
     }
     const ignoreContainerPlace = ["minecraft:chest", "minecraft:trapped_chest"];
     // Check if place item is salvageable
-    if (salvageable[block.type.id] && block.type.id in ignoreContainerPlace === false) {
+    if (salvageable[block.typeId] && block.typeId in ignoreContainerPlace === false) {
         // Block from specified location
         let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
         // Get a copy of this blocks permutation
@@ -148,7 +148,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
         blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
-    if (block.type.id in illegalitems && block.type.id in iicWhitelist === false) {
+    if (block.typeId in illegalitems && block.typeId in iicWhitelist === false) {
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
