@@ -20,7 +20,9 @@ function nearestPlayer(entity: Entity) {
     // Iterate over all players
     for (let player of allPlayers) {
         // Find from the current player's location
-        query.location = player.location;
+        query.location.x = player.location.x;
+        query.location.y = player.location.y;
+        query.location.z = player.location.z;
         // Exclude the current player
         query.excludeNames = [player.nameTag];
         // Find players that match query, spread them into an array, and index for the first player found
@@ -53,8 +55,8 @@ function crasherb(object: EntitySpawnEvent) {
     if (entity.id === "minecraft:item") {
         let itemComponent = entity.getComponent("item") as unknown as EntityItemComponent;
         let itemObject = itemComponent.itemStack;
-        if (itemObject.id === "minecraft:arrow" && itemObject.data > 43) {
-            flag(nearestPlayer(entity), "Crasher", "B", "Exploit", null, null, "item", `${itemObject.id.replace("minecraft:", "")}: data=${itemObject.data}`, false, null);
+        if (itemObject.typeId === "minecraft:arrow" && itemObject.data > 43) {
+            flag(nearestPlayer(entity), "Crasher", "B", "Exploit", null, null, "item", `${itemObject.typeId.replace("minecraft:", "")}: data=${itemObject.data}`, false, null);
             entity.kill();
         }
     }
