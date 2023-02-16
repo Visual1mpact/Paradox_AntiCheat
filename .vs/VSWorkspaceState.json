@@ -1,16 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\.github\\ISSUE_TEMPLATE",
-    "\\src\\libs",
-    "\\src\\penrose",
-    "\\src\\penrose\\blockplaceevent",
-    "\\src\\penrose\\blockplaceevent\\illegalitems",
-    "\\src\\penrose\\entitycreateevent",
-    "\\src\\penrose\\systemevent",
-    "\\src\\penrose\\tickevent",
-    "\\src\\penrose\\tickevent\\illegalitems"
+    ""
   ],
-  "SelectedNode": "\\src",
   "PreviewInSolutionExplorer": false
 }
