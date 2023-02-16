@@ -19,7 +19,7 @@ function nearestPlayer(entity: Entity) {
     let foundPlayer: Player;
     // Iterate over all players
     for (let player of allPlayers) {
-        // Find from the current player's location
+        // Find from the current player's location, now using vector 3 so check xyz coords
         query.location.x = player.location.x;
         query.location.y = player.location.y;
         query.location.z = player.location.z;
