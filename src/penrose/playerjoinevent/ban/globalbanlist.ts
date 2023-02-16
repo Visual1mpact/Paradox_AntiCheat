@@ -34,7 +34,7 @@ function banHammerTime(player: Player, callback: any) {
 }
 
 const GlobalBanList = () => {
-    World.events.playerJoin.subscribe((loaded) => {
+    World.events.playerSpawn.subscribe((loaded) => {
         // Get the name of the player who is joining
         let player = loaded.player;
         // Subscribe tick event to the time function
