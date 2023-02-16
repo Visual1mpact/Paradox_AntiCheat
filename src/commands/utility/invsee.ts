@@ -1,5 +1,6 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, EntityInventoryComponent, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, EntityInventoryComponent, IEntityComponent, Player, world } from "@minecraft/server";
+
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
@@ -78,7 +79,7 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    let inv = member.getComponent("inventory");
+    let inv = member.getComponent("inventory") as EntityInventoryComponent;
     let container = inv.container;
 
     sendMsgToPlayer(player, [
@@ -86,7 +87,7 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
         `§r§4[§6Paradox§4]§r ${member.nameTag}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
             const item = container.getItem(i);
-            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.id.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r §6=>§r §4[§fData ${item.data}§4]§r` : "§7(empty)"}`;
+            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r §6=>§r §4[§fData ${item.data}§4]§r` : "§7(empty)"}`;
         }),
         ` `,
     ]);

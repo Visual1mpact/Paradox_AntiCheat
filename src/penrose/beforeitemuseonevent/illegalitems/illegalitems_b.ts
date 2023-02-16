@@ -15,7 +15,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     if (!enchData) {
         // Tag with reason and by who
         try {
-            player.addTag(`Reason:Illegal Item B (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})`);
+            player.addTag(`Reason:Illegal Item B (${inventory_item.typeId.replace("minecraft:", "")}=${inventory_item.amount})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
@@ -26,7 +26,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     } else {
         // Tag with reason and by who
         try {
-            player.addTag(`Reason:Illegal Item B (${inventory_item.id.replace("minecraft:", "")}: ${enchData.id}=${enchData.level})`);
+            player.addTag(`Reason:Illegal Item B (${inventory_item.typeId.replace("minecraft:", "")}: ${enchData.id}=${enchData.level})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
@@ -68,7 +68,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
 
     // Used for getting some info on the item
     if (config.debug) {
-        source.runCommandAsync(`say Item: ${item.id}, Data: ${item.data}, Amount: ${item.amount}`);
+        source.runCommandAsync(`say Item: ${item.typeId}, Data: ${item.data}, Amount: ${item.amount}`);
     }
 
     // Check for hash/salt and validate password
@@ -93,34 +93,34 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
-    if (antiShulkerBoolean && item.id in shulkerItems) {
+    if (antiShulkerBoolean && item.typeId in shulkerItems) {
         object.cancel = true;
-        let invContainer = source.getComponent("minecraft:inventory");
+        let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
         invContainer.container.setItem(hand, emptyItem);
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} from ${source.nameTag}.`);
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${item.typeId.replace("minecraft:", "")} from ${source.nameTag}.`);
         sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
         return;
     }
 
-    const itemType = Items.get(item.id);
+    const itemType = Items.get(item.typeId);
     // Check if item is in illegal item list
-    if (item.id in illegalitems) {
+    if (item.typeId in illegalitems) {
         object.cancel = true;
-        flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, null, null, false, null);
-        let invContainer = source.getComponent("minecraft:inventory");
+        flag(source, "IllegalItems", "B", "Exploit", item.typeId, item.amount, null, null, false, null);
+        let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
         invContainer.container.setItem(hand, emptyItem);
         // Ban
         return rip(source, item, null);
     }
 
     // Check if item exceeds allowed stacks then remove and ban if enabled
-    const maxStack = maxItemStack[item.id] ?? defaultMaxItemStack;
+    const maxStack = maxItemStack[item.typeId] ?? defaultMaxItemStack;
     if (item.amount < 0 || item.amount > maxStack) {
-        const itemId = item.id.replace("minecraft:", "");
+        const itemId = item.typeId.replace("minecraft:", "");
         object.cancel = true;
         // Item stacks over max allowed and we remove
         try {
-            let invContainer = source.getComponent("minecraft:inventory");
+            let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
             invContainer.container.setItem(hand, emptyItem);
             sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${source.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
             sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
@@ -137,10 +137,10 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
     if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(item.getLore()))) {
         object.cancel = true;
         try {
-            let invContainer = source.getComponent("minecraft:inventory");
+            let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
             invContainer.container.setItem(hand, emptyItem);
         } catch {}
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${item.id.replace("minecraft:", "")} with lore from ${source.nameTag}.`);
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${item.typeId.replace("minecraft:", "")} with lore from ${source.nameTag}.`);
         sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
         return;
     }
@@ -161,13 +161,13 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                 let enchantLevel = enchantedSlot[id];
                 if (!enchantLevel) {
                     object.cancel = true;
-                    flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, null, null, false, null);
+                    flag(source, "IllegalItems", "B", "Exploit", item.typeId, item.amount, null, null, false, null);
                     // Remove this item immediately
-                    let invContainer = source.getComponent("minecraft:inventory");
+                    let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                     invContainer.container.setItem(hand, emptyItem);
                     sendMsg("@a[tag=notify]", [
-                        `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                        `§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`,
+                        `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
+                        `§r§4[§6Paradox§4]§r Removed §4[§f${item.typeId.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`,
                     ]);
                     sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                     rip(source, item, { id, level });
@@ -176,13 +176,13 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                 // Does the enchantment type exceed or break vanilla levels
                 if (level > enchantLevel || level < 0) {
                     object.cancel = true;
-                    flag(source, "IllegalItems", "B", "Exploit", item.id, item.amount, null, null, false, null);
+                    flag(source, "IllegalItems", "B", "Exploit", item.typeId, item.amount, null, null, false, null);
                     // Remove this item immediately
-                    let invContainer = source.getComponent("minecraft:inventory");
+                    let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                     invContainer.container.setItem(hand, emptyItem);
                     sendMsg("@a[tag=notify]", [
-                        `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                        `§r§4[§6Paradox§4]§r Removed §4[§f${item.id.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`,
+                        `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
+                        `§r§4[§6Paradox§4]§r Removed §4[§f${item.typeId.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`,
                     ]);
                     sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                     rip(source, item, { id, level });
@@ -192,7 +192,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
         }
     }
 
-    if (itemType && salvageBoolean && item.id in whitelist === false) {
+    if (itemType && salvageBoolean && item.typeId in whitelist === false) {
         /**
          * Salvage System to mitigate NBT's on every item in the game
          */
@@ -200,7 +200,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
             let enchantArray = [];
             let enchantLevelArray = [];
             let verifiedItemName = item.nameTag;
-            let newNameTag = titleCase(item.id.replace("minecraft:", ""));
+            let newNameTag = titleCase(item.typeId.replace("minecraft:", ""));
             let actualItemName = new ItemStack(itemType);
             actualItemName.data = item.data;
             actualItemName.amount = item.amount;
@@ -253,12 +253,12 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
                     let loreData = item.getLore();
                     try {
                         actualItemName.setLore(loreData);
-                        let invContainer = source.getComponent("minecraft:inventory");
+                        let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                         invContainer.container.setItem(hand, actualItemName);
                     } catch (error) {}
                 } else if (illegalLoresBoolean) {
                     try {
-                        let invContainer = source.getComponent("minecraft:inventory");
+                        let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                         invContainer.container.setItem(hand, actualItemName);
                     } catch (error) {}
                 }
@@ -273,54 +273,54 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
         // Check if item is salvageable and save it
         let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
         // Check if data exceeds vanilla data
-        if (salvageable[item.id] && uniqueItems.indexOf(salvageable[item.id].name) !== -1 && salvageable[item.id].data < item.data) {
+        if (salvageable[item.typeId] && uniqueItems.indexOf(salvageable[item.typeId].name) !== -1 && salvageable[item.typeId].data < item.data) {
             // Reset item to data type of 0
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
                     const newItem = new ItemStack(itemType, item.amount);
                     newItem.setLore(loreData);
-                    let invContainer = source.getComponent("minecraft:inventory");
+                    let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                     invContainer.container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
             }
             try {
-                let invContainer = source.getComponent("minecraft:inventory");
+                let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                 invContainer.container.setItem(hand, new ItemStack(itemType, item.amount));
             } catch (error) {}
             return;
-        } else if (salvageable[item.id] && salvageable[item.id].data !== item.data && uniqueItems.indexOf(salvageable[item.id].name) === -1) {
+        } else if (salvageable[item.typeId] && salvageable[item.typeId].data !== item.data && uniqueItems.indexOf(salvageable[item.typeId].name) === -1) {
             // Reset item to data type of equal data if they do not match
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
-                    const newItem = new ItemStack(itemType, item.amount, salvageable[item.id].data);
+                    const newItem = new ItemStack(itemType, item.amount, salvageable[item.typeId].data);
                     newItem.setLore(loreData);
-                    let invContainer = source.getComponent("minecraft:inventory");
+                    let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                     invContainer.container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
             }
             try {
-                let invContainer = source.getComponent("minecraft:inventory");
-                invContainer.container.setItem(hand, new ItemStack(itemType, item.amount, salvageable[item.id].data));
+                let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
+                invContainer.container.setItem(hand, new ItemStack(itemType, item.amount, salvageable[item.typeId].data));
             } catch (error) {}
             return;
-        } else if (salvageable[item.id]) {
+        } else if (salvageable[item.typeId]) {
             // Reset item to data type of equal data because we take no chances
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
                     const newItem = new ItemStack(itemType, item.amount, item.data);
                     newItem.setLore(loreData);
-                    let invContainer = source.getComponent("minecraft:inventory");
+                    let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                     invContainer.container.setItem(hand, newItem);
                 } catch (error) {}
                 return;
             }
             try {
-                let invContainer = source.getComponent("minecraft:inventory");
+                let invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                 invContainer.container.setItem(hand, new ItemStack(itemType, item.amount, item.data));
             } catch (error) {}
             return;

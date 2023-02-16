@@ -1,4 +1,4 @@
-import { ObjectiveSortOrder, Player, ScoreboardIdentityType, ScoreboardObjective as MCSO, world } from "@minecraft/server";
+import { DisplaySlotId, ObjectiveSortOrder, Player, ScoreboardIdentityType, ScoreboardObjective as MCSO, world } from "@minecraft/server";
 import { execCmd } from "./mc.js";
 
 export default class scoreboard {
@@ -160,7 +160,8 @@ export class ScoreboardPlayers {
 
 export class ScoreboardDisplay {
     static set(slot: displaySlots, obj?: ScoreboardObjective | MCSO, sort: "ascending" | "descending" = "descending") {
-        obj ? world.scoreboard.setObjectiveAtDisplaySlot(slot, new ScoreboardObjectiveDisplayOptions(obj instanceof ScoreboardObjective ? obj.data : obj, ObjectiveSortOrder[sort])) : world.scoreboard.clearObjectiveAtDisplaySlot(slot);
+        //obj ? world.scoreboard.setObjectiveAtDisplaySlot(slot, new ScoreboardObjectiveDisplayOptions(obj instanceof ScoreboardObjective ? obj.data : obj, ObjectiveSortOrder[sort])) : world.scoreboard.clearObjectiveAtDisplaySlot(slot);
+        obj ? world.scoreboard.setObjectiveAtDisplaySlot(slot, { objective: obj instanceof MCSO ? obj : obj.data, sortOrder: ObjectiveSortOrder[sort] }) : world.scoreboard.clearObjectiveAtDisplaySlot(slot);
     }
 
     static clear(slot: displaySlots) {
