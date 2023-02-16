@@ -31,14 +31,14 @@ function antiknockbacka(id: number) {
 
         let hand = player.selectedSlot;
 
-        let invContainer = player.getComponent("inventory");
+        let invContainer = player.getComponent("inventory") as EntityInventoryComponent;
         let inventory = invContainer.container;
         let equippedItem = inventory.getItem(hand);
 
         let defineItem = "";
         // Check if object returns defined
         if (equippedItem !== undefined) {
-            defineItem = equippedItem.id;
+            defineItem = equippedItem.typeId;
         }
         // Verify if property of object is a trident and skip if it is
         if (defineItem === "minecraft:trident") {

@@ -42,17 +42,17 @@ function illegalitemsd() {
         if (entity.id === "minecraft:item") {
             // If shulker boxes are not allowed in the server then we handle this here
             const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
-            if (antiShulkerBoolean && itemName.id in shulkerItems) {
+            if (antiShulkerBoolean && itemName.typeId in shulkerItems) {
                 entity.kill();
                 continue;
             }
             // If it is an illegal item then remove it
-            if (itemName.id in illegalitems) {
+            if (itemName.typeId in illegalitems) {
                 entity.kill();
                 continue;
             }
             // If it is an illegal stack then remove it
-            const maxStack = maxItemStack[itemName.id] ?? defaultMaxItemStack;
+            const maxStack = maxItemStack[itemName.typeId] ?? defaultMaxItemStack;
             if (itemName.amount < 0 || itemName.amount > maxStack) {
                 entity.kill();
                 continue;
