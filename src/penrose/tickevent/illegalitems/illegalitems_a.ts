@@ -17,7 +17,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     if (!enchData) {
         // Tag with reason and by who
         try {
-            player.addTag(`Reason:Illegal Item A (${inventory_item.id.replace("minecraft:", "")}=${inventory_item.amount})`);
+            player.addTag(`Reason:Illegal Item A (${inventory_item.typeId.replace("minecraft:", "")}=${inventory_item.amount})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
@@ -28,7 +28,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     } else {
         // Tag with reason and by who
         try {
-            player.addTag(`Reason:Illegal Item A (${inventory_item.id.replace("minecraft:", "")}: ${enchData.id}=${enchData.level})`);
+            player.addTag(`Reason:Illegal Item A (${inventory_item.typeId.replace("minecraft:", "")}: ${enchData.id}=${enchData.level})`);
             player.addTag("By:Paradox");
             player.addTag("isBanned");
             // Despawn if we cannot kick the player
@@ -84,7 +84,7 @@ function illegalitemsa() {
             continue;
         }
 
-        let inventory = player.getComponent("minecraft:inventory"),
+        let inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent,
             container = inventory.container;
         storage.set(player, container);
     }
@@ -96,12 +96,12 @@ function illegalitemsa() {
             let inventory_item = container.getItem(i);
             if (!inventory_item) continue;
 
-            const itemType = Items.get(inventory_item.id);
+            const itemType = Items.get(inventory_item.typeId);
 
             // If player has an illegal item we kick them
             // If we cannot kick them then we despawn them (no mercy)
-            if (inventory_item.id in illegalitems) {
-                flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
+            if (inventory_item.typeId in illegalitems) {
+                flag(player, "IllegalItems", "A", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                 try {
                     container.setItem(i, emptyItem);
                 } catch {}
@@ -109,11 +109,11 @@ function illegalitemsa() {
                 return rip(player, inventory_item, null);
             }
             // If player has illegal stack we clear it and ban if enabled
-            const maxStack = maxItemStack[inventory_item.id] ?? defaultMaxItemStack;
+            const maxStack = maxItemStack[inventory_item.typeId] ?? defaultMaxItemStack;
             if (inventory_item.amount < 0 || inventory_item.amount > maxStack) {
-                const itemId = inventory_item.id.replace("minecraft:", "");
+                const itemId = inventory_item.typeId.replace("minecraft:", "");
                 // Item stacks over max allowed we clear them
-                flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, "Stacks", itemId, false, null);
+                flag(player, "IllegalItems", "A", "Exploit", inventory_item.typeId, inventory_item.amount, "Stacks", itemId, false, null);
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
                 if (stackBanBoolean) {
@@ -130,7 +130,7 @@ function illegalitemsa() {
                 try {
                     container.setItem(i, emptyItem);
                 } catch {}
-                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.typeId.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
                 continue;
             }
@@ -151,14 +151,14 @@ function illegalitemsa() {
                             case !enchantLevel:
                             // Does the enchantment type exceed or break vanilla levels
                             case level > enchantLevel || level < 0: {
-                                flag(player, "IllegalItems", "A", "Exploit", inventory_item.id, inventory_item.amount, null, null, false, null);
+                                flag(player, "IllegalItems", "A", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                                 // Remove this item immediately
                                 try {
                                     container.setItem(i, emptyItem);
                                 } catch {}
                                 sendMsg("@a[tag=notify]", [
-                                    `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
-                                    `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.id.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
+                                    `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.typeId.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
+                                    `§r§4[§6Paradox§4]§r Removed §4[§f${inventory_item.typeId.replace("minecraft:", "")}§4]§r from ${player.nameTag}.`,
                                 ]);
                                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal enchantments are not allowed!`);
                                 rip(player, inventory_item, { id, level });
@@ -173,23 +173,23 @@ function illegalitemsa() {
             // If shulker boxes are not allowed in the server then we handle this here
             // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
             const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
-            if (antiShulkerBoolean && inventory_item.id in shulkerItems) {
+            if (antiShulkerBoolean && inventory_item.typeId in shulkerItems) {
                 try {
                     container.setItem(i, emptyItem);
                 } catch {}
-                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.id.replace("minecraft:", "")} from ${player.nameTag}.`);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.typeId.replace("minecraft:", "")} from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
                 continue;
             }
 
-            if (itemType && salvageBoolean && inventory_item.id in whitelist === false) {
+            if (itemType && salvageBoolean && inventory_item.typeId in whitelist === false) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
                 let enchantArray = [],
                     enchantLevelArray = [],
                     verifiedItemName = inventory_item.nameTag,
-                    newNameTag = titleCase(inventory_item.id.replace("minecraft:", "")),
+                    newNameTag = titleCase(inventory_item.typeId.replace("minecraft:", "")),
                     actualItemName = new ItemStack(itemType);
                 actualItemName.data = inventory_item.data;
                 actualItemName.amount = inventory_item.amount;
@@ -258,7 +258,7 @@ function illegalitemsa() {
                     // If player has salvageable item we save it
                     uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
                 // Check if data exceeds vanilla data
-                if (salvageable[inventory_item.id] && uniqueItems.indexOf(salvageable[inventory_item.id].name) !== -1 && salvageable[inventory_item.id].data < inventory_item.data) {
+                if (salvageable[inventory_item.typeId] && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) !== -1 && salvageable[inventory_item.typeId].data < inventory_item.data) {
                     // Reset item to data type of 0
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
@@ -273,7 +273,7 @@ function illegalitemsa() {
                         container.setItem(i, new ItemStack(itemType, inventory_item.amount));
                     } catch (error) {}
                     continue;
-                } else if (salvageable[inventory_item.id] && salvageable[inventory_item.id].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.id].name) === -1) {
+                } else if (salvageable[inventory_item.typeId] && salvageable[inventory_item.typeId].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) === -1) {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
@@ -285,10 +285,10 @@ function illegalitemsa() {
                     }
                     // Reset item to data type of equal data if they do not match
                     try {
-                        container.setItem(i, new ItemStack(itemType, inventory_item.amount, salvageable[inventory_item.id].data));
+                        container.setItem(i, new ItemStack(itemType, inventory_item.amount, salvageable[inventory_item.typeId].data));
                     } catch (error) {}
                     continue;
-                } else if (salvageable[inventory_item.id]) {
+                } else if (salvageable[inventory_item.typeId]) {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
