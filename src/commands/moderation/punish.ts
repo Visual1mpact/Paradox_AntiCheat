@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items } from "@minecraft/server";
+import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items, PlayerInventoryComponentContainer } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
@@ -96,8 +96,9 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get requested player's inventory so we can wipe it out
-    let inventoryContainer = member.getComponent("minecraft:inventory");
+    let inventoryContainer = member.getComponent("minecraft:inventory") as EntityInventoryComponent;
     let inventory = inventoryContainer.container;
+
     for (let i = 0; i < inventory.size; i++) {
         let inventory_item = inventory.getItem(i);
         if (!inventory_item) {
