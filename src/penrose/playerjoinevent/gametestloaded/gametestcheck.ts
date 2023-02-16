@@ -27,7 +27,7 @@ function time() {
 
 // This function will be called when playerJoin event is triggered
 const GametestCheck = () => {
-    World.events.playerJoin.subscribe((loaded) => {
+    World.events.playerSpawn.subscribe((loaded) => {
         if (isChecked === false) {
             // Get the name of the player who is joining
             player = loaded.player;
