@@ -1,4 +1,4 @@
-import { Dimension, Entity, Player, world } from "@minecraft/server";
+import { CommandResult, Dimension, Entity, Player, world } from "@minecraft/server";
 import { getStack } from "./misc.js";
 
 const overworld = world.getDimension("overworld");
@@ -40,7 +40,7 @@ export class CommandError extends Error {
 interface commandResponse {
     [k: string]: any;
     /** Response code. `0` if succeed, `-2147483648` if syntax error, `-2147352576` if command error. */
-    statusCode: number;
+    statusCode?: number;
     /** Response message. */
-    statusMessage: string;
+    statusMessage?: string;
 }

@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Location, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, CommandResult, Location, Player, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -86,15 +86,24 @@ export function banMessage(player: Player) {
  * @param {string} objective - Scoreboard objective
  * @param {Player} player - The player object
  */
-export function getScore(objective: string, player: Player, { minimum, maximum } = { minimum: 0, maximum: 0 }) {
+//export function getScore(objective: string, player: Player, { minimum, maximum } = { minimum: 0, maximum: 0 }) {
+//  try {
+//    const data = player.runCommandAsync(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
+//  return parseInt(data.statusMessage.match(/-?\d+/));
+
+//} catch (error) {
+//    return undefined;
+//}
+//}
+
+//provided by VisualImpact
+export function getScore(objective: string, player: Player) {
     try {
-        const data = player.runCommandAsync(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
-        return parseInt(data.statusMessage.match(/-?\d+/));
+        return world.scoreboard.getObjective(objective).getScore(player.scoreboard);
     } catch (error) {
-        return undefined;
+        return 0;
     }
 }
-
 /**
  * @name getPrefix
  * @param {Player} player - The player object
