@@ -91,6 +91,14 @@ function illegalitemsa() {
     let player: Player;
     let container: InventoryComponentContainer;
     for ([player, container] of storage.entries()) {
+        /**
+         * Once we get the player as the key and its relevant value from the map
+         * we want to immediately clear that player from the map to prevent any potential errors
+         * if they log off later on. A player is never properly cleared from the map
+         * when a player logs off so the loop here attempts to target a player that does not
+         * exist.
+         */
+        storage.delete(player);
         let i = container.size;
         while (i--) {
             let inventory_item = container.getItem(i);
