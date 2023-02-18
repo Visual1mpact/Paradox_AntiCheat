@@ -10,7 +10,7 @@
             "name": "Attach to Minecraft",
             "mode": "connect",
             "localRoot": "${workspaceFolder}/scripts/",
-			"host": "localhost",
+            "host": "localhost",
             "port": 19144
         }
     ]

@@ -42,7 +42,7 @@ const maxLevel = {
     swiftSneak: 3,
 } as const;
 
-const compatibles = <List extends (keyof typeof maxLevel)[]>(compatibleEnchantments: List): { [K in List[number]]: typeof maxLevel[K] } => {
+const compatibles = <List extends (keyof typeof maxLevel)[]>(compatibleEnchantments: List): { [K in List[number]]: (typeof maxLevel)[K] } => {
     const obj = Object.create(null);
     for (const ench of compatibleEnchantments) obj[ench] = maxLevel[ench];
     return obj;
