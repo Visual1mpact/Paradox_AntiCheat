@@ -116,8 +116,8 @@ function illegalitemsc(object: BlockPlaceEvent) {
     // If shulker boxes are not allowed in the server then we handle this here
     // No need to ban when we can just remove it entirely and it's not officially listed as an illegal item at this moment
     const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
-    if (antiShulkerBoolean && block.type.id in shulkerItems) {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.type.id.replace("minecraft:", "")} from ${player.nameTag}.`);
+    if (antiShulkerBoolean && block.typeId in shulkerItems) {
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.typeId.replace("minecraft:", "")} from ${player.nameTag}.`);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
         // Set block in world
         block.setType(block.type);
@@ -259,7 +259,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
             }
             // Check if item container is not empty
             const whitelistChest = ["minecraft:shulker_box", "minecraft:undyed_shulker_box", "minecraft:ender_chest"];
-            if (block.type.id in whitelistChest) {
+            if (block.typeId in whitelistChest) {
                 // Most items with a container should be empty when placing down
                 // If we detect items in the container when being placed then it is a hack
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.typeId, inventory_item.amount, "Container", block.type.id.replace("minecraft:", ""), false, null);
