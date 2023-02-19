@@ -14,6 +14,8 @@ history pertaining to Scythe still exists within this project and is free to rev
 
 Check the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki).
 
+Head over to [discord](https://discord.gg/qVd53N2xhq) for support.
+
 <div align="left">
   
 <div align="center">
@@ -37,4 +39,3 @@ Paradox will kick you out if you have any illegal items in your inventory so if 
 
 If you reset your world for any reason then it is recommended to change `password`.
 
-Discord: https://discord.gg/qVd53N2xhq
