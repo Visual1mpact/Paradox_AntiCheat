@@ -6,7 +6,7 @@
         "module": "esnext",
         "sourceMap": false,
         "moduleResolution": "node",
-        "outDir": "scripts",
+        "outDir": "build/scripts",
         "removeComments": false,
         "allowJs": true,
         "checkJs": false,
@@ -15,5 +15,5 @@
         // "noImplicitAny": true
     },
     "include": ["src", "types"],
-	"exclude": ["node_modules"]
+    "exclude": ["node_modules"]
 }

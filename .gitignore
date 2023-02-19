@@ -1,3 +1,4 @@
-scripts
-types
-node_modules
+scripts/
+types/
+node_modules/
+build/
