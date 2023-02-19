@@ -1,4 +1,9 @@
 # Changelog
+## [v3.0.13](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.13) (2023-02-18)
+
+## [v3.0.12](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.12) (2022-02-13)
+
+## [v3.0.11](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.11) (2022-12-23)
 
 ## [v3.0.10](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.10) (2022-12-02)
 
