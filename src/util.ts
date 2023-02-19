@@ -32,7 +32,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
     }
 
     try {
-        player.runCommandAsync(`scoreboard players add @s ${check.toLowerCase()}vl 1`);
+        setScore(player, `${check.toLowerCase()}vl`, 1, true);
     } catch {}
 
     try {
@@ -104,6 +104,23 @@ export function getScore(objective: string, player: Player) {
         return 0;
     }
 }
+
+/**
+ * Sets a players score.
+ * @name setScore
+ * @param {Player} target The player object.
+ * @param {string} objective Scoreboard objective.
+ * @param {number} amount The number to set it to.
+ * @param {boolean} stack If true, it will be added instead of set. Default false.
+ * @returns {number} The score it was set to.
+ */
+export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
+    const scoreObj = world.scoreboard.getObjective(objective);
+    const score = (stack ? target.scoreboard.getScore(scoreObj) ?? 0 : 0) + amount;
+    target.scoreboard.setScore(scoreObj, score);
+    return score;
+}
+
 /**
  * @name getPrefix
  * @param {Player} player - The player object

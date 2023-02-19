@@ -1,5 +1,5 @@
 import { EntityInventoryComponent, world } from "@minecraft/server";
-import { flag, crypto } from "../../../util.js";
+import { flag, crypto, setScore } from "../../../util.js";
 import config from "../../../data/config.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 
@@ -52,7 +52,7 @@ function antiknockbacka(id: number) {
                     // Make sure Anti Knockback is turned on
                     player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);
                     flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, null);
-                    player.runCommandAsync(`scoreboard players add @s velocityvl 1`);
+                    setScore(player, "velocityvl", 1, true);
                 } catch (error) {}
             }
         }

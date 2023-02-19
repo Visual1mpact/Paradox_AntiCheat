@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions, GameMode } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { crypto, getScore, sendMsg } from "../../../util.js";
+import { crypto, getScore, sendMsg, setScore } from "../../../util.js";
 
 const World = world;
 
@@ -57,7 +57,7 @@ function creative() {
             // Survival is allowed so set them to survival
             player.runCommandAsync(`gamemode s`);
         }
-        player.runCommandAsync(`scoreboard players add @s gamemodevl 1`);
+        setScore(player, "gamemodevl", 1, true);
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} §6has tried to change their gamemode §7(Gamemode_C)§6.§4 VL= ${getScore("gamemodevl", player)}`);
     }
 }

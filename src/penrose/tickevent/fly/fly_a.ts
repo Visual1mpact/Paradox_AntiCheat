@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode } from "@minecraft/server";
-import { getScore, flag, crypto } from "../../../util.js";
+import { getScore, flag, crypto, setScore } from "../../../util.js";
 import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import config from "../../../data/config.js";
 
@@ -77,7 +77,7 @@ function flya(id: number) {
                 (Block2?.type.id === "minecraft:air" ?? true)
             ) {
                 try {
-                    player.runCommandAsync(`scoreboard players add @s fly_timer 1`);
+                    setScore(player, "fly_timer", 1, true);
                 } catch (error) {}
                 if (test >= 6) {
                     try {
@@ -90,7 +90,7 @@ function flya(id: number) {
                 }
             } else if (player.hasTag("ground")) {
                 try {
-                    player.runCommandAsync(`scoreboard players set @s fly_timer 0`);
+                    setScore(player, "fly_timer", 0);
                 } catch (error) {}
             }
         }
