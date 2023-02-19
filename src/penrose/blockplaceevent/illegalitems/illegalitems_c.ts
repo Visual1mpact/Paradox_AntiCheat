@@ -144,6 +144,14 @@ function illegalitemsc(object: BlockPlaceEvent) {
         try {
             player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.typeId} 0`);
         } catch (error) {}
+
+        // Put a delay to make sure the command has been completed, just in case the command has been queued
+
+        let i: number = 0;
+        while (i < 2000) {
+            console.log("i: " + i);
+            i++;
+        }
         // Update block with modified permutation to correct its direction
         blockLoc.setPermutation(blockPerm);
     }
