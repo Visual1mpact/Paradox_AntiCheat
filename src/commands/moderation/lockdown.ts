@@ -97,10 +97,10 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
         }
         try {
             // Kick players from server
-            pl.runCommandAsync(`lockdown ${JSON.stringify(pl.name)} ${reason}`);
+            pl.runCommandAsync(`kick ${JSON.stringify(pl.name)} ${reason}`);
         } catch (error) {
             // Despawn players from server
-            pl.triggerEvent("paradox:lockdown");
+            pl.triggerEvent("paradox:kick");
         }
     }
     // Shutting it down
