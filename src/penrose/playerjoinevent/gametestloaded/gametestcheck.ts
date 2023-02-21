@@ -1,15 +1,13 @@
-import { Player, world } from "@minecraft/server";
+import { Player, world, system } from "@minecraft/server";
 
 const World = world;
-
-const tickEventCallback = World.events.tick;
 
 // This is to allow passing between functions
 let player: Player;
 let isChecked = false;
 
 // This function will be called when tick event is triggered from the playerloaded function
-function time() {
+function time(id: number) {
     try {
         // We loop testfor until it returns true so we know the
         // player is in the world because playerJoin triggers
@@ -20,7 +18,7 @@ function time() {
             player.runCommandAsync(`scoreboard players set paradox:config gametestapi 1`);
             player.runCommandAsync(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
-            tickEventCallback.unsubscribe(time);
+            system.clearRunSchedule(id);
         } catch (error) {}
     } catch (error) {}
 }
@@ -31,8 +29,14 @@ const GametestCheck = () => {
         if (isChecked === false) {
             // Get the name of the player who is joining
             player = loaded.player;
-            // Subscribe tick event to the time function
-            tickEventCallback.subscribe(time);
+            /**
+             * We store the identifier in a variable
+             * to cancel the execution of this scheduled run
+             * if needed to do so.
+             */
+            const timeId = system.runSchedule(() => {
+                time(timeId);
+            });
         }
     });
 };

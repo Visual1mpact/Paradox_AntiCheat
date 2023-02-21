@@ -1,8 +1,7 @@
 import "./debug/main.js";
 import "./wrap.js";
 // Import Customs
-import { world } from "@minecraft/server";
-import { setTickInterval } from "./libs/scheduling.js";
+import { world, system } from "@minecraft/server";
 import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
 // Import BeforeChat Events
 import { BadPackets1 } from "./penrose/beforechatevent/spammer/badpackets_1.js";
@@ -78,33 +77,39 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
-ClearLag();
-BadPackets2();
-VerifyPermission();
-OPS();
-Hotbar();
-NoPerms();
-PlayerPosition();
-Vanish();
-IllegalItemsD();
-Survival();
-Adventure();
-Creative();
-WorldBorder();
-ServerBan();
-CrasherA();
-NamespoofA();
-NamespoofB();
-BedrockValidate();
-JesusA();
-NoSlowA();
-IllegalItemsA();
-InvalidSprintA();
-FlyA();
-AntiKnockbackA();
+ClearLag;
+BadPackets2;
+VerifyPermission;
+OPS;
+Hotbar;
+NoPerms;
+PlayerPosition;
+Vanish;
+IllegalItemsD;
+Survival;
+Adventure;
+Creative;
+WorldBorder;
+ServerBan;
+CrasherA;
+NamespoofA;
+NamespoofB;
+BedrockValidate;
+JesusA;
+NoSlowA;
+IllegalItemsA;
+InvalidSprintA;
+FlyA;
+AntiKnockbackA;
 
-// Freeze Check
-setTickInterval(() => {
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ *
+ * Freeze Check
+ */
+const timeId = system.runSchedule(() => {
     let hastag: boolean;
     // run as each player
     for (let player of World.getPlayers()) {

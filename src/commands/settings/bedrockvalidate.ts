@@ -77,7 +77,7 @@ export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
         // Allow
         World.setDynamicProperty("bedrockvalidate_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`);
-        BedrockValidate();
+        BedrockValidate;
         return;
     } else if (bedrockValidateBoolean === true) {
         // Deny

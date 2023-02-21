@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer } from "@minecraft/server";
+import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer, system } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { crypto, flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
@@ -39,7 +39,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     }
 }
 
-function illegalitemsa() {
+function illegalitemsa(id: number) {
     // Get Dynamic Property
     let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b"),
         salvageBoolean = World.getDynamicProperty("salvage_b"),
@@ -64,7 +64,7 @@ function illegalitemsa() {
                 player.removeTag("illegalitemsA");
             }
         }
-        World.events.tick.unsubscribe(illegalitemsa);
+        system.clearRunSchedule(id);
         return;
     }
 
@@ -318,8 +318,11 @@ function illegalitemsa() {
     return;
 }
 
-const IllegalItemsA = () => {
-    World.events.tick.subscribe(illegalitemsa);
-};
-
-export { IllegalItemsA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const IllegalItemsA = system.runSchedule(() => {
+    illegalitemsa(IllegalItemsA);
+});

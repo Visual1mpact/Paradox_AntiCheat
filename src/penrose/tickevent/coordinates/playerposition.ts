@@ -1,20 +1,24 @@
-import { world } from "@minecraft/server";
-import { setTickInterval } from "../../../libs/scheduling.js";
+import { world, system } from "@minecraft/server";
 
 const World = world;
 
-const PlayerPosition = () => {
-    setTickInterval(() => {
-        // run as each player
-        for (let player of World.getPlayers()) {
-            // player position
-            try {
-                player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
-                player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
-                player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
-            } catch (e) {}
-        }
-    }, 20); // Executes every 1 seconds
-};
+function playerposition() {
+    // run as each player
+    for (let player of World.getPlayers()) {
+        // player position
+        try {
+            player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
+            player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
+            player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
+        } catch (e) {}
+    }
+}
 
-export { PlayerPosition };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const PlayerPosition = system.runSchedule(() => {
+    playerposition();
+}, 20);

@@ -1,7 +1,6 @@
 import config from "../../../data/config.js";
-import { world, EntityQueryOptions, ItemStack, EntityItemComponent } from "@minecraft/server";
+import { world, EntityQueryOptions, ItemStack, EntityItemComponent, system } from "@minecraft/server";
 import { sendMsg } from "../../../util.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import { clearItems } from "../../../data/clearlag.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 
@@ -31,7 +30,7 @@ function dhms(ms: number) {
     return [sec, "seconds"];
 }
 
-function executionItem() {
+function executionItem(id: number) {
     // Find them all and take them out
     let filter = new Object() as EntityQueryOptions;
     filter.type = "item";
@@ -52,10 +51,10 @@ function executionItem() {
             entity.kill();
         }
     }
-    return World.events.tick.unsubscribe(executionItem);
+    return system.clearRunSchedule(id);
 }
 
-function executionEntity() {
+function executionEntity(id: number) {
     // Find them all and take them out
     let filter = new Object() as EntityQueryOptions;
     filter.families = ["monster"];
@@ -69,7 +68,7 @@ function executionEntity() {
         kickablePlayers.add(entity);
         entity.triggerEvent("paradox:kick");
     }
-    return World.events.tick.unsubscribe(executionEntity);
+    return system.clearRunSchedule(id);
 }
 
 function clearlag(id: number) {
@@ -80,7 +79,7 @@ function clearlag(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (clearLagBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
 
@@ -136,9 +135,19 @@ function clearlag(id: number) {
     if (activeTimer[0] <= 0) {
         // Delete old key and value
         cooldownTimer.delete(object);
-        // Clear entities and items
-        World.events.tick.subscribe(executionItem);
-        World.events.tick.subscribe(executionEntity);
+        /**
+         * We store the identifier in a variable
+         * to cancel the execution of this scheduled run
+         * if needed to do so.
+         *
+         * Clear entities and items
+         */
+        const executionItemId = system.runSchedule(() => {
+            executionItem(executionItemId);
+        });
+        const executionEntityId = system.runSchedule(() => {
+            executionEntity(executionEntityId);
+        });
         // Notify that it has been cleared
         sendMsg("@a", `§r§4[§6Paradox§4]§r Server has been cleared to reduce lag!`);
     } else {
@@ -149,8 +158,11 @@ function clearlag(id: number) {
     }
 }
 
-const ClearLag = () => {
-    const id = setTickInterval(() => clearlag(id), 20);
-};
-
-export { ClearLag };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const ClearLag = system.runSchedule(() => {
+    clearlag(ClearLag);
+}, 20);

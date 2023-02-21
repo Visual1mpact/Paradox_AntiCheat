@@ -1,7 +1,6 @@
-import { EntityInventoryComponent, world } from "@minecraft/server";
+import { EntityInventoryComponent, world, system } from "@minecraft/server";
 import { flag, crypto, setScore } from "../../../util.js";
 import config from "../../../data/config.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 
 const World = world;
 
@@ -13,7 +12,7 @@ function antiknockbacka(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (antikbBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -60,9 +59,11 @@ function antiknockbacka(id: number) {
     return;
 }
 
-const AntiKnockbackA = () => {
-    // Executes every 2 seconds
-    const id = setTickInterval(() => antiknockbacka(id), 40);
-};
-
-export { AntiKnockbackA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const AntiKnockbackA = system.runSchedule(() => {
+    antiknockbacka(AntiKnockbackA);
+}, 40);

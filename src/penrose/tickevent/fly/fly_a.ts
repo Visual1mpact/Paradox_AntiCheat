@@ -1,6 +1,5 @@
-import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode } from "@minecraft/server";
+import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode, system } from "@minecraft/server";
 import { getScore, flag, crypto, setScore } from "../../../util.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -15,7 +14,7 @@ function flya(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (flyABoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
 
@@ -97,9 +96,11 @@ function flya(id: number) {
     }
 }
 
-const FlyA = () => {
-    // Executes every 1 second
-    const id = setTickInterval(() => flya(id), 20);
-};
-
-export { FlyA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const FlyA = system.runSchedule(() => {
+    flya(FlyA);
+}, 20);

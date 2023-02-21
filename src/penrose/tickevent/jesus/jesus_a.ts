@@ -1,5 +1,4 @@
-import { world, Location, BlockLocation, Block, Player, Dimension } from "@minecraft/server";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
+import { world, Location, BlockLocation, Block, Player, Dimension, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 
@@ -25,7 +24,7 @@ function jesusa(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (jesusaBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -69,9 +68,11 @@ function jesusa(id: number) {
     return;
 }
 
-const JesusA = () => {
-    // Executes every 1 seconds
-    const id = setTickInterval(() => jesusa(id), 20);
-};
-
-export { JesusA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const JesusA = system.runSchedule(() => {
+    jesusa(JesusA);
+}, 20);

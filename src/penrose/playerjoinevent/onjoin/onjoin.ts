@@ -1,4 +1,4 @@
-import { Player, world } from "@minecraft/server";
+import { Player, world, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { getPrefix } from "../../../util.js";
@@ -6,11 +6,9 @@ import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
-const tickEventCallback = World.events.tick;
-
 let check = false;
 
-function onJoinTime(player: Player, callback: any) {
+function onJoinTime(player: Player, id: number) {
     // Get Dynamic Property
     let lockdownBoolean = World.getDynamicProperty("lockdown_b");
     if (lockdownBoolean === undefined) {
@@ -37,7 +35,7 @@ function onJoinTime(player: Player, callback: any) {
                 kickablePlayers.add(player);
                 player.triggerEvent("paradox:kick");
             }
-            return tickEventCallback.unsubscribe(callback);
+            return system.clearRunSchedule(id);
         }
 
         // We execute each command in the list
@@ -65,7 +63,7 @@ function onJoinTime(player: Player, callback: any) {
     } catch (error) {}
     if (check) {
         check = false;
-        return tickEventCallback.unsubscribe(callback);
+        return system.clearRunSchedule(id);
     }
 }
 
@@ -73,9 +71,14 @@ const onJoin = () => {
     World.events.playerSpawn.subscribe((loaded) => {
         // Get the name of the player who is joining
         let player = loaded.player;
-        let callback: any;
-        // Subscribe tick event to the time function
-        tickEventCallback.subscribe((callback = () => onJoinTime(player, callback)));
+        /**
+         * We store the identifier in a variable
+         * to cancel the execution of this scheduled run
+         * if needed to do so.
+         */
+        const onJoinTimeId = system.runSchedule(() => {
+            onJoinTime(player, onJoinTimeId);
+        });
     });
 };
 

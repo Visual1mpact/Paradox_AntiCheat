@@ -1,14 +1,12 @@
-import { Player, world } from "@minecraft/server";
+import { Player, world, system } from "@minecraft/server";
 import { banplayer } from "../../../data/globalban.js";
 import { banMessage } from "../../../util.js";
 
 const World = world;
 
-const tickEventCallback = World.events.tick;
-
 let check = false;
 
-function banHammerTime(player: Player, callback: any) {
+function banHammerTime(player: Player, id: number) {
     try {
         // Loop until player is detected in the world
         player.runCommandAsync(`testfor @s`);
@@ -28,7 +26,7 @@ function banHammerTime(player: Player, callback: any) {
     } catch (error) {}
     if (check) {
         check = false;
-        tickEventCallback.unsubscribe(callback);
+        system.clearRunSchedule(id);
         return;
     }
 }
@@ -37,9 +35,14 @@ const GlobalBanList = () => {
     World.events.playerSpawn.subscribe((loaded) => {
         // Get the name of the player who is joining
         let player = loaded.player;
-        // Subscribe tick event to the time function
-        let callback: any;
-        tickEventCallback.subscribe((callback = () => banHammerTime(player, callback)));
+        /**
+         * We store the identifier in a variable
+         * to cancel the execution of this scheduled run
+         * if needed to do so.
+         */
+        const banHammerTimeId = system.runSchedule(() => {
+            banHammerTime(player, banHammerTimeId);
+        });
     });
 };
 

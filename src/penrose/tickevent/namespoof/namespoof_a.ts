@@ -1,7 +1,6 @@
-import { world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 
 const World = world;
 
@@ -13,7 +12,7 @@ function namespoofa(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -38,9 +37,11 @@ function namespoofa(id: number) {
     return;
 }
 
-const NamespoofA = () => {
-    // Executes every 2 seconds
-    const id = setTickInterval(() => namespoofa(id), 40);
-};
-
-export { NamespoofA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const NamespoofA = system.runSchedule(() => {
+    namespoofa(NamespoofA);
+}, 40);

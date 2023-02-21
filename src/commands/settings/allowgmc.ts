@@ -90,11 +90,11 @@ export function allowgmc(message: BeforeChatEvent, args: string[]) {
         if (adventureGMBoolean === true && survivalGMBoolean === true) {
             World.setDynamicProperty("adventuregm_b", false);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
-            Adventure();
+            Adventure;
             return;
         }
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 1 (Creative)§r to be used!`);
-        Creative();
+        Creative;
         return;
     } else if (creativeGMBoolean === true) {
         // Deny
