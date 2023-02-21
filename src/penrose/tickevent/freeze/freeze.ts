@@ -1,10 +1,8 @@
-import { world, Location, Player } from "@minecraft/server";
+import { world, Location, Player, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { getScore, crypto, sendMsg } from "../../../util.js";
 
 const World = world;
-const tickEventCallback = World.events.tick;
-const playerLeaveEventCallback = World.events.playerLeave;
 
 // Global definitions within script
 let posx: number;
@@ -21,7 +19,7 @@ let backz: number;
 let player: Player;
 let hastag: boolean;
 
-function Freeze() {
+function Freeze(id: number) {
     // Record their location
     try {
         posx = player.location.x;
@@ -47,7 +45,7 @@ function Freeze() {
             player.removeTag("freeze");
             player.runCommandAsync(`effect @s clear`);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`);
-            tickEventCallback.unsubscribe(Freeze);
+            system.clearRunSchedule(id);
             return;
         }
         // We just need this in case they log off and log back on
@@ -118,18 +116,18 @@ function Freeze() {
         // Return them back to original coordinates
         player.teleport(new Location(backx, backy, backz), World.getDimension(realmIDString), 0, 0);
         player.removeTag("freezeactive");
-        playerLeaveEventCallback.unsubscribe(StopTickFreeze);
-        tickEventCallback.unsubscribe(Freeze);
+        World.events.playerLeave.unsubscribe(() => StopTickFreeze(id));
+        system.clearRunSchedule(id);
     }
 }
 
 // If they log off then unsubscribe Freeze
-function StopTickFreeze() {
-    tickEventCallback.unsubscribe(Freeze);
+function StopTickFreeze(id: number) {
+    system.clearRunSchedule(id);
 }
 
 // Where the magic begins
-function TickFreeze(data) {
+function TickFreeze(data: Player) {
     player = data;
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty("hash");
@@ -139,10 +137,15 @@ function TickFreeze(data) {
         encode = crypto(salt, config.modules.encryption.password);
     } catch (error) {}
     if (hash === undefined || encode !== hash) {
-        try {
-            tickEventCallback.subscribe(Freeze);
-        } catch (error) {}
-        playerLeaveEventCallback.subscribe(StopTickFreeze);
+        /**
+         * We store the identifier in a variable
+         * to cancel the execution of this scheduled run
+         * if needed to do so.
+         */
+        const freezeId = system.runSchedule(() => {
+            Freeze(freezeId);
+        });
+        World.events.playerLeave.subscribe(() => StopTickFreeze(freezeId));
     }
 }
 

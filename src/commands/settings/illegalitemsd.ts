@@ -77,7 +77,7 @@ export function illegalitemsD(message: BeforeChatEvent, args: string[]) {
         // Allow
         World.setDynamicProperty("illegalitemsd_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsD§r!`);
-        IllegalItemsD();
+        IllegalItemsD;
         return;
     } else if (illegalItemsDBoolean === true) {
         // Deny

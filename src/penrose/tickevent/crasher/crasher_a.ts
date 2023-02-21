@@ -1,11 +1,11 @@
-import { world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
-function crashera() {
+function crashera(id: number) {
     // Get Dynamic Property
     let crasherABoolean = World.getDynamicProperty("crashera_b");
     if (crasherABoolean === undefined) {
@@ -13,7 +13,7 @@ function crashera() {
     }
     // Unsubscribe if disabled in-game
     if (crasherABoolean === false) {
-        World.events.tick.unsubscribe(crashera);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -33,8 +33,11 @@ function crashera() {
     }
 }
 
-const CrasherA = () => {
-    World.events.tick.subscribe(crashera);
-};
-
-export { CrasherA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const CrasherA = system.runSchedule(() => {
+    crashera(CrasherA);
+});

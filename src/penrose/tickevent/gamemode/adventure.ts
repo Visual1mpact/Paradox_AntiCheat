@@ -1,10 +1,10 @@
-import { world, EntityQueryOptions, GameMode } from "@minecraft/server";
+import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, getScore, sendMsg, setScore } from "../../../util.js";
 
 const World = world;
 
-function adventure() {
+function adventure(id: number) {
     // Get Dynamic Property
     let adventureGMBoolean = World.getDynamicProperty("adventuregm_b");
     if (adventureGMBoolean === undefined) {
@@ -20,7 +20,7 @@ function adventure() {
     }
     // Unsubscribe if disabled in-game
     if (adventureGMBoolean === false) {
-        World.events.tick.unsubscribe(adventure);
+        system.clearRunSchedule(id);
         return;
     }
     let filter = new Object() as EntityQueryOptions;
@@ -62,8 +62,11 @@ function adventure() {
     }
 }
 
-const Adventure = () => {
-    World.events.tick.subscribe(adventure);
-};
-
-export { Adventure };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const Adventure = system.runSchedule(() => {
+    adventure(Adventure);
+});

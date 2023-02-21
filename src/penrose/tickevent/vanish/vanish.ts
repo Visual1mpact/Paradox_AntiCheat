@@ -1,4 +1,4 @@
-import { world, MinecraftEffectTypes, EntityQueryOptions } from "@minecraft/server";
+import { world, MinecraftEffectTypes, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 
@@ -39,8 +39,11 @@ function vanish() {
     }
 }
 
-const Vanish = () => {
-    World.events.tick.subscribe(vanish);
-};
-
-export { Vanish };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const Vanish = system.runSchedule(() => {
+    vanish();
+});

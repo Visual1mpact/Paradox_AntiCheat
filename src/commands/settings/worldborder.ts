@@ -105,7 +105,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[1])));
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[3])));
-        WorldBorder();
+        WorldBorder;
         return;
     }
 
@@ -121,7 +121,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[3])));
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[1])));
-        WorldBorder();
+        WorldBorder;
         return;
     }
 
@@ -135,7 +135,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[0])));
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[1])));
-        WorldBorder();
+        WorldBorder;
         return;
     }
 
@@ -148,7 +148,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Nether: ${args[1]}`);
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[1])));
-        WorldBorder();
+        WorldBorder;
         return;
     }
 
@@ -161,7 +161,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Overworld: ${args[1]}`);
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[1])));
-        WorldBorder();
+        WorldBorder;
         return;
     }
 

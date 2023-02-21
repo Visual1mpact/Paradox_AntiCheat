@@ -1,6 +1,5 @@
-import { world, EntityQueryOptions } from "@minecraft/server";
+import { world, EntityQueryOptions, system } from "@minecraft/server";
 import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
-import { setTickInterval } from "../../../libs/scheduling.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
 const World = world;
@@ -39,9 +38,11 @@ function serverban() {
     }
 }
 
-const ServerBan = () => {
-    // Executes every 2 seconds
-    setTickInterval(() => serverban(), 40);
-};
-
-export { ServerBan };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const ServerBan = system.runSchedule(() => {
+    serverban();
+}, 40);

@@ -86,7 +86,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
             config.modules.hotbar.message = args.join(" ");
         }
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has enabled §6Hotbar`);
-        Hotbar();
+        Hotbar;
         return;
     } else if (hotbarBoolean === true && args[0].toLowerCase() === "disable") {
         // Deny

@@ -1,7 +1,6 @@
-import { world, MinecraftEffectTypes, EntityMovementComponent } from "@minecraft/server";
+import { world, MinecraftEffectTypes, EntityMovementComponent, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 
 const World = world;
 
@@ -13,7 +12,7 @@ function noslowa(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (noSlowBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -40,9 +39,11 @@ function noslowa(id: number) {
     return;
 }
 
-const NoSlowA = () => {
-    // Executes every 2 seconds
-    const id = setTickInterval(() => noslowa(id), 40);
-};
-
-export { NoSlowA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const NoSlowA = system.runSchedule(() => {
+    noslowa(NoSlowA);
+}, 40);

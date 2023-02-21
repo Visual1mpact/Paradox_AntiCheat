@@ -1,6 +1,5 @@
-import { world, EntityQueryOptions, Player } from "@minecraft/server";
+import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { clearTickTimeout, setTickTimeout } from "../../../libs/scheduling.js";
 
 const World = world;
 
@@ -12,10 +11,10 @@ function queueSleep(player: Player, id: number) {
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
         player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
     }
-    clearTickTimeout(id);
+    system.clearRunSchedule(id);
 }
 
-function ops() {
+function ops(opsID: number) {
     // Get Dynamic Property
     let opsBoolean = World.getDynamicProperty("ops_b");
     if (opsBoolean === undefined) {
@@ -23,19 +22,24 @@ function ops() {
     }
     // Unsubscribe if disabled in-game
     if (opsBoolean === false) {
-        World.events.tick.unsubscribe(ops);
+        system.clearRunSchedule(opsID);
         return;
     }
     let filter = new Object() as EntityQueryOptions;
     filter.tags = ["sleeping"];
     let filterPlayers = [...World.getPlayers(filter)];
     if (filterPlayers.length) {
-        const id = setTickTimeout(() => queueSleep(filterPlayers[0], id), 40);
+        const id = system.runSchedule(() => {
+            queueSleep(filterPlayers[0], id);
+        }, 40);
     }
 }
 
-const OPS = () => {
-    World.events.tick.subscribe(ops);
-};
-
-export { OPS };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const OPS = system.runSchedule(() => {
+    ops(OPS);
+});

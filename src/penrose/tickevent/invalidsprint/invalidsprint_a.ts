@@ -1,6 +1,5 @@
-import { world, MinecraftEffectTypes, EntityMovementComponent } from "@minecraft/server";
+import { world, MinecraftEffectTypes, EntityMovementComponent, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import config from "../../../data/config.js";
 
 const World = world;
@@ -13,7 +12,7 @@ function invalidsprinta(id) {
     }
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -40,9 +39,11 @@ function invalidsprinta(id) {
     return;
 }
 
-const InvalidSprintA = () => {
-    // Executes every 2 seconds
-    const id = setTickInterval(() => invalidsprinta(id), 40);
-};
-
-export { InvalidSprintA };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const InvalidSprintA = system.runSchedule(() => {
+    invalidsprinta(InvalidSprintA);
+}, 40);

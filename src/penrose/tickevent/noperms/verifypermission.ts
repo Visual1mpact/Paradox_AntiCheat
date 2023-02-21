@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions } from "@minecraft/server";
+import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 
@@ -28,8 +28,11 @@ function verifypermission() {
     }
 }
 
-const VerifyPermission = () => {
-    World.events.tick.subscribe(verifypermission);
-};
-
-export { VerifyPermission };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const VerifyPermission = system.runSchedule(() => {
+    verifypermission();
+});

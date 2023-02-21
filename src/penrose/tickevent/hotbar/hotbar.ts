@@ -1,9 +1,9 @@
-import { world, EntityQueryOptions } from "@minecraft/server";
+import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 
 const World = world;
 
-function hotbar() {
+function hotbar(id: number) {
     // Get Dynamic Property
     let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined) {
@@ -11,7 +11,7 @@ function hotbar() {
     }
     // Unsubscribe if disabled in-game
     if (hotbarBoolean === false) {
-        World.events.tick.unsubscribe(hotbar);
+        system.clearRunSchedule(id);
         return;
     }
     let hotbarMessage: string;
@@ -24,8 +24,11 @@ function hotbar() {
     }
 }
 
-const Hotbar = () => {
-    World.events.tick.subscribe(hotbar);
-};
-
-export { Hotbar };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const Hotbar = system.runSchedule(() => {
+    hotbar(Hotbar);
+});

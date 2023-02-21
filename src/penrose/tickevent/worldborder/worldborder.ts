@@ -1,4 +1,4 @@
-import { BlockLocation, Location, MinecraftBlockTypes, Player, world } from "@minecraft/server";
+import { BlockLocation, Location, MinecraftBlockTypes, Player, world, system } from "@minecraft/server";
 import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
 
@@ -39,7 +39,7 @@ function worldborder() {
     }
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
-        World.events.tick.unsubscribe(worldborder);
+        system.clearRunSchedule(WorldBorder);
         return;
     }
     for (let player of World.getPlayers()) {
@@ -231,8 +231,11 @@ function worldborder() {
     }
 }
 
-const WorldBorder = () => {
-    World.events.tick.subscribe(worldborder);
-};
-
-export { WorldBorder };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const WorldBorder = system.runSchedule(() => {
+    worldborder();
+});

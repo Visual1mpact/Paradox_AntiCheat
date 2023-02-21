@@ -1,11 +1,11 @@
-import { EntityItemComponent, EntityQueryOptions, ItemStack, world } from "@minecraft/server";
+import { EntityItemComponent, EntityQueryOptions, ItemStack, world, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 
 const World = world;
 
-function illegalitemsd() {
+function illegalitemsd(id: number) {
     // Get Dynamic Property
     let illegalItemsDBoolean = World.getDynamicProperty("illegalitemsd_b");
     if (illegalItemsDBoolean === undefined) {
@@ -17,7 +17,7 @@ function illegalitemsd() {
     }
     // Unsubscribe if disabled in-game
     if (illegalItemsDBoolean === false) {
-        World.events.tick.unsubscribe(illegalitemsd);
+        system.clearRunSchedule(id);
         return;
     }
     let filter = new Object() as EntityQueryOptions;
@@ -61,8 +61,11 @@ function illegalitemsd() {
     }
 }
 
-const IllegalItemsD = () => {
-    World.events.tick.subscribe(illegalitemsd);
-};
-
-export { IllegalItemsD };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const IllegalItemsD = system.runSchedule(() => {
+    illegalitemsd(IllegalItemsD);
+});

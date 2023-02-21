@@ -1,7 +1,6 @@
-import { Player, world } from "@minecraft/server";
+import { Player, world, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
@@ -27,7 +26,7 @@ function namespoofb(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -54,9 +53,11 @@ function namespoofb(id: number) {
     return;
 }
 
-const NamespoofB = () => {
-    // Executes every 2 seconds
-    const id = setTickInterval(() => namespoofb(id), 40);
-};
-
-export { NamespoofB };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const NamespoofB = system.runSchedule(() => {
+    namespoofb(NamespoofB);
+}, 40);

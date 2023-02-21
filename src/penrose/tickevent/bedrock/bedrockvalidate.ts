@@ -1,5 +1,4 @@
-import { world } from "@minecraft/server";
-import { clearTickInterval, setTickInterval } from "../../../libs/scheduling.js";
+import { world, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
 
@@ -13,7 +12,7 @@ function bedrockvalidate(id: number) {
     }
     // Unsubscribe if disabled in-game
     if (bedrockValidateBoolean === false) {
-        clearTickInterval(id);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -51,9 +50,11 @@ function bedrockvalidate(id: number) {
     }
 }
 
-const BedrockValidate = () => {
-    // Executes every 1 second
-    const id = setTickInterval(() => bedrockvalidate(id), 20);
-};
-
-export { BedrockValidate };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const BedrockValidate = system.runSchedule(() => {
+    bedrockvalidate(BedrockValidate);
+}, 20);

@@ -1,10 +1,10 @@
-import { world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 
 const World = world;
 
-function badpackets2() {
+function badpackets2(id: number) {
     // Get Dynamic Property
     let badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
     if (badPackets2Boolean === undefined) {
@@ -12,7 +12,7 @@ function badpackets2() {
     }
     // Unsubscribe if disabled in-game
     if (badPackets2Boolean === false) {
-        World.events.tick.unsubscribe(badpackets2);
+        system.clearRunSchedule(id);
         return;
     }
     // run as each player
@@ -25,8 +25,11 @@ function badpackets2() {
     }
 }
 
-const BadPackets2 = () => {
-    World.events.tick.subscribe(badpackets2);
-};
-
-export { BadPackets2 };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const BadPackets2 = system.runSchedule(() => {
+    badpackets2(BadPackets2);
+});

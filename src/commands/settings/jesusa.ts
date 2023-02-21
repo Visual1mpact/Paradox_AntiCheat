@@ -77,7 +77,7 @@ export function jesusA(message: BeforeChatEvent, args: string) {
         // Allow
         World.setDynamicProperty("jesusa_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6JesusA§r!`);
-        JesusA();
+        JesusA;
         return;
     } else if (jesusaBoolean === true) {
         // Deny

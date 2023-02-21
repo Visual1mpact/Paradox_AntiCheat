@@ -1,4 +1,4 @@
-import { world, Player, EntityQueryOptions } from "@minecraft/server";
+import { world, Player, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 
@@ -43,8 +43,11 @@ function noperms() {
     }
 }
 
-const NoPerms = () => {
-    World.events.tick.subscribe(noperms);
-};
-
-export { NoPerms };
+/**
+ * We store the identifier in a variable
+ * to cancel the execution of this scheduled run
+ * if needed to do so.
+ */
+export const NoPerms = system.runSchedule(() => {
+    noperms();
+});
