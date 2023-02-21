@@ -13,6 +13,7 @@ import {
     BlockInventoryComponent,
     BlockInventoryComponentContainer,
     ItemEnchantsComponent,
+    CommandResult,
 } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
@@ -141,19 +142,17 @@ function illegalitemsc(object: BlockPlaceEvent) {
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
-        try {
-            player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.typeId} 0`);
-        } catch (error) {}
-
-        // Put a delay to make sure the command has been completed, just in case the command has been queued
-
-        let i: number = 0;
-        while (i < 2000) {
-            console.log("i: " + i);
-            i++;
-        }
-        // Update block with modified permutation to correct its direction
-        blockLoc.setPermutation(blockPerm);
+        player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.typeId} 0`).then(
+            function () {
+                // the command completed now run the code here.
+                // Update block with modified permutation to correct its direction
+                blockLoc.setPermutation(blockPerm);
+            },
+            function () {
+                //it failed
+                return;
+            }
+        );
     }
     // Check if place item is illegal
     if (block.typeId in illegalitems && block.typeId in iicWhitelist === false) {
