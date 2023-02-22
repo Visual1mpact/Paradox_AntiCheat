@@ -31,7 +31,7 @@ function punishHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function punish(message: BeforeChatEvent, args: string[]) {
+export async function punish(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/punish.js:10)");
@@ -91,7 +91,7 @@ export function punish(message: BeforeChatEvent, args: string[]) {
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
         try {
-            member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
+            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
         } catch (error) {}
     }
 

@@ -31,7 +31,7 @@ function kickHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function kick(message: BeforeChatEvent, args: string[]) {
+export async function kick(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/kick.js:33)");
@@ -86,7 +86,7 @@ export function kick(message: BeforeChatEvent, args: string[]) {
     }
 
     try {
-        player.runCommandAsync(`kick ${JSON.stringify(member.name)} ${reason}`);
+        await player.runCommandAsync(`kick ${JSON.stringify(member.name)} ${reason}`);
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);

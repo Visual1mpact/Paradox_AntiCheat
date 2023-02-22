@@ -4,7 +4,7 @@ import { crypto, getScore, sendMsg, setScore } from "../../../util.js";
 
 const World = world;
 
-function creative(id: number) {
+async function creative(id: number) {
     // Get Dynamic Property
     let adventureGMBoolean = World.getDynamicProperty("adventuregm_b");
     if (adventureGMBoolean === undefined) {
@@ -46,16 +46,16 @@ function creative(id: number) {
         // Are they in creative? Fix it.
         if (survivalGMBoolean === true && adventureGMBoolean === false) {
             // Adventure is allowed so set them to adventure
-            player.runCommandAsync(`gamemode a`);
+            await player.runCommandAsync(`gamemode a`);
         }
         if (survivalGMBoolean === false && adventureGMBoolean === true) {
             // Survival is allowed so set them to survival
-            player.runCommandAsync(`gamemode s`);
+            await player.runCommandAsync(`gamemode s`);
         }
         // If both are allowed then default to survival
         if (survivalGMBoolean === false && adventureGMBoolean === false) {
             // Survival is allowed so set them to survival
-            player.runCommandAsync(`gamemode s`);
+            await player.runCommandAsync(`gamemode s`);
         }
         setScore(player, "gamemodevl", 1, true);
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} §6has tried to change their gamemode §7(Gamemode_C)§6.§4 VL= ${getScore("gamemodevl", player)}`);

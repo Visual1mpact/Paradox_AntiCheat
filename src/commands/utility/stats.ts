@@ -29,7 +29,7 @@ function statsHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function stats(message: BeforeChatEvent, args: string[]) {
+export async function stats(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/stats.js:29)");
@@ -81,5 +81,5 @@ export function stats(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    return member.runCommandAsync(`execute as @s at @s run function tools/stats`);
+    return await member.runCommandAsync(`execute as @s at @s run function tools/stats`);
 }

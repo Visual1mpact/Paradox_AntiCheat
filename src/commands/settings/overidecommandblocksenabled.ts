@@ -33,7 +33,7 @@ function overrideCBEHelp(player: Player, prefix: string, cmdsscore: string | num
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function overidecommandblocksenabled(message: BeforeChatEvent, args: string[]) {
+export async function overidecommandblocksenabled(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/overideCommandBlocksEnabled.js:7)");
@@ -68,16 +68,16 @@ export function overidecommandblocksenabled(message: BeforeChatEvent, args: stri
 
     if (cmdsscore <= 0) {
         // Allow
-        player.runCommandAsync(`scoreboard players set paradox:config cmds 1`);
+        await player.runCommandAsync(`scoreboard players set paradox:config cmds 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §6enabled§r!`);
     } else if (cmdsscore === 1) {
         // Deny
-        player.runCommandAsync(`scoreboard players set paradox:config cmds 2`);
+        await player.runCommandAsync(`scoreboard players set paradox:config cmds 2`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set CommandBlocksEnabled as §4disabled§r!`);
     } else if (cmdsscore >= 2) {
         // Force
-        player.runCommandAsync(`scoreboard players set paradox:config cmds 0`);
+        await player.runCommandAsync(`scoreboard players set paradox:config cmds 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has §etoggled§r Force-CommandBlocksEnabled!`);
     }
-    return player.runCommandAsync(`scoreboard players operation @a cmds = paradox:config cmds`);
+    return await player.runCommandAsync(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, CommandResult, Location, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, Location, Player, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -16,10 +16,10 @@ import { kickablePlayers } from "./kickcheck.js";
  * @param {boolean} shouldTP - Whever to tp the player to itself.
  * @param {BeforeChatEvent} message - The message object, used to cancel the message.
  */
-export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
+export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
     // make sure the vl objective exists
     try {
-        player.runCommandAsync(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
+        await player.runCommandAsync(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
     } catch {}
 
     // cancel the message
@@ -47,7 +47,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
 
     try {
         if (check === "Namespoof") {
-            player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r You have illegal characters in your name!`);
+            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r You have illegal characters in your name!`);
         }
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
@@ -60,7 +60,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
  * @name banMessage
  * @param {Player} player - The player object
  */
-export function banMessage(player: Player) {
+export async function banMessage(player: Player) {
     let tags = player.getTags();
 
     var reason: string;
@@ -73,7 +73,7 @@ export function banMessage(player: Player) {
     });
 
     try {
-        player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
+        await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
     } catch (error) {
         // if we cant kick them with /kick then we instant despawn them
         kickablePlayers.add(player);
@@ -251,14 +251,14 @@ export const crypto = (salt: string | number | boolean, text: string) => {
 
 const overworld = world.getDimension("overworld");
 
-export const sendMsg = (target: string, message: string | string[]) => {
+export const sendMsg = async (target: string, message: string | string[]) => {
     try {
-        overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
+        await overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
     } catch {}
 };
 
-export const sendMsgToPlayer = (target: Player, message: string | string[]) => {
+export const sendMsgToPlayer = async (target: Player, message: string | string[]) => {
     try {
-        target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
+        await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
     } catch {}
 };

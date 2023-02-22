@@ -28,7 +28,7 @@ function fullReportHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function fullreport(message: BeforeChatEvent, args: string[]) {
+export async function fullreport(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fullreport.js:28)");
@@ -63,5 +63,5 @@ export function fullreport(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
     }
 
-    return player.runCommandAsync(`execute as @a at @s run function tools/stats`);
+    return await player.runCommandAsync(`execute as @a at @s run function tools/stats`);
 }

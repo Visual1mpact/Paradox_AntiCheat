@@ -65,7 +65,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     }
 }
 
-function illegalitemsc(object: BlockPlaceEvent) {
+async function illegalitemsc(object: BlockPlaceEvent) {
     // Get Dynamic Property
     let illegalItemsCBoolean = World.getDynamicProperty("illegalitemsc_b");
     if (illegalItemsCBoolean === undefined) {
@@ -125,7 +125,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
-            player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
+            await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
         } catch (error) {}
         return;
     }
@@ -142,17 +142,9 @@ function illegalitemsc(object: BlockPlaceEvent) {
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
-        player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.typeId} 0`).then(
-            function () {
-                // the command completed now run the code here.
-                // Update block with modified permutation to correct its direction
-                blockLoc.setPermutation(blockPerm);
-            },
-            function () {
-                //it failed
-                return;
-            }
-        );
+        await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.typeId} 0`);
+        // Update block with modified permutation to correct its direction
+        blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
     if (block.typeId in illegalitems && block.typeId in iicWhitelist === false) {
@@ -161,7 +153,7 @@ function illegalitemsc(object: BlockPlaceEvent) {
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
-            player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
+            await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
         } catch (error) {}
         flag(player, "IllegalItems", "C", "Exploit", null, null, null, null, null, null);
         return rip(player, null, null, block);

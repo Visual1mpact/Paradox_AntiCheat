@@ -38,7 +38,7 @@ function mayflyenable(player: Player, member: Player) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - (Optional) Additional arguments provided (optional).
  */
-export function fly(message: BeforeChatEvent, args: string[]) {
+export async function fly(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fly.js:38)");
@@ -92,7 +92,7 @@ export function fly(message: BeforeChatEvent, args: string[]) {
 
     if (!membertag.includes("noflying") && !membertag.includes("flying")) {
         try {
-            member.runCommandAsync(`ability @s mayfly true`);
+            await member.runCommandAsync(`ability @s mayfly true`);
             member.addTag("flying");
             mayflyenable(player, member);
         } catch (Error) {
@@ -107,7 +107,7 @@ export function fly(message: BeforeChatEvent, args: string[]) {
 
     if (member.hasTag("noflying")) {
         try {
-            member.runCommandAsync(`ability @s mayfly false`);
+            await member.runCommandAsync(`ability @s mayfly false`);
             member.removeTag("flying");
             mayflydisable(player, member);
             member.removeTag("noflying");

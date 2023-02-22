@@ -37,7 +37,7 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
     }
 }
 
-function illegalitemsb(object: BeforeItemUseOnEvent) {
+async function illegalitemsb(object: BeforeItemUseOnEvent) {
     // Get Dynamic Property
     let illegalItemsBBoolean = World.getDynamicProperty("illegalitemsb_b");
     if (illegalItemsBBoolean === undefined) illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
@@ -68,7 +68,7 @@ function illegalitemsb(object: BeforeItemUseOnEvent) {
 
     // Used for getting some info on the item
     if (config.debug) {
-        source.runCommandAsync(`say Item: ${item.typeId}, Data: ${item.data}, Amount: ${item.amount}`);
+        await source.runCommandAsync(`say Item: ${item.typeId}, Data: ${item.data}, Amount: ${item.amount}`);
     }
 
     // Check for hash/salt and validate password

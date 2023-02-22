@@ -37,7 +37,7 @@ function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | 
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function lockdown(message: BeforeChatEvent, args: string[]) {
+export async function lockdown(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/lockdown.js:37)");
@@ -97,7 +97,7 @@ export function lockdown(message: BeforeChatEvent, args: string[]) {
         }
         try {
             // Kick players from server
-            pl.runCommandAsync(`kick ${JSON.stringify(pl.name)} ${reason}`);
+            await pl.runCommandAsync(`kick ${JSON.stringify(pl.name)} ${reason}`);
         } catch (error) {
             // Despawn players from server
             pl.triggerEvent("paradox:kick");

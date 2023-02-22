@@ -45,7 +45,7 @@ export function evalCmd(evd: mc.BeforeChatEvent, args: string[], argFull?: strin
     } catch (e) {
         return sendMsgToPlayer(player, "Uncaught " + (e instanceof Error ? `${e}\n${e.stack}` : viewobj(e)));
     }
-    sendMsgToPlayer(player, viewobj(v));
+    return sendMsgToPlayer(player, viewobj(v));
 }
 
 import { enchantmentSlot as enchantments } from "../data/enchantments.js";

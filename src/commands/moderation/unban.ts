@@ -6,7 +6,7 @@ export const queueUnban = new Set();
 
 function listQueue(queue: string, player: Player) {
     if (queue) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${player.nameTag}§r is queued to be unbanned`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${player.nameTag}§r is queued to be unbanned`);
     }
 }
 
