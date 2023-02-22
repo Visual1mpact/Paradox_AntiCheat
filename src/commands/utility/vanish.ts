@@ -26,7 +26,7 @@ function vanishHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function vanish(message: BeforeChatEvent, args: string[]) {
+export async function vanish(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./utility/vanish.js:26)");
@@ -67,7 +67,7 @@ export function vanish(message: BeforeChatEvent, args: string[]) {
 
     if (player.hasTag("novanish")) {
         player.triggerEvent("unvanish");
-        player.runCommandAsync(`effect @s clear`);
+        await player.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${player.nameTag}§r is no longer in vanish.`);
     }

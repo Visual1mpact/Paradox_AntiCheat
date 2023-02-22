@@ -36,7 +36,7 @@ function antikbHelp(player: Player, prefix: string, antikbBoolean: string | numb
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function antiknockback(message: BeforeChatEvent, args: string[]) {
+export async function antiknockback(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antikb.js:36)");
@@ -78,14 +78,14 @@ export function antiknockback(message: BeforeChatEvent, args: string[]) {
     if (antikbscore <= 0) {
         // Allow
         World.setDynamicProperty("antikb_b", true);
-        player.runCommandAsync(`scoreboard players set paradox:config antikb 1`);
+        await player.runCommandAsync(`scoreboard players set paradox:config antikb 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`);
         AntiKnockbackA;
     } else if (antikbscore >= 1) {
         // Deny
         World.setDynamicProperty("antikb_b", false);
-        player.runCommandAsync(`scoreboard players set paradox:config antikb 0`);
+        await player.runCommandAsync(`scoreboard players set paradox:config antikb 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`);
     }
-    return player.runCommandAsync(`scoreboard players operation @a antikb = paradox:config antikb`);
+    return await player.runCommandAsync(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

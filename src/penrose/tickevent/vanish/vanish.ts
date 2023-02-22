@@ -4,7 +4,7 @@ import { crypto, sendMsg } from "../../../util.js";
 
 const World = world;
 
-function vanish() {
+async function vanish() {
     // Filter for only players who are vanished
     let filter = new Object() as EntityQueryOptions;
     filter.tags = ["vanish"];
@@ -22,14 +22,14 @@ function vanish() {
         if (hash !== undefined && encode === hash) {
             player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255, false);
             player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255, false);
-            player.runCommandAsync(`title @s actionbar §6YOU ARE VANISHED!`);
+            await player.runCommandAsync(`title @s actionbar §6YOU ARE VANISHED!`);
         }
         // Make sure they have permission to use Vanish
         if (hash === undefined || encode !== hash) {
             // They have been busted!
             player.removeTag("vanish");
             if (player.getEffect(MinecraftEffectTypes.invisibility) || player.getEffect(MinecraftEffectTypes.nightVision)) {
-                player.runCommandAsync(`effect @s clear`);
+                await player.runCommandAsync(`effect @s clear`);
             }
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {

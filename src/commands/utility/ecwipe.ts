@@ -29,7 +29,7 @@ function ecWipeHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided.
  */
-export function ecwipe(message: BeforeChatEvent, args: string[]) {
+export async function ecwipe(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/ecwipe.js:29)");
@@ -80,7 +80,7 @@ export function ecwipe(message: BeforeChatEvent, args: string[]) {
     // There are 30 slots ranging from 0 to 29
     for (let slot = 0; slot < 30; slot++) {
         try {
-            member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
+            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
         } catch (error) {}
     }
     return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wiped ${member.nameTag}'s enderchest!`);

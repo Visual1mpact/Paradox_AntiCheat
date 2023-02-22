@@ -3,7 +3,7 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function hotbar(id: number) {
+async function hotbar(id: number) {
     // Get Dynamic Property
     let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined) {
@@ -20,7 +20,7 @@ function hotbar(id: number) {
     // run as each player
     for (let player of World.getPlayers(filter)) {
         hotbarMessage = config.modules.hotbar.message;
-        player.runCommandAsync(`titleraw @s actionbar {"rawtext":[{"text":${JSON.stringify(hotbarMessage)}}]}`);
+        await player.runCommandAsync(`titleraw @s actionbar {"rawtext":[{"text":${JSON.stringify(hotbarMessage)}}]}`);
     }
 }
 

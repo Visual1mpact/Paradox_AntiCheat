@@ -3,13 +3,13 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function queueSleep(player: Player, id: number) {
-    player.runCommandAsync(`time set sunrise`);
-    player.runCommandAsync(`time add 2000`);
-    player.runCommandAsync(`weather clear`);
+async function queueSleep(player: Player, id: number) {
+    await player.runCommandAsync(`time set sunrise`);
+    await player.runCommandAsync(`time add 2000`);
+    await player.runCommandAsync(`weather clear`);
     let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
-        player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
+        await player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
     }
     system.clearRunSchedule(id);
 }

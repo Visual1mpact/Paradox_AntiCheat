@@ -7,7 +7,7 @@ const World = world;
 
 let blockTimer = new Map();
 
-function nukera(object: BlockBreakEvent) {
+async function nukera(object: BlockBreakEvent) {
     // Get Dynamic Property
     let antiNukerABoolean = World.getDynamicProperty("antinukera_b");
     if (antiNukerABoolean === undefined) {
@@ -138,13 +138,13 @@ function nukera(object: BlockBreakEvent) {
         blockLoc.setPermutation(blockID);
         try {
             // Remove dropped items after nuking because it will leave a mess of entities in the world
-            player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
+            await player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
         } catch (error) {}
 
         /*
         try {
-            player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
-            player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            await player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
+            await player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
             player.addTag('isBanned');
         } catch (error) {
             kickablePlayers.add(player); player.triggerEvent('paradox:kick');

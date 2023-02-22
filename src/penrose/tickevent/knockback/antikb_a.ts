@@ -4,7 +4,7 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-function antiknockbacka(id: number) {
+async function antiknockbacka(id: number) {
     // Get Dynamic Property
     let antikbBoolean = World.getDynamicProperty("antikb_b");
     if (antikbBoolean === undefined) {
@@ -49,7 +49,7 @@ function antiknockbacka(id: number) {
             if (player.hasTag("attacked") && !player.hasTag("dead") && !player.hasTag("gliding") && !player.hasTag("levitating") && !player.hasTag("flying")) {
                 try {
                     // Make sure Anti Knockback is turned on
-                    player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);
+                    await player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);
                     flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, null);
                     setScore(player, "velocityvl", 1, true);
                 } catch (error) {}

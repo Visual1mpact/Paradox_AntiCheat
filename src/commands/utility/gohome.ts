@@ -50,7 +50,7 @@ function goHomeHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function gohome(message: BeforeChatEvent, args: string[]) {
+export async function gohome(message: BeforeChatEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/gohome.js:52)");
@@ -139,7 +139,7 @@ export function gohome(message: BeforeChatEvent, args: string[]) {
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || (hash !== undefined && encode === hash)) {
-            player.runCommandAsync(`scoreboard players set @s teleport 25`);
+            await player.runCommandAsync(`scoreboard players set @s teleport 25`);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
             // Delete old key and value

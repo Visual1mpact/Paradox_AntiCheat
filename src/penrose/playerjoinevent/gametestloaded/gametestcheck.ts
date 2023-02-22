@@ -7,16 +7,16 @@ let player: Player;
 let isChecked = false;
 
 // This function will be called when tick event is triggered from the playerloaded function
-function time(id: number) {
+async function time(id: number) {
     try {
         // We loop testfor until it returns true so we know the
         // player is in the world because playerJoin triggers
         // too quickly while player is in loading screen
-        player.runCommandAsync(`testfor @s`);
+        await player.runCommandAsync(`testfor @s`);
         try {
             // (1..) Set gametestapi to 1
-            player.runCommandAsync(`scoreboard players set paradox:config gametestapi 1`);
-            player.runCommandAsync(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
+            await player.runCommandAsync(`scoreboard players set paradox:config gametestapi 1`);
+            await player.runCommandAsync(`scoreboard players operation @a gametestapi = paradox:config gametestapi`);
             isChecked = true;
             system.clearRunSchedule(id);
         } catch (error) {}

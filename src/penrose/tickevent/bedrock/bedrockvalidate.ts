@@ -4,7 +4,7 @@ import { crypto } from "../../../util.js";
 
 const World = world;
 
-function bedrockvalidate(id: number) {
+async function bedrockvalidate(id: number) {
     // Get Dynamic Property
     let bedrockValidateBoolean = World.getDynamicProperty("bedrockvalidate_b");
     if (bedrockValidateBoolean === undefined) {
@@ -30,21 +30,21 @@ function bedrockvalidate(id: number) {
         // bedrock validation
         if (player.dimension === World.getDimension("overworld") && config.modules.bedrockValidate.overworld) {
             try {
-                player.runCommandAsync(`fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
+                await player.runCommandAsync(`fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
             } catch (error) {}
         }
 
         if (player.dimension === World.getDimension("nether") && config.modules.bedrockValidate.nether) {
             try {
-                player.runCommandAsync(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
+                await player.runCommandAsync(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
             } catch (error) {}
 
             try {
-                player.runCommandAsync(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
+                await player.runCommandAsync(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
             } catch (error) {}
 
             try {
-                player.runCommandAsync(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
+                await player.runCommandAsync(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
             } catch (error) {}
         }
     }

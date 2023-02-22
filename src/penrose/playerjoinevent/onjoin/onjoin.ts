@@ -8,7 +8,7 @@ const World = world;
 
 let check = false;
 
-function onJoinTime(player: Player, id: number) {
+async function onJoinTime(player: Player, id: number) {
     // Get Dynamic Property
     let lockdownBoolean = World.getDynamicProperty("lockdown_b");
     if (lockdownBoolean === undefined) {
@@ -22,14 +22,14 @@ function onJoinTime(player: Player, id: number) {
 
     try {
         // Loop until player is detected in the world
-        player.runCommandAsync(`testfor @s`);
+        await player.runCommandAsync(`testfor @s`);
 
         // Lock down the server if enabled
         if (lockdownBoolean) {
             let reason = "Under Maintenance! Sorry for the inconvenience.";
             try {
                 // Kick players from server
-                player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
+                await player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
             } catch (error) {
                 // Despawn players from server
                 kickablePlayers.add(player);
@@ -41,7 +41,7 @@ function onJoinTime(player: Player, id: number) {
         // We execute each command in the list
         for (let i = 0; i < onJoinData.length; i++) {
             try {
-                player.runCommandAsync(`${onJoinData[i]}`);
+                await player.runCommandAsync(`${onJoinData[i]}`);
             } catch (error) {}
         }
 

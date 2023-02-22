@@ -29,7 +29,7 @@ function auraCheckHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function auracheck(message: BeforeChatEvent, args: string[]) {
+export async function auracheck(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/auracheck.js:29)");
@@ -77,5 +77,5 @@ export function auracheck(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    return member.runCommandAsync(`summon paradox:killaura ^ ^ ^-3`);
+    return await member.runCommandAsync(`summon paradox:killaura ^ ^ ^-3`);
 }

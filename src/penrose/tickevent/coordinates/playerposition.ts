@@ -2,14 +2,14 @@ import { world, system } from "@minecraft/server";
 
 const World = world;
 
-function playerposition() {
+async function playerposition() {
     // run as each player
     for (let player of World.getPlayers()) {
         // player position
         try {
-            player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
-            player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
-            player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
+            await player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
+            await player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
+            await player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
         } catch (e) {}
     }
 }

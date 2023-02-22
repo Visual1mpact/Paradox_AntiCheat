@@ -33,7 +33,7 @@ function removeCBEHelp(player: Player, prefix: string, commandblocksscore: strin
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function removecommandblocks(message: BeforeChatEvent, args: string[]) {
+export async function removecommandblocks(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/removeCommandBlocks.js:33)");
@@ -68,12 +68,12 @@ export function removecommandblocks(message: BeforeChatEvent, args: string[]) {
 
     if (commandblocksscore <= 0) {
         // Allow
-        player.runCommandAsync(`scoreboard players set paradox:config commandblocks 1`);
+        await player.runCommandAsync(`scoreboard players set paradox:config commandblocks 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Command Blocks§r!`);
     } else if (commandblocksscore >= 1) {
         // Deny
-        player.runCommandAsync(`scoreboard players set paradox:config commandblocks 0`);
+        await player.runCommandAsync(`scoreboard players set paradox:config commandblocks 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Command Blocks§r!`);
     }
-    return player.runCommandAsync(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
+    return await player.runCommandAsync(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
 }

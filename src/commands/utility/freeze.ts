@@ -30,7 +30,7 @@ function freezeHelp(player: Player, prefix: string) {
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function freeze(message: BeforeChatEvent, args: string[]) {
+export async function freeze(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/freeze.js:30)");
@@ -97,7 +97,7 @@ export function freeze(message: BeforeChatEvent, args: string[]) {
         member.removeTag("freeze");
     }
     if (member.hasTag("nofreeze")) {
-        member.runCommandAsync(`effect @s clear`);
+        await member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`);
     }
