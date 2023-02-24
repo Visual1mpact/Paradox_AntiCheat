@@ -4,8 +4,7 @@ import config from "../../../data/config.js";
 const World = world;
 
 async function queueSleep(player: Player, id: number) {
-    await player.runCommandAsync(`time set sunrise`);
-    await player.runCommandAsync(`time add 2000`);
+    await player.runCommandAsync(`time set 126553000`);
     await player.runCommandAsync(`weather clear`);
     let hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
