@@ -12,7 +12,7 @@ history pertaining to Scythe still exists within this project and is free to rev
 
 **Paradox:** A statement or situation that contradicts itself, opposed to common sense and yet perhaps true.
 
-Check the [wiki](https://github.com/Visual1mpact/Paradox_AntiCheat/wiki).
+Check the [wiki](https://github.com/Pete9xi/Paradox_AntiCheat/wiki).
 
 Head over to [discord](https://discord.gg/qVd53N2xhq) for support.
 
