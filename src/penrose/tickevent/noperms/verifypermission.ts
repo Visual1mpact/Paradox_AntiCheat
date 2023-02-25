@@ -5,19 +5,22 @@ import { crypto, sendMsg } from "../../../util.js";
 const World = world;
 
 function verifypermission() {
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.tags = ["paradoxOpped"];
     // Let's check the players for illegal permissions
-    for (let player of World.getPlayers(filter)) {
+    for (const player of World.getPlayers(filter)) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
-        let encode;
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
+        let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch (error) {}
         if (hash !== undefined && encode === hash) {
             continue;
+        } else {
+            player.removeDynamicProperty("hash");
+            player.removeDynamicProperty("salt");
         }
         // If they have the basic permission but not the hash then remove it
         player.removeTag("paradoxOpped");
