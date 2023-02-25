@@ -234,7 +234,7 @@ export default {
         },
         hotbar: {
             enabled: false,
-            message: "", // Put Message inside the quotes
+            message: "Hotbar is enabled (Set your message to change this)", // Put Message inside the quotes
         },
         ops: {
             enabled: false,

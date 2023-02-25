@@ -81,7 +81,7 @@ ClearLag;
 BadPackets2;
 VerifyPermission;
 OPS;
-Hotbar;
+Hotbar();
 NoPerms;
 PlayerPosition;
 Vanish;

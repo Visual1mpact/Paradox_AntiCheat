@@ -48,8 +48,8 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -60,13 +60,10 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
-    if (hotbarBoolean === undefined) {
-        hotbarBoolean = config.modules.hotbar.enabled;
-    }
+    const hotbarBoolean = World.getDynamicProperty("hotbar_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -74,20 +71,19 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.hotbar) {
         return hotbarHelp(player, prefix, hotbarBoolean);
     }
 
-    if (hotbarBoolean === false) {
+    if (hotbarBoolean === false && args[0].toLowerCase() !== "disable") {
         // Allow
         World.setDynamicProperty("hotbar_b", true);
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         }
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has enabled §6Hotbar`);
-        Hotbar;
-        return;
+        Hotbar();
     } else if (hotbarBoolean === true && args[0].toLowerCase() === "disable") {
         // Deny
         World.setDynamicProperty("hotbar_b", false);

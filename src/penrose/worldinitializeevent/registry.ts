@@ -230,7 +230,7 @@ function registry(data: WorldInitializeEvent) {
     }
 
     // Set properties for hotbar
-    let hotbar_b = World.getDynamicProperty("hotbar_b");
+    const hotbar_b = World.getDynamicProperty("hotbar_b");
     if (hotbar_b === undefined) {
         World.setDynamicProperty("hotbar_b", config.modules.hotbar.enabled);
     }
