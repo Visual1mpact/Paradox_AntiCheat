@@ -349,12 +349,6 @@ function registry(data: WorldInitializeEvent) {
         World.setDynamicProperty("salvage_b", config.modules.salvage.enabled);
     }
 
-    // Set properties for rcbr
-    let rcbr_b = World.getDynamicProperty("rcbr_b");
-    if (rcbr_b === undefined) {
-        World.setDynamicProperty("rcbr_b", config.modules.rbcr.enabled);
-    }
-
     // Set properties for illegallores
     let illegallores_b = World.getDynamicProperty("illegallores_b");
     if (illegallores_b === undefined) {

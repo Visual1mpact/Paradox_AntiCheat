@@ -99,7 +99,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     let spammerABoolean = World.getDynamicProperty("spammera_b");
     let badPackets1Boolean = World.getDynamicProperty("badpackets1_b");
     let savageBoolean = World.getDynamicProperty("salvage_b");
-    let rcbrBoolean = World.getDynamicProperty("rcbr_b");
     let illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
     let illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b");
     let lockdownBoolean = World.getDynamicProperty("lockdown_b");
@@ -152,7 +151,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `Anti-Shulkers: ${status(antiShulkerBoolean)}`,
         `Hotbar: ${status(hotbarBoolean)}`,
         `OPS: ${status(opsBoolean)}`,
-        `RBCR: ${status(rcbrBoolean)}`,
         `Salvage: ${status(savageBoolean)}`,
         `Lockdown: ${status(lockdownBoolean)}`,
         `Badpackets2: ${status(badPackets2Boolean)}`,

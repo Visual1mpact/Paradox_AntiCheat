@@ -103,7 +103,6 @@ export function help(message: BeforeChatEvent) {
         `§6${prefix}xraya§r - ${config.customcommands.xraya ? `Notify's staff when and where player's mine specific ores.` : textDisabled}`,
         `§6${prefix}chatranks§r - ${config.customcommands.chatranks ? `Toggles chat ranks.` : textDisabled}`,
         `§6${prefix}antishulker§r - ${config.customcommands.antishulker ? `Toggles shulkers in the world.` : textDisabled}`,
-        `§6${prefix}rbcr§r - ${config.customcommands.rbcr ? `Toggles option to use Realm Bot Chat Relay.` : textDisabled}`,
         `§6${prefix}ops§r - ${config.customcommands.ops ? `Toggles One Player Sleep (OPS) for all online players.` : textDisabled}`,
         `§6${prefix}salvage§r - ${config.customcommands.salvage ? `Toggles new salvage system [Experimental].` : textDisabled}`,
         `§6${prefix}badpackets2§r - ${config.customcommands.badpackets2 ? `Toggles checks for invalid selected slots by player.` : textDisabled}`,

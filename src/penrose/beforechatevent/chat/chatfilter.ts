@@ -7,10 +7,6 @@ const World = world;
 const ChatFilter = () => {
     World.events.beforeChat.subscribe((msg) => {
         // Get Dynamic Property
-        let rcbrBoolean = World.getDynamicProperty("rcbr_b");
-        if (rcbrBoolean === undefined) {
-            rcbrBoolean = config.modules.rbcr.enabled;
-        }
         let chatRanksBoolean = World.getDynamicProperty("chatranks_b");
         if (chatRanksBoolean === undefined) {
             chatRanksBoolean = config.modules.chatranks.enabled;
@@ -41,7 +37,6 @@ const ChatFilter = () => {
             // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
             // player.nameTag = nametag;
             if (!msg.cancel) {
-                if (rcbrBoolean) sendMsg("RealmBot", "RB_COMMAND" + `{content:'[§6${rank}§4] §7${player.name}: §r${message}'}`);
                 sendMsg("@a", `§4[§6${rank}§4] §7${player.name}: §r${message}`);
                 msg.cancel = true;
             }
@@ -49,7 +44,6 @@ const ChatFilter = () => {
             let message = msg.message;
             let player = msg.sender;
 
-            if (rcbrBoolean) sendMsg("RealmBot", "RB_COMMAND" + `{content:'${player.name}: ${message}'}`);
             sendMsg("@a", `${player.name}: ${message}`);
             msg.cancel = true;
         }
