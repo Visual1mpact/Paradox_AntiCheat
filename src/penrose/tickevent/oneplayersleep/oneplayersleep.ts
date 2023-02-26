@@ -6,7 +6,7 @@ const World = world;
 async function queueSleep(player: Player, id: number) {
     await player.runCommandAsync(`time set 126553000`);
     await player.runCommandAsync(`weather clear`);
-    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
+    const hotbarBoolean = World.getDynamicProperty("hotbar_b");
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
         await player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
     }
@@ -24,9 +24,9 @@ function ops(opsID: number) {
         system.clearRunSchedule(opsID);
         return;
     }
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.tags = ["sleeping"];
-    let filterPlayers = [...World.getPlayers(filter)];
+    const filterPlayers = [...World.getPlayers(filter)];
     if (filterPlayers.length) {
         const id = system.runSchedule(() => {
             queueSleep(filterPlayers[0], id);
@@ -39,6 +39,8 @@ function ops(opsID: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const OPS = system.runSchedule(() => {
-    ops(OPS);
-});
+export function OPS() {
+    const opsId = system.runSchedule(() => {
+        ops(opsId);
+    });
+}

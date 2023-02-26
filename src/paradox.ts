@@ -82,7 +82,7 @@ ChatFilter();
 ClearLag();
 BadPackets2;
 VerifyPermission;
-OPS;
+OPS();
 Hotbar();
 NoPerms;
 PlayerPosition;
