@@ -16,10 +16,10 @@ async function antiknockbacka(id: number) {
         return;
     }
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
@@ -28,11 +28,11 @@ async function antiknockbacka(id: number) {
             continue;
         }
 
-        let hand = player.selectedSlot;
+        const hand = player.selectedSlot;
 
-        let invContainer = player.getComponent("inventory") as EntityInventoryComponent;
-        let inventory = invContainer.container;
-        let equippedItem = inventory.getItem(hand);
+        const invContainer = player.getComponent("inventory") as EntityInventoryComponent;
+        const inventory = invContainer.container;
+        const equippedItem = inventory.getItem(hand);
 
         let defineItem = "";
         // Check if object returns defined
@@ -64,6 +64,8 @@ async function antiknockbacka(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const AntiKnockbackA = system.runSchedule(() => {
-    antiknockbacka(AntiKnockbackA);
-}, 40);
+export function AntiKnockbackA() {
+    const antiKnockbackAId = system.runSchedule(() => {
+        antiknockbacka(antiKnockbackAId);
+    }, 40);
+}
