@@ -89,7 +89,7 @@ PlayerPosition;
 Vanish;
 IllegalItemsD;
 Survival;
-Adventure;
+Adventure();
 Creative;
 WorldBorder();
 ServerBan;
