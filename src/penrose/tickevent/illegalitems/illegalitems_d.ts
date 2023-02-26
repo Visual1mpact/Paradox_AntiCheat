@@ -20,9 +20,9 @@ function illegalitemsd(id: number) {
         system.clearRunSchedule(id);
         return;
     }
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.type = "item";
-    for (let entity of World.getDimension("overworld").getEntities(filter)) {
+    for (const entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
@@ -31,7 +31,7 @@ function illegalitemsd(id: number) {
         let itemName: ItemStack;
         // Get component of itemStack for dropped item
         try {
-            let itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
+            const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
             itemName = itemContainer.itemStack;
         } catch (error) {}
 
@@ -66,6 +66,8 @@ function illegalitemsd(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const IllegalItemsD = system.runSchedule(() => {
-    illegalitemsd(IllegalItemsD);
-});
+export function IllegalItemsD() {
+    const illegalItemsDId = system.runSchedule(() => {
+        illegalitemsd(illegalItemsDId);
+    });
+}

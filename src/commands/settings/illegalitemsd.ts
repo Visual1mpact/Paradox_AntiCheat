@@ -44,11 +44,11 @@ export function illegalitemsD(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -65,10 +65,10 @@ export function illegalitemsD(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.illegalitemsd) {
         return illegalItemsDHelp(player, prefix, illegalItemsDBoolean);
     }
@@ -77,12 +77,10 @@ export function illegalitemsD(message: BeforeChatEvent, args: string[]) {
         // Allow
         World.setDynamicProperty("illegalitemsd_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsD§r!`);
-        IllegalItemsD;
-        return;
+        IllegalItemsD();
     } else if (illegalItemsDBoolean === true) {
         // Deny
         World.setDynamicProperty("illegalitemsd_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsD§r!`);
-        return;
     }
 }

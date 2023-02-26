@@ -87,7 +87,7 @@ Hotbar();
 NoPerms;
 PlayerPosition;
 Vanish;
-IllegalItemsD;
+IllegalItemsD();
 Survival();
 Adventure();
 Creative();
