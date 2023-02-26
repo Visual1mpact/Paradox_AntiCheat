@@ -96,7 +96,7 @@ ServerBan;
 CrasherA;
 NamespoofA();
 NamespoofB();
-BedrockValidate;
+BedrockValidate();
 JesusA;
 NoSlowA;
 IllegalItemsA();
