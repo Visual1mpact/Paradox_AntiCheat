@@ -98,7 +98,7 @@ NamespoofA();
 NamespoofB();
 BedrockValidate();
 JesusA();
-NoSlowA;
+NoSlowA();
 IllegalItemsA();
 InvalidSprintA;
 FlyA;

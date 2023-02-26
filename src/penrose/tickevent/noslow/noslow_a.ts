@@ -16,10 +16,10 @@ function noslowa(id: number) {
         return;
     }
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
@@ -31,7 +31,7 @@ function noslowa(id: number) {
         // Check the players current speed and see if it exceeds the value we have hardcoded
         // If they do not have the effect for speed then we flag and reset their speed to the default value.
         if (speedcheck.current >= config.modules.noslowA.speed && !player.getEffect(MinecraftEffectTypes.speed)) {
-            let speedrecord = speedcheck.current;
+            const speedrecord = speedcheck.current;
             flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", speedrecord.toFixed(3), true, null);
             speedcheck.setCurrent(speedcheck.value);
         }
@@ -44,6 +44,8 @@ function noslowa(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const NoSlowA = system.runSchedule(() => {
-    noslowa(NoSlowA);
-}, 40);
+export function NoSlowA() {
+    const noSlowAId = system.runSchedule(() => {
+        noslowa(noSlowAId);
+    }, 40);
+}
