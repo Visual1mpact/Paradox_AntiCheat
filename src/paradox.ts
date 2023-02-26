@@ -90,7 +90,7 @@ Vanish;
 IllegalItemsD;
 Survival();
 Adventure();
-Creative;
+Creative();
 WorldBorder();
 ServerBan;
 CrasherA;
