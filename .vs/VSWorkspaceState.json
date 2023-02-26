@@ -1,4 +1,10 @@
 {
-    "ExpandedNodes": [""],
-    "PreviewInSolutionExplorer": false
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\commands",
+    "\\src\\commands\\settings"
+  ],
+  "SelectedNode": "\\src\\commands\\settings\\removecommandblocks.ts",
+  "PreviewInSolutionExplorer": false
 }

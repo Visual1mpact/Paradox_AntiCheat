@@ -59,6 +59,8 @@ import { Registry } from "./penrose/worldinitializeevent/registry.js";
 import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
+//Import EntityHurt Events
+import { AntiFall } from "./penrose/entityhurtevent/AntiFall.js";
 
 // Self explanatory
 const World = world;
@@ -149,3 +151,5 @@ CrasherB();
 
 // System Events
 WatchDog();
+// EnitityHurt Events
+AntiFall();
