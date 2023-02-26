@@ -99,7 +99,7 @@ NamespoofB;
 BedrockValidate;
 JesusA;
 NoSlowA;
-IllegalItemsA;
+IllegalItemsA();
 InvalidSprintA;
 FlyA;
 AntiKnockbackA;

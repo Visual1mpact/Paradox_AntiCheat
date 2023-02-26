@@ -58,7 +58,7 @@ function illegalitemsa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
-        let allPlayers = [...World.getPlayers()];
+        const allPlayers = [...World.getPlayers()];
         for (let player of allPlayers) {
             if (player.hasTag("illegalitemsA")) {
                 player.removeTag("illegalitemsA");
@@ -68,14 +68,14 @@ function illegalitemsa(id: number) {
         return;
     }
 
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         if (!player.hasTag("illegalitemsA") && illegalItemsABoolean) {
             player.addTag("illegalitemsA");
         }
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash"),
-            salt = player.getDynamicProperty("salt"),
-            encode: string;
+        const hash = player.getDynamicProperty("hash"),
+            salt = player.getDynamicProperty("salt");
+        let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch {}
@@ -84,7 +84,7 @@ function illegalitemsa(id: number) {
             continue;
         }
 
-        let inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent,
+        const inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent,
             container = inventory.container;
         storage.set(player, container);
     }
@@ -101,7 +101,7 @@ function illegalitemsa(id: number) {
         storage.delete(player);
         let i = container.size;
         while (i--) {
-            let inventory_item = container.getItem(i);
+            const inventory_item = container.getItem(i);
             if (!inventory_item) continue;
 
             const itemType = Items.get(inventory_item.typeId);
@@ -144,7 +144,7 @@ function illegalitemsa(id: number) {
             }
             if (illegalEnchantmentBoolean) {
                 // We get a list of enchantments on this item
-                let enchantContainer = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent,
+                const enchantContainer = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent,
                     item_enchants = enchantContainer.enchantments,
                     // List of allowed enchantments on item
                     enchantedSlot = enchantmentSlot[item_enchants.slot];
@@ -154,7 +154,7 @@ function illegalitemsa(id: number) {
                         level,
                         type: { id },
                     } of item_enchants) {
-                        let enchantLevel = enchantedSlot[id];
+                        const enchantLevel = enchantedSlot[id];
                         switch (true) {
                             case !enchantLevel:
                             // Does the enchantment type exceed or break vanilla levels
@@ -205,24 +205,24 @@ function illegalitemsa(id: number) {
 
                 if (verifiedItemName !== newNameTag) {
                     // Gets enchantment component
-                    let ench_comp = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent,
+                    const ench_comp = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent,
                         // Gets enchantment list from enchantment
                         ench_data = ench_comp.enchantments;
                     // Check if enchantment is not illegal on item
                     if (ench_data) {
                         // List of allowed enchantments on item
-                        let enchantedSlot = enchantmentSlot[ench_data.slot];
-                        for (let enchants in MinecraftEnchantmentTypes) {
+                        const enchantedSlot = enchantmentSlot[ench_data.slot];
+                        for (const enchants in MinecraftEnchantmentTypes) {
                             // If no enchantment then move to next loop
-                            let enchanted = MinecraftEnchantmentTypes[enchants];
+                            const enchanted = MinecraftEnchantmentTypes[enchants];
                             if (!ench_data.hasEnchantment(enchanted)) continue;
                             // Get properties of this enchantment
-                            let enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]),
+                            const enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]),
                                 // Is this item allowed to have this enchantment and does it not exceed level limitations
                                 enchantLevel = enchantedSlot[enchants];
                             if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level >= 0) {
                                 // Save this enchantment and level for new item
-                                let changeCase = toCamelCase(enchants);
+                                const changeCase = toCamelCase(enchants);
                                 enchantArray.push(changeCase);
                                 enchantLevelArray.push(enchant_data.level);
                             }
@@ -230,7 +230,7 @@ function illegalitemsa(id: number) {
                     }
 
                     // Gets enchantment component for new instance
-                    let new_ench_comp = actualItemName.getComponent("minecraft:enchantments") as ItemEnchantsComponent,
+                    const new_ench_comp = actualItemName.getComponent("minecraft:enchantments") as ItemEnchantsComponent,
                         // Gets enchantment list from enchantment of new instance
                         new_ench_data = new_ench_comp.enchantments;
 
@@ -323,6 +323,8 @@ function illegalitemsa(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const IllegalItemsA = system.runSchedule(() => {
-    illegalitemsa(IllegalItemsA);
-});
+export function IllegalItemsA() {
+    const illegalItemsAId = system.runSchedule(() => {
+        illegalitemsa(illegalItemsAId);
+    });
+}
