@@ -45,11 +45,11 @@ export function allowgms(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -74,10 +74,10 @@ export function allowgms(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.allowgms) {
         return allowgmsHelp(player, prefix, survivalGMBoolean);
     }
@@ -90,15 +90,14 @@ export function allowgms(message: BeforeChatEvent, args: string[]) {
         if (adventureGMBoolean === true && creativeGMBoolean === true) {
             World.setDynamicProperty("adventuregm_b", false);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
-            Adventure;
+            Adventure();
             return;
         }
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 0 (Survival)§r to be used!`);
-        Survival;
-        return;
+        Survival();
     } else if (survivalGMBoolean === true) {
         // Deny
         World.setDynamicProperty("survivalgm_b", true);
-        return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 0 (Survival)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 0 (Survival)§r to be used!`);
     }
 }

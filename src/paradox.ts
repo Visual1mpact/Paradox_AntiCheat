@@ -88,7 +88,7 @@ NoPerms;
 PlayerPosition;
 Vanish;
 IllegalItemsD;
-Survival;
+Survival();
 Adventure();
 Creative;
 WorldBorder();
