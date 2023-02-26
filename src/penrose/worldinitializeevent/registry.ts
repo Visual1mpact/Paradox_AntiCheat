@@ -230,7 +230,7 @@ function registry(data: WorldInitializeEvent) {
     }
 
     // Set properties for hotbar
-    let hotbar_b = World.getDynamicProperty("hotbar_b");
+    const hotbar_b = World.getDynamicProperty("hotbar_b");
     if (hotbar_b === undefined) {
         World.setDynamicProperty("hotbar_b", config.modules.hotbar.enabled);
     }
@@ -347,12 +347,6 @@ function registry(data: WorldInitializeEvent) {
     let salvage_b = World.getDynamicProperty("salvage_b");
     if (salvage_b === undefined) {
         World.setDynamicProperty("salvage_b", config.modules.salvage.enabled);
-    }
-
-    // Set properties for rcbr
-    let rcbr_b = World.getDynamicProperty("rcbr_b");
-    if (rcbr_b === undefined) {
-        World.setDynamicProperty("rcbr_b", config.modules.rbcr.enabled);
     }
 
     // Set properties for illegallores

@@ -5,17 +5,15 @@ const World = world;
 
 async function hotbar(id: number) {
     // Get Dynamic Property
-    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
-    if (hotbarBoolean === undefined) {
-        hotbarBoolean = config.modules.hotbar.enabled;
-    }
+    const hotbarBoolean = World.getDynamicProperty("hotbar_b");
+
     // Unsubscribe if disabled in-game
     if (hotbarBoolean === false) {
         system.clearRunSchedule(id);
         return;
     }
     let hotbarMessage: string;
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.excludeTags = ["vanish"];
     // run as each player
     for (let player of World.getPlayers(filter)) {
@@ -29,6 +27,8 @@ async function hotbar(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const Hotbar = system.runSchedule(() => {
-    hotbar(Hotbar);
-});
+export function Hotbar() {
+    const hotbarId = system.runSchedule(() => {
+        hotbar(hotbarId);
+    });
+}

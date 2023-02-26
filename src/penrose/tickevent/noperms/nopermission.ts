@@ -5,13 +5,13 @@ import { crypto, sendMsg } from "../../../util.js";
 const World = world;
 
 function noperms() {
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.tags = ["paradoxOpped"];
     // We need a list of players for checking behind a bug in Minecraft
-    let playerArray = [...World.getPlayers(filter)];
+    const playerArray = [...World.getPlayers(filter)];
     // Let's check the entities for illegal permissions
     // Apparently all dimensions are checked even though we target overworld
-    for (let entity of World.getDimension("overworld").getEntities(filter)) {
+    for (const entity of World.getDimension("overworld").getEntities(filter)) {
         // If it's a player then ignore
         if (entity instanceof Player) {
             continue;
@@ -23,9 +23,9 @@ function noperms() {
             continue;
         }
         // Check for hash/salt and validate password
-        let hash = entity.getDynamicProperty("hash");
-        let salt = entity.getDynamicProperty("salt");
-        let encode;
+        const hash = entity.getDynamicProperty("hash");
+        const salt = entity.getDynamicProperty("salt");
+        let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch (error) {}

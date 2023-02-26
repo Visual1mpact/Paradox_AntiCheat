@@ -38,11 +38,11 @@ export function deop(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -54,10 +54,10 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.deop) {
         return deopHelp(player, prefix);
     }
@@ -82,8 +82,8 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for hash/salt and validate password from member
-    let memberHash = member.getDynamicProperty("hash");
-    let memberSalt = member.getDynamicProperty("salt");
+    const memberHash = member.getDynamicProperty("hash");
+    const memberSalt = member.getDynamicProperty("salt");
     let memberEncode: string;
     try {
         memberEncode = crypto(memberSalt, config.modules.encryption.password);

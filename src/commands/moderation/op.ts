@@ -38,7 +38,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty("hash");
@@ -71,10 +71,10 @@ export function op(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.op) {
         return opHelp(player, prefix);
     }
@@ -108,7 +108,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     }
     // If no hash then create one
     if (memberHash === undefined) {
-        let encode = crypto(memberSalt, config.modules.encryption.password);
+        encode = crypto(memberSalt, config.modules.encryption.password);
         member.setDynamicProperty("hash", encode);
         memberHash = member.getDynamicProperty("hash");
     }

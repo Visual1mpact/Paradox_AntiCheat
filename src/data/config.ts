@@ -74,7 +74,6 @@ export default {
         illegallores: true,
         despawn: true,
         hotbar: true,
-        rbcr: true,
         ops: true,
         salvage: true,
         badpackets2: true,
@@ -235,10 +234,7 @@ export default {
         },
         hotbar: {
             enabled: false,
-            message: "", // Put Message inside the quotes
-        },
-        rbcr: {
-            enabled: false,
+            message: "Hotbar is enabled (Set your message to change this)", // Put Message inside the quotes
         },
         ops: {
             enabled: false,

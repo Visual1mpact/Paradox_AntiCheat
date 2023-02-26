@@ -4,6 +4,9 @@ import { Hotbar } from "../../penrose/tickevent/hotbar/hotbar.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
+const configMessageBackup = new WeakMap();
+// Dummy object
+const dummy = [];
 
 function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -26,6 +29,7 @@ function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | numb
         `§4[§6Optional§4]§r: message, disable, help`,
         `§4[§6Description§4]§r: Displays a hotbar message for all player's currently online.`,
         `§4[§6Examples§4]§r:`,
+        `    ${prefix}hotbar`,
         `    ${prefix}hotbar disable`,
         `    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843`,
         `    ${prefix}hotbar help`,
@@ -48,8 +52,8 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     let player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -60,40 +64,46 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
-    if (hotbarBoolean === undefined) {
-        hotbarBoolean = config.modules.hotbar.enabled;
-    }
+    const hotbarBoolean = World.getDynamicProperty("hotbar_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
-
-    // Are there arguements
-    if (!args.length) {
-        return hotbarHelp(player, prefix, hotbarBoolean);
-    }
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.hotbar) {
         return hotbarHelp(player, prefix, hotbarBoolean);
     }
 
-    if (hotbarBoolean === false) {
+    /**
+     * Backup original message from config (initial usage only)
+     *
+     * Reload server to reset this in memory
+     */
+    if (configMessageBackup.has(dummy) === false) {
+        configMessageBackup.set(dummy, config.modules.hotbar.message);
+    }
+
+    if ((hotbarBoolean === false && !args.length) || (hotbarBoolean === false && args[0].toLowerCase() !== "disable")) {
         // Allow
         World.setDynamicProperty("hotbar_b", true);
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
+        } else {
+            config.modules.hotbar.message = configMessageBackup.get(dummy);
         }
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has enabled §6Hotbar`);
-        Hotbar;
-        return;
-    } else if (hotbarBoolean === true && args[0].toLowerCase() === "disable") {
+        Hotbar();
+    } else if (hotbarBoolean === true && args.length === 1 && args[0].toLowerCase() === "disable") {
         // Deny
         World.setDynamicProperty("hotbar_b", false);
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has disabled §6Hotbar`);
-    } else if (hotbarBoolean === true && args.length >= 1) {
-        config.modules.hotbar.message = args.join(" ");
+    } else if ((hotbarBoolean === true && args.length >= 1) || (hotbarBoolean === true && !args.length)) {
+        if (args.length >= 1) {
+            config.modules.hotbar.message = args.join(" ");
+        } else {
+            config.modules.hotbar.message = configMessageBackup.get(dummy);
+        }
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has updated §6Hotbar`);
     } else {
         return hotbarHelp(player, prefix, hotbarBoolean);

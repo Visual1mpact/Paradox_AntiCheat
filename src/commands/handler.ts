@@ -74,7 +74,6 @@ import { illegalLores } from "./settings/illegallores.js";
 import { despawn } from "./moderation/despawn.js";
 import { reachC } from "./settings/reachc.js";
 import { hotbar } from "./utility/hotbar.js";
-import { rbcr } from "./settings/rbcr.js";
 import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
@@ -160,7 +159,6 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         despawn: despawn,
         reachc: reachC,
         hotbar: hotbar,
-        rbcr: rbcr,
         ops: ops,
         salvage: salvage,
         badpackets2: badpackets2,
