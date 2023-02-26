@@ -30,10 +30,10 @@ function namespoofb(id: number) {
         return;
     }
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
@@ -58,6 +58,8 @@ function namespoofb(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const NamespoofB = system.runSchedule(() => {
-    namespoofb(NamespoofB);
-}, 40);
+export function NamespoofB() {
+    const nameSpoofBId = system.runSchedule(() => {
+        namespoofb(nameSpoofBId);
+    }, 40);
+}
