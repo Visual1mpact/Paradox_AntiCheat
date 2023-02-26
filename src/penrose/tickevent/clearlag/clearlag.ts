@@ -6,9 +6,9 @@ import { kickablePlayers } from "../../../kickcheck.js";
 
 const World = world;
 
-let cooldownTimer = new WeakMap();
+const cooldownTimer = new WeakMap();
 // Just a dummy object to use with set/get
-let object = { cooldown: "String" };
+const object = { cooldown: "String" };
 
 function dhms(ms: number) {
     const days = Math.floor(ms / (24 * 60 * 60 * 1000));
@@ -32,9 +32,9 @@ function dhms(ms: number) {
 
 function executionItem(id: number) {
     // Find them all and take them out
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.type = "item";
-    for (let entity of World.getDimension("overworld").getEntities(filter)) {
+    for (const entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
@@ -43,7 +43,7 @@ function executionItem(id: number) {
         let itemName: ItemStack;
         // Get component of itemStack for dropped item
         try {
-            let itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
+            const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
             itemName = itemContainer.itemStack;
         } catch (error) {}
         // Kill dropped items
@@ -56,9 +56,9 @@ function executionItem(id: number) {
 
 function executionEntity(id: number) {
     // Find them all and take them out
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.families = ["monster"];
-    for (let entity of World.getDimension("overworld").getEntities(filter)) {
+    for (const entity of World.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
@@ -90,12 +90,12 @@ function clearlag(id: number) {
     let cooldownCalc: number;
     let activeTimer = [];
     // Get original time in milliseconds
-    let cooldownVerify = cooldownTimer.get(object);
+    const cooldownVerify = cooldownTimer.get(object);
     // Convert config settings to milliseconds so we can be sure the countdown is accurate
-    let msSettings = config.modules.clearLag.days * 24 * 60 * 60 * 1000 + config.modules.clearLag.hours * 60 * 60 * 1000 + config.modules.clearLag.minutes * 60 * 1000 + config.modules.clearLag.seconds * 1000;
+    const msSettings = config.modules.clearLag.days * 24 * 60 * 60 * 1000 + config.modules.clearLag.hours * 60 * 60 * 1000 + config.modules.clearLag.minutes * 60 * 1000 + config.modules.clearLag.seconds * 1000;
     if (cooldownVerify !== undefined) {
         // Determine difference between new and original times in milliseconds
-        let bigBrain = new Date().getTime() - cooldownVerify;
+        const bigBrain = new Date().getTime() - cooldownVerify;
         // Subtract realtime clock from countdown in configuration to get difference
         cooldownCalc = msSettings - bigBrain;
         // Convert difference to clock format D : H : M : S
@@ -103,32 +103,33 @@ function clearlag(id: number) {
     }
     // Give advance warning
     if (activeTimer[0] === 1 && activeTimer[2] === "minutes" && activeTimer[1] <= 0) {
-        // Notify 10 seconds in advance
+        // Notify 60 seconds in advance
         sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
     }
     // Give advance warning
     if (activeTimer[0] === 5 && activeTimer[1] === "seconds") {
-        // Notify 10 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 5`);
+        // Notify 5 seconds in advance
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in:`);
+        sendMsg("@a", `§r§4[§6Paradox§4]§r 5`);
     }
     // Give advance warning
     if (activeTimer[0] === 4 && activeTimer[1] === "seconds") {
-        // Notify 10 seconds in advance
+        // Notify 4 seconds in advance
         sendMsg("@a", `§r§4[§6Paradox§4]§r 4`);
     }
     // Give advance warning
     if (activeTimer[0] === 3 && activeTimer[1] === "seconds") {
-        // Notify 5 seconds in advance
+        // Notify 3 seconds in advance
         sendMsg("@a", `§r§4[§6Paradox§4]§r 3`);
     }
     // Give advance warning
     if (activeTimer[0] === 2 && activeTimer[1] === "seconds") {
-        // Notify 5 seconds in advance
+        // Notify 2 seconds in advance
         sendMsg("@a", `§r§4[§6Paradox§4]§r 2`);
     }
     // Give advance warning
     if (activeTimer[0] === 1 && activeTimer[1] === "seconds") {
-        // Notify 5 seconds in advance
+        // Notify 1 seconds in advance
         sendMsg("@a", `§r§4[§6Paradox§4]§r 1`);
     }
     // If timer doesn't exist or has expired then set the countdown
@@ -163,6 +164,8 @@ function clearlag(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const ClearLag = system.runSchedule(() => {
-    clearlag(ClearLag);
-}, 20);
+export function ClearLag() {
+    const clearLagId = system.runSchedule(() => {
+        clearlag(clearLagId);
+    }, 20);
+}

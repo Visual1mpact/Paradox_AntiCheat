@@ -79,7 +79,7 @@ PrefixCommand();
 ChatFilter();
 
 // Tick Events
-ClearLag;
+ClearLag();
 BadPackets2;
 VerifyPermission;
 OPS;
