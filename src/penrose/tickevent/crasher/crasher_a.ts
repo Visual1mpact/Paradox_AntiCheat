@@ -17,7 +17,7 @@ function crashera(id: number) {
         return;
     }
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Crasher/A = invalid pos check
         if (Math.abs(player.location.x) > 30000000 || Math.abs(player.location.y) > 30000000 || Math.abs(player.location.z) > 30000000) {
             flag(player, "Crasher", "A", "Exploit", null, null, null, null, true, null);
@@ -38,6 +38,8 @@ function crashera(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const CrasherA = system.runSchedule(() => {
-    crashera(CrasherA);
-});
+export function CrasherA() {
+    const crasherAId = system.runSchedule(() => {
+        crashera(crasherAId);
+    });
+}

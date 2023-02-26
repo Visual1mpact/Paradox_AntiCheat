@@ -93,7 +93,7 @@ Adventure();
 Creative();
 WorldBorder();
 ServerBan;
-CrasherA;
+CrasherA();
 NamespoofA();
 NamespoofB();
 BedrockValidate();
