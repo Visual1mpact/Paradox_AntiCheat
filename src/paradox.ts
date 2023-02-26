@@ -100,7 +100,7 @@ BedrockValidate();
 JesusA();
 NoSlowA();
 IllegalItemsA();
-InvalidSprintA;
+InvalidSprintA();
 FlyA;
 AntiKnockbackA;
 

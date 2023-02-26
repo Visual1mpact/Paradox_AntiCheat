@@ -16,11 +16,11 @@ function invalidsprinta(id) {
         return;
     }
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
-        let encode;
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
+        let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch (error) {}
@@ -31,7 +31,7 @@ function invalidsprinta(id) {
         // Check the players current speed and see if it is equal or more than the value we have hardcoded
         // If they do have the effect for blindness and they are sprinting then we flag and reset their speed.
         if (speedcheck.current >= config.modules.invalidsprintA.speed && player.getEffect(MinecraftEffectTypes.blindness)) {
-            let speedrecord = speedcheck.current;
+            const speedrecord = speedcheck.current;
             flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", speedrecord.toFixed(3), true, null);
             speedcheck.setCurrent(speedcheck.value);
         }
@@ -44,6 +44,8 @@ function invalidsprinta(id) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const InvalidSprintA = system.runSchedule(() => {
-    invalidsprinta(InvalidSprintA);
-}, 40);
+export function InvalidSprintA() {
+    system.runSchedule(() => {
+        invalidsprinta(InvalidSprintA);
+    }, 40);
+}
