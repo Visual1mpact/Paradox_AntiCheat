@@ -80,7 +80,7 @@ ChatFilter();
 
 // Tick Events
 ClearLag();
-BadPackets2;
+BadPackets2();
 VerifyPermission;
 OPS();
 Hotbar();

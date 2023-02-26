@@ -16,7 +16,7 @@ function badpackets2(id: number) {
         return;
     }
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Invalid slot
         if (player.selectedSlot < 0 || player.selectedSlot > 8) {
             flag(player, "BadPackets", "2", "Exploit", null, null, "selectedSlot", `${player.selectedSlot}`, false, null);
@@ -30,6 +30,8 @@ function badpackets2(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const BadPackets2 = system.runSchedule(() => {
-    badpackets2(BadPackets2);
-});
+export function BadPackets2() {
+    const badPackets2Id = system.runSchedule(() => {
+        badpackets2(badPackets2Id);
+    });
+}
