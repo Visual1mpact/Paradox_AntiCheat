@@ -4,7 +4,7 @@ import config from "../../../data/config.js";
 
 const World = world;
 
-let playersOldCoordinates = new Map();
+const playersOldCoordinates = new Map();
 
 function flya(id: number) {
     // Get Dynamic Property
@@ -19,13 +19,13 @@ function flya(id: number) {
     }
 
     // Exclude creative gamemode
-    let gm = new Object() as EntityQueryOptions;
+    const gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [GameMode.creative];
     // run as each player who are in survival
-    for (let player of World.getPlayers(gm)) {
+    for (const player of World.getPlayers(gm)) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
@@ -34,13 +34,13 @@ function flya(id: number) {
             continue;
         }
 
-        let test = getScore("fly_timer", player);
+        const test = getScore("fly_timer", player);
 
         // Fun trick here so that we don't false flag /ability @s mayfly true users
         // It works because hacks add y vel to the player to stay in the air, and it stays between 1-3 whereas mayfly will have a steady score of 0
         // Will still false flag sometimes, but that's why we have !fly
-        let xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
-        let zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
+        const xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
+        const zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
 
         let Block: Block, Block1: Block, Block2: Block;
         try {
@@ -52,12 +52,12 @@ function flya(id: number) {
 
         let oldX: number, oldY: number, oldZ: number;
         if (player.hasTag("ground")) {
-            let playerX = Math.trunc(player.location.x);
-            let playerY = Math.trunc(player.location.y);
-            let playerZ = Math.trunc(player.location.z);
+            const playerX = Math.trunc(player.location.x);
+            const playerY = Math.trunc(player.location.y);
+            const playerZ = Math.trunc(player.location.z);
             playersOldCoordinates.set(player.name, { x: playerX, y: playerY, z: playerZ });
         }
-        let playerCoords = playersOldCoordinates.get(player.name);
+        const playerCoords = playersOldCoordinates.get(player.name);
         try {
             // Use try/catch because this will return undefined when player is loading in
             (oldX = playerCoords.x), (oldY = playerCoords.y), (oldZ = playerCoords.z);
@@ -71,9 +71,9 @@ function flya(id: number) {
                 !player.hasTag("riding") &&
                 !player.hasTag("flying") &&
                 !player.hasTag("swimming") &&
-                (Block?.type.id === "minecraft:air" ?? true) &&
-                (Block1?.type.id === "minecraft:air" ?? true) &&
-                (Block2?.type.id === "minecraft:air" ?? true)
+                (Block?.typeId === "minecraft:air" ?? true) &&
+                (Block1?.typeId === "minecraft:air" ?? true) &&
+                (Block2?.typeId === "minecraft:air" ?? true)
             ) {
                 try {
                     setScore(player, "fly_timer", 1, true);
@@ -101,6 +101,8 @@ function flya(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const FlyA = system.runSchedule(() => {
-    flya(FlyA);
-}, 20);
+export function FlyA() {
+    const flyAId = system.runSchedule(() => {
+        flya(flyAId);
+    }, 20);
+}

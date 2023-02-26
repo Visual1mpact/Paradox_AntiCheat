@@ -101,7 +101,7 @@ JesusA();
 NoSlowA();
 IllegalItemsA();
 InvalidSprintA();
-FlyA;
+FlyA();
 AntiKnockbackA;
 
 /**
