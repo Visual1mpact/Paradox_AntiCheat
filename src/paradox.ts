@@ -91,7 +91,7 @@ IllegalItemsD;
 Survival;
 Adventure;
 Creative;
-WorldBorder;
+WorldBorder();
 ServerBan;
 CrasherA;
 NamespoofA;

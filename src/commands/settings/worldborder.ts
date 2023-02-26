@@ -49,11 +49,11 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -70,7 +70,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements?
     if (!args.length) {
@@ -78,7 +78,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.worldborder) {
         return worldBorderHelp(player, prefix, worldBorderBoolean);
     }
@@ -105,7 +105,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[1])));
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[3])));
-        WorldBorder;
+        WorldBorder();
         return;
     }
 
@@ -121,7 +121,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[3])));
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[1])));
-        WorldBorder;
+        WorldBorder();
         return;
     }
 
@@ -135,7 +135,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[0])));
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[1])));
-        WorldBorder;
+        WorldBorder();
         return;
     }
 
@@ -148,7 +148,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Nether: ${args[1]}`);
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_nether_n", Math.abs(Number(args[1])));
-        WorldBorder;
+        WorldBorder();
         return;
     }
 
@@ -161,7 +161,7 @@ export function worldborders(message: BeforeChatEvent, args: string[]) {
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Overworld: ${args[1]}`);
         World.setDynamicProperty("worldborder_b", true);
         World.setDynamicProperty("worldborder_n", Math.abs(Number(args[1])));
-        WorldBorder;
+        WorldBorder();
         return;
     }
 

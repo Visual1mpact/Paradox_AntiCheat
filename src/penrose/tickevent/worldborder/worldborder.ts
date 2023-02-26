@@ -6,10 +6,10 @@ const World = world;
 
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {
-    let blockVerification = parseInt(y.toFixed(0)) - 1;
+    const blockVerification = parseInt(y.toFixed(0)) - 1;
     let safe: number;
     for (let i = blockVerification; i < blockVerification + 100; i++) {
-        let testAir = player.dimension.getBlock(new BlockLocation(x, i, z));
+        const testAir = player.dimension.getBlock(new BlockLocation(x, i, z));
         if (testAir.typeId == "minecraft:air") {
             safe = testAir.y;
             break;
@@ -22,7 +22,7 @@ function safetyProtocol(player: Player, x: number, y: number, z: number) {
     }
 }
 
-function worldborder() {
+function worldborder(id: number) {
     // Dynamic Properties for boolean
     let worldBorderBoolean = World.getDynamicProperty("worldborder_b");
     if (worldBorderBoolean === undefined) {
@@ -39,13 +39,13 @@ function worldborder() {
     }
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
-        system.clearRunSchedule(WorldBorder);
+        system.clearRunSchedule(id);
         return;
     }
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
+        const hash = player.getDynamicProperty("hash");
+        const salt = player.getDynamicProperty("salt");
         let encode: string;
         try {
             encode = crypto(salt, config.modules.encryption.password);
@@ -76,20 +76,20 @@ function worldborder() {
         }
 
         // Location of portal block using player location with new instance of BlockLocation
-        let test = new BlockLocation(player.location.x, player.location.y, player.location.z);
+        const test = new BlockLocation(player.location.x, player.location.y, player.location.z);
 
         // Offset location from player for actual block locations and return string
         let portals = [
-            player.dimension.getBlock(test.offset(0, -1, 0)).type.id,
-            player.dimension.getBlock(test.offset(0, -1, 1)).type.id,
-            player.dimension.getBlock(test.offset(0, -1, -1)).type.id,
-            player.dimension.getBlock(test.offset(1, -1, 0)).type.id,
-            player.dimension.getBlock(test.offset(-1, -1, 0)).type.id,
-            player.dimension.getBlock(test.offset(0, 0, 0)).type.id,
-            player.dimension.getBlock(test.offset(0, 0, 1)).type.id,
-            player.dimension.getBlock(test.offset(0, 0, -1)).type.id,
-            player.dimension.getBlock(test.offset(1, 0, 0)).type.id,
-            player.dimension.getBlock(test.offset(-1, 0, 0)).type.id,
+            player.dimension.getBlock(test.offset(0, -1, 0)).typeId,
+            player.dimension.getBlock(test.offset(0, -1, 1)).typeId,
+            player.dimension.getBlock(test.offset(0, -1, -1)).typeId,
+            player.dimension.getBlock(test.offset(1, -1, 0)).typeId,
+            player.dimension.getBlock(test.offset(-1, -1, 0)).typeId,
+            player.dimension.getBlock(test.offset(0, 0, 0)).typeId,
+            player.dimension.getBlock(test.offset(0, 0, 1)).typeId,
+            player.dimension.getBlock(test.offset(0, 0, -1)).typeId,
+            player.dimension.getBlock(test.offset(1, 0, 0)).typeId,
+            player.dimension.getBlock(test.offset(-1, 0, 0)).typeId,
         ];
 
         /**
@@ -109,56 +109,56 @@ function worldborder() {
                 // Positives
                 if (player.location.x >= overworldSize && player.location.z >= overworldSize) {
                     player.teleport(new Location(overworldSize - 3, player.location.y, overworldSize - 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, overworldSize - 3, player.location.y, overworldSize - 3);
+                    const safe = safetyProtocol(player, overworldSize - 3, player.location.y, overworldSize - 3);
                     player.teleport(new Location(overworldSize - 3, safe, overworldSize - 3), player.dimension, 0, 0);
                     break;
                 }
                 // Negatives
                 if (player.location.x <= -overworldSize && player.location.z <= -overworldSize) {
                     player.teleport(new Location(-overworldSize + 3, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, -overworldSize + 3, player.location.y, -overworldSize + 3);
+                    const safe = safetyProtocol(player, -overworldSize + 3, player.location.y, -overworldSize + 3);
                     player.teleport(new Location(-overworldSize + 3, safe, -overworldSize + 3), player.dimension, 0, 0);
                     break;
                 }
                 // Postive x and negative z
                 if (player.location.x >= overworldSize && player.location.z <= -overworldSize) {
                     player.teleport(new Location(overworldSize - 3, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, overworldSize - 3, player.location.y, -overworldSize + 3);
+                    const safe = safetyProtocol(player, overworldSize - 3, player.location.y, -overworldSize + 3);
                     player.teleport(new Location(overworldSize - 3, safe, -overworldSize + 3), player.dimension, 0, 0);
                     break;
                 }
                 // Negative x and positive z
                 if (player.location.x <= -overworldSize && player.location.z >= overworldSize) {
                     player.teleport(new Location(-overworldSize + 3, player.location.y, overworldSize - 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, -overworldSize + 3, player.location.y, overworldSize - 3);
+                    const safe = safetyProtocol(player, -overworldSize + 3, player.location.y, overworldSize - 3);
                     player.teleport(new Location(-overworldSize + 3, safe, overworldSize - 3), player.dimension, 0, 0);
                     break;
                 }
                 // Postive x
                 if (player.location.x >= overworldSize) {
                     player.teleport(new Location(overworldSize - 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, overworldSize - 3, player.location.y, player.location.z);
+                    const safe = safetyProtocol(player, overworldSize - 3, player.location.y, player.location.z);
                     player.teleport(new Location(overworldSize - 3, safe, player.location.z), player.dimension, 0, 0);
                     break;
                 }
                 // Positive z
                 if (player.location.z >= overworldSize) {
                     player.teleport(new Location(player.location.x, player.location.y, overworldSize - 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, player.location.x, player.location.y, overworldSize - 3);
+                    const safe = safetyProtocol(player, player.location.x, player.location.y, overworldSize - 3);
                     player.teleport(new Location(player.location.x, safe, overworldSize - 3), player.dimension, 0, 0);
                     break;
                 }
                 // Negative x
                 if (player.location.x <= -overworldSize) {
                     player.teleport(new Location(-overworldSize + 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, -overworldSize + 3, player.location.y, player.location.z);
+                    const safe = safetyProtocol(player, -overworldSize + 3, player.location.y, player.location.z);
                     player.teleport(new Location(-overworldSize + 3, safe, player.location.z), player.dimension, 0, 0);
                     break;
                 }
                 // Negative z
                 if (player.location.z <= -overworldSize) {
                     player.teleport(new Location(player.location.x, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, player.location.x, player.location.y, -overworldSize + 3);
+                    const safe = safetyProtocol(player, player.location.x, player.location.y, -overworldSize + 3);
                     player.teleport(new Location(player.location.x, safe, -overworldSize + 3), player.dimension, 0, 0);
                     break;
                 }
@@ -173,56 +173,56 @@ function worldborder() {
                 // Positives
                 if (player.location.x >= netherSize && player.location.z >= netherSize) {
                     player.teleport(new Location(netherSize - 3, player.location.y, netherSize - 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, netherSize - 3, player.location.y, netherSize - 3);
+                    const safe = safetyProtocol(player, netherSize - 3, player.location.y, netherSize - 3);
                     player.teleport(new Location(netherSize - 3, safe, netherSize - 3), player.dimension, 0, 0);
                     break;
                 }
                 // Negatives
                 if (player.location.x <= -netherSize && player.location.z <= -netherSize) {
                     player.teleport(new Location(-netherSize + 3, player.location.y, -netherSize + 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, -netherSize + 3, player.location.y, -netherSize + 3);
+                    const safe = safetyProtocol(player, -netherSize + 3, player.location.y, -netherSize + 3);
                     player.teleport(new Location(-netherSize + 3, safe, -netherSize + 3), player.dimension, 0, 0);
                     break;
                 }
                 // Postive x and negative z
                 if (player.location.x >= netherSize && player.location.z <= -netherSize) {
                     player.teleport(new Location(netherSize - 3, player.location.y, -netherSize + 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, netherSize - 3, player.location.y, -netherSize + 3);
+                    const safe = safetyProtocol(player, netherSize - 3, player.location.y, -netherSize + 3);
                     player.teleport(new Location(netherSize - 3, safe, -netherSize + 3), player.dimension, 0, 0);
                     break;
                 }
                 // Negative x and positive z
                 if (player.location.x <= -netherSize && player.location.z >= netherSize) {
                     player.teleport(new Location(-netherSize + 3, player.location.y, netherSize - 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, -netherSize + 3, player.location.y, netherSize - 3);
+                    const safe = safetyProtocol(player, -netherSize + 3, player.location.y, netherSize - 3);
                     player.teleport(new Location(-netherSize + 3, safe, netherSize - 3), player.dimension, 0, 0);
                     break;
                 }
                 // Postive x
                 if (player.location.x >= netherSize) {
                     player.teleport(new Location(netherSize - 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, netherSize - 3, player.location.y, player.location.z);
+                    const safe = safetyProtocol(player, netherSize - 3, player.location.y, player.location.z);
                     player.teleport(new Location(netherSize - 3, safe, player.location.z), player.dimension, 0, 0);
                     break;
                 }
                 // Positive z
                 if (player.location.z >= netherSize) {
                     player.teleport(new Location(player.location.x, player.location.y, netherSize - 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, player.location.x, player.location.y, netherSize - 3);
+                    const safe = safetyProtocol(player, player.location.x, player.location.y, netherSize - 3);
                     player.teleport(new Location(player.location.x, safe, netherSize - 3), player.dimension, 0, 0);
                     break;
                 }
                 // Negative x
                 if (player.location.x <= -netherSize) {
                     player.teleport(new Location(-netherSize + 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, -netherSize + 3, player.location.y, player.location.z);
+                    const safe = safetyProtocol(player, -netherSize + 3, player.location.y, player.location.z);
                     player.teleport(new Location(-netherSize + 3, safe, player.location.z), player.dimension, 0, 0);
                     break;
                 }
                 // Negative z
                 if (player.location.z <= -netherSize) {
                     player.teleport(new Location(player.location.x, player.location.y, -netherSize + 3), player.dimension, 0, 0);
-                    let safe = safetyProtocol(player, player.location.x, player.location.y, -netherSize + 3);
+                    const safe = safetyProtocol(player, player.location.x, player.location.y, -netherSize + 3);
                     player.teleport(new Location(player.location.x, safe, -netherSize + 3), player.dimension, 0, 0);
                     break;
                 }
@@ -236,6 +236,8 @@ function worldborder() {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const WorldBorder = system.runSchedule(() => {
-    worldborder();
-});
+export function WorldBorder() {
+    const worldborderId = system.runSchedule(() => {
+        worldborder(worldborderId);
+    });
+}
