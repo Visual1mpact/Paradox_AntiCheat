@@ -3,8 +3,8 @@
     "",
     "\\src",
     "\\src\\commands",
-    "\\src\\commands\\settings"
+    "\\src\\penrose"
   ],
-  "SelectedNode": "\\src\\commands\\settings\\removecommandblocks.ts",
+  "SelectedNode": "\\src\\penrose\\playerjoinevent",
   "PreviewInSolutionExplorer": false
 }

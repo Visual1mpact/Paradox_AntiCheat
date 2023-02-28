@@ -37,6 +37,7 @@ import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
 import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.js";
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/tickevent/clearlag/clearlag.js";
+import { AntiFallA } from "./penrose/tickevent/antifalla/antifalla.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -59,8 +60,7 @@ import { Registry } from "./penrose/worldinitializeevent/registry.js";
 import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
-//Import EntityHurt Events
-import { AntiFall } from "./penrose/entityhurtevent/AntiFall.js";
+
 
 // Self explanatory
 const World = world;
@@ -103,6 +103,7 @@ IllegalItemsA();
 InvalidSprintA();
 FlyA();
 AntiKnockbackA();
+AntiFallA();
 
 /**
  * We store the identifier in a variable
@@ -151,5 +152,4 @@ CrasherB();
 
 // System Events
 WatchDog();
-// EnitityHurt Events
-AntiFall();
+
