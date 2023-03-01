@@ -1,14 +1,27 @@
 import { world, Player, Block, EntityQueryOptions, GameMode, system, BlockLocation, BlockType, MinecraftBlockTypes } from "@minecraft/server";
+import config from "../../../data/config.js";
 import { getScore, flag, crypto, setScore } from "../../../util.js";
 const World = world;
 
 function antifalla(id: number) {
     let gm = new Object() as EntityQueryOptions;
-
     gm.excludeGameModes = [GameMode.creative];
     for (let player of World.getPlayers(gm)) {
+        /**
+         * Check for hash/salt and validate password
+         *
+         * If they are good to go then we can ignore them
+         */
+        let hash = player.getDynamicProperty("hash");
+        let salt = player.getDynamicProperty("salt");
+        let encode: string;
+        try {
+            encode = crypto(salt, config.modules.encryption.password);
+        } catch (error) {}
+        if (hash !== undefined && encode === hash) {
+            return;
+        }
         let vy = player.velocity.y;
-        let Block: Block;
 
         let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
         CenBlockX = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
