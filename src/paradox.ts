@@ -61,7 +61,6 @@ import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
 
-
 // Self explanatory
 const World = world;
 
@@ -103,7 +102,7 @@ IllegalItemsA();
 InvalidSprintA();
 FlyA();
 AntiKnockbackA();
-AntiFallA();
+AntiFallA;
 
 /**
  * We store the identifier in a variable
@@ -152,4 +151,3 @@ CrasherB();
 
 // System Events
 WatchDog();
-
