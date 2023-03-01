@@ -42,12 +42,25 @@ function flya(id: number) {
         const xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
         const zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
 
-        let Block: Block, Block1: Block, Block2: Block;
+        // let Block: Block, Block1: Block, Block2: Block;
+        let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
         try {
             // We want to know if the blocks below the player is air or not
-            Block = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y, player.location.z));
-            Block1 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-            Block2 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 2, player.location.z));
+
+            //Block = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y, player.location.z));
+            //Block1 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
+            //Block2 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 2, player.location.z));
+            CenBlockX = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
+            PosBlockX = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z));
+            NegBlockX = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z));
+            CenBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
+            PosBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z + 1));
+            NegBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z - 1));
+            // if the player is in any corner of the block we move the block back to the center before hand and test for air
+            CenBlockXTopLeft = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z + 1));
+            CenBlockXTopRight = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z - 1));
+            CenBlockXBottomLeft = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z + 1));
+            CenBlockXBottomRight = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z - 1));
         } catch (error) {}
 
         let oldX: number, oldY: number, oldZ: number;
@@ -71,9 +84,19 @@ function flya(id: number) {
                 !player.hasTag("riding") &&
                 !player.hasTag("flying") &&
                 !player.hasTag("swimming") &&
-                (Block?.typeId === "minecraft:air" ?? true) &&
-                (Block1?.typeId === "minecraft:air" ?? true) &&
-                (Block2?.typeId === "minecraft:air" ?? true)
+                CenBlockX.typeId == "minecraft:air" &&
+                PosBlockX.typeId == "minecraft:air" &&
+                NegBlockX.typeId == "minecraft:air" &&
+                CenBlockZ.typeId == "minecraft:air" &&
+                PosBlockZ.typeId == "minecraft:air" &&
+                NegBlockZ.typeId == "minecraft:air" &&
+                CenBlockXTopLeft.typeId == "minecraft:air" &&
+                CenBlockXTopRight.typeId == "minecraft:air" &&
+                CenBlockXBottomLeft.typeId == "minecraft:air" &&
+                CenBlockXBottomRight.typeId == "minecraft:air"
+                //(Block?.typeId === "minecraft:air" ?? true) &&
+                //(Block1?.typeId === "minecraft:air" ?? true) &&
+                //(Block2?.typeId === "minecraft:air" ?? true)
             ) {
                 try {
                     setScore(player, "fly_timer", 1, true);

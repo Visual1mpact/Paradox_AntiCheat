@@ -51,7 +51,7 @@ function antifalla(id: number) {
         ) {
             //flag it as a hack and not a movement hack due to issues with flya.
 
-            flag(player, "AntiFall", "A", "Hack", null, null, null, null, false, null);
+            flag(player, "AntiFall", "A", "Exploit", null, null, null, null, false, null);
         }
     }
 }
