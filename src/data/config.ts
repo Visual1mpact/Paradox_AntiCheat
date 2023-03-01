@@ -52,6 +52,7 @@ export default {
         noslowa: true,
         invalidsprinta: true,
         flya: true,
+        antifalla: true,
         illegalitemsa: true,
         illegalitemsb: true,
         illegalitemsc: false,
@@ -149,6 +150,9 @@ export default {
             speed: 0.20800000429153442,
         },
         flyA: {
+            enabled: true,
+        },
+        antifallA: {
             enabled: true,
         },
         illegalitemsA: {

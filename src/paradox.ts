@@ -37,7 +37,7 @@ import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
 import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.js";
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/tickevent/clearlag/clearlag.js";
-import { AntiFallA } from "./penrose/tickevent/antifalla/antifalla.js";
+import { AntiFallA } from "./penrose/tickevent/antifalla/antifall_a.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";

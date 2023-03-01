@@ -4,6 +4,17 @@ import { getScore, flag, crypto, setScore } from "../../../util.js";
 const World = world;
 
 function antifalla(id: number) {
+    // Get Dynamic Property
+    let antifallABoolean = World.getDynamicProperty("antifalla_b");
+    if (antifallABoolean === undefined) {
+        antifallABoolean = config.modules.antifallA.enabled;
+    }
+    // Unsubscribe if disabled in-game
+    if (antifallABoolean === false) {
+        system.clearRunSchedule(id);
+        return;
+    }
+    //exclude players who are in creative.
     let gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [GameMode.creative];
     for (let player of World.getPlayers(gm)) {
@@ -22,7 +33,6 @@ function antifalla(id: number) {
             return;
         }
         let vy = player.velocity.y;
-
         let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
         CenBlockX = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
         PosBlockX = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z));
