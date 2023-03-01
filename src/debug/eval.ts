@@ -49,7 +49,7 @@ export function evalCmd(evd: mc.BeforeChatEvent, args: string[], argFull?: strin
 }
 
 import { enchantmentSlot as enchantments } from "../data/enchantments.js";
-import { GlobalBanList as globalBan } from "../penrose/playerjoinevent/ban/globalbanlist.js";
+import { GlobalBanList as globalBan } from "../penrose/playerspawnevent/ban/globalbanlist.js";
 import { illegalitems as illegalItems } from "../data/itemban.js";
 import { onJoinData } from "../data/onjoindata.js";
 import salvageable from "../data/salvageable.js";

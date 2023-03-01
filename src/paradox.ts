@@ -43,9 +43,9 @@ import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
 // Import JoinPlayer Events
-import { GametestCheck } from "./penrose/playerjoinevent/gametestloaded/gametestcheck.js";
-import { onJoin } from "./penrose/playerjoinevent/onjoin/onjoin.js";
-import { GlobalBanList } from "./penrose/playerjoinevent/ban/globalbanlist.js";
+import { GametestCheck } from "./penrose/playerspawnevent/gametestloaded/gametestcheck.js";
+import { onJoin } from "./penrose/playerspawnevent/onjoin/onjoin.js";
+import { GlobalBanList } from "./penrose/playerspawnevent/ban/globalbanlist.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
