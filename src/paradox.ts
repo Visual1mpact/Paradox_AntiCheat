@@ -102,7 +102,7 @@ IllegalItemsA();
 InvalidSprintA();
 FlyA();
 AntiKnockbackA();
-AntiFallA;
+AntiFallA();
 
 /**
  * We store the identifier in a variable

@@ -69,7 +69,7 @@ export function antifallA(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.flya) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antifalla) {
         return antifallaHelp(player, prefix, antifallABoolean);
     }
 
@@ -77,7 +77,7 @@ export function antifallA(message: BeforeChatEvent, args: string[]) {
         // Allow
         World.setDynamicProperty("antifalla_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiFallA§r!`);
-        AntiFallA;
+        AntiFallA();
     } else if (antifallABoolean === true) {
         // Deny
         World.setDynamicProperty("antifalla_b", false);

@@ -143,6 +143,9 @@ function registry(data: WorldInitializeEvent) {
     // Define properties for clearlag
     property.defineBoolean("clearlag_b");
 
+    // Define properties for antifalla
+    property.defineBoolean("antifalla_b");
+
     // Define properties for hash
     personal.defineString("hash", 200);
 
@@ -407,6 +410,12 @@ function registry(data: WorldInitializeEvent) {
     let clearlag_b = World.getDynamicProperty("clearlag_b");
     if (clearlag_b === undefined) {
         World.setDynamicProperty("clearlag_b", config.modules.clearLag.enabled);
+    }
+
+    // Set properties for antifalla
+    let antifalla_b = World.getDynamicProperty("antifalla_b");
+    if (antifalla_b === undefined) {
+        World.setDynamicProperty("antifalla_b", config.modules.antifallA.enabled);
     }
 }
 
