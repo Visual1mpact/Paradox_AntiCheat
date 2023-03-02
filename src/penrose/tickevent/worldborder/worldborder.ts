@@ -1,6 +1,7 @@
 import { BlockLocation, Location, MinecraftBlockTypes, Player, world, system } from "@minecraft/server";
 import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -24,19 +25,12 @@ function safetyProtocol(player: Player, x: number, y: number, z: number) {
 
 function worldborder(id: number) {
     // Dynamic Properties for boolean
-    let worldBorderBoolean = World.getDynamicProperty("worldborder_b");
-    if (worldBorderBoolean === undefined) {
-        worldBorderBoolean = config.modules.worldBorder.enabled;
-    }
+    const worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
+
     // Dynamic Properties for number
-    let worldBorderOverworldNumber = World.getDynamicProperty("worldborder_n");
-    if (worldBorderOverworldNumber === undefined) {
-        worldBorderOverworldNumber = config.modules.worldBorder.overworld;
-    }
-    let worldBorderNetherNumber = World.getDynamicProperty("worldborder_nether_n");
-    if (worldBorderNetherNumber === undefined) {
-        worldBorderNetherNumber = config.modules.worldBorder.nether;
-    }
+    const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
+    const worldBorderNetherNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
+
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
         system.clearRunSchedule(id);

@@ -1,6 +1,7 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -59,10 +60,7 @@ export async function antiknockback(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antikbBoolean = World.getDynamicProperty("antikb_b");
-    if (antikbBoolean === undefined) {
-        antikbBoolean = config.modules.antikbA.enabled;
-    }
+    const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
 
     // Check for custom prefix
     const prefix = getPrefix(player);
@@ -77,12 +75,14 @@ export async function antiknockback(message: BeforeChatEvent, args: string[]) {
 
     if (antikbscore <= 0) {
         // Allow
+        dynamicPropertyRegistry.set("antikb_b", true);
         World.setDynamicProperty("antikb_b", true);
         await player.runCommandAsync(`scoreboard players set paradox:config antikb 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Knockback§r!`);
         AntiKnockbackA();
     } else if (antikbscore >= 1) {
         // Deny
+        dynamicPropertyRegistry.set("antikb_b", false);
         World.setDynamicProperty("antikb_b", false);
         await player.runCommandAsync(`scoreboard players set paradox:config antikb 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Knockback§r!`);

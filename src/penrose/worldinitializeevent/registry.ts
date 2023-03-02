@@ -3,6 +3,8 @@ import config from "../../data/config.js";
 
 const World = world;
 
+export const dynamicPropertyRegistry = new Map();
+
 function registry(data: WorldInitializeEvent) {
     // World instance
     let property = new DynamicPropertiesDefinition();
@@ -162,50 +164,77 @@ function registry(data: WorldInitializeEvent) {
     let worldborder_n = World.getDynamicProperty("worldborder_n");
     if (worldborder_n === undefined) {
         World.setDynamicProperty("worldborder_n", config.modules.worldBorder.overworld);
+        dynamicPropertyRegistry.set("worldborder_n", config.modules.worldBorder.overworld);
+    } else {
+        dynamicPropertyRegistry.set("worldborder_n", worldborder_n);
     }
     let worldborderNether_n = World.getDynamicProperty("worldborder_nether_n");
     if (worldborderNether_n === undefined) {
         World.setDynamicProperty("worldborder_nether_n", config.modules.worldBorder.nether);
+        dynamicPropertyRegistry.set("worldborder_nether_n", config.modules.worldBorder.nether);
+    } else {
+        dynamicPropertyRegistry.set("worldborder_nether_n", worldborderNether_n);
     }
     let worldborder_b = World.getDynamicProperty("worldborder_b");
     if (worldborder_b === undefined) {
         World.setDynamicProperty("worldborder_b", config.modules.worldBorder.enabled);
+        dynamicPropertyRegistry.set("worldborder_b", config.modules.worldBorder.enabled);
+    } else {
+        dynamicPropertyRegistry.set("worldborder_b", worldborder_b);
     }
 
     // Set properties for xray
     let xraya_b = World.getDynamicProperty("xraya_b");
     if (xraya_b === undefined) {
         World.setDynamicProperty("xraya_b", config.modules.xrayA.enabled);
+        dynamicPropertyRegistry.set("xraya_b", config.modules.xrayA.enabled);
+    } else {
+        dynamicPropertyRegistry.set("xraya_b", xraya_b);
     }
 
     // Set properties for ops
     let ops_b = World.getDynamicProperty("ops_b");
     if (ops_b === undefined) {
         World.setDynamicProperty("ops_b", config.modules.ops.enabled);
+        dynamicPropertyRegistry.set("ops_b", config.modules.ops.enabled);
+    } else {
+        dynamicPropertyRegistry.set("ops_b", ops_b);
     }
 
     // Set properties for noslowa
     let noslowa_b = World.getDynamicProperty("noslowa_b");
     if (noslowa_b === undefined) {
         World.setDynamicProperty("noslowa_b", config.modules.noslowA.enabled);
+        dynamicPropertyRegistry.set("noslowa_b", config.modules.noslowA.enabled);
+    } else {
+        dynamicPropertyRegistry.set("noslowa_b", noslowa_b);
     }
 
     // Set properties for namespoofa
     let namespoofa_b = World.getDynamicProperty("namespoofa_b");
     if (namespoofa_b === undefined) {
         World.setDynamicProperty("namespoofa_b", config.modules.namespoofA.enabled);
+        dynamicPropertyRegistry.set("namespoofa_b", config.modules.namespoofA.enabled);
+    } else {
+        dynamicPropertyRegistry.set("namespoofa_b", namespoofa_b);
     }
 
     // Set properties for namespoofb
     let namespoofb_b = World.getDynamicProperty("namespoofb_b");
     if (namespoofb_b === undefined) {
         World.setDynamicProperty("namespoofb_b", config.modules.namespoofB.enabled);
+        dynamicPropertyRegistry.set("namespoofb_b", config.modules.namespoofB.enabled);
+    } else {
+        dynamicPropertyRegistry.set("namespoofb_b", namespoofb_b);
     }
 
     // Set properties for antikba
     let antikb_b = World.getDynamicProperty("antikb_b");
     if (antikb_b === undefined) {
         World.setDynamicProperty("antikb_b", config.modules.antikbA.enabled);
+        dynamicPropertyRegistry.set("antikb_b", config.modules.antikbA.enabled);
+    } else {
+        dynamicPropertyRegistry.set("antikb_b", antikb_b);
     }
 
     // Set properties for jesusa

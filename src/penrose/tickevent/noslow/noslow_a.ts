@@ -1,15 +1,14 @@
 import { world, MinecraftEffectTypes, EntityMovementComponent, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 function noslowa(id: number) {
     // Get Dynamic Property
-    let noSlowBoolean = World.getDynamicProperty("noslowa_b");
-    if (noSlowBoolean === undefined) {
-        noSlowBoolean = config.modules.noslowA.enabled;
-    }
+    const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+
     // Unsubscribe if disabled in-game
     if (noSlowBoolean === false) {
         system.clearRunSchedule(id);

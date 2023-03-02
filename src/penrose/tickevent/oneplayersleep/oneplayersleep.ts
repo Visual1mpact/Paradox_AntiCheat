@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
-import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -15,10 +15,8 @@ async function queueSleep(player: Player, id: number) {
 
 function ops(opsID: number) {
     // Get Dynamic Property
-    let opsBoolean = World.getDynamicProperty("ops_b");
-    if (opsBoolean === undefined) {
-        opsBoolean = config.modules.ops.enabled;
-    }
+    const opsBoolean = dynamicPropertyRegistry.get("ops_b");
+
     // Unsubscribe if disabled in-game
     if (opsBoolean === false) {
         system.clearRunSchedule(opsID);

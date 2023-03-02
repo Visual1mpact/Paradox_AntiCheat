@@ -1,5 +1,6 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getScore, getPrefix, crypto, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -68,12 +69,12 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     let antikb = getScore("antikb", player);
 
     // Booleans
-    let worldBorderBoolean = World.getDynamicProperty("worldborder_b");
-    let xrayaBoolean = World.getDynamicProperty("xraya_b");
-    let opsBoolean = World.getDynamicProperty("ops_b");
-    let noSlowBoolean = World.getDynamicProperty("noslowa_b");
-    let nameSpoofABoolean = World.getDynamicProperty("namespoofa_b");
-    let nameSpoofBBoolean = World.getDynamicProperty("namespoofb_b");
+    let worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
+    let xrayaBoolean = dynamicPropertyRegistry.get("xraya_b");
+    let opsBoolean = dynamicPropertyRegistry.get("ops_b");
+    let noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+    let nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
+    let nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
     let jesusABoolean = World.getDynamicProperty("jesusa_b");
     let InvalidSprintABoolean = World.getDynamicProperty("invalidsprinta_b");
     let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
@@ -110,8 +111,8 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     let clearLagBoolean = World.getDynamicProperty("clearlag_b");
 
     // Numbers
-    let worldBorderOverworldNumber = World.getDynamicProperty("worldborder_n");
-    let worldBorderNetherNumber = World.getDynamicProperty("worldborder_nether_n");
+    let worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
+    let worldBorderNetherNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
 
     const status = (b: string | number | boolean) => (b ? "§aENABLED" : "§4DISABLED");
 

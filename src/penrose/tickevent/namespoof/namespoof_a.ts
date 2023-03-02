@@ -1,15 +1,14 @@
 import { world, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 function namespoofa(id: number) {
     // Get Dynamic Property
-    let nameSpoofBoolean = World.getDynamicProperty("namespoofa_b");
-    if (nameSpoofBoolean === undefined) {
-        nameSpoofBoolean = config.modules.namespoofA.enabled;
-    }
+    const nameSpoofBoolean = dynamicPropertyRegistry.get("namespoofa_b");
+
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
         system.clearRunSchedule(id);

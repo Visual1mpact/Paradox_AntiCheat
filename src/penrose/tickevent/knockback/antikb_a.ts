@@ -1,15 +1,14 @@
 import { EntityInventoryComponent, world, system } from "@minecraft/server";
 import { flag, crypto, setScore } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 async function antiknockbacka(id: number) {
     // Get Dynamic Property
-    let antikbBoolean = World.getDynamicProperty("antikb_b");
-    if (antikbBoolean === undefined) {
-        antikbBoolean = config.modules.antikbA.enabled;
-    }
+    const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
+
     // Unsubscribe if disabled in-game
     if (antikbBoolean === false) {
         system.clearRunSchedule(id);

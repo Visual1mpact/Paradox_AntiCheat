@@ -2,6 +2,7 @@ import { Player, world, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -20,10 +21,8 @@ function rip(player: Player) {
 
 function namespoofb(id: number) {
     // Get Dynamic Property
-    let nameSpoofBoolean = World.getDynamicProperty("namespoofb_b");
-    if (nameSpoofBoolean === undefined) {
-        nameSpoofBoolean = config.modules.namespoofB.enabled;
-    }
+    const nameSpoofBoolean = dynamicPropertyRegistry.get("namespoofb_b");
+
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
         system.clearRunSchedule(id);
