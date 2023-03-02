@@ -3,7 +3,9 @@
     "",
     "\\src",
     "\\src\\commands",
-    "\\src\\penrose"
+    "\\src\\penrose",
+    "\\src\\penrose\\tickevent"
   ],
+  "SelectedNode": "\\src\\penrose\\tickevent\\jesus",
   "PreviewInSolutionExplorer": false
 }

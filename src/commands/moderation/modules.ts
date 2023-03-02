@@ -109,6 +109,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     let badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
     let antiSpamBoolean = World.getDynamicProperty("antispam_b");
     let clearLagBoolean = World.getDynamicProperty("clearlag_b");
+    let antiFallABoolean = World.getDynamicProperty("antifalla_b");
 
     // Numbers
     let worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
@@ -139,6 +140,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `NoSlowA: ${status(noSlowBoolean)}`,
         `InvalidSprintA: ${status(InvalidSprintABoolean)}`,
         `FlyA: ${status(flyABoolean)}`,
+        `AntiFallA: ${status(antiFallABoolean)}`,
         `IllegalItemsA: ${illegalItemsABoolean ? `§aENABLED§r [Ban Illegal Stacks ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
         `IllegalItemsB: ${illegalItemsBBoolean ? `§aENABLED§r [Ban Illegal Stacks ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
         `IllegalItemsC: ${illegalItemsCBoolean ? `§aENABLED§r [Ban Illegal Stacks ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
