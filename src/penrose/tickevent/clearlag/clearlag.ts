@@ -3,6 +3,7 @@ import { world, EntityQueryOptions, ItemStack, EntityItemComponent, system } fro
 import { sendMsg } from "../../../util.js";
 import { clearItems } from "../../../data/clearlag.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -73,10 +74,8 @@ function executionEntity(id: number) {
 
 function clearlag(id: number) {
     // Get Dynamic Property
-    let clearLagBoolean = World.getDynamicProperty("clearlag_b");
-    if (clearLagBoolean === undefined) {
-        clearLagBoolean = config.modules.clearLag.enabled;
-    }
+    const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
+
     // Unsubscribe if disabled in-game
     if (clearLagBoolean === false) {
         system.clearRunSchedule(id);

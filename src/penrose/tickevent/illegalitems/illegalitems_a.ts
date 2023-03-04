@@ -7,6 +7,7 @@ import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
@@ -42,14 +43,13 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
 function illegalitemsa(id: number) {
     // Get Dynamic Property
     let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b"),
-        salvageBoolean = World.getDynamicProperty("salvage_b"),
+        salvageBoolean = dynamicPropertyRegistry.get("salvage_b"),
         illegalLoresBoolean = World.getDynamicProperty("illegallores_b"),
         illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b"),
         antiShulkerBoolean = World.getDynamicProperty("antishulker_b"),
         stackBanBoolean = World.getDynamicProperty("stackban_b");
 
     if (illegalItemsABoolean === undefined) illegalItemsABoolean = config.modules.illegalitemsA.enabled;
-    if (salvageBoolean === undefined) salvageBoolean = config.modules.salvage.enabled;
     if (illegalLoresBoolean === undefined) illegalLoresBoolean = config.modules.illegalLores.enabled;
     if (illegalLoresBoolean === undefined) illegalLoresBoolean = config.modules.illegalLores.enabled;
     if (illegalEnchantmentBoolean === undefined) illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
@@ -59,7 +59,7 @@ function illegalitemsa(id: number) {
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
         const allPlayers = [...World.getPlayers()];
-        for (let player of allPlayers) {
+        for (const player of allPlayers) {
             if (player.hasTag("illegalitemsA")) {
                 player.removeTag("illegalitemsA");
             }
@@ -150,7 +150,7 @@ function illegalitemsa(id: number) {
                     enchantedSlot = enchantmentSlot[item_enchants.slot];
                 // Check if enchantment is illegal on item
                 if (item_enchants) {
-                    for (let {
+                    for (const {
                         level,
                         type: { id },
                     } of item_enchants) {
@@ -194,7 +194,7 @@ function illegalitemsa(id: number) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
-                let enchantArray = [],
+                const enchantArray = [],
                     enchantLevelArray = [],
                     verifiedItemName = inventory_item.nameTag,
                     newNameTag = titleCase(inventory_item.typeId.replace("minecraft:", "")),
@@ -244,7 +244,7 @@ function illegalitemsa(id: number) {
                     }
                     // Restore enchanted item
                     if (!illegalLoresBoolean) {
-                        let loreData = inventory_item.getLore();
+                        const loreData = inventory_item.getLore();
                         try {
                             actualItemName.setLore(loreData);
                             container.setItem(i, actualItemName);

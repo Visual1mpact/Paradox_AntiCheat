@@ -1,15 +1,14 @@
 import { world, Player, EntityHitEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, flag } from "../../util.js";
+import { dynamicPropertyRegistry } from "../worldinitializeevent/registry.js";
 
 const World = world;
 
 function reachc(object: EntityHitEvent) {
     // Get Dynamic Property
-    let reachCBoolean = World.getDynamicProperty("reachc_b");
-    if (reachCBoolean === undefined) {
-        reachCBoolean = config.modules.reachC.enabled;
-    }
+    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+
     // Unsubscribe if disabled in-game
     if (reachCBoolean === false) {
         World.events.entityHit.unsubscribe(reachc);
@@ -17,7 +16,7 @@ function reachc(object: EntityHitEvent) {
     }
 
     // Properties from class
-    let { hitEntity, hitBlock, entity } = object;
+    const { hitEntity, hitBlock, entity } = object;
 
     // If it's not a player then ignore
     if (!(entity instanceof Player)) {
@@ -30,8 +29,8 @@ function reachc(object: EntityHitEvent) {
     }
 
     // Check for hash/salt and validate password
-    let hash = entity.getDynamicProperty("hash");
-    let salt = entity.getDynamicProperty("salt");
+    const hash = entity.getDynamicProperty("hash");
+    const salt = entity.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -42,12 +41,12 @@ function reachc(object: EntityHitEvent) {
     }
 
     // Entity coordinates
-    let { x, y, z } = hitEntity.location;
+    const { x, y, z } = hitEntity.location;
     // Player coordinates
-    let { x: x1, y: y1, z: z1 } = entity.location;
+    const { x: x1, y: y1, z: z1 } = entity.location;
 
     // Calculate the distance between the player and the entity being hit
-    let reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
+    const reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
 
     if (reach > config.modules.reachC.reach) {
         flag(entity, "Reach", "C", "Attack", null, null, "reach", reach.toFixed(3), false, null);

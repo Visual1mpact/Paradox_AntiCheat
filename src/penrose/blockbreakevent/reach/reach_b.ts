@@ -1,16 +1,15 @@
 import { BlockBreakEvent, world } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 // import { flag } from "../../../util.js";
 
 const World = world;
 
 function reachb(object: BlockBreakEvent) {
     // Get Dynamic Property
-    let reachBBoolean = World.getDynamicProperty("reachb_b");
-    if (reachBBoolean === undefined) {
-        reachBBoolean = config.modules.reachB.enabled;
-    }
+    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
+
     // Unsubscribe if disabled in-game
     if (reachBBoolean === false) {
         World.events.blockBreak.unsubscribe(reachb);
@@ -18,11 +17,11 @@ function reachb(object: BlockBreakEvent) {
     }
 
     // Properties from class
-    let { block, player, brokenBlockPermutation } = object;
+    const { block, player, brokenBlockPermutation } = object;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -33,15 +32,15 @@ function reachb(object: BlockBreakEvent) {
     }
 
     // Block coordinates
-    let { x, y, z } = block.location;
+    const { x, y, z } = block.location;
     // Player coordinates
-    let { x: x1, y: y1, z: z1 } = player.location;
+    const { x: x1, y: y1, z: z1 } = player.location;
 
     // Get the properties of the block being destroyed
-    let blockID = brokenBlockPermutation.clone();
+    const blockID = brokenBlockPermutation.clone();
 
     // Calculate the distance between the player and the block being destroyed
-    let reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
+    const reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
 
     if (reach > config.modules.reachB.reach) {
         block.setPermutation(blockID);

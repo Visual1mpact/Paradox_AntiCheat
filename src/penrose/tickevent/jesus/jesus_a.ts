@@ -1,6 +1,7 @@
 import { world, Location, BlockLocation, Block, Player, Dimension, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -18,10 +19,8 @@ function timer(player: Player, dimension: Dimension, x: number, y: number, z: nu
 
 function jesusa(id: number) {
     // Get Dynamic Property
-    let jesusaBoolean = World.getDynamicProperty("jesusa_b");
-    if (jesusaBoolean === undefined) {
-        jesusaBoolean = config.modules.jesusA.enabled;
-    }
+    const jesusaBoolean = dynamicPropertyRegistry.get("jesusa_b");
+
     // Unsubscribe if disabled in-game
     if (jesusaBoolean === false) {
         system.clearRunSchedule(id);

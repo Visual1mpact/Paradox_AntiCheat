@@ -37,11 +37,11 @@ export function modules(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -52,68 +52,68 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.modules) {
         return modulesHelp(player, prefix);
     }
 
     // scores
-    let commandblocks = getScore("commandblocks", player);
-    let cmds = getScore("cmds", player);
-    let autoclicker = getScore("autoclicker", player);
-    let encharmor = getScore("encharmor", player);
-    let autoaura = getScore("autoaura", player);
-    let antikb = getScore("antikb", player);
+    const commandblocks = getScore("commandblocks", player);
+    const cmds = getScore("cmds", player);
+    const autoclicker = getScore("autoclicker", player);
+    const encharmor = getScore("encharmor", player);
+    const autoaura = getScore("autoaura", player);
+    const antikb = getScore("antikb", player);
 
     // Booleans
-    let worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
-    let xrayaBoolean = dynamicPropertyRegistry.get("xraya_b");
-    let opsBoolean = dynamicPropertyRegistry.get("ops_b");
-    let noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
-    let nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
-    let nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
-    let jesusABoolean = World.getDynamicProperty("jesusa_b");
-    let InvalidSprintABoolean = World.getDynamicProperty("invalidsprinta_b");
-    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
-    let illegalItemsDBoolean = World.getDynamicProperty("illegalitemsd_b");
-    let hotbarBoolean = World.getDynamicProperty("hotbar_b");
-    let adventureGMBoolean = World.getDynamicProperty("adventuregm_b");
-    let creativeGMBoolean = World.getDynamicProperty("creativegm_b");
-    let survivalGMBoolean = World.getDynamicProperty("survivalgm_b");
-    let flyABoolean = World.getDynamicProperty("flya_b");
-    let crasherABoolean = World.getDynamicProperty("crashera_b");
-    let crasherBBoolean = World.getDynamicProperty("crasherb_b");
-    let bedrockValidateBoolean = World.getDynamicProperty("bedrockvalidate_b");
-    let reachCBoolean = World.getDynamicProperty("reachc_b");
-    let antiScaffoldABoolean = World.getDynamicProperty("antiscaffolda_b");
-    let reachABoolean = World.getDynamicProperty("reacha_b");
-    let illegalItemsCBoolean = World.getDynamicProperty("illegalitemsc_b");
-    let reachBBoolean = World.getDynamicProperty("reachb_b");
-    let antiNukerABoolean = World.getDynamicProperty("antinukera_b");
-    let illegalItemsBBoolean = World.getDynamicProperty("illegalitemsb_b");
-    let spammerDBoolean = World.getDynamicProperty("spammerd_b");
-    let spammerCBoolean = World.getDynamicProperty("spammerc_b");
-    let spammerBBoolean = World.getDynamicProperty("spammerb_b");
-    let spammerABoolean = World.getDynamicProperty("spammera_b");
-    let badPackets1Boolean = World.getDynamicProperty("badpackets1_b");
-    let savageBoolean = World.getDynamicProperty("salvage_b");
-    let illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
-    let illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b");
-    let lockdownBoolean = World.getDynamicProperty("lockdown_b");
-    let antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
-    let chatRanksBoolean = World.getDynamicProperty("chatranks_b");
-    let stackBanBoolean = World.getDynamicProperty("stackban_b");
-    let badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
-    let antiSpamBoolean = World.getDynamicProperty("antispam_b");
-    let clearLagBoolean = World.getDynamicProperty("clearlag_b");
-    let antiFallABoolean = World.getDynamicProperty("antifalla_b");
+    const worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
+    const xrayaBoolean = dynamicPropertyRegistry.get("xraya_b");
+    const opsBoolean = dynamicPropertyRegistry.get("ops_b");
+    const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+    const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
+    const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
+    const jesusABoolean = dynamicPropertyRegistry.get("jesusa_b");
+    const InvalidSprintABoolean = World.getDynamicProperty("invalidsprinta_b");
+    const illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
+    const illegalItemsDBoolean = World.getDynamicProperty("illegalitemsd_b");
+    const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
+    const adventureGMBoolean = World.getDynamicProperty("adventuregm_b");
+    const creativeGMBoolean = World.getDynamicProperty("creativegm_b");
+    const survivalGMBoolean = World.getDynamicProperty("survivalgm_b");
+    const flyABoolean = dynamicPropertyRegistry.get("flya_b");
+    const crasherABoolean = World.getDynamicProperty("crashera_b");
+    const crasherBBoolean = World.getDynamicProperty("crasherb_b");
+    const bedrockValidateBoolean = World.getDynamicProperty("bedrockvalidate_b");
+    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+    const antiScaffoldABoolean = World.getDynamicProperty("antiscaffolda_b");
+    const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
+    const illegalItemsCBoolean = World.getDynamicProperty("illegalitemsc_b");
+    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
+    const antiNukerABoolean = World.getDynamicProperty("antinukera_b");
+    const illegalItemsBBoolean = World.getDynamicProperty("illegalitemsb_b");
+    const spammerDBoolean = World.getDynamicProperty("spammerd_b");
+    const spammerCBoolean = World.getDynamicProperty("spammerc_b");
+    const spammerBBoolean = World.getDynamicProperty("spammerb_b");
+    const spammerABoolean = World.getDynamicProperty("spammera_b");
+    const badPackets1Boolean = World.getDynamicProperty("badpackets1_b");
+    const savageBoolean = dynamicPropertyRegistry.get("salvage_b");
+    const illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
+    const illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b");
+    const lockdownBoolean = World.getDynamicProperty("lockdown_b");
+    const antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
+    const chatRanksBoolean = World.getDynamicProperty("chatranks_b");
+    const stackBanBoolean = World.getDynamicProperty("stackban_b");
+    const badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
+    const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
+    const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
+    const antiFallABoolean = World.getDynamicProperty("antifalla_b");
 
     // Numbers
-    let worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
-    let worldBorderNetherNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
+    const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
+    const worldBorderNetherNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
 
     const status = (b: string | number | boolean) => (b ? "§aENABLED" : "§4DISABLED");
 

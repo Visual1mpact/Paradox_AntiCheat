@@ -1,6 +1,7 @@
 import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode, system } from "@minecraft/server";
 import { getScore, flag, crypto, setScore } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -8,10 +9,8 @@ const playersOldCoordinates = new Map();
 
 function flya(id: number) {
     // Get Dynamic Property
-    let flyABoolean = World.getDynamicProperty("flya_b");
-    if (flyABoolean === undefined) {
-        flyABoolean = config.modules.flyA.enabled;
-    }
+    const flyABoolean = dynamicPropertyRegistry.get("flya_b");
+
     // Unsubscribe if disabled in-game
     if (flyABoolean === false) {
         system.clearRunSchedule(id);

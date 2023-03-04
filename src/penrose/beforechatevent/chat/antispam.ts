@@ -2,6 +2,7 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { crypto, sendMsgToPlayer } from "../../../util.js";
 import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -9,22 +10,20 @@ const spamList = new WeakMap<Player, { lastSendTime: number; lastMessage: string
 
 function antispam(msg: BeforeChatEvent) {
     // Get Dynamic Property
-    let antiSpamBoolean = World.getDynamicProperty("antispam_b");
-    if (antiSpamBoolean === undefined) {
-        antiSpamBoolean = config.modules.antispam.enabled;
-    }
+    const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
+
     // Unsubscribe if disabled in-game
     if (antiSpamBoolean === false) {
         World.events.beforeChat.unsubscribe(antispam);
         return;
     }
     // Store player object
-    let player = msg.sender;
-    let message = msg.message;
+    const player = msg.sender;
+    const message = msg.message;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);

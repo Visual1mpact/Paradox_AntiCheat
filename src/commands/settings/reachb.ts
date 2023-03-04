@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -44,11 +45,11 @@ export function reachB(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,16 +60,13 @@ export function reachB(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let reachBBoolean = World.getDynamicProperty("reachb_b");
-    if (reachBBoolean === undefined) {
-        reachBBoolean = config.modules.reachB.enabled;
-    }
+    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.reachb) {
         return reachBHelp(player, prefix, reachBBoolean);
     }

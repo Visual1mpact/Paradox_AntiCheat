@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { ReachC } from "../../penrose/entityhitevent/reach_c.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -44,11 +45,11 @@ export function reachC(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,30 +60,27 @@ export function reachC(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let reachCBoolean = World.getDynamicProperty("reachc_b");
-    if (reachCBoolean === undefined) {
-        reachCBoolean = config.modules.reachC.enabled;
-    }
+    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.reachc) {
         return reachCHelp(player, prefix, reachCBoolean);
     }
 
     if (reachCBoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("reachc_b", true);
         World.setDynamicProperty("reachc_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachC§r!`);
         ReachC();
-        return;
     } else if (reachCBoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("reachc_b", false);
         World.setDynamicProperty("reachc_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachC§r!`);
-        return;
     }
 }

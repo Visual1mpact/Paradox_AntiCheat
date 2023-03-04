@@ -24,6 +24,7 @@ import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
@@ -71,10 +72,8 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     if (illegalItemsCBoolean === undefined) {
         illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
     }
-    let salvageBoolean = World.getDynamicProperty("salvage_b");
-    if (salvageBoolean === undefined) {
-        salvageBoolean = config.modules.salvage.enabled;
-    }
+    const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
+
     let illegalLoresBoolean = World.getDynamicProperty("illegallores_b");
     if (illegalLoresBoolean === undefined) {
         illegalLoresBoolean = config.modules.illegalLores.enabled;
@@ -98,13 +97,13 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     }
 
     // Properties from class
-    let { block, player, dimension } = object;
+    const { block, player, dimension } = object;
     // Block coordinates
-    let { x, y, z } = block.location;
+    const { x, y, z } = block.location;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -133,9 +132,9 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     // Check if place item is salvageable
     if (salvageable[block.typeId] && block.typeId in ignoreContainerPlace === false) {
         // Block from specified location
-        let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
+        const blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
         // Get a copy of this blocks permutation
-        let blockPerm = blockLoc.permutation;
+        const blockPerm = blockLoc.permutation;
         // Get the direction property
         blockPerm.getProperty(BlockProperties.direction);
         // Set block in world
@@ -161,12 +160,12 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     // Check if placed item has a inventory container
     let inventory: BlockInventoryComponentContainer;
     try {
-        let invComponent = block.getComponent("inventory") as BlockInventoryComponent;
+        const invComponent = block.getComponent("inventory") as BlockInventoryComponent;
         inventory = invComponent.container;
     } catch (error) {}
     if (inventory) {
         for (let i = 0; i < inventory.size; i++) {
-            let inventory_item = inventory.getItem(i);
+            const inventory_item = inventory.getItem(i);
             if (!inventory_item) {
                 continue;
             }
@@ -206,17 +205,17 @@ async function illegalitemsc(object: BlockPlaceEvent) {
             }
             if (illegalEnchantmentBoolean) {
                 // We get a list of enchantments on this item
-                let enchantComponent = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
-                let item_enchants = enchantComponent.enchantments;
+                const enchantComponent = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+                const item_enchants = enchantComponent.enchantments;
                 // List of allowed enchantments on item
-                let enchantedSlot = enchantmentSlot[item_enchants.slot];
+                const enchantedSlot = enchantmentSlot[item_enchants.slot];
                 // Check if enchantment is illegal on item
                 if (item_enchants) {
-                    for (let {
+                    for (const {
                         level,
                         type: { id },
                     } of item_enchants) {
-                        let enchantLevel = enchantedSlot[id];
+                        const enchantLevel = enchantedSlot[id];
                         if (!enchantLevel) {
                             flag(player, "IllegalItems", "C", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                             // Remove this item immediately
@@ -273,38 +272,38 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */
-                let enchantArray = [];
-                let enchantLevelArray = [];
-                let verifiedItemName = inventory_item.nameTag;
-                let newNameTag = titleCase(inventory_item.typeId.replace("minecraft:", ""));
-                let actualItemName = new ItemStack(itemType);
+                const enchantArray = [];
+                const enchantLevelArray = [];
+                const verifiedItemName = inventory_item.nameTag;
+                const newNameTag = titleCase(inventory_item.typeId.replace("minecraft:", ""));
+                const actualItemName = new ItemStack(itemType);
                 actualItemName.data = inventory_item.data;
                 actualItemName.amount = inventory_item.amount;
                 actualItemName.nameTag = newNameTag;
 
                 if (verifiedItemName !== newNameTag) {
                     // Gets enchantment component
-                    let ench_comp = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+                    const ench_comp = inventory_item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
                     // Gets enchantment list from enchantment
-                    let ench_data = ench_comp.enchantments;
+                    const ench_data = ench_comp.enchantments;
 
                     // List of allowed enchantments on item
-                    let enchantedSlot = enchantmentSlot[ench_data.slot];
+                    const enchantedSlot = enchantmentSlot[ench_data.slot];
                     // Check if enchantment is not illegal on item
                     if (ench_data) {
-                        for (let enchants in MinecraftEnchantmentTypes) {
+                        for (const enchants in MinecraftEnchantmentTypes) {
                             // If no enchantment then move to next loop
-                            let enchanted = MinecraftEnchantmentTypes[enchants];
+                            const enchanted = MinecraftEnchantmentTypes[enchants];
                             if (!ench_data.hasEnchantment(enchanted)) {
                                 continue;
                             }
                             // Get properties of this enchantment
-                            let enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]);
+                            const enchant_data = ench_data.getEnchantment(MinecraftEnchantmentTypes[enchants]);
                             // Is this item allowed to have this enchantment and does it not exceed level limitations
-                            let enchantLevel = enchantedSlot[enchants];
+                            const enchantLevel = enchantedSlot[enchants];
                             if (enchantLevel && enchant_data && enchant_data.level <= enchantLevel && enchant_data.level >= 0) {
                                 // Save this enchantment and level for new item
-                                let changeCase = toCamelCase(enchants);
+                                const changeCase = toCamelCase(enchants);
                                 enchantArray.push(changeCase);
                                 enchantLevelArray.push(enchant_data.level);
                             }
@@ -313,9 +312,9 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 }
 
                 // Gets enchantment component for new instance
-                let new_ench_comp = actualItemName.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+                const new_ench_comp = actualItemName.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
                 // Gets enchantment list from enchantment of new instance
-                let new_ench_data = new_ench_comp.enchantments;
+                const new_ench_data = new_ench_comp.enchantments;
 
                 // Both arrays should be inline with each other so we just use enchantArray here
                 // Add enchantment and corresponding level to the item
@@ -327,7 +326,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 }
                 // Restore enchanted item
                 if (!illegalLoresBoolean) {
-                    let loreData = inventory_item.getLore();
+                    const loreData = inventory_item.getLore();
                     try {
                         actualItemName.setLore(loreData);
                         inventory.setItem(i, actualItemName);
@@ -345,7 +344,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                  * Old salvage system if new is disabled
                  */
                 // Check if item found inside the container is salvageable
-                let uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+                const uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
                 // Check if data exceeds vanilla data
                 if (salvageable[inventory_item.typeId] && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) !== -1 && salvageable[inventory_item.typeId].data < inventory_item.data) {
                     // Reset item to data type of 0

@@ -1,6 +1,7 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Hotbar } from "../../penrose/tickevent/hotbar/hotbar.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -49,7 +50,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
     const hash = player.getDynamicProperty("hash");
@@ -64,7 +65,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    const hotbarBoolean = World.getDynamicProperty("hotbar_b");
+    const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
 
     // Check for custom prefix
     const prefix = getPrefix(player);
@@ -86,6 +87,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
 
     if ((hotbarBoolean === false && !args.length) || (hotbarBoolean === false && args[0].toLowerCase() !== "disable")) {
         // Allow
+        dynamicPropertyRegistry.set("hotbar_b", true);
         World.setDynamicProperty("hotbar_b", true);
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
@@ -96,6 +98,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
         Hotbar();
     } else if (hotbarBoolean === true && args.length === 1 && args[0].toLowerCase() === "disable") {
         // Deny
+        dynamicPropertyRegistry.set("hotbar_b", false);
         World.setDynamicProperty("hotbar_b", false);
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has disabled §6Hotbar`);
     } else if ((hotbarBoolean === true && args.length >= 1) || (hotbarBoolean === true && !args.length)) {

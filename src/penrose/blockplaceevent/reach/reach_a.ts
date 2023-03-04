@@ -1,16 +1,15 @@
 import { world, BlockLocation, MinecraftBlockTypes, BlockPlaceEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 // import { flag } from "../../../util.js";
 
 const World = world;
 
 function reacha(object: BlockPlaceEvent) {
     // Get Dynamic Property
-    let reachABoolean = World.getDynamicProperty("reacha_b");
-    if (reachABoolean === undefined) {
-        reachABoolean = config.modules.reachA.enabled;
-    }
+    const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
+
     // Unsubscribe if disabled in-game
     if (reachABoolean === false) {
         World.events.blockPlace.unsubscribe(reacha);
@@ -18,11 +17,11 @@ function reacha(object: BlockPlaceEvent) {
     }
 
     // Properties from class
-    let { block, player, dimension } = object;
+    const { block, player, dimension } = object;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -33,12 +32,12 @@ function reacha(object: BlockPlaceEvent) {
     }
 
     // Block coordinates
-    let { x, y, z } = block.location;
+    const { x, y, z } = block.location;
     // Player coordinates
-    let { x: x1, y: y1, z: z1 } = player.location;
+    const { x: x1, y: y1, z: z1 } = player.location;
 
     // Calculate the distance between the player and the block being placed
-    let reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
+    const reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
 
     if (reach > config.modules.reachA.reach) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);

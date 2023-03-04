@@ -1,6 +1,7 @@
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -43,11 +44,11 @@ export function salvage(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,29 +59,26 @@ export function salvage(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let salvageBoolean = World.getDynamicProperty("salvage_b");
-    if (salvageBoolean === undefined) {
-        salvageBoolean = config.modules.salvage.enabled;
-    }
+    const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.salvage) {
         return salvageHelp(player, prefix, salvageBoolean);
     }
 
     if (salvageBoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("salvage_b", true);
         World.setDynamicProperty("salvage_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Salvage§r!`);
-        return;
     } else if (salvageBoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("salvage_b", false);
         World.setDynamicProperty("salvage_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Salvage§r!`);
-        return;
     }
 }
