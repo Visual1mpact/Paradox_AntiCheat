@@ -18,9 +18,9 @@ import { kickablePlayers } from "./kickcheck.js";
  */
 export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
     // make sure the vl objective exists
-    try {
-        await player.runCommandAsync(`scoreboard objectives add ${check.toLowerCase()}vl dummy`);
-    } catch {}
+    if (!world.scoreboard.getObjective(`${check.toLowerCase()}vl`)) {
+        world.scoreboard.addObjective(`${check.toLowerCase()}vl`, `${check.toLowerCase()}vl`).setScore(player.scoreboard, 0);
+    }
 
     // cancel the message
     if (message) message.cancel = true;
@@ -116,8 +116,9 @@ export function getScore(objective: string, player: Player) {
  */
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
-    const score = (stack ? target.scoreboard.getScore(scoreObj) ?? 0 : 0) + amount;
-    target.scoreboard.setScore(scoreObj, score);
+    const score = scoreObj.getScore(target.scoreboard);
+    const result = (stack ? score ?? 0 : 0) + amount;
+    target.scoreboard.setScore(scoreObj, result);
     return score;
 }
 
