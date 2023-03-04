@@ -2,19 +2,15 @@ import { EntityItemComponent, EntityQueryOptions, ItemStack, world, system } fro
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 function illegalitemsd(id: number) {
     // Get Dynamic Property
-    let illegalItemsDBoolean = World.getDynamicProperty("illegalitemsd_b");
-    if (illegalItemsDBoolean === undefined) {
-        illegalItemsDBoolean = config.modules.illegalitemsD.enabled;
-    }
-    let antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
-    if (antiShulkerBoolean === undefined) {
-        antiShulkerBoolean = config.modules.antishulker.enabled;
-    }
+    const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
+    const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
+
     // Unsubscribe if disabled in-game
     if (illegalItemsDBoolean === false) {
         system.clearRunSchedule(id);

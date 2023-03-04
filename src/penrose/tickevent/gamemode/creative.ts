@@ -1,23 +1,16 @@
 import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, getScore, sendMsg, setScore } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 async function creative(id: number) {
     // Get Dynamic Property
-    let adventureGMBoolean = World.getDynamicProperty("adventuregm_b");
-    if (adventureGMBoolean === undefined) {
-        adventureGMBoolean = config.modules.adventureGM.enabled;
-    }
-    let creativeGMBoolean = World.getDynamicProperty("creativegm_b");
-    if (creativeGMBoolean === undefined) {
-        creativeGMBoolean = config.modules.creativeGM.enabled;
-    }
-    let survivalGMBoolean = World.getDynamicProperty("survivalgm_b");
-    if (survivalGMBoolean === undefined) {
-        survivalGMBoolean = config.modules.survivalGM.enabled;
-    }
+    const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
+    const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
+    const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
+
     // Unsubscribe if disabled in-game
     if (creativeGMBoolean === false) {
         system.clearRunSchedule(id);
@@ -41,6 +34,7 @@ async function creative(id: number) {
         // Make sure they didn't enable all of them in config.js as this will have a negative impact
         if (survivalGMBoolean === true && adventureGMBoolean === true) {
             // Default to adventure for safety
+            dynamicPropertyRegistry.set("adventuregm_b", false);
             World.setDynamicProperty("adventuregm_b", false);
         }
         // Are they in creative? Fix it.

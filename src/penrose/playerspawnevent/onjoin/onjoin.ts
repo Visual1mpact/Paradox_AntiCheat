@@ -3,6 +3,7 @@ import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { getPrefix } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -18,19 +19,14 @@ async function onJoinTime(object: PlayerSpawnEvent) {
     }
 
     // Get Dynamic Property
-    let lockdownBoolean = World.getDynamicProperty("lockdown_b");
-    if (lockdownBoolean === undefined) {
-        lockdownBoolean = config.modules.lockDown.enabled;
-    }
+    const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
+
     // Get Dynamic Property
-    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
-    if (illegalItemsABoolean === undefined) {
-        illegalItemsABoolean = config.modules.illegalitemsA.enabled;
-    }
+    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
 
     // Lock down the server if enabled
     if (lockdownBoolean) {
-        let reason = "Under Maintenance! Sorry for the inconvenience.";
+        const reason = "Under Maintenance! Sorry for the inconvenience.";
         try {
             // Kick players from server
             await player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
@@ -51,8 +47,8 @@ async function onJoinTime(object: PlayerSpawnEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
-        let allPlayers = [...World.getPlayers()];
-        for (let player of allPlayers) {
+        const allPlayers = [...World.getPlayers()];
+        for (const player of allPlayers) {
             if (player.hasTag("illegalitemsA")) {
                 player.removeTag("illegalitemsA");
             }

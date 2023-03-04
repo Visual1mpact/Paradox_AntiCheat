@@ -1,15 +1,14 @@
 import { world, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 function badpackets2(id: number) {
     // Get Dynamic Property
-    let badPackets2Boolean = World.getDynamicProperty("badpackets2_b");
-    if (badPackets2Boolean === undefined) {
-        badPackets2Boolean = config.modules.badpackets2.enabled;
-    }
+    const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
+
     // Unsubscribe if disabled in-game
     if (badPackets2Boolean === false) {
         system.clearRunSchedule(id);

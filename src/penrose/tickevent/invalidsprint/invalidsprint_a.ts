@@ -1,15 +1,14 @@
 import { world, MinecraftEffectTypes, EntityMovementComponent, system } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
-function invalidsprinta(id) {
+function invalidsprinta(id: number) {
     // Get Dynamic Property
-    let invalidSprintABoolean = World.getDynamicProperty("invalidsprinta_b");
-    if (invalidSprintABoolean === undefined) {
-        invalidSprintABoolean = config.modules.invalidsprintA.enabled;
-    }
+    const invalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b");
+
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
         system.clearRunSchedule(id);
@@ -45,7 +44,7 @@ function invalidsprinta(id) {
  * if needed to do so.
  */
 export function InvalidSprintA() {
-    system.runSchedule(() => {
-        invalidsprinta(InvalidSprintA);
+    const invalidSprintAId = system.runSchedule(() => {
+        invalidsprinta(invalidSprintAId);
     }, 40);
 }

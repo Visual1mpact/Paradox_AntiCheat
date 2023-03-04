@@ -1,5 +1,6 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { resetTag, getPrefix, crypto, sendMsgToPlayer, sendMsg } from "../../util.js";
 
 const World = world;
@@ -45,14 +46,14 @@ export function tag(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // fixes a bug that kills !tag when using custom names
     player.nameTag = player.name;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -63,13 +64,10 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let chatRanksBoolean = World.getDynamicProperty("chatranks_b");
-    if (chatRanksBoolean === undefined) {
-        chatRanksBoolean = config.modules.chatranks.enabled;
-    }
+    const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -77,14 +75,14 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
         return tagHelp(player, prefix, chatRanksBoolean);
     }
 
     // try to find the player requested
     let member: Player;
-    for (let pl of World.getPlayers()) {
+    for (const pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }
@@ -95,7 +93,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // check if array contains the string 'reset'
-    let argcheck = args.includes("reset");
+    const argcheck = args.includes("reset");
 
     // reset rank
     if (argcheck === true) {
@@ -104,7 +102,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
         return;
     }
 
-    let custom;
+    let custom: string;
     args.forEach((t) => {
         if (t.startsWith("Rank:")) {
             custom = t;

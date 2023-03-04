@@ -2,6 +2,7 @@ import { world, BlockLocation, MinecraftBlockTypes, BlockPlaceEvent } from "@min
 import config from "../../../data/config.js";
 import { crypto, flag } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -9,10 +10,8 @@ let blockTimer = new Map();
 
 function scaffolda(object: BlockPlaceEvent) {
     // Get Dynamic Property
-    let antiScaffoldABoolean = World.getDynamicProperty("antiscaffolda_b");
-    if (antiScaffoldABoolean === undefined) {
-        antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
-    }
+    const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
+
     // Unsubscribe if disabled in-game
     if (antiScaffoldABoolean === false) {
         World.events.blockPlace.unsubscribe(scaffolda);

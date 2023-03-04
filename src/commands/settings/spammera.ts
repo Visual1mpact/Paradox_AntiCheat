@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { SpammerA } from "../../penrose/beforechatevent/spammer/spammer_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -44,11 +45,11 @@ export function spammerA(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,30 +60,27 @@ export function spammerA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let spammerABoolean = World.getDynamicProperty("spammera_b");
-    if (spammerABoolean === undefined) {
-        spammerABoolean = config.modules.spammerA.enabled;
-    }
+    const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.spammera) {
         return spammerAHelp(player, prefix, spammerABoolean);
     }
 
     if (spammerABoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("spammera_b", true);
         World.setDynamicProperty("spammera_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerA§r!`);
         SpammerA();
-        return;
     } else if (spammerABoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("spammera_b", false);
         World.setDynamicProperty("spammera_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerA§r!`);
-        return;
     }
 }

@@ -1,6 +1,7 @@
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -43,11 +44,11 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -58,28 +59,16 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let stackBanBoolean = World.getDynamicProperty("stackban_b");
-    if (stackBanBoolean === undefined) {
-        stackBanBoolean = config.modules.stackBan.enabled;
-    }
-    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
-    if (illegalItemsABoolean === undefined) {
-        illegalItemsABoolean = config.modules.illegalitemsA.enabled;
-    }
-    let illegalItemsBBoolean = World.getDynamicProperty("illegalitemsb_b");
-    if (illegalItemsBBoolean === undefined) {
-        illegalItemsBBoolean = config.modules.illegalitemsB.enabled;
-    }
-    let illegalItemsCBoolean = World.getDynamicProperty("illegalitemsc_b");
-    if (illegalItemsCBoolean === undefined) {
-        illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
-    }
+    const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
+    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
+    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
+    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.stackban) {
         return stackBanHelp(player, prefix, stackBanBoolean);
     }
@@ -87,6 +76,7 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
     if (!illegalItemsABoolean && !illegalItemsBBoolean && !illegalItemsCBoolean) {
         if (stackBanBoolean) {
             // In this stage they are likely turning it off so oblige their request
+            dynamicPropertyRegistry.set("stackban_b", false);
             return World.setDynamicProperty("stackban_b", false);
         }
         // If illegal items are not enabled then let user know this feature is inaccessible
@@ -96,13 +86,13 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
 
     if (stackBanBoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("stackban_b", true);
         World.setDynamicProperty("stackban_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6StackBans§r!`);
-        return;
     } else if (stackBanBoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("stackban_b", false);
         World.setDynamicProperty("stackban_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4StackBans§r!`);
-        return;
     }
 }

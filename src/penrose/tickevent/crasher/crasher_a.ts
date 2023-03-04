@@ -1,16 +1,14 @@
 import { world, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
-import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 function crashera(id: number) {
     // Get Dynamic Property
-    let crasherABoolean = World.getDynamicProperty("crashera_b");
-    if (crasherABoolean === undefined) {
-        crasherABoolean = config.modules.crasherA.enabled;
-    }
+    const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
+
     // Unsubscribe if disabled in-game
     if (crasherABoolean === false) {
         system.clearRunSchedule(id);

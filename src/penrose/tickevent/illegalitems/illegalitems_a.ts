@@ -42,19 +42,12 @@ function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; 
 
 function illegalitemsa(id: number) {
     // Get Dynamic Property
-    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b"),
+    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b"),
         salvageBoolean = dynamicPropertyRegistry.get("salvage_b"),
-        illegalLoresBoolean = World.getDynamicProperty("illegallores_b"),
-        illegalEnchantmentBoolean = World.getDynamicProperty("illegalenchantment_b"),
-        antiShulkerBoolean = World.getDynamicProperty("antishulker_b"),
-        stackBanBoolean = World.getDynamicProperty("stackban_b");
-
-    if (illegalItemsABoolean === undefined) illegalItemsABoolean = config.modules.illegalitemsA.enabled;
-    if (illegalLoresBoolean === undefined) illegalLoresBoolean = config.modules.illegalLores.enabled;
-    if (illegalLoresBoolean === undefined) illegalLoresBoolean = config.modules.illegalLores.enabled;
-    if (illegalEnchantmentBoolean === undefined) illegalEnchantmentBoolean = config.modules.illegalEnchantment.enabled;
-    if (antiShulkerBoolean === undefined) antiShulkerBoolean = config.modules.antishulker.enabled;
-    if (stackBanBoolean === undefined) stackBanBoolean = config.modules.stackBan.enabled;
+        illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b"),
+        illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b"),
+        antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b"),
+        stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {

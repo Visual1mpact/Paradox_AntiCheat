@@ -1,15 +1,14 @@
 import { BeforeChatEvent, world } from "@minecraft/server";
 import { crypto, flag } from "../../../util.js";
 import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 function spammerb(msg: BeforeChatEvent) {
     // Get Dynamic Property
-    let spammerBBoolean = World.getDynamicProperty("spammerb_b");
-    if (spammerBBoolean === undefined) {
-        spammerBBoolean = config.modules.spammerB.enabled;
-    }
+    const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
+
     // Unsubscribe if disabled in-game
     if (spammerBBoolean === false) {
         World.events.beforeChat.unsubscribe(spammerb);
@@ -18,8 +17,8 @@ function spammerb(msg: BeforeChatEvent) {
     const player = msg.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);

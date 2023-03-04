@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { ScaffoldA } from "../../penrose/blockplaceevent/scaffold/scaffold_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -44,11 +45,11 @@ export function antiscaffoldA(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,30 +60,27 @@ export function antiscaffoldA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antiScaffoldABoolean = World.getDynamicProperty("antiscaffolda_b");
-    if (antiScaffoldABoolean === undefined) {
-        antiScaffoldABoolean = config.modules.antiscaffoldA.enabled;
-    }
+    const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antiscaffolda) {
         return antiscaffoldaHelp(player, prefix, antiScaffoldABoolean);
     }
 
     if (antiScaffoldABoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("antiscaffolda_b", true);
         World.setDynamicProperty("antiscaffolda_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`);
         ScaffoldA();
-        return;
     } else if (antiScaffoldABoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("antiscaffolda_b", false);
         World.setDynamicProperty("antiscaffolda_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`);
-        return;
     }
 }

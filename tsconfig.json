@@ -11,7 +11,8 @@
         "allowJs": true,
         "checkJs": false,
         "useDefineForClassFields": true,
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
+        // "noUnusedLocals": true
         // "noImplicitAny": true
     },
     "include": ["src", "types"],

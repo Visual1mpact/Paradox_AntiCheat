@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { IllegalItemsC } from "../../penrose/blockplaceevent/illegalitems/illegalitems_c.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -44,11 +45,11 @@ export function illegalitemsC(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,30 +60,27 @@ export function illegalitemsC(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let illegalItemsCBoolean = World.getDynamicProperty("illegalitemsc_b");
-    if (illegalItemsCBoolean === undefined) {
-        illegalItemsCBoolean = config.modules.illegalitemsC.enabled;
-    }
+    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.illegalitemsc) {
         return illegalItemsCHelp(player, prefix, illegalItemsCBoolean);
     }
 
     if (illegalItemsCBoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("illegalitemsc_b", true);
         World.setDynamicProperty("illegalitemsc_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsC§r!`);
         IllegalItemsC();
-        return;
     } else if (illegalItemsCBoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("illegalitemsc_b", false);
         World.setDynamicProperty("illegalitemsc_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsC§r!`);
-        return;
     }
 }

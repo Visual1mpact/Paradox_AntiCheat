@@ -1,20 +1,18 @@
 import { Location, world } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { sendMsg, sendMsgToPlayer } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 const ChatFilter = () => {
     World.events.beforeChat.subscribe((msg) => {
         // Get Dynamic Property
-        let chatRanksBoolean = World.getDynamicProperty("chatranks_b");
-        if (chatRanksBoolean === undefined) {
-            chatRanksBoolean = config.modules.chatranks.enabled;
-        }
+        const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
 
         if (chatRanksBoolean === true) {
-            let message = msg.message;
-            let player = msg.sender;
+            const message = msg.message;
+            const player = msg.sender;
 
             // Kill their broadcast if muted
             if (player.hasTag("isMuted")) {
@@ -23,7 +21,7 @@ const ChatFilter = () => {
                 return;
             }
 
-            let tags = player.getTags();
+            const tags = player.getTags();
             let rank: string;
             for (const tag of tags) {
                 if (tag.startsWith("Rank:")) {
@@ -41,8 +39,8 @@ const ChatFilter = () => {
                 msg.cancel = true;
             }
         } else if (!msg.cancel) {
-            let message = msg.message;
-            let player = msg.sender;
+            const message = msg.message;
+            const player = msg.sender;
 
             sendMsg("@a", `${player.name}: ${message}`);
             msg.cancel = true;

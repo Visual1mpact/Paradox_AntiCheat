@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -44,11 +45,11 @@ export function antinukerA(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -59,30 +60,27 @@ export function antinukerA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antiNukerABoolean = World.getDynamicProperty("antinukera_b");
-    if (antiNukerABoolean === undefined) {
-        antiNukerABoolean = config.modules.antinukerA.enabled;
-    }
+    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antinukera) {
         return antinukeraHelp(player, prefix, antiNukerABoolean);
     }
 
     if (antiNukerABoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("antinukera_b", true);
         World.setDynamicProperty("antinukera_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`);
         NukerA();
-        return;
     } else if (antiNukerABoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("antinukera_b", false);
         World.setDynamicProperty("antinukera_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`);
-        return;
     }
 }

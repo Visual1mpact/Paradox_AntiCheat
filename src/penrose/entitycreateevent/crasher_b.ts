@@ -1,6 +1,7 @@
 import { Entity, EntitySpawnEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
+import { dynamicPropertyRegistry } from "../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -39,10 +40,8 @@ function nearestPlayer(entity: Entity) {
 
 function crasherb(object: EntitySpawnEvent) {
     // Get Dynamic Property
-    let crasherBBoolean = World.getDynamicProperty("crasherb_b");
-    if (crasherBBoolean === undefined) {
-        crasherBBoolean = config.modules.crasherB.enabled;
-    }
+    const crasherBBoolean = dynamicPropertyRegistry.get("crasherb_b");
+
     // Unsubscribe if disabled in-game
     if (crasherBBoolean === false) {
         World.events.entitySpawn.unsubscribe(crasherb);
@@ -50,11 +49,11 @@ function crasherb(object: EntitySpawnEvent) {
     }
 
     // Event property
-    let { entity } = object;
+    const { entity } = object;
 
     if (entity.id === "minecraft:item") {
-        let itemComponent = entity.getComponent("item") as unknown as EntityItemComponent;
-        let itemObject = itemComponent.itemStack;
+        const itemComponent = entity.getComponent("item") as unknown as EntityItemComponent;
+        const itemObject = itemComponent.itemStack;
         if (itemObject.typeId === "minecraft:arrow" && itemObject.data > 43) {
             flag(nearestPlayer(entity), "Crasher", "B", "Exploit", null, null, "item", `${itemObject.typeId.replace("minecraft:", "")}: data=${itemObject.data}`, false, null);
             entity.kill();

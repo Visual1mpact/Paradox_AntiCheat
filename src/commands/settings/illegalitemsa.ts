@@ -2,6 +2,7 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { IllegalItemsA } from "../../penrose/tickevent/illegalitems/illegalitems_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -59,10 +60,7 @@ export function illegalitemsA(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let illegalItemsABoolean = World.getDynamicProperty("illegalitemsa_b");
-    if (illegalItemsABoolean === undefined) {
-        illegalItemsABoolean = config.modules.illegalitemsA.enabled;
-    }
+    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
 
     // Check for custom prefix
     const prefix = getPrefix(player);
@@ -75,11 +73,13 @@ export function illegalitemsA(message: BeforeChatEvent, args: string[]) {
 
     if (illegalItemsABoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("illegalitemsa_b", true);
         World.setDynamicProperty("illegalitemsa_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`);
         IllegalItemsA();
     } else if (illegalItemsABoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("illegalitemsa_b", false);
         World.setDynamicProperty("illegalitemsa_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`);
     }

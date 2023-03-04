@@ -1,14 +1,13 @@
 import { world, Player, Block, EntityQueryOptions, GameMode, system, BlockLocation, BlockType, MinecraftBlockTypes } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { getScore, flag, crypto, setScore } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 const World = world;
 
 function antifalla(id: number) {
     // Get Dynamic Property
-    let antifallABoolean = World.getDynamicProperty("antifalla_b");
-    if (antifallABoolean === undefined) {
-        antifallABoolean = config.modules.antifallA.enabled;
-    }
+    const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b");
+
     // Unsubscribe if disabled in-game
     if (antifallABoolean === false) {
         system.clearRunSchedule(id);

@@ -1,6 +1,7 @@
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -43,12 +44,12 @@ export function antishulker(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode;
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
+    let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
     } catch (error) {}
@@ -58,29 +59,26 @@ export function antishulker(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    let antiShulkerBoolean = World.getDynamicProperty("antishulker_b");
-    if (antiShulkerBoolean === undefined) {
-        antiShulkerBoolean = config.modules.antishulker.enabled;
-    }
+    const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antishulker) {
         return antishulkerHelp(player, prefix, antiShulkerBoolean);
     }
 
     if (antiShulkerBoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("antishulker_b", true);
         World.setDynamicProperty("antishulker_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti-Shulkers§r!`);
-        return;
     } else if (antiShulkerBoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("antishulker_b", false);
         World.setDynamicProperty("antishulker_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti-Shulkers§r!`);
-        return;
     }
 }

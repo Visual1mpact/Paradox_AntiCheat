@@ -2,6 +2,7 @@ import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEn
 import config from "../../../data/config.js";
 import { crypto, flag } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -9,23 +10,21 @@ let blockTimer = new Map();
 
 async function nukera(object: BlockBreakEvent) {
     // Get Dynamic Property
-    let antiNukerABoolean = World.getDynamicProperty("antinukera_b");
-    if (antiNukerABoolean === undefined) {
-        antiNukerABoolean = config.modules.antinukerA.enabled;
-    }
+    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
+
     if (antiNukerABoolean === false) {
         World.events.blockBreak.unsubscribe(nukera);
         return;
     }
 
     // Properties from class
-    let { block, player, dimension, brokenBlockPermutation } = object;
+    const { block, player, dimension, brokenBlockPermutation } = object;
     // Block coordinates
-    let { x, y, z } = block.location;
+    const { x, y, z } = block.location;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     let encode: string;
     try {
         encode = crypto(salt, config.modules.encryption.password);
@@ -36,17 +35,17 @@ async function nukera(object: BlockBreakEvent) {
     }
 
     // Get the slot number in their possession
-    let hand = player.selectedSlot;
+    const hand = player.selectedSlot;
 
     // Get the type of item from the slot number in their possession
-    let invContainer = player.getComponent("minecraft:inventory") as EntityInventoryComponent;
-    let item = invContainer.container.getItem(hand) as ItemStack;
+    const invContainer = player.getComponent("minecraft:inventory") as EntityInventoryComponent;
+    const item = invContainer.container.getItem(hand) as ItemStack;
 
     // We get enchantment on this item
     let enchantment: Enchantment;
     if (item) {
-        let enchantComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
-        let item_enchants = enchantComponent.enchantments;
+        const enchantComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
+        const item_enchants = enchantComponent.enchantments;
         if (item_enchants.hasEnchantment(MinecraftEnchantmentTypes.efficiency)) {
             enchantment = item_enchants.getEnchantment(MinecraftEnchantmentTypes.efficiency);
         }
@@ -61,17 +60,17 @@ async function nukera(object: BlockBreakEvent) {
 
     timer.push(new Date());
 
-    let tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
+    const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
     blockTimer.set(player.nameTag, tiktok);
 
     // Get the properties of the blocks being destroyed
-    let blockID = brokenBlockPermutation.clone();
+    const blockID = brokenBlockPermutation.clone();
 
     // Block dimension and location for permutation
-    let blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
+    const blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
 
     // Ignore vegetation
-    let vegetation = [
+    const vegetation = [
         "minecraft:yellow_flower",
         "minecraft:red_flower",
         "minecraft:double_plant",

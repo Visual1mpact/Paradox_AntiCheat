@@ -1,15 +1,14 @@
 import { world, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
 async function bedrockvalidate(id: number) {
     // Get Dynamic Property
-    let bedrockValidateBoolean = World.getDynamicProperty("bedrockvalidate_b");
-    if (bedrockValidateBoolean === undefined) {
-        bedrockValidateBoolean = config.modules.bedrockValidate.enabled;
-    }
+    const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
+
     // Unsubscribe if disabled in-game
     if (bedrockValidateBoolean === false) {
         system.clearRunSchedule(id);
