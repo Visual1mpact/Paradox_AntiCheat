@@ -81,7 +81,7 @@ function registry(data: WorldInitializeEvent) {
 
     // Define numbers (property)
     for (let n = 0; n < defineNumberProperties.length; n++) {
-        property.defineBoolean(defineNumberProperties[n]);
+        property.defineNumber(defineNumberProperties[n]);
     }
 
     // Register Defined properties in world globally
