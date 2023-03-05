@@ -42,10 +42,11 @@ import { AntiFallA } from "./penrose/tickevent/antifalla/antifall_a.js";
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
-// Import JoinPlayer Events
+// Import PlayerSpawn Events
 import { GametestCheck } from "./penrose/playerspawnevent/gametestloaded/gametestcheck.js";
 import { onJoin } from "./penrose/playerspawnevent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/playerspawnevent/ban/globalbanlist.js";
+import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
@@ -60,7 +61,6 @@ import { Registry } from "./penrose/worldinitializeevent/registry.js";
 import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
-import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
 
 // Self explanatory
 const World = world;
