@@ -3,10 +3,11 @@
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function resetPrefix(player: Player) {
-    let sanitize = player.getTags();
-    for (let tag of sanitize) {
+    const sanitize = player.getTags();
+    for (const tag of sanitize) {
         if (tag.startsWith("Prefix:")) {
             player.removeTag(tag);
             config.customcommands.prefix = "!";
@@ -42,25 +43,21 @@ export function prefix(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.prefix) {
         return prefixHelp(player, prefix);
     }
@@ -71,7 +68,7 @@ export function prefix(message: BeforeChatEvent, args: string[]) {
     }
 
     // check if array contains the string 'reset'
-    let argcheck = args.includes("reset");
+    const argcheck = args.includes("reset");
 
     // reset prefix
     if (argcheck === true) {

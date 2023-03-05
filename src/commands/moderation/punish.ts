@@ -2,6 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items, PlayerInventoryComponentContainer } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -39,25 +40,21 @@ export async function punish(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
     // Make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.punish) {
         return punishHelp(player, prefix);
     }
@@ -70,7 +67,7 @@ export async function punish(message: BeforeChatEvent, args: string[]) {
     // Try to find the player requested
     let member: Player;
     if (args.length) {
-        for (let pl of World.getPlayers()) {
+        for (const pl of World.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }
@@ -96,11 +93,11 @@ export async function punish(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get requested player's inventory so we can wipe it out
-    let inventoryContainer = member.getComponent("minecraft:inventory") as EntityInventoryComponent;
-    let inventory = inventoryContainer.container;
+    const inventoryContainer = member.getComponent("minecraft:inventory") as EntityInventoryComponent;
+    const inventory = inventoryContainer.container;
 
     for (let i = 0; i < inventory.size; i++) {
-        let inventory_item = inventory.getItem(i);
+        const inventory_item = inventory.getItem(i);
         if (!inventory_item) {
             continue;
         }

@@ -2,6 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -40,16 +41,11 @@ export function deop(message: BeforeChatEvent, args: string[]) {
 
     const player = message.sender;
 
-    // Check for hash/salt and validate password
-    const hash = player.getDynamicProperty("hash");
-    const salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
@@ -70,7 +66,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     // try to find the player requested
     let member: Player;
     if (args.length) {
-        for (let pl of World.getPlayers()) {
+        for (const pl of World.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }
@@ -93,6 +89,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
         member.removeDynamicProperty("hash");
         member.removeDynamicProperty("salt");
         member.removeTag("paradoxOpped");
+        dynamicPropertyRegistry.delete(member.scoreboard.id);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your OP status has been revoked!`);
     }

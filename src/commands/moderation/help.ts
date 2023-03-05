@@ -1,5 +1,6 @@
 import { BeforeChatEvent } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";
 
@@ -15,21 +16,17 @@ export function help(message: BeforeChatEvent) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
-    // make sure the user has permissions to run the command
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
     // if not then show them non staff commands
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    if (hash === undefined || encode !== hash) {
+    if (uniqueId !== player.name) {
         return nonstaffhelp(message);
     }
 

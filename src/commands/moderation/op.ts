@@ -2,6 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -52,6 +53,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     // If no hash then create one
     if (hash === undefined && args[0] === config.modules.encryption.password) {
         encode = crypto(salt, config.modules.encryption.password);
+        dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
         player.setDynamicProperty("hash", encode);
         hash = player.getDynamicProperty("hash");
     } else {
@@ -87,7 +89,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     // try to find the player requested
     let member: Player;
     if (args.length) {
-        for (let pl of World.getPlayers()) {
+        for (const pl of World.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }
@@ -109,6 +111,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     // If no hash then create one
     if (memberHash === undefined) {
         encode = crypto(memberSalt, config.modules.encryption.password);
+        dynamicPropertyRegistry.set(member.scoreboard.id, member.name);
         member.setDynamicProperty("hash", encode);
         memberHash = member.getDynamicProperty("hash");
     }

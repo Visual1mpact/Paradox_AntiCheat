@@ -1,6 +1,7 @@
 /* eslint no-var: "off"*/
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -38,26 +39,22 @@ export async function mute(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
-    let reason = args.slice(1).join(" ") || "No reason specified";
+    const player = message.sender;
+    const reason = args.slice(1).join(" ") || "No reason specified";
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.mute) {
         return muteHelp(player, prefix);
     }
@@ -69,7 +66,7 @@ export async function mute(message: BeforeChatEvent, args: string[]) {
 
     // try to find the player requested
     let member: Player;
-    for (let pl of World.getPlayers()) {
+    for (const pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }
@@ -79,21 +76,16 @@ export async function mute(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    // Check for hash/salt and validate password for members
-    let memberHash = member.getDynamicProperty("hash");
-    let memberSalt = member.getDynamicProperty("salt");
-    let memberEncode: string;
-    try {
-        memberEncode = crypto(memberSalt, config.modules.encryption.password);
-    } catch (error) {}
+    // Get unique ID
+    const uniqueId2 = dynamicPropertyRegistry.get(member.scoreboard.id);
 
-    // make sure they dont mute themselves
-    if (member === player) {
+    // Make sure they dont mute themselves
+    if (uniqueId2 === uniqueId) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot mute yourself.`);
     }
 
-    // make sure staff dont mute staff
-    if (memberEncode === memberHash) {
+    // Make sure staff dont mute staff
+    if (uniqueId2 === member.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot mute staff players.`);
     }
 

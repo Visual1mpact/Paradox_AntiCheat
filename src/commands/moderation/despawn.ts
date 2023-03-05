@@ -1,6 +1,7 @@
 /* eslint no-var: "off"*/
 import { BeforeChatEvent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -39,25 +40,21 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.despawn) {
         return despawnHelp(player, prefix);
     }
@@ -72,11 +69,11 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     let verify = false;
     let filteredEntity: string;
     let requestedEntity: string;
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.excludeTypes = ["player"];
     // Specified entity
     if (args[0] !== "all" && args.length > 0) {
-        for (let entity of World.getDimension("overworld").getEntities(filter)) {
+        for (const entity of World.getDimension("overworld").getEntities(filter)) {
             filteredEntity = entity.id.replace("minecraft:", "");
             requestedEntity = args[0].replace("minecraft:", "");
             // If an entity was specified then handle it here
@@ -91,7 +88,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     }
     // All entities
     if (args[0] === "all") {
-        for (let entity of World.getDimension("overworld").getEntities(filter)) {
+        for (const entity of World.getDimension("overworld").getEntities(filter)) {
             counter = ++counter;
             verify = true;
             // Despawn this entity
