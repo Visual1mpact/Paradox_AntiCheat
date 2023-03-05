@@ -74,16 +74,16 @@ function worldborder(id: number) {
 
         // Offset location from player for actual block locations and return string
         let portals = [
-            player.dimension.getBlock(test.offset(0, -1, 0)).typeId,
-            player.dimension.getBlock(test.offset(0, -1, 1)).typeId,
-            player.dimension.getBlock(test.offset(0, -1, -1)).typeId,
-            player.dimension.getBlock(test.offset(1, -1, 0)).typeId,
-            player.dimension.getBlock(test.offset(-1, -1, 0)).typeId,
-            player.dimension.getBlock(test.offset(0, 0, 0)).typeId,
-            player.dimension.getBlock(test.offset(0, 0, 1)).typeId,
-            player.dimension.getBlock(test.offset(0, 0, -1)).typeId,
-            player.dimension.getBlock(test.offset(1, 0, 0)).typeId,
-            player.dimension.getBlock(test.offset(-1, 0, 0)).typeId,
+            player.dimension.getBlock(test.offset(0, -1, 0)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(0, -1, 1)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(0, -1, -1)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(1, -1, 0)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(-1, -1, 0)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(0, 0, 0)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(0, 0, 1)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(0, 0, -1)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(1, 0, 0)).typeId ?? "minecraft:air",
+            player.dimension.getBlock(test.offset(-1, 0, 0)).typeId ?? "minecraft:air",
         ];
 
         /**
