@@ -65,14 +65,11 @@ function illegalitemsa(id: number) {
         if (!player.hasTag("illegalitemsA") && illegalItemsABoolean) {
             player.addTag("illegalitemsA");
         }
-        // Check for hash/salt and validate password
-        const hash = player.getDynamicProperty("hash"),
-            salt = player.getDynamicProperty("salt");
-        let encode: string;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch {}
-        if (hash !== undefined && encode === hash) {
+        // Get unique ID
+        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+        // Skip if they have permission
+        if (uniqueId === player.name) {
             storage.delete(player);
             continue;
         }

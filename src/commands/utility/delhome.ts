@@ -34,10 +34,10 @@ export function delhome(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -45,7 +45,7 @@ export function delhome(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.delhome) {
         return delhomeHelp(player, prefix);
     }
@@ -57,7 +57,7 @@ export function delhome(message: BeforeChatEvent, args: string[]) {
 
     // Find and delete this saved home location
     let verify = false;
-    let tags = player.getTags();
+    const tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;

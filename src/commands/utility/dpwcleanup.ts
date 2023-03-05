@@ -1,6 +1,7 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import scoreboard from "../../libs/scoreboardnew.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function dpwcleanupHelp(player: Player, prefix: string) {
@@ -28,22 +29,18 @@ export async function dpwcleanup(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -51,7 +48,7 @@ export async function dpwcleanup(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if (argCheck && args[0].toLowerCase() === "help") {
         return dpwcleanupHelp(player, prefix);
     }

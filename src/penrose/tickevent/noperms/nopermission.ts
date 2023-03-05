@@ -1,6 +1,7 @@
 import { world, Player, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -35,6 +36,7 @@ function noperms() {
         if (hash !== undefined && encode === hash) {
             entity.removeDynamicProperty("hash");
             entity.removeDynamicProperty("salt");
+            dynamicPropertyRegistry.delete(entity.scoreboard.id);
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {

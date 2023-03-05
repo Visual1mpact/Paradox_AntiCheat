@@ -5,15 +5,15 @@ import { queueUnban } from "../../../commands/moderation/unban.js";
 const World = world;
 
 function serverban() {
-    let filter = new Object() as EntityQueryOptions;
+    const filter = new Object() as EntityQueryOptions;
     filter.tags = ["isBanned"];
     // run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (const player of World.getPlayers(filter)) {
         if (queueUnban.has(player.nameTag)) {
             // Remove tag
             player.removeTag("isBanned");
 
-            let tags = player.getTags();
+            const tags = player.getTags();
 
             // This removes old ban stuff
             tags.forEach((t) => {

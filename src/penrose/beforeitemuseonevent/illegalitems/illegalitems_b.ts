@@ -61,15 +61,11 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
         await source.runCommandAsync(`say Item: ${item.typeId}, Data: ${item.data}, Amount: ${item.amount}`);
     }
 
-    // Check for hash/salt and validate password
-    const hash = source.getDynamicProperty("hash");
-    const salt = source.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // Return if player is OP
-    if (hash !== undefined && encode === hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(source.scoreboard.id);
+
+    // Skip if they have permission
+    if (uniqueId === source.nameTag) {
         return;
     }
 

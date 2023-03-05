@@ -2,6 +2,7 @@
 import { BeforeChatEvent, EntityInventoryComponent, IEntityComponent, Player, world } from "@minecraft/server";
 
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -39,22 +40,18 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -62,14 +59,14 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.invsee) {
         return invseeHelp(player, prefix);
     }
 
     // try to find the player requested
     let member: Player;
-    for (let pl of World.getPlayers()) {
+    for (const pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }
@@ -79,8 +76,8 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    let inv = member.getComponent("inventory") as EntityInventoryComponent;
-    let container = inv.container;
+    const inv = member.getComponent("inventory") as EntityInventoryComponent;
+    const container = inv.container;
 
     sendMsgToPlayer(player, [
         ` `,

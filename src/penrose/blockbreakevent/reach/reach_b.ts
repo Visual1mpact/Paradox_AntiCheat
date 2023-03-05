@@ -19,15 +19,11 @@ function reachb(object: BlockBreakEvent) {
     // Properties from class
     const { block, player, brokenBlockPermutation } = object;
 
-    // Check for hash/salt and validate password
-    const hash = player.getDynamicProperty("hash");
-    const salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Skip if they have permission
+    if (uniqueId === player.name) {
         return;
     }
 

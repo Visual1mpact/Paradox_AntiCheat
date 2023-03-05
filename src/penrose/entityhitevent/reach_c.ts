@@ -28,15 +28,11 @@ function reachc(object: EntityHitEvent) {
         return;
     }
 
-    // Check for hash/salt and validate password
-    const hash = entity.getDynamicProperty("hash");
-    const salt = entity.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(entity.scoreboard.id);
+
+    // Skip if they have permission
+    if (uniqueId === entity.name) {
         return;
     }
 

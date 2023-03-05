@@ -1,5 +1,6 @@
 import { world, Location, Player, BeforeChatEvent } from "@minecraft/server";
 import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
@@ -58,10 +59,10 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -69,7 +70,7 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.gohome) {
         return goHomeHelp(player, prefix);
     }
@@ -79,20 +80,15 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
     }
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
     let homex: number;
     let homey: number;
     let homez: number;
     let dimension: string;
     let coordinatesArray: string[];
-    let tags = player.getTags();
+    const tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             // Split string into array
@@ -123,12 +119,12 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
         let cooldownCalc: number;
         let activeTimer: string;
         // Get original time in milliseconds
-        let cooldownVerify = cooldownTimer.get(player);
+        const cooldownVerify = cooldownTimer.get(player);
         // Convert config settings to milliseconds so we can be sure the countdown is accurate
-        let msSettings = config.modules.goHome.days * 24 * 60 * 60 * 1000 + config.modules.goHome.hours * 60 * 60 * 1000 + config.modules.goHome.minutes * 60 * 1000 + config.modules.goHome.seconds * 1000;
+        const msSettings = config.modules.goHome.days * 24 * 60 * 60 * 1000 + config.modules.goHome.hours * 60 * 60 * 1000 + config.modules.goHome.minutes * 60 * 1000 + config.modules.goHome.seconds * 1000;
         if (cooldownVerify !== undefined) {
             // Determine difference between new and original times in milliseconds
-            let bigBrain = new Date().getTime() - cooldownVerify;
+            const bigBrain = new Date().getTime() - cooldownVerify;
             // Subtract realtime clock from countdown in configuration to get difference
             cooldownCalc = msSettings - bigBrain;
             // Convert difference to clock format D : H : M : S
@@ -138,7 +134,7 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
             cooldownCalc = msSettings;
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
-        if (cooldownCalc === msSettings || cooldownCalc <= 0 || (hash !== undefined && encode === hash)) {
+        if (cooldownCalc === msSettings || cooldownCalc <= 0 || uniqueId === player.name) {
             await player.runCommandAsync(`scoreboard players set @s teleport 25`);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
             player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);

@@ -1,6 +1,7 @@
 import { world, Location, Player, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { getScore, crypto, sendMsg } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -129,14 +130,11 @@ function StopTickFreeze(id: number) {
 // Where the magic begins
 function TickFreeze(data: Player) {
     player = data;
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Skip if they have permission
+    if (uniqueId !== player.name) {
         /**
          * We store the identifier in a variable
          * to cancel the execution of this scheduled run

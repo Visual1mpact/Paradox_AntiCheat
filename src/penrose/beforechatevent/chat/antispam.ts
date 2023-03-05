@@ -21,15 +21,11 @@ function antispam(msg: BeforeChatEvent) {
     const player = msg.sender;
     const message = msg.message;
 
-    // Check for hash/salt and validate password
-    const hash = player.getDynamicProperty("hash");
-    const salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
-    if (hash === undefined || encode !== hash) {
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         // gets current time
         const currentTime = Date.now();
 

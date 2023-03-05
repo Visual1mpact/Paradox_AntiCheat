@@ -21,14 +21,11 @@ async function creative(id: number) {
     filter.gameMode = GameMode.creative;
     // Run as each player
     for (const player of World.getPlayers(filter)) {
-        // Check for hash/salt and validate password
-        const hash = player.getDynamicProperty("hash");
-        const salt = player.getDynamicProperty("salt");
-        let encode: string;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
-        if (hash !== undefined && encode === hash) {
+        // Get unique ID
+        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+        // Skip if they have permission
+        if (uniqueId === player.name) {
             continue;
         }
         // Make sure they didn't enable all of them in config.js as this will have a negative impact

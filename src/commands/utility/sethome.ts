@@ -34,10 +34,10 @@ export function sethome(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -45,17 +45,17 @@ export function sethome(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.sethome) {
         return setHomeHelp(player, prefix);
     }
 
     // Get current location
-    let { x, y, z } = player.location;
+    const { x, y, z } = player.location;
 
-    let homex = x.toFixed(0);
-    let homey = y.toFixed(0);
-    let homez = z.toFixed(0);
+    const homex = x.toFixed(0);
+    const homey = y.toFixed(0);
+    const homez = z.toFixed(0);
     let currentDimension: string;
 
     // Don't allow spaces
@@ -67,7 +67,7 @@ export function sethome(message: BeforeChatEvent, args: string[]) {
     // Make sure this name doesn't exist already and it doesn't exceed limitations
     let verify = false;
     let counter = 0;
-    let tags = player.getTags();
+    const tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;

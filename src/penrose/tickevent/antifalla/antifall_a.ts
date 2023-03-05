@@ -17,18 +17,11 @@ function antifalla(id: number) {
     const gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [GameMode.creative];
     for (const player of World.getPlayers(gm)) {
-        /**
-         * Check for hash/salt and validate password
-         *
-         * If they are good to go then we can ignore them
-         */
-        const hash = player.getDynamicProperty("hash");
-        const salt = player.getDynamicProperty("salt");
-        let encode: string;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
-        if (hash !== undefined && encode === hash) {
+        // Get unique ID
+        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+        // Skip if they have permission
+        if (uniqueId === player.name) {
             return;
         }
         const vy = player.velocity.y;

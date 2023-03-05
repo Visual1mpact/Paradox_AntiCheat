@@ -19,22 +19,18 @@ function scaffolda(object: BlockPlaceEvent) {
     }
 
     // Properties from class
-    let { block, player, dimension } = object;
+    const { block, player, dimension } = object;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // Return if player has op
-    if (hash !== undefined && encode === hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Skip if they have permission
+    if (uniqueId === player.name) {
         return;
     }
 
     // Block coordinates
-    let { x, y, z } = block.location;
+    const { x, y, z } = block.location;
 
     let timer: Date[];
     if (blockTimer.has(player.nameTag)) {
@@ -45,7 +41,7 @@ function scaffolda(object: BlockPlaceEvent) {
 
     timer.push(new Date());
 
-    let tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
+    const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
     blockTimer.set(player.nameTag, tiktok);
 
     if (tiktok.length >= config.modules.antiscaffoldA.max) {

@@ -34,24 +34,24 @@ export function listhome(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.listhome) {
         return listHomeHelp(player, prefix);
     }
 
-    let tags = player.getTags();
+    const tags = player.getTags();
     let counter = 0;
     let verify = false;
     for (let i = 0; i < tags.length; i++) {
         if (tags[i].startsWith("LocationHome:")) {
             // Split string into array
-            let coordinatesArray = tags[i].split(" ");
+            const coordinatesArray = tags[i].split(" ");
             let home: string;
             let homex: number;
             let homey: number;

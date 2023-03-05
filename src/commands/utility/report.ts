@@ -37,11 +37,11 @@ export function report(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
-    let reason = args.slice(1).join(" ") || "No reason specified";
+    const player = message.sender;
+    const reason = args.slice(1).join(" ") || "No reason specified";
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Are there arguements
     if (!args.length) {
@@ -49,14 +49,14 @@ export function report(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.report) {
         return reportHelp(player, prefix);
     }
 
     // Try to find the player requested
     let member: Player;
-    for (let pl of World.getPlayers()) {
+    for (const pl of World.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }

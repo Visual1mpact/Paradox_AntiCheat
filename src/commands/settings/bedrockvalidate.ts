@@ -47,15 +47,11 @@ export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    // Check for hash/salt and validate password
-    const hash = player.getDynamicProperty("hash");
-    const salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 

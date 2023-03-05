@@ -3,6 +3,7 @@
 import { BeforeChatEvent, EntityInventoryComponent, Player, world, MinecraftItemTypes, ItemStack, PlayerInventoryComponentContainer, InventoryComponentContainer } from "@minecraft/server";
 import config from "../../data/config.js";
 import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
 
 const World = world;
@@ -42,25 +43,21 @@ export function give(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
-    try {
-        encode = crypto(salt, config.modules.encryption.password);
-    } catch (error) {}
-    // make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+    // Make sure the user has permissions to run the command
+    if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.give) {
         return giveHelp(player, prefix);
     }
@@ -73,7 +70,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
     // Try to find the player requested
     let member: Player;
     if (args.length) {
-        for (let pl of World.getPlayers()) {
+        for (const pl of World.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }
@@ -93,8 +90,8 @@ export function give(message: BeforeChatEvent, args: string[]) {
      * args[3] = data (optional)
      */
     let confirmItem = false;
-    let itemStringConvert = toCamelCase(args[1]);
-    for (let itemValidate in MinecraftItemTypes) {
+    const itemStringConvert = toCamelCase(args[1]);
+    for (const itemValidate in MinecraftItemTypes) {
         if (itemStringConvert === itemValidate) {
             confirmItem = true;
             break;
@@ -115,10 +112,10 @@ export function give(message: BeforeChatEvent, args: string[]) {
         }
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
         if (maxStack >= Number(args[2])) {
-            let invContainer = member.getComponent("inventory") as EntityInventoryComponent;
+            const invContainer = member.getComponent("inventory") as EntityInventoryComponent;
 
-            let inv = invContainer.container;
-            let item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
+            const inv = invContainer.container;
+            const item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
             inv.addItem(item);
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} was given ${args[1]} x${args[2]}.`);
         } else {

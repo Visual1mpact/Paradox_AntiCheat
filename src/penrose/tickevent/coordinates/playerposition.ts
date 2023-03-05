@@ -4,7 +4,7 @@ const World = world;
 
 async function playerposition() {
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (const player of World.getPlayers()) {
         // player position
         try {
             await player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);

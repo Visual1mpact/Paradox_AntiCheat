@@ -1,6 +1,7 @@
 import { world, MinecraftEffectTypes, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -10,22 +11,17 @@ async function vanish() {
     filter.tags = ["vanish"];
     // Run as each player
     for (let player of World.getPlayers(filter)) {
-        // Check for hash/salt and validate password
-        let hash = player.getDynamicProperty("hash");
-        let salt = player.getDynamicProperty("salt");
-        let encode: string;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
-        // Grant them invisibility and night vision
-        // 1728000 = 24 hours
-        if (hash !== undefined && encode === hash) {
+        // Get unique ID
+        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+
+        // Make sure they have permission
+        if (uniqueId === player.name) {
             player.addEffect(MinecraftEffectTypes.invisibility, 1728000, 255, false);
             player.addEffect(MinecraftEffectTypes.nightVision, 1728000, 255, false);
             await player.runCommandAsync(`title @s actionbar §6YOU ARE VANISHED!`);
         }
         // Make sure they have permission to use Vanish
-        if (hash === undefined || encode !== hash) {
+        if (uniqueId !== player.name) {
             // They have been busted!
             player.removeTag("vanish");
             if (player.getEffect(MinecraftEffectTypes.invisibility) || player.getEffect(MinecraftEffectTypes.nightVision)) {
