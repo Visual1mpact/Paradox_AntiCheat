@@ -60,6 +60,7 @@ import { Registry } from "./penrose/worldinitializeevent/registry.js";
 import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
+import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
 
 // Self explanatory
 const World = world;
@@ -130,10 +131,11 @@ XrayA();
 NukerA();
 ReachB();
 
-// JoinPlayer Events
+// playerSpawn Events
 GametestCheck();
 onJoin();
 GlobalBanList();
+hashCode();
 
 // BlockPlace Events
 ScaffoldA();
