@@ -106,6 +106,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
     const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
     const antiFallABoolean = dynamicPropertyRegistry.get("antifalla_b");
+    const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
 
     // Numbers
     const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
@@ -161,5 +162,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `Autoclicker: ${status(autoclicker)}`,
         `World Border: ${worldBorderBoolean ? `§aENABLED§r (Overworld: ${worldBorderOverworldNumber} Nether: ${worldBorderNetherNumber})` : "§4DISABLED"}`,
         `ClearLag: ${status(clearLagBoolean)}`,
+        `ShowRules: ${status(showrulesBoolean)}`,
     ]);
 }

@@ -84,6 +84,8 @@ import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
 import { dpwcleanup } from "./utility/dpwcleanup.js";
 import { antifallA } from "./settings/antifalla.js";
+import { ShowRules } from "../penrose/tickevent/showrules/showrules.js";
+import { showrules } from "./moderation/showrules.js";
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         eval: evalCmd,
@@ -167,6 +169,7 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         clearlag: clearlag,
         listitems: listitems,
         dpwcleanup: dpwcleanup,
+        showrules: showrules,
     },
     null
 );

@@ -2,8 +2,18 @@ import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { getPrefix } from "../../../util.js";
 import { MessageFormData } from "@minecraft/server-ui";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-function showrules() {
+function showrules(id: number) {
+    //Get Dynamic Property
+    const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
+
+    // Unsubscribe if disabled in-game
+    if (showrulesBoolean === false) {
+        system.clearRunSchedule(id);
+        return;
+    }
+
     let filter = new Object() as EntityQueryOptions;
     filter.tags = ["ShowRulesOnJoin"];
     // run as each player
@@ -30,6 +40,8 @@ function showrules() {
     }
 }
 
-export const ShowRules = system.runSchedule(() => {
-    showrules();
-}, 40);
+export function ShowRules() {
+    const showrulesId = system.runSchedule(() => {
+        showrules(showrulesId);
+    }, 40);
+}

@@ -107,7 +107,7 @@ InvalidSprintA();
 FlyA();
 AntiKnockbackA();
 AntiFallA();
-ShowRules;
+ShowRules();
 
 /**
  * We store the identifier in a variable

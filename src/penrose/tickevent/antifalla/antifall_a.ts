@@ -66,5 +66,5 @@ function antifalla(id: number) {
 export function AntiFallA() {
     const antiFallAId = system.runSchedule(() => {
         antifalla(antiFallAId);
-    }, 10);
+    }, 20);
 }
