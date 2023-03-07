@@ -80,6 +80,7 @@ export default {
         badpackets2: true,
         give: true,
         clearlag: true,
+        showrules: true,
     },
     modules: {
         badpackets1: {
@@ -248,6 +249,10 @@ export default {
         },
         badpackets2: {
             enabled: true,
+        },
+        showrules: {
+            enabled: true,
+            rules: "Rule1: No hacking\nRule2: No Greifing\nRule3: Be nice to all players!",
         },
         /**
          * Add a password in-between the quotes.

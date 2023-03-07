@@ -38,6 +38,7 @@ import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.j
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/tickevent/clearlag/clearlag.js";
 import { AntiFallA } from "./penrose/tickevent/antifalla/antifall_a.js";
+import { ShowRules } from "./penrose/tickevent/showrules/showrules.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -47,6 +48,7 @@ import { GametestCheck } from "./penrose/playerspawnevent/gametestloaded/gametes
 import { onJoin } from "./penrose/playerspawnevent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/playerspawnevent/ban/globalbanlist.js";
 import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
+import { onJoinrules } from "./penrose/playerspawnevent/rules/rules.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
@@ -55,6 +57,7 @@ import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 // Import EntityHit Events
 import { ReachC } from "./penrose/entityhitevent/reach_c.js";
+import { KillAura } from "./penrose/entityhitevent/killaura.js";
 // Import WorldInitialize Events
 import { Registry } from "./penrose/worldinitializeevent/registry.js";
 // Import EntityCreate Events
@@ -104,6 +107,7 @@ InvalidSprintA();
 FlyA();
 AntiKnockbackA();
 AntiFallA();
+ShowRules;
 
 /**
  * We store the identifier in a variable
@@ -136,7 +140,7 @@ GametestCheck();
 onJoin();
 GlobalBanList();
 hashCode();
-
+onJoinrules();
 // BlockPlace Events
 ScaffoldA();
 IllegalItemsC();
@@ -147,6 +151,7 @@ IllegalItemsB();
 
 // EntityHit Events
 ReachC();
+KillAura();
 
 // EntityCreate Events
 CrasherB();
