@@ -3,6 +3,7 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { AntiFallA } from "../../penrose/tickevent/antifalla/antifall_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ShowRules } from "../../penrose/tickevent/showrules/showrules.js";
 
 const World = world;
 
@@ -72,7 +73,7 @@ export function showrules(message: BeforeChatEvent, args: string[]) {
         dynamicPropertyRegistry.set("showrules_b", true);
         World.setDynamicProperty("showrules_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6showrules§r!`);
-        AntiFallA();
+        ShowRules();
     } else if (showrulesBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("showrules_b", false);
