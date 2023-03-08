@@ -81,6 +81,7 @@ export default {
         give: true,
         clearlag: true,
         showrules: true,
+        paradoxiu: true,
     },
     modules: {
         badpackets1: {
@@ -253,6 +254,9 @@ export default {
         showrules: {
             enabled: true,
             rules: "Rule1: No hacking\nRule2: No Greifing\nRule3: Be nice to all players!",
+        },
+        paradoxui: {
+            enabled: true,
         },
         /**
          * Add a password in-between the quotes.
