@@ -1,5 +1,3 @@
-import "./debug/main.js";
-import "./wrap.js";
 // Import Customs
 import { world, system } from "@minecraft/server";
 import { TickFreeze } from "./penrose/tickevent/freeze/freeze.js";
