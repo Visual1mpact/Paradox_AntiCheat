@@ -24,8 +24,8 @@ function showrules(id: number) {
         let form = new MessageFormData();
         form.title("Server Rules");
         form.body(cfgrules);
-        form.button1("I Agree.");
-        form.button2("No!");
+        form.button1("I Agree");
+        form.button2("Decline");
         form.show(player)
             .then((r) => {
                 // This will stop the code when the player closes the form
