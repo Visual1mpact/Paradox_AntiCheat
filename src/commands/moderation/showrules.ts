@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { AntiFallA } from "../../penrose/tickevent/antifalla/antifall_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { ShowRules } from "../../penrose/tickevent/showrules/showrules.js";
+import { ShowRules } from "../../gui/showrules/showrules.js";
 
 const World = world;
 

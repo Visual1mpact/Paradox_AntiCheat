@@ -36,7 +36,6 @@ import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.j
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/tickevent/clearlag/clearlag.js";
 import { AntiFallA } from "./penrose/tickevent/antifalla/antifall_a.js";
-import { ShowRules } from "./penrose/tickevent/showrules/showrules.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -46,7 +45,7 @@ import { GametestCheck } from "./penrose/playerspawnevent/gametestloaded/gametes
 import { onJoin } from "./penrose/playerspawnevent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/playerspawnevent/ban/globalbanlist.js";
 import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
-import { onJoinrules } from "./penrose/playerspawnevent/rules/rules.js";
+import { onJoinrules } from "./gui/playerspawnevent/rules/rules.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
@@ -105,7 +104,6 @@ InvalidSprintA();
 FlyA();
 AntiKnockbackA();
 AntiFallA();
-ShowRules();
 
 /**
  * We store the identifier in a variable
@@ -138,7 +136,7 @@ GametestCheck();
 onJoin();
 GlobalBanList();
 hashCode();
-onJoinrules();
+onJoinrules(); // GUI
 // BlockPlace Events
 ScaffoldA();
 IllegalItemsC();
