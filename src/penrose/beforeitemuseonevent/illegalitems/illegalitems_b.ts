@@ -56,11 +56,6 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
     // Properties from class
     const { item, source } = object;
 
-    // Used for getting some info on the item
-    if (config.debug) {
-        await source.runCommandAsync(`say Item: ${item.typeId}, Data: ${item.data}, Amount: ${item.amount}`);
-    }
-
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(source.scoreboard.id);
 
@@ -247,9 +242,6 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
                         const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                         invContainer.container.setItem(hand, actualItemName);
                     } catch (error) {}
-                }
-                if (config.debug) {
-                    console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/B)!`);
                 }
             }
         } catch (error) {}

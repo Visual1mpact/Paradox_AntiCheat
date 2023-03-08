@@ -1,6 +1,7 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;
 
@@ -16,11 +17,16 @@ function verifypermission() {
         try {
             encode = crypto(salt, config.modules.encryption.password);
         } catch (error) {}
-        if (hash !== undefined && encode === hash) {
+        if (encode === hash) {
+            // Make sure their unique ID exists in case of a reload
+            if (dynamicPropertyRegistry.has(player.scoreboard.id) === false) {
+                dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
+            }
             continue;
         } else {
             player.removeDynamicProperty("hash");
             player.removeDynamicProperty("salt");
+            dynamicPropertyRegistry.delete(player.scoreboard.id);
         }
         // If they have the basic permission but not the hash then remove it
         player.removeTag("paradoxOpped");

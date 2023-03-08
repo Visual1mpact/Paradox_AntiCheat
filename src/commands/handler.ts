@@ -77,18 +77,15 @@ import { hotbar } from "./utility/hotbar.js";
 import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
-import { evalCmd } from "../debug/eval.js";
 import { crasherB } from "./settings/crasherb.js";
 import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
-import { dpwcleanup } from "./utility/dpwcleanup.js";
 import { antifallA } from "./settings/antifalla.js";
 import { ShowRules } from "../penrose/tickevent/showrules/showrules.js";
 import { showrules } from "./moderation/showrules.js";
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
-        eval: evalCmd,
         kick: kick,
         tag: tag,
         ban: ban,
@@ -168,7 +165,6 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         give: give,
         clearlag: clearlag,
         listitems: listitems,
-        dpwcleanup: dpwcleanup,
         showrules: showrules,
     },
     null

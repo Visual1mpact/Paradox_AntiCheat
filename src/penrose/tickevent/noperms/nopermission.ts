@@ -33,7 +33,7 @@ function noperms() {
         if (entity.hasTag("paradoxOpped")) {
             entity.removeTag("paradoxOpped");
         }
-        if (hash !== undefined && encode === hash) {
+        if (encode === hash) {
             entity.removeDynamicProperty("hash");
             entity.removeDynamicProperty("salt");
             dynamicPropertyRegistry.delete(entity.scoreboard.id);

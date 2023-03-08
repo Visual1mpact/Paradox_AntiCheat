@@ -1,7 +1,6 @@
 // Basic AntiFall might not be needed but here anyway and might be useful to someone else.
 //This assumes that the hack keeps the players health at 100.
 import { world, Player, EntityHitEvent } from "@minecraft/server";
-import scoreboard, { ScoreboardPlayers } from "../../libs/scoreboardnew";
 import { flag } from "../../util";
 
 function killaura(obj: EntityHitEvent) {

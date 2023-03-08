@@ -244,9 +244,6 @@ function illegalitemsa(id: number) {
                             container.setItem(i, actualItemName);
                         } catch {}
                     }
-                    if (config.debug) {
-                        console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/A)!`);
-                    }
                 }
             } else {
                 /**

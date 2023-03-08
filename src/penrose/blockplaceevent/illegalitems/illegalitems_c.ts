@@ -317,9 +317,6 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                         inventory.setItem(i, actualItemName);
                     } catch (error) {}
                 }
-                if (config.debug) {
-                    console.warn(`${newNameTag} has been set and verified by Paradox (illegalitems/C)!`);
-                }
             } else {
                 /**
                  * Old salvage system if new is disabled
