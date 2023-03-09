@@ -2,7 +2,7 @@ import { /*getPrefix*/ sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { paradoxui } from "../../gui/beforechatevent/settings/paradoxui.js";
+import { paradoxui } from "../../gui/paradoxui.js";
 
 /*function paradoxuiHelp(player: Player, prefix: string, paradoxuiBoolean: string | number | boolean) {
     let commandStatus: string;
