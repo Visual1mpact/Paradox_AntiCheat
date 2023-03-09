@@ -253,7 +253,11 @@ export default {
         },
         showrules: {
             enabled: true,
-            rules: "Rule1: No hacking\nRule2: No Greifing\nRule3: Be nice to all players!",
+            rule1: "Rule1: No hacking",
+            rule2: "Rule2: No Greifing",
+            rule3: "Rule3: Be nice to all players!",
+            rule4: "Rule4:",
+            rule5: "Rule5:",
         },
         paradoxui: {
             enabled: true,

@@ -19,10 +19,16 @@ async function showrules(id: number) {
     // run as each player
     for (const player of world.getPlayers(filter)) {
         // pull the rules from the config file.
-        const cfgrules = config.modules.showrules.rules;
+        const cfgrule1 = config.modules.showrules.rule1;
+        const cfgrule2 = config.modules.showrules.rule2;
+        const cfgrule3 = config.modules.showrules.rule3;
+        const cfgrule4 = config.modules.showrules.rule4;
+        const cfgrule5 = config.modules.showrules.rule5;
+        //Join the strings to make a single string and add the newlines
+        const CompleteRules = cfgrule1 + "\n" + cfgrule2 + "\n" + cfgrule3 + "\n" + cfgrule4 + "\n" + cfgrule5;
         const form = new MessageFormData();
         form.title("Server Rules");
-        form.body(cfgrules);
+        form.body(CompleteRules);
         form.button1("I Agree");
         form.button2("Decline");
         form.show(player)

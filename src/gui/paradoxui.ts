@@ -1,6 +1,7 @@
 import { Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
+import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
 import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiDEOP } from "./moderation/uiDeop";
@@ -11,7 +12,7 @@ async function paradoxui(player: Player) {
 
         .title("§4Paradox§4")
         .body("§eA utility to fight against malicious hackers on Bedrock Edition§e")
-        .button("§0op§2", "textures/items/ender_eye")
+        .button("§0op§2", "textures/ui/op")
         .button("§0deop§2", "textures/items/ender_pearl")
         .button("§0Moderation§2", "textures/items/book_normal")
         .button("§0Modules§2", "textures/blocks/command_block")
@@ -46,8 +47,9 @@ async function paradoxui(player: Player) {
                 //new window for Moderation
                 const moderationui = new ActionFormData();
                 moderationui.title("§4Paradox Moderation§4");
-                moderationui.button("Ban", "textures/blocks/barrier");
+                moderationui.button("Ban", "textures/ui/hammer_l");
                 moderationui.button("Unban", "textures/ui/check");
+                moderationui.button("Rules", "textures/items/book_writable");
 
                 moderationui.show(player).then((ModUIresult) => {
                     if (ModUIresult.selection === 0) {
@@ -71,6 +73,27 @@ async function paradoxui(player: Player) {
                         unbanui.textField(`Player`, `Enter a players username to be unbanned.`);
                         unbanui.show(player).then((unbanResult) => {
                             uiUNBAN(unbanResult, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 2) {
+                        //show rules ui
+                        let rule1: string = config.modules.showrules.rule1;
+                        let rule2: string = config.modules.showrules.rule2;
+                        let rule3: string = config.modules.showrules.rule3;
+                        let rule4: string = config.modules.showrules.rule4;
+                        let rule5: string = config.modules.showrules.rule5;
+
+                        const rulesui = new ModalFormData();
+                        rulesui.title("§4Configure Rules!§4");
+                        rulesui.textField(`Enter a rule`, `${rule1}`);
+                        rulesui.textField(`Enter a rule`, `${rule2}`);
+                        rulesui.textField(`Enter a rule`, `${rule3}`);
+                        rulesui.textField(`Enter a rule`, `${rule4}`);
+                        rulesui.textField(`Enter a rule`, `${rule5}`);
+                        const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
+                        rulesui.toggle("Enable Rules", showrulesBoolean);
+                        rulesui.show(player).then((rulesResult) => {
+                            //logic to save the new rules back to config.js
                         });
                     }
                 });
