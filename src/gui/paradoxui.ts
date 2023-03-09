@@ -2,6 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
 import { crypto } from "../util";
+import { uiBAN } from "./moderation/uiBan";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiOP } from "./moderation/UIOp";
 async function paradoxui(player: Player) {
@@ -38,6 +39,41 @@ async function paradoxui(player: Player) {
                 deopgui.dropdown(`\n  §rSelect a player to remove access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
                 deopgui.show(player).then((opResult) => {
                     uiDEOP(opResult, onlineList, player);
+                });
+            }
+            if (result.selection === 2) {
+                //new window for Moderation
+                const moderationui = new ActionFormData();
+                moderationui.title("§4Paradox Moderation§4");
+                moderationui.button("Ban", "textures/blocks/barrier");
+                moderationui.button("Unban", "textures/ui/check");
+
+                moderationui.show(player).then((ModUIresult) => {
+                    if (ModUIresult.selection === 0) {
+                        //show ban ui here
+                        const banui = new ModalFormData();
+                        let onlineList: string[] = [];
+
+                        banui.title("§4Ban A player!§4");
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        banui.dropdown(`\n  §rSelect a player to Ban.§r\n\nPlayer's Online\n`, onlineList);
+                        banui.textField(`Reason`, `Enter a reason as to why they have been banned.`);
+                        banui.show(player).then((banResult) => {
+                            //ban function goes here
+                            uiBAN(banResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 1) {
+                        //show unban ui here
+                        const unbanui = new ModalFormData();
+                        let onlineList: string[] = [];
+                        unbanui.title("§4Unban A player!§4");
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        unbanui.dropdown(`\n  §rSelect a player to Unban.§r\n\nPlayer's Online\n`, onlineList);
+                        unbanui.show(player).then((unbanResult) => {
+                            //unban function goes here
+                        });
+                    }
                 });
             }
 

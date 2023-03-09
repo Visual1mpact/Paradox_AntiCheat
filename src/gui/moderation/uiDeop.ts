@@ -30,8 +30,8 @@ export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player
             member.removeTag("paradoxOpped");
         }
         member.tell(`r§4[§6Paradox§4]§r Your OP status has been revoked!`);
-        paradoxui(player);
+        return paradoxui(player);
     }
     player.tell(`r§4[§6Paradox§4]§r ${member.name} Did not have Op permissions.`);
-    paradoxui(player);
+    return paradoxui(player);
 }
