@@ -5,6 +5,7 @@ import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiOP } from "./moderation/UIOp";
+import { uiUNBAN } from "./moderation/uiUnban";
 async function paradoxui(player: Player) {
     await new ActionFormData()
 
@@ -66,12 +67,10 @@ async function paradoxui(player: Player) {
                     if (ModUIresult.selection === 1) {
                         //show unban ui here
                         const unbanui = new ModalFormData();
-                        let onlineList: string[] = [];
                         unbanui.title("§4Unban A player!§4");
-                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        unbanui.dropdown(`\n  §rSelect a player to Unban.§r\n\nPlayer's Online\n`, onlineList);
+                        unbanui.textField(`Player`, `Enter a players username to be unbanned.`);
                         unbanui.show(player).then((unbanResult) => {
-                            //unban function goes here
+                            uiUNBAN(unbanResult, player);
                         });
                     }
                 });

@@ -6,7 +6,6 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiBAN(banResult: ModalFormResponse, onlineList: string[], player: Player) {
-    world.say(`uiBAN!`);
     const [value, textField] = banResult.formValues;
     let member: Player = undefined;
     for (let pl of world.getPlayers()) {
