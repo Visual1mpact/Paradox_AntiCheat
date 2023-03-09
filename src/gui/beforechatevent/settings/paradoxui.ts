@@ -2,7 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 
 async function paradoxui(player: Player) {
-    const response = await new ActionFormData()
+    await new ActionFormData()
         .title("§4Paradox§4")
         .body("§eA utility to fight against malicious hackers on Bedrock Edition§e")
         .button("§0op§2", "textures/items/ender_eye")

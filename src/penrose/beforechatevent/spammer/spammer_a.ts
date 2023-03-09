@@ -1,6 +1,5 @@
 import { BeforeChatEvent, world } from "@minecraft/server";
-import { crypto, flag } from "../../../util.js";
-import config from "../../../data/config.js";
+import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;

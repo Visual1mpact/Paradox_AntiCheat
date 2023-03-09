@@ -1,7 +1,7 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { resetTag, getPrefix, crypto, sendMsgToPlayer, sendMsg } from "../../util.js";
+import { resetTag, getPrefix, sendMsgToPlayer, sendMsg } from "../../util.js";
 
 const World = world;
 

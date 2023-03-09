@@ -1,9 +1,9 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, EntityInventoryComponent, IEntityComponent, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, EntityInventoryComponent, Player, world } from "@minecraft/server";
 
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

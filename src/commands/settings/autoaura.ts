@@ -1,7 +1,7 @@
 import { BeforeChatEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function autoauraHelp(player: Player, prefix: string, autoaurascore: string | number | boolean) {
     let commandStatus: string;

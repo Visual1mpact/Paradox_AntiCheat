@@ -1,11 +1,8 @@
-import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { /*getPrefix*/ sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { AntiFallA } from "../../penrose/tickevent/antifalla/antifall_a.js";
+import { BeforeChatEvent } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { paradoxui } from "../../gui/beforechatevent/settings/paradoxui.js";
-
-const World = world;
 
 /*function paradoxuiHelp(player: Player, prefix: string, paradoxuiBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -60,7 +57,7 @@ export function paradoxUI(message: BeforeChatEvent, args: string[]) {
     //const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
 
     // Check for custom prefix
-    const prefix = getPrefix(player);
+    // const prefix = getPrefix(player);
 
     // Was help requested
     const argCheck = args[0];

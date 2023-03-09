@@ -1,6 +1,5 @@
 import { BlockLocation, Location, MinecraftBlockTypes, Player, world, system } from "@minecraft/server";
-import { crypto, sendMsgToPlayer } from "../../../util.js";
-import config from "../../../data/config.js";
+import { sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;

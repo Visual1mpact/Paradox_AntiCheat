@@ -82,7 +82,6 @@ import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
 import { antifallA } from "./settings/antifalla.js";
-import { ShowRules } from "../gui/showrules/showrules.js";
 import { showrules } from "./moderation/showrules.js";
 import { paradoxUI } from "./moderation/paradoxui.js";
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(

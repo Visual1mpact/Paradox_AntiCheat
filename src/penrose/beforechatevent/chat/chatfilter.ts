@@ -1,5 +1,4 @@
-import { Location, world } from "@minecraft/server";
-import config from "../../../data/config.js";
+import { world } from "@minecraft/server";
 import { sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 

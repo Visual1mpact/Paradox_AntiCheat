@@ -106,13 +106,9 @@ AntiKnockbackA();
 AntiFallA();
 
 /**
- * We store the identifier in a variable
- * to cancel the execution of this scheduled run
- * if needed to do so.
- *
  * Freeze Check
  */
-const timeId = system.runSchedule(() => {
+system.runSchedule(() => {
     let hastag: boolean;
     // run as each player
     for (let player of World.getPlayers()) {

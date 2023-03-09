@@ -2,7 +2,7 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

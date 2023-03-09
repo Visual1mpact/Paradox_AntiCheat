@@ -1,9 +1,9 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent, Items, PlayerInventoryComponentContainer } from "@minecraft/server";
+import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 const empty = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);

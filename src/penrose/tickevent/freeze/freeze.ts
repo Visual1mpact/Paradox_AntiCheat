@@ -1,6 +1,5 @@
 import { world, Location, Player, system } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { getScore, crypto, sendMsg } from "../../../util.js";
+import { getScore, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;

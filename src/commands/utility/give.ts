@@ -1,10 +1,10 @@
 /* eslint no-var: "off"*/
 
-import { BeforeChatEvent, EntityInventoryComponent, Player, world, MinecraftItemTypes, ItemStack, PlayerInventoryComponentContainer, InventoryComponentContainer } from "@minecraft/server";
+import { BeforeChatEvent, EntityInventoryComponent, Player, world, MinecraftItemTypes, ItemStack } from "@minecraft/server";
 import config from "../../data/config.js";
 import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
+import { getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
 
 const World = world;
 

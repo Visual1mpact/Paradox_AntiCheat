@@ -1,10 +1,8 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { BeforeChatEvent, ItemStack, MinecraftItemTypes, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, ItemStack, MinecraftItemTypes, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
-
-const World = world;
 
 function listItems(player: Player, prefix: string) {
     let commandStatus: string;

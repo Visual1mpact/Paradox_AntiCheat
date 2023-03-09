@@ -1,6 +1,5 @@
 import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode, system } from "@minecraft/server";
-import { getScore, flag, crypto, setScore } from "../../../util.js";
-import config from "../../../data/config.js";
+import { getScore, flag, setScore } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;

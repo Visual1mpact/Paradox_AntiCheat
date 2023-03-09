@@ -1,5 +1,4 @@
 import { EntityItemComponent, EntityQueryOptions, ItemStack, world, system } from "@minecraft/server";
-import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";

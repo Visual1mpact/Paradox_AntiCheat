@@ -1,5 +1,4 @@
 import { Entity, EntitySpawnEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
-import config from "../../data/config.js";
 import { flag } from "../../util.js";
 import { dynamicPropertyRegistry } from "../worldinitializeevent/registry.js";
 

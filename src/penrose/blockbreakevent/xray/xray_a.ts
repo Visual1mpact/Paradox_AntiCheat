@@ -1,7 +1,6 @@
 import { BlockBreakEvent, world } from "@minecraft/server";
 import { xrayblocks } from "../../../data/xray.js";
-import { crypto, sendMsg } from "../../../util.js";
-import config from "../../../data/config.js";
+import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;

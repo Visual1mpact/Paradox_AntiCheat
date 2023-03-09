@@ -1,6 +1,5 @@
-import { world, Player, Block, EntityQueryOptions, GameMode, system, BlockLocation, BlockType, MinecraftBlockTypes } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { getScore, flag, crypto, setScore } from "../../../util.js";
+import { world, Block, EntityQueryOptions, GameMode, system, BlockLocation } from "@minecraft/server";
+import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 const World = world;
 

@@ -1,6 +1,5 @@
 import { world, MinecraftEffectTypes, EntityQueryOptions, system } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { crypto, sendMsg } from "../../../util.js";
+import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const World = world;

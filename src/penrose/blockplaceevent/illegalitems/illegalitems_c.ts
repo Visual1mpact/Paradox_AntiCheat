@@ -13,11 +13,10 @@ import {
     BlockInventoryComponent,
     BlockInventoryComponentContainer,
     ItemEnchantsComponent,
-    CommandResult,
 } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
-import { flag, toCamelCase, crypto, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
+import { flag, toCamelCase, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";

@@ -1,4 +1,4 @@
-import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { IllegalItemsC } from "../../penrose/blockplaceevent/illegalitems/illegalitems_c.js";

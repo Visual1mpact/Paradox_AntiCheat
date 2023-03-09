@@ -1,5 +1,4 @@
 import { Player, PlayerSpawnEvent, world } from "@minecraft/server";
-import config from "../../../data/config.js";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { getPrefix } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";

@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
 import { Creative } from "../../penrose/tickevent/gamemode/creative.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const World = world;
 

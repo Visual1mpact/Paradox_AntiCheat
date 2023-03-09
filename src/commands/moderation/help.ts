@@ -1,7 +1,7 @@
 import { BeforeChatEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
 import { nonstaffhelp } from "./nonstaffhelp.js";
 
 /**
