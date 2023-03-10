@@ -7,6 +7,7 @@ import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/regi
 async function showrules(id: number) {
     //Get Dynamic Property
     const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
+    const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
 
     // Unsubscribe if disabled in-game
     if (showrulesBoolean === false) {
@@ -44,12 +45,15 @@ async function showrules(id: number) {
                 // Button 2 (Declined)
                 if (r.selection === 0) {
                     const reason = "You must agree to the rules to join.";
-                    // Goodbye lol
-                    try {
-                        player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
-                    } catch (error) {
-                        player.triggerEvent("paradox:kick");
+                    if (KickOnDeclineBoolean === true) {
+                        // Goodbye lol
+                        try {
+                            player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
+                        } catch (error) {
+                            player.triggerEvent("paradox:kick");
+                        }
                     }
+                    //if kick is not enabled then dont kick
                 }
 
                 if (r.canceled) {

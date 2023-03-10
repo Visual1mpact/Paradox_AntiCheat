@@ -62,6 +62,7 @@ function registry(data: WorldInitializeEvent) {
         "bedrockvalidate_b",
         "illegalenchantment_b",
         "showrules_b",
+        "kickondecline_b",
     ];
 
     // String properties

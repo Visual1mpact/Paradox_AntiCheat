@@ -6,6 +6,7 @@ import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiOP } from "./moderation/UIOp";
+import { uiRULES } from "./moderation/uiRules";
 import { uiUNBAN } from "./moderation/uiUnban";
 async function paradoxui(player: Player) {
     await new ActionFormData()
@@ -77,23 +78,15 @@ async function paradoxui(player: Player) {
                     }
                     if (ModUIresult.selection === 2) {
                         //show rules ui
-                        let rule1: string = config.modules.showrules.rule1;
-                        let rule2: string = config.modules.showrules.rule2;
-                        let rule3: string = config.modules.showrules.rule3;
-                        let rule4: string = config.modules.showrules.rule4;
-                        let rule5: string = config.modules.showrules.rule5;
-
                         const rulesui = new ModalFormData();
-                        rulesui.title("§4Configure Rules!§4");
-                        rulesui.textField(`Enter a rule`, `${rule1}`);
-                        rulesui.textField(`Enter a rule`, `${rule2}`);
-                        rulesui.textField(`Enter a rule`, `${rule3}`);
-                        rulesui.textField(`Enter a rule`, `${rule4}`);
-                        rulesui.textField(`Enter a rule`, `${rule5}`);
+                        rulesui.title("§4Paradox - Configure Rules!§4");
                         const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
+                        const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
                         rulesui.toggle("Enable Rules", showrulesBoolean);
+                        rulesui.toggle("Kick On Decline", KickOnDeclineBoolean);
                         rulesui.show(player).then((rulesResult) => {
-                            //logic to save the new rules back to config.js
+                            // due to limitations we can't edit the rules in game.
+                            uiRULES(rulesResult, player);
                         });
                     }
                 });
