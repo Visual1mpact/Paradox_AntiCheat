@@ -40,6 +40,9 @@ async function showrules(id: number) {
                     player.removeTag("ShowRulesOnJoin");
                     // We appreciate you for agreeing to the rules
                     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Thank you for accepting the rules ${player.name}.`);
+                    // This needs to be monitored with multiplayer
+                    // It may cause disruptions with other players who get this form?
+                    return system.clearRunSchedule(id);
                 }
 
                 // Button 2 (Declined)
@@ -54,6 +57,10 @@ async function showrules(id: number) {
                         }
                     }
                     //if kick is not enabled then dont kick
+
+                    // This needs to be monitored with multiplayer
+                    // It may cause disruptions with other players who get this form?
+                    return system.clearRunSchedule(id);
                 }
 
                 if (r.canceled) {
@@ -71,5 +78,5 @@ async function showrules(id: number) {
 export function ShowRules() {
     const showrulesId = system.runSchedule(() => {
         showrules(showrulesId);
-    }, 40);
+    }, 200);
 }

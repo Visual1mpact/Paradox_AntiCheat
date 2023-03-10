@@ -3,6 +3,7 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { onJoinrules } from "../playerspawnevent/rules/rules.js";
 
 export function uiRULES(banResult: ModalFormResponse, player: Player) {
     const World = world;
@@ -18,6 +19,7 @@ export function uiRULES(banResult: ModalFormResponse, player: Player) {
     if (EnabledRules === true) {
         dynamicPropertyRegistry.set("showrules_b", true);
         World.setDynamicProperty("showrules_b", true);
+        onJoinrules();
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6showrules§r!`);
     }
     if (EnabledRules === false) {
