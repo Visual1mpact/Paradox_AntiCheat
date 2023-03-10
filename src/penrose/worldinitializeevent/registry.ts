@@ -115,6 +115,25 @@ function registry(data: WorldInitializeEvent) {
                         }
                     }
                 }
+            } else {
+                /**
+                 * Boolean does not exist in config and is only set
+                 * from within the game itself. These booleans we will
+                 * disable by default. Users can enable afterwards and
+                 * this section will handle those changes.
+                 */
+
+                // We condtionally test if the dynamic property already exists
+                const test = World.getDynamicProperty(booleanProps);
+                if (test === undefined) {
+                    // Dynamic property doesn't exist so we create it and disable it by default
+                    World.setDynamicProperty(booleanProps, false);
+                    // Set property with value as an element that we can use in other scripts
+                    dynamicPropertyRegistry.set(booleanProps, false);
+                } else {
+                    // Dynamic property exists so set property with value as an element that we can use in other scripts
+                    dynamicPropertyRegistry.set(booleanProps, test);
+                }
             }
         });
     }
