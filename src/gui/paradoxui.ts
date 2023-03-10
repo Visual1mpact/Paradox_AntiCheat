@@ -5,7 +5,7 @@ import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registr
 import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiDEOP } from "./moderation/uiDeop";
-import { uiOP } from "./moderation/UIOp";
+import { uiOP } from "./moderation/uiOp";
 import { uiRULES } from "./moderation/uiRules";
 import { uiUNBAN } from "./moderation/uiUnban";
 async function paradoxui(player: Player) {
