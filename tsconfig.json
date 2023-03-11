@@ -1,6 +1,7 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+        "typeRoots": ["node_modules/@minecraft"],
         "lib": ["esnext"],
         "target": "esnext",
         "module": "esnext",
@@ -12,9 +13,9 @@
         "checkJs": false,
         "useDefineForClassFields": true,
         "noImplicitReturns": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
         // "noImplicitAny": true
     },
-    "include": ["src", "types"],
+    "include": ["src"],
     "exclude": ["node_modules"]
 }
