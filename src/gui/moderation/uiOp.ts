@@ -1,7 +1,8 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import config from "../../data/config.js";
-import { crypto, sendMsg, UUID } from "../../util";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { crypto, sendMsg, sendMsgToPlayer, UUID } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 //Function provided by Visual1mpact
@@ -18,20 +19,27 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             if (hash === undefined) {
                 encode = crypto(salt, config.modules.encryption.password);
                 player.setDynamicProperty("hash", encode);
+                dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
                 hash = player.getDynamicProperty("hash");
             } else {
                 encode = crypto(salt, config.modules.encryption.password);
             }
             if (hash === encode) {
-                return player.tell(`§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+                sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
+                paradoxui(player);
             } else {
-                return player.tell(`§r§4[§6Paradox§4]§r Something went wrong.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong.`);
+                paradoxui(player);
             }
+        } else {
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wrong password!`);
+            paradoxui(player);
         }
     } else {
         // Need player object
         let member: Player = undefined;
-        for (let pl of world.getPlayers()) {
+        for (const pl of world.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
@@ -51,8 +59,9 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
         if (memberHash !== encode) {
             let encode = crypto(memberSalt, config.modules.encryption.password);
             member.setDynamicProperty("hash", encode);
+            dynamicPropertyRegistry.set(member.scoreboard.id, member.name);
         }
-        member.tell(`r§4[§6Paradox§4]§r You are now op!`);
+        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);
         member.addTag("paradoxOpped");
         paradoxui(player);

@@ -123,6 +123,7 @@ export function help(message: BeforeChatEvent) {
         `§6${prefix}listhome§r - ${config.customcommands.listhome ? `Shows your list of saved locations.` : textDisabled}`,
         `§6${prefix}delhome <name>§r - ${config.customcommands.delhome ? `Deletes a saved location from list.` : textDisabled}`,
         `§6${prefix}hotbar <optional>§r - ${config.customcommands.hotbar ? `Toggles hotbar message for all players. Optional: Message` : textDisabled}`,
+        `§6${prefix}paradoxui§r - ${config.customcommands.paradoxiu ? `Shows GUI for main menu.` : textDisabled}`,
         ` `,
         `§l§6[§4Debugging Utilites§6]§r`,
         `§6${prefix}listitems§r - ${config.debug ? `Prints every item in the game and their max stack.` : textDisabled}`,
