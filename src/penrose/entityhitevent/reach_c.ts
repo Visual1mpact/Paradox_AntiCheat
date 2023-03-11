@@ -3,15 +3,13 @@ import config from "../../data/config.js";
 import { flag } from "../../util.js";
 import { dynamicPropertyRegistry } from "../worldinitializeevent/registry.js";
 
-const World = world;
-
 function reachc(object: EntityHitEvent) {
     // Get Dynamic Property
     const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
 
     // Unsubscribe if disabled in-game
     if (reachCBoolean === false) {
-        World.events.entityHit.unsubscribe(reachc);
+        world.events.entityHit.unsubscribe(reachc);
         return;
     }
 
@@ -50,7 +48,7 @@ function reachc(object: EntityHitEvent) {
 }
 
 const ReachC = () => {
-    World.events.entityHit.subscribe(reachc);
+    world.events.entityHit.subscribe(reachc);
 };
 
 export { ReachC };

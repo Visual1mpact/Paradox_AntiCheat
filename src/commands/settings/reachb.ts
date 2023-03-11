@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function reachBHelp(player: Player, prefix: string, reachBBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.reachb) {
@@ -69,13 +67,13 @@ export function reachB(message: BeforeChatEvent, args: string[]) {
 
     if (reachBBoolean === false) {
         // Allow
-        World.setDynamicProperty("reachb_b", true);
+        world.setDynamicProperty("reachb_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachB§r!`);
         ReachB();
         return;
     } else if (reachBBoolean === true) {
         // Deny
-        World.setDynamicProperty("reachb_b", false);
+        world.setDynamicProperty("reachb_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachB§r!`);
         return;
     }

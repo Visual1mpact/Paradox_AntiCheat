@@ -4,8 +4,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function banHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.ban) {
@@ -67,7 +65,7 @@ export function ban(message: BeforeChatEvent, args: string[]) {
 
     // try to find the player requested
     let member: Player;
-    for (const pl of World.getPlayers()) {
+    for (const pl of world.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }

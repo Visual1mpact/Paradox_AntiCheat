@@ -6,8 +6,6 @@ import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
 
-const World = world;
-
 function giveHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.fullreport) {
@@ -70,7 +68,7 @@ export function give(message: BeforeChatEvent, args: string[]) {
     // Try to find the player requested
     let member: Player;
     if (args.length) {
-        for (const pl of World.getPlayers()) {
+        for (const pl of world.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }

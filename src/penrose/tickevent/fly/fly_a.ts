@@ -2,8 +2,6 @@ import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode, sy
 import { getScore, flag, setScore } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 const playersOldCoordinates = new Map();
 
 function flya(id: number) {
@@ -20,7 +18,7 @@ function flya(id: number) {
     const gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [GameMode.creative];
     // run as each player who are in survival
-    for (const player of World.getPlayers(gm)) {
+    for (const player of world.getPlayers(gm)) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 

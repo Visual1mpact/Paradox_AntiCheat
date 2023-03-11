@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function salvageHelp(player: Player, prefix: string, salvageBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.salvage) {
@@ -69,12 +67,12 @@ export function salvage(message: BeforeChatEvent, args: string[]) {
     if (salvageBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("salvage_b", true);
-        World.setDynamicProperty("salvage_b", true);
+        world.setDynamicProperty("salvage_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Salvage§r!`);
     } else if (salvageBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("salvage_b", false);
-        World.setDynamicProperty("salvage_b", false);
+        world.setDynamicProperty("salvage_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Salvage§r!`);
     }
 }

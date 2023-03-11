@@ -68,7 +68,7 @@ export function paradoxUI(message: BeforeChatEvent, args: string[]) {
     //if (showrulesBoolean === false) {
     // Allow
     //dynamicPropertyRegistry.set("showrules_b", true);
-    //World.setDynamicProperty("showrules_b", true);
+    //world.setDynamicProperty("showrules_b", true);
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has requested §6ParadoxUI§r!`);
     if (config.debug) {
         paradoxui(player);

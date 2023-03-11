@@ -2,8 +2,6 @@ import { world, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 async function bedrockvalidate(id: number) {
     // Get Dynamic Property
     const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
@@ -14,7 +12,7 @@ async function bedrockvalidate(id: number) {
         return;
     }
     // run as each player
-    for (const player of World.getPlayers()) {
+    for (const player of world.getPlayers()) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
@@ -23,13 +21,13 @@ async function bedrockvalidate(id: number) {
             continue;
         }
         // bedrock validation
-        if (player.dimension === World.getDimension("overworld") && config.modules.bedrockValidate.overworld) {
+        if (player.dimension === world.getDimension("overworld") && config.modules.bedrockValidate.overworld) {
             try {
                 await player.runCommandAsync(`fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
             } catch (error) {}
         }
 
-        if (player.dimension === World.getDimension("nether") && config.modules.bedrockValidate.nether) {
+        if (player.dimension === world.getDimension("nether") && config.modules.bedrockValidate.nether) {
             try {
                 await player.runCommandAsync(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
             } catch (error) {}

@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function antinukeraHelp(player: Player, prefix: string, antiNukerABoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.antinukera) {
@@ -70,13 +68,13 @@ export function antinukerA(message: BeforeChatEvent, args: string[]) {
     if (antiNukerABoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antinukera_b", true);
-        World.setDynamicProperty("antinukera_b", true);
+        world.setDynamicProperty("antinukera_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiNukerA§r!`);
         NukerA();
     } else if (antiNukerABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antinukera_b", false);
-        World.setDynamicProperty("antinukera_b", false);
+        world.setDynamicProperty("antinukera_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiNukerA§r!`);
     }
 }

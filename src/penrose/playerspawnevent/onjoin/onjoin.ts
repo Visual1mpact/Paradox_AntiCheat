@@ -4,8 +4,6 @@ import { getPrefix } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 async function onJoinTime(object: PlayerSpawnEvent) {
     /**
      * We only want to execute this when it's a players initial spawn
@@ -46,7 +44,7 @@ async function onJoinTime(object: PlayerSpawnEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
-        const allPlayers = [...World.getPlayers()];
+        const allPlayers = [...world.getPlayers()];
         for (const player of allPlayers) {
             if (player.hasTag("illegalitemsA")) {
                 player.removeTag("illegalitemsA");
@@ -61,7 +59,7 @@ async function onJoinTime(object: PlayerSpawnEvent) {
 }
 
 const onJoin = () => {
-    World.events.playerSpawn.subscribe(onJoinTime);
+    world.events.playerSpawn.subscribe(onJoinTime);
 };
 
 export { onJoin };

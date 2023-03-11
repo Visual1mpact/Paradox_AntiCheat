@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { SpammerD } from "../../penrose/beforechatevent/spammer/spammer_d.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function spammerDHelp(player: Player, prefix: string, spammerDBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.spammerd) {
@@ -70,13 +68,13 @@ export function spammerD(message: BeforeChatEvent, args: string[]) {
     if (spammerDBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("spammerd_b", true);
-        World.setDynamicProperty("spammerd_b", true);
+        world.setDynamicProperty("spammerd_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6SpammerD§r!`);
         SpammerD();
     } else if (spammerDBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("spammerd_b", false);
-        World.setDynamicProperty("spammerd_b", false);
+        world.setDynamicProperty("spammerd_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4SpammerD§r!`);
     }
 }

@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { ScaffoldA } from "../../penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function antiscaffoldaHelp(player: Player, prefix: string, antiScaffoldABoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.antiscaffolda) {
@@ -70,13 +68,13 @@ export function antiscaffoldA(message: BeforeChatEvent, args: string[]) {
     if (antiScaffoldABoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antiscaffolda_b", true);
-        World.setDynamicProperty("antiscaffolda_b", true);
+        world.setDynamicProperty("antiscaffolda_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`);
         ScaffoldA();
     } else if (antiScaffoldABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antiscaffolda_b", false);
-        World.setDynamicProperty("antiscaffolda_b", false);
+        world.setDynamicProperty("antiscaffolda_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`);
     }
 }

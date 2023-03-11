@@ -2,13 +2,11 @@ import { world, EntityQueryOptions, system } from "@minecraft/server";
 import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
-const World = world;
-
 function serverban() {
     const filter = new Object() as EntityQueryOptions;
     filter.tags = ["isBanned"];
     // run as each player
-    for (const player of World.getPlayers(filter)) {
+    for (const player of world.getPlayers(filter)) {
         if (queueUnban.has(player.nameTag)) {
             // Remove tag
             player.removeTag("isBanned");

@@ -1,7 +1,6 @@
 import { world, Block, EntityQueryOptions, GameMode, system, BlockLocation } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
-const World = world;
 
 function antifalla(id: number) {
     // Get Dynamic Property
@@ -15,7 +14,7 @@ function antifalla(id: number) {
     //exclude players who are in creative.
     const gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [GameMode.creative];
-    for (const player of World.getPlayers(gm)) {
+    for (const player of world.getPlayers(gm)) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 

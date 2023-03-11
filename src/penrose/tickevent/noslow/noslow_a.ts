@@ -3,8 +3,6 @@ import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function noslowa(id: number) {
     // Get Dynamic Property
     const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
@@ -15,7 +13,7 @@ function noslowa(id: number) {
         return;
     }
     // run as each player
-    for (const player of World.getPlayers()) {
+    for (const player of world.getPlayers()) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 

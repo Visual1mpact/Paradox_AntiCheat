@@ -1,8 +1,6 @@
 import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 async function queueSleep(player: Player, id: number) {
     await player.runCommandAsync(`time set 126553000`);
     await player.runCommandAsync(`weather clear`);
@@ -24,7 +22,7 @@ function ops(opsID: number) {
     }
     const filter = new Object() as EntityQueryOptions;
     filter.tags = ["sleeping"];
-    const filterPlayers = [...World.getPlayers(filter)];
+    const filterPlayers = [...world.getPlayers(filter)];
     if (filterPlayers.length) {
         const id = system.runSchedule(() => {
             queueSleep(filterPlayers[0], id);

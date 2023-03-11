@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { NamespoofA } from "../../penrose/tickevent/namespoof/namespoof_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function namespoofAHelp(player: Player, prefix: string, nameSpoofBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.namespoofa) {
@@ -70,13 +68,13 @@ export function namespoofA(message: BeforeChatEvent, args: string[]) {
     if (nameSpoofBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("namespoofa_b", true);
-        World.setDynamicProperty("namespoofa_b", true);
+        world.setDynamicProperty("namespoofa_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofA§r!`);
         NamespoofA();
     } else if (nameSpoofBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofa_b", false);
-        World.setDynamicProperty("namespoofa_b", false);
+        world.setDynamicProperty("namespoofa_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4NamespoofA§r!`);
     }
 }

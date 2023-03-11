@@ -2,10 +2,8 @@ import { world } from "@minecraft/server";
 import { sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 const ChatFilter = () => {
-    World.events.beforeChat.subscribe((msg) => {
+    world.events.beforeChat.subscribe((msg) => {
         // Get Dynamic Property
         const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
 

@@ -5,8 +5,6 @@ import { Survival } from "../../penrose/tickevent/gamemode/survival.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.allowgms) {
@@ -73,12 +71,12 @@ export function allowgms(message: BeforeChatEvent, args: string[]) {
     if (survivalGMBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("survivalgm_b", true);
-        World.setDynamicProperty("survivalgm_b", true);
+        world.setDynamicProperty("survivalgm_b", true);
         // Make sure at least one is allowed since this could cause serious issues if all were locked down
         // We will allow Adventure Mode in this case
         if (adventureGMBoolean === true && creativeGMBoolean === true) {
             dynamicPropertyRegistry.set("adventuregm_b", false);
-            World.setDynamicProperty("adventuregm_b", false);
+            world.setDynamicProperty("adventuregm_b", false);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
             return;
@@ -88,7 +86,7 @@ export function allowgms(message: BeforeChatEvent, args: string[]) {
     } else if (survivalGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("survivalgm_b", false);
-        World.setDynamicProperty("survivalgm_b", false);
+        world.setDynamicProperty("survivalgm_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 0 (Survival)§r to be used!`);
     }
 }

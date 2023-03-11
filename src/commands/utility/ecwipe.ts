@@ -4,8 +4,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function ecWipeHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.ecwipe) {
@@ -64,7 +62,7 @@ export async function ecwipe(message: BeforeChatEvent, args: string[]) {
 
     // try to find the player requested
     let member: Player;
-    for (let pl of World.getPlayers()) {
+    for (let pl of world.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }

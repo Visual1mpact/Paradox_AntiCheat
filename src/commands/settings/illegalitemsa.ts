@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { IllegalItemsA } from "../../penrose/tickevent/illegalitems/illegalitems_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function illegalItemsAHelp(player: Player, prefix: string, illegalItemsABoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.illegalitemsa) {
@@ -70,13 +68,13 @@ export function illegalitemsA(message: BeforeChatEvent, args: string[]) {
     if (illegalItemsABoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegalitemsa_b", true);
-        World.setDynamicProperty("illegalitemsa_b", true);
+        world.setDynamicProperty("illegalitemsa_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`);
         IllegalItemsA();
     } else if (illegalItemsABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalitemsa_b", false);
-        World.setDynamicProperty("illegalitemsa_b", false);
+        world.setDynamicProperty("illegalitemsa_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`);
     }
 }

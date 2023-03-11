@@ -3,8 +3,6 @@
  */
 import { world } from "@minecraft/server";
 
-const World = world;
-
 const tickTimeoutMap = new Map();
 const tickIntervalMap = new Map();
 let tickTimeoutID = 0,
@@ -55,7 +53,7 @@ function clearTickInterval(handle: number) {
     if (!tickIntervalMap.delete(handle)) console.warn(`Failed to clear tick interval with ID ${handle}: the ID doesn't exist`);
 }
 
-World.events.tick.subscribe((data) => {
+world.events.tick.subscribe((data) => {
     for (const [ID, tickTimeout] of tickTimeoutMap) {
         tickTimeout.tick--;
         if (tickTimeout.tick <= 0) {

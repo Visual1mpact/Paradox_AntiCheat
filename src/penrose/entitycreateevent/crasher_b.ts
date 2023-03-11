@@ -2,14 +2,12 @@ import { Entity, EntitySpawnEvent, EntityItemComponent, EntityQueryOptions, Play
 import { flag } from "../../util.js";
 import { dynamicPropertyRegistry } from "../worldinitializeevent/registry.js";
 
-const World = world;
-
 function nearestPlayer(entity: Entity) {
     if (!entity) {
         return undefined;
     }
 
-    const allPlayers = World.getPlayers();
+    const allPlayers = world.getPlayers();
 
     // Query new EntityQueryOptions class for searching
     const query = new Object() as EntityQueryOptions;
@@ -43,7 +41,7 @@ function crasherb(object: EntitySpawnEvent) {
 
     // Unsubscribe if disabled in-game
     if (crasherBBoolean === false) {
-        World.events.entitySpawn.unsubscribe(crasherb);
+        world.events.entitySpawn.unsubscribe(crasherb);
         return;
     }
 
@@ -61,7 +59,7 @@ function crasherb(object: EntitySpawnEvent) {
 }
 
 const CrasherB = () => {
-    World.events.entitySpawn.subscribe(crasherb);
+    world.events.entitySpawn.subscribe(crasherb);
 };
 
 export { CrasherB };

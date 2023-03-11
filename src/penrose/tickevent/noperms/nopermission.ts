@@ -3,16 +3,14 @@ import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function noperms() {
     const filter = new Object() as EntityQueryOptions;
     filter.tags = ["paradoxOpped"];
     // We need a list of players for checking behind a bug in Minecraft
-    const playerArray = [...World.getPlayers(filter)];
+    const playerArray = [...world.getPlayers(filter)];
     // Let's check the entities for illegal permissions
     // Apparently all dimensions are checked even though we target overworld
-    for (const entity of World.getDimension("overworld").getEntities(filter)) {
+    for (const entity of world.getDimension("overworld").getEntities(filter)) {
         // If it's a player then ignore
         if (entity instanceof Player) {
             continue;

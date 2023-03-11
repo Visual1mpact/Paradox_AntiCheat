@@ -2,8 +2,6 @@ import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import { getScore, sendMsg, setScore } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 async function adventure(id: number) {
     // Get Dynamic Property
     const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
@@ -19,7 +17,7 @@ async function adventure(id: number) {
     // 2 = adventure
     filter.gameMode = GameMode.adventure;
     // Run as each player
-    for (const player of World.getPlayers(filter)) {
+    for (const player of world.getPlayers(filter)) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
@@ -31,7 +29,7 @@ async function adventure(id: number) {
         if (survivalGMBoolean === true && creativeGMBoolean === true) {
             // Default to adventure for safety
             dynamicPropertyRegistry.set("adventuregm_b", false);
-            World.setDynamicProperty("adventuregm_b", false);
+            world.setDynamicProperty("adventuregm_b", false);
         }
         // Are they in adventure? Fix it.
         if (survivalGMBoolean === true && creativeGMBoolean === false) {

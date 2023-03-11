@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function illegalLoresHelp(player: Player, prefix: string, illegalLoresBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.illegallores) {
@@ -69,12 +67,12 @@ export function illegalLores(message: BeforeChatEvent, args: string[]) {
     if (illegalLoresBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegallores_b", true);
-        World.setDynamicProperty("illegallores_b", true);
+        world.setDynamicProperty("illegallores_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalLores§r!`);
     } else if (illegalLoresBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegallores_b", false);
-        World.setDynamicProperty("illegallores_b", false);
+        world.setDynamicProperty("illegallores_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalLores§r!`);
     }
 }

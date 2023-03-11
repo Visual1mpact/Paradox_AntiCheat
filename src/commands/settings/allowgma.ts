@@ -4,8 +4,6 @@ import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function allowgmaHelp(player: Player, prefix: string, adventureGMBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.allowgma) {
@@ -72,12 +70,12 @@ export function allowgma(message: BeforeChatEvent, args: string) {
     if (adventureGMBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("adventuregm_b", true);
-        World.setDynamicProperty("adventuregm_b", true);
+        world.setDynamicProperty("adventuregm_b", true);
         // Make sure at least one is allowed since this could cause serious issues if all were locked down
         // We will allow Adventure Mode in this case
         if (survivalGMBoolean === true && creativeGMBoolean === true) {
             dynamicPropertyRegistry.set("adventuregm_b", false);
-            World.setDynamicProperty("adventuregm_b", false);
+            world.setDynamicProperty("adventuregm_b", false);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
             return;
@@ -87,7 +85,7 @@ export function allowgma(message: BeforeChatEvent, args: string) {
     } else if (adventureGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("adventuregm_b", false);
-        World.setDynamicProperty("adventuregm_b", false);
+        world.setDynamicProperty("adventuregm_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`);
     }
 }

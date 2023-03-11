@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { BadPackets1 } from "../../penrose/beforechatevent/spammer/badpackets_1.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function badpackets1Help(player: Player, prefix: string, badPackets1Boolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.badpackets1) {
@@ -70,13 +68,13 @@ export function badpackets1(message: BeforeChatEvent, args: string[]) {
     if (badPackets1Boolean === false) {
         // Allow
         dynamicPropertyRegistry.set("badpackets1_b", true);
-        World.setDynamicProperty("badpackets1_b", true);
+        world.setDynamicProperty("badpackets1_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets1§r!`);
         BadPackets1();
     } else if (badPackets1Boolean === true) {
         // Deny
         dynamicPropertyRegistry.set("badpackets1_b", false);
-        World.setDynamicProperty("badpackets1_b", false);
+        world.setDynamicProperty("badpackets1_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets1§r!`);
     }
 }

@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { InvalidSprintA } from "../../penrose/tickevent/invalidsprint/invalidsprint_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function invalidSprintAHelp(player: Player, prefix: string, invalidSprintABoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.invalidsprinta) {
@@ -70,13 +68,13 @@ export function invalidsprintA(message: BeforeChatEvent, args: string[]) {
     if (invalidSprintABoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("invalidsprinta_b", true);
-        World.setDynamicProperty("invalidsprinta_b", true);
+        world.setDynamicProperty("invalidsprinta_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6InvalidSprintA§r!`);
         InvalidSprintA();
     } else if (invalidSprintABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("invalidsprinta_b", false);
-        World.setDynamicProperty("invalidsprinta_b", false);
+        world.setDynamicProperty("invalidsprinta_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4InvalidSprintA§r!`);
     }
 }

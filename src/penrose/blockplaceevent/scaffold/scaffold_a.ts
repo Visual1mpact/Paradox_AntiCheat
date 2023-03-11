@@ -3,8 +3,6 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 let blockTimer = new Map();
 
 function scaffolda(object: BlockPlaceEvent) {
@@ -13,7 +11,7 @@ function scaffolda(object: BlockPlaceEvent) {
 
     // Unsubscribe if disabled in-game
     if (antiScaffoldABoolean === false) {
-        World.events.blockPlace.unsubscribe(scaffolda);
+        world.events.blockPlace.unsubscribe(scaffolda);
         return;
     }
 
@@ -59,7 +57,7 @@ function scaffolda(object: BlockPlaceEvent) {
 }
 
 const ScaffoldA = () => {
-    World.events.blockPlace.subscribe(scaffolda);
+    world.events.blockPlace.subscribe(scaffolda);
 };
 
 export { ScaffoldA };

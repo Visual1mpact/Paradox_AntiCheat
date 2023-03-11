@@ -2,15 +2,13 @@ import { BeforeChatEvent, world } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function spammera(msg: BeforeChatEvent) {
     // Get Dynamic Property
     const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
 
     // Unsubscribe if disabled in-game
     if (spammerABoolean === false) {
-        World.events.beforeChat.unsubscribe(spammera);
+        world.events.beforeChat.unsubscribe(spammera);
         return;
     }
     const player = msg.sender;
@@ -30,7 +28,7 @@ function spammera(msg: BeforeChatEvent) {
 }
 
 const SpammerA = () => {
-    World.events.beforeChat.subscribe(spammera);
+    world.events.beforeChat.subscribe(spammera);
 };
 
 export { SpammerA };

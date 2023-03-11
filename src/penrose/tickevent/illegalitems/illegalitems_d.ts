@@ -3,8 +3,6 @@ import { illegalitems } from "../../../data/itemban.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function illegalitemsd(id: number) {
     // Get Dynamic Property
     const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
@@ -17,7 +15,7 @@ function illegalitemsd(id: number) {
     }
     const filter = new Object() as EntityQueryOptions;
     filter.type = "item";
-    for (const entity of World.getDimension("overworld").getEntities(filter)) {
+    for (const entity of world.getDimension("overworld").getEntities(filter)) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;

@@ -4,8 +4,6 @@ import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function bedrockValidateHelp(player: Player, prefix: string, bedrockValidateBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.bedrockvalidate) {
@@ -70,13 +68,13 @@ export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
     if (bedrockValidateBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("bedrockvalidate_b", true);
-        World.setDynamicProperty("bedrockvalidate_b", true);
+        world.setDynamicProperty("bedrockvalidate_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6BedrockValidate§r!`);
         BedrockValidate();
     } else if (bedrockValidateBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("bedrockvalidate_b", false);
-        World.setDynamicProperty("bedrockvalidate_b", false);
+        world.setDynamicProperty("bedrockvalidate_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4BedrockValidate§r!`);
     }
 }

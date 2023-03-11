@@ -2,8 +2,6 @@ import { BlockLocation, Location, MinecraftBlockTypes, Player, world, system } f
 import { sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {
     const blockVerification = parseInt(y.toFixed(0)) - 1;
@@ -35,7 +33,7 @@ function worldborder(id: number) {
         system.clearRunSchedule(id);
         return;
     }
-    for (const player of World.getPlayers()) {
+    for (const player of world.getPlayers()) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 

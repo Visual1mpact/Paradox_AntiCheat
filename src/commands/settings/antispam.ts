@@ -4,8 +4,6 @@ import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.antispam) {
@@ -70,13 +68,13 @@ export function antispam(message: BeforeChatEvent, args: string[]) {
     if (antiSpamBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antispam_b", true);
-        World.setDynamicProperty("antispam_b", true);
+        world.setDynamicProperty("antispam_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Spam§r!`);
         AntiSpam();
     } else if (antiSpamBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antispam_b", false);
-        World.setDynamicProperty("antispam_b", false);
+        world.setDynamicProperty("antispam_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Spam§r!`);
     }
 }

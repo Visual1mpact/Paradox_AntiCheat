@@ -1,7 +1,5 @@
 import { Player, world, PlayerSpawnEvent } from "@minecraft/server";
 
-const World = world;
-
 // This function will be called when tick event is triggered from the playerloaded function
 async function gametestcheck(object: PlayerSpawnEvent) {
     /**
@@ -22,7 +20,7 @@ async function gametestcheck(object: PlayerSpawnEvent) {
 }
 
 const GametestCheck = () => {
-    World.events.playerSpawn.subscribe(gametestcheck);
+    world.events.playerSpawn.subscribe(gametestcheck);
 };
 
 export { GametestCheck };

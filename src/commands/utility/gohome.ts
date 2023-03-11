@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 let cooldownTimer = new WeakMap();
 
 function dhms(ms: number) {
@@ -137,7 +135,7 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || uniqueId === player.name) {
             await player.runCommandAsync(`scoreboard players set @s teleport 25`);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
-            player.teleport(new Location(homex, homey, homez), World.getDimension(dimension), 0, 0);
+            player.teleport(new Location(homex, homey, homez), world.getDimension(dimension), 0, 0);
             // Delete old key and value
             cooldownTimer.delete(player);
             // Create new key and value with current time in milliseconds

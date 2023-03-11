@@ -2,24 +2,21 @@ import { world, Location, Player, system } from "@minecraft/server";
 import { getScore, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
-// Global definitions within script
-let posx: number;
-let posy: number;
-let posz: number;
-let posx1: number;
-let posy1: number;
-let posz1: number;
-let realmID: number;
-let realmIDString: string;
-let backx: number;
-let backy: number;
-let backz: number;
-let player: Player;
-let hastag: boolean;
-
 async function Freeze(id: number) {
+    let posx: number;
+    let posy: number;
+    let posz: number;
+    let posx1: number;
+    let posy1: number;
+    let posz1: number;
+    let realmID: number;
+    let realmIDString: string;
+    let backx: number;
+    let backy: number;
+    let backz: number;
+    let player: Player;
+    let hastag: boolean;
+
     // Record their location
     try {
         posx = player.location.x;
@@ -62,7 +59,7 @@ async function Freeze(id: number) {
         posy = Math.floor(245);
         posz = Math.floor(posz);
         // TP them at the new location in the overworld
-        player.teleport(new Location(posx, posy, posz), World.getDimension("overworld"), 0, 0);
+        player.teleport(new Location(posx, posy, posz), world.getDimension("overworld"), 0, 0);
         // Create prison around player
         try {
             await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier 0 hollow`);
@@ -86,7 +83,7 @@ async function Freeze(id: number) {
     if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
         // If they move then tp them back
         try {
-            player.teleport(new Location(posx1, posy1, posz1), World.getDimension("overworld"), 0, 0);
+            player.teleport(new Location(posx1, posy1, posz1), world.getDimension("overworld"), 0, 0);
         } catch (error) {}
     }
 
@@ -114,9 +111,9 @@ async function Freeze(id: number) {
         // Release from prison
         await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air 0 hollow`);
         // Return them back to original coordinates
-        player.teleport(new Location(backx, backy, backz), World.getDimension(realmIDString), 0, 0);
+        player.teleport(new Location(backx, backy, backz), world.getDimension(realmIDString), 0, 0);
         player.removeTag("freezeactive");
-        World.events.playerLeave.unsubscribe(() => StopTickFreeze(id));
+        world.events.playerLeave.unsubscribe(() => StopTickFreeze(id));
         system.clearRunSchedule(id);
     }
 }
@@ -128,7 +125,7 @@ function StopTickFreeze(id: number) {
 
 // Where the magic begins
 function TickFreeze(data: Player) {
-    player = data;
+    const player = data;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
@@ -142,7 +139,7 @@ function TickFreeze(data: Player) {
         const freezeId = system.runSchedule(() => {
             Freeze(freezeId);
         });
-        World.events.playerLeave.subscribe(() => StopTickFreeze(freezeId));
+        world.events.playerLeave.subscribe(() => StopTickFreeze(freezeId));
     }
 }
 

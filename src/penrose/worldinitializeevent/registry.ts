@@ -1,8 +1,6 @@
 import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 
-const World = world;
-
 export const dynamicPropertyRegistry = new Map();
 
 function registry(data: WorldInitializeEvent) {
@@ -103,10 +101,10 @@ function registry(data: WorldInitializeEvent) {
                     // If a match then set the dynamic property
                     if (setting === "enabled") {
                         // We condtionally test if the dynamic property already exists
-                        const test = World.getDynamicProperty(booleanProps);
+                        const test = world.getDynamicProperty(booleanProps);
                         if (test === undefined) {
                             // Dynamic property doesn't exist so we create it with the default settings in config
-                            World.setDynamicProperty(booleanProps, config.modules[configProperties][setting]);
+                            world.setDynamicProperty(booleanProps, config.modules[configProperties][setting]);
                             // Set property with value as an element that we can use in other scripts
                             dynamicPropertyRegistry.set(booleanProps, config.modules[configProperties][setting]);
                         } else {
@@ -124,10 +122,10 @@ function registry(data: WorldInitializeEvent) {
                  */
 
                 // We condtionally test if the dynamic property already exists
-                const test = World.getDynamicProperty(booleanProps);
+                const test = world.getDynamicProperty(booleanProps);
                 if (test === undefined) {
                     // Dynamic property doesn't exist so we create it and disable it by default
-                    World.setDynamicProperty(booleanProps, false);
+                    world.setDynamicProperty(booleanProps, false);
                     // Set property with value as an element that we can use in other scripts
                     dynamicPropertyRegistry.set(booleanProps, false);
                 } else {
@@ -139,16 +137,16 @@ function registry(data: WorldInitializeEvent) {
     }
 
     // Set additional properties for world border
-    let worldborder_n = World.getDynamicProperty("worldborder_n");
+    let worldborder_n = world.getDynamicProperty("worldborder_n");
     if (worldborder_n === undefined) {
-        World.setDynamicProperty("worldborder_n", config.modules.worldBorder.overworld);
+        world.setDynamicProperty("worldborder_n", config.modules.worldBorder.overworld);
         dynamicPropertyRegistry.set("worldborder_n", config.modules.worldBorder.overworld);
     } else {
         dynamicPropertyRegistry.set("worldborder_n", worldborder_n);
     }
-    let worldborderNether_n = World.getDynamicProperty("worldborder_nether_n");
+    let worldborderNether_n = world.getDynamicProperty("worldborder_nether_n");
     if (worldborderNether_n === undefined) {
-        World.setDynamicProperty("worldborder_nether_n", config.modules.worldBorder.nether);
+        world.setDynamicProperty("worldborder_nether_n", config.modules.worldBorder.nether);
         dynamicPropertyRegistry.set("worldborder_nether_n", config.modules.worldBorder.nether);
     } else {
         dynamicPropertyRegistry.set("worldborder_nether_n", worldborderNether_n);
@@ -156,7 +154,7 @@ function registry(data: WorldInitializeEvent) {
 }
 
 const Registry = () => {
-    World.events.worldInitialize.subscribe((data) => registry(data));
+    world.events.worldInitialize.subscribe((data) => registry(data));
 };
 
 export { Registry };

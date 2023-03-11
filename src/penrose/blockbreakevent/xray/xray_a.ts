@@ -3,15 +3,13 @@ import { xrayblocks } from "../../../data/xray.js";
 import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function xraya(object: BlockBreakEvent) {
     // Get Dynamic Property
     const xrayBoolean = dynamicPropertyRegistry.get("xraya_b");
 
     // Unsubscribe if disabled in-game
     if (xrayBoolean === false) {
-        World.events.blockBreak.unsubscribe(xraya);
+        world.events.blockBreak.unsubscribe(xraya);
         return;
     }
 
@@ -35,7 +33,7 @@ function xraya(object: BlockBreakEvent) {
 }
 
 const XrayA = () => {
-    World.events.blockBreak.subscribe(xraya);
+    world.events.blockBreak.subscribe(xraya);
 };
 
 export { XrayA };

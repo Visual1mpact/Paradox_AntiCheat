@@ -2,8 +2,6 @@ import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 async function hotbar(id: number) {
     // Get Dynamic Property
     const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
@@ -17,7 +15,7 @@ async function hotbar(id: number) {
     const filter = new Object() as EntityQueryOptions;
     filter.excludeTags = ["vanish"];
     // run as each player
-    for (const player of World.getPlayers(filter)) {
+    for (const player of world.getPlayers(filter)) {
         hotbarMessage = config.modules.hotbar.message;
         await player.runCommandAsync(`titleraw @s actionbar {"rawtext":[{"text":${JSON.stringify(hotbarMessage)}}]}`);
     }

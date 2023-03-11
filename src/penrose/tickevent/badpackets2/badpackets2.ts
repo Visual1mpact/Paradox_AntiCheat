@@ -2,8 +2,6 @@ import { world, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function badpackets2(id: number) {
     // Get Dynamic Property
     const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
@@ -14,7 +12,7 @@ function badpackets2(id: number) {
         return;
     }
     // run as each player
-    for (const player of World.getPlayers()) {
+    for (const player of world.getPlayers()) {
         // Invalid slot
         if (player.selectedSlot < 0 || player.selectedSlot > 8) {
             flag(player, "BadPackets", "2", "Exploit", null, null, "selectedSlot", `${player.selectedSlot}`, false, null);

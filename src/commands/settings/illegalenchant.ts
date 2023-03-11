@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function illegalEnchantHelp(player: Player, prefix: string, illegalEnchantmentBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.illegalenchant) {
@@ -69,12 +67,12 @@ export function illegalEnchant(message: BeforeChatEvent, args: string[]) {
     if (illegalEnchantmentBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegalenchantment_b", true);
-        World.setDynamicProperty("illegalenchantment_b", true);
+        world.setDynamicProperty("illegalenchantment_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalEnchantments§r!`);
     } else if (illegalEnchantmentBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalenchantment_b", false);
-        World.setDynamicProperty("illegalenchantment_b", false);
+        world.setDynamicProperty("illegalenchantment_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalEnchantments§r!`);
     }
 }

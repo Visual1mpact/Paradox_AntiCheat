@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function antishulkerHelp(player: Player, prefix: string, antiShulkerBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.antishulker) {
@@ -69,12 +67,12 @@ export function antishulker(message: BeforeChatEvent, args: string[]) {
     if (antiShulkerBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antishulker_b", true);
-        World.setDynamicProperty("antishulker_b", true);
+        world.setDynamicProperty("antishulker_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti-Shulkers§r!`);
     } else if (antiShulkerBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antishulker_b", false);
-        World.setDynamicProperty("antishulker_b", false);
+        world.setDynamicProperty("antishulker_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti-Shulkers§r!`);
     }
 }

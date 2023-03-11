@@ -25,7 +25,6 @@ import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
 const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }, block: Block) {
@@ -76,7 +75,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsCBoolean === false) {
-        World.events.blockPlace.unsubscribe(illegalitemsc);
+        world.events.blockPlace.unsubscribe(illegalitemsc);
         return;
     }
 
@@ -348,7 +347,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
 }
 
 const IllegalItemsC = () => {
-    World.events.blockPlace.subscribe(illegalitemsc);
+    world.events.blockPlace.subscribe(illegalitemsc);
 };
 
 export { IllegalItemsC };

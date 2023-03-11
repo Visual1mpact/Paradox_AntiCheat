@@ -4,8 +4,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function despawnHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.despawn) {
@@ -73,7 +71,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     filter.excludeTypes = ["player"];
     // Specified entity
     if (args[0] !== "all" && args.length > 0) {
-        for (const entity of World.getDimension("overworld").getEntities(filter)) {
+        for (const entity of world.getDimension("overworld").getEntities(filter)) {
             filteredEntity = entity.id.replace("minecraft:", "");
             requestedEntity = args[0].replace("minecraft:", "");
             // If an entity was specified then handle it here
@@ -88,7 +86,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     }
     // All entities
     if (args[0] === "all") {
-        for (const entity of World.getDimension("overworld").getEntities(filter)) {
+        for (const entity of world.getDimension("overworld").getEntities(filter)) {
             counter = ++counter;
             verify = true;
             // Despawn this entity

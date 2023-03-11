@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function stackBanHelp(player: Player, prefix: string, stackBanBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.stackban) {
@@ -73,7 +71,7 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
         if (stackBanBoolean) {
             // In this stage they are likely turning it off so oblige their request
             dynamicPropertyRegistry.set("stackban_b", false);
-            return World.setDynamicProperty("stackban_b", false);
+            return world.setDynamicProperty("stackban_b", false);
         }
         // If illegal items are not enabled then let user know this feature is inaccessible
         // It will not work without one of them
@@ -83,12 +81,12 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
     if (stackBanBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("stackban_b", true);
-        World.setDynamicProperty("stackban_b", true);
+        world.setDynamicProperty("stackban_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6StackBans§r!`);
     } else if (stackBanBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("stackban_b", false);
-        World.setDynamicProperty("stackban_b", false);
+        world.setDynamicProperty("stackban_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4StackBans§r!`);
     }
 }

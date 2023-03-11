@@ -3,15 +3,13 @@ import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function badpackets1(msg: BeforeChatEvent) {
     // Get Dynamic Property
     const badPackets1Boolean = dynamicPropertyRegistry.get("badpackets1_b");
 
     // Unsubscribe if disabled in-game
     if (badPackets1Boolean === false) {
-        World.events.beforeChat.unsubscribe(badpackets1);
+        world.events.beforeChat.unsubscribe(badpackets1);
         return;
     }
     const player = msg.sender;
@@ -32,7 +30,7 @@ function badpackets1(msg: BeforeChatEvent) {
 }
 
 const BadPackets1 = () => {
-    World.events.beforeChat.subscribe(badpackets1);
+    world.events.beforeChat.subscribe(badpackets1);
 };
 
 export { BadPackets1 };

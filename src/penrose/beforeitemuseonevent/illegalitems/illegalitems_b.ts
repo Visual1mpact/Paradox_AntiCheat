@@ -9,7 +9,6 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
 const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }) {
@@ -49,7 +48,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
-        World.events.beforeItemUseOn.unsubscribe(illegalitemsb);
+        world.events.beforeItemUseOn.unsubscribe(illegalitemsb);
         return;
     }
 
@@ -307,7 +306,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
 }
 
 const IllegalItemsB = () => {
-    World.events.beforeItemUseOn.subscribe(illegalitemsb);
+    world.events.beforeItemUseOn.subscribe(illegalitemsb);
 };
 
 export { IllegalItemsB };

@@ -1,8 +1,6 @@
 import { BeforeChatEvent, world } from "@minecraft/server";
 import { commandHandler } from "../../../commands/handler.js";
 
-const World = world;
-
 function prefixcommand(msg: BeforeChatEvent) {
     const player = msg.sender;
 
@@ -10,7 +8,7 @@ function prefixcommand(msg: BeforeChatEvent) {
 }
 
 const PrefixCommand = () => {
-    World.events.beforeChat.subscribe(prefixcommand);
+    world.events.beforeChat.subscribe(prefixcommand);
 };
 
 export { PrefixCommand };

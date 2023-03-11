@@ -3,13 +3,11 @@ import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 function verifypermission() {
     const filter = new Object() as EntityQueryOptions;
     filter.tags = ["paradoxOpped"];
     // Let's check the players for illegal permissions
-    for (const player of World.getPlayers(filter)) {
+    for (const player of world.getPlayers(filter)) {
         // Check for hash/salt and validate password
         const hash = player.getDynamicProperty("hash");
         const salt = player.getDynamicProperty("salt");

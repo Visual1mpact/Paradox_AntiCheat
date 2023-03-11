@@ -2,8 +2,6 @@ import { world, PlayerSpawnEvent, Player } from "@minecraft/server";
 import { banplayer } from "../../../data/globalban.js";
 import { banMessage } from "../../../util.js";
 
-const World = world;
-
 async function banHammerTime(object: PlayerSpawnEvent) {
     /**
      * We only want to execute this when it's a players initial spawn
@@ -30,7 +28,7 @@ async function banHammerTime(object: PlayerSpawnEvent) {
 }
 
 const GlobalBanList = () => {
-    World.events.playerSpawn.subscribe(banHammerTime);
+    world.events.playerSpawn.subscribe(banHammerTime);
 };
 
 export { GlobalBanList };

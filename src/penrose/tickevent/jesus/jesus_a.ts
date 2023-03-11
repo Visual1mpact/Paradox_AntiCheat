@@ -1,8 +1,6 @@
 import { world, Location, BlockLocation, Block, Player, Dimension, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 let BlockAtPlayer0: Block;
 let BlockAtPlayer1: Block;
 
@@ -25,7 +23,7 @@ function jesusa(id: number) {
         return;
     }
     // run as each player
-    for (const player of World.getPlayers()) {
+    for (const player of world.getPlayers()) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 

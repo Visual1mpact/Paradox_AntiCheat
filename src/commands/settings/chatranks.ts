@@ -3,8 +3,6 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-const World = world;
-
 function chatRanksHelp(player: Player, prefix: string, chatRanksBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.chatranks) {
@@ -69,7 +67,7 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
     if (chatRanksBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("chatranks_b", true);
-        World.setDynamicProperty("chatranks_b", true);
+        world.setDynamicProperty("chatranks_b", true);
         /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;
@@ -83,7 +81,7 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
     } else if (chatRanksBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("chatranks_b", false);
-        World.setDynamicProperty("chatranks_b", false);
+        world.setDynamicProperty("chatranks_b", false);
         /*
         for (let pl of world.getPlayers()) {
             const dimension = pl.dimension;

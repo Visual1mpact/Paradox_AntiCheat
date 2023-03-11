@@ -5,8 +5,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function tpaHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.tpa) {
@@ -68,7 +66,7 @@ export function tpa(message: BeforeChatEvent, args: string[]) {
     let member: Player;
 
     // Try to find the player requested
-    for (const pl of World.getPlayers()) {
+    for (const pl of world.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             artificalPlayer = pl;
         }

@@ -4,7 +4,6 @@ import { Hotbar } from "../../penrose/tickevent/hotbar/hotbar.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
 const configMessageBackup = new WeakMap();
 // Dummy object
 const dummy = [];
@@ -84,7 +83,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     if ((hotbarBoolean === false && !args.length) || (hotbarBoolean === false && args[0].toLowerCase() !== "disable")) {
         // Allow
         dynamicPropertyRegistry.set("hotbar_b", true);
-        World.setDynamicProperty("hotbar_b", true);
+        world.setDynamicProperty("hotbar_b", true);
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         } else {
@@ -95,7 +94,7 @@ export function hotbar(message: BeforeChatEvent, args: string[]) {
     } else if (hotbarBoolean === true && args.length === 1 && args[0].toLowerCase() === "disable") {
         // Deny
         dynamicPropertyRegistry.set("hotbar_b", false);
-        World.setDynamicProperty("hotbar_b", false);
+        world.setDynamicProperty("hotbar_b", false);
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has disabled §6Hotbar`);
     } else if ((hotbarBoolean === true && args.length >= 1) || (hotbarBoolean === true && !args.length)) {
         if (args.length >= 1) {

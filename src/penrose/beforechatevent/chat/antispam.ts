@@ -4,8 +4,6 @@ import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 const spamList = new WeakMap<Player, { lastSendTime: number; lastMessage: string; spamCounter: number }>();
 
 function antispam(msg: BeforeChatEvent) {
@@ -14,7 +12,7 @@ function antispam(msg: BeforeChatEvent) {
 
     // Unsubscribe if disabled in-game
     if (antiSpamBoolean === false) {
-        World.events.beforeChat.unsubscribe(antispam);
+        world.events.beforeChat.unsubscribe(antispam);
         return;
     }
     // Store player object
@@ -77,7 +75,7 @@ function antispam(msg: BeforeChatEvent) {
 }
 
 const AntiSpam = () => {
-    World.events.beforeChat.subscribe(antispam);
+    world.events.beforeChat.subscribe(antispam);
 };
 
 export { AntiSpam };

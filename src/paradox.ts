@@ -63,7 +63,6 @@ import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
 
 // Self explanatory
-const World = world;
 
 // WorldInitialize Events
 Registry();
@@ -111,7 +110,7 @@ AntiFallA();
 system.runSchedule(() => {
     let hastag: boolean;
     // run as each player
-    for (let player of World.getPlayers()) {
+    for (let player of world.getPlayers()) {
         try {
             hastag = player.hasTag("freeze");
         } catch (error) {}

@@ -2,14 +2,12 @@ import { world, MinecraftEffectTypes, EntityQueryOptions, system } from "@minecr
 import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 async function vanish() {
     // Filter for only players who are vanished
     let filter = new Object() as EntityQueryOptions;
     filter.tags = ["vanish"];
     // Run as each player
-    for (let player of World.getPlayers(filter)) {
+    for (let player of world.getPlayers(filter)) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 

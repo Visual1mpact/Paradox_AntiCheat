@@ -3,8 +3,6 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
-
 let blockTimer = new Map();
 
 async function nukera(object: BlockBreakEvent) {
@@ -12,7 +10,7 @@ async function nukera(object: BlockBreakEvent) {
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
 
     if (antiNukerABoolean === false) {
-        World.events.blockBreak.unsubscribe(nukera);
+        world.events.blockBreak.unsubscribe(nukera);
         return;
     }
 
@@ -147,7 +145,7 @@ async function nukera(object: BlockBreakEvent) {
 }
 
 const NukerA = () => {
-    World.events.blockBreak.subscribe(nukera);
+    world.events.blockBreak.subscribe(nukera);
 };
 
 export { NukerA };

@@ -9,7 +9,6 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const World = world;
 const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 const storage = new Map();
@@ -51,7 +50,7 @@ function illegalitemsa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
-        const allPlayers = [...World.getPlayers()];
+        const allPlayers = [...world.getPlayers()];
         for (const player of allPlayers) {
             if (player.hasTag("illegalitemsA")) {
                 player.removeTag("illegalitemsA");
@@ -61,7 +60,7 @@ function illegalitemsa(id: number) {
         return;
     }
 
-    for (const player of World.getPlayers()) {
+    for (const player of world.getPlayers()) {
         if (!player.hasTag("illegalitemsA") && illegalItemsABoolean) {
             player.addTag("illegalitemsA");
         }

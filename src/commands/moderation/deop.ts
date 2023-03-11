@@ -5,8 +5,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function deopHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.deop) {
@@ -66,7 +64,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     // try to find the player requested
     let member: Player;
     if (args.length) {
-        for (const pl of World.getPlayers()) {
+        for (const pl of world.getPlayers()) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }

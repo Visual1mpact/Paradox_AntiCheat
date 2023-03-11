@@ -5,8 +5,6 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-const World = world;
-
 function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.lockdown) {
@@ -72,14 +70,14 @@ export async function lockdown(message: BeforeChatEvent, args: string[]) {
     if (lockdownBoolean) {
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is no longer in lockdown!`);
         dynamicPropertyRegistry.set("lockdown_b", false);
-        return World.setDynamicProperty("lockdown_b", false);
+        return world.setDynamicProperty("lockdown_b", false);
     }
 
     // Default reason for locking it down
     const reason = "Under Maintenance! Sorry for the inconvenience.";
 
     // Lock it down
-    for (const pl of World.getPlayers()) {
+    for (const pl of world.getPlayers()) {
         // Check for hash/salt and validate password
         const hash = pl.getDynamicProperty("hash");
         const salt = pl.getDynamicProperty("salt");
@@ -101,5 +99,5 @@ export async function lockdown(message: BeforeChatEvent, args: string[]) {
     // Shutting it down
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is in lockdown!`);
     dynamicPropertyRegistry.set("lockdown_b", true);
-    return World.setDynamicProperty("lockdown_b", true);
+    return world.setDynamicProperty("lockdown_b", true);
 }
