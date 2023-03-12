@@ -6,6 +6,7 @@ import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiDEOP } from "./moderation/uiDeop";
+import { uiLOCKDOWN } from "./moderation/uiLockdown";
 import { uiMUTE } from "./moderation/uiMute";
 import { uiNOTIFY } from "./moderation/uiNotify";
 import { uiOP } from "./moderation/uiOp";
@@ -64,6 +65,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Unban", "textures/ui/check");
             moderationui.button("Rules", "textures/items/book_writable");
             moderationui.button("Chat", "textures/ui/newOffersIcon");
+            moderationui.button("Lockdown", "textures/ui/lock_color");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -163,6 +165,18 @@ async function paradoxui(player: Player) {
                                 uiUNMUTE(muteResult, onlineList, player);
                             });
                         }
+                    });
+                }
+                if (ModUIresult.selection === 4) {
+                    //Lockdown ui
+                    const lockdownui = new ModalFormData();
+                    // Get Dynamic Property Boolean
+                    const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
+                    lockdownui.title("§4Pardox - Lockdown§4");
+                    lockdownui.textField("Reason", "Kicked all members but staff due to possible hacker.");
+                    lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
+                    lockdownui.show(player).then((lockdownResult) => {
+                        uiLOCKDOWN(lockdownResult, player);
                     });
                 }
             });
