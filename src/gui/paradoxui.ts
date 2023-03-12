@@ -4,6 +4,7 @@ import config from "../data/config";
 import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
 import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
+import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiNOTIFY } from "./moderation/uiNotify";
 import { uiOP } from "./moderation/uiOp";
@@ -123,7 +124,18 @@ async function paradoxui(player: Player) {
                             });
                         }
                         if (chatResult.selection === 1) {
-                            //Chat Ranks Logic
+                            //Chat Ranks ui
+                            const chatranksui = new ModalFormData();
+                            let onlineList: string[] = [];
+                            chatranksui.title("§4Change a players chat rank.§4");
+                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                            let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
+                            chatranksui.dropdown(`\n  §rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
+                            chatranksui.dropdown(`\n  §rSelect a pre defined rank or you can set a custom on bellow.§r`, predefinedrank);
+                            chatranksui.textField("Enter a custom Rank", "VIP");
+                            chatranksui.show(player).then((chatranksResult) => {
+                                uiCHATRANKS(chatranksResult, onlineList, predefinedrank, player);
+                            });
                         }
                         if (chatResult.selection === 2) {
                             //Mute logic
