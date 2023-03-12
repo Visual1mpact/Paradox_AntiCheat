@@ -269,11 +269,24 @@ export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpp
  * @param {string} text - String to be hashed
  */
 export const crypto = (salt: string | number | boolean, text: string) => {
-    const textToChars = (text: string) => text.split("").map((c) => c.charCodeAt(0));
+    const textToChars = (text: string) => new Uint8Array([...text].map((c) => c.charCodeAt(0)));
     const byteHex = (n: number) => ("0" + n.toString(16)).substring(-2);
-    const applySaltToChar = (code: number[]) => textToChars(String(salt)).reduce((a: number, b: number) => a ^ b, Number(code));
+    const applySaltToChar = (code: Uint8Array) => {
+        const saltChars = textToChars(String(salt));
+        let result = 0;
+        for (let i = 0; i < code.length; i++) {
+            result ^= saltChars[i % saltChars.length] ^ code[i];
+        }
+        return result;
+    };
 
-    return text.split("").map(textToChars).map(applySaltToChar).map(byteHex).join("");
+    const textChars = textToChars(text);
+    const resultChars = new Uint8Array(textChars.length);
+    for (let i = 0; i < textChars.length; i++) {
+        resultChars[i] = applySaltToChar(textChars.slice(i, i + 1));
+    }
+
+    return [...resultChars].map(byteHex).join("");
 };
 
 const overworld = world.getDimension("overworld");
