@@ -37,7 +37,7 @@ async function paradoxui(player: Player) {
                 opgui.textField(`\nPassword\n`, `Enter password here.`);
             } else {
                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                opgui.dropdown(`\n  §rSelect a player to give access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
+                opgui.dropdown(`\n§rSelect a player to give access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
             }
             opgui.show(player).then((opResult) => {
                 uiOP(opResult, salt, hash, encode, onlineList, player);
@@ -49,7 +49,7 @@ async function paradoxui(player: Player) {
             let onlineList: string[] = [];
             deopgui.title("§4DEOP§4");
             onlineList = Array.from(world.getPlayers(), (player) => player.name);
-            deopgui.dropdown(`\n  §rSelect a player to remove access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
+            deopgui.dropdown(`\n§rSelect a player to remove access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
             deopgui.show(player).then((opResult) => {
                 uiDEOP(opResult, onlineList, player);
             });
@@ -70,7 +70,7 @@ async function paradoxui(player: Player) {
 
                     banui.title("§4Ban A player!§4");
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    banui.dropdown(`\n  §rSelect a player to Ban.§r\n\nPlayer's Online\n`, onlineList);
+                    banui.dropdown(`\n§rSelect a player to Ban.§r\n\nPlayer's Online\n`, onlineList);
                     banui.textField(`Reason`, `Enter a reason as to why they have been banned.`);
                     banui.show(player).then((banResult) => {
                         //ban function goes here
@@ -116,7 +116,7 @@ async function paradoxui(player: Player) {
                             let onlineList: string[] = [];
                             notifyui.title("§4Enable or Disable Notifications!§4");
                             onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            notifyui.dropdown(`\n  §rSelect a player to Enable or Disable Notifications.§r\n\nPlayer's Online\n`, onlineList);
+                            notifyui.dropdown(`\n§rSelect a player to Enable or Disable Notifications.§r\n\nPlayer's Online\n`, onlineList);
                             //by default set the current value to disabled.
                             notifyui.toggle("Notfications", false);
                             notifyui.show(player).then((notifyResult) => {
@@ -130,8 +130,8 @@ async function paradoxui(player: Player) {
                             chatranksui.title("§4Change a players chat rank.§4");
                             onlineList = Array.from(world.getPlayers(), (player) => player.name);
                             let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
-                            chatranksui.dropdown(`\n  §rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
-                            chatranksui.dropdown(`\n  §rSelect a pre defined rank or you can set a custom on bellow.§r`, predefinedrank);
+                            chatranksui.dropdown(`\n§rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
+                            chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on bellow.§r`, predefinedrank);
                             chatranksui.textField("Enter a custom Rank", "VIP");
                             chatranksui.show(player).then((chatranksResult) => {
                                 uiCHATRANKS(chatranksResult, onlineList, predefinedrank, player);
