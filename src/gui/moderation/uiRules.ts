@@ -18,6 +18,7 @@ export function uiRULES(banResult: ModalFormResponse, player: Player) {
     if (EnabledRules === true) {
         dynamicPropertyRegistry.set("showrules_b", true);
         world.setDynamicProperty("showrules_b", true);
+        //remember to call the function!
         onJoinrules();
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6showrules§r!`);
     }

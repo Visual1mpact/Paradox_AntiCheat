@@ -1,11 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\functions",
+    "\\functions\\checks",
     "\\src",
-    "\\src\\commands",
     "\\src\\penrose",
-    "\\src\\penrose\\tickevent"
+    "\\src\\penrose\\entityhurtevent"
   ],
-  "SelectedNode": "\\src\\penrose\\entitycreateevent",
+  "SelectedNode": "\\functions\\checks\\killaura.mcfunction",
   "PreviewInSolutionExplorer": false
 }

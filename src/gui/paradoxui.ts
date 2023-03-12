@@ -5,6 +5,7 @@ import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registr
 import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiDEOP } from "./moderation/uiDeop";
+import { uiNOTIFY } from "./moderation/uiNotify";
 import { uiOP } from "./moderation/uiOp";
 import { uiRULES } from "./moderation/uiRules";
 import { uiUNBAN } from "./moderation/uiUnban";
@@ -59,7 +60,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Ban", "textures/ui/hammer_l");
             moderationui.button("Unban", "textures/ui/check");
             moderationui.button("Rules", "textures/items/book_writable");
-
+            moderationui.button("Chat", "textures/ui/newOffersIcon");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -95,6 +96,41 @@ async function paradoxui(player: Player) {
                     rulesui.show(player).then((rulesResult) => {
                         // due to limitations we can't edit the rules in game.
                         uiRULES(rulesResult, player);
+                    });
+                }
+                if (ModUIresult.selection === 3) {
+                    //show chat ui
+                    const chatui = new ActionFormData();
+                    chatui.title("§4Paradox - Configure Chat§4");
+                    chatui.body("§eSettings related to chat.§e");
+                    chatui.button("Notify", "textures/ui/chat_send");
+                    chatui.button("Ranks", "textures/ui/saleribbon");
+                    chatui.button("Mute", "textures/ui/mute_on");
+                    chatui.button("Unmute", "textures/ui/mute_off");
+                    chatui.show(player).then((chatResult) => {
+                        //4 possible options
+                        if (chatResult.selection === 0) {
+                            //notify ui
+                            const notifyui = new ModalFormData();
+                            let onlineList: string[] = [];
+                            notifyui.title("§4Enable or Disable Notifications!§4");
+                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                            notifyui.dropdown(`\n  §rSelect a player to Enable or Disable Notifications.§r\n\nPlayer's Online\n`, onlineList);
+                            //by default set the current value to disabled.
+                            notifyui.toggle("Notfications", false);
+                            notifyui.show(player).then((notifyResult) => {
+                                uiNOTIFY(notifyResult, onlineList, player);
+                            });
+                        }
+                        if (chatResult.selection === 1) {
+                            //Chat Ranks Logic
+                        }
+                        if (chatResult.selection === 2) {
+                            //Mute logic
+                        }
+                        if (chatResult.selection === 3) {
+                            //UnMute logic
+                        }
                     });
                 }
             });
