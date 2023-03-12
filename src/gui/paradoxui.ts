@@ -6,10 +6,12 @@ import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiDEOP } from "./moderation/uiDeop";
+import { uiMUTE } from "./moderation/uiMute";
 import { uiNOTIFY } from "./moderation/uiNotify";
 import { uiOP } from "./moderation/uiOp";
 import { uiRULES } from "./moderation/uiRules";
 import { uiUNBAN } from "./moderation/uiUnban";
+import { uiUNMUTE } from "./moderation/uiUnmute";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -138,10 +140,28 @@ async function paradoxui(player: Player) {
                             });
                         }
                         if (chatResult.selection === 2) {
-                            //Mute logic
+                            //Mute ui
+                            const muteui = new ModalFormData();
+                            let onlineList: string[] = [];
+                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                            muteui.title("§4Mute a player in chat.§4");
+                            muteui.dropdown(`\n§rSelect a player to mute.§r\n\nPlayer's Online\n`, onlineList);
+                            muteui.textField("Reason", "has been posting discord links.");
+                            muteui.show(player).then((muteResult) => {
+                                uiMUTE(muteResult, onlineList, player);
+                            });
                         }
                         if (chatResult.selection === 3) {
-                            //UnMute logic
+                            //UnMute ui
+                            const unmuteui = new ModalFormData();
+                            let onlineList: string[] = [];
+                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                            unmuteui.title("§4Mute a player in chat.§4");
+                            unmuteui.dropdown(`\n§rSelect a player to unmute.§r\n\nPlayer's Online\n`, onlineList);
+                            unmuteui.textField("Reason", "Has been given permissions to talk in chat.");
+                            unmuteui.show(player).then((muteResult) => {
+                                uiUNMUTE(muteResult, onlineList, player);
+                            });
                         }
                     });
                 }
