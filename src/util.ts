@@ -89,14 +89,17 @@ export async function flag(player: Player, check: string, checkType: string, hac
 export async function banMessage(player: Player) {
     let tags = player.getTags();
 
-    var reason: string;
-    var by: string;
+    let reason: string;
+    let by: string;
 
     // this removes old ban stuff
-    tags.forEach((t) => {
-        if (t.startsWith("By:")) by = t.slice(3);
-        if (t.startsWith("Reason:")) reason = t.slice(7);
-    });
+    for (const tag of tags) {
+        if (tag.startsWith("By:")) {
+            by = tag.slice(3);
+        } else if (tag.startsWith("Reason:")) {
+            reason = tag.slice(7);
+        }
+    }
 
     try {
         await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
