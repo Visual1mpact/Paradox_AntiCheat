@@ -153,14 +153,17 @@ export function setScore(target: Player, objective: string, amount: number, stac
  * @param {Player} player - The player object
  */
 export function getPrefix(player: Player) {
-    let customprefix: string;
-    let sanitize = player.getTags();
-    for (let tag of sanitize) {
+    const tags = player.getTags();
+    let customprefix = null;
+
+    for (const tag of tags) {
         if (tag.startsWith("Prefix:")) {
             customprefix = tag.replace("Prefix:", "");
-            return (config.customcommands.prefix = customprefix);
+            break;
         }
     }
+
+    config.customcommands.prefix = customprefix || config.customcommands.prefix;
     return config.customcommands.prefix;
 }
 
