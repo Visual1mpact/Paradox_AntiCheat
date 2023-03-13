@@ -145,7 +145,7 @@ export default {
         },
         noslowA: {
             enabled: true,
-            speed: 0.20800000429153442,
+            speed: 4.8,
         },
         invalidsprintA: {
             enabled: true,
