@@ -13,6 +13,7 @@ import { uiOP } from "./moderation/uiOp";
 import { uiPREFIX } from "./moderation/uiPrefix";
 import { uiPUNISH } from "./moderation/uiPunish";
 import { uiRULES } from "./moderation/uiRules";
+import { uiTPA } from "./moderation/uiTpa";
 import { uiUNBAN } from "./moderation/uiUnban";
 import { uiUNMUTE } from "./moderation/uiUnmute";
 async function paradoxui(player: Player) {
@@ -70,6 +71,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Chat", "textures/ui/newOffersIcon");
             moderationui.button("Lockdown", "textures/ui/lock_color");
             moderationui.button("Punish", "textures/ui/trash");
+            moderationui.button("Teleport Assistance", "textures/blocks/portal_placeholder");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -199,6 +201,18 @@ async function paradoxui(player: Player) {
                         punishui.show(player).then((punishResult) => {
                             uiPUNISH(punishResult, onlineList, player);
                         });
+                    });
+                }
+                if (ModUIresult.selection === 6) {
+                    const tpaui = new ModalFormData();
+                    tpaui.title("§4Pardox - Teleport Assistance.§4");
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    tpaui.dropdown(`\n§rSelect a player to teleport.§r\n\nPlayer's Online\n`, onlineList);
+                    tpaui.toggle("Teleport To player.", true);
+                    tpaui.toggle("Teleport the player to you.", false);
+                    tpaui.show(player).then((tpaResult) => {
+                        uiTPA(tpaResult, onlineList, player);
                     });
                 }
             });
