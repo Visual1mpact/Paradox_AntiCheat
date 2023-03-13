@@ -145,11 +145,11 @@ export default {
         },
         noslowA: {
             enabled: true,
-            speed: 4.8,
+            speed: 12.84,
         },
         invalidsprintA: {
             enabled: true,
-            speed: 12.84,
+            speed: 0.20800000429153442,
         },
         flyA: {
             enabled: true,
