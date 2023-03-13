@@ -1,4 +1,4 @@
-import { world, system, EntityQueryOptions, GameMode } from "@minecraft/server";
+import { world, system, EntityQueryOptions, GameMode, Vector } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
@@ -59,6 +59,7 @@ function noslowa(id: number) {
         highestBps = calculateMovementBPS([x, y, z]);
         // We compare with a 20% buffer to minimize false flags
         if (highestBps > config.modules.noslowA.speed) {
+            player.setVelocity(Vector.zero);
             flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", highestBps.toFixed(2), true, null);
             highestBps = 0;
         }
