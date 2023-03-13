@@ -149,7 +149,7 @@ export default {
         },
         invalidsprintA: {
             enabled: true,
-            speed: 0.20800000429153442,
+            speed: 8.21,
         },
         flyA: {
             enabled: true,
