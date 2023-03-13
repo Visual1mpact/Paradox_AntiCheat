@@ -1,5 +1,5 @@
 import { Player, world } from "@minecraft/server";
-import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
+import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
 import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
 import { crypto } from "../util";
@@ -11,6 +11,7 @@ import { uiMUTE } from "./moderation/uiMute";
 import { uiNOTIFY } from "./moderation/uiNotify";
 import { uiOP } from "./moderation/uiOp";
 import { uiPREFIX } from "./moderation/uiPrefix";
+import { uiPUNISH } from "./moderation/uiPunish";
 import { uiRULES } from "./moderation/uiRules";
 import { uiUNBAN } from "./moderation/uiUnban";
 import { uiUNMUTE } from "./moderation/uiUnmute";
@@ -68,6 +69,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Rules", "textures/items/book_writable");
             moderationui.button("Chat", "textures/ui/newOffersIcon");
             moderationui.button("Lockdown", "textures/ui/lock_color");
+            moderationui.button("Punish", "textures/ui/trash");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -179,6 +181,24 @@ async function paradoxui(player: Player) {
                     lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
                     lockdownui.show(player).then((lockdownResult) => {
                         uiLOCKDOWN(lockdownResult, player);
+                    });
+                }
+                if (ModUIresult.selection === 5) {
+                    //Punish UI im going to use two forms one as a yes/no message so i can advise what this will do.
+                    const punishprewarnui = new MessageFormData();
+                    punishprewarnui.title("§4Pardox - Punish§4");
+                    punishprewarnui.body("This will allow you to wipe a players ender chest as well as thier invenotry.");
+                    punishprewarnui.button1("Okay");
+                    punishprewarnui.show(player).then((prewarnResult) => {
+                        //show the Punish UI
+                        const punishui = new ModalFormData();
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        punishui.title("§4Pardox - Punish§4");
+                        punishui.dropdown(`\n§rSelect a player to wipe.§r\n\nPlayer's Online\n`, onlineList);
+                        punishui.show(player).then((punishResult) => {
+                            uiPUNISH(punishResult, onlineList, player);
+                        });
                     });
                 }
             });
