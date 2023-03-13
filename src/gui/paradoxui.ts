@@ -10,6 +10,7 @@ import { uiLOCKDOWN } from "./moderation/uiLockdown";
 import { uiMUTE } from "./moderation/uiMute";
 import { uiNOTIFY } from "./moderation/uiNotify";
 import { uiOP } from "./moderation/uiOp";
+import { uiPREFIX } from "./moderation/uiPrefix";
 import { uiRULES } from "./moderation/uiRules";
 import { uiUNBAN } from "./moderation/uiUnban";
 import { uiUNMUTE } from "./moderation/uiUnmute";
@@ -29,6 +30,7 @@ async function paradoxui(player: Player) {
         maingui.button("§0deop§2", "textures/items/ender_pearl");
         maingui.button("§0Moderation§2", "textures/items/book_normal");
         maingui.button("§0Modules§2", "textures/blocks/command_block");
+        maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
     }
     maingui.show(player).then((result) => {
         if (result.selection === 0) {
@@ -179,6 +181,23 @@ async function paradoxui(player: Player) {
                         uiLOCKDOWN(lockdownResult, player);
                     });
                 }
+            });
+        }
+        if (result.selection === 3) {
+            //Modules ui
+        }
+        if (result.selection === 4) {
+            //Prefix ui
+            const prefixui = new ModalFormData();
+            let onlineList: string[] = [];
+            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+            prefixui.title("§4Pardox - Change command prefix§4");
+            prefixui.dropdown(`\nChanges prefix used for commands\n\nPlayer's Online\n`, onlineList);
+            prefixui.textField(`\nPrefix\n`, `Put new prefix here`, null);
+            prefixui.toggle(`\nReset Prefix`, false);
+            prefixui.show(player).then((prefixResult) => {
+                //Prefix logic
+                uiPREFIX(prefixResult, onlineList, player);
             });
         }
 
