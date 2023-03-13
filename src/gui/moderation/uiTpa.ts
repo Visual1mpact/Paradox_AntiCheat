@@ -5,8 +5,8 @@ import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/regi
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export function uiTPA(banResult: ModalFormResponse, onlineList: string[], player: Player) {
-    const [value, toggleToTarget, toggleTargetTo] = banResult.formValues;
+export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player: Player) {
+    const [value, toggleToTarget, toggleTargetTo] = tpaResult.formValues;
     let member: Player = undefined;
     for (let pl of world.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {

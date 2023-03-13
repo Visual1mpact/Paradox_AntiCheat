@@ -6,6 +6,7 @@ import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiDEOP } from "./moderation/uiDeop";
+import { uiKICK } from "./moderation/uiKick";
 import { uiLOCKDOWN } from "./moderation/uiLockdown";
 import { uiMUTE } from "./moderation/uiMute";
 import { uiNOTIFY } from "./moderation/uiNotify";
@@ -72,6 +73,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Lockdown", "textures/ui/lock_color");
             moderationui.button("Punish", "textures/ui/trash");
             moderationui.button("Teleport Assistance", "textures/blocks/portal_placeholder");
+            moderationui.button("Kick a player.", "textures/items/gold_boots");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -213,6 +215,18 @@ async function paradoxui(player: Player) {
                     tpaui.toggle("Teleport the player to you.", false);
                     tpaui.show(player).then((tpaResult) => {
                         uiTPA(tpaResult, onlineList, player);
+                    });
+                }
+                if (ModUIresult.selection === 7) {
+                    const kickui = new ModalFormData();
+                    kickui.title("§4Pardox - Kick a player.§4");
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    kickui.dropdown(`\n§rSelect a player to Kick.§r\n\nPlayer's Online\n`, onlineList);
+                    kickui.textField("Reason.", "Hacking!");
+
+                    kickui.show(player).then((kickResult) => {
+                        uiKICK(kickResult, onlineList, player);
                     });
                 }
             });
