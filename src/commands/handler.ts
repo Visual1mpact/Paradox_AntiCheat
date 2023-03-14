@@ -192,7 +192,7 @@ export function commandHandler(player: Player, message: BeforeChatEvent) {
     if (config.debug) console.warn(`${new Date()} | "${player.name}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
 
     message.cancel = true;
-    message.targets = [];
+    message.setTargets([]);
     message.sendToTargets = true;
 
     if (!(commandName in commandDefinitions)) return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
