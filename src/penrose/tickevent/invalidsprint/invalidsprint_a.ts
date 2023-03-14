@@ -1,4 +1,4 @@
-import { world, MinecraftEffectTypes, system, Vector } from "@minecraft/server";
+import { world, MinecraftEffectTypes, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";

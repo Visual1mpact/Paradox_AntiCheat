@@ -1,4 +1,4 @@
-import { world, system, EntityQueryOptions, GameMode, Vector } from "@minecraft/server";
+import { world, system, EntityQueryOptions, GameMode } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
