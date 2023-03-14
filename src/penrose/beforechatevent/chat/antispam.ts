@@ -6,11 +6,13 @@ import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js"
 const chatSpamLimit = 3; // The maximum number of messages a player can send in the spamTime frame.
 const spamTime = 2 * 1000; // The time frame during which the player's messages will be counted.
 const offenseCount = 3; // Total strikes until you are kicked out.
+const strikeReset = 60 * 1000; // The time frame until the strike is reduced
 
 interface ChatRecord {
     count: number;
     lastTime: number;
     offense: number;
+    lastOffenseTime: number;
 }
 
 const chatRecords = new Map<string, ChatRecord>();
@@ -24,6 +26,7 @@ function antispam(msg: BeforeChatEvent) {
         world.events.beforeChat.unsubscribe(antispam);
         return;
     }
+
     // Store player object
     const player = msg.sender;
 
@@ -33,7 +36,7 @@ function antispam(msg: BeforeChatEvent) {
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
         const now = Date.now();
-        const chatRecord = chatRecords.get(player.name) ?? { count: 0, lastTime: now, offense: 0 };
+        const chatRecord = chatRecords.get(player.name) ?? { count: 0, lastTime: now, offense: 0, lastOffenseTime: now };
 
         if (now - chatRecord.lastTime > spamTime) {
             // Reset count if time frame has expired
@@ -50,6 +53,7 @@ function antispam(msg: BeforeChatEvent) {
             msg.cancel = true;
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
             chatRecord.offense++;
+            chatRecord.lastOffenseTime = now;
         } else if (chatRecord.offense >= offenseCount) {
             chatRecords.delete(player.name);
             try {
@@ -60,6 +64,9 @@ function antispam(msg: BeforeChatEvent) {
                 kickablePlayers.add(player);
                 player.triggerEvent("paradox:kick");
             }
+        } else if (chatRecord.offense > 0 && now - chatRecord.lastOffenseTime >= strikeReset) {
+            chatRecord.offense--;
+            chatRecord.lastOffenseTime = now;
         }
     }
 }
