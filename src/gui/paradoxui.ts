@@ -6,6 +6,7 @@ import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiDEOP } from "./moderation/uiDeop";
+import { uiEWIPE } from "./moderation/uiEwipe";
 import { uiKICK } from "./moderation/uiKick";
 import { uiLOCKDOWN } from "./moderation/uiLockdown";
 import { uiMUTE } from "./moderation/uiMute";
@@ -74,6 +75,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Punish", "textures/ui/trash");
             moderationui.button("Teleport Assistance", "textures/blocks/portal_placeholder");
             moderationui.button("Kick a player.", "textures/items/gold_boots");
+            moderationui.button("Wipe an Enderchest", "textures/blocks/ender_chest_front");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -227,6 +229,16 @@ async function paradoxui(player: Player) {
 
                     kickui.show(player).then((kickResult) => {
                         uiKICK(kickResult, onlineList, player);
+                    });
+                }
+                if (ModUIresult.selection === 8) {
+                    const ewipeui = new ModalFormData();
+                    ewipeui.title("§4Pardox - Wipe a players Enderchest.§4");
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    ewipeui.dropdown(`\n§rSelect a player to wipe thier Enderchest.§r\n\nPlayer's Online\n`, onlineList);
+                    ewipeui.show(player).then((ewipeResult) => {
+                        uiEWIPE(ewipeResult, onlineList, player);
                     });
                 }
             });
