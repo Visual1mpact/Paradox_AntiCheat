@@ -1,10 +1,19 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, world } from "@minecraft/server";
 import { sendMsgToPlayer } from "../../../util.js";
-import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const spamList = new WeakMap<Player, { lastSendTime: number; lastMessage: string; spamCounter: number }>();
+const chatSpamLimit = 3; // The maximum number of messages a player can send in the spamTime frame.
+const spamTime = 2 * 1000; // The time frame during which the player's messages will be counted.
+const offenseCount = 3; // Total strikes until you are kicked out.
+
+interface ChatRecord {
+    count: number;
+    lastTime: number;
+    offense: number;
+}
+
+const chatRecords = new Map<string, ChatRecord>();
 
 function antispam(msg: BeforeChatEvent) {
     // Get Dynamic Property
@@ -17,51 +26,31 @@ function antispam(msg: BeforeChatEvent) {
     }
     // Store player object
     const player = msg.sender;
-    const message = msg.message;
 
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        // gets current time
-        const currentTime = Date.now();
+        const now = Date.now();
+        const chatRecord = chatRecords.get(player.name) ?? { count: 0, lastTime: now, offense: 0 };
 
-        // gets spam data (and sets one if doesn't exist)
-        if (!spamList.has(player)) spamList.set(player, { lastMessage: message, lastSendTime: -Infinity, spamCounter: 0 });
-        const spamData = spamList.get(player);
-
-        let check = true;
-
-        // resets spam data
-        if (currentTime - spamData.lastSendTime >= config.modules.antispam.cooldown * 50) {
-            check = false;
-            spamData.lastMessage = message;
-            spamData.lastSendTime = currentTime;
-            spamData.spamCounter = 0;
+        if (now - chatRecord.lastTime > spamTime) {
+            // Reset count if time frame has expired
+            chatRecord.count = 0;
+            chatRecord.lastTime = now;
         }
 
-        // Specific to Horion
-        if (message.includes("the best minecraft bedrock utility mod")) {
-            spamData.spamCounter = Infinity;
-        }
+        chatRecord.count++;
+        chatRecord.lastTime = now;
 
-        if (check) {
-            // check if the player sends the same message with the previous one, otherwise resets the spam counter
-            if (spamData.lastMessage === message) {
-                spamData.spamCounter++;
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Do not spam the chat!`);
-                msg.cancel = true;
-            }
-            // check if the player sends a message during cooldown
-            else {
-                msg.cancel = true;
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
-            }
-        }
+        chatRecords.set(player.name, chatRecord);
 
-        // check if the spam counter goes above the threshold
-        if (spamData.spamCounter > 12) {
+        if (chatRecord.count > chatSpamLimit) {
+            msg.cancel = true;
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
+        } else if (chatRecord.offense >= offenseCount) {
+            chatRecords.delete(player.name);
             try {
                 player.addTag("Reason:Spamming");
                 player.addTag("By:Paradox");
