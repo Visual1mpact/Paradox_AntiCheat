@@ -49,6 +49,7 @@ function antispam(msg: BeforeChatEvent) {
         if (chatRecord.count > chatSpamLimit) {
             msg.cancel = true;
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
+            chatRecord.offense++;
         } else if (chatRecord.offense >= offenseCount) {
             chatRecords.delete(player.name);
             try {
