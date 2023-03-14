@@ -56,7 +56,6 @@ function invalidsprinta(id: number) {
         highestBps = calculateMovementBPS([x, y, z]);
         // We compare with a 20% buffer to minimize false flags
         if (highestBps > config.modules.invalidsprintA.speed && player.getEffect(MinecraftEffectTypes.blindness)) {
-            player.setVelocity(Vector.zero);
             flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", highestBps.toFixed(2), true, null);
             highestBps = 0;
         }
