@@ -29,12 +29,15 @@ function reacha(object: BlockPlaceEvent) {
     // Player coordinates
     const { x: x1, y: y1, z: z1 } = player.location;
 
-    // Calculate the distance between the player and the block being placed
-    const reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
+    // Calculate the distance squared between the player and the block being placed
+    const dx = x - x1;
+    const dy = y - y1;
+    const dz = z - z1;
+    const distanceSquared = dx * dx + dy * dy + dz * dz;
 
-    if (reach > config.modules.reachA.reach) {
+    if (distanceSquared > config.modules.reachA.reach * config.modules.reachA.reach) {
         dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
-        // flag(player, "Reach", "A", "Placement", false, false "reach", reach.toFixed(3), false, false);
+        // flag(player, "Reach", "A", "Placement", false, false "reach", Math.sqrt(distanceSquared).toFixed(3), false, false);
     }
 }
 

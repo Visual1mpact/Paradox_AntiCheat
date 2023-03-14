@@ -32,10 +32,13 @@ function reachb(object: BlockBreakEvent) {
     // Get the properties of the block being destroyed
     const blockID = brokenBlockPermutation.clone();
 
-    // Calculate the distance between the player and the block being destroyed
-    const reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
+    // Calculate the squared distance between the player and the block being destroyed
+    const dx = x - x1;
+    const dy = y - y1;
+    const dz = z - z1;
+    const distanceSquared = dx * dx + dy * dy + dz * dz;
 
-    if (reach > config.modules.reachB.reach) {
+    if (distanceSquared > config.modules.reachB.reach * config.modules.reachB.reach) {
         block.setPermutation(blockID);
         // flag(player, "Reach", "B", "Break", false, false, "reach", reach.toFixed(3), false, false);
     }
