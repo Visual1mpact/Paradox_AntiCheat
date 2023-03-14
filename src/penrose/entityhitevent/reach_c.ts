@@ -39,11 +39,13 @@ function reachc(object: EntityHitEvent) {
     // Player coordinates
     const { x: x1, y: y1, z: z1 } = entity.location;
 
-    // Calculate the distance between the player and the entity being hit
-    const reach = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2 + (z - z1) ** 2);
+    const dx = x - x1;
+    const dy = y - y1;
+    const dz = z - z1;
+    const distanceSquared = dx * dx + dy * dy + dz * dz;
 
-    if (reach > config.modules.reachC.reach) {
-        flag(entity, "Reach", "C", "Attack", null, null, "reach", reach.toFixed(3), false, null);
+    if (distanceSquared > config.modules.reachC.reach * config.modules.reachC.reach) {
+        flag(entity, "Reach", "C", "Attack", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
     }
 }
 

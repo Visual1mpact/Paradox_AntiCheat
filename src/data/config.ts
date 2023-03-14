@@ -103,7 +103,6 @@ export default {
         },
         antispam: {
             enabled: true,
-            cooldown: 40,
         },
         crasherA: {
             enabled: true,
@@ -149,7 +148,7 @@ export default {
         },
         invalidsprintA: {
             enabled: true,
-            speed: 0.20800000429153442,
+            speed: 8.21,
         },
         flyA: {
             enabled: true,
