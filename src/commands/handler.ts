@@ -77,7 +77,6 @@ import { hotbar } from "./utility/hotbar.js";
 import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
 import { badpackets2 } from "./settings/badpackets2.js";
-import { crasherB } from "./settings/crasherb.js";
 import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
@@ -126,7 +125,6 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         spammerd: spammerD,
         antispam: antispam,
         crashera: crasherA,
-        crasherb: crasherB,
         namespoofa: namespoofA,
         namespoofb: namespoofB,
         reacha: reachA,

@@ -43,7 +43,6 @@ export default {
         spammerd: true,
         antispam: true,
         crashera: true,
-        crasherb: true,
         namespoofa: true,
         namespoofb: true,
         reacha: true,
@@ -105,9 +104,6 @@ export default {
             enabled: true,
         },
         crasherA: {
-            enabled: true,
-        },
-        crasherB: {
             enabled: true,
         },
         namespoofA: {

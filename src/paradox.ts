@@ -57,8 +57,6 @@ import { ReachC } from "./penrose/entityhitevent/reach_c.js";
 import { KillAura } from "./penrose/entityhitevent/killaura.js";
 // Import WorldInitialize Events
 import { Registry } from "./penrose/worldinitializeevent/registry.js";
-// Import EntityCreate Events
-import { CrasherB } from "./penrose/entitycreateevent/crasher_b.js";
 // Import System Events
 import { WatchDog } from "./penrose/systemevent/watchdog.js";
 
@@ -143,9 +141,6 @@ IllegalItemsB();
 // EntityHit Events
 ReachC();
 KillAura();
-
-// EntityCreate Events
-CrasherB();
 
 // System Events
 WatchDog();
