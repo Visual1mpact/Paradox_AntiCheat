@@ -1,6 +1,7 @@
 // Basic AntiFall might not be needed but here anyway and might be useful to someone else.
 //This assumes that the hack keeps the players health at 100.
 import { world, Player, EntityHitEvent } from "@minecraft/server";
+import config from "../../data/config";
 
 function killaura(obj: EntityHitEvent) {
     // Properties from class
@@ -14,9 +15,9 @@ function killaura(obj: EntityHitEvent) {
     //console.log("entity attacking: " + entity.nameTag + "entity attacked: " + hitEntity.nameTag);
     //attackers location
     const { x, y, z } = entity.location;
-    const { x: vx, y: vy, z: vz } = entity.velocity;
-    world.say(`Pos: ${x} ${y} ${z} `);
-    world.say(`Vel: ${vx} ${vy} ${vz}`);
+    const { x: vx, y: vy, z: vz } = entity.getVelocity();
+    world.sendMessage(`Pos: ${x} ${y} ${z} `);
+    world.sendMessage(`Vel: ${vx} ${vy} ${vz}`);
     if (entity.hasTag("attack") && vx == 0 && vz == 0) {
         //flag player!
     }
@@ -25,5 +26,7 @@ function killaura(obj: EntityHitEvent) {
 //  }
 
 export const KillAura = () => {
-    world.events.entityHit.subscribe(killaura);
+    if (config.debug) {
+        world.events.entityHit.subscribe(killaura);
+    }
 };
