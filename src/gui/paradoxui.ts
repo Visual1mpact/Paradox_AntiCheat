@@ -5,6 +5,7 @@ import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registr
 import { crypto } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
+import { uiCLEARCHAT } from "./moderation/uiClearchat";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiEWIPE } from "./moderation/uiEwipe";
 import { uiKICK } from "./moderation/uiKick";
@@ -198,6 +199,7 @@ async function paradoxui(player: Player) {
                     chatui.button("Ranks", "textures/ui/saleribbon");
                     chatui.button("Mute", "textures/ui/mute_on");
                     chatui.button("Unmute", "textures/ui/mute_off");
+                    chatui.button("Clear Chat", "textures/ui/cancel");
                     chatui.show(player).then((chatResult) => {
                         //4 possible options
                         if (chatResult.selection === 0) {
@@ -249,6 +251,22 @@ async function paradoxui(player: Player) {
                             unmuteui.textField("Reason", "Has been given permissions to talk in chat.");
                             unmuteui.show(player).then((muteResult) => {
                                 uiUNMUTE(muteResult, onlineList, player);
+                            });
+                        }
+                        if (chatResult.selection === 4) {
+                            //Clear Chat ui
+                            const clearchatui = new MessageFormData();
+                            clearchatui.title("§4Clear Chat.§4");
+                            clearchatui.body("Are you sure you want to clear chat?");
+                            clearchatui.button1("Yes");
+                            clearchatui.button2("No");
+                            clearchatui.show(player).then((clearchatResult) => {
+                                if (clearchatResult.selection === 1) {
+                                    uiCLEARCHAT(player);
+                                }
+                                if (clearchatResult.selection === 0) {
+                                    paradoxui(player);
+                                }
                             });
                         }
                     });
