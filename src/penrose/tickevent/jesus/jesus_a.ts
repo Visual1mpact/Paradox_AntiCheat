@@ -1,4 +1,4 @@
-import { world, Location, BlockLocation, Block, Player, Dimension, system } from "@minecraft/server";
+import { world, Block, Player, Dimension, system, Vector } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 let BlockAtPlayer0: Block;
@@ -9,7 +9,7 @@ const _player = {
 };
 
 function timer(player: Player, dimension: Dimension, x: number, y: number, z: number) {
-    player.teleport(new Location(x, y - 2, z), dimension, 0, 0);
+    player.teleport(new Vector(x, y - 2, z), dimension, 0, 0);
     _player.count = 0;
 }
 
@@ -37,9 +37,9 @@ function jesusa(id: number) {
         const dimension = player.dimension;
         try {
             // Below Below player
-            BlockAtPlayer0 = player.dimension.getBlock(new BlockLocation(x, y - 1, z));
+            BlockAtPlayer0 = player.dimension.getBlock(new Vector(x, y - 1, z));
             // Below player
-            BlockAtPlayer1 = player.dimension.getBlock(new BlockLocation(x, y, z));
+            BlockAtPlayer1 = player.dimension.getBlock(new Vector(x, y, z));
         } catch (error) {}
 
         if (
