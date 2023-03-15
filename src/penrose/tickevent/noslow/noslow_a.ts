@@ -40,7 +40,7 @@ function noslowa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (noSlowBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
 
@@ -72,7 +72,7 @@ function noslowa(id: number) {
  * if needed to do so.
  */
 export function NoSlowA() {
-    const noSlowAId = system.runSchedule(() => {
+    const noSlowAId = system.runInterval(() => {
         noslowa(noSlowAId);
     }, 10);
 }

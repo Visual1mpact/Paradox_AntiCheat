@@ -8,7 +8,7 @@ async function bedrockvalidate(id: number) {
 
     // Unsubscribe if disabled in-game
     if (bedrockValidateBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -49,7 +49,7 @@ async function bedrockvalidate(id: number) {
  * if needed to do so.
  */
 export function BedrockValidate() {
-    const bedrockValidateId = system.runSchedule(() => {
+    const bedrockValidateId = system.runInterval(() => {
         bedrockvalidate(bedrockValidateId);
     }, 20);
 }

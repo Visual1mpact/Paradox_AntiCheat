@@ -9,7 +9,7 @@ function crashera(id: number) {
 
     // Unsubscribe if disabled in-game
     if (crasherABoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -35,7 +35,7 @@ function crashera(id: number) {
  * if needed to do so.
  */
 export function CrasherA() {
-    const crasherAId = system.runSchedule(() => {
+    const crasherAId = system.runInterval(() => {
         crashera(crasherAId);
     });
 }

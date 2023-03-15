@@ -41,6 +41,6 @@ function serverban() {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const ServerBan = system.runSchedule(() => {
+export const ServerBan = system.runInterval(() => {
     serverban();
 }, 40);

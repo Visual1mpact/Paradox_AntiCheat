@@ -56,7 +56,7 @@ function illegalitemsa(id: number) {
                 player.removeTag("illegalitemsA");
             }
         }
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
 
@@ -310,7 +310,7 @@ function illegalitemsa(id: number) {
  * if needed to do so.
  */
 export function IllegalItemsA() {
-    const illegalItemsAId = system.runSchedule(() => {
+    const illegalItemsAId = system.runInterval(() => {
         illegalitemsa(illegalItemsAId);
     });
 }

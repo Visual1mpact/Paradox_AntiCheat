@@ -8,7 +8,7 @@ function badpackets2(id: number) {
 
     // Unsubscribe if disabled in-game
     if (badPackets2Boolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -27,7 +27,7 @@ function badpackets2(id: number) {
  * if needed to do so.
  */
 export function BadPackets2() {
-    const badPackets2Id = system.runSchedule(() => {
+    const badPackets2Id = system.runInterval(() => {
         badpackets2(badPackets2Id);
     });
 }

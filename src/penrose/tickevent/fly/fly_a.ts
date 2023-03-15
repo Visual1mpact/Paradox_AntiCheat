@@ -10,7 +10,7 @@ function flya(id: number) {
 
     // Unsubscribe if disabled in-game
     if (flyABoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
 
@@ -118,7 +118,7 @@ function flya(id: number) {
  * if needed to do so.
  */
 export function FlyA() {
-    const flyAId = system.runSchedule(() => {
+    const flyAId = system.runInterval(() => {
         flya(flyAId);
     }, 20);
 }

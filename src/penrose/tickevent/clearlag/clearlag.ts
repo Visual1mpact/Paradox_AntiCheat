@@ -50,7 +50,7 @@ function executionItem(id: number) {
             entity.kill();
         }
     }
-    return system.clearRunSchedule(id);
+    return system.clearRun(id);
 }
 
 function executionEntity(id: number) {
@@ -67,7 +67,7 @@ function executionEntity(id: number) {
         kickablePlayers.add(entity);
         entity.triggerEvent("paradox:kick");
     }
-    return system.clearRunSchedule(id);
+    return system.clearRun(id);
 }
 
 function clearlag(id: number) {
@@ -76,7 +76,7 @@ function clearlag(id: number) {
 
     // Unsubscribe if disabled in-game
     if (clearLagBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
 
@@ -140,10 +140,10 @@ function clearlag(id: number) {
          *
          * Clear entities and items
          */
-        const executionItemId = system.runSchedule(() => {
+        const executionItemId = system.runInterval(() => {
             executionItem(executionItemId);
         });
-        const executionEntityId = system.runSchedule(() => {
+        const executionEntityId = system.runInterval(() => {
             executionEntity(executionEntityId);
         });
         // Notify that it has been cleared
@@ -162,7 +162,7 @@ function clearlag(id: number) {
  * if needed to do so.
  */
 export function ClearLag() {
-    const clearLagId = system.runSchedule(() => {
+    const clearLagId = system.runInterval(() => {
         clearlag(clearLagId);
     }, 20);
 }

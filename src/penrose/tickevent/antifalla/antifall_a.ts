@@ -8,7 +8,7 @@ function antifalla(id: number) {
 
     // Unsubscribe if disabled in-game
     if (antifallABoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     //exclude players who are in creative.
@@ -62,7 +62,7 @@ function antifalla(id: number) {
  * if needed to do so.
  */
 export function AntiFallA() {
-    const antiFallAId = system.runSchedule(() => {
+    const antiFallAId = system.runInterval(() => {
         antifalla(antiFallAId);
     }, 20);
 }

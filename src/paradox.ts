@@ -107,7 +107,7 @@ AntiFallA();
 /**
  * Freeze Check
  */
-system.runSchedule(() => {
+system.runInterval(() => {
     let hastag: boolean;
     // run as each player
     for (let player of world.getPlayers()) {

@@ -11,7 +11,7 @@ async function showrules(id: number) {
 
     // Unsubscribe if disabled in-game
     if (showrulesBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
 
@@ -42,7 +42,7 @@ async function showrules(id: number) {
                     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Thank you for accepting the rules ${player.name}.`);
                     // This needs to be monitored with multiplayer
                     // It may cause disruptions with other players who get this form?
-                    return system.clearRunSchedule(id);
+                    return system.clearRun(id);
                 }
 
                 // Button 2 (Declined)
@@ -60,13 +60,13 @@ async function showrules(id: number) {
 
                     // This needs to be monitored with multiplayer
                     // It may cause disruptions with other players who get this form?
-                    return system.clearRunSchedule(id);
+                    return system.clearRun(id);
                 }
 
                 if (r.canceled) {
                     // This needs to be monitored with multiplayer
                     // It may cause disruptions with other players who get this form?
-                    return system.clearRunSchedule(id);
+                    return system.clearRun(id);
                 }
             })
             .catch((e) => {
@@ -76,7 +76,7 @@ async function showrules(id: number) {
 }
 
 export function ShowRules() {
-    const showrulesId = system.runSchedule(() => {
+    const showrulesId = system.runInterval(() => {
         showrules(showrulesId);
     }, 200);
 }

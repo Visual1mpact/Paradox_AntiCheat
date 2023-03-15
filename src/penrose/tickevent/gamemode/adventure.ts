@@ -10,7 +10,7 @@ async function adventure(id: number) {
 
     // Unsubscribe if disabled in-game
     if (adventureGMBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     const filter = new Object() as EntityQueryOptions;
@@ -56,7 +56,7 @@ async function adventure(id: number) {
  * if needed to do so.
  */
 export function Adventure() {
-    const adventureId = system.runSchedule(() => {
+    const adventureId = system.runInterval(() => {
         adventure(adventureId);
     });
 }

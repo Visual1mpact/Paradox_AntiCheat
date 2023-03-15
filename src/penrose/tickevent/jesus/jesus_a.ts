@@ -19,7 +19,7 @@ function jesusa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (jesusaBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -66,7 +66,7 @@ function jesusa(id: number) {
  * if needed to do so.
  */
 export function JesusA() {
-    const jesusAId = system.runSchedule(() => {
+    const jesusAId = system.runInterval(() => {
         jesusa(jesusAId);
     }, 20);
 }

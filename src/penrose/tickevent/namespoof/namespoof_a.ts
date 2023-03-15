@@ -9,7 +9,7 @@ function namespoofa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (nameSpoofBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -37,7 +37,7 @@ function namespoofa(id: number) {
  * if needed to do so.
  */
 export function NamespoofA() {
-    const nameSpoofAId = system.runSchedule(() => {
+    const nameSpoofAId = system.runInterval(() => {
         namespoofa(nameSpoofAId);
     }, 40);
 }

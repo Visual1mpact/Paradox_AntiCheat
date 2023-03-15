@@ -10,7 +10,7 @@ async function survival(id: number) {
 
     // Unsubscribe if disabled in-game
     if (survivalGMBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     const filter = new Object() as EntityQueryOptions;
@@ -56,7 +56,7 @@ async function survival(id: number) {
  * if needed to do so.
  */
 export function Survival() {
-    const survivalId = system.runSchedule(() => {
+    const survivalId = system.runInterval(() => {
         survival(survivalId);
     });
 }

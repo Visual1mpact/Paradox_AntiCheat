@@ -42,7 +42,7 @@ async function Freeze(id: number) {
             player.removeTag("freeze");
             await player.runCommandAsync(`effect @s clear`);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.nameTag}.`);
-            system.clearRunSchedule(id);
+            system.clearRun(id);
             return;
         }
         // We just need this in case they log off and log back on
@@ -114,13 +114,13 @@ async function Freeze(id: number) {
         player.teleport(new Location(backx, backy, backz), world.getDimension(realmIDString), 0, 0);
         player.removeTag("freezeactive");
         world.events.playerLeave.unsubscribe(() => StopTickFreeze(id));
-        system.clearRunSchedule(id);
+        system.clearRun(id);
     }
 }
 
 // If they log off then unsubscribe Freeze
 function StopTickFreeze(id: number) {
-    system.clearRunSchedule(id);
+    system.clearRun(id);
 }
 
 // Where the magic begins
@@ -136,7 +136,7 @@ function TickFreeze(data: Player) {
          * to cancel the execution of this scheduled run
          * if needed to do so.
          */
-        const freezeId = system.runSchedule(() => {
+        const freezeId = system.runInterval(() => {
             Freeze(freezeId);
         });
         world.events.playerLeave.subscribe(() => StopTickFreeze(freezeId));

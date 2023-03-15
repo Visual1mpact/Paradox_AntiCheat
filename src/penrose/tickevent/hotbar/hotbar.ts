@@ -8,7 +8,7 @@ async function hotbar(id: number) {
 
     // Unsubscribe if disabled in-game
     if (hotbarBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     let hotbarMessage: string;
@@ -27,7 +27,7 @@ async function hotbar(id: number) {
  * if needed to do so.
  */
 export function Hotbar() {
-    const hotbarId = system.runSchedule(() => {
+    const hotbarId = system.runInterval(() => {
         hotbar(hotbarId);
     });
 }

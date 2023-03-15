@@ -40,7 +40,7 @@ function invalidsprinta(id: number) {
 
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -69,7 +69,7 @@ function invalidsprinta(id: number) {
  * if needed to do so.
  */
 export function InvalidSprintA() {
-    const invalidSprintAId = system.runSchedule(() => {
+    const invalidSprintAId = system.runInterval(() => {
         invalidsprinta(invalidSprintAId);
     }, 10);
 }

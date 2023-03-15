@@ -10,7 +10,7 @@ function illegalitemsd(id: number) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsDBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     const filter = new Object() as EntityQueryOptions;
@@ -60,7 +60,7 @@ function illegalitemsd(id: number) {
  * if needed to do so.
  */
 export function IllegalItemsD() {
-    const illegalItemsDId = system.runSchedule(() => {
+    const illegalItemsDId = system.runInterval(() => {
         illegalitemsd(illegalItemsDId);
     });
 }

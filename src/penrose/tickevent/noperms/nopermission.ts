@@ -48,6 +48,6 @@ function noperms() {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const NoPerms = system.runSchedule(() => {
+export const NoPerms = system.runInterval(() => {
     noperms();
 });

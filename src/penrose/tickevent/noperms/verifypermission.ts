@@ -40,6 +40,6 @@ function verifypermission() {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const VerifyPermission = system.runSchedule(() => {
+export const VerifyPermission = system.runInterval(() => {
     verifypermission();
 });

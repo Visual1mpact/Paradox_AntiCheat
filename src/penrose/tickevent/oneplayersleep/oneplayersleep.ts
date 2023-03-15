@@ -8,7 +8,7 @@ async function queueSleep(player: Player, id: number) {
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
         await player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
     }
-    system.clearRunSchedule(id);
+    system.clearRun(id);
 }
 
 function ops(opsID: number) {
@@ -17,14 +17,14 @@ function ops(opsID: number) {
 
     // Unsubscribe if disabled in-game
     if (opsBoolean === false) {
-        system.clearRunSchedule(opsID);
+        system.clearRun(opsID);
         return;
     }
     const filter = new Object() as EntityQueryOptions;
     filter.tags = ["sleeping"];
     const filterPlayers = [...world.getPlayers(filter)];
     if (filterPlayers.length) {
-        const id = system.runSchedule(() => {
+        const id = system.runInterval(() => {
             queueSleep(filterPlayers[0], id);
         }, 40);
     }
@@ -36,7 +36,7 @@ function ops(opsID: number) {
  * if needed to do so.
  */
 export function OPS() {
-    const opsId = system.runSchedule(() => {
+    const opsId = system.runInterval(() => {
         ops(opsId);
     });
 }

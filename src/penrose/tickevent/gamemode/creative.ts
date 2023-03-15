@@ -10,7 +10,7 @@ async function creative(id: number) {
 
     // Unsubscribe if disabled in-game
     if (creativeGMBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     const filter = new Object() as EntityQueryOptions;
@@ -56,7 +56,7 @@ async function creative(id: number) {
  * if needed to do so.
  */
 export function Creative() {
-    const creativeId = system.runSchedule(() => {
+    const creativeId = system.runInterval(() => {
         creative(creativeId);
     });
 }

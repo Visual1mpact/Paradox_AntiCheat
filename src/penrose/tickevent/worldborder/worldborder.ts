@@ -30,7 +30,7 @@ function worldborder(id: number) {
 
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     for (const player of world.getPlayers()) {
@@ -225,7 +225,7 @@ function worldborder(id: number) {
  * if needed to do so.
  */
 export function WorldBorder() {
-    const worldborderId = system.runSchedule(() => {
+    const worldborderId = system.runInterval(() => {
         worldborder(worldborderId);
     });
 }

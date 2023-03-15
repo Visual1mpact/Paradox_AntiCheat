@@ -37,6 +37,6 @@ async function vanish() {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const Vanish = system.runSchedule(() => {
+export const Vanish = system.runInterval(() => {
     vanish();
 });

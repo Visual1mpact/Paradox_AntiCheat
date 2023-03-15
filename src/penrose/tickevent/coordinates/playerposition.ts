@@ -17,6 +17,6 @@ async function playerposition() {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export const PlayerPosition = system.runSchedule(() => {
+export const PlayerPosition = system.runInterval(() => {
     playerposition();
 }, 20);

@@ -9,7 +9,7 @@ async function antiknockbacka(id: number) {
 
     // Unsubscribe if disabled in-game
     if (antikbBoolean === false) {
-        system.clearRunSchedule(id);
+        system.clearRun(id);
         return;
     }
     // run as each player
@@ -59,7 +59,7 @@ async function antiknockbacka(id: number) {
  * if needed to do so.
  */
 export function AntiKnockbackA() {
-    const antiKnockbackAId = system.runSchedule(() => {
+    const antiKnockbackAId = system.runInterval(() => {
         antiknockbacka(antiKnockbackAId);
     }, 40);
 }
