@@ -1,6 +1,5 @@
 import {
     world,
-    BlockLocation,
     MinecraftItemTypes,
     ItemStack,
     Items,
@@ -13,6 +12,7 @@ import {
     BlockInventoryComponent,
     BlockInventoryComponentContainer,
     ItemEnchantsComponent,
+    Vector,
 } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
@@ -111,11 +111,11 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     // Check if place item is salvageable
     if (salvageable[block.typeId] && block.typeId in ignoreContainerPlace === false) {
         // Block from specified location
-        const blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
+        const blockLoc = dimension.getBlock(new Vector(x, y, z));
         // Get a copy of this blocks permutation
         const blockPerm = blockLoc.permutation;
         // Get the direction property
-        blockPerm.getProperty(BlockProperties.direction);
+        blockPerm.getProperty(BlockProperties.get("direction").id);
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
@@ -256,7 +256,6 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 const verifiedItemName = inventory_item.nameTag;
                 const newNameTag = titleCase(inventory_item.typeId.replace("minecraft:", ""));
                 const actualItemName = new ItemStack(itemType);
-                actualItemName.data = inventory_item.data;
                 actualItemName.amount = inventory_item.amount;
                 actualItemName.nameTag = newNameTag;
 
@@ -319,25 +318,10 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 /**
                  * Old salvage system if new is disabled
                  */
-                // Check if item found inside the container is salvageable
-                const uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-                // Check if data exceeds vanilla data
-                if (salvageable[inventory_item.typeId] && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) !== -1 && salvageable[inventory_item.typeId].data < inventory_item.data) {
-                    // Reset item to data type of 0
-                    try {
-                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount));
-                    } catch (error) {}
-                    continue;
-                } else if (salvageable[inventory_item.typeId].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) === -1) {
-                    // Reset item to data type of equal data if they do not match
-                    try {
-                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount, salvageable[inventory_item.typeId].data));
-                    } catch (error) {}
-                    continue;
-                } else if (salvageable[inventory_item.typeId]) {
+                if (salvageable[inventory_item.typeId]) {
                     // Reset item to data type of equal data because we take no chances
                     try {
-                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount, inventory_item.data));
+                        inventory.setItem(i, new ItemStack(itemType, inventory_item.amount));
                     } catch (error) {}
                     continue;
                 }
