@@ -16,6 +16,9 @@ import { uiPREFIX } from "./moderation/uiPrefix";
 import { uiPUNISH } from "./moderation/uiPunish";
 import { uiRULES } from "./moderation/uiRules";
 import { uiTPA } from "./moderation/uiTpa";
+import { uiTPR } from "./moderation/uiTpr";
+import { uiTPRSEND } from "./moderation/uiTprSend";
+//import { uiTPR } from "./moderation/uiTpr";
 import { uiUNBAN } from "./moderation/uiUnban";
 import { uiUNMUTE } from "./moderation/uiUnmute";
 async function paradoxui(player: Player) {
@@ -29,12 +32,14 @@ async function paradoxui(player: Player) {
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e");
     if (uniqueId !== player.name) {
         maingui.button("§0op§2", "textures/ui/op");
+        maingui.button("§0TPR§2", "textures/ui/op");
     } else {
         maingui.button("§0op§2", "textures/ui/op");
         maingui.button("§0deop§2", "textures/items/ender_pearl");
         maingui.button("§0Moderation§2", "textures/items/book_normal");
         maingui.button("§0Modules§2", "textures/blocks/command_block");
         maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
+        maingui.button("§0TPR§2", "textures/ui/op");
     }
     maingui.show(player).then((result) => {
         if (result.selection === 0) {
@@ -53,15 +58,86 @@ async function paradoxui(player: Player) {
             });
         }
         if (result.selection === 1) {
-            // New window for deop
-            const deopgui = new ModalFormData();
-            let onlineList: string[] = [];
-            deopgui.title("§4DEOP§4");
-            onlineList = Array.from(world.getPlayers(), (player) => player.name);
-            deopgui.dropdown(`\n§rSelect a player to remove access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
-            deopgui.show(player).then((opResult) => {
-                uiDEOP(opResult, onlineList, player);
-            });
+            if (uniqueId !== player.name) {
+                //TPR ui
+                const tprui = new ActionFormData();
+                //let onlineList: string[] = [];
+                // onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                tprui.title("§4Pardox - TPR Menu§4");
+                tprui.button("My Requests.", "textures/ui/mail_icon");
+                tprui.button("Send A Request.", "textures/ui/send_icon");
+                tprui.show(player).then((tprmenuResult) => {
+                    if (tprmenuResult.selection === 0) {
+                        //get the current requests and show them in a ui.
+                        let requester: string;
+
+                        try {
+                            let playerscurrenttags = player.getTags();
+                            let rq: string;
+                            playerscurrenttags.forEach((t) => {
+                                if (t.startsWith("Requester:")) {
+                                    rq = t;
+                                }
+                            });
+                            //from the tag get the requster as a player so we can pass this to the function
+                            let pl: string;
+                            pl = rq.slice(10);
+                            requester = pl;
+                        } catch (error) {
+                            // This will throw if the player has no tags that match.
+                            //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+                        }
+                        const tprinboxui = new MessageFormData();
+                        tprinboxui.title("Paradox Your TP Request.");
+                        tprinboxui.body(requester + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request.");
+                        tprinboxui.button1("Yes");
+                        tprinboxui.button2("No");
+                        tprinboxui.show(player).then((tprInboxResult) => {
+                            if (tprInboxResult.selection === 1) {
+                                uiTPR(requester, player);
+                            }
+                            //beacuse for some reason the no button is 0 yet its the second control
+                            if (tprInboxResult.selection === 0) {
+                                //get the players tags so we can loop through them to find the requester
+                                let playertags = player.getTags();
+                                //store the requester tag
+                                let tagtoremove: string;
+                                playertags.forEach((t) => {
+                                    if (t.startsWith("Requester:")) {
+                                        tagtoremove = t;
+                                    }
+                                });
+                                // remove the tag
+                                player.removeTag(tagtoremove);
+                                player.removeTag("RequestPending");
+                            }
+                        });
+                    }
+
+                    if (tprmenuResult.selection === 1) {
+                        //show the ui to send a request.
+                        const tprsendrequestxui = new ModalFormData();
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        tprsendrequestxui.title("§4Pardox - Send TP Request§4");
+                        tprsendrequestxui.dropdown(`\nSelect a player to send a request.\n\nPlayer's Online\n`, onlineList);
+                        tprsendrequestxui.show(player).then((tprSendRequestResult) => {
+                            //Send Logic
+                            uiTPRSEND(tprSendRequestResult, onlineList, player);
+                        });
+                    }
+                });
+            } else {
+                // New window for deop
+                const deopgui = new ModalFormData();
+                let onlineList: string[] = [];
+                deopgui.title("§4DEOP§4");
+                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                deopgui.dropdown(`\n§rSelect a player to remove access to Paradox.§r\n\nPlayer's Online\n`, onlineList);
+                deopgui.show(player).then((opResult) => {
+                    uiDEOP(opResult, onlineList, player);
+                });
+            }
         }
         if (result.selection === 2) {
             //new window for Moderation
@@ -258,6 +334,76 @@ async function paradoxui(player: Player) {
             prefixui.show(player).then((prefixResult) => {
                 //Prefix logic
                 uiPREFIX(prefixResult, onlineList, player);
+            });
+        }
+        if (result.selection === 5) {
+            //TPR ui
+            const tprui = new ActionFormData();
+            //let onlineList: string[] = [];
+            // onlineList = Array.from(world.getPlayers(), (player) => player.name);
+            tprui.title("§4Pardox - TPR Menu§4");
+            tprui.button("My Requests.", "textures/ui/mail_icon");
+            tprui.button("Send A Request.", "textures/ui/send_icon");
+            tprui.show(player).then((tprmenuResult) => {
+                if (tprmenuResult.selection === 0) {
+                    //get the current requests and show them in a ui.
+                    let requester: string;
+
+                    try {
+                        let playerscurrenttags = player.getTags();
+                        let rq: string;
+                        playerscurrenttags.forEach((t) => {
+                            if (t.startsWith("Requester:")) {
+                                rq = t;
+                            }
+                        });
+                        //from the tag get the requster as a player so we can pass this to the function
+                        let pl: string;
+                        pl = rq.slice(10);
+                        requester = pl;
+                    } catch (error) {
+                        // This will throw if the player has no tags that match.
+                        //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+                    }
+                    const tprinboxui = new MessageFormData();
+                    tprinboxui.title("Paradox Your TP Request.");
+                    tprinboxui.body(requester + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request.");
+                    tprinboxui.button1("Yes");
+                    tprinboxui.button2("No");
+                    tprinboxui.show(player).then((tprInboxResult) => {
+                        if (tprInboxResult.selection === 1) {
+                            uiTPR(requester, player);
+                        }
+                        //beacuse for some reason the no button is 0 yet its the second control
+                        if (tprInboxResult.selection === 0) {
+                            //get the players tags so we can loop through them to find the requester
+                            let playertags = player.getTags();
+                            //store the requester tag
+                            let tagtoremove: string;
+                            playertags.forEach((t) => {
+                                if (t.startsWith("Requester:")) {
+                                    tagtoremove = t;
+                                }
+                            });
+                            // remove the tag
+                            player.removeTag(tagtoremove);
+                            player.removeTag("RequestPending");
+                        }
+                    });
+                }
+
+                if (tprmenuResult.selection === 1) {
+                    //show the ui to send a request.
+                    const tprsendrequestxui = new ModalFormData();
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    tprsendrequestxui.title("§4Pardox - Send TP Request§4");
+                    tprsendrequestxui.dropdown(`\nSelect a player to send a request.\n\nPlayer's Online\n`, onlineList);
+                    tprsendrequestxui.show(player).then((tprSendRequestResult) => {
+                        //Send Logic
+                        uiTPRSEND(tprSendRequestResult, onlineList, player);
+                    });
+                }
             });
         }
 
