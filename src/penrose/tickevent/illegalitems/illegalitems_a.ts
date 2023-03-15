@@ -188,7 +188,6 @@ function illegalitemsa(id: number) {
                     verifiedItemName = inventory_item.nameTag,
                     newNameTag = titleCase(inventory_item.typeId.replace("minecraft:", "")),
                     actualItemName = new ItemStack(itemType);
-                actualItemName.data = inventory_item.data;
                 actualItemName.amount = inventory_item.amount;
                 actualItemName.nameTag = newNameTag;
 
@@ -248,41 +247,9 @@ function illegalitemsa(id: number) {
                 /**
                  * Old salvage system if new is disabled
                  */
-                let loreData: string[],
-                    // If player has salvageable item we save it
-                    uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-                // Check if data exceeds vanilla data
-                if (salvageable[inventory_item.typeId] && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) !== -1 && salvageable[inventory_item.typeId].data < inventory_item.data) {
-                    // Reset item to data type of 0
-                    if (!illegalLoresBoolean) {
-                        loreData = inventory_item.getLore();
-                        try {
-                            const newItem = new ItemStack(itemType, inventory_item.amount);
-                            newItem.setLore(loreData);
-                            container.setItem(i, newItem);
-                        } catch (error) {}
-                        continue;
-                    }
-                    try {
-                        container.setItem(i, new ItemStack(itemType, inventory_item.amount));
-                    } catch (error) {}
-                    continue;
-                } else if (salvageable[inventory_item.typeId] && salvageable[inventory_item.typeId].data !== inventory_item.data && uniqueItems.indexOf(salvageable[inventory_item.typeId].name) === -1) {
-                    if (!illegalLoresBoolean) {
-                        loreData = inventory_item.getLore();
-                        try {
-                            const newItem = new ItemStack(itemType, inventory_item.amount);
-                            newItem.setLore(loreData);
-                            container.setItem(i, newItem);
-                        } catch (error) {}
-                        continue;
-                    }
-                    // Reset item to data type of equal data if they do not match
-                    try {
-                        container.setItem(i, new ItemStack(itemType, inventory_item.amount, salvageable[inventory_item.typeId].data));
-                    } catch (error) {}
-                    continue;
-                } else if (salvageable[inventory_item.typeId]) {
+                let loreData: string[];
+                // If player has salvageable item we save it
+                if (salvageable[inventory_item.typeId]) {
                     if (!illegalLoresBoolean) {
                         loreData = inventory_item.getLore();
                         try {
@@ -294,7 +261,7 @@ function illegalitemsa(id: number) {
                     }
                     // Reset item to data type of equal data because we take no chances
                     try {
-                        container.setItem(i, new ItemStack(itemType, inventory_item.amount, inventory_item.data));
+                        container.setItem(i, new ItemStack(itemType, inventory_item.amount));
                     } catch (error) {}
                     continue;
                 }
