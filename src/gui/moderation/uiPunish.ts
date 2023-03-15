@@ -1,10 +1,9 @@
-import { EntityInventoryComponent, ItemStack, MinecraftItemTypes, Player, world } from "@minecraft/server";
+import { EntityInventoryComponent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 export async function uiPUNISH(punishResult, onlineList, player) {
     const [value] = punishResult.formValues;
-    const empty = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
     let member: Player = undefined;
     for (let pl of world.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
@@ -50,7 +49,7 @@ export async function uiPUNISH(punishResult, onlineList, player) {
             continue;
         }
         try {
-            inventory.setItem(i, empty);
+            inventory.setItem(i, undefined);
         } catch {}
     }
     // Notify staff and player that punishment has taken place

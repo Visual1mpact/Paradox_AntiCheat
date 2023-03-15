@@ -1,11 +1,9 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, ItemStack, MinecraftItemTypes, Player, BeforeChatEvent, EntityInventoryComponent } from "@minecraft/server";
+import { world, Player, BeforeChatEvent, EntityInventoryComponent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-
-const empty = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function punishHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -101,7 +99,7 @@ export async function punish(message: BeforeChatEvent, args: string[]) {
             continue;
         }
         try {
-            inventory.setItem(i, empty);
+            inventory.setItem(i, undefined);
         } catch {}
     }
     // Notify staff and player that punishment has taken place

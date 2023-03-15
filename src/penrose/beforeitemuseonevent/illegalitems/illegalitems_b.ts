@@ -1,4 +1,4 @@
-import { world, Player, ItemStack, Items, MinecraftItemTypes, MinecraftEnchantmentTypes, Enchantment, BeforeItemUseOnEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
+import { world, Player, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, BeforeItemUseOnEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import { flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
 import config from "../../../data/config.js";
@@ -8,8 +8,6 @@ import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
-
-const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }) {
     if (!enchData) {
@@ -76,7 +74,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
     if (antiShulkerBoolean && item.typeId in shulkerItems) {
         object.cancel = true;
         const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-        invContainer.container.setItem(hand, emptyItem);
+        invContainer.container.setItem(hand, undefined);
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${item.typeId.replace("minecraft:", "")} from ${source.nameTag}.`);
         sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
         return;
@@ -88,7 +86,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
         object.cancel = true;
         flag(source, "IllegalItems", "B", "Exploit", item.typeId, item.amount, null, null, false, null);
         const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-        invContainer.container.setItem(hand, emptyItem);
+        invContainer.container.setItem(hand, undefined);
         // Ban
         return rip(source, item, null);
     }
@@ -101,7 +99,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
         // Item stacks over max allowed and we remove
         try {
             const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-            invContainer.container.setItem(hand, emptyItem);
+            invContainer.container.setItem(hand, undefined);
             sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${source.nameTag}§r detected with stacked items greater than x${maxStack} for '${itemId}'.`);
             sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Stacked item '${itemId}' cannot exceed x${maxStack}!`);
         } catch (error) {}
@@ -118,7 +116,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
         object.cancel = true;
         try {
             const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-            invContainer.container.setItem(hand, emptyItem);
+            invContainer.container.setItem(hand, undefined);
         } catch {}
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${item.typeId.replace("minecraft:", "")} with lore from ${source.nameTag}.`);
         sendMsgToPlayer(source, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
@@ -144,7 +142,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
                     flag(source, "IllegalItems", "B", "Exploit", item.typeId, item.amount, null, null, false, null);
                     // Remove this item immediately
                     const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                    invContainer.container.setItem(hand, emptyItem);
+                    invContainer.container.setItem(hand, undefined);
                     sendMsg("@a[tag=notify]", [
                         `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
                         `§r§4[§6Paradox§4]§r Removed §4[§f${item.typeId.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`,
@@ -159,7 +157,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
                     flag(source, "IllegalItems", "B", "Exploit", item.typeId, item.amount, null, null, false, null);
                     // Remove this item immediately
                     const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                    invContainer.container.setItem(hand, emptyItem);
+                    invContainer.container.setItem(hand, undefined);
                     sendMsg("@a[tag=notify]", [
                         `§r§4[§6Paradox§4]§r §4[§f${source.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${hand}§r §6=>§r §4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
                         `§r§4[§6Paradox§4]§r Removed §4[§f${item.typeId.replace("minecraft:", "")}§4]§r from ${source.nameTag}.`,

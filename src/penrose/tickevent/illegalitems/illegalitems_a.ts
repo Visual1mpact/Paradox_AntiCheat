@@ -1,4 +1,4 @@
-import { world, ItemStack, MinecraftItemTypes, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer, system } from "@minecraft/server";
+import { world, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer, system } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
@@ -8,8 +8,6 @@ import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
-
-const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 const storage = new Map();
 
@@ -100,7 +98,7 @@ function illegalitemsa(id: number) {
             if (inventory_item.typeId in illegalitems) {
                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                 try {
-                    container.setItem(i, emptyItem);
+                    container.setItem(i, undefined);
                 } catch {}
                 // Ban
                 return rip(player, inventory_item, null);
@@ -118,14 +116,14 @@ function illegalitemsa(id: number) {
                     return rip(player, inventory_item, null);
                 }
                 try {
-                    container.setItem(i, emptyItem);
+                    container.setItem(i, undefined);
                 } catch {}
                 continue;
             }
             // Check items for illegal lores
             if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
-                    container.setItem(i, emptyItem);
+                    container.setItem(i, undefined);
                 } catch {}
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.typeId.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
@@ -151,7 +149,7 @@ function illegalitemsa(id: number) {
                                 flag(player, "IllegalItems", "A", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                                 // Remove this item immediately
                                 try {
-                                    container.setItem(i, emptyItem);
+                                    container.setItem(i, undefined);
                                 } catch {}
                                 sendMsg("@a[tag=notify]", [
                                     `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.typeId.replace("minecraft:", "")}§4]§r §6Enchanted: §4${id}=${level}§r`,
@@ -172,7 +170,7 @@ function illegalitemsa(id: number) {
             const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
             if (antiShulkerBoolean && inventory_item.typeId in shulkerItems) {
                 try {
-                    container.setItem(i, emptyItem);
+                    container.setItem(i, undefined);
                 } catch {}
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${inventory_item.typeId.replace("minecraft:", "")} from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);

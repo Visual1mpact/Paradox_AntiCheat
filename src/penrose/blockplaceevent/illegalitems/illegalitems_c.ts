@@ -1,19 +1,4 @@
-import {
-    world,
-    MinecraftItemTypes,
-    ItemStack,
-    Items,
-    MinecraftEnchantmentTypes,
-    BlockProperties,
-    Enchantment,
-    Player,
-    Block,
-    BlockPlaceEvent,
-    BlockInventoryComponent,
-    BlockInventoryComponentContainer,
-    ItemEnchantsComponent,
-    Vector,
-} from "@minecraft/server";
+import { world, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment, Player, Block, BlockPlaceEvent, BlockInventoryComponent, BlockInventoryComponentContainer, ItemEnchantsComponent, Vector } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, toCamelCase, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
@@ -24,8 +9,6 @@ import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
-
-const emptyItem = new ItemStack(MinecraftItemTypes.acaciaBoat, 0);
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }, block: Block) {
     if (!enchData && !block) {
@@ -154,7 +137,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
             // Check if item found inside the container is illegal
             if (inventory_item.typeId in illegalitems) {
                 flag(player, "IllegalItems", "C", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
-                inventory.setItem(i, emptyItem);
+                inventory.setItem(i, undefined);
                 return rip(player, inventory_item, null, null);
             }
             // Check if item found inside container exceeds allowed stacks
@@ -169,14 +152,14 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                     return rip(player, inventory_item, null, null);
                 }
                 try {
-                    inventory.setItem(i, emptyItem);
+                    inventory.setItem(i, undefined);
                 } catch (error) {}
                 continue;
             }
             // Check items for illegal lores
             if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(inventory_item.getLore()))) {
                 try {
-                    inventory.setItem(i, emptyItem);
+                    inventory.setItem(i, undefined);
                 } catch {}
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.type.id.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
@@ -199,7 +182,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                             flag(player, "IllegalItems", "C", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                             // Remove this item immediately
                             try {
-                                inventory.setItem(i, emptyItem);
+                                inventory.setItem(i, undefined);
                             } catch {}
                             sendMsg("@a[tag=notify]", [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.type.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.typeId.replace(
@@ -217,7 +200,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                             flag(player, "IllegalItems", "C", "Exploit", inventory_item.typeId, inventory_item.amount, null, null, false, null);
                             // Remove this item immediately
                             try {
-                                inventory.setItem(i, emptyItem);
+                                inventory.setItem(i, undefined);
                             } catch {}
                             sendMsg("@a[tag=notify]", [
                                 `§r§4[§6Paradox§4]§r §4[§f${player.nameTag}§4]§r §6=>§r §4[§f${block.type.id.replace("minecraft:", "")}§4]§r §6=>§r §4[§fSlot§4]§r ${i}§r §6=>§r §4[§f${inventory_item.typeId.replace(
@@ -243,7 +226,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} placed a nested chest at X=${x.toFixed(0)}, Y=${y.toFixed(0)}, Z=${z.toFixed(0)}. Chest has been cleared!`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Nested chests are not allowed. This chest has been cleared!`);
                 // Clear this container from the world
-                inventory.setItem(i, emptyItem);
+                inventory.setItem(i, undefined);
                 continue;
             }
 
