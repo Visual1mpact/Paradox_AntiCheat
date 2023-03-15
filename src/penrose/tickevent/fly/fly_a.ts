@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, Location, BlockLocation, Block, GameMode, system } from "@minecraft/server";
+import { world, EntityQueryOptions, Block, GameMode, system, Vector } from "@minecraft/server";
 import { getScore, flag, setScore } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
@@ -32,28 +32,28 @@ function flya(id: number) {
         // Fun trick here so that we don't false flag /ability @s mayfly true users
         // It works because hacks add y vel to the player to stay in the air, and it stays between 1-3 whereas mayfly will have a steady score of 0
         // Will still false flag sometimes, but that's why we have !fly
-        const xyVelocity = Math.hypot(player.velocity.x, player.velocity.y).toFixed(4);
-        const zyVelocity = Math.hypot(player.velocity.z, player.velocity.y).toFixed(4);
+        const xyVelocity = Math.hypot(player.getVelocity().x, player.getVelocity().y).toFixed(4);
+        const zyVelocity = Math.hypot(player.getVelocity().z, player.getVelocity().y).toFixed(4);
 
         // let Block: Block, Block1: Block, Block2: Block;
         let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
         try {
             // We want to know if the blocks below the player is air or not
 
-            //Block = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y, player.location.z));
-            //Block1 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-            //Block2 = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 2, player.location.z));
-            CenBlockX = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-            PosBlockX = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z));
-            NegBlockX = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z));
-            CenBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-            PosBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z + 1));
-            NegBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z - 1));
+            //Block = player.dimension.getBlock(new Vector(player.location.x, player.location.y, player.location.z));
+            //Block1 = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
+            //Block2 = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 2, player.location.z));
+            CenBlockX = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
+            PosBlockX = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z));
+            NegBlockX = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z));
+            CenBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
+            PosBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z + 1));
+            NegBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z - 1));
             // if the player is in any corner of the block we move the block back to the center before hand and test for air
-            CenBlockXTopLeft = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z + 1));
-            CenBlockXTopRight = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z - 1));
-            CenBlockXBottomLeft = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z + 1));
-            CenBlockXBottomRight = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z - 1));
+            CenBlockXTopLeft = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z + 1));
+            CenBlockXTopRight = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z - 1));
+            CenBlockXBottomLeft = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z + 1));
+            CenBlockXBottomRight = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z - 1));
         } catch (error) {}
 
         let oldX: number, oldY: number, oldZ: number;
@@ -99,7 +99,7 @@ function flya(id: number) {
                         // Use try/catch since variables for cords could return undefined if player is loading in
                         // and they meet the conditions. An example is them flagging this, logging off, then logging
                         // back on again.
-                        player.teleport(new Location(oldX, oldY, oldZ), player.dimension, 0, 0);
+                        player.teleport(new Vector(oldX, oldY, oldZ), player.dimension, 0, 0);
                     } catch (error) {}
                     flag(player, "Fly", "A", "Exploit", null, null, null, null, false, null);
                 }
