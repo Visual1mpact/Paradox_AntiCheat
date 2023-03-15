@@ -182,7 +182,6 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
             const verifiedItemName = item.nameTag;
             const newNameTag = titleCase(item.typeId.replace("minecraft:", ""));
             const actualItemName = new ItemStack(itemType);
-            actualItemName.data = item.data;
             actualItemName.amount = item.amount;
             actualItemName.nameTag = newNameTag;
 
@@ -247,11 +246,8 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
     } else {
         // Used to contain data about Lores
         let loreData;
-        // Check if item is salvageable and save it
-        const uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
-        // Check if data exceeds vanilla data
-        if (salvageable[item.typeId] && uniqueItems.indexOf(salvageable[item.typeId].name) !== -1 && salvageable[item.typeId].data < item.data) {
-            // Reset item to data type of 0
+        if (salvageable[item.typeId]) {
+            // Reset item to data type of equal data because we take no chances
             if (!illegalLoresBoolean) {
                 loreData = item.getLore();
                 try {
@@ -265,40 +261,6 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
             try {
                 const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
                 invContainer.container.setItem(hand, new ItemStack(itemType, item.amount));
-            } catch (error) {}
-            return;
-        } else if (salvageable[item.typeId] && salvageable[item.typeId].data !== item.data && uniqueItems.indexOf(salvageable[item.typeId].name) === -1) {
-            // Reset item to data type of equal data if they do not match
-            if (!illegalLoresBoolean) {
-                loreData = item.getLore();
-                try {
-                    const newItem = new ItemStack(itemType, item.amount, salvageable[item.typeId].data);
-                    newItem.setLore(loreData);
-                    const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                    invContainer.container.setItem(hand, newItem);
-                } catch (error) {}
-                return;
-            }
-            try {
-                const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                invContainer.container.setItem(hand, new ItemStack(itemType, item.amount, salvageable[item.typeId].data));
-            } catch (error) {}
-            return;
-        } else if (salvageable[item.typeId]) {
-            // Reset item to data type of equal data because we take no chances
-            if (!illegalLoresBoolean) {
-                loreData = item.getLore();
-                try {
-                    const newItem = new ItemStack(itemType, item.amount, item.data);
-                    newItem.setLore(loreData);
-                    const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                    invContainer.container.setItem(hand, newItem);
-                } catch (error) {}
-                return;
-            }
-            try {
-                const invContainer = source.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                invContainer.container.setItem(hand, new ItemStack(itemType, item.amount, item.data));
             } catch (error) {}
             return;
         }
