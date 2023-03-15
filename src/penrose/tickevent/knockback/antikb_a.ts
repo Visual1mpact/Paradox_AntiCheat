@@ -39,12 +39,12 @@ async function antiknockbacka(id: number) {
         }
 
         // antikb/a = checks for anti knockback and flags it
-        if (Number((player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3)) <= config.modules.antikbA.magnitude) {
+        if (Number((player.getVelocity().y + player.getVelocity().x + player.getVelocity().z).toFixed(3)) <= config.modules.antikbA.magnitude) {
             if (player.hasTag("attacked") && !player.hasTag("dead") && !player.hasTag("gliding") && !player.hasTag("levitating") && !player.hasTag("flying")) {
                 try {
                     // Make sure Anti Knockback is turned on
                     await player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);
-                    flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.velocity.y + player.velocity.x + player.velocity.z).toFixed(3), true, null);
+                    flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.getVelocity().y + player.getVelocity().x + player.getVelocity().z).toFixed(3), true, null);
                     setScore(player, "velocityvl", 1, true);
                 } catch (error) {}
             }
