@@ -1,4 +1,4 @@
-import { world, Block, EntityQueryOptions, GameMode, system, BlockLocation } from "@minecraft/server";
+import { world, Block, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
@@ -22,19 +22,19 @@ function antifalla(id: number) {
         if (uniqueId === player.name) {
             return;
         }
-        const vy = player.velocity.y;
+        const vy = player.getVelocity().y;
         let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
-        CenBlockX = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-        PosBlockX = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z));
-        NegBlockX = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z));
-        CenBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z));
-        PosBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z + 1));
-        NegBlockZ = player.dimension.getBlock(new BlockLocation(player.location.x, player.location.y - 1, player.location.z - 1));
+        CenBlockX = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
+        PosBlockX = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z));
+        NegBlockX = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z));
+        CenBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
+        PosBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z + 1));
+        NegBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z - 1));
         // if the player is in any corner of the block we move the block back to the center before hand and test for air
-        CenBlockXTopLeft = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z + 1));
-        CenBlockXTopRight = player.dimension.getBlock(new BlockLocation(player.location.x - 1, player.location.y - 1, player.location.z - 1));
-        CenBlockXBottomLeft = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z + 1));
-        CenBlockXBottomRight = player.dimension.getBlock(new BlockLocation(player.location.x + 1, player.location.y - 1, player.location.z - 1));
+        CenBlockXTopLeft = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z + 1));
+        CenBlockXTopRight = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z - 1));
+        CenBlockXBottomLeft = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z + 1));
+        CenBlockXBottomRight = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z - 1));
         //we know that the NoFall hack keeps the players Velocity set to 0 at all times we can check for this while the player has air blocks and are not standing on a block or its edges etc.
         if (
             CenBlockX.typeId == "minecraft:air" &&
