@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 
-import { BeforeChatEvent, EntityInventoryComponent, Player, world, MinecraftItemTypes, ItemStack } from "@minecraft/server";
+import { BeforeChatEvent, Player, world, MinecraftItemTypes } from "@minecraft/server";
 import config from "../../data/config.js";
 import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
@@ -108,13 +108,17 @@ export function give(message: BeforeChatEvent, args: string[]) {
              */
             args.splice(3, 1, "0");
         }
+
         const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
         if (maxStack >= Number(args[2])) {
+            player.runCommandAsync(`give ${member.name} ${args[1]} ${Number(args[2])} ${Number(args[3])}`);
+            /* This is commented out because in 1.19.70 they removed the data parameter from ItemStack
             const invContainer = member.getComponent("inventory") as EntityInventoryComponent;
 
             const inv = invContainer.container;
             const item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
             inv.addItem(item);
+            */
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} was given ${args[1]} x${args[2]}.`);
         } else {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This stack is too high! ${maxStack} is the max. Try again.`);
