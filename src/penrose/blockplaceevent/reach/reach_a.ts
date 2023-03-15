@@ -1,4 +1,4 @@
-import { world, BlockLocation, MinecraftBlockTypes, BlockPlaceEvent } from "@minecraft/server";
+import { world, MinecraftBlockTypes, BlockPlaceEvent, Vector } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 // import { flag } from "../../../util.js";
@@ -36,7 +36,7 @@ function reacha(object: BlockPlaceEvent) {
     const distanceSquared = dx * dx + dy * dy + dz * dz;
 
     if (distanceSquared > config.modules.reachA.reach * config.modules.reachA.reach) {
-        dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air);
+        dimension.getBlock(new Vector(x, y, z)).setType(MinecraftBlockTypes.air);
         // flag(player, "Reach", "A", "Placement", false, false "reach", Math.sqrt(distanceSquared).toFixed(3), false, false);
     }
 }
