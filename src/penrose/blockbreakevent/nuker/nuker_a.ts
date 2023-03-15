@@ -1,4 +1,4 @@
-import { world, BlockLocation, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "@minecraft/server";
+import { world, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment, Vector } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
@@ -60,7 +60,7 @@ async function nukera(object: BlockBreakEvent) {
     const blockID = brokenBlockPermutation.clone();
 
     // Block dimension and location for permutation
-    const blockLoc = dimension.getBlock(new BlockLocation(x, y, z));
+    const blockLoc = dimension.getBlock(new Vector(x, y, z));
 
     // Ignore vegetation
     const vegetation = [
