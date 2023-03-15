@@ -1,4 +1,4 @@
-import { world, Location, Player, system } from "@minecraft/server";
+import { world, Player, system, Vector } from "@minecraft/server";
 import { getScore, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
@@ -59,7 +59,7 @@ async function Freeze(id: number) {
         posy = Math.floor(245);
         posz = Math.floor(posz);
         // TP them at the new location in the overworld
-        player.teleport(new Location(posx, posy, posz), world.getDimension("overworld"), 0, 0);
+        player.teleport(new Vector(posx, posy, posz), world.getDimension("overworld"), 0, 0);
         // Create prison around player
         try {
             await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier 0 hollow`);
@@ -83,7 +83,7 @@ async function Freeze(id: number) {
     if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
         // If they move then tp them back
         try {
-            player.teleport(new Location(posx1, posy1, posz1), world.getDimension("overworld"), 0, 0);
+            player.teleport(new Vector(posx1, posy1, posz1), world.getDimension("overworld"), 0, 0);
         } catch (error) {}
     }
 
@@ -111,7 +111,7 @@ async function Freeze(id: number) {
         // Release from prison
         await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air 0 hollow`);
         // Return them back to original coordinates
-        player.teleport(new Location(backx, backy, backz), world.getDimension(realmIDString), 0, 0);
+        player.teleport(new Vector(backx, backy, backz), world.getDimension(realmIDString), 0, 0);
         player.removeTag("freezeactive");
         world.events.playerLeave.unsubscribe(() => StopTickFreeze(id));
         system.clearRun(id);
