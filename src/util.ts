@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Location, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, Player, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -52,9 +52,9 @@ export async function flag(player: Player, check: string, checkType: string, hac
     if (message) message.cancel = true;
 
     if (shouldTP && check !== "Crasher") {
-        player.teleport(new Location(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
+        player.teleport(new Vector(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
     } else if (shouldTP && check === "Crasher") {
-        player.teleport(new Location(30000000, 30000000, 30000000), player.dimension, 0, 0);
+        player.teleport(new Vector(30000000, 30000000, 30000000), player.dimension, 0, 0);
     }
 
     try {
