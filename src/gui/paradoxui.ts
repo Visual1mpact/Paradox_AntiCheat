@@ -8,6 +8,7 @@ import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiCLEARCHAT } from "./moderation/uiClearchat";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiEWIPE } from "./moderation/uiEwipe";
+import { uiFREEZE } from "./moderation/uiFreeze";
 import { uiKICK } from "./moderation/uiKick";
 import { uiLOCKDOWN } from "./moderation/uiLockdown";
 import { uiMUTE } from "./moderation/uiMute";
@@ -153,6 +154,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Teleport Assistance", "textures/blocks/portal_placeholder");
             moderationui.button("Kick a player.", "textures/items/gold_boots");
             moderationui.button("Wipe an Enderchest", "textures/blocks/ender_chest_front");
+            moderationui.button("Freeze a player", "textures/ui/frozen_effect");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -333,6 +335,16 @@ async function paradoxui(player: Player) {
                     ewipeui.dropdown(`\n§rSelect a player to wipe thier Enderchest.§r\n\nPlayer's Online\n`, onlineList);
                     ewipeui.show(player).then((ewipeResult) => {
                         uiEWIPE(ewipeResult, onlineList, player);
+                    });
+                }
+                if (ModUIresult.selection === 9) {
+                    const freezeui = new ModalFormData();
+                    freezeui.title("§4Pardox - Freeze a player.§4");
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    freezeui.dropdown(`\n§rSelect a player to freeze.§r\n\nPlayer's Online\n`, onlineList);
+                    freezeui.show(player).then((freezeResult) => {
+                        uiFREEZE(freezeResult, onlineList, player);
                     });
                 }
             });
