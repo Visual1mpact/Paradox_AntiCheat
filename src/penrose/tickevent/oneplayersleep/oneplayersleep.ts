@@ -2,8 +2,7 @@ import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 async function queueSleep(player: Player, id: number) {
-    await player.runCommandAsync(`time set 126553000`);
-    await player.runCommandAsync(`weather clear`);
+    await Promise.all([player.runCommandAsync(`time set 126553000`), player.runCommandAsync(`weather clear`)]);
     const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
     if (hotbarBoolean === undefined || hotbarBoolean === false) {
         await player.runCommandAsync(`title @a[tag=!vanish] actionbar Good Morning`);
@@ -20,12 +19,12 @@ function ops(opsID: number) {
         system.clearRun(opsID);
         return;
     }
-    const filter = new Object() as EntityQueryOptions;
-    filter.tags = ["sleeping"];
-    const filterPlayers = [...world.getPlayers(filter)];
-    if (filterPlayers.length) {
+
+    const filter: EntityQueryOptions = { tags: ["sleeping"] };
+
+    for (const player of world.getPlayers(filter)) {
         const id = system.runInterval(() => {
-            queueSleep(filterPlayers[0], id);
+            queueSleep(player, id);
         }, 40);
     }
 }
