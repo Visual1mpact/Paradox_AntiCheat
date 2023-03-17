@@ -11,10 +11,7 @@ function verifypermission() {
         // Check for hash/salt and validate password
         const hash = player.getDynamicProperty("hash");
         const salt = player.getDynamicProperty("salt");
-        let encode: string;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
+        const encode = crypto?.(salt, config?.modules?.encryption?.password);
         if (encode === hash) {
             // Make sure their unique ID exists in case of a reload
             if (dynamicPropertyRegistry.has(player.scoreboard.id) === false) {

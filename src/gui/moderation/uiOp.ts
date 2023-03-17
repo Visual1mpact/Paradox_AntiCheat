@@ -17,12 +17,12 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             }
             // If no hash then create one
             if (hash === undefined) {
-                encode = crypto(salt, config.modules.encryption.password);
+                encode = crypto?.(salt, config?.modules?.encryption?.password);
                 player.setDynamicProperty("hash", encode);
                 dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
                 hash = player.getDynamicProperty("hash");
             } else {
-                encode = crypto(salt, config.modules.encryption.password);
+                encode = crypto?.(salt, config?.modules?.encryption?.password);
             }
             if (hash === encode) {
                 sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);

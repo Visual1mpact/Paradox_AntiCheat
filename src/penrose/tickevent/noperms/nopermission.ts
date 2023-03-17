@@ -24,10 +24,7 @@ function noperms() {
         // Check for hash/salt and validate password
         const hash = entity.getDynamicProperty("hash");
         const salt = entity.getDynamicProperty("salt");
-        let encode: string;
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
+        const encode = crypto?.(salt, config?.modules?.encryption?.password);
         if (entity.hasTag("paradoxOpped")) {
             entity.removeTag("paradoxOpped");
         }

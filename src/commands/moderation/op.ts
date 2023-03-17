@@ -50,14 +50,12 @@ export function op(message: BeforeChatEvent, args: string[]) {
     }
     // If no hash then create one
     if (hash === undefined && args[0] === config.modules.encryption.password) {
-        encode = crypto(salt, config.modules.encryption.password);
+        encode = crypto?.(salt, config?.modules?.encryption?.password);
         dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
         player.setDynamicProperty("hash", encode);
         hash = player.getDynamicProperty("hash");
     } else {
-        try {
-            encode = crypto(salt, config.modules.encryption.password);
-        } catch (error) {}
+        encode = crypto?.(salt, config?.modules?.encryption?.password);
     }
     // Make sure the user has permissions to run the command
     if (hash === undefined || (hash !== encode && args[0] !== config.modules.encryption.password)) {
