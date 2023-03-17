@@ -374,6 +374,17 @@ async function paradoxui(player: Player) {
         }
         if (result.selection === 3) {
             //Modules ui
+            const modulesui = new ActionFormData();
+            modulesui.title("§4Pardox - Modules§4");
+            modulesui.button("Config Gamemodes", "textures/items/totem");
+            modulesui.show(player).then((ModulesUIResult) => {
+                if (ModulesUIResult.selection === 0) {
+                    //GameModes UI
+                    const gamemodesui = new ModalFormData();
+                    gamemodesui.title("§4Pardox -Vanish from the server.§4");
+                    gamemodesui.show(player).then((gamemodeResult) => {});
+                }
+            });
         }
         if (result.selection === 4) {
             //Prefix ui
