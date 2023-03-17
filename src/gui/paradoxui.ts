@@ -8,6 +8,7 @@ import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiCLEARCHAT } from "./moderation/uiClearchat";
 import { uiDEOP } from "./moderation/uiDeop";
 import { uiEWIPE } from "./moderation/uiEwipe";
+import { uiFLY } from "./moderation/uiFly";
 import { uiFREEZE } from "./moderation/uiFreeze";
 import { uiKICK } from "./moderation/uiKick";
 import { uiLOCKDOWN } from "./moderation/uiLockdown";
@@ -155,6 +156,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Kick a player.", "textures/items/gold_boots");
             moderationui.button("Wipe an Enderchest", "textures/blocks/ender_chest_front");
             moderationui.button("Freeze a player", "textures/ui/frozen_effect");
+            moderationui.button("Allow a player to fly.", "textures/ui/flyingascend");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -345,6 +347,16 @@ async function paradoxui(player: Player) {
                     freezeui.dropdown(`\n§rSelect a player to freeze.§r\n\nPlayer's Online\n`, onlineList);
                     freezeui.show(player).then((freezeResult) => {
                         uiFREEZE(freezeResult, onlineList, player);
+                    });
+                }
+                if (ModUIresult.selection === 10) {
+                    const flyui = new ModalFormData();
+                    flyui.title("§4Pardox - Grant a player fly abilities.§4");
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    flyui.dropdown(`\n§rSelect a player to allow the ability to fly.§r\n\nPlayer's Online\n`, onlineList);
+                    flyui.show(player).then((flyResult) => {
+                        uiFLY(flyResult, onlineList, player);
                     });
                 }
             });

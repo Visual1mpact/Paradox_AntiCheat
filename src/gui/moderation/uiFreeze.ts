@@ -24,11 +24,11 @@ export async function uiFREEZE(freezeResult, onlineList, player) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    // Make sure they don't punish themselves
+    // Make sure they don't freeze themselves
     if (member === player) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze yourself.`);
     }
-    //Make sure they don't punish staff!
+    //Make sure they don't freeze staff!
     if (member.hasTag("paradoxOpped")) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze Staff.`);
     }
