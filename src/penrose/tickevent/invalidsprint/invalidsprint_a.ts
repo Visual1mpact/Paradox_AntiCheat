@@ -15,6 +15,10 @@ function calculateMovementBPS(currentPosition: [number, number, number]): number
 
     // We only want to focus on moves in any direction other than purely vertically
     if (dx === 0 && dz === 0 && dy !== 0) {
+        // Check if player is falling, return 0
+        if (dy < 0) {
+            return 0;
+        }
         // Player moved only vertically, return 0;
         return 0;
     }
