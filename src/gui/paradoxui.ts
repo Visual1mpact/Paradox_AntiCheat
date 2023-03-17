@@ -24,6 +24,7 @@ import { uiTPRSEND } from "./moderation/uiTprSend";
 //import { uiTPR } from "./moderation/uiTpr";
 import { uiUNBAN } from "./moderation/uiUnban";
 import { uiUNMUTE } from "./moderation/uiUnmute";
+import { uiGAMEMODES } from "./modules/uiGamemodes";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -381,8 +382,16 @@ async function paradoxui(player: Player) {
                 if (ModulesUIResult.selection === 0) {
                     //GameModes UI
                     const gamemodesui = new ModalFormData();
-                    gamemodesui.title("§4Pardox -Vanish from the server.§4");
-                    gamemodesui.show(player).then((gamemodeResult) => {});
+                    const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
+                    const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
+                    const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
+                    gamemodesui.title("§4Pardox - Configure gamemodes.§4");
+                    gamemodesui.toggle("Disable Adventure", adventureGMBoolean);
+                    gamemodesui.toggle("Disable Creative", creativeGMBoolean);
+                    gamemodesui.toggle("Disable Survival", survivalGMBoolean);
+                    gamemodesui.show(player).then((gamemodeResult) => {
+                        uiGAMEMODES(gamemodeResult, player);
+                    });
                 }
             });
         }
