@@ -157,6 +157,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Wipe an Enderchest", "textures/blocks/ender_chest_front");
             moderationui.button("Freeze a player", "textures/ui/frozen_effect");
             moderationui.button("Allow a player to fly.", "textures/ui/flyingascend");
+            moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -356,6 +357,16 @@ async function paradoxui(player: Player) {
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     flyui.dropdown(`\n§rSelect a player to allow the ability to fly.§r\n\nPlayer's Online\n`, onlineList);
                     flyui.show(player).then((flyResult) => {
+                        uiFLY(flyResult, onlineList, player);
+                    });
+                }
+                if (ModUIresult.selection === 10) {
+                    const vanishui = new ModalFormData();
+                    vanishui.title("§4Pardox -Vanish from the server.§4");
+                    let onlineList: string[] = [];
+                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                    vanishui.dropdown(`\n§rSelect a player to vanish.§r\n\nPlayer's Online\n`, onlineList);
+                    vanishui.show(player).then((flyResult) => {
                         uiFLY(flyResult, onlineList, player);
                     });
                 }
