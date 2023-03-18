@@ -377,7 +377,9 @@ async function paradoxui(player: Player) {
             //Modules ui
             const modulesui = new ActionFormData();
             modulesui.title("§4Pardox - Modules§4");
-            modulesui.button("Config Gamemodes", "textures/items/totem");
+            modulesui.button("Configure Gamemodes", "textures/items/totem");
+            modulesui.button("Configfure Movement", "textures/ui/move");
+
             modulesui.show(player).then((ModulesUIResult) => {
                 if (ModulesUIResult.selection === 0) {
                     //GameModes UI
@@ -391,6 +393,21 @@ async function paradoxui(player: Player) {
                     gamemodesui.toggle("Disable Survival", survivalGMBoolean);
                     gamemodesui.show(player).then((gamemodeResult) => {
                         uiGAMEMODES(gamemodeResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 1) {
+                    const modulesmovementui = new ActionFormData();
+                    modulesmovementui.title("§4Paradox Modules-Movement§4");
+                    modulesmovementui.button("Anti Knockback", "textures/items/diamond_chestplate");
+                    modulesmovementui.show(player).then((movementResult) => {
+                        if (movementResult.selection === 0) {
+                            //Anto Knockback UI
+                            const modulesantiknockbackui = new ModalFormData();
+                            const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
+                            modulesantiknockbackui.title("§4Paradox Modules-Anti KnockBack§4");
+                            modulesantiknockbackui.toggle("Anti Knockback", antikbBoolean);
+                            modulesantiknockbackui.show(player).then((movementResult) => {});
+                        }
                     });
                 }
             });
