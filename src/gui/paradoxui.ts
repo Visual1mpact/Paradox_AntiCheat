@@ -29,6 +29,7 @@ import { uiANTIKNOCKBACK } from "./modules/uiAntiKnockback";
 import { uiGAMEMODES } from "./modules/uiGamemodes";
 import { uiANTIFLY } from "./modules/uiAntiFly";
 import { uiINVALIDSPRINT } from "./modules/uiInvalidSprint";
+import { uiNOWSLOW } from "./modules/uiNowslow";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -456,7 +457,7 @@ async function paradoxui(player: Player) {
                             modulesnoslowui.title("§4Paradox Modules-Noslow§4");
                             modulesnoslowui.toggle("Noslow", noSlowBoolean);
                             modulesnoslowui.show(player).then((invalidsprintResult) => {
-                                //uiINVALIDSPRINT(invalidsprintResult, player);
+                                uiNOWSLOW(invalidsprintResult, player);
                             });
                         }
                     });
