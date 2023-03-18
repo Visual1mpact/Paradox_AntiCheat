@@ -9,31 +9,29 @@ let highestBps: number = 0;
 
 function calculateMovementBPS(currentPosition: [number, number, number]): number {
     const currentTimestamp = Date.now();
-    const timeElapsedInSeconds = (currentTimestamp - lastTimestamp) / 500;
+    const timeElapsedInSeconds = (currentTimestamp - lastTimestamp) / 1000;
 
     const [dx, dy, dz] = [currentPosition[0] - lastPosition[0], currentPosition[1] - lastPosition[1], currentPosition[2] - lastPosition[2]];
 
-    // We only want to focus on moves in any direction other than purely vertically
-    if (dx === 0 && dz === 0 && dy !== 0) {
-        // Check if player is falling, return 0
-        if (dy < 0) {
-            return 0;
-        }
-        // Player moved only vertically, return 0
-        return 0;
+    // Ignore purely vertical movement and downward vertical movement only
+    if (dy < 0 && dx === 0 && dz === 0) {
+        return highestBps;
     }
 
-    const distanceMovedSquared = dx * dx + dy * dy + dz * dz;
-    const bps = distanceMovedSquared / (timeElapsedInSeconds * timeElapsedInSeconds);
+    // Calculate distance moved (ignoring vertical movement)
+    const distanceMoved = Math.sqrt(dx * dx + dz * dz);
 
+    // Calculate speed
+    const bps = distanceMoved / timeElapsedInSeconds;
+
+    // Update last position and timestamp
+    lastPosition = currentPosition;
+    lastTimestamp = currentTimestamp;
+
+    // Update highest speed
     if (bps > highestBps) {
         highestBps = bps;
     }
-
-    lastPosition[0] = currentPosition[0];
-    lastPosition[1] = currentPosition[1];
-    lastPosition[2] = currentPosition[2];
-    lastTimestamp = currentTimestamp;
 
     return highestBps;
 }
@@ -72,6 +70,7 @@ function noslowa(id: number) {
 
         const { x, y, z } = player.location;
         highestBps = calculateMovementBPS([x, y, z]);
+        player.onScreenDisplay.setActionBar(String(highestBps));
         // We compare with a 20% buffer to minimize false flags
         if (highestBps > config.modules.noslowA.speed) {
             flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", highestBps.toFixed(2), true, null);
