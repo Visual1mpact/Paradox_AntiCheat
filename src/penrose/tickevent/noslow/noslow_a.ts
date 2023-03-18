@@ -70,7 +70,6 @@ function noslowa(id: number) {
 
         const { x, y, z } = player.location;
         highestBps = calculateMovementBPS([x, y, z]);
-        player.onScreenDisplay.setActionBar(String(highestBps));
         // We compare with a 20% buffer to minimize false flags
         if (highestBps > config.modules.noslowA.speed) {
             flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", highestBps.toFixed(2), true, null);
