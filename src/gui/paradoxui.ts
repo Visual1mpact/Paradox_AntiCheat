@@ -2,7 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
 import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
-import { crypto } from "../util";
+import { crypto, getScore } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiCLEARCHAT } from "./moderation/uiClearchat";
@@ -32,6 +32,7 @@ import { uiINVALIDSPRINT } from "./modules/uiInvalidSprint";
 import { uiNOWSLOW } from "./modules/uiNowslow";
 import { uiANTISCAFFOLD } from "./modules/uiAntiScaffold";
 import { uiANTIJESUS } from "./modules/uiAntiJesus";
+import { uiANTIKILLAURA } from "./modules/uiAntiKillaura";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -386,6 +387,7 @@ async function paradoxui(player: Player) {
             modulesui.title("§4Paradox - Modules§4");
             modulesui.button("Configure Gamemodes", "textures/items/totem");
             modulesui.button("Configure Movement", "textures/ui/move");
+            modulesui.button("Configure KillAura", "textures/items/diamond_sword");
 
             modulesui.show(player).then((ModulesUIResult) => {
                 if (ModulesUIResult.selection === 0) {
@@ -483,6 +485,26 @@ async function paradoxui(player: Player) {
                                 uiANTIJESUS(antijesusResult, player);
                             });
                         }
+                    });
+                }
+                if (ModulesUIResult.selection === 2) {
+                    const modulesantikillaura = new ModalFormData();
+                    const autoaurascore = getScore("autoaura", player);
+                    let autoauraBoolean: boolean = undefined;
+                    /**get the score value and then check to see if its already enable or already disabled
+                     * so we can then update the control boolean to disaply its current setting to the player
+                     * in the menu.
+                     */
+                    if (autoaurascore <= 0) {
+                        autoauraBoolean = false;
+                    }
+                    if (autoaurascore >= 1) {
+                        autoauraBoolean = true;
+                    }
+                    modulesantikillaura.title("§4Paradox Modules-Anti KillAura§4");
+                    modulesantikillaura.toggle("Anti KillAura", autoauraBoolean);
+                    modulesantikillaura.show(player).then((antikillauraResult) => {
+                        uiANTIKILLAURA(antikillauraResult, player);
                     });
                 }
             });
