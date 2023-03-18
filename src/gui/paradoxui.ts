@@ -31,6 +31,7 @@ import { uiANTIFLY } from "./modules/uiAntiFly";
 import { uiINVALIDSPRINT } from "./modules/uiInvalidSprint";
 import { uiNOWSLOW } from "./modules/uiNowslow";
 import { uiANTISCAFFOLD } from "./modules/uiAntiScaffold";
+import { uiANTIJESUS } from "./modules/uiAntiJesus";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -410,6 +411,7 @@ async function paradoxui(player: Player) {
                     modulesmovementui.button("Invalid Sprint", "textures/items/diamond_boots");
                     modulesmovementui.button("Noslow", "textures/items/diamond_boots");
                     modulesmovementui.button("Anti Scaffold", "textures/blocks/scaffolding_top");
+                    modulesmovementui.button("Anti Jesusa", "textures/blocks/lava_placeholder");
                     modulesmovementui.show(player).then((movementResult) => {
                         if (movementResult.selection === 0) {
                             //Anti Knockback UI
@@ -469,6 +471,16 @@ async function paradoxui(player: Player) {
                             modulesantiscaffoldui.toggle("Anti Scaffold", antiScaffoldABoolean);
                             modulesantiscaffoldui.show(player).then((antiscaffoldResult) => {
                                 uiANTISCAFFOLD(antiscaffoldResult, player);
+                            });
+                        }
+                        if (movementResult.selection === 6) {
+                            //Jesus UI
+                            const modulesantijesusui = new ModalFormData();
+                            const jesusaBoolean = dynamicPropertyRegistry.get("jesusa_b");
+                            modulesantijesusui.title("§4Paradox Modules-Anti Jesus§4");
+                            modulesantijesusui.toggle("Anti Jesus", jesusaBoolean);
+                            modulesantijesusui.show(player).then((antijesusResult) => {
+                                uiANTIJESUS(antijesusResult, player);
                             });
                         }
                     });
