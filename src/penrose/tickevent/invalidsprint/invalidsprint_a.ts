@@ -56,6 +56,17 @@ function invalidsprinta(id: number) {
         if (uniqueId === player.name) {
             continue;
         }
+
+        const glideCheck = player.hasTag("gliding");
+        if (glideCheck) {
+            return;
+        }
+
+        const rideCheck = player.hasTag("riding");
+        if (rideCheck) {
+            return;
+        }
+
         const { x, y, z } = player.location;
         highestBps = calculateMovementBPS([x, y, z]);
         // We compare with a 20% buffer to minimize false flags
