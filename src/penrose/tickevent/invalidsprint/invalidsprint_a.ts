@@ -14,8 +14,8 @@ function calculateMovementBPS(currentPosition: [number, number, number]): number
     const [dx, dy, dz] = [currentPosition[0] - lastPosition[0], currentPosition[1] - lastPosition[1], currentPosition[2] - lastPosition[2]];
 
     // Ignore purely vertical movement and downward vertical movement only
-    if (dy < 0 && dx === 0 && dz === 0) {
-        return highestBps;
+    if (dy <= 0 && Math.abs(dx) < Math.abs(dy) && Math.abs(dz) < Math.abs(dy)) {
+        return 0;
     }
 
     // Calculate distance moved (ignoring vertical movement)
