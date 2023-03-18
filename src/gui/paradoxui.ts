@@ -30,6 +30,7 @@ import { uiGAMEMODES } from "./modules/uiGamemodes";
 import { uiANTIFLY } from "./modules/uiAntiFly";
 import { uiINVALIDSPRINT } from "./modules/uiInvalidSprint";
 import { uiNOWSLOW } from "./modules/uiNowslow";
+import { uiANTISCAFFOLD } from "./modules/uiAntiScaffold";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -458,6 +459,16 @@ async function paradoxui(player: Player) {
                             modulesnoslowui.toggle("Noslow", noSlowBoolean);
                             modulesnoslowui.show(player).then((invalidsprintResult) => {
                                 uiNOWSLOW(invalidsprintResult, player);
+                            });
+                        }
+                        if (movementResult.selection === 5) {
+                            //AntiScaffold
+                            const modulesantiscaffoldui = new ModalFormData();
+                            const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
+                            modulesantiscaffoldui.title("§4Paradox Modules-Anti Scaffold§4");
+                            modulesantiscaffoldui.toggle("Anti Scaffold", antiScaffoldABoolean);
+                            modulesantiscaffoldui.show(player).then((antiscaffoldResult) => {
+                                uiANTISCAFFOLD(antiscaffoldResult, player);
                             });
                         }
                     });
