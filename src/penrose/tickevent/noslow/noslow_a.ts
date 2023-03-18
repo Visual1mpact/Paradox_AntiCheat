@@ -62,12 +62,12 @@ function noslowa(id: number) {
 
         const glideCheck = player.hasTag("gliding");
         if (glideCheck) {
-            return;
+            continue;
         }
 
         const rideCheck = player.hasTag("riding");
         if (rideCheck) {
-            return;
+            continue;
         }
 
         const { x, y, z } = player.location;
