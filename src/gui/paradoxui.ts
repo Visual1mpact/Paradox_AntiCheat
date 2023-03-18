@@ -441,16 +441,23 @@ async function paradoxui(player: Player) {
                         }
                         if (movementResult.selection === 3) {
                             //Invalid Sprint
-                            const modulesinvalidsprint = new ModalFormData();
+                            const modulesinvalidsprintui = new ModalFormData();
                             const invalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b");
-                            modulesinvalidsprint.title("§4Paradox Modules-Invalid Sprint§4");
-                            modulesinvalidsprint.toggle("Invalid Sprint", invalidSprintABoolean);
-                            modulesinvalidsprint.show(player).then((invalidsprintResult) => {
+                            modulesinvalidsprintui.title("§4Paradox Modules-Invalid Sprint§4");
+                            modulesinvalidsprintui.toggle("Invalid Sprint", invalidSprintABoolean);
+                            modulesinvalidsprintui.show(player).then((invalidsprintResult) => {
                                 uiINVALIDSPRINT(invalidsprintResult, player);
                             });
                         }
                         if (movementResult.selection === 4) {
                             //NoSlowA
+                            const modulesnoslowui = new ModalFormData();
+                            const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+                            modulesnoslowui.title("§4Paradox Modules-Noslow§4");
+                            modulesnoslowui.toggle("Noslow", noSlowBoolean);
+                            modulesnoslowui.show(player).then((invalidsprintResult) => {
+                                //uiINVALIDSPRINT(invalidsprintResult, player);
+                            });
                         }
                     });
                 }
