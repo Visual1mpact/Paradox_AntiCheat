@@ -63,7 +63,7 @@ function illegalitemsa(id: number) {
             player.addTag("illegalitemsA");
         }
         // Get unique ID
-        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+        const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
         // Skip if they have permission
         if (uniqueId === player.name) {

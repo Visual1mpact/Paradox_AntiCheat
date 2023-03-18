@@ -19,7 +19,7 @@ function scaffolda(object: BlockPlaceEvent) {
     const { block, player, dimension } = object;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
     // Skip if they have permission
     if (uniqueId === player.name) {

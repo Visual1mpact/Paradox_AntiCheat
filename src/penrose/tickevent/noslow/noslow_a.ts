@@ -53,7 +53,7 @@ function noslowa(id: number) {
     filter.excludeGameModes = [GameMode.creative, GameMode.spectator];
     for (const player of world.getPlayers(filter)) {
         // Get unique ID
-        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+        const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
         // Skip if they have permission
         if (uniqueId === player.name) {

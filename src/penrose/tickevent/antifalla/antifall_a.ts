@@ -16,7 +16,7 @@ function antifalla(id: number) {
     gm.excludeGameModes = [GameMode.creative];
     for (const player of world.getPlayers(gm)) {
         // Get unique ID
-        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+        const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
         // Skip if they have permission
         if (uniqueId === player.name) {

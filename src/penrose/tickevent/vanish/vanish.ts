@@ -9,7 +9,7 @@ async function vanish() {
     // Run as each player
     for (let player of world.getPlayers(filter)) {
         // Get unique ID
-        const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+        const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
         // Make sure they have permission
         if (uniqueId === player.name) {

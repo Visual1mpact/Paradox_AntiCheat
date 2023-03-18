@@ -13,7 +13,7 @@ export async function uiFREEZE(freezeResult, onlineList, player) {
         }
     }
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);

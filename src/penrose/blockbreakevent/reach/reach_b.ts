@@ -17,7 +17,7 @@ function reachb(object: BlockBreakEvent) {
     const { block, player, brokenBlockPermutation } = object;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
     // Skip if they have permission
     if (uniqueId === player.name) {

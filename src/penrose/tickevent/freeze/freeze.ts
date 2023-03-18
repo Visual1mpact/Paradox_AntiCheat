@@ -127,7 +127,7 @@ function StopTickFreeze(id: number) {
 function TickFreeze(data: Player) {
     const player = data;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
     // Skip if they have permission
     if (uniqueId !== player.name) {

@@ -25,7 +25,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList, player: Pl
         }
     }
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {

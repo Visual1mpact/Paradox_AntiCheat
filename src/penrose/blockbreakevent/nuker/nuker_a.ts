@@ -20,7 +20,7 @@ async function nukera(object: BlockBreakEvent) {
     const { x, y, z } = block.location;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
     // Skip if they have permission
     if (uniqueId === player.name) {

@@ -79,7 +79,7 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
     let homex: number;
     let homey: number;
