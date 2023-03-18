@@ -27,6 +27,7 @@ import { uiVANISH } from "./moderation/uiVanish";
 import { uiANTIFALL } from "./modules/uiAntiFall";
 import { uiANTIKNOCKBACK } from "./modules/uiAntiKnockback";
 import { uiGAMEMODES } from "./modules/uiGamemodes";
+import { uiANTIFLY } from "./modules/uiAntiFly";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -402,6 +403,7 @@ async function paradoxui(player: Player) {
                     modulesmovementui.title("§4Paradox Modules-Movement§4");
                     modulesmovementui.button("Anti Knockback", "textures/items/diamond_chestplate");
                     modulesmovementui.button("Anti Fall", "textures/items/diamond_boots");
+                    modulesmovementui.button("Anti Fly", "textures/items/elytra");
                     modulesmovementui.show(player).then((movementResult) => {
                         if (movementResult.selection === 0) {
                             //Anti Knockback UI
@@ -421,6 +423,16 @@ async function paradoxui(player: Player) {
                             modulesantifallui.toggle("Anti Fall", antifallABoolean);
                             modulesantifallui.show(player).then((antifallResult) => {
                                 uiANTIFALL(antifallResult, player);
+                            });
+                        }
+                        if (movementResult.selection === 2) {
+                            //Anti Fall
+                            const modulesantiflyui = new ModalFormData();
+                            const flyABoolean = dynamicPropertyRegistry.get("flya_b");
+                            modulesantiflyui.title("§4Paradox Modules-Anti Fall§4");
+                            modulesantiflyui.toggle("Anti Fall", flyABoolean);
+                            modulesantiflyui.show(player).then((antiflyResult) => {
+                                uiANTIFLY(antiflyResult, player);
                             });
                         }
                     });
