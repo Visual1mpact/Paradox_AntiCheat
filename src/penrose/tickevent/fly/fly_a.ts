@@ -1,8 +1,8 @@
-import { world, EntityQueryOptions, Block, GameMode, system, Vector } from "@minecraft/server";
-import { getScore, flag, setScore } from "../../../util.js";
+import { world, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
+import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-const playersOldCoordinates = new Map();
+const playersOldCoordinates = new Map<string, Vector>();
 
 function flya(id: number) {
     // Get Dynamic Property
@@ -16,7 +16,7 @@ function flya(id: number) {
 
     // Exclude creative gamemode
     const gm = new Object() as EntityQueryOptions;
-    gm.excludeGameModes = [GameMode.creative];
+    gm.excludeGameModes = [GameMode.creative, GameMode.spectator];
     // run as each player who are in survival
     for (const player of world.getPlayers(gm)) {
         // Get unique ID
@@ -27,86 +27,59 @@ function flya(id: number) {
             continue;
         }
 
-        const test = getScore("fly_timer", player);
+        const jumpCheck = player.hasTag("jump");
+        if (jumpCheck) {
+            return;
+        }
 
-        // Fun trick here so that we don't false flag /ability @s mayfly true users
-        // It works because hacks add y vel to the player to stay in the air, and it stays between 1-3 whereas mayfly will have a steady score of 0
-        // Will still false flag sometimes, but that's why we have !fly
-        const xyVelocity = Math.hypot(player.getVelocity().x, player.getVelocity().y).toFixed(4);
-        const zyVelocity = Math.hypot(player.getVelocity().z, player.getVelocity().y).toFixed(4);
+        const glideCheck = player.hasTag("gliding");
+        if (glideCheck) {
+            return;
+        }
 
-        // let Block: Block, Block1: Block, Block2: Block;
-        let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
-        try {
-            // We want to know if the blocks below the player is air or not
+        const velocity = player.getVelocity();
+        if (velocity.y < 0) {
+            // Player is falling, ignore them
+            return;
+        }
+        const horizontalVelocity = new Vector(velocity.x, 0, velocity.z);
 
-            //Block = player.dimension.getBlock(new Vector(player.location.x, player.location.y, player.location.z));
-            //Block1 = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
-            //Block2 = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 2, player.location.z));
-            CenBlockX = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
-            PosBlockX = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z));
-            NegBlockX = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z));
-            CenBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
-            PosBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z + 1));
-            NegBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z - 1));
-            // if the player is in any corner of the block we move the block back to the center before hand and test for air
-            CenBlockXTopLeft = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z + 1));
-            CenBlockXTopRight = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z - 1));
-            CenBlockXBottomLeft = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z + 1));
-            CenBlockXBottomRight = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z - 1));
-        } catch (error) {}
+        const xyVelocity = Math.hypot(horizontalVelocity.x, horizontalVelocity.y).toFixed(4);
+        const zyVelocity = Math.hypot(horizontalVelocity.z, horizontalVelocity.y).toFixed(4);
 
-        let oldX: number, oldY: number, oldZ: number;
-        if (player.hasTag("ground")) {
+        if (Number(xyVelocity) > 0 || Number(zyVelocity) > 0) {
+            const oldPlayerCoords = playersOldCoordinates.get(player.name);
+
             const playerX = Math.trunc(player.location.x);
             const playerY = Math.trunc(player.location.y);
             const playerZ = Math.trunc(player.location.z);
-            playersOldCoordinates.set(player.name, { x: playerX, y: playerY, z: playerZ });
-        }
-        const playerCoords = playersOldCoordinates.get(player.name);
-        try {
-            // Use try/catch because this will return undefined when player is loading in
-            (oldX = playerCoords.x), (oldY = playerCoords.y), (oldZ = playerCoords.z);
-        } catch (error) {}
+            playersOldCoordinates.set(player.name, new Vector(playerX, playerY, playerZ));
 
-        if (Number(xyVelocity) != 0.0784 || Number(zyVelocity) != 0.0784) {
-            if (
-                !player.hasTag("ground") &&
-                !player.hasTag("gliding") &&
-                !player.hasTag("levitating") &&
-                !player.hasTag("riding") &&
-                !player.hasTag("flying") &&
-                !player.hasTag("swimming") &&
-                CenBlockX.typeId == "minecraft:air" &&
-                PosBlockX.typeId == "minecraft:air" &&
-                NegBlockX.typeId == "minecraft:air" &&
-                CenBlockZ.typeId == "minecraft:air" &&
-                PosBlockZ.typeId == "minecraft:air" &&
-                NegBlockZ.typeId == "minecraft:air" &&
-                CenBlockXTopLeft.typeId == "minecraft:air" &&
-                CenBlockXTopRight.typeId == "minecraft:air" &&
-                CenBlockXBottomLeft.typeId == "minecraft:air" &&
-                CenBlockXBottomRight.typeId == "minecraft:air"
-                //(Block?.typeId === "minecraft:air" ?? true) &&
-                //(Block1?.typeId === "minecraft:air" ?? true) &&
-                //(Block2?.typeId === "minecraft:air" ?? true)
-            ) {
-                try {
-                    setScore(player, "fly_timer", 1, true);
-                } catch (error) {}
-                if (test >= 6) {
+            if (oldPlayerCoords) {
+                let isSurroundedByAir = true;
+
+                for (let x = -1; x <= 1; x++) {
+                    for (let y = -1; y <= 1; y++) {
+                        for (let z = -1; z <= 1; z++) {
+                            const block = player.dimension.getBlock(new Vector(player.location.x + x, player.location.y + y, player.location.z + z));
+
+                            if (block.typeId !== "minecraft:air") {
+                                isSurroundedByAir = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (isSurroundedByAir) {
                     try {
                         // Use try/catch since variables for cords could return undefined if player is loading in
                         // and they meet the conditions. An example is them flagging this, logging off, then logging
                         // back on again.
-                        player.teleport(new Vector(oldX, oldY, oldZ), player.dimension, 0, 0);
+                        player.teleport(new Vector(oldPlayerCoords.x, oldPlayerCoords.y, oldPlayerCoords.z), player.dimension, 0, 0);
                     } catch (error) {}
                     flag(player, "Fly", "A", "Exploit", null, null, null, null, false, null);
                 }
-            } else if (player.hasTag("ground")) {
-                try {
-                    setScore(player, "fly_timer", 0);
-                } catch (error) {}
             }
         }
     }
