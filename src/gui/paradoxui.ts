@@ -21,9 +21,11 @@ import { uiRULES } from "./moderation/uiRules";
 import { uiTPA } from "./moderation/uiTpa";
 import { uiTPR } from "./moderation/uiTpr";
 import { uiTPRSEND } from "./moderation/uiTprSend";
-//import { uiTPR } from "./moderation/uiTpr";
 import { uiUNBAN } from "./moderation/uiUnban";
 import { uiUNMUTE } from "./moderation/uiUnmute";
+import { uiVANISH } from "./moderation/uiVanish";
+import { uiANTIFALL } from "./modules/uiAntiFall";
+import { uiANTIKNOCKBACK } from "./modules/uiAntiKnockback";
 import { uiGAMEMODES } from "./modules/uiGamemodes";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
@@ -367,8 +369,8 @@ async function paradoxui(player: Player) {
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     vanishui.dropdown(`\n§rSelect a player to vanish.§r\n\nPlayer's Online\n`, onlineList);
-                    vanishui.show(player).then((flyResult) => {
-                        uiFLY(flyResult, onlineList, player);
+                    vanishui.show(player).then((vanishResult) => {
+                        uiVANISH(vanishResult, onlineList, player);
                     });
                 }
             });
@@ -376,9 +378,9 @@ async function paradoxui(player: Player) {
         if (result.selection === 3) {
             //Modules ui
             const modulesui = new ActionFormData();
-            modulesui.title("§4Pardox - Modules§4");
+            modulesui.title("§4Paradox - Modules§4");
             modulesui.button("Configure Gamemodes", "textures/items/totem");
-            modulesui.button("Configfure Movement", "textures/ui/move");
+            modulesui.button("Configure Movement", "textures/ui/move");
 
             modulesui.show(player).then((ModulesUIResult) => {
                 if (ModulesUIResult.selection === 0) {
@@ -387,7 +389,7 @@ async function paradoxui(player: Player) {
                     const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
                     const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
                     const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
-                    gamemodesui.title("§4Pardox - Configure gamemodes.§4");
+                    gamemodesui.title("§4Paradox - Configure gamemodes.§4");
                     gamemodesui.toggle("Disable Adventure", adventureGMBoolean);
                     gamemodesui.toggle("Disable Creative", creativeGMBoolean);
                     gamemodesui.toggle("Disable Survival", survivalGMBoolean);
@@ -399,14 +401,27 @@ async function paradoxui(player: Player) {
                     const modulesmovementui = new ActionFormData();
                     modulesmovementui.title("§4Paradox Modules-Movement§4");
                     modulesmovementui.button("Anti Knockback", "textures/items/diamond_chestplate");
+                    modulesmovementui.button("Anti Fall", "textures/items/diamond_boots");
                     modulesmovementui.show(player).then((movementResult) => {
                         if (movementResult.selection === 0) {
-                            //Anto Knockback UI
+                            //Anti Knockback UI
                             const modulesantiknockbackui = new ModalFormData();
                             const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
                             modulesantiknockbackui.title("§4Paradox Modules-Anti KnockBack§4");
                             modulesantiknockbackui.toggle("Anti Knockback", antikbBoolean);
-                            modulesantiknockbackui.show(player).then((movementResult) => {});
+                            modulesantiknockbackui.show(player).then((antikbResult) => {
+                                uiANTIKNOCKBACK(antikbResult, player);
+                            });
+                        }
+                        if (movementResult.selection === 1) {
+                            //Anti Fall
+                            const modulesantifallui = new ModalFormData();
+                            const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b");
+                            modulesantifallui.title("§4Paradox Modules-Anti Fall§4");
+                            modulesantifallui.toggle("Anti Fall", antifallABoolean);
+                            modulesantifallui.show(player).then((antifallResult) => {
+                                uiANTIFALL(antifallResult, player);
+                            });
                         }
                     });
                 }

@@ -1,7 +1,7 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getScore, sendMsg, sendMsgToPlayer } from "../../util";
+import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
 
