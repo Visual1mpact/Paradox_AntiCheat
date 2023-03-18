@@ -59,8 +59,6 @@ export const onJoinData = [
     "scoreboard objectives add ench_chest dummy",
     "scoreboard objectives add ench_legs dummy",
     "scoreboard objectives add ench_boots dummy",
-    "scoreboard objectives add fly_timer dummy",
-    "scoreboard players add @s fly_timer 0",
     "scoreboard objectives add flyvl dummy",
     "scoreboard objectives add velocityvl dummy",
     "scoreboard objectives add atcd dummy",
