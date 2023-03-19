@@ -29,18 +29,18 @@ function flya(id: number) {
 
         const jumpCheck = player.hasTag("jump");
         if (jumpCheck) {
-            return;
+            continue;
         }
 
         const glideCheck = player.hasTag("gliding");
         if (glideCheck) {
-            return;
+            continue;
         }
 
         const velocity = player.getVelocity();
         if (velocity.y < 0) {
             // Player is falling, ignore them
-            return;
+            continue;
         }
         const horizontalVelocity = new Vector(velocity.x, 0, velocity.z);
 
