@@ -81,6 +81,7 @@ export default {
         clearlag: true,
         showrules: true,
         paradoxiu: true,
+        tpr: true,
     },
     modules: {
         badpackets1: {
@@ -256,6 +257,12 @@ export default {
         },
         paradoxui: {
             enabled: true,
+        },
+        tprExpiration: {
+            seconds: 0,
+            minutes: 2,
+            hours: 0,
+            days: 0,
         },
         /**
          * Add a password in-between the quotes.
