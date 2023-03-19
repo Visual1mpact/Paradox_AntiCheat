@@ -27,6 +27,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             if (hash === encode) {
                 sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
+                player.addTag("paradoxOpped");
                 paradoxui(player);
             } else {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong.`);
