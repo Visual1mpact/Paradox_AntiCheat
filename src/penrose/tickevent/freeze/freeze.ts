@@ -62,7 +62,7 @@ async function Freeze(id: number) {
         player.teleport(new Vector(posx, posy, posz), world.getDimension("overworld"), 0, 0);
         // Create prison around player
         try {
-            await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier 0 hollow`);
+            await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow`);
         } catch (erro) {}
         // Save coordinates at prison
         posx1 = player.location.x;
@@ -109,7 +109,7 @@ async function Freeze(id: number) {
             realmIDString = "the end";
         }
         // Release from prison
-        await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air 0 hollow`);
+        await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air [] hollow`);
         // Return them back to original coordinates
         player.teleport(new Vector(backx, backy, backz), world.getDimension(realmIDString), 0, 0);
         player.removeTag("freezeactive");

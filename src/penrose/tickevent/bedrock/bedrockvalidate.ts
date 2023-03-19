@@ -37,7 +37,7 @@ async function bedrockvalidate(id: number) {
             } catch (error) {}
 
             try {
-                await player.runCommandAsync(`fill ~-5 5 ~-5 ~5 120 ~5 air 0 replace bedrock`);
+                await player.runCommandAsync(`fill ~-5 5 ~-5 ~5 120 ~5 air [] replace bedrock`);
             } catch (error) {}
         }
     }

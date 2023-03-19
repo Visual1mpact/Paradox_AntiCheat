@@ -86,7 +86,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
-            await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
+            await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
         } catch (error) {}
         return;
     }
@@ -103,7 +103,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
-        await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace ${block.typeId} 0`);
+        await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace ${block.typeId}`);
         // Update block with modified permutation to correct its direction
         blockLoc.setPermutation(blockPerm);
     }
@@ -114,7 +114,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         // replace block in world since destroying would drop item entities
         // dimension.getBlock(new BlockLocation(x, y, z)).setType(MinecraftBlockTypes.air); //<-- This destroys
         try {
-            await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air 0 replace air 0`);
+            await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
         } catch (error) {}
         flag(player, "IllegalItems", "C", "Exploit", null, null, null, null, null, null);
         return rip(player, null, null, block);
