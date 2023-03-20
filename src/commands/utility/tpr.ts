@@ -10,6 +10,12 @@ interface TeleportRequest {
 
 const teleportRequests: TeleportRequest[] = [];
 
+// This allows us to read from the teleportRequests array without
+// creating a memory leak by accidentally modifying its contents.
+export function getTeleportRequests(): TeleportRequest[] {
+    return teleportRequests;
+}
+
 function tprHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.tpr) {
