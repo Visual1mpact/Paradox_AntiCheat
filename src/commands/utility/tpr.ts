@@ -138,4 +138,15 @@ export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEv
         teleportRequestHandler(event);
         world.events.beforeChat.subscribe(teleportRequestApprovalHandler);
     }
+
+    // This is for the GUI when sending approvals or denials
+    const validMessages = ["approved", "approve", "denied", "deny"];
+
+    if (validMessages.some((msg) => msg === message)) {
+        const event = {
+            sender,
+            message,
+        } as BeforeChatEvent;
+        teleportRequestApprovalHandler(event);
+    }
 }
