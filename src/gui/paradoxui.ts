@@ -33,6 +33,7 @@ import { uiNOWSLOW } from "./modules/uiNowslow";
 import { uiANTISCAFFOLD } from "./modules/uiAntiScaffold";
 import { uiANTIJESUS } from "./modules/uiAntiJesus";
 import { uiANTIKILLAURA } from "./modules/uiAntiKillaura";
+import { getTeleportRequests } from "../commands/utility/tpr";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -81,47 +82,31 @@ async function paradoxui(player: Player) {
                 tprui.show(player).then((tprmenuResult) => {
                     if (tprmenuResult.selection === 0) {
                         //get the current requests and show them in a ui.
-                        let requester: string;
-
-                        try {
-                            let playerscurrenttags = player.getTags();
-                            let rq: string;
-                            playerscurrenttags.forEach((t) => {
-                                if (t.startsWith("Requester:")) {
-                                    rq = t;
-                                }
-                            });
-                            //from the tag get the requster as a player so we can pass this to the function
-                            let pl: string;
-                            pl = rq.slice(10);
-                            requester = pl;
-                        } catch (error) {
-                            // This will throw if the player has no tags that match.
-                            //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+                        interface TeleportRequest {
+                            requester: Player;
+                            target: Player;
+                            expiresAt: number;
                         }
+                        let teleportRequests: TeleportRequest[] = [];
+                        teleportRequests = getTeleportRequests();
+                        const requestIndex = teleportRequests.findIndex((r) => r.target === player);
+                        const request = teleportRequests[requestIndex];
+                        let respons: string;
+                        const toMinutes: Date = new Date(request.expiresAt);
                         const tprinboxui = new MessageFormData();
                         tprinboxui.title("Paradox Your TP Request.");
-                        tprinboxui.body(requester + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request.");
+                        tprinboxui.body(request.requester.name + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request. \n This request expires in: " + toMinutes.getMinutes());
                         tprinboxui.button1("Yes");
                         tprinboxui.button2("No");
                         tprinboxui.show(player).then((tprInboxResult) => {
                             if (tprInboxResult.selection === 1) {
-                                uiTPR(requester, player);
+                                respons = "yes";
+                                uiTPR(request.requester.name, player, respons);
                             }
                             //beacuse for some reason the no button is 0 yet its the second control
                             if (tprInboxResult.selection === 0) {
-                                //get the players tags so we can loop through them to find the requester
-                                let playertags = player.getTags();
-                                //store the requester tag
-                                let tagtoremove: string;
-                                playertags.forEach((t) => {
-                                    if (t.startsWith("Requester:")) {
-                                        tagtoremove = t;
-                                    }
-                                });
-                                // remove the tag
-                                player.removeTag(tagtoremove);
-                                player.removeTag("RequestPending");
+                                respons = "no";
+                                uiTPR(request.requester.name, player, respons);
                             }
                         });
                     }
@@ -534,47 +519,31 @@ async function paradoxui(player: Player) {
             tprui.show(player).then((tprmenuResult) => {
                 if (tprmenuResult.selection === 0) {
                     //get the current requests and show them in a ui.
-                    let requester: string;
-
-                    try {
-                        let playerscurrenttags = player.getTags();
-                        let rq: string;
-                        playerscurrenttags.forEach((t) => {
-                            if (t.startsWith("Requester:")) {
-                                rq = t;
-                            }
-                        });
-                        //from the tag get the requster as a player so we can pass this to the function
-                        let pl: string;
-                        pl = rq.slice(10);
-                        requester = pl;
-                    } catch (error) {
-                        // This will throw if the player has no tags that match.
-                        //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+                    interface TeleportRequest {
+                        requester: Player;
+                        target: Player;
+                        expiresAt: number;
                     }
+                    let teleportRequests: TeleportRequest[] = [];
+                    teleportRequests = getTeleportRequests();
+                    const requestIndex = teleportRequests.findIndex((r) => r.target === player);
+                    const request = teleportRequests[requestIndex];
+                    let respons: string;
+                    const toMinutes: Date = new Date(request.expiresAt);
                     const tprinboxui = new MessageFormData();
                     tprinboxui.title("Paradox Your TP Request.");
-                    tprinboxui.body(requester + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request.");
+                    tprinboxui.body(request.requester.name + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request. \n This request expires in: " + toMinutes.getMinutes());
                     tprinboxui.button1("Yes");
                     tprinboxui.button2("No");
                     tprinboxui.show(player).then((tprInboxResult) => {
                         if (tprInboxResult.selection === 1) {
-                            uiTPR(requester, player);
+                            respons = "yes";
+                            uiTPR(request.requester.name, player, respons);
                         }
                         //beacuse for some reason the no button is 0 yet its the second control
                         if (tprInboxResult.selection === 0) {
-                            //get the players tags so we can loop through them to find the requester
-                            let playertags = player.getTags();
-                            //store the requester tag
-                            let tagtoremove: string;
-                            playertags.forEach((t) => {
-                                if (t.startsWith("Requester:")) {
-                                    tagtoremove = t;
-                                }
-                            });
-                            // remove the tag
-                            player.removeTag(tagtoremove);
-                            player.removeTag("RequestPending");
+                            respons = "no";
+                            uiTPR(request.requester.name, player, respons);
                         }
                     });
                 }

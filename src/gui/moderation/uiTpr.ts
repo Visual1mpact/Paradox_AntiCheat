@@ -1,6 +1,8 @@
-import { world } from "@minecraft/server";
+import { BeforeChatEvent, world } from "@minecraft/server";
+import { TeleportRequestHandler } from "../../commands/utility/tpr";
 import { sendMsgToPlayer } from "../../util";
-export function uiTPR(requester, player) {
+import { paradoxui } from "../paradoxui";
+export function uiTPR(requester, player, respons) {
     let member = undefined;
     for (let pl of world.getPlayers()) {
         if (pl.nameTag.toLowerCase().includes(requester.toLowerCase().replace(/"|\\|@/g, ""))) {
@@ -15,16 +17,19 @@ export function uiTPR(requester, player) {
     }
 
     // Let's complete this tpr request
-    member.teleport(player.location, player.dimension, 0, 0);
-    // Let you know that you have been teleported
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${member.name} to ${player.name}`);
-    let playertags = player.getTags();
-    let tagtoremove: string;
-    playertags.forEach((t) => {
-        if (t.startsWith("Requester:")) {
-            tagtoremove = t;
-        }
-    });
-    player.removeTag("RequestPending");
-    return player.removeTag(tagtoremove);
+    if (respons === "yes") {
+        const event = {
+            sender: player,
+            message: "approve",
+        } as BeforeChatEvent;
+        TeleportRequestHandler(event, ["approve"]);
+    }
+    if (respons === "no") {
+        const event = {
+            sender: player,
+            message: "denied",
+        } as BeforeChatEvent;
+        TeleportRequestHandler(event, ["denied"]);
+    }
+    return paradoxui(player);
 }
