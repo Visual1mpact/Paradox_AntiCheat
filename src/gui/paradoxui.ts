@@ -34,6 +34,9 @@ import { uiANTISCAFFOLD } from "./modules/uiAntiScaffold";
 import { uiANTIJESUS } from "./modules/uiAntiJesus";
 import { uiANTIKILLAURA } from "./modules/uiAntiKillaura";
 import { getTeleportRequests } from "../commands/utility/tpr";
+import { uiANTINUKER } from "./modules/uiAntiNuker";
+import { uiANTISHULKER } from "./modules/uiAntiShulker";
+import { uiANTISPAM } from "./modules/uiAntiSpam";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -373,6 +376,9 @@ async function paradoxui(player: Player) {
             modulesui.button("Configure Gamemodes", "textures/items/totem");
             modulesui.button("Configure Movement", "textures/ui/move");
             modulesui.button("Configure KillAura", "textures/items/diamond_sword");
+            modulesui.button("Configure Anti Nuker", "textures/blocks/tnt_side");
+            modulesui.button("Configure Anti Shulker", "textures/blocks/shulker_top_purple");
+            modulesui.button("Configure Anti Spam", "textures/ui/mute_off");
 
             modulesui.show(player).then((ModulesUIResult) => {
                 if (ModulesUIResult.selection === 0) {
@@ -490,6 +496,33 @@ async function paradoxui(player: Player) {
                     modulesantikillaura.toggle("Anti KillAura", autoauraBoolean);
                     modulesantikillaura.show(player).then((antikillauraResult) => {
                         uiANTIKILLAURA(antikillauraResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 3) {
+                    const modulesantinukerui = new ModalFormData();
+                    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
+                    modulesantinukerui.title("§4Paradox Modules-Anti Nuker§4");
+                    modulesantinukerui.toggle("Anti Nuker", antiNukerABoolean);
+                    modulesantinukerui.show(player).then((antinukerResult) => {
+                        uiANTINUKER(antinukerResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 4) {
+                    const modulesantishulkerui = new ModalFormData();
+                    const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
+                    modulesantishulkerui.title("§4Paradox Modules-Anti Shulker§4");
+                    modulesantishulkerui.toggle("Anti Shulker", antiShulkerBoolean);
+                    modulesantishulkerui.show(player).then((antishulkerResult) => {
+                        uiANTISHULKER(antishulkerResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 5) {
+                    const modulesantispamui = new ModalFormData();
+                    const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
+                    modulesantispamui.title("§4Paradox Modules-Anti Spam§4");
+                    modulesantispamui.toggle("Anti Spam", antiSpamBoolean);
+                    modulesantispamui.show(player).then((antispamResult) => {
+                        uiANTISPAM(antispamResult, player);
                     });
                 }
             });
