@@ -1,7 +1,7 @@
 <div align="center">
 <img src="https://i.imgur.com/ZS38i7c.png" border="0">
 <div align="center">
-  Updated for 1.19.61 <br/>
+  Updated for 1.19.71 </br>
   Paradox is based on Scythe AntiCheat and can be found [here.](https://github.com/MrDiamond64/Scythe-AntiCheat "here.")</div>
   
 **Paradox exists due to some differences within Scythe so under the GPLv3 License
