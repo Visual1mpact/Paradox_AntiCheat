@@ -89,17 +89,17 @@ function registry(data: WorldInitializeEvent) {
     // Register Defined properties in entity globally
     data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.player);
 
-    // Conditionally set properties for Booleans
-    for (const configProperties in config.modules) {
-        // Loop through the identifiers in the array
-        defineBooleanProperties.forEach((booleanProps) => {
-            // Verify if identifier matches the module property in config
+    let flag = false;
+    let booleanProps: string = "";
+    // Loop through the identifiers in the array
+    defineBooleanProperties.forEach((booleanProps) => {
+        // Verify if identifier matches any module property in config
+        for (const configProperties in config.modules) {
             if (booleanProps.replaceAll(/(_b)/g, "") === configProperties.toLowerCase()) {
                 // Loop through the settings of each property in module
                 for (const setting in config.modules[configProperties]) {
-                    // If a match then set the dynamic property
                     if (setting === "enabled") {
-                        // We condtionally test if the dynamic property already exists
+                        // We conditionally test if the dynamic property already exists
                         const test = world.getDynamicProperty(booleanProps);
                         if (test === undefined) {
                             // Dynamic property doesn't exist so we create it with the default settings in config
@@ -111,28 +111,27 @@ function registry(data: WorldInitializeEvent) {
                             dynamicPropertyRegistry.set(booleanProps, test);
                         }
                     }
-                }
-            } else {
-                /**
-                 * Boolean does not exist in config and is only set
-                 * from within the game itself. These booleans we will
-                 * disable by default. Users can enable afterwards and
-                 * this section will handle those changes.
-                 */
-
-                // We condtionally test if the dynamic property already exists
-                const test = world.getDynamicProperty(booleanProps);
-                if (test === undefined) {
-                    // Dynamic property doesn't exist so we create it and disable it by default
-                    world.setDynamicProperty(booleanProps, false);
-                    // Set property with value as an element that we can use in other scripts
-                    dynamicPropertyRegistry.set(booleanProps, false);
-                } else {
-                    // Dynamic property exists so set property with value as an element that we can use in other scripts
-                    dynamicPropertyRegistry.set(booleanProps, test);
+                    // If a matching boolean property is found, set the flag and break out of the loop
+                    flag = true;
+                    return;
                 }
             }
-        });
+        }
+    });
+
+    // If no matching boolean property was found, execute the else block
+    if (!flag) {
+        // We conditionally test if the dynamic property already exists
+        const test = world.getDynamicProperty(booleanProps);
+        if (test === undefined) {
+            // Dynamic property doesn't exist so we create it and disable it by default
+            world.setDynamicProperty(booleanProps, false);
+            // Set property with value as an element that we can use in other scripts
+            dynamicPropertyRegistry.set(booleanProps, false);
+        } else {
+            // Dynamic property exists so set property with value as an element that we can use in other scripts
+            dynamicPropertyRegistry.set(booleanProps, test);
+        }
     }
 
     // Set additional properties for world border
