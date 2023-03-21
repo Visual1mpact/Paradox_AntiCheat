@@ -1,39 +1,70 @@
 #!/bin/bash
 
-shopt -s nullglob
-files=(entities/*.json)
+# Define the directory where the entity JSON files are stored
+entity_dir="./entities"
 
-total=${#files[@]}
-current=0
+# Loop through all JSON files in the entity directory
+for file in "$entity_dir"/*.json; do
+    if [[ $file == "player.json" ]]; then
+        continue;
+    fi
 
-echo "Processing ${total} files"
+    # Remove comments from the file
+    sed -i 's/\/\/.*//' "$file"
 
-for file in "${files[@]}"; do
-    if [ "$file" != "entities/player.json" ]; then
-        ((current++))
-
-        # Show progress bar
-        progress=$(awk "BEGIN { printf \"%.2f\", $current/$total * 100 }")
-        printf "[%-50s] %s%% (%s/%s)\r" "${progress// /#}" "$progress" "$current" "$total"
-
-        # Check if the file contains the event object
-        if ! grep -q '^\s*"events": {' "$file"; then
-            # If it doesn't exist, add it to the entity object
-            sed -i '/^\s*"minecraft:entity": {/a \ \ \ \ "events": {\n \ \ \ \ \ \ \ \ "paradox:kick": {\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "add": {\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "component_groups": ["paradox:kick"]\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\n \ \ \ \ \ \ \ \ }\n' "$file"
-            if grep -q '^\s*"component_groups": {' "$file"; then
-                echo "[Component_Groups] File ${file} updated with paradox:kick component group"
-            else
-                echo "[Events & Component_Groups] File ${file} updated with paradox:kick event and component group"
-            fi
-        # Check if the file contains the component group
-        elif ! grep -q '^\s*"paradox:kick": {' "$file"; then
-            # If it doesn't exist, add it to the component_groups object
-            sed -i '/^\s*"component_groups": {/a \ \ \ \ "paradox:kick": {\n \ \ \ \ \ \ \ \ "minecraft:despawn": {\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "remove_child_entities": true\n \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\n \ \ \ \ \ \ \ \ }\n' "$file"
-            echo "[Events] File ${file} updated with paradox:kick event"
+    # Check if the file contains a "component_groups" object
+    if grep -q '"component_groups":' "$file"; then
+        # If the file contains a "component_groups" object, check if it contains the "paradox:kick" component group
+        if ! grep -q '"paradox:kick":' "$file"; then
+            # If the file does not contain the "paradox:kick" component group, add it to the "component_groups" object
+            sed -i '/"component_groups": {/a \
+                "paradox:kick": {\
+                    "minecraft:despawn": {\
+                        "remove_child_entities": true\
+                    }\
+                },' "$file"
+            echo "Added paradox:kick component group to $file"
         else
-            echo "[No Update] File ${file} already contains paradox:kick event and component group"
+            echo "paradox:kick component group already exists in $file"
         fi
+    else
+        # If the file does not contain a "component_groups" object, add it and the "paradox:kick" component group to the entity
+        sed -i '/"minecraft:entity": {/a \
+            "component_groups": {\
+                "paradox:kick": {\
+                    "minecraft:despawn": {\
+                        "remove_child_entities": true\
+                    }\
+                }\
+            },' "$file"
+        echo "Added component_groups object and paradox:kick component group to $file"
+    fi
+
+    # Check if the file contains an "events" object
+    if grep -q '"events":' "$file"; then
+        # If the file contains an "events" object, check if it contains the "paradox:kick" event
+        if ! grep -qE '^\s*"paradox:kick":' <(jq --slurp '.[0]["minecraft:entity"]["events"]' "$file"); then
+            # If the file does not contain the "paradox:kick" event, add it to the "events" object
+            sed -i '/"events": {/a \
+                "paradox:kick": {\
+                    "add": {\
+                        "component_groups": ["paradox:kick"]\
+                    }\
+                },' "$file"
+            echo "Added paradox:kick event to $file"
+        else
+            echo "paradox:kick event already exists in $file"
+        fi
+    else
+        # If the file does not contain an "events" object, add it and the "paradox:kick" event to the entity
+        sed -i '/"minecraft:entity": {/a \
+            "events": {\
+                "paradox:kick": {\
+                    "add": {\
+                        "component_groups": ["paradox:kick"]\
+                    }\
+                }\
+            },' "$file"
+        echo "Added events object and paradox:kick event to $file"
     fi
 done
-
-echo "Processing complete"
