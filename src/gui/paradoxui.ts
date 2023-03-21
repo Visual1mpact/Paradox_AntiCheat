@@ -42,6 +42,11 @@ import { uiBADPACKETS } from "./modules/uiBadpackets";
 import { uiBEDROCKVALIDATION } from "./modules/uiBedrockValidation";
 import { uiANTICRASHER } from "./modules/uiAntiCrasher";
 import { uiILLEGALITEMS } from "./modules/uiIllegaItems";
+import { uiLAGCLEAR } from "./modules/uiLagClear";
+import { uiNAMESPOOFING } from "./modules/uiNameSpoofing";
+import { uiOPS } from "./modules/uiOnePlayerSleep";
+import { uiCOMMANDBLOCKS } from "./modules/uiCommandBlocks";
+import { uiREACH } from "./modules/uiReach";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -388,8 +393,14 @@ async function paradoxui(player: Player) {
             modulesui.button("Configure Badpackets", "textures/ui/upload_glyph");
             modulesui.button("Configure Bedrock Validation", "textures/blocks/bedrock");
             modulesui.button("Configure Anti Crasher", "textures/ui/Ping_Red");
-            modulesui.button("Configure Enchanted Armor", "textures/items/diamond_leggins");
+            modulesui.button("Configure Enchanted Armor", "textures/items/diamond_leggings");
             modulesui.button("Configure Illegal Items", "textures/items/netherite_pickaxe");
+            modulesui.button("Configure Lag Clearing", "textures/ui/interact");
+            modulesui.button("Configure Namespoofing", "textures/items/fishing_rod_uncast");
+            modulesui.button("Configure One Player Sleep(OPS)", "textures/items/bed_red");
+            modulesui.button("Configure Command Blocks", "textures/blocks/command_block");
+            modulesui.button("Configure Anti Reach", "textures/ui/crossout");
+            modulesui.button("Configure Exp Salvage System", "textures/blocks/smithing_table_front");
             modulesui.show(player).then((ModulesUIResult) => {
                 if (ModulesUIResult.selection === 0) {
                     //GameModes UI
@@ -626,6 +637,79 @@ async function paradoxui(player: Player) {
                     modulesillegalitemsui.show(player).then((illegalitemsResult) => {
                         uiILLEGALITEMS(illegalitemsResult, player);
                     });
+                }
+                if (ModulesUIResult.selection === 12) {
+                    //Lagclear
+                    const moduleslaglearui = new ModalFormData();
+                    const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
+                    moduleslaglearui.title("§4Paradox Modules-Clear Lag§4");
+                    moduleslaglearui.toggle("Clear Lag: Clears items and entities with timer", clearLagBoolean);
+                    moduleslaglearui.show(player).then((lagclearResult) => {
+                        uiLAGCLEAR(lagclearResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 13) {
+                    //Namespoofing
+                    const modulesnamespoofingui = new ModalFormData();
+                    const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
+                    const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
+                    modulesnamespoofingui.title("§4Paradox Modules-Namespoofing§4");
+                    modulesnamespoofingui.toggle("Name Spoofing A: checks for player's name exceeding character limitations.", nameSpoofABoolean);
+                    modulesnamespoofingui.toggle("Name Spoofing B: checks for player's name that has Non ASCII characters.", nameSpoofBBoolean);
+                    modulesnamespoofingui.show(player).then((namespoofingResult) => {
+                        uiNAMESPOOFING(namespoofingResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 14) {
+                    const modulesopsui = new ModalFormData();
+                    const opsBoolean = dynamicPropertyRegistry.get("ops_b");
+                    modulesopsui.title("§4Paradox Modules-One Player Sleep§4");
+                    modulesopsui.toggle("One Player Sleep: Allows 1 player to sleep through the night", opsBoolean);
+                    modulesopsui.show(player).then((opsResult) => {
+                        uiOPS(opsResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 15) {
+                    const modulescommandblocksui = new ModalFormData();
+                    const cmdsscore = getScore("cmds", player);
+                    const commandblocksscore = getScore("commandblocks", player);
+                    let removecmdblocksBoolean;
+                    Boolean;
+                    let cmdoBoolean: boolean;
+                    if (cmdsscore <= 0) {
+                        cmdoBoolean = false;
+                    }
+                    if (cmdsscore >= 1) {
+                        cmdoBoolean = true;
+                    }
+                    if (commandblocksscore <= 0) {
+                        removecmdblocksBoolean = false;
+                    }
+                    if (commandblocksscore >= 1) {
+                        removecmdblocksBoolean = true;
+                    }
+                    modulescommandblocksui.title("§4Paradox Modules-Command Blocks§4");
+                    modulescommandblocksui.toggle("Override Command Blocks: Forces the commandblocksenabled gamerule to be enabled or disabled at all times.", cmdoBoolean);
+                    modulescommandblocksui.toggle("Anti Command Blocks: Clears all Command Blocks when enabled.", removecmdblocksBoolean);
+                    modulescommandblocksui.show(player).then((commandblockResult) => {
+                        uiCOMMANDBLOCKS(commandblockResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 16) {
+                    const modulesreachui = new ModalFormData();
+                    const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
+                    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
+                    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+                    modulesreachui.title("§4Paradox Modules-Reach§4");
+                    modulesreachui.toggle("Reach A: checks for player's placing blocks beyond reach.", reachABoolean);
+                    modulesreachui.toggle("Reach B: checks for player's breaking blocks beyond reach.", reachBBoolean);
+                    modulesreachui.toggle("Reach C: checks for player's attacking beyond reach.", reachCBoolean);
+                    modulesreachui.show(player).then((reachResult) => {
+                        uiREACH(reachResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 17) {
+                    //New Slavage System
                 }
             });
         }
