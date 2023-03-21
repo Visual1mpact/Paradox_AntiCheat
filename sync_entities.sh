@@ -5,12 +5,19 @@ entity_dir="./entities"
 
 # Loop through all JSON files in the entity directory
 for file in "$entity_dir"/*.json; do
-    if [[ $file == "player.json" ]]; then
+    if [[ $file == "${entity_dir}/player.json" ]]; then
         continue;
     fi
 
     # Remove comments from the file
     sed -i 's/\/\/.*//' "$file"
+
+    # Ignore killaura as we need those to remain
+    if [[ $file != "${entity_dir}/killaura.json" ]]; then
+        # Update is_spawnable and is_summonable properties
+        sed -i 's/"is_spawnable": [^,]*,/"is_spawnable": false,/' "$file"
+        sed -i 's/"is_summonable": [^,]*,/"is_summonable": false,/' "$file"
+    fi
 
     # Check if the file contains a "component_groups" object
     if grep -q '"component_groups":' "$file"; then
