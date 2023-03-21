@@ -37,6 +37,11 @@ import { getTeleportRequests } from "../commands/utility/tpr";
 import { uiANTINUKER } from "./modules/uiAntiNuker";
 import { uiANTISHULKER } from "./modules/uiAntiShulker";
 import { uiANTISPAM } from "./modules/uiAntiSpam";
+import { uiANTIAUTOCLICKER } from "./modules/uiAntiAutoClicker";
+import { uiBADPACKETS } from "./modules/uiBadpackets";
+import { uiBEDROCKVALIDATION } from "./modules/uiBedrockValidation";
+import { uiANTICRASHER } from "./modules/uiAntiCrasher";
+import { uiILLEGALITEMS } from "./modules/uiIllegaItems";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -373,13 +378,18 @@ async function paradoxui(player: Player) {
             //Modules ui
             const modulesui = new ActionFormData();
             modulesui.title("§4Paradox - Modules§4");
-            modulesui.button("Configure Gamemodes", "textures/items/totem");
-            modulesui.button("Configure Movement", "textures/ui/move");
-            modulesui.button("Configure KillAura", "textures/items/diamond_sword");
+            modulesui.button("Configure Anti Gamemodes", "textures/items/totem");
+            modulesui.button("Configure Movement Modules", "textures/ui/move");
+            modulesui.button("Configure Anti KillAura", "textures/items/diamond_sword");
             modulesui.button("Configure Anti Nuker", "textures/blocks/tnt_side");
             modulesui.button("Configure Anti Shulker", "textures/blocks/shulker_top_purple");
             modulesui.button("Configure Anti Spam", "textures/ui/mute_off");
-
+            modulesui.button("Configure Anti AutoCliker", "textures/ui/cursor_gamecore");
+            modulesui.button("Configure Badpackets", "textures/ui/upload_glyph");
+            modulesui.button("Configure Bedrock Validation", "textures/blocks/bedrock");
+            modulesui.button("Configure Anti Crasher", "textures/ui/Ping_Red");
+            modulesui.button("Configure Enchanted Armor", "textures/items/diamond_leggins");
+            modulesui.button("Configure Illegal Items", "textures/items/netherite_pickaxe");
             modulesui.show(player).then((ModulesUIResult) => {
                 if (ModulesUIResult.selection === 0) {
                     //GameModes UI
@@ -523,6 +533,98 @@ async function paradoxui(player: Player) {
                     modulesantispamui.toggle("Anti Spam", antiSpamBoolean);
                     modulesantispamui.show(player).then((antispamResult) => {
                         uiANTISPAM(antispamResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 6) {
+                    const autoclickerscore = getScore("autoclicker", player);
+                    let autoclickerBoolean: boolean = undefined;
+                    /**get the score value and then check to see if its already enable or already disabled
+                     * so we can then update the control boolean to disaply its current setting to the player
+                     * in the menu.
+                     */
+                    if (autoclickerscore <= 0) {
+                        autoclickerBoolean = false;
+                    }
+                    if (autoclickerscore >= 1) {
+                        autoclickerBoolean = true;
+                    }
+                    const modulesantiautoclickerui = new ModalFormData();
+                    modulesantiautoclickerui.title("§4Paradox Modules-Anti AutoClicker§4");
+                    modulesantiautoclickerui.toggle("Anti AutoClicker", autoclickerBoolean);
+                    modulesantiautoclickerui.show(player).then((antiautoclickerResult) => {
+                        uiANTIAUTOCLICKER(antiautoclickerResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 7) {
+                    const modulesbadpacketsui = new ModalFormData();
+                    const badPackets1Boolean = dynamicPropertyRegistry.get("badpackets1_b");
+                    const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
+                    modulesbadpacketsui.title("§4Paradox Modules-Badpackets§4");
+                    modulesbadpacketsui.toggle("Badpackets1: checks for message lengths with each broadcast", badPackets1Boolean);
+                    modulesbadpacketsui.toggle("Badpackets2: checks for invalid selected slots by player", badPackets2Boolean);
+                    modulesbadpacketsui.show(player).then((badpacketsResult) => {
+                        uiBADPACKETS(badpacketsResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 8) {
+                    const modulesbedrockvalidateui = new ModalFormData();
+                    const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
+                    modulesbedrockvalidateui.title("§4Paradox Modules-Bedrock Validation§4");
+                    modulesbedrockvalidateui.toggle("Bedrock Validate: checks for bedrock validations", bedrockValidateBoolean);
+                    modulesbedrockvalidateui.show(player).then((bedrockvalidationResult) => {
+                        uiBEDROCKVALIDATION(bedrockvalidationResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 9) {
+                    const modulesanticrasherui = new ModalFormData();
+                    const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
+                    modulesanticrasherui.title("§4Paradox Modules-Anti Crasher§4");
+                    modulesanticrasherui.toggle("Anti Crasher: checks for the infamous Horion Crasher", crasherABoolean);
+                    modulesanticrasherui.show(player).then((anticrasherResult) => {
+                        uiANTICRASHER(anticrasherResult, player);
+                    });
+                }
+                if (ModulesUIResult.selection === 10) {
+                    const modulesenchantedarmorui = new ModalFormData();
+                    const encharmorscore = getScore("encharmor", player);
+                    let enchantedarmorBoolean: boolean;
+                    /**get the score value and then check to see if its already enable or already disabled
+                     * so we can then update the control boolean to disaply its current setting to the player
+                     * in the menu.
+                     */
+                    if (encharmorscore <= 0) {
+                        enchantedarmorBoolean = false;
+                    }
+                    if (encharmorscore >= 1) {
+                        enchantedarmorBoolean = true;
+                    }
+                    modulesenchantedarmorui.title("§4Paradox Modules-Enchaneted Armor§4");
+                    modulesenchantedarmorui.toggle("Enchanted Armor: Anti Enchanted Armor for all players", enchantedarmorBoolean);
+                    modulesenchantedarmorui.show(player).then((enchantedarmorResult) => {
+                        uiANTICRASHER(enchantedarmorResult, player);
+                    });
+                }
+
+                if (ModulesUIResult.selection === 11) {
+                    //Illegal items this will cover a few modules so will group these into one UI.
+                    const modulesillegalitemsui = new ModalFormData();
+                    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
+                    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
+                    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
+                    const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
+                    const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
+                    const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
+                    const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
+                    modulesillegalitemsui.title("§4Paradox Modules-Illegal Items§4");
+                    modulesillegalitemsui.toggle("Illegal Items A: checks for player's that have illegal items in inventory.", illegalItemsABoolean);
+                    modulesillegalitemsui.toggle("Illegal Items B: checks for player's that use illegal items.", illegalItemsBBoolean);
+                    modulesillegalitemsui.toggle("Illegal Items C: hecks for player's that place illegal items.", illegalItemsCBoolean);
+                    modulesillegalitemsui.toggle("Illegal Items D: checks for illegal dropped items.", illegalItemsDBoolean);
+                    modulesillegalitemsui.toggle("Illegal Enchants: checks for items with illegal enchantments.", illegalEnchantmentBoolean);
+                    modulesillegalitemsui.toggle("Illegal Lores: checks for illegal Lores on items.", illegalLoresBoolean);
+                    modulesillegalitemsui.toggle("Stack Ban: checks for player's with illegal stacks over 64.", stackBanBoolean);
+                    modulesillegalitemsui.show(player).then((illegalitemsResult) => {
+                        uiILLEGALITEMS(illegalitemsResult, player);
                     });
                 }
             });
