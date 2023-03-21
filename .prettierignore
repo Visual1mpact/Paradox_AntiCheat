@@ -1,0 +1,16 @@
+node_modules
+.gitignore
+.distignore
+.mcattributes
+.prettierrc
+dist.bat
+package-lock.json
+package.json
+sync_entities.sh
+sync.bat
+tsconfig.json
+.github
+.vs
+.vscode
+.git
+.prettierignore

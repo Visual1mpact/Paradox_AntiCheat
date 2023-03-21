@@ -21,7 +21,7 @@
     "scripts": {
         "enableMcLoopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
         "enableMcPreviewLoopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476",
-        "format": "npx prettier --write ./",
+        "format": "npx prettier --write --ignore-path .prettierignore ./",
         "linux//": " --- BUILD (Linux) --- ",
         "clean": "rm -rf build/",
         "mkDirs": "mkdir -p build",
