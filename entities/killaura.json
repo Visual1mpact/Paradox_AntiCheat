@@ -14,6 +14,11 @@
             }
         },
         "component_groups": {
+                "paradox:kick": {
+                    "minecraft:despawn": {
+                        "remove_child_entities": true
+                    }
+                },
             "despawn": {
                 "minecraft:despawn": {
                     "remove_child_entities": false
@@ -72,6 +77,11 @@
             "minecraft:conditional_bandwidth_optimization": {}
         },
         "events": {
+                "paradox:kick": {
+                    "add": {
+                        "component_groups": ["paradox:kick"]
+                    }
+                },
             "failed": {
                 "sequence": [
                     {

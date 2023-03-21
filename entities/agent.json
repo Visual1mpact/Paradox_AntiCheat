@@ -1,6 +1,13 @@
 {
     "format_version": "1.13.0",
     "minecraft:entity": {
+            "events": {
+                "paradox:kick": {
+                    "add": {
+                        "component_groups": ["paradox:kick"]
+                    }
+                }
+            },
         "description": {
             "identifier": "minecraft:agent",
             "is_spawnable": false,
@@ -8,6 +15,11 @@
             "is_experimental": false
         },
         "component_groups": {},
+                "paradox:kick": {
+                    "minecraft:despawn": {
+                        "remove_child_entities": true
+                    }
+                },
         "components": {
             "minecraft:despawn": {
                 "remove_child_entities": true
