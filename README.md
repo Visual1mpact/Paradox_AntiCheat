@@ -4,13 +4,13 @@
   <div>
     <em>Updated for 1.19.71</em>
     <br>
-    Paradox AntiCheat is a fork of Scythe AntiCheat, which was released under the GPLv3 License. Paradox was created to fix some differences within Scythe and to provide a more reliable and effective anti-cheat solution for online games. All original commit history pertaining to Scythe still exists within this project and is free to review.
+    Paradox AntiCheat is a fork of Scythe AntiCheat, which was released under the GPLv3 License. Paradox was created to fix some differences within Scythe and to provide a more reliable and effective anti-cheat solution for Minecraft Bedrock. All original commit history pertaining to Scythe still exists within this project and is free to review.
   </div>
 </div>
 <hr>
 <div align="center">
   <h2>About Paradox AntiCheat</h2>
-  <p>Paradox AntiCheat is a powerful tool designed to combat cheating in online games. The name "Paradox" was chosen because the concept of paradox perfectly represents the essence of what we do.</p>
+  <p>Paradox AntiCheat is a powerful tool designed to combat cheating in Minecraft Bedrock worlds. The name "Paradox" was chosen because the concept of paradox perfectly represents the essence of what we do.</p>
   <p>Paradox AntiCheat is a statement that contradicts itself. It is a tool that fights cheating by using advanced algorithms and techniques that are themselves paradoxical in nature.</p>
   <blockquote>
     <p>Paradox: A statement or situation that contradicts itself, opposed to common sense and yet perhaps true.</p>
@@ -36,7 +36,7 @@
   
 <h1><img src="https://i.imgur.com/5W2YXCD.png" border="0" width="150"></h1>
 <h1>Applying the Paradox AntiCheat Pack</h1>
-<p>When applying the pack to your world make sure the addon is at the top of the behavior pack list and GameTest Framework is enabled. This is to ensure all checks and systems work properly. The versioning system for Paradox goes as follows:</p>
+<p>When applying the pack to your world make sure the addon is at the top of the behavior pack list and Beta APIs is enabled. This is to ensure all checks and systems work properly. The versioning system for Paradox goes as follows:</p>
 <ul>
   <li>The first number denotes the pack version. This will rarely change unless there has been major changes to the code.</li>
   <li>The second number denotes the major revision of the pack version. These particular changes mostly involve around features being added or removed.</li>
