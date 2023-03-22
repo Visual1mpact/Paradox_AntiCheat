@@ -1,7 +1,7 @@
 import { world, Player, BeforeChatEvent, Vector } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { decryptString, getPrefix, encryptString, sendMsgToPlayer } from "../../util.js";
+import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
 
 let cooldownTimer = new WeakMap();
 
@@ -151,7 +151,8 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
         }
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || uniqueId === player.name) {
-            await player.runCommandAsync(`scoreboard players set @s teleport 25`);
+            // This timer is a grace period
+            setTimer(player.name);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
             player.teleport(new Vector(homex, homey, homez), world.getDimension(dimension), 0, 0);
             // Delete old key and value

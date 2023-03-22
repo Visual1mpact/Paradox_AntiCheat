@@ -3,7 +3,7 @@
 import { world, Player, BeforeChatEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsgToPlayer, setTimer } from "../../util.js";
 
 function tpaHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -85,6 +85,7 @@ export function tpa(message: BeforeChatEvent, args: string[]) {
     // Check if teleporting to them or vice versa then set it up
     if (args[0] && args[1]) {
         // Let's teleport you to that player
+        setTimer(artificalPlayer.name);
         artificalPlayer.teleport(member.location, member.dimension, 0, 0);
         // Let you know that you have been teleported
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${artificalPlayer.name} to ${member.name}`);

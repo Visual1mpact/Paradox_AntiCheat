@@ -1,5 +1,5 @@
 import { world, MinecraftEffectTypes, system } from "@minecraft/server";
-import { flag } from "../../../util.js";
+import { flag, isTimerExpired } from "../../../util.js";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
@@ -67,8 +67,9 @@ function invalidsprinta(id: number) {
 
         const { x, y, z } = player.location;
         highestBps = calculateMovementBPS([x, y, z]);
+        const verifyTpGrace = isTimerExpired(player.name);
         // We compare with a 20% buffer to minimize false flags
-        if (highestBps > config.modules.invalidsprintA.speed && player.getEffect(MinecraftEffectTypes.blindness)) {
+        if (highestBps > config.modules.invalidsprintA.speed && player.getEffect(MinecraftEffectTypes.blindness) && verifyTpGrace === true) {
             flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", highestBps.toFixed(2), true, null);
             highestBps = 0;
         }

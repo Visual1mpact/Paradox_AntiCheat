@@ -1,6 +1,6 @@
 import { world, system, EntityQueryOptions, GameMode } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+import { flag, isTimerExpired } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 let lastPosition: [number, number, number] = [0, 0, 0];
@@ -70,8 +70,9 @@ function noslowa(id: number) {
 
         const { x, y, z } = player.location;
         highestBps = calculateMovementBPS([x, y, z]);
+        const verifyTpGrace = isTimerExpired(player.name);
         // We compare with a 20% buffer to minimize false flags
-        if (highestBps > config.modules.noslowA.speed) {
+        if (highestBps > config.modules.noslowA.speed && verifyTpGrace === true) {
             flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", highestBps.toFixed(2), true, null);
             highestBps = 0;
         }

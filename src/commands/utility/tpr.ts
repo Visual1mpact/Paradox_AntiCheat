@@ -1,6 +1,6 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config";
-import { getPrefix, sendMsgToPlayer } from "../../util";
+import { getPrefix, sendMsgToPlayer, setTimer } from "../../util";
 
 interface TeleportRequest {
     requester: Player;
@@ -95,6 +95,7 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatE
         const validMessages = ["approved", "approve"];
 
         if (validMessages.some((msg) => msg === message)) {
+            setTimer(request.requester.name);
             request.requester.teleport(request.target.location, request.target.dimension, 0, 0, false);
             sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
         } else {

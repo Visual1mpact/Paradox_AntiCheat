@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Player, Vector, world } from "@minecraft/server";
+import { BeforeChatEvent, Player, system, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -327,6 +327,50 @@ export function decryptString(str: string, salt: string): string {
     }
     return plaintext;
 }
+
+const timerMap = new Map();
+
+export function setTimer(player: string) {
+    // Set a timer for 2 seconds
+    const timer = Date.now() + 2000;
+
+    // Store the timer in the map
+    timerMap.set(player, timer);
+}
+
+export function isTimerExpired(player: string) {
+    // Get the timer for the player
+    const timer = timerMap.get(player);
+
+    // If the timer doesn't exist, assume it's expired
+    if (!timer) {
+        return true;
+    }
+
+    // Check if the timer has expired
+    if (Date.now() > timer) {
+        timerMap.delete(player);
+        return true;
+    }
+
+    return false;
+}
+
+// Define the maximum age of a key (in milliseconds)
+const maxAge = 60000; // 1 minute
+
+// Define the interval (in milliseconds) for checking keys
+const checkInterval = 300000; // 5 minutes
+
+// Create the timer for checking keys
+system.runInterval(() => {
+    const now = Date.now();
+    timerMap.forEach((value, key) => {
+        if (now - value > maxAge) {
+            timerMap.delete(key);
+        }
+    });
+}, checkInterval);
 
 const overworld = world.getDimension("overworld");
 
