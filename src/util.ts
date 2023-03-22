@@ -330,9 +330,15 @@ export function decryptString(str: string, salt: string): string {
 
 const timerMap = new Map();
 
-export function setTimer(player: string) {
-    // Set a timer for 2 seconds
-    const timer = Date.now() + 2000;
+export function setTimer(player: string, spawn: boolean = false) {
+    let timer: number = 0;
+    if (spawn === true) {
+        // Set a timer for 10 seconds
+        timer = Date.now() + 10000;
+    } else {
+        // Set a timer for 2 seconds
+        timer = Date.now() + 2000;
+    }
 
     // Store the timer in the map
     timerMap.set(player, timer);

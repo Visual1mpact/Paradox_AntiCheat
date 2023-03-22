@@ -1,10 +1,16 @@
 import { Player, PlayerSpawnEvent, world } from "@minecraft/server";
 import { onJoinData } from "../../../data/onjoindata.js";
-import { getPrefix } from "../../../util.js";
+import { getPrefix, setTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 async function onJoinTime(object: PlayerSpawnEvent) {
+    /**
+     * This is to give the player a grace period
+     * in case they previously died and spawned again
+     */
+    setTimer(object.player.name, true);
+
     /**
      * We only want to execute this when it's a players initial spawn
      */
