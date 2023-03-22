@@ -38,8 +38,11 @@ async function antiknockbacka(id: number) {
             continue;
         }
 
+        const velocity = player.getVelocity();
+        const velocitySum = Number((velocity.y + velocity.x + velocity.z).toFixed(3));
+
         // antikb/a = checks for anti knockback and flags it
-        if (Number((player.getVelocity().y + player.getVelocity().x + player.getVelocity().z).toFixed(3)) <= config.modules.antikbA.magnitude) {
+        if (velocitySum <= config.modules.antikbA.magnitude) {
             if (player.hasTag("attacked") && !player.hasTag("dead") && !player.hasTag("gliding") && !player.hasTag("levitating") && !player.hasTag("flying")) {
                 try {
                     // Make sure Anti Knockback is turned on
