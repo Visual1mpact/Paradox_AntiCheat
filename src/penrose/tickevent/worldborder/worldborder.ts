@@ -89,144 +89,72 @@ function worldborder(id: number) {
 
         // Overworld
         if (player.dimension.id === "minecraft:overworld") {
+            const border = overworldSize - 3;
+            const { x, y, z } = player.location;
+
             // Make sure nobody climbs over the wall
-            if (player.location.x > overworldSize || player.location.x < -overworldSize || player.location.z > overworldSize || player.location.z < -overworldSize) {
+            if (x > overworldSize || x < -overworldSize || z > overworldSize || z < -overworldSize) {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
-                // Positives
-                if (player.location.x >= overworldSize && player.location.z >= overworldSize) {
+
+                const teleportToBorder = (x: number, z: number) => {
                     setTimer(player.name);
-                    player.teleport(new Vector(overworldSize - 3, player.location.y, overworldSize - 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, overworldSize - 3, player.location.y, overworldSize - 3);
-                    player.teleport(new Vector(overworldSize - 3, safe, overworldSize - 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Negatives
-                if (player.location.x <= -overworldSize && player.location.z <= -overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(-overworldSize + 3, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, -overworldSize + 3, player.location.y, -overworldSize + 3);
-                    player.teleport(new Vector(-overworldSize + 3, safe, -overworldSize + 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Postive x and negative z
-                if (player.location.x >= overworldSize && player.location.z <= -overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(overworldSize - 3, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, overworldSize - 3, player.location.y, -overworldSize + 3);
-                    player.teleport(new Vector(overworldSize - 3, safe, -overworldSize + 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Negative x and positive z
-                if (player.location.x <= -overworldSize && player.location.z >= overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(-overworldSize + 3, player.location.y, overworldSize - 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, -overworldSize + 3, player.location.y, overworldSize - 3);
-                    player.teleport(new Vector(-overworldSize + 3, safe, overworldSize - 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Postive x
-                if (player.location.x >= overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(overworldSize - 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, overworldSize - 3, player.location.y, player.location.z);
-                    player.teleport(new Vector(overworldSize - 3, safe, player.location.z), player.dimension, 0, 0);
-                    break;
-                }
-                // Positive z
-                if (player.location.z >= overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(player.location.x, player.location.y, overworldSize - 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, player.location.x, player.location.y, overworldSize - 3);
-                    player.teleport(new Vector(player.location.x, safe, overworldSize - 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Negative x
-                if (player.location.x <= -overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(-overworldSize + 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, -overworldSize + 3, player.location.y, player.location.z);
-                    player.teleport(new Vector(-overworldSize + 3, safe, player.location.z), player.dimension, 0, 0);
-                    break;
-                }
-                // Negative z
-                if (player.location.z <= -overworldSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(player.location.x, player.location.y, -overworldSize + 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, player.location.x, player.location.y, -overworldSize + 3);
-                    player.teleport(new Vector(player.location.x, safe, -overworldSize + 3), player.dimension, 0, 0);
-                    break;
+                    player.teleport(new Vector(x, y, z), player.dimension, 0, 0);
+                    const safe = safetyProtocol(player, x, y, z);
+                    player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
+                };
+
+                if (x >= overworldSize && z >= overworldSize) {
+                    teleportToBorder(border, border);
+                } else if (x <= -overworldSize && z <= -overworldSize) {
+                    teleportToBorder(-border + 6, -border + 6);
+                } else if (x >= overworldSize && z <= -overworldSize) {
+                    teleportToBorder(border, -border + 6);
+                } else if (x <= -overworldSize && z >= overworldSize) {
+                    teleportToBorder(-border + 6, border);
+                } else if (x >= overworldSize) {
+                    teleportToBorder(border, z);
+                } else if (z >= overworldSize) {
+                    teleportToBorder(x, border);
+                } else if (x <= -overworldSize) {
+                    teleportToBorder(-border + 6, z);
+                } else if (z <= -overworldSize) {
+                    teleportToBorder(x, -border + 6);
                 }
             }
         }
 
         // Nether
-        if (player.dimension.id === "minecraft:nether") {
+        if (player.dimension.id === "minecraft:the_nether") {
+            const border = netherSize - 3;
+            const { x, y, z } = player.location;
+
             // Make sure nobody climbs over the wall
-            if (player.location.x > netherSize || player.location.x < -netherSize || player.location.z > netherSize || player.location.z < -netherSize) {
+            if (x > netherSize || x < -netherSize || z > netherSize || z < -netherSize) {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
-                // Positives
-                if (player.location.x >= netherSize && player.location.z >= netherSize) {
+
+                const teleportToBorder = (x: number, z: number) => {
                     setTimer(player.name);
-                    player.teleport(new Vector(netherSize - 3, player.location.y, netherSize - 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, netherSize - 3, player.location.y, netherSize - 3);
-                    player.teleport(new Vector(netherSize - 3, safe, netherSize - 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Negatives
-                if (player.location.x <= -netherSize && player.location.z <= -netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(-netherSize + 3, player.location.y, -netherSize + 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, -netherSize + 3, player.location.y, -netherSize + 3);
-                    player.teleport(new Vector(-netherSize + 3, safe, -netherSize + 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Postive x and negative z
-                if (player.location.x >= netherSize && player.location.z <= -netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(netherSize - 3, player.location.y, -netherSize + 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, netherSize - 3, player.location.y, -netherSize + 3);
-                    player.teleport(new Vector(netherSize - 3, safe, -netherSize + 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Negative x and positive z
-                if (player.location.x <= -netherSize && player.location.z >= netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(-netherSize + 3, player.location.y, netherSize - 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, -netherSize + 3, player.location.y, netherSize - 3);
-                    player.teleport(new Vector(-netherSize + 3, safe, netherSize - 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Postive x
-                if (player.location.x >= netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(netherSize - 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, netherSize - 3, player.location.y, player.location.z);
-                    player.teleport(new Vector(netherSize - 3, safe, player.location.z), player.dimension, 0, 0);
-                    break;
-                }
-                // Positive z
-                if (player.location.z >= netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(player.location.x, player.location.y, netherSize - 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, player.location.x, player.location.y, netherSize - 3);
-                    player.teleport(new Vector(player.location.x, safe, netherSize - 3), player.dimension, 0, 0);
-                    break;
-                }
-                // Negative x
-                if (player.location.x <= -netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(-netherSize + 3, player.location.y, player.location.z), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, -netherSize + 3, player.location.y, player.location.z);
-                    player.teleport(new Vector(-netherSize + 3, safe, player.location.z), player.dimension, 0, 0);
-                    break;
-                }
-                // Negative z
-                if (player.location.z <= -netherSize) {
-                    setTimer(player.name);
-                    player.teleport(new Vector(player.location.x, player.location.y, -netherSize + 3), player.dimension, 0, 0);
-                    const safe = safetyProtocol(player, player.location.x, player.location.y, -netherSize + 3);
-                    player.teleport(new Vector(player.location.x, safe, -netherSize + 3), player.dimension, 0, 0);
-                    break;
+                    player.teleport(new Vector(x, y, z), player.dimension, 0, 0);
+                    const safe = safetyProtocol(player, x, y, z);
+                    player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
+                };
+
+                if (x >= netherSize && z >= netherSize) {
+                    teleportToBorder(border, border);
+                } else if (x <= -netherSize && z <= -netherSize) {
+                    teleportToBorder(-border + 6, -border + 6);
+                } else if (x >= netherSize && z <= -netherSize) {
+                    teleportToBorder(border, -border + 6);
+                } else if (x <= -netherSize && z >= netherSize) {
+                    teleportToBorder(-border + 6, border);
+                } else if (x >= netherSize) {
+                    teleportToBorder(border, z);
+                } else if (z >= netherSize) {
+                    teleportToBorder(x, border);
+                } else if (x <= -netherSize) {
+                    teleportToBorder(-border + 6, z);
+                } else if (z <= -netherSize) {
+                    teleportToBorder(x, -border + 6);
                 }
             }
         }
