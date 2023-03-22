@@ -289,6 +289,45 @@ export const crypto = (salt: string | number | boolean, text: string) => {
     return [...resultChars].map(byteHex).join("");
 };
 
+/**
+ * @name encryptString
+ * @param {string} str - The string to encrypt
+ * @param {string} salt - The salt to use for encryption
+ * @returns {string} The encrypted string
+ */
+export function encryptString(str: string, salt: string): string {
+    let ciphertext = "";
+    let keyIndex = 0;
+    for (let i = 0; i < str.length; i++) {
+        let plainCharCode = str.charCodeAt(i);
+        let keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+        let cipherCharCode = (plainCharCode + keyCharCode) % 256; // wrap around at 256
+        ciphertext += String.fromCharCode(cipherCharCode);
+        keyIndex++;
+    }
+    return "6f78" + ciphertext;
+}
+
+/**
+ * @name decryptString
+ * @param {string} str - The string to decrypt
+ * @param {string} salt - The salt to use for decryption
+ * @returns {string} The decrypted string
+ */
+export function decryptString(str: string, salt: string): string {
+    let plaintext = "";
+    let keyIndex = 0;
+    str = str.slice(4);
+    for (let i = 0; i < str.length; i++) {
+        let cipherCharCode = str.charCodeAt(i);
+        let keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+        let plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
+        plaintext += String.fromCharCode(plainCharCode);
+        keyIndex++;
+    }
+    return plaintext;
+}
+
 const overworld = world.getDimension("overworld");
 
 export const sendMsg = async (target: string, message: string | string[]) => {

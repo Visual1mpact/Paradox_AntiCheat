@@ -1,5 +1,6 @@
 import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeEvent } from "@minecraft/server";
 import config from "../../data/config.js";
+import { UUID } from "../../util.js";
 
 export const dynamicPropertyRegistry = new Map();
 
@@ -83,6 +84,11 @@ function registry(data: WorldInitializeEvent) {
         property.defineNumber(defineNumberProperties[n]);
     }
 
+    /**
+     * This is global security for strings where applicable
+     */
+    property.defineString("crypt", 50);
+
     // Register Defined properties in world globally
     data.propertyRegistry.registerWorldDynamicProperties(property);
 
@@ -148,6 +154,14 @@ function registry(data: WorldInitializeEvent) {
         dynamicPropertyRegistry.set("worldborder_nether_n", config.modules.worldBorder.nether);
     } else {
         dynamicPropertyRegistry.set("worldborder_nether_n", worldborderNether_n);
+    }
+
+    /**
+     * This is global security for strings where applicable
+     */
+    const salt = world.getDynamicProperty("crypt");
+    if (salt === undefined) {
+        world.setDynamicProperty("crypt", UUID.generate());
     }
 }
 

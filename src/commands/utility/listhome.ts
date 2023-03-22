@@ -1,6 +1,6 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { decryptString, getPrefix, encryptString, sendMsgToPlayer } from "../../util.js";
 
 function listHomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -45,11 +45,31 @@ export function listhome(message: BeforeChatEvent, args: string[]) {
         return listHomeHelp(player, prefix);
     }
 
+    // Hash the coordinates for security
+    const salt = world.getDynamicProperty("crypt");
+
     const tags = player.getTags();
     let counter = 0;
     let verify = false;
     for (let i = 0; i < tags.length; i++) {
+        /**
+         * This first if statement is to verify if they have old coordinates
+         * not encrypted. If so then we encrypt it now. This is only a temporary
+         * patch to minimize players having to manually record and remove the old
+         * tags. Eventually this will be removed.
+         */
         if (tags[i].startsWith("LocationHome:")) {
+            player.removeTag(tags[i]);
+            tags[i] = encryptString(tags[i], String(salt));
+            player.addTag(tags[i]);
+        }
+        if (tags[i].startsWith("6f78")) {
+            // Decode it so we can verify it
+            tags[i] = decryptString(tags[i], String(salt));
+            // If invalid then skip it
+            if (tags[i].startsWith("LocationHome:") === false) {
+                continue;
+            }
             // Split string into array
             const coordinatesArray = tags[i].split(" ");
             let home: string;

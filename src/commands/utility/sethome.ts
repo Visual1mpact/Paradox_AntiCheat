@@ -1,6 +1,6 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { decryptString, getPrefix, encryptString, sendMsgToPlayer } from "../../util.js";
 
 function setHomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -64,11 +64,29 @@ export function sethome(message: BeforeChatEvent, args: string[]) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
     }
 
+    // Hash the coordinates for security
+    const salt = world.getDynamicProperty("crypt");
+
     // Make sure this name doesn't exist already and it doesn't exceed limitations
     let verify = false;
     let counter = 0;
     const tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
+        /**
+         * This first if statement is to verify if they have old coordinates
+         * not encrypted. If so then we encrypt it now. This is only a temporary
+         * patch to minimize players having to manually record and remove the old
+         * tags. Eventually this will be removed.
+         */
+        if (tags[i].startsWith(args[0].toString() + " X", 13) || tags[i].startsWith("LocationHome:")) {
+            player.removeTag(tags[i]);
+            tags[i] = encryptString(tags[i], String(salt));
+            player.addTag(tags[i]);
+        }
+        if (tags[i].startsWith("6f78")) {
+            // Decode it so we can verify if it already exists
+            tags[i] = decryptString(tags[i], String(salt));
+        }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home with name '${args[0]}' already exists!`);
@@ -98,8 +116,10 @@ export function sethome(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Not allowed to set home in this dimension!`);
     }
 
+    const decryptedLocationString = `LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`;
+    const security = encryptString(decryptedLocationString, String(salt));
     // Store their new home coordinates
-    player.addTag(`LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`);
+    player.addTag(security);
 
     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' has been set at ${homex} ${homey} ${homez}!`);
 }
