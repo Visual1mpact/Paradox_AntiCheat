@@ -15,7 +15,7 @@ export function uiANTISPAM(antispamResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure gamemodes`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Anti Spam`);
     }
     if (AntiSpamToggle === true) {
         /// Allow

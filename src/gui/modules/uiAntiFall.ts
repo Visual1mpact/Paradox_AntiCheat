@@ -14,7 +14,7 @@ export async function uiANTIFALL(antifallResult: ModalFormResponse, player: Play
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure gamemodes`);
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Anit Fall`);
     }
     if (AntiFallToggle === true) {
         // Allow

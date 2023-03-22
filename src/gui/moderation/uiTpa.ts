@@ -2,7 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 //import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsgToPlayer } from "../../util";
+import { sendMsgToPlayer, setTimer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player: Player) {
@@ -38,6 +38,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
     if (toggleToTarget === true) {
         // tp the op to the target
         // Let's teleport you to that player
+        setTimer(player.name);
         player.teleport(member.location, member.dimension, 0, 0);
         // Let you know that you have been teleported
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${player.name} to ${member.name}`);
@@ -45,6 +46,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
 
     if (toggleTargetTo === true) {
         //tp the target to the op
+        setTimer(member.name);
         member.teleport(player.location, member.dimension, 0, 0);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${member.name} to ${player.name}`);
     }
