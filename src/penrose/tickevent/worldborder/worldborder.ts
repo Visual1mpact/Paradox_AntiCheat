@@ -4,20 +4,17 @@ import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js"
 
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {
-    const blockVerification = parseInt(y.toFixed(0)) - 1;
-    let safe: number;
-    for (let i = blockVerification; i < blockVerification + 100; i++) {
+    const blockVerification = Math.ceil(y) + 1;
+    let safe = null;
+    let i = blockVerification;
+    while (i < blockVerification + 100 && !safe) {
         const testAir = player.dimension.getBlock(new Vector(x, i, z));
-        if (testAir.typeId == "minecraft:air") {
+        if (testAir.typeId === "minecraft:air") {
             safe = testAir.y;
-            break;
         }
+        i++;
     }
-    if (safe) {
-        return safe;
-    } else {
-        return (safe = y);
-    }
+    return safe || y;
 }
 
 function worldborder(id: number) {
