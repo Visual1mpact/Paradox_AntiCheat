@@ -1,6 +1,6 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { decryptString, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function delhomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -55,13 +55,22 @@ export function delhome(message: BeforeChatEvent, args: string[]) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
     }
 
+    // Hash the coordinates for security
+    const salt = world.getDynamicProperty("crypt");
+
     // Find and delete this saved home location
     let verify = false;
+    let encryptedString: string = "";
     const tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
+        if (tags[i].startsWith("6f78")) {
+            encryptedString = tags[i];
+            // Decode it so we can verify it
+            tags[i] = decryptString(tags[i], String(salt));
+        }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            player.removeTag(tags[i]);
+            player.removeTag(encryptedString);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${args[0]}'!`);
             break;
         }
