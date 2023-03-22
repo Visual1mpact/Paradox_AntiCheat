@@ -63,29 +63,29 @@ function worldborder(id: number) {
             continue;
         }
 
-        // Location of portal block using player location with new instance of BlockLocation
-        const test = new Vector(player.location.x, player.location.y, player.location.z);
+        const { x, y, z } = player.location;
 
-        // Offset location from player for actual block locations and return string
-        let portals = [
-            player.dimension.getBlock(new Vector(test.x, test.y - 1, test.z)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x, test.y - 1, test.z + 1)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x, test.y - 1, test.z - 1)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x + 1, test.y - 1, test.z)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x - 1, test.y - 1, test.z)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x, test.y, test.z)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x, test.y, test.z + 1)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x, test.y, test.z - 1)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x + 1, test.y, test.z)).typeId ?? "minecraft:air",
-            player.dimension.getBlock(new Vector(test.x - 1, test.y, test.z)).typeId ?? "minecraft:air",
+        const blockCoords = [
+            [x, y - 1, z],
+            [x, y - 1, z + 1],
+            [x, y - 1, z - 1],
+            [x + 1, y - 1, z],
+            [x - 1, y - 1, z],
+            [x, y, z],
+            [x, y, z + 1],
+            [x, y, z - 1],
+            [x + 1, y, z],
+            [x - 1, y, z],
         ];
 
-        /**
-         * Ignore until they move away from the portal.
-         * This will prevent a loop caused by a conflict with Mojang's proprietary code.
-         * I literally can't think of any other solution to work around this problem for now.
-         */
-        if (MinecraftBlockTypes.portal.id in portals || portals[0] === MinecraftBlockTypes.air.id) {
+        const portalBlocks = {};
+
+        for (const [x, y, z] of blockCoords) {
+            const block = player.dimension.getBlock(new Vector(x, y, z));
+            portalBlocks[`${x},${y},${z}`] = block.typeId ?? "minecraft:air";
+        }
+
+        if (portalBlocks[MinecraftBlockTypes.portal.id] || portalBlocks[`${x},${y - 1},${z}`] === MinecraftBlockTypes.air.id) {
             setTimer(player.name);
             continue;
         }
