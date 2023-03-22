@@ -47,7 +47,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
     if (toggleTargetTo === true) {
         //tp the target to the op
         setTimer(member.name);
-        member.teleport(player.location, member.dimension, 0, 0);
+        member.teleport(player.location, player.dimension, 0, 0);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${member.name} to ${player.name}`);
     }
 
