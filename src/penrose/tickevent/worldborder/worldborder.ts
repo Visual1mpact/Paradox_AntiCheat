@@ -100,6 +100,7 @@ function worldborder(id: number) {
                     setTimer(player.name);
                     player.teleport(new Vector(x, y, z), player.dimension, 0, 0);
                     const safe = safetyProtocol(player, x, y, z);
+                    setTimer(player.name);
                     player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
                 };
 
@@ -136,6 +137,7 @@ function worldborder(id: number) {
                     setTimer(player.name);
                     player.teleport(new Vector(x, y, z), player.dimension, 0, 0);
                     const safe = safetyProtocol(player, x, y, z);
+                    setTimer(player.name);
                     player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
                 };
 
