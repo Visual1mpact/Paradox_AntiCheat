@@ -1,16 +1,15 @@
 import { world, Block, Player, Dimension, system, Vector } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-let BlockAtPlayer0: Block;
-let BlockAtPlayer1: Block;
+let blockAtPlayer0: Block;
+let blockAtPlayer1: Block;
+let playerTags: string[] = ["vanish", "swimming", "riding", "flying", "ground"];
 
-const _player = {
-    count: 0,
-};
+const playerCount = new Map<Player, number>();
 
 function timer(player: Player, dimension: Dimension, x: number, y: number, z: number) {
     player.teleport(new Vector(x, y - 2, z), dimension, 0, 0);
-    _player.count = 0;
+    playerCount.set(player, 0);
 }
 
 function jesusa(id: number) {
@@ -19,6 +18,7 @@ function jesusa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (jesusaBoolean === false) {
+        playerCount.clear();
         system.clearRun(id);
         return;
     }
@@ -31,33 +31,33 @@ function jesusa(id: number) {
         if (uniqueId === player.name) {
             continue;
         }
-        const x = Math.floor(player.location.x);
-        const y = Math.floor(player.location.y);
-        const z = Math.floor(player.location.z);
+
+        const { x, y, z } = player.location;
         const dimension = player.dimension;
         try {
             // Below Below player
-            BlockAtPlayer0 = player.dimension.getBlock(new Vector(x, y - 1, z));
+            blockAtPlayer0 = player.dimension.getBlock(new Vector(x, y - 1, z));
             // Below player
-            BlockAtPlayer1 = player.dimension.getBlock(new Vector(x, y, z));
+            blockAtPlayer1 = player.dimension.getBlock(new Vector(x, y, z));
         } catch (error) {}
 
         if (
-            (!player.hasTag("vanish") && !player.hasTag("swimming") && !player.hasTag("riding") && !player.hasTag("flying") && BlockAtPlayer1.type.id === "minecraft:water" && BlockAtPlayer0.type.id === "minecraft:water") ||
-            (!player.hasTag("vanish") && !player.hasTag("swimming") && !player.hasTag("riding") && !player.hasTag("flying") && BlockAtPlayer1.type.id === "minecraft:lava" && BlockAtPlayer0.type.id === "minecraft:lava")
+            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water") ||
+            (blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava")
         ) {
-            _player.count++;
+            const count = playerCount.get(player) || 0;
+            playerCount.set(player, count + 1);
+
             // Flag them after 2 seconds of activity
-            if (_player.count === 1) {
+            if (count === 1) {
                 timer(player, dimension, x, y, z);
             }
         }
         // Reset count
         if (player.hasTag("ground")) {
-            _player.count = 0;
+            playerCount.delete(player);
         }
     }
-    return;
 }
 
 /**
