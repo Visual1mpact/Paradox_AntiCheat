@@ -82,8 +82,8 @@ function illegalitemsa(id: number) {
          * the integrity of our Memory.
          */
         const timerExpired = startTimer("illegalitemsa", player.name, Date.now());
-        if (timerExpired.includes("illegalitemsa")) {
-            const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+        if (timerExpired.namespace.indexOf("illegalitemsa") !== -1) {
+            const deletedKey = timerExpired.key; // extract the key without the namespace prefix
             storage.delete(deletedKey);
         }
     }

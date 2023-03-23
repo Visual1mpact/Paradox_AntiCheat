@@ -55,8 +55,8 @@ function antispam(msg: BeforeChatEvent) {
          * the integrity of our Memory.
          */
         const timerExpired = startTimer("antispam", player.name, Date.now());
-        if (timerExpired.includes("antispam")) {
-            const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+        if (timerExpired.namespace.indexOf("antispam") !== -1) {
+            const deletedKey = timerExpired.key; // extract the key without the namespace prefix
             chatRecords.delete(deletedKey);
         }
 

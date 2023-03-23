@@ -63,8 +63,8 @@ async function nukera(object: BlockBreakEvent) {
      * the integrity of our Memory.
      */
     const timerExpired = startTimer("nukera", player.name, Date.now());
-    if (timerExpired.includes("nukera")) {
-        const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+    if (timerExpired.namespace.indexOf("nukera") !== -1) {
+        const deletedKey = timerExpired.key; // extract the key without the namespace prefix
         blockTimer.delete(deletedKey);
     }
 

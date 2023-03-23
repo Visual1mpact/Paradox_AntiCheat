@@ -6,11 +6,11 @@ let blockAtPlayer0: Block;
 let blockAtPlayer1: Block;
 let playerTags: string[] = ["vanish", "swimming", "riding", "flying", "ground"];
 
-const playerCount = new Map<Player, number>();
+const playerCount = new Map<string, number>();
 
 function timer(player: Player, dimension: Dimension, x: number, y: number, z: number) {
     player.teleport(new Vector(x, y - 2, z), dimension, 0, 0);
-    playerCount.set(player, 0);
+    playerCount.set(player.name, 0);
 }
 
 function jesusa(id: number) {
@@ -46,8 +46,8 @@ function jesusa(id: number) {
             (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water") ||
             (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava")
         ) {
-            const count = playerCount.get(player) || 0;
-            playerCount.set(player, count + 1);
+            const count = playerCount.get(player.name) || 0;
+            playerCount.set(player.name, count + 1);
 
             /**
              * startTimer will make sure the key is properly removed
@@ -55,8 +55,8 @@ function jesusa(id: number) {
              * the integrity of our Memory.
              */
             const timerExpired = startTimer("jesusa", player.name, Date.now());
-            if (timerExpired.includes("jesusa")) {
-                const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+            if (timerExpired.namespace.indexOf("jesusa") !== -1) {
+                const deletedKey = timerExpired.key; // extract the key without the namespace prefix
                 playerCount.delete(deletedKey);
             }
 
@@ -67,7 +67,7 @@ function jesusa(id: number) {
         }
         // Reset count
         if (player.hasTag("ground")) {
-            playerCount.delete(player);
+            playerCount.delete(player.name);
         }
     }
 }

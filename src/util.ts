@@ -357,8 +357,8 @@ export function setTimer(player: string, spawn: boolean = false) {
      * the integrity of our Memory.
      */
     const timerExpired = startTimer("util", player, Date.now());
-    if (timerExpired.includes("util")) {
-        const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+    if (timerExpired.namespace.indexOf("util") !== -1) {
+        const deletedKey = timerExpired.key; // extract the key without the namespace prefix
         timerMap.delete(deletedKey);
     }
 }
@@ -398,23 +398,27 @@ const theVoid = new Map();
  * @param namespace - The namespace prefix to use for the key in `theVoid` map.
  * @param key - The key of the key-value pair in `theVoid` map.
  * @param value - The value of the key-value pair in `theVoid` map, which should be a `Date` object representing the start time of the timer.
- * @returns A boolean value indicating whether the timer has expired (`true`) or not (`false`).
+ * @returns An object containing the namespace and key that were used to start the timer.
  */
-export function startTimer(namespace: string, key: any, value: number): any {
+export function startTimer(namespace: string, key: string, value: number): { namespace: string; key: string } {
     const namespacedKey = `${namespace}:${key}`;
     theVoid.set(namespacedKey, value);
 
-    system.runInterval(() => {
+    const intervalId = system.runInterval(() => {
         const now = Date.now();
         const timeElapsed = now - theVoid.get(namespacedKey);
 
         if (timeElapsed > maxAge) {
+            const cache = theVoid.get(namespacedKey + ":intervalId");
             theVoid.delete(namespacedKey);
-            return namespacedKey;
+            theVoid.delete(namespacedKey + ":intervalId");
+            system.clearRun(cache);
         }
-
-        return "false";
     }, checkInterval);
+
+    theVoid.set(namespacedKey + ":intervalId", intervalId);
+
+    return { namespace, key };
 }
 
 const overworld = world.getDimension("overworld");
