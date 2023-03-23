@@ -43,7 +43,7 @@ function jesusa(id: number) {
 
         if (
             (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water") ||
-            (blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava")
+            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava")
         ) {
             const count = playerCount.get(player) || 0;
             playerCount.set(player, count + 1);
