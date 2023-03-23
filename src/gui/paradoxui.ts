@@ -64,14 +64,14 @@ async function paradoxui(player: Player) {
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e");
     if (uniqueId !== player.name) {
         maingui.button("§0Op§2", "textures/ui/op");
-        maingui.button("§0Telaport Requests§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
     } else {
         maingui.button("§0Op§2", "textures/ui/op");
         maingui.button("§0Deop§2", "textures/items/ender_pearl");
         maingui.button("§0Moderation§2", "textures/items/book_normal");
         maingui.button("§0Modules§2", "textures/blocks/command_block");
         maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
-        maingui.button("§0Telaport Requets§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Teleport Requets§2", "textures/blocks/portal_placeholder");
     }
     maingui.show(player).then((result) => {
         if (result.selection === 0) {
@@ -113,7 +113,7 @@ async function paradoxui(player: Player) {
                         let respons: string;
                         const toMinutes: Date = new Date(request.expiresAt);
                         const tprinboxui = new MessageFormData();
-                        tprinboxui.title("Paradox Your TP Request.");
+                        tprinboxui.title("Paradox-Your TP Request.");
                         tprinboxui.body(request.requester.name + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request. \n This request expires in: " + toMinutes.getMinutes());
                         tprinboxui.button1("Yes");
                         tprinboxui.button2("No");
@@ -135,7 +135,7 @@ async function paradoxui(player: Player) {
                         const tprsendrequestxui = new ModalFormData();
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        tprsendrequestxui.title("§4Pardox - Send TP Request§4");
+                        tprsendrequestxui.title("§4Paradox - Send TP Request§4");
                         tprsendrequestxui.dropdown(`\nSelect a player to send a request.\n\nPlayer's Online\n`, onlineList);
                         tprsendrequestxui.show(player).then((tprSendRequestResult) => {
                             //Send Logic
@@ -238,7 +238,7 @@ async function paradoxui(player: Player) {
                             const chatranksui = new ModalFormData();
                             let onlineList: string[] = [];
                             const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
-                            chatranksui.title("§4Change a players chat rank.§4");
+                            chatranksui.title("§4Change a player's chat rank.§4");
                             onlineList = Array.from(world.getPlayers(), (player) => player.name);
                             let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
                             chatranksui.dropdown(`\n§rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
@@ -296,7 +296,7 @@ async function paradoxui(player: Player) {
                     const lockdownui = new ModalFormData();
                     // Get Dynamic Property Boolean
                     const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
-                    lockdownui.title("§4Pardox - Lockdown§4");
+                    lockdownui.title("§4Paradox - Lockdown§4");
                     lockdownui.textField("Reason", "Kicked all members but staff due to possible hacker.");
                     lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
                     lockdownui.show(player).then((lockdownResult) => {
@@ -306,7 +306,7 @@ async function paradoxui(player: Player) {
                 if (ModUIresult.selection === 5) {
                     //Punish UI im going to use two forms one as a yes/no message so i can advise what this will do.
                     const punishprewarnui = new MessageFormData();
-                    punishprewarnui.title("§4Pardox - Punish§4");
+                    punishprewarnui.title("§4Paradox - Punish§4");
                     punishprewarnui.body("This will allow you to wipe a players ender chest as well as thier invenotry.");
                     punishprewarnui.button1("Okay");
                     punishprewarnui.show(player).then((prewarnResult) => {
@@ -323,7 +323,7 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 6) {
                     const tpaui = new ModalFormData();
-                    tpaui.title("§4Pardox - Teleport Assistance.§4");
+                    tpaui.title("§4Paradox - Teleport Assistance.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     tpaui.dropdown(`\n§rSelect a player to teleport.§r\n\nPlayer's Online\n`, onlineList);
@@ -335,7 +335,7 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 7) {
                     const kickui = new ModalFormData();
-                    kickui.title("§4Pardox - Kick a player.§4");
+                    kickui.title("§4Paradox - Kick a player.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     kickui.dropdown(`\n§rSelect a player to Kick.§r\n\nPlayer's Online\n`, onlineList);
@@ -347,7 +347,7 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 8) {
                     const ewipeui = new ModalFormData();
-                    ewipeui.title("§4Pardox - Wipe a players Enderchest.§4");
+                    ewipeui.title("§4Paradox - Wipe a player's Enderchest.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     ewipeui.dropdown(`\n§rSelect a player to wipe thier Enderchest.§r\n\nPlayer's Online\n`, onlineList);
@@ -357,7 +357,7 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 9) {
                     const freezeui = new ModalFormData();
-                    freezeui.title("§4Pardox - Freeze a player.§4");
+                    freezeui.title("§4Paradox - Freeze a player.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     freezeui.dropdown(`\n§rSelect a player to freeze.§r\n\nPlayer's Online\n`, onlineList);
@@ -367,7 +367,7 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 10) {
                     const flyui = new ModalFormData();
-                    flyui.title("§4Pardox - Grant a player fly abilities.§4");
+                    flyui.title("§4Paradox - Grant a player fly abilities.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     flyui.dropdown(`\n§rSelect a player to allow the ability to fly.§r\n\nPlayer's Online\n`, onlineList);
@@ -377,7 +377,7 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 11) {
                     const vanishui = new ModalFormData();
-                    vanishui.title("§4Pardox -Vanish from the server.§4");
+                    vanishui.title("§4Paradox -Vanish from the server.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     vanishui.dropdown(`\n§rSelect a player to vanish.§r\n\nPlayer's Online\n`, onlineList);
@@ -786,7 +786,7 @@ async function paradoxui(player: Player) {
             const prefixui = new ModalFormData();
             let onlineList: string[] = [];
             onlineList = Array.from(world.getPlayers(), (player) => player.name);
-            prefixui.title("§4Pardox - Change command prefix§4");
+            prefixui.title("§4Paradox - Change command prefix§4");
             prefixui.dropdown(`\nChanges prefix used for commands\n\nPlayer's Online\n`, onlineList);
             prefixui.textField(`\nPrefix\n`, `Put new prefix here`, null);
             prefixui.toggle(`\nReset Prefix`, false);
@@ -800,7 +800,7 @@ async function paradoxui(player: Player) {
             const tprui = new ActionFormData();
             //let onlineList: string[] = [];
             // onlineList = Array.from(world.getPlayers(), (player) => player.name);
-            tprui.title("§4Pardox - TPR Menu§4");
+            tprui.title("§4Paradox - TPR Menu§4");
             tprui.button("My Requests.", "textures/ui/mail_icon");
             tprui.button("Send A Request.", "textures/ui/send_icon");
             tprui.show(player).then((tprmenuResult) => {
@@ -840,7 +840,7 @@ async function paradoxui(player: Player) {
                     const tprsendrequestxui = new ModalFormData();
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    tprsendrequestxui.title("§4Pardox - Send TP Request§4");
+                    tprsendrequestxui.title("§4Paradox - Send TP Request§4");
                     tprsendrequestxui.dropdown(`\nSelect a player to send a request.\n\nPlayer's Online\n`, onlineList);
                     tprsendrequestxui.show(player).then((tprSendRequestResult) => {
                         //Send Logic
