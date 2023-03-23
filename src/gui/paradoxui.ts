@@ -95,7 +95,7 @@ async function paradoxui(player: Player) {
                 const tprui = new ActionFormData();
                 //let onlineList: string[] = [];
                 // onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                tprui.title("§4Pardox - TPR Menu§4");
+                tprui.title("§4Paradox - TPR Menu§4");
                 tprui.button("My Requests.", "textures/ui/mail_icon");
                 tprui.button("Send A Request.", "textures/ui/send_icon");
                 tprui.show(player).then((tprmenuResult) => {
@@ -190,7 +190,7 @@ async function paradoxui(player: Player) {
                     //show unban ui here
                     const unbanui = new ModalFormData();
                     unbanui.title("§4Unban A player!§4");
-                    unbanui.textField(`Player`, `Enter a players username to be unbanned.`);
+                    unbanui.textField(`Player`, `Enter a player's username to be unbanned.`);
                     unbanui.show(player).then((unbanResult) => {
                         uiUNBAN(unbanResult, player);
                     });
@@ -228,7 +228,7 @@ async function paradoxui(player: Player) {
                             onlineList = Array.from(world.getPlayers(), (player) => player.name);
                             notifyui.dropdown(`\n§rSelect a player to Enable or Disable Notifications.§r\n\nPlayer's Online\n`, onlineList);
                             //by default set the current value to disabled.
-                            notifyui.toggle("Notfications", false);
+                            notifyui.toggle("Notifications", false);
                             notifyui.show(player).then((notifyResult) => {
                                 uiNOTIFY(notifyResult, onlineList, player);
                             });
@@ -307,7 +307,7 @@ async function paradoxui(player: Player) {
                     //Punish UI im going to use two forms one as a yes/no message so i can advise what this will do.
                     const punishprewarnui = new MessageFormData();
                     punishprewarnui.title("§4Paradox - Punish§4");
-                    punishprewarnui.body("This will allow you to wipe a players ender chest as well as thier invenotry.");
+                    punishprewarnui.body("This will allow you to wipe a player's ender chest as well as thier inventory.");
                     punishprewarnui.button1("Okay");
                     punishprewarnui.show(player).then((prewarnResult) => {
                         //show the Punish UI
@@ -327,8 +327,8 @@ async function paradoxui(player: Player) {
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     tpaui.dropdown(`\n§rSelect a player to teleport.§r\n\nPlayer's Online\n`, onlineList);
-                    tpaui.toggle("Teleport To player.", true);
-                    tpaui.toggle("Teleport the player to you.", false);
+                    tpaui.toggle("Teleport to the target player.", true);
+                    tpaui.toggle("Teleport the target player to you.", false);
                     tpaui.show(player).then((tpaResult) => {
                         uiTPA(tpaResult, onlineList, player);
                     });
@@ -818,7 +818,7 @@ async function paradoxui(player: Player) {
                     let respons: string;
                     const toMinutes: Date = new Date(request.expiresAt);
                     const tprinboxui = new MessageFormData();
-                    tprinboxui.title("Paradox Your TP Request.");
+                    tprinboxui.title("Paradox Your TP Requests.");
                     tprinboxui.body(request.requester.name + " Has sent you a request to be teleported to your location, use the buttons bellow to approve or decline this request. \n This request expires in: " + toMinutes.getMinutes());
                     tprinboxui.button1("Yes");
                     tprinboxui.button2("No");
