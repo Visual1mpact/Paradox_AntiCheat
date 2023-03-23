@@ -330,6 +330,14 @@ export function decryptString(str: string, salt: string): string {
 
 const timerMap = new Map();
 
+/**
+ * Sets a timer for a given player.
+ *
+ * @param player - A string representing the player for whom the timer is being set.
+ * @param spawn - An optional boolean parameter with a default value of `false`.
+ * If `spawn` is set to `true`, the timer will be set for 10 seconds;
+ * otherwise, it will be set for 2 seconds.
+ */
 export function setTimer(player: string, spawn: boolean = false) {
     let timer: number = 0;
     if (spawn === true) {
@@ -342,8 +350,25 @@ export function setTimer(player: string, spawn: boolean = false) {
 
     // Store the timer in the map
     timerMap.set(player, timer);
+
+    /**
+     * startTimer will make sure the key is properly removed
+     * when the time for theVoid has expired. This will preserve
+     * the integrity of our Memory.
+     */
+    const timerExpired = startTimer("util", player, Date.now());
+    if (timerExpired.includes("util")) {
+        const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+        timerMap.delete(deletedKey);
+    }
 }
 
+/**
+ * Checks if the timer for the specified player has expired.
+ *
+ * @param player - A string representing the player whose timer will be checked.
+ * @returns A boolean value indicating whether the timer has expired (`true`) or not (`false`).
+ */
 export function isTimerExpired(player: string) {
     // Get the timer for the player
     const timer = timerMap.get(player);
@@ -362,21 +387,35 @@ export function isTimerExpired(player: string) {
     return false;
 }
 
-// Define the maximum age of a key (in milliseconds)
+// The Void
 const maxAge = 60000; // 1 minute
-
-// Define the interval (in milliseconds) for checking keys
 const checkInterval = 300000; // 5 minutes
+const theVoid = new Map();
 
-// Create the timer for checking keys
-system.runInterval(() => {
-    const now = Date.now();
-    timerMap.forEach((value, key) => {
-        if (now - value > maxAge) {
-            timerMap.delete(key);
+/**
+ * Starts a timer for a given key-value pair in `theVoid` map with a namespace prefix.
+ *
+ * @param namespace - The namespace prefix to use for the key in `theVoid` map.
+ * @param key - The key of the key-value pair in `theVoid` map.
+ * @param value - The value of the key-value pair in `theVoid` map, which should be a `Date` object representing the start time of the timer.
+ * @returns A boolean value indicating whether the timer has expired (`true`) or not (`false`).
+ */
+export function startTimer(namespace: string, key: any, value: number): any {
+    const namespacedKey = `${namespace}:${key}`;
+    theVoid.set(namespacedKey, value);
+
+    system.runInterval(() => {
+        const now = Date.now();
+        const timeElapsed = now - theVoid.get(namespacedKey);
+
+        if (timeElapsed > maxAge) {
+            theVoid.delete(namespacedKey);
+            return namespacedKey;
         }
-    });
-}, checkInterval);
+
+        return "false";
+    }, checkInterval);
+}
 
 const overworld = world.getDimension("overworld");
 

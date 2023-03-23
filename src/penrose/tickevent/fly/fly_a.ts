@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
-import { flag } from "../../../util.js";
+import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const playersOldCoordinates = new Map<string, Vector>();
@@ -10,6 +10,7 @@ function flya(id: number) {
 
     // Unsubscribe if disabled in-game
     if (flyABoolean === false) {
+        playersOldCoordinates.clear();
         system.clearRun(id);
         return;
     }
@@ -54,6 +55,17 @@ function flya(id: number) {
             const playerY = Math.trunc(player.location.y);
             const playerZ = Math.trunc(player.location.z);
             playersOldCoordinates.set(player.name, new Vector(playerX, playerY, playerZ));
+
+            /**
+             * startTimer will make sure the key is properly removed
+             * when the time for theVoid has expired. This will preserve
+             * the integrity of our Memory.
+             */
+            const timerExpired = startTimer("flya", player.name, Date.now());
+            if (timerExpired.includes("flya")) {
+                const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+                playersOldCoordinates.delete(deletedKey);
+            }
 
             if (oldPlayerCoords) {
                 let isSurroundedByAir = true;

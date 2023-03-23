@@ -1,5 +1,5 @@
 import { BeforeChatEvent, world } from "@minecraft/server";
-import { sendMsgToPlayer } from "../../../util.js";
+import { sendMsgToPlayer, startTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
@@ -23,6 +23,7 @@ function antispam(msg: BeforeChatEvent) {
 
     // Unsubscribe if disabled in-game
     if (antiSpamBoolean === false) {
+        chatRecords.clear();
         world.events.beforeChat.unsubscribe(antispam);
         return;
     }
@@ -48,6 +49,16 @@ function antispam(msg: BeforeChatEvent) {
         chatRecord.lastTime = now;
 
         chatRecords.set(player.name, chatRecord);
+        /**
+         * startTimer will make sure the key is properly removed
+         * when the time for theVoid has expired. This will preserve
+         * the integrity of our Memory.
+         */
+        const timerExpired = startTimer("antispam", player.name, Date.now());
+        if (timerExpired.includes("antispam")) {
+            const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+            chatRecords.delete(deletedKey);
+        }
 
         if (chatRecord.count > chatSpamLimit) {
             msg.cancel = true;

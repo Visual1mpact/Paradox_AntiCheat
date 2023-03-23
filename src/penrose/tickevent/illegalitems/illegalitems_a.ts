@@ -1,7 +1,7 @@
 import { world, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer, system } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
-import { flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
+import { flag, sendMsg, sendMsgToPlayer, startTimer, titleCase, toCamelCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
 import { whitelist } from "../../../data/whitelistitems.js";
@@ -54,6 +54,7 @@ function illegalitemsa(id: number) {
                 player.removeTag("illegalitemsA");
             }
         }
+        storage.clear();
         system.clearRun(id);
         return;
     }
@@ -74,6 +75,17 @@ function illegalitemsa(id: number) {
         const inventory = player.getComponent("minecraft:inventory") as EntityInventoryComponent,
             container = inventory.container;
         storage.set(player, container);
+
+        /**
+         * startTimer will make sure the key is properly removed
+         * when the time for theVoid has expired. This will preserve
+         * the integrity of our Memory.
+         */
+        const timerExpired = startTimer("illegalitemsa", player.name, Date.now());
+        if (timerExpired.includes("illegalitemsa")) {
+            const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+            storage.delete(deletedKey);
+        }
     }
     let player: Player;
     let container: InventoryComponentContainer;

@@ -1,6 +1,6 @@
 import { world, MinecraftBlockTypes, BlockPlaceEvent, Vector } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag } from "../../../util.js";
+import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 let blockTimer = new Map();
@@ -11,6 +11,7 @@ function scaffolda(object: BlockPlaceEvent) {
 
     // Unsubscribe if disabled in-game
     if (antiScaffoldABoolean === false) {
+        blockTimer.clear();
         world.events.blockPlace.unsubscribe(scaffolda);
         return;
     }
@@ -40,6 +41,17 @@ function scaffolda(object: BlockPlaceEvent) {
 
     const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
     blockTimer.set(player.nameTag, tiktok);
+
+    /**
+     * startTimer will make sure the key is properly removed
+     * when the time for theVoid has expired. This will preserve
+     * the integrity of our Memory.
+     */
+    const timerExpired = startTimer("scaffolda", player.name, Date.now());
+    if (timerExpired.includes("scaffolda")) {
+        const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+        blockTimer.delete(deletedKey);
+    }
 
     if (tiktok.length >= config.modules.antiscaffoldA.max) {
         dimension.getBlock(new Vector(x, y, z)).setType(MinecraftBlockTypes.air);

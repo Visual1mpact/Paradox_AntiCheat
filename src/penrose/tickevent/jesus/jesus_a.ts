@@ -1,4 +1,5 @@
 import { world, Block, Player, Dimension, system, Vector } from "@minecraft/server";
+import { startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 let blockAtPlayer0: Block;
@@ -47,6 +48,17 @@ function jesusa(id: number) {
         ) {
             const count = playerCount.get(player) || 0;
             playerCount.set(player, count + 1);
+
+            /**
+             * startTimer will make sure the key is properly removed
+             * when the time for theVoid has expired. This will preserve
+             * the integrity of our Memory.
+             */
+            const timerExpired = startTimer("jesusa", player.name, Date.now());
+            if (timerExpired.includes("jesusa")) {
+                const deletedKey = timerExpired.split(":")[1]; // extract the key without the namespace prefix
+                playerCount.delete(deletedKey);
+            }
 
             // Flag them after 2 seconds of activity
             if (count === 1) {
