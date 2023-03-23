@@ -1,5 +1,5 @@
 import config from "../../../data/config.js";
-import { world, EntityQueryOptions, ItemStack, EntityItemComponent, system } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { sendMsg } from "../../../util.js";
 import { clearItems } from "../../../data/clearlag.js";
 import { kickablePlayers } from "../../../kickcheck.js";
@@ -9,68 +9,36 @@ const cooldownTimer = new WeakMap();
 // Just a dummy object to use with set/get
 const object = { cooldown: "String" };
 
-function dhms(ms: number) {
-    const days = Math.floor(ms / (24 * 60 * 60 * 1000));
-    const daysms = ms % (24 * 60 * 60 * 1000);
-    const hours = Math.floor(daysms / (60 * 60 * 1000));
-    const hoursms = ms % (60 * 60 * 1000);
-    const minutes = Math.floor(hoursms / (60 * 1000));
-    const minutesms = ms % (60 * 1000);
-    const sec = Math.floor(minutesms / 1000);
-    if (days !== 0) {
-        return [days, hours, minutes, sec, "days"];
-    }
-    if (hours !== 0) {
-        return [hours, minutes, sec, "hours"];
-    }
-    if (minutes !== 0) {
-        return [minutes, sec, "minutes"];
-    }
-    return [sec, "seconds"];
-}
+const countdown = {
+    days: config.modules.clearLag.days,
+    hours: config.modules.clearLag.hours,
+    minutes: config.modules.clearLag.minutes,
+    seconds: config.modules.clearLag.seconds,
+};
 
-function executionItem(id: number) {
-    // Find them all and take them out
-    const filter = new Object() as EntityQueryOptions;
-    filter.type = "item";
-    for (const entity of world.getDimension("overworld").getEntities(filter)) {
-        // Check if entity object returns undefined and skip it
-        if (entity === undefined) {
-            continue;
-        }
+let warned = false; // variable to track whether the 60 second warning has been displayed
 
-        let itemName: ItemStack;
-        // Get component of itemStack for dropped item
-        try {
-            const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
-            itemName = itemContainer.itemStack;
-        } catch (error) {}
-        // Kill dropped items
+function clearEntityItems() {
+    const filter = { type: "item" };
+    const entitiesCache = world.getDimension("overworld").getEntities(filter);
+    for (const entity of entitiesCache) {
+        const itemName = entity.getComponent("item");
         if (itemName.typeId in clearItems) {
             entity.kill();
         }
     }
-    return system.clearRun(id);
 }
 
-function executionEntity(id: number) {
-    // Find them all and take them out
-    const filter = new Object() as EntityQueryOptions;
-    filter.families = ["monster"];
-    for (const entity of world.getDimension("overworld").getEntities(filter)) {
-        // Check if entity object returns undefined and skip it
-        if (entity === undefined) {
-            continue;
-        }
-
-        // Despawn this entity
+function clearEntities() {
+    const filter = { families: ["monster"] };
+    const entitiesCache = world.getDimension("overworld").getEntities(filter);
+    for (const entity of entitiesCache) {
         kickablePlayers.add(entity);
         entity.triggerEvent("paradox:kick");
     }
-    return system.clearRun(id);
 }
 
-function clearlag(id: number) {
+function clearLag(id: number) {
     // Get Dynamic Property
     const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
 
@@ -80,79 +48,26 @@ function clearlag(id: number) {
         return;
     }
 
-    /**
-     * Check if timer has expired.
-     * If timer has expired then we will clear the items and entities
-     */
-    let cooldownCalc: number;
-    let activeTimer = [];
-    // Get original time in milliseconds
-    const cooldownVerify = cooldownTimer.get(object);
-    // Convert config settings to milliseconds so we can be sure the countdown is accurate
-    const msSettings = config.modules.clearLag.days * 24 * 60 * 60 * 1000 + config.modules.clearLag.hours * 60 * 60 * 1000 + config.modules.clearLag.minutes * 60 * 1000 + config.modules.clearLag.seconds * 1000;
-    if (cooldownVerify !== undefined) {
-        // Determine difference between new and original times in milliseconds
-        const bigBrain = new Date().getTime() - cooldownVerify;
-        // Subtract realtime clock from countdown in configuration to get difference
-        cooldownCalc = msSettings - bigBrain;
-        // Convert difference to clock format D : H : M : S
-        activeTimer = dhms(cooldownCalc);
+    let cooldownVerify = cooldownTimer.get(object);
+    if (!cooldownVerify) {
+        cooldownVerify = Date.now();
+        cooldownTimer.set(object, cooldownVerify);
     }
-    // Give advance warning
-    if (activeTimer[0] === 1 && activeTimer[2] === "minutes" && activeTimer[1] <= 0) {
-        // Notify 60 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
-    }
-    // Give advance warning
-    if (activeTimer[0] === 5 && activeTimer[1] === "seconds") {
-        // Notify 5 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in:`);
-        sendMsg("@a", `§r§4[§6Paradox§4]§r 5`);
-    }
-    // Give advance warning
-    if (activeTimer[0] === 4 && activeTimer[1] === "seconds") {
-        // Notify 4 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r 4`);
-    }
-    // Give advance warning
-    if (activeTimer[0] === 3 && activeTimer[1] === "seconds") {
-        // Notify 3 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r 3`);
-    }
-    // Give advance warning
-    if (activeTimer[0] === 2 && activeTimer[1] === "seconds") {
-        // Notify 2 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r 2`);
-    }
-    // Give advance warning
-    if (activeTimer[0] === 1 && activeTimer[1] === "seconds") {
-        // Notify 1 seconds in advance
-        sendMsg("@a", `§r§4[§6Paradox§4]§r 1`);
-    }
-    // If timer doesn't exist or has expired then set the countdown
-    if (activeTimer[0] <= 0) {
-        // Delete old key and value
+
+    const msSettings = countdown.days * 24 * 60 * 60 * 1000 + countdown.hours * 60 * 60 * 1000 + countdown.minutes * 60 * 1000 + countdown.seconds * 1000;
+    const timeLeft = msSettings - (Date.now() - cooldownVerify);
+
+    if (timeLeft <= 0) {
+        clearEntityItems();
+        clearEntities();
         cooldownTimer.delete(object);
-        /**
-         * We store the identifier in a variable
-         * to cancel the execution of this scheduled run
-         * if needed to do so.
-         *
-         * Clear entities and items
-         */
-        const executionItemId = system.runInterval(() => {
-            executionItem(executionItemId);
-        });
-        const executionEntityId = system.runInterval(() => {
-            executionEntity(executionEntityId);
-        });
-        // Notify that it has been cleared
-        sendMsg("@a", `§r§4[§6Paradox§4]§r Server has been cleared to reduce lag!`);
-    } else {
-        // Create new key and value with current time in milliseconds
-        if (cooldownTimer.get(object) === undefined) {
-            cooldownTimer.set(object, new Date().getTime());
-        }
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag has been cleared!`);
+        warned = false; // reset the warned variable so that the 60 second warning will display again next time
+    } else if (timeLeft < 60000 && timeLeft > 0 && !warned) {
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 60 seconds!`);
+        warned = true; // set the warned variable to true so that the 60 second warning won't display again
+    } else if (timeLeft <= 5000 && timeLeft > 0) {
+        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in ${Math.ceil(timeLeft / 1000)} seconds!`);
     }
 }
 
@@ -163,6 +78,6 @@ function clearlag(id: number) {
  */
 export function ClearLag() {
     const clearLagId = system.runInterval(() => {
-        clearlag(clearLagId);
+        clearLag(clearLagId);
     }, 20);
 }
