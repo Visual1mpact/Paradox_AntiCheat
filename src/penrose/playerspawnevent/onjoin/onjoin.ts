@@ -58,8 +58,6 @@ async function onJoinTime(object: PlayerSpawnEvent) {
         }
     }
 
-    // Set up custom tag
-    // tagRank(player);
     // Set up custom prefix
     getPrefix(player);
 }

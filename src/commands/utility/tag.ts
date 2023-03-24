@@ -92,7 +92,6 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     // reset rank
     if (argcheck === true) {
         resetTag(player, member);
-        // tagRank(member);
         return;
     }
 
@@ -105,7 +104,6 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     if (custom.startsWith("Rank:")) {
         resetTag(player, member);
         member.addTag(`${custom}`);
-        // tagRank(member);
     } else {
         return tagHelp(player, prefix, chatRanksBoolean);
     }

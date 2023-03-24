@@ -171,22 +171,6 @@ export function getPrefix(player: Player) {
 }
 
 /**
- * @name tagRank
- * @param {Player} player - The player object
- */
-export function tagRank(player: Player) {
-    const tags = player.getTags();
-    let rank = "Member";
-    for (const tag of tags) {
-        rank = tag.startsWith("Rank:") ? tag.replace("Rank:", "").replaceAll("--", "§4]§r§4[§6") : rank;
-    }
-    const nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
-    player.nameTag = nametag;
-    const dimension = player.dimension;
-    player.teleport(player.location, dimension, 0, 0);
-}
-
-/**
  * @name resetTag
  * @param {Player} player - The player object
  * @param {Player} member - The other player object

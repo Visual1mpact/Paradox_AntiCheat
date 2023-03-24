@@ -68,29 +68,11 @@ export function chatranks(message: BeforeChatEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("chatranks_b", true);
         world.setDynamicProperty("chatranks_b", true);
-        /*
-        for (let pl of world.getPlayers()) {
-            const dimension = pl.dimension;
-            Restore their custom nametag
-            tagRank(pl);
-            This refreshes the nameTag in the World for everyone online
-            pl.teleport(pl.location, dimension, 0, 0);
-        }
-        */
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`);
     } else if (chatRanksBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("chatranks_b", false);
         world.setDynamicProperty("chatranks_b", false);
-        /*
-        for (let pl of world.getPlayers()) {
-            const dimension = pl.dimension;
-            Reset their nametag to its original name
-            pl.nameTag = pl.name;
-            This refreshes the nameTag in the World for everyone online
-            pl.teleport(pl.location, dimension, 0, 0);
-        }
-        */
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`);
     }
 }
