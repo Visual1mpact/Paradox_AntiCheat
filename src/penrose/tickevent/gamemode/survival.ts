@@ -1,6 +1,4 @@
-import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
-import { getScore, sendMsg, setScore } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry, EntityQueryOptions, GameMode, getScore, sendMsg, setScore, system, world } from "../../../index";
 
 async function survival(id: number) {
     // Get Dynamic Property

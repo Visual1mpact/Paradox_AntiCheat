@@ -1,9 +1,6 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
+import { Player, world, dynamicPropertyRegistry, sendMsgToPlayer, paradoxui, setTimer } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 //import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsgToPlayer, setTimer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
 
 export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value, toggleToTarget, toggleTargetTo] = tpaResult.formValues;

@@ -1,9 +1,4 @@
-/* eslint no-var: "off"*/
-/* eslint no-redeclare: "off"*/
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { BeforeChatEvent, config, crypto, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number | boolean) {
     let commandStatus: string;

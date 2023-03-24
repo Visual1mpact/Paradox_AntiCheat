@@ -1,7 +1,4 @@
-import { world, system, EntityQueryOptions, GameMode } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { flag, isTimerExpired } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { config, dynamicPropertyRegistry, EntityQueryOptions, flag, GameMode, isTimerExpired, system, world } from "../../../index";
 
 let lastPosition: [number, number, number] = [0, 0, 0];
 let lastTimestamp: number = Date.now();

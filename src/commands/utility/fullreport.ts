@@ -1,9 +1,4 @@
-/* eslint no-var: "off"*/
-
-import { BeforeChatEvent, Player } from "@minecraft/server";
-import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsgToPlayer } from "../../index";
 
 function fullReportHelp(player: Player, prefix: string) {
     let commandStatus: string;

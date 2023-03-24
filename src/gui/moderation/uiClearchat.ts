@@ -1,6 +1,5 @@
-import { Player } from "@minecraft/server";
-import { sendMsg } from "../../util";
-import { paradoxui } from "../paradoxui";
+import { Player, sendMsg, paradoxui } from "../../index";
+
 export function uiCLEARCHAT(player: Player) {
     for (let clear = 0; clear < 10; clear++) sendMsg("@a", "\n".repeat(60));
 

@@ -1,7 +1,4 @@
-import { world, Player, EntityQueryOptions, system } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { crypto, sendMsg } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { config, crypto, dynamicPropertyRegistry, EntityQueryOptions, Player, sendMsg, system, world } from "../../../index";
 
 function noperms() {
     const filter = new Object() as EntityQueryOptions;

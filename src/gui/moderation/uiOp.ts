@@ -1,9 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { crypto, sendMsg, sendMsgToPlayer, UUID } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, dynamicPropertyRegistry, config, sendMsg, sendMsgToPlayer, paradoxui, UUID, crypto } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 //Function provided by Visual1mpact
 export function uiOP(opResult: ModalFormResponse, salt: string | number | boolean, hash: string | number | boolean, encode: string, onlineList: string[], player: Player) {

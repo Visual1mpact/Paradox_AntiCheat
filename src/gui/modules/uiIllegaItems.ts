@@ -1,12 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { IllegalItemsB } from "../../penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
-import { IllegalItemsC } from "../../penrose/blockplaceevent/illegalitems/illegalitems_c.js";
-import { IllegalItemsA } from "../../penrose/tickevent/illegalitems/illegalitems_a.js";
-import { IllegalItemsD } from "../../penrose/tickevent/illegalitems/illegalitems_d.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, IllegalItemsA, IllegalItemsB, IllegalItemsC, IllegalItemsD, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Player) {
     const [IllegalItemsAToggle, IllegalItemsBToggle, IllegalItemsCToggle, IllegalItemsDToggle, IllegalEnchanmentsToggle, IllegalLoreToggle, IllegalStackBanToggle] = illegalitemsResult.formValues;

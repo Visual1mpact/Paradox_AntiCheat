@@ -1,6 +1,4 @@
-import { world, Block, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
-import { flag } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { Block, dynamicPropertyRegistry, EntityQueryOptions, flag, GameMode, system, Vector, world } from "../../../index";
 
 function antifalla(id: number) {
     // Get Dynamic Property

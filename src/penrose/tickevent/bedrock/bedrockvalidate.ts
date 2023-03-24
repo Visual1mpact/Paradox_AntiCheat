@@ -1,6 +1,4 @@
-import { world, system } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { config, dynamicPropertyRegistry, system, world } from "../../../index";
 
 async function bedrockvalidate(id: number) {
     // Get Dynamic Property

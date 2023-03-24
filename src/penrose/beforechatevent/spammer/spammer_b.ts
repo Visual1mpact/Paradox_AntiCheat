@@ -1,6 +1,4 @@
-import { BeforeChatEvent, world } from "@minecraft/server";
-import { flag } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { BeforeChatEvent, dynamicPropertyRegistry, flag, world } from "../../../index";
 
 function spammerb(msg: BeforeChatEvent) {
     // Get Dynamic Property

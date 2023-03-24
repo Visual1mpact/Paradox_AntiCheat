@@ -1,8 +1,4 @@
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { ScaffoldA } from "../../penrose/blockplaceevent/scaffold/scaffold_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, ScaffoldA, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function antiscaffoldaHelp(player: Player, prefix: string, antiScaffoldABoolean: string | number | boolean) {
     let commandStatus: string;

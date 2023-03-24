@@ -1,10 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { NamespoofA } from "../../penrose/tickevent/namespoof/namespoof_a.js";
-import { NamespoofB } from "../../penrose/tickevent/namespoof/namespoof_b.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, NamespoofA, NamespoofB, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiNAMESPOOFING(namespoofingResult: ModalFormResponse, player: Player) {
     const [NameSpoofAToggle, NameSpoofBToggle] = namespoofingResult.formValues;

@@ -1,58 +1,60 @@
-import { Player, world } from "@minecraft/server";
-import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
-import config from "../data/config";
-import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
-import { crypto, getScore } from "../util";
-import { uiBAN } from "./moderation/uiBan";
-import { uiCHATRANKS } from "./moderation/uiChatranks";
-import { uiCLEARCHAT } from "./moderation/uiClearchat";
-import { uiDEOP } from "./moderation/uiDeop";
-import { uiEWIPE } from "./moderation/uiEwipe";
-import { uiFLY } from "./moderation/uiFly";
-import { uiFREEZE } from "./moderation/uiFreeze";
-import { uiKICK } from "./moderation/uiKick";
-import { uiLOCKDOWN } from "./moderation/uiLockdown";
-import { uiMUTE } from "./moderation/uiMute";
-import { uiNOTIFY } from "./moderation/uiNotify";
-import { uiOP } from "./moderation/uiOp";
-import { uiPREFIX } from "./moderation/uiPrefix";
-import { uiPUNISH } from "./moderation/uiPunish";
-import { uiRULES } from "./moderation/uiRules";
-import { uiTPA } from "./moderation/uiTpa";
-import { uiTPR } from "./moderation/uiTpr";
-import { uiTPRSEND } from "./moderation/uiTprSend";
-import { uiUNBAN } from "./moderation/uiUnban";
-import { uiUNMUTE } from "./moderation/uiUnmute";
-import { uiVANISH } from "./moderation/uiVanish";
-import { uiANTIFALL } from "./modules/uiAntiFall";
-import { uiANTIKNOCKBACK } from "./modules/uiAntiKnockback";
-import { uiGAMEMODES } from "./modules/uiGamemodes";
-import { uiANTIFLY } from "./modules/uiAntiFly";
-import { uiINVALIDSPRINT } from "./modules/uiInvalidSprint";
-import { uiNOWSLOW } from "./modules/uiNowslow";
-import { uiANTISCAFFOLD } from "./modules/uiAntiScaffold";
-import { uiANTIJESUS } from "./modules/uiAntiJesus";
-import { uiANTIKILLAURA } from "./modules/uiAntiKillaura";
-import { getTeleportRequests } from "../commands/utility/tpr";
-import { uiANTINUKER } from "./modules/uiAntiNuker";
-import { uiANTISHULKER } from "./modules/uiAntiShulker";
-import { uiANTISPAM } from "./modules/uiAntiSpam";
-import { uiANTIAUTOCLICKER } from "./modules/uiAntiAutoClicker";
-import { uiBADPACKETS } from "./modules/uiBadpackets";
-import { uiBEDROCKVALIDATION } from "./modules/uiBedrockValidation";
-import { uiANTICRASHER } from "./modules/uiAntiCrasher";
-import { uiILLEGALITEMS } from "./modules/uiIllegaItems";
-import { uiLAGCLEAR } from "./modules/uiLagClear";
-import { uiNAMESPOOFING } from "./modules/uiNameSpoofing";
-import { uiOPS } from "./modules/uiOnePlayerSleep";
-import { uiCOMMANDBLOCKS } from "./modules/uiCommandBlocks";
-import { uiREACH } from "./modules/uiReach";
-import { uiEXPSALVAGESYSTEM } from "./modules/uiExpSalvageSystem";
-import { uiSPAMMER } from "./modules/uiSpammer";
-import { uiWORLDBORDER } from "./modules/uiWorldborder";
-import { uiXRAY } from "./modules/uiXray";
-import { uiENCHANTEDARMOR } from "./modules/uiEnchantedArmor";
-import { uiHOTBAR } from "./modules/uiHotbar";
+import { Player, world, config, crypto, getScore, dynamicPropertyRegistry } from "../index";
+import { getTeleportRequests } from "../command_index";
+import {
+    ActionFormData,
+    MessageFormData,
+    ModalFormData,
+    uiANTIAUTOCLICKER,
+    uiANTICRASHER,
+    uiANTIFALL,
+    uiANTIFLY,
+    uiANTIJESUS,
+    uiANTIKILLAURA,
+    uiANTIKNOCKBACK,
+    uiANTINUKER,
+    uiANTISCAFFOLD,
+    uiANTISHULKER,
+    uiANTISPAM,
+    uiBADPACKETS,
+    uiBEDROCKVALIDATION,
+    uiBAN,
+    uiCHATRANKS,
+    uiCLEARCHAT,
+    uiCOMMANDBLOCKS,
+    uiDEOP,
+    uiENCHANTEDARMOR,
+    uiEWIPE,
+    uiEXPSALVAGESYSTEM,
+    uiFLY,
+    uiFREEZE,
+    uiGAMEMODES,
+    uiHOTBAR,
+    uiILLEGALITEMS,
+    uiINVALIDSPRINT,
+    uiKICK,
+    uiLAGCLEAR,
+    uiLOCKDOWN,
+    uiMUTE,
+    uiNAMESPOOFING,
+    uiNOTIFY,
+    uiNOWSLOW,
+    uiOPS,
+    uiOP,
+    uiPREFIX,
+    uiPUNISH,
+    uiREACH,
+    uiRULES,
+    uiSPAMMER,
+    uiTPA,
+    uiTPR,
+    uiTPRSEND,
+    uiUNBAN,
+    uiUNMUTE,
+    uiVANISH,
+    uiWORLDBORDER,
+    uiXRAY,
+} from "../gui_index";
+
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 

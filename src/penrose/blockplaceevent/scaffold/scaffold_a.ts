@@ -1,7 +1,4 @@
-import { world, MinecraftBlockTypes, BlockPlaceEvent, Vector } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { flag, startTimer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { BlockPlaceEvent, config, dynamicPropertyRegistry, flag, MinecraftBlockTypes, startTimer, Vector, world } from "../../../index";
 
 let blockTimer = new Map();
 

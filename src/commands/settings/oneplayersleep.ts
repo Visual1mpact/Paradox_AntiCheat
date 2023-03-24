@@ -1,8 +1,4 @@
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { OPS } from "../../penrose/tickevent/oneplayersleep/oneplayersleep.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, OPS, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function opsHelp(player: Player, prefix: string, opsBoolean: string | number | boolean) {
     let commandStatus: string;

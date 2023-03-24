@@ -1,4 +1,4 @@
-import { Player, world, PlayerSpawnEvent } from "@minecraft/server";
+import { Player, world, PlayerSpawnEvent } from "../../../index";
 
 // This function will be called when tick event is triggered from the playerloaded function
 async function gametestcheck(object: PlayerSpawnEvent) {

@@ -1,12 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { SpammerA } from "../../penrose/beforechatevent/spammer/spammer_a.js";
-import { SpammerB } from "../../penrose/beforechatevent/spammer/spammer_b.js";
-import { SpammerC } from "../../penrose/beforechatevent/spammer/spammer_c.js";
-import { SpammerD } from "../../penrose/beforechatevent/spammer/spammer_d.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, SpammerA, SpammerB, SpammerC, SpammerD, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiSPAMMER(spamResult: ModalFormResponse, player: Player) {
     const [SpammerAToggle, SpammerBToggle, SpammerCToggle, SpammerDToggle] = spamResult.formValues;

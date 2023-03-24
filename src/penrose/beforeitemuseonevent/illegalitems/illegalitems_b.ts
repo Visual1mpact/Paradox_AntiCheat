@@ -1,13 +1,28 @@
-import { world, Player, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, BeforeItemUseOnEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
-import { illegalitems } from "../../../data/itemban.js";
-import { flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../../util.js";
-import config from "../../../data/config.js";
-import { enchantmentSlot } from "../../../data/enchantments.js";
-import salvageable from "../../../data/salvageable.js";
-import { whitelist } from "../../../data/whitelistitems.js";
-import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
-import { kickablePlayers } from "../../../kickcheck.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import {
+    BeforeItemUseOnEvent,
+    config,
+    defaultMaxItemStack,
+    dynamicPropertyRegistry,
+    Enchantment,
+    enchantmentSlot,
+    EntityInventoryComponent,
+    flag,
+    illegalitems,
+    ItemEnchantsComponent,
+    Items,
+    ItemStack,
+    kickablePlayers,
+    maxItemStack,
+    MinecraftEnchantmentTypes,
+    Player,
+    salvageable,
+    sendMsg,
+    sendMsgToPlayer,
+    titleCase,
+    toCamelCase,
+    whitelist,
+    world,
+} from "../../../index";
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }) {
     if (!enchData) {

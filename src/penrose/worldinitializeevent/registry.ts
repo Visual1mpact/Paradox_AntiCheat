@@ -1,6 +1,4 @@
-import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeEvent } from "@minecraft/server";
-import config from "../../data/config.js";
-import { UUID } from "../../util.js";
+import { config, DynamicPropertiesDefinition, MinecraftEntityTypes, UUID, world, WorldInitializeEvent } from "../../index";
 
 export const dynamicPropertyRegistry = new Map();
 

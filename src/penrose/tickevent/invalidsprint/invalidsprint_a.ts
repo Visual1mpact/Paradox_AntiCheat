@@ -1,7 +1,4 @@
-import { world, MinecraftEffectTypes, system } from "@minecraft/server";
-import { flag, isTimerExpired } from "../../../util.js";
-import config from "../../../data/config.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { config, dynamicPropertyRegistry, flag, isTimerExpired, MinecraftEffectTypes, system, world } from "../../../index";
 
 let lastPosition: [number, number, number] = [0, 0, 0];
 let lastTimestamp: number = Date.now();

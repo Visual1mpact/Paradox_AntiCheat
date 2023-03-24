@@ -1,8 +1,4 @@
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { NamespoofB } from "../../penrose/tickevent/namespoof/namespoof_b.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, NamespoofB, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function namespoofBHelp(player: Player, prefix: string, nameSpoofBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -70,7 +66,7 @@ export function namespoofB(message: BeforeChatEvent, args: string[]) {
         dynamicPropertyRegistry.set("namespoofb_b", true);
         world.setDynamicProperty("namespoofb_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6NamespoofB§r!`);
-        NamespoofB;
+        NamespoofB();
     } else if (nameSpoofBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofb_b", false);

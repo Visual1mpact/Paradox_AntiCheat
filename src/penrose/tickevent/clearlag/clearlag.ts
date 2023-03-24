@@ -1,9 +1,4 @@
-import config from "../../../data/config.js";
-import { world, system } from "@minecraft/server";
-import { sendMsg } from "../../../util.js";
-import { clearItems } from "../../../data/clearlag.js";
-import { kickablePlayers } from "../../../kickcheck.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { clearItems, config, dynamicPropertyRegistry, kickablePlayers, sendMsg, system, world } from "../../../index";
 
 const cooldownTimer = new WeakMap();
 // Just a dummy object to use with set/get

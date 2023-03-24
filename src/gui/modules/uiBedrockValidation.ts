@@ -1,9 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, BedrockValidate, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiBEDROCKVALIDATION(bedrockvalidationResult: ModalFormResponse, player: Player) {
     const [BedrockValidationToggle] = bedrockvalidationResult.formValues;

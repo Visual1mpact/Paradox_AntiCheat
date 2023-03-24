@@ -1,9 +1,4 @@
-/* eslint no-var: "off"*/
-/* eslint no-redeclare: "off"*/
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
-import config from "../../data/config.js";
-import { BeforeChatEvent, Player } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsgToPlayer } from "../../index";
 
 function resetPrefix(player: Player) {
     const sanitize = player.getTags();

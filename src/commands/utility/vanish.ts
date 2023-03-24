@@ -1,7 +1,4 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
-import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer } from "../../index";
 
 function vanishHelp(player: Player, prefix: string) {
     let commandStatus: string;

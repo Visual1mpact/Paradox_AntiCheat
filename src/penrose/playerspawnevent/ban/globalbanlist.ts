@@ -1,6 +1,4 @@
-import { world, PlayerSpawnEvent } from "@minecraft/server";
-import { banplayer } from "../../../data/globalban.js";
-import { banMessage } from "../../../util.js";
+import { banMessage, banplayer, PlayerSpawnEvent, world } from "../../../index";
 
 function banHammerTime(object: PlayerSpawnEvent) {
     /**

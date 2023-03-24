@@ -1,9 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { InvalidSprintA } from "../../penrose/tickevent/invalidsprint/invalidsprint_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, InvalidSprintA, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiINVALIDSPRINT(invalidsprintResult: ModalFormResponse, player: Player) {
     const [InvalidSprintToggle] = invalidsprintResult.formValues;

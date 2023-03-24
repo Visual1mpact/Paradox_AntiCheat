@@ -1,7 +1,4 @@
-import { BeforeChatEvent, world } from "@minecraft/server";
-import { sendMsgToPlayer, startTimer } from "../../../util.js";
-import { kickablePlayers } from "../../../kickcheck.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { BeforeChatEvent, dynamicPropertyRegistry, kickablePlayers, sendMsgToPlayer, startTimer, world } from "../../../index";
 
 const chatSpamLimit = 3; // The maximum number of messages a player can send in the spamTime frame.
 const spamTime = 2 * 1000; // The time frame during which the player's messages will be counted.

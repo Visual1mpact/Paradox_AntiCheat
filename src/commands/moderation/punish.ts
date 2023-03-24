@@ -1,9 +1,4 @@
-/* eslint no-var: "off"*/
-/* eslint no-redeclare: "off"*/
-import { world, Player, BeforeChatEvent, EntityInventoryComponent } from "@minecraft/server";
-import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, EntityInventoryComponent, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function punishHelp(player: Player, prefix: string) {
     let commandStatus: string;

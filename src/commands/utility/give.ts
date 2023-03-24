@@ -1,10 +1,4 @@
-/* eslint no-var: "off"*/
-
-import { BeforeChatEvent, Player, world, MinecraftItemTypes } from "@minecraft/server";
-import config from "../../data/config.js";
-import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
+import { BeforeChatEvent, config, defaultMaxItemStack, dynamicPropertyRegistry, getPrefix, maxItemStack, MinecraftItemTypes, Player, sendMsgToPlayer, toCamelCase, world } from "../../index";
 
 function giveHelp(player: Player, prefix: string) {
     let commandStatus: string;

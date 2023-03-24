@@ -1,11 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
-import { ReachA } from "../../penrose/blockplaceevent/reach/reach_a.js";
-import { ReachC } from "../../penrose/entityhitevent/reach_c.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, ReachA, ReachB, ReachC, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiREACH(reachResult: ModalFormResponse, player: Player) {
     const [ReachAToggle, ReachBToggle, ReachCToggle] = reachResult.formValues;

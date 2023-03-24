@@ -1,8 +1,4 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import config from "../../data/config.js";
-import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { AntiKnockbackA, BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, getScore, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function antikbHelp(player: Player, prefix: string, antikbBoolean: string | number | boolean) {
     let commandStatus: string;

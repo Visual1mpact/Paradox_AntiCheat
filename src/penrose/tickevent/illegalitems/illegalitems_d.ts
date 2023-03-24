@@ -1,7 +1,4 @@
-import { EntityItemComponent, EntityQueryOptions, ItemStack, world, system } from "@minecraft/server";
-import { illegalitems } from "../../../data/itemban.js";
-import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { defaultMaxItemStack, dynamicPropertyRegistry, EntityItemComponent, EntityQueryOptions, illegalitems, ItemStack, maxItemStack, system, world } from "../../../index";
 
 function illegalitemsd(id: number) {
     // Get Dynamic Property

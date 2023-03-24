@@ -1,7 +1,4 @@
-import { world, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment, Vector } from "@minecraft/server";
-import config from "../../../data/config.js";
-import { flag, startTimer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { BlockBreakEvent, config, dynamicPropertyRegistry, Enchantment, EntityInventoryComponent, flag, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, startTimer, Vector, world } from "../../../index";
 
 let blockTimer = new Map();
 

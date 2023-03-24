@@ -1,7 +1,4 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
-import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, getScore, Player, sendMsg, sendMsgToPlayer } from "../../index";
 
 function removeCBEHelp(player: Player, prefix: string, commandblocksscore: string | number | boolean) {
     let commandStatus: string;

@@ -1,7 +1,6 @@
 // Basic AntiFall might not be needed but here anyway and might be useful to someone else.
 //This assumes that the hack keeps the players health at 100.
-import { world, Player, EntityHitEvent } from "@minecraft/server";
-import config from "../../data/config";
+import { config, EntityHitEvent, Player, world } from "../../index";
 
 function killaura(obj: EntityHitEvent) {
     // Properties from class

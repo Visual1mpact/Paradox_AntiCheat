@@ -1,5 +1,4 @@
-import { BeforeChatEvent, world } from "@minecraft/server";
-import { commandHandler } from "../../../commands/handler.js";
+import { BeforeChatEvent, commandHandler, world } from "../../../index";
 
 function prefixcommand(msg: BeforeChatEvent) {
     const player = msg.sender;

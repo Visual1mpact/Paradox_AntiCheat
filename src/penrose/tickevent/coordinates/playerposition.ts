@@ -1,4 +1,4 @@
-import { world, system } from "@minecraft/server";
+import { world, system } from "../../../index";
 
 async function playerposition() {
     // run as each player

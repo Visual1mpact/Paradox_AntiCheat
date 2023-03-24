@@ -1,7 +1,5 @@
-import { EntityInventoryComponent, Player, world } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, EntityInventoryComponent, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+
 export async function uiPUNISH(punishResult, onlineList, player) {
     const [value] = punishResult.formValues;
     let member: Player = undefined;

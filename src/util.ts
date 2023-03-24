@@ -1,7 +1,4 @@
-/* eslint no-var: "off"*/
-import { BeforeChatEvent, Player, system, Vector, world } from "@minecraft/server";
-import config from "./data/config.js";
-import { kickablePlayers } from "./kickcheck.js";
+import { BeforeChatEvent, config, kickablePlayers, Player, system, Vector, world } from "./index";
 
 /**
  * @name flag

@@ -1,8 +1,4 @@
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, ReachB, sendMsg, sendMsgToPlayer, world } from "../../index";
 
 function reachBHelp(player: Player, prefix: string, reachBBoolean: string | number | boolean) {
     let commandStatus: string;

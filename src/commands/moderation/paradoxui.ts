@@ -1,7 +1,4 @@
-import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import config from "../../data/config.js";
-import { BeforeChatEvent, Player } from "@minecraft/server";
-import { paradoxui } from "../../gui/paradoxui.js";
+import { BeforeChatEvent, config, getPrefix, paradoxui, Player, sendMsg, sendMsgToPlayer } from "../../index";
 
 function paradoxuiHelp(player: Player, prefix: string) {
     let commandStatus: string;

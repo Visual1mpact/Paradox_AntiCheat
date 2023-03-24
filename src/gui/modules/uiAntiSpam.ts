@@ -1,10 +1,5 @@
-import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
-
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { sendMsg, sendMsgToPlayer } from "../../util";
-import { paradoxui } from "../paradoxui.js";
+import { Player, world, AntiSpam, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
+import { ModalFormResponse } from "../../gui_index";
 
 export function uiANTISPAM(antispamResult: ModalFormResponse, player: Player) {
     const [AntiSpamToggle] = antispamResult.formValues;

@@ -1,6 +1,4 @@
-import { world } from "@minecraft/server";
-import { sendMsg, sendMsgToPlayer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, world } from "../../../index";
 
 const ChatFilter = () => {
     world.events.beforeChat.subscribe((msg) => {
