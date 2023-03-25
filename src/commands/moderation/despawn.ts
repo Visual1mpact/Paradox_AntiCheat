@@ -65,6 +65,28 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     // try to find the entity or despawn them all if requested
     const filter = new Object() as EntityQueryOptions;
     filter.excludeTypes = ["player"];
+    // Specified entity
+    if (args[0] !== "all" && args.length > 0) {
+        let counter = 0;
+        let requestedEntity: string = "";
+        for (const entity of world.getDimension("overworld").getEntities(filter)) {
+            const filteredEntity = entity.typeId.replace("minecraft:", "");
+            requestedEntity = args[0].replace("minecraft:", "");
+            // If an entity was specified then handle it here
+            if (filteredEntity === requestedEntity || filteredEntity === args[0]) {
+                counter = ++counter;
+                // Despawn this entity
+                entity.triggerEvent("paradox:kick");
+                continue;
+                // If all entities were specified then handle this here
+            }
+        }
+        if (counter > 0) {
+            return sendMsgToPlayer(player, ` | §fDespawned§r §6=>§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
+        } else {
+            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
+        }
+    }
     // All entities
     if (args[0] === "all") {
         const entityCount = {};
@@ -101,8 +123,5 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
         } else {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);
         }
-    } else {
-        // Need to give a parameter that is recognized
-        return sendMsgToPlayer(player, [`§r§4[§6Paradox§4]§r Please specify which entity or target all!`, `§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem`, `§r§4[§6Paradox§4]§r Example: ${prefix}despawn all`]);
     }
 }
