@@ -1,4 +1,7 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function illegalEnchantHelp(player: Player, prefix: string, illegalEnchantmentBoolean: string | number | boolean) {
     let commandStatus: string;

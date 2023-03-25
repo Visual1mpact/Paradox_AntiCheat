@@ -1,4 +1,9 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, MinecraftEffectTypes, Player, sendMsg, sendMsgToPlayer, TickFreeze, world } from "../../index";
+/* eslint no-var: "off"*/
+import { world, MinecraftEffectTypes, Player, BeforeChatEvent } from "@minecraft/server";
+import config from "../../data/config.js";
+import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function freezeHelp(player: Player, prefix: string) {
     let commandStatus: string;

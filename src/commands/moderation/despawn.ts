@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, EntityQueryOptions, getPrefix, Player, sendMsgToPlayer, world } from "../../index";
+/* eslint no-var: "off"*/
+import { BeforeChatEvent, EntityQueryOptions, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function despawnHelp(player: Player, prefix: string) {
     let commandStatus: string;

@@ -1,5 +1,9 @@
-import { Player, world, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export function uiANTISHULKER(antishulkerResult: ModalFormResponse, player: Player) {
     const [AntiShulkerToggle] = antishulkerResult.formValues;

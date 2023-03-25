@@ -1,4 +1,7 @@
-import { config, crypto, dynamicPropertyRegistry, EntityQueryOptions, sendMsg, system, world } from "../../../index";
+import { world, EntityQueryOptions, system } from "@minecraft/server";
+import config from "../../../data/config.js";
+import { crypto, sendMsg } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function verifypermission() {
     const filter = new Object() as EntityQueryOptions;

@@ -1,5 +1,9 @@
-import { Player, world, XrayA, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { XrayA } from "../../penrose/blockbreakevent/xray/xray_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export function uiXRAY(xrayResult: ModalFormResponse, player: Player) {
     const [XrayToggle] = xrayResult.formValues;

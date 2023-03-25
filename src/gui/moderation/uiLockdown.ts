@@ -1,5 +1,9 @@
-import { Player, world, dynamicPropertyRegistry, config, crypto, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { crypto, sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Player) {
     const [reason, LockdownToggle] = lockdownResult.formValues;

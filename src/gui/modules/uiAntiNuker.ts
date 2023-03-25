@@ -1,5 +1,9 @@
-import { Player, world, NukerA, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export function uiANTINUKER(antinukerResult: ModalFormResponse, player: Player) {
     const [AntiNukerToggle] = antinukerResult.formValues;

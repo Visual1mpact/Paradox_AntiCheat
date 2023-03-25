@@ -1,5 +1,7 @@
-import { Player, world, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-
+import { Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 export async function uiEWIPE(ewipeResult, onlineList, player) {
     const [value] = ewipeResult.formValues;
     let member: Player = undefined;

@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, InvalidSprintA, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { InvalidSprintA } from "../../penrose/tickevent/invalidsprint/invalidsprint_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function invalidSprintAHelp(player: Player, prefix: string, invalidSprintABoolean: string | number | boolean) {
     let commandStatus: string;

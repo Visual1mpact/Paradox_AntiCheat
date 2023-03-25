@@ -1,4 +1,6 @@
-import { Block, Dimension, dynamicPropertyRegistry, Player, startTimer, system, Vector, world } from "../../../index";
+import { world, Block, Player, Dimension, system, Vector } from "@minecraft/server";
+import { startTimer } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 let blockAtPlayer0: Block;
 let blockAtPlayer1: Block;

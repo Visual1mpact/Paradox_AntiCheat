@@ -1,4 +1,9 @@
-import { Adventure, BeforeChatEvent, config, Creative, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
+import { Creative } from "../../penrose/tickevent/gamemode/creative.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function allowgmcHelp(player: Player, prefix: string, creativeGMBoolean: string | number | boolean) {
     let commandStatus: string;

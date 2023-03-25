@@ -1,6 +1,8 @@
-import { Player, world, getPrefix, sendMsgToPlayer, paradoxui, BeforeChatEvent } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
-import { TeleportRequestHandler } from "../../command_index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { getPrefix, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
+import { TeleportRequestHandler } from "../../commands/utility/tpr.js";
 
 export function uiTPRSEND(tprSendRequestResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = tprSendRequestResult.formValues;

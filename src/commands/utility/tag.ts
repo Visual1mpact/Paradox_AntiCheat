@@ -1,4 +1,7 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, resetTag, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { resetTag, getPrefix, sendMsgToPlayer, sendMsg } from "../../util.js";
 
 function tagHelp(player: Player, prefix: string, chatRanksBoolean: string | number | boolean) {
     let commandStatus: string;

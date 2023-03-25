@@ -1,5 +1,8 @@
-import { Player, world, MinecraftEffectTypes, TickFreeze, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-
+import { MinecraftEffectTypes, Player, world } from "@minecraft/server";
+import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 export async function uiFREEZE(freezeResult, onlineList, player) {
     const [value] = freezeResult.formValues;
     let member: Player = undefined;

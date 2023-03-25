@@ -1,5 +1,9 @@
-import { Player, world, ScaffoldA, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { ScaffoldA } from "../../penrose/blockplaceevent/scaffold/scaffold_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export async function uiANTISCAFFOLD(antiscaffoldResult: ModalFormResponse, player: Player) {
     const [AntiScaffoldToggle] = antiscaffoldResult.formValues;

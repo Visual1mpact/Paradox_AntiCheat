@@ -1,4 +1,7 @@
-import { BlockBreakEvent, config, dynamicPropertyRegistry, world } from "../../../index";
+import { BlockBreakEvent, world } from "@minecraft/server";
+import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+// import { flag } from "../../../util.js";
 
 function reachb(object: BlockBreakEvent) {
     // Get Dynamic Property

@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, FlyA, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { FlyA } from "../../penrose/tickevent/fly/fly_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function flyaHelp(player: Player, prefix: string, flyABoolean: string | number | boolean) {
     let commandStatus: string;

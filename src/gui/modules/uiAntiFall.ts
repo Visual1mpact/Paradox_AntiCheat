@@ -1,5 +1,9 @@
-import { Player, world, dynamicPropertyRegistry, paradoxui, sendMsg, sendMsgToPlayer, AntiFallA } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { paradoxui } from "../paradoxui.js";
+import { sendMsgToPlayer, sendMsg } from "../../util.js";
+import { AntiFallA } from "../../penrose/tickevent/antifalla/antifall_a.js";
 
 export async function uiANTIFALL(antifallResult: ModalFormResponse, player: Player) {
     const [AntiFallToggle] = antifallResult.formValues;

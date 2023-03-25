@@ -1,5 +1,5 @@
 // @ts-ignore
-import { system } from "../../index";
+import { system } from "@minecraft/server";
 
 function watchdog(terminator) {
     // Cancel watchdog from shutting down server/realm

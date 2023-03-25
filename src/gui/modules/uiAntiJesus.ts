@@ -1,5 +1,9 @@
-import { Player, world, JesusA, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { JesusA } from "../../penrose/tickevent/jesus/jesus_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export function uiANTIJESUS(antijesusResult: ModalFormResponse, player: Player) {
     const [AntiJesusToggle] = antijesusResult.formValues;

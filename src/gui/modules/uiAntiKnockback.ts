@@ -1,5 +1,9 @@
-import { Player, world, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui, AntiKnockbackA } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
+import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
 
 export async function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, player: Player) {
     const [AntiKnockBackToggle] = antiknockbackResult.formValues;

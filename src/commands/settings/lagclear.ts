@@ -1,4 +1,8 @@
-import { BeforeChatEvent, ClearLag, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ClearLag } from "../../penrose/tickevent/clearlag/clearlag.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function clearlagHelp(player: Player, prefix: string, clearLagBoolean: string | number | boolean) {
     let commandStatus: string;

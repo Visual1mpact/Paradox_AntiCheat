@@ -1,33 +1,14 @@
-import {
-    Block,
-    BlockInventoryComponent,
-    BlockInventoryComponentContainer,
-    BlockPlaceEvent,
-    BlockProperties,
-    config,
-    defaultMaxItemStack,
-    dynamicPropertyRegistry,
-    Enchantment,
-    enchantmentSlot,
-    flag,
-    iicWhitelist,
-    illegalitems,
-    ItemEnchantsComponent,
-    Items,
-    ItemStack,
-    kickablePlayers,
-    maxItemStack,
-    MinecraftEnchantmentTypes,
-    Player,
-    salvageable,
-    sendMsg,
-    sendMsgToPlayer,
-    titleCase,
-    toCamelCase,
-    Vector,
-    whitelist,
-    world,
-} from "../../../index";
+import { world, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment, Player, Block, BlockPlaceEvent, BlockInventoryComponent, BlockInventoryComponentContainer, ItemEnchantsComponent, Vector } from "@minecraft/server";
+import { illegalitems } from "../../../data/itemban.js";
+import config from "../../../data/config.js";
+import { flag, toCamelCase, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
+import { enchantmentSlot } from "../../../data/enchantments.js";
+import salvageable from "../../../data/salvageable.js";
+import { whitelist } from "../../../data/whitelistitems.js";
+import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
+import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
+import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }, block: Block) {
     if (!enchData && !block) {

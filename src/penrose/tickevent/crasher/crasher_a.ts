@@ -1,4 +1,7 @@
-import { dynamicPropertyRegistry, flag, kickablePlayers, system, world } from "../../../index";
+import { world, system } from "@minecraft/server";
+import { flag } from "../../../util.js";
+import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function crashera(id: number) {
     // Get Dynamic Property

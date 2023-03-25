@@ -1,4 +1,7 @@
-import { config, dynamicPropertyRegistry, EntityInventoryComponent, flag, setScore, system, world } from "../../../index";
+import { EntityInventoryComponent, world, system } from "@minecraft/server";
+import { flag, setScore } from "../../../util.js";
+import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 async function antiknockbacka(id: number) {
     // Get Dynamic Property

@@ -1,4 +1,8 @@
-import { BedrockValidate, BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function bedrockValidateHelp(player: Player, prefix: string, bedrockValidateBoolean: string | number | boolean) {
     let commandStatus: string;

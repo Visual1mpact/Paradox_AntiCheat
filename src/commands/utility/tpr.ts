@@ -1,4 +1,6 @@
-import { BeforeChatEvent, config, getPrefix, Player, sendMsgToPlayer, setTimer, world } from "../../index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config";
+import { getPrefix, sendMsgToPlayer, setTimer } from "../../util";
 
 interface TeleportRequest {
     requester: Player;

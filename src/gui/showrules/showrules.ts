@@ -1,5 +1,8 @@
-import { world, EntityQueryOptions, system, config, sendMsgToPlayer, dynamicPropertyRegistry } from "../../index";
-import { MessageFormData } from "../../gui_index";
+import { world, EntityQueryOptions, system } from "@minecraft/server";
+import config from "../../data/config.js";
+import { sendMsgToPlayer } from "../../util.js";
+import { MessageFormData } from "@minecraft/server-ui";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 async function showrules(id: number) {
     //Get Dynamic Property

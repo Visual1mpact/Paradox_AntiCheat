@@ -1,4 +1,7 @@
-import { BlockPlaceEvent, config, dynamicPropertyRegistry, MinecraftBlockTypes, Vector, world } from "../../../index";
+import { world, MinecraftBlockTypes, BlockPlaceEvent, Vector } from "@minecraft/server";
+import config from "../../../data/config.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+// import { flag } from "../../../util.js";
 
 function reacha(object: BlockPlaceEvent) {
     // Get Dynamic Property

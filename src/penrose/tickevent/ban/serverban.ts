@@ -1,5 +1,6 @@
-import { banMessage, EntityQueryOptions, sendMsg, sendMsgToPlayer, system, world } from "../../../index";
-import { queueUnban } from "../../../command_index";
+import { world, EntityQueryOptions, system } from "@minecraft/server";
+import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
+import { queueUnban } from "../../../commands/moderation/unban.js";
 
 function serverban() {
     const filter = new Object() as EntityQueryOptions;

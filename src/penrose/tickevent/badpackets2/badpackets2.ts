@@ -1,4 +1,6 @@
-import { dynamicPropertyRegistry, flag, system, world } from "../../../index";
+import { world, system } from "@minecraft/server";
+import { flag } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function badpackets2(id: number) {
     // Get Dynamic Property

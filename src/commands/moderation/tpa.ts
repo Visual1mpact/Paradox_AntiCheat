@@ -1,4 +1,9 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsgToPlayer, setTimer, world } from "../../index";
+/* eslint no-var: "off"*/
+/* eslint no-redeclare: "off"*/
+import { world, Player, BeforeChatEvent } from "@minecraft/server";
+import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsgToPlayer, setTimer } from "../../util.js";
 
 function tpaHelp(player: Player, prefix: string) {
     let commandStatus: string;

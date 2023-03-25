@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, IllegalItemsD, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { IllegalItemsD } from "../../penrose/tickevent/illegalitems/illegalitems_d.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function illegalItemsDHelp(player: Player, prefix: string, illegalItemsDBoolean: string | number | boolean) {
     let commandStatus: string;

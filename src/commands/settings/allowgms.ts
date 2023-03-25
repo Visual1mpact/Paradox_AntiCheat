@@ -1,4 +1,9 @@
-import { Adventure, BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, Survival, world } from "../../index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
+import { Survival } from "../../penrose/tickevent/gamemode/survival.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string | number | boolean) {
     let commandStatus: string;

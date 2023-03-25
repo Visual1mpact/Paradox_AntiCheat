@@ -1,4 +1,7 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, sendMsgToPlayer } from "../../index";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 /**
  * @name nonstaffhelp

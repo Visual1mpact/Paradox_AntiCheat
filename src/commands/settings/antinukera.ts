@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, NukerA, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function antinukeraHelp(player: Player, prefix: string, antiNukerABoolean: string | number | boolean) {
     let commandStatus: string;

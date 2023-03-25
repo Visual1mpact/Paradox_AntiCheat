@@ -1,4 +1,6 @@
-import { dynamicPropertyRegistry, EntityQueryOptions, flag, GameMode, startTimer, system, Vector, world } from "../../../index";
+import { world, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
+import { flag, startTimer } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const playersOldCoordinates = new Map<string, Vector>();
 

@@ -1,4 +1,6 @@
-import { dynamicPropertyRegistry, MinecraftBlockTypes, Player, sendMsgToPlayer, setTimer, system, Vector, world } from "../../../index";
+import { MinecraftBlockTypes, Player, world, system, Vector } from "@minecraft/server";
+import { sendMsgToPlayer, setTimer } from "../../../util.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {

@@ -1,6 +1,7 @@
-import { TeleportRequestHandler } from "../../command_index";
-import { BeforeChatEvent, world, sendMsgToPlayer, paradoxui } from "../../index";
-
+import { BeforeChatEvent, world } from "@minecraft/server";
+import { TeleportRequestHandler } from "../../commands/utility/tpr";
+import { sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui";
 export function uiTPR(requester, player, respons) {
     let member = undefined;
     for (let pl of world.getPlayers()) {

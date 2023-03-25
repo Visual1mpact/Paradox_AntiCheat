@@ -1,4 +1,8 @@
-import { config, dynamicPropertyRegistry, flag, kickablePlayers, Player, system, world } from "../../../index";
+import { Player, world, system } from "@minecraft/server";
+import { flag } from "../../../util.js";
+import config from "../../../data/config.js";
+import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function rip(player: Player) {
     // Tag with reason and by who

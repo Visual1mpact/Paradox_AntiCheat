@@ -1,4 +1,8 @@
-import { dynamicPropertyRegistry, getPrefix, kickablePlayers, onJoinData, Player, PlayerSpawnEvent, setTimer, world } from "../../../index";
+import { Player, PlayerSpawnEvent, world } from "@minecraft/server";
+import { onJoinData } from "../../../data/onjoindata.js";
+import { getPrefix, setTimer } from "../../../util.js";
+import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 async function onJoinTime(object: PlayerSpawnEvent) {
     /**

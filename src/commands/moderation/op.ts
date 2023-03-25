@@ -1,4 +1,9 @@
-import { BeforeChatEvent, config, crypto, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, UUID, world } from "../../index";
+/* eslint no-var: "off"*/
+/* eslint no-redeclare: "off"*/
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function opHelp(player: Player, prefix: string) {
     let commandStatus: string;

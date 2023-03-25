@@ -1,4 +1,6 @@
-import { PlayerSpawnEvent, world, ShowRules, dynamicPropertyRegistry } from "../../../index";
+import { PlayerSpawnEvent, world } from "@minecraft/server";
+import { ShowRules } from "../../showrules/showrules.js";
+import { dynamicPropertyRegistry } from "../../../penrose/worldinitializeevent/registry.js";
 
 async function onJoinRules(object: PlayerSpawnEvent) {
     //Get Dynamic Property

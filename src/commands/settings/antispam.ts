@@ -1,4 +1,8 @@
-import { AntiSpam, BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean) {
     let commandStatus: string;

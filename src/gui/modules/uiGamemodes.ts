@@ -1,5 +1,11 @@
-import { Player, world, Adventure, Creative, Survival, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
+import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
+import { Creative } from "../../penrose/tickevent/gamemode/creative.js";
+import { Survival } from "../../penrose/tickevent/gamemode/survival.js";
 
 export function uiGAMEMODES(gamemodeResult: ModalFormResponse, player: Player) {
     const [AdventureGM, CreativeGM, SurvivalGM] = gamemodeResult.formValues;

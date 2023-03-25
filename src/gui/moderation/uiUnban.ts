@@ -1,7 +1,10 @@
-import { Player, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
-import { queueUnban } from "../../command_index";
+import { Player } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { queueUnban } from "../../commands/moderation/unban.js";
 //import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export function uiUNBAN(unbanResult: ModalFormResponse, player: Player) {
     const [textField] = unbanResult.formValues;

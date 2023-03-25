@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, CrasherA, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world } from "../../index";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { CrasherA } from "../../penrose/tickevent/crasher/crasher_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function crasheraHelp(player: Player, prefix: string, crasherABoolean: string | number | boolean) {
     let commandStatus: string;

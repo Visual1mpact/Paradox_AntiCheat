@@ -1,5 +1,10 @@
-import { Player, world, BadPackets1, BadPackets2, dynamicPropertyRegistry, sendMsg, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import { BadPackets1 } from "../../penrose/beforechatevent/spammer/badpackets_1.js";
+import { BadPackets2 } from "../../penrose/tickevent/badpackets2/badpackets2.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsg, sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 
 export function uiBADPACKETS(badpacketsResult: ModalFormResponse, player: Player) {
     const [BadPackets1Toggle, BadPackets2Toggle] = badpacketsResult.formValues;

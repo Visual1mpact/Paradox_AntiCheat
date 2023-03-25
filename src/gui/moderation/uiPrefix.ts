@@ -1,5 +1,9 @@
-import { Player, world, dynamicPropertyRegistry, config, sendMsgToPlayer, paradoxui } from "../../index";
-import { ModalFormResponse } from "../../gui_index";
+import { Player, world } from "@minecraft/server";
+import { ModalFormResponse } from "@minecraft/server-ui";
+import config from "../../data/config.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { sendMsgToPlayer } from "../../util";
+import { paradoxui } from "../paradoxui.js";
 function resetPrefix(player: Player) {
     const sanitize = player.getTags();
     for (const tag of sanitize) {

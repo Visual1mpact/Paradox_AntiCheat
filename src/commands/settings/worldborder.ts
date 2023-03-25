@@ -1,4 +1,8 @@
-import { BeforeChatEvent, config, dynamicPropertyRegistry, getPrefix, Player, sendMsg, sendMsgToPlayer, world, WorldBorder } from "../../index";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import config from "../../data/config.js";
+import { WorldBorder } from "../../penrose/tickevent/worldborder/worldborder.js";
+import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: string | number | boolean) {
     let commandStatus: string;

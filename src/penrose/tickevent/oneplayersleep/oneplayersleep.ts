@@ -1,4 +1,5 @@
-import { dynamicPropertyRegistry, EntityQueryOptions, Player, system, world } from "../../../index";
+import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 async function queueSleep(player: Player, id: number) {
     await Promise.all([player.runCommandAsync(`time set 126553000`), player.runCommandAsync(`weather clear`)]);

@@ -1,30 +1,13 @@
-import {
-    config,
-    defaultMaxItemStack,
-    dynamicPropertyRegistry,
-    Enchantment,
-    enchantmentSlot,
-    EntityInventoryComponent,
-    flag,
-    illegalitems,
-    InventoryComponentContainer,
-    ItemEnchantsComponent,
-    Items,
-    ItemStack,
-    kickablePlayers,
-    maxItemStack,
-    MinecraftEnchantmentTypes,
-    Player,
-    salvageable,
-    sendMsg,
-    sendMsgToPlayer,
-    startTimer,
-    system,
-    titleCase,
-    toCamelCase,
-    whitelist,
-    world,
-} from "../../../index";
+import { world, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer, system } from "@minecraft/server";
+import { illegalitems } from "../../../data/itemban.js";
+import config from "../../../data/config.js";
+import { flag, sendMsg, sendMsgToPlayer, startTimer, titleCase, toCamelCase } from "../../../util.js";
+import { enchantmentSlot } from "../../../data/enchantments.js";
+import salvageable from "../../../data/salvageable.js";
+import { whitelist } from "../../../data/whitelistitems.js";
+import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
+import { kickablePlayers } from "../../../kickcheck.js";
+import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 const storage = new Map();
 
