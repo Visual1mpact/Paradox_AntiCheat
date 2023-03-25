@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, EntityQueryOptions, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
@@ -63,47 +63,44 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     }
 
     // try to find the entity or despawn them all if requested
-    let counter = 0;
-    let verify = false;
-    let filteredEntity: string;
-    let requestedEntity: string;
     const filter = new Object() as EntityQueryOptions;
     filter.excludeTypes = ["player"];
-    // Specified entity
-    if (args[0] !== "all" && args.length > 0) {
-        for (const entity of world.getDimension("overworld").getEntities(filter)) {
-            filteredEntity = entity.typeId.replace("minecraft:", "");
-            requestedEntity = args[0].replace("minecraft:", "");
-            // If an entity was specified then handle it here
-            if (filteredEntity === requestedEntity || filteredEntity === args[0]) {
-                counter = ++counter;
-                // Despawn this entity
-                entity.triggerEvent("paradox:kick");
-                continue;
-                // If all entities were specified then handle this here
-            }
-        }
-    }
     // All entities
     if (args[0] === "all") {
+        const entityCount = {};
         for (const entity of world.getDimension("overworld").getEntities(filter)) {
-            counter = ++counter;
-            verify = true;
+            let filteredEntity = entity.typeId.replace("minecraft:", "");
+            if (filteredEntity === "item") {
+                const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
+                const itemName = itemContainer.itemStack;
+                if (itemName !== undefined) {
+                    filteredEntity = itemName.typeId.replace("minecraft:", "");
+                }
+            }
+            if (!entityCount[filteredEntity]) {
+                entityCount[filteredEntity] = 1;
+            } else {
+                entityCount[filteredEntity]++;
+            }
             // Despawn this entity
             entity.triggerEvent("paradox:kick");
-            continue;
         }
-    }
-    // Let player know how many of the specified entity were removed
-    if (counter > 0 && verify === false) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned ${requestedEntity} (x${counter})!`);
-    }
-    if (verify === true) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned all entities (x${counter})!`);
-    }
-    // If nothing then abort and let them know
-    if (args[0] !== "all" && args.length > 0) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This entity was not found in the world!`);
+        let totalCounter = 0;
+        let entityMessage = "";
+        for (const entity in entityCount) {
+            if (entityCount.hasOwnProperty(entity)) {
+                const count = entityCount[entity];
+                if (count > 0) {
+                    entityMessage += ` | §fDespawned§r §6=>§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
+                    totalCounter += count;
+                }
+            }
+        }
+        if (totalCounter > 0) {
+            return sendMsgToPlayer(player, entityMessage);
+        } else {
+            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);
+        }
     } else {
         // Need to give a parameter that is recognized
         return sendMsgToPlayer(player, [`§r§4[§6Paradox§4]§r Please specify which entity or target all!`, `§r§4[§6Paradox§4]§r Example: ${prefix}despawn iron_golem`, `§r§4[§6Paradox§4]§r Example: ${prefix}despawn all`]);
