@@ -126,15 +126,15 @@ export default {
         },
         reachA: {
             enabled: true,
-            reach: 7,
+            reach: 6,
         },
         reachB: {
             enabled: true,
-            reach: 7,
+            reach: 6,
         },
         reachC: {
             enabled: true,
-            reach: 7,
+            reach: 5,
         },
         jesusA: {
             enabled: false,

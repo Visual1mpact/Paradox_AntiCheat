@@ -37,7 +37,7 @@ function reacha(object: BlockPlaceEvent) {
 
     if (distanceSquared > config.modules.reachA.reach * config.modules.reachA.reach) {
         dimension.getBlock(new Vector(x, y, z)).setType(MinecraftBlockTypes.air);
-        // flag(player, "Reach", "A", "Placement", false, false "reach", Math.sqrt(distanceSquared).toFixed(3), false, false);
+        // flag(player, "Reach", "A", "Placement", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
     }
 }
 

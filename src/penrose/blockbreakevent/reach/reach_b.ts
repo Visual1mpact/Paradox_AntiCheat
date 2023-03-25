@@ -40,7 +40,7 @@ function reachb(object: BlockBreakEvent) {
 
     if (distanceSquared > config.modules.reachB.reach * config.modules.reachB.reach) {
         block.setPermutation(blockID);
-        // flag(player, "Reach", "B", "Break", false, false, "reach", reach.toFixed(3), false, false);
+        // flag(player, "Reach", "B", "Break", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
     }
 }
 
