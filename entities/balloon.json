@@ -1,20 +1,20 @@
 {
     "format_version": "1.8.0",
     "minecraft:entity": {
-            "events": {
-                "paradox:kick": {
-                    "add": {
-                        "component_groups": ["paradox:kick"]
-                    }
+        "events": {
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
-            },
-            "component_groups": {
-                "paradox:kick": {
-                    "minecraft:despawn": {
-                        "remove_child_entities": true
-                    }
+            }
+        },
+        "component_groups": {
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
-            },
+            }
+        },
         "description": {
             "identifier": "minecraft:balloon",
             "is_spawnable": false,

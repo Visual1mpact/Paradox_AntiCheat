@@ -72,7 +72,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     // Specified entity
     if (args[0] !== "all" && args.length > 0) {
         for (const entity of world.getDimension("overworld").getEntities(filter)) {
-            filteredEntity = entity.id.replace("minecraft:", "");
+            filteredEntity = entity.typeId.replace("minecraft:", "");
             requestedEntity = args[0].replace("minecraft:", "");
             // If an entity was specified then handle it here
             if (filteredEntity === requestedEntity || filteredEntity === args[0]) {
