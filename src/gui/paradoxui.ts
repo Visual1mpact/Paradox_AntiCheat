@@ -53,6 +53,7 @@ import { uiWORLDBORDER } from "./modules/uiWorldborder";
 import { uiXRAY } from "./modules/uiXray";
 import { uiENCHANTEDARMOR } from "./modules/uiEnchantedArmor";
 import { uiHOTBAR } from "./modules/uiHotbar";
+import { uiDESPAWNER } from "./moderation/uiDespawner";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -171,6 +172,7 @@ async function paradoxui(player: Player) {
             moderationui.button("Freeze a player", "textures/ui/frozen_effect");
             moderationui.button("Allow a player to fly.", "textures/ui/flyingascend");
             moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
+            moderationui.button("Despawn entities", "textures/ui/trash");
             moderationui.show(player).then((ModUIresult) => {
                 if (ModUIresult.selection === 0) {
                     //show ban ui here
@@ -377,12 +379,21 @@ async function paradoxui(player: Player) {
                 }
                 if (ModUIresult.selection === 11) {
                     const vanishui = new ModalFormData();
-                    vanishui.title("§4Paradox -Vanish from the server.§4");
+                    vanishui.title("§4Paradox - Vanish from the server.§4");
                     let onlineList: string[] = [];
                     onlineList = Array.from(world.getPlayers(), (player) => player.name);
                     vanishui.dropdown(`\n§rSelect a player to vanish.§r\n\nPlayer's Online\n`, onlineList);
                     vanishui.show(player).then((vanishResult) => {
                         uiVANISH(vanishResult, onlineList, player);
+                    });
+                }
+                if (ModUIresult.selection === 12) {
+                    const despawnerui = new ModalFormData();
+                    despawnerui.title("§4Paradox - Despawn Entitys.§4");
+                    despawnerui.textField("Enter the name of a entity to despawn.", "creeper");
+                    despawnerui.toggle("Despawn all entities in the loaded chunks.", false);
+                    despawnerui.show(player).then((despawnerResult) => {
+                        uiDESPAWNER(despawnerResult, player);
                     });
                 }
             });
