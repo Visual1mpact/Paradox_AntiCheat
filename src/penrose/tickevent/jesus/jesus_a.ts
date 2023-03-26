@@ -55,7 +55,7 @@ function jesusa(id: number) {
              * the integrity of our Memory.
              */
             const timerExpired = startTimer("jesusa", player.name, Date.now());
-            if (timerExpired.namespace.indexOf("jesusa") !== -1) {
+            if (timerExpired.namespace.indexOf("jesusa") !== -1 && timerExpired.expired) {
                 const deletedKey = timerExpired.key; // extract the key without the namespace prefix
                 playerCount.delete(deletedKey);
             }

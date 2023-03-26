@@ -341,7 +341,7 @@ export function setTimer(player: string, spawn: boolean = false) {
      * the integrity of our Memory.
      */
     const timerExpired = startTimer("util", player, Date.now());
-    if (timerExpired.namespace.indexOf("util") !== -1) {
+    if (timerExpired.namespace.indexOf("util") !== -1 && timerExpired.expired) {
         const deletedKey = timerExpired.key; // extract the key without the namespace prefix
         timerMap.delete(deletedKey);
     }
@@ -382,11 +382,13 @@ const theVoid = new Map();
  * @param namespace - The namespace prefix to use for the key in `theVoid` map.
  * @param key - The key of the key-value pair in `theVoid` map.
  * @param value - The value of the key-value pair in `theVoid` map, which should be a `Date` object representing the start time of the timer.
- * @returns An object containing the namespace and key that were used to start the timer.
+ * @returns An object containing a boolean indicating whether the timer has expired, and the namespace and key that were used to start the timer.
  */
-export function startTimer(namespace: string, key: string, value: number): { namespace: string; key: string } {
+export function startTimer(namespace: string, key: string, value: number): { expired: boolean; namespace: string; key: string } {
     const namespacedKey = `${namespace}:${key}`;
     theVoid.set(namespacedKey, value);
+
+    let expired = false;
 
     const intervalId = system.runInterval(() => {
         const now = Date.now();
@@ -396,13 +398,14 @@ export function startTimer(namespace: string, key: string, value: number): { nam
             const cache = theVoid.get(namespacedKey + ":intervalId");
             theVoid.delete(namespacedKey);
             theVoid.delete(namespacedKey + ":intervalId");
+            expired = true;
             system.clearRun(cache);
         }
     }, checkInterval);
 
     theVoid.set(namespacedKey + ":intervalId", intervalId);
 
-    return { namespace, key };
+    return { expired, namespace, key };
 }
 
 const overworld = world.getDimension("overworld");

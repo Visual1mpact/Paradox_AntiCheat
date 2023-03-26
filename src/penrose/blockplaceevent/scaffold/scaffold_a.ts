@@ -48,7 +48,7 @@ function scaffolda(object: BlockPlaceEvent) {
      * the integrity of our Memory.
      */
     const timerExpired = startTimer("scaffolda", player.name, Date.now());
-    if (timerExpired.namespace.indexOf("scaffolda") !== -1) {
+    if (timerExpired.namespace.indexOf("scaffolda") !== -1 && timerExpired.expired) {
         const deletedKey = timerExpired.key; // extract the key without the namespace prefix
         blockTimer.delete(deletedKey);
     }

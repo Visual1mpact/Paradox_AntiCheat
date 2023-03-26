@@ -62,7 +62,7 @@ function flya(id: number) {
              * the integrity of our Memory.
              */
             const timerExpired = startTimer("flya", player.name, Date.now());
-            if (timerExpired.namespace.indexOf("flya") !== -1) {
+            if (timerExpired.namespace.indexOf("flya") !== -1 && timerExpired.expired) {
                 const deletedKey = timerExpired.key; // extract the key without the namespace prefix
                 playersOldCoordinates.delete(deletedKey);
             }
