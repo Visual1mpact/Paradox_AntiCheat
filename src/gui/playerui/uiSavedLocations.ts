@@ -1,6 +1,6 @@
 import { Player, Vector, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { decryptString, sendMsgToPlayer } from "../../util.js";
+import { decryptString, sendMsgToPlayer, setTimer } from "../../util.js";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locations: string[], player: Player, coordArray: string[]) {
@@ -23,6 +23,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         return paradoxui(player);
     }
     if (teleportToSelectedLocation === true) {
+        setTimer(player.name);
         player.teleport(new Vector(x, y, z), world.getDimension(dimension), 0, 0);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
         return player;
