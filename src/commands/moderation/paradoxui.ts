@@ -37,8 +37,8 @@ export function paradoxUI(message: BeforeChatEvent, args: string[]) {
 
     const player = message.sender;
 
-    if (!config.debug) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Debugging is not enabled!`);
+    if (!config.ParadoxUIBeta) {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ParadoxUIBeta is not enabled.!`);
     }
 
     // Check for custom prefix

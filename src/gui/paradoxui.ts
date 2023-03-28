@@ -2,7 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
 import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
-import { crypto, getScore } from "../util";
+import { crypto, decryptString, encryptString, getScore } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiCLEARCHAT } from "./moderation/uiClearchat";
@@ -54,6 +54,7 @@ import { uiXRAY } from "./modules/uiXray";
 import { uiENCHANTEDARMOR } from "./modules/uiEnchantedArmor";
 import { uiHOTBAR } from "./modules/uiHotbar";
 import { uiDESPAWNER } from "./moderation/uiDespawner";
+import { uiSAVEDLOCATIONS } from "./playerui/uiSavedLocations";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -66,6 +67,15 @@ async function paradoxui(player: Player) {
     if (uniqueId !== player.name) {
         maingui.button("§0Op§2", "textures/ui/op");
         maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Saved Locations§2", "textures/items/compass_item");
+    } else if (config.ParadoxUIBeta === true) {
+        maingui.button("§0Op§2", "textures/ui/op");
+        maingui.button("§0Deop§2", "textures/items/ender_pearl");
+        maingui.button("§0Moderation§2", "textures/items/book_normal");
+        maingui.button("§0Modules§2", "textures/blocks/command_block");
+        maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
+        maingui.button("§0Teleport Requets§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Saved Locations§2", "textures/items/compass_item");
     } else {
         maingui.button("§0Op§2", "textures/ui/op");
         maingui.button("§0Deop§2", "textures/items/ender_pearl");
@@ -73,7 +83,9 @@ async function paradoxui(player: Player) {
         maingui.button("§0Modules§2", "textures/blocks/command_block");
         maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
         maingui.button("§0Teleport Requets§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Saved Locations§2", "textures/items/compass_item");
     }
+
     maingui.show(player).then((result) => {
         if (result.selection === 0) {
             // New window for op
@@ -157,246 +169,296 @@ async function paradoxui(player: Player) {
             }
         }
         if (result.selection === 2) {
-            //new window for Moderation
-            const moderationui = new ActionFormData();
-            moderationui.title("§4Paradox Moderation§4");
-            moderationui.button("Ban", "textures/ui/hammer_l");
-            moderationui.button("Unban", "textures/ui/check");
-            moderationui.button("Rules", "textures/items/book_writable");
-            moderationui.button("Chat", "textures/ui/newOffersIcon");
-            moderationui.button("Lockdown", "textures/ui/lock_color");
-            moderationui.button("Punish", "textures/ui/trash");
-            moderationui.button("Teleport Assistance", "textures/blocks/portal_placeholder");
-            moderationui.button("Kick a player.", "textures/items/gold_boots");
-            moderationui.button("Wipe an Enderchest", "textures/blocks/ender_chest_front");
-            moderationui.button("Freeze a player", "textures/ui/frozen_effect");
-            moderationui.button("Allow a player to fly.", "textures/ui/flyingascend");
-            moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
-            moderationui.button("Despawn entities", "textures/ui/trash");
-            moderationui.show(player).then((ModUIresult) => {
-                if (ModUIresult.selection === 0) {
-                    //show ban ui here
-                    const banui = new ModalFormData();
-                    let onlineList: string[] = [];
+            if (uniqueId !== player.name) {
+                //No Opped Menu to show Saved Locations
+                const savedlocationsui = new ModalFormData();
+                // Hash the coordinates for security
+                const salt = world.getDynamicProperty("crypt");
+                const tags = player.getTags();
+                let counter = 0;
+                let Locations: string[] = [];
+                let coordsArray: string[] = [];
+                for (let i = 0; i < tags.length; i++) {
+                    /**
+                     * This first if statement is to verify if they have old coordinates
+                     * not encrypted. If so then we encrypt it now. This is only a temporary
+                     * patch to minimize players having to manually record and remove the old
+                     * tags. Eventually this will be removed.
+                     */
+                    if (tags[i].startsWith("LocationHome:")) {
+                        player.removeTag(tags[i]);
+                        tags[i] = encryptString(tags[i], String(salt));
+                        player.addTag(tags[i]);
+                    }
+                    if (tags[i].startsWith("6f78")) {
+                        // Decode it so we can verify it
+                        tags[i] = decryptString(tags[i], String(salt));
+                        // If invalid then skip it
+                        if (tags[i].startsWith("LocationHome:") === false) {
+                            continue;
+                        }
+                        // Split string into array
+                        const coordinatesArray = tags[i].split(" ");
+                        counter = ++counter;
+                        for (let i = 0; i < coordinatesArray.length; i++) {
+                            // Get their location from the array
+                            coordsArray.push(coordinatesArray[i]);
+                            if (coordinatesArray[i].includes("LocationHome:")) {
+                                Locations.push(coordinatesArray[i].replace("LocationHome:", ""));
+                            }
+                            continue;
+                        }
+                    }
+                }
+                savedlocationsui.title("§4Paradox - Saved Locations§4");
+                savedlocationsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, Locations);
+                savedlocationsui.toggle("Teleport to the selected location", false);
+                savedlocationsui.toggle("Deletes the selected Location!", false);
+                savedlocationsui.show(player).then((savedlocationsResult) => {
+                    uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
+                });
+            } else {
+                //new window for Moderation
+                const moderationui = new ActionFormData();
+                moderationui.title("§4Paradox Moderation§4");
+                moderationui.button("Ban", "textures/ui/hammer_l");
+                moderationui.button("Unban", "textures/ui/check");
+                moderationui.button("Rules", "textures/items/book_writable");
+                moderationui.button("Chat", "textures/ui/newOffersIcon");
+                moderationui.button("Lockdown", "textures/ui/lock_color");
+                moderationui.button("Punish", "textures/ui/trash");
+                moderationui.button("Teleport Assistance", "textures/blocks/portal_placeholder");
+                moderationui.button("Kick a player.", "textures/items/gold_boots");
+                moderationui.button("Wipe an Enderchest", "textures/blocks/ender_chest_front");
+                moderationui.button("Freeze a player", "textures/ui/frozen_effect");
+                moderationui.button("Allow a player to fly.", "textures/ui/flyingascend");
+                moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
+                moderationui.button("Despawn entities", "textures/ui/trash");
+                moderationui.show(player).then((ModUIresult) => {
+                    if (ModUIresult.selection === 0) {
+                        //show ban ui here
+                        const banui = new ModalFormData();
+                        let onlineList: string[] = [];
 
-                    banui.title("§4Ban A player!§4");
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    banui.dropdown(`\n§rSelect a player to Ban.§r\n\nPlayer's Online\n`, onlineList);
-                    banui.textField(`Reason`, `Enter a reason as to why they have been banned.`);
-                    banui.show(player).then((banResult) => {
-                        //ban function goes here
-                        uiBAN(banResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 1) {
-                    //show unban ui here
-                    const unbanui = new ModalFormData();
-                    unbanui.title("§4Unban A player!§4");
-                    unbanui.textField(`Player`, `Enter a player's username to be unbanned.`);
-                    unbanui.show(player).then((unbanResult) => {
-                        uiUNBAN(unbanResult, player);
-                    });
-                }
-                if (ModUIresult.selection === 2) {
-                    //show rules ui
-                    const rulesui = new ModalFormData();
-                    rulesui.title("§4Paradox - Configure Rules!§4");
-                    const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
-                    const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
-                    rulesui.toggle("Enable Rules", showrulesBoolean);
-                    rulesui.toggle("Kick On Decline", KickOnDeclineBoolean);
-                    rulesui.show(player).then((rulesResult) => {
-                        // due to limitations we can't edit the rules in game.
-                        uiRULES(rulesResult, player);
-                    });
-                }
-                if (ModUIresult.selection === 3) {
-                    //show chat ui
-                    const chatui = new ActionFormData();
-                    chatui.title("§4Paradox - Configure Chat§4");
-                    chatui.body("§eSettings related to chat.§e");
-                    chatui.button("Notify", "textures/ui/chat_send");
-                    chatui.button("Ranks", "textures/ui/saleribbon");
-                    chatui.button("Mute", "textures/ui/mute_on");
-                    chatui.button("Unmute", "textures/ui/mute_off");
-                    chatui.button("Clear Chat", "textures/ui/cancel");
-                    chatui.show(player).then((chatResult) => {
-                        //4 possible options
-                        if (chatResult.selection === 0) {
-                            //notify ui
-                            const notifyui = new ModalFormData();
+                        banui.title("§4Ban A player!§4");
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        banui.dropdown(`\n§rSelect a player to Ban.§r\n\nPlayer's Online\n`, onlineList);
+                        banui.textField(`Reason`, `Enter a reason as to why they have been banned.`);
+                        banui.show(player).then((banResult) => {
+                            //ban function goes here
+                            uiBAN(banResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 1) {
+                        //show unban ui here
+                        const unbanui = new ModalFormData();
+                        unbanui.title("§4Unban A player!§4");
+                        unbanui.textField(`Player`, `Enter a player's username to be unbanned.`);
+                        unbanui.show(player).then((unbanResult) => {
+                            uiUNBAN(unbanResult, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 2) {
+                        //show rules ui
+                        const rulesui = new ModalFormData();
+                        rulesui.title("§4Paradox - Configure Rules!§4");
+                        const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
+                        const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
+                        rulesui.toggle("Enable Rules", showrulesBoolean);
+                        rulesui.toggle("Kick On Decline", KickOnDeclineBoolean);
+                        rulesui.show(player).then((rulesResult) => {
+                            // due to limitations we can't edit the rules in game.
+                            uiRULES(rulesResult, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 3) {
+                        //show chat ui
+                        const chatui = new ActionFormData();
+                        chatui.title("§4Paradox - Configure Chat§4");
+                        chatui.body("§eSettings related to chat.§e");
+                        chatui.button("Notify", "textures/ui/chat_send");
+                        chatui.button("Ranks", "textures/ui/saleribbon");
+                        chatui.button("Mute", "textures/ui/mute_on");
+                        chatui.button("Unmute", "textures/ui/mute_off");
+                        chatui.button("Clear Chat", "textures/ui/cancel");
+                        chatui.show(player).then((chatResult) => {
+                            //4 possible options
+                            if (chatResult.selection === 0) {
+                                //notify ui
+                                const notifyui = new ModalFormData();
+                                let onlineList: string[] = [];
+                                notifyui.title("§4Enable or Disable Notifications!§4");
+                                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                                notifyui.dropdown(`\n§rSelect a player to Enable or Disable Notifications.§r\n\nPlayer's Online\n`, onlineList);
+                                //by default set the current value to disabled.
+                                notifyui.toggle("Notifications", false);
+                                notifyui.show(player).then((notifyResult) => {
+                                    uiNOTIFY(notifyResult, onlineList, player);
+                                });
+                            }
+                            if (chatResult.selection === 1) {
+                                //Chat Ranks ui
+                                const chatranksui = new ModalFormData();
+                                let onlineList: string[] = [];
+                                const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
+                                chatranksui.title("§4Change a player's chat rank.§4");
+                                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                                let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
+                                chatranksui.dropdown(`\n§rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
+                                chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on bellow.§r`, predefinedrank);
+                                chatranksui.textField("Enter a custom Rank", "VIP");
+                                chatranksui.toggle("Chat Ranks: Enables or Disables chat ranks.", chatRanksBoolean);
+                                chatranksui.show(player).then((chatranksResult) => {
+                                    uiCHATRANKS(chatranksResult, onlineList, predefinedrank, player);
+                                });
+                            }
+                            if (chatResult.selection === 2) {
+                                //Mute ui
+                                const muteui = new ModalFormData();
+                                let onlineList: string[] = [];
+                                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                                muteui.title("§4Mute a player in chat.§4");
+                                muteui.dropdown(`\n§rSelect a player to mute.§r\n\nPlayer's Online\n`, onlineList);
+                                muteui.textField("Reason", "has been posting discord links.");
+                                muteui.show(player).then((muteResult) => {
+                                    uiMUTE(muteResult, onlineList, player);
+                                });
+                            }
+                            if (chatResult.selection === 3) {
+                                //UnMute ui
+                                const unmuteui = new ModalFormData();
+                                let onlineList: string[] = [];
+                                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                                unmuteui.title("§4Mute a player in chat.§4");
+                                unmuteui.dropdown(`\n§rSelect a player to unmute.§r\n\nPlayer's Online\n`, onlineList);
+                                unmuteui.textField("Reason", "Has been given permissions to talk in chat.");
+                                unmuteui.show(player).then((muteResult) => {
+                                    uiUNMUTE(muteResult, onlineList, player);
+                                });
+                            }
+                            if (chatResult.selection === 4) {
+                                //Clear Chat ui
+                                const clearchatui = new MessageFormData();
+                                clearchatui.title("§4Clear Chat.§4");
+                                clearchatui.body("Are you sure you want to clear chat?");
+                                clearchatui.button1("Yes");
+                                clearchatui.button2("No");
+                                clearchatui.show(player).then((clearchatResult) => {
+                                    if (clearchatResult.selection === 1) {
+                                        uiCLEARCHAT(player);
+                                    }
+                                    if (clearchatResult.selection === 0) {
+                                        paradoxui(player);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    if (ModUIresult.selection === 4) {
+                        //Lockdown ui
+                        const lockdownui = new ModalFormData();
+                        // Get Dynamic Property Boolean
+                        const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
+                        lockdownui.title("§4Paradox - Lockdown§4");
+                        lockdownui.textField("Reason", "Kicked all members but staff due to possible hacker.");
+                        lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
+                        lockdownui.show(player).then((lockdownResult) => {
+                            uiLOCKDOWN(lockdownResult, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 5) {
+                        //Punish UI im going to use two forms one as a yes/no message so i can advise what this will do.
+                        const punishprewarnui = new MessageFormData();
+                        punishprewarnui.title("§4Paradox - Punish§4");
+                        punishprewarnui.body("This will allow you to wipe a player's ender chest as well as thier inventory.");
+                        punishprewarnui.button1("Okay");
+                        punishprewarnui.show(player).then((prewarnResult) => {
+                            //show the Punish UI
+                            const punishui = new ModalFormData();
                             let onlineList: string[] = [];
-                            notifyui.title("§4Enable or Disable Notifications!§4");
                             onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            notifyui.dropdown(`\n§rSelect a player to Enable or Disable Notifications.§r\n\nPlayer's Online\n`, onlineList);
-                            //by default set the current value to disabled.
-                            notifyui.toggle("Notifications", false);
-                            notifyui.show(player).then((notifyResult) => {
-                                uiNOTIFY(notifyResult, onlineList, player);
+                            punishui.title("§4Pardox - Punish§4");
+                            punishui.dropdown(`\n§rSelect a player to wipe.§r\n\nPlayer's Online\n`, onlineList);
+                            punishui.show(player).then((punishResult) => {
+                                uiPUNISH(punishResult, onlineList, player);
                             });
-                        }
-                        if (chatResult.selection === 1) {
-                            //Chat Ranks ui
-                            const chatranksui = new ModalFormData();
-                            let onlineList: string[] = [];
-                            const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
-                            chatranksui.title("§4Change a player's chat rank.§4");
-                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
-                            chatranksui.dropdown(`\n§rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
-                            chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on bellow.§r`, predefinedrank);
-                            chatranksui.textField("Enter a custom Rank", "VIP");
-                            chatranksui.toggle("Chat Ranks: Enables or Disables chat ranks.", chatRanksBoolean);
-                            chatranksui.show(player).then((chatranksResult) => {
-                                uiCHATRANKS(chatranksResult, onlineList, predefinedrank, player);
-                            });
-                        }
-                        if (chatResult.selection === 2) {
-                            //Mute ui
-                            const muteui = new ModalFormData();
-                            let onlineList: string[] = [];
-                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            muteui.title("§4Mute a player in chat.§4");
-                            muteui.dropdown(`\n§rSelect a player to mute.§r\n\nPlayer's Online\n`, onlineList);
-                            muteui.textField("Reason", "has been posting discord links.");
-                            muteui.show(player).then((muteResult) => {
-                                uiMUTE(muteResult, onlineList, player);
-                            });
-                        }
-                        if (chatResult.selection === 3) {
-                            //UnMute ui
-                            const unmuteui = new ModalFormData();
-                            let onlineList: string[] = [];
-                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            unmuteui.title("§4Mute a player in chat.§4");
-                            unmuteui.dropdown(`\n§rSelect a player to unmute.§r\n\nPlayer's Online\n`, onlineList);
-                            unmuteui.textField("Reason", "Has been given permissions to talk in chat.");
-                            unmuteui.show(player).then((muteResult) => {
-                                uiUNMUTE(muteResult, onlineList, player);
-                            });
-                        }
-                        if (chatResult.selection === 4) {
-                            //Clear Chat ui
-                            const clearchatui = new MessageFormData();
-                            clearchatui.title("§4Clear Chat.§4");
-                            clearchatui.body("Are you sure you want to clear chat?");
-                            clearchatui.button1("Yes");
-                            clearchatui.button2("No");
-                            clearchatui.show(player).then((clearchatResult) => {
-                                if (clearchatResult.selection === 1) {
-                                    uiCLEARCHAT(player);
-                                }
-                                if (clearchatResult.selection === 0) {
-                                    paradoxui(player);
-                                }
-                            });
-                        }
-                    });
-                }
-                if (ModUIresult.selection === 4) {
-                    //Lockdown ui
-                    const lockdownui = new ModalFormData();
-                    // Get Dynamic Property Boolean
-                    const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
-                    lockdownui.title("§4Paradox - Lockdown§4");
-                    lockdownui.textField("Reason", "Kicked all members but staff due to possible hacker.");
-                    lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
-                    lockdownui.show(player).then((lockdownResult) => {
-                        uiLOCKDOWN(lockdownResult, player);
-                    });
-                }
-                if (ModUIresult.selection === 5) {
-                    //Punish UI im going to use two forms one as a yes/no message so i can advise what this will do.
-                    const punishprewarnui = new MessageFormData();
-                    punishprewarnui.title("§4Paradox - Punish§4");
-                    punishprewarnui.body("This will allow you to wipe a player's ender chest as well as thier inventory.");
-                    punishprewarnui.button1("Okay");
-                    punishprewarnui.show(player).then((prewarnResult) => {
-                        //show the Punish UI
-                        const punishui = new ModalFormData();
+                        });
+                    }
+                    if (ModUIresult.selection === 6) {
+                        const tpaui = new ModalFormData();
+                        tpaui.title("§4Paradox - Teleport Assistance.§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        punishui.title("§4Pardox - Punish§4");
-                        punishui.dropdown(`\n§rSelect a player to wipe.§r\n\nPlayer's Online\n`, onlineList);
-                        punishui.show(player).then((punishResult) => {
-                            uiPUNISH(punishResult, onlineList, player);
+                        tpaui.dropdown(`\n§rSelect a player to teleport.§r\n\nPlayer's Online\n`, onlineList);
+                        tpaui.toggle("Teleport to the target player.", true);
+                        tpaui.toggle("Teleport the target player to you.", false);
+                        tpaui.show(player).then((tpaResult) => {
+                            uiTPA(tpaResult, onlineList, player);
                         });
-                    });
-                }
-                if (ModUIresult.selection === 6) {
-                    const tpaui = new ModalFormData();
-                    tpaui.title("§4Paradox - Teleport Assistance.§4");
-                    let onlineList: string[] = [];
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    tpaui.dropdown(`\n§rSelect a player to teleport.§r\n\nPlayer's Online\n`, onlineList);
-                    tpaui.toggle("Teleport to the target player.", true);
-                    tpaui.toggle("Teleport the target player to you.", false);
-                    tpaui.show(player).then((tpaResult) => {
-                        uiTPA(tpaResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 7) {
-                    const kickui = new ModalFormData();
-                    kickui.title("§4Paradox - Kick a player.§4");
-                    let onlineList: string[] = [];
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    kickui.dropdown(`\n§rSelect a player to Kick.§r\n\nPlayer's Online\n`, onlineList);
-                    kickui.textField("Reason.", "Hacking!");
+                    }
+                    if (ModUIresult.selection === 7) {
+                        const kickui = new ModalFormData();
+                        kickui.title("§4Paradox - Kick a player.§4");
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        kickui.dropdown(`\n§rSelect a player to Kick.§r\n\nPlayer's Online\n`, onlineList);
+                        kickui.textField("Reason.", "Hacking!");
 
-                    kickui.show(player).then((kickResult) => {
-                        uiKICK(kickResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 8) {
-                    const ewipeui = new ModalFormData();
-                    ewipeui.title("§4Paradox - Wipe a player's Enderchest.§4");
-                    let onlineList: string[] = [];
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    ewipeui.dropdown(`\n§rSelect a player to wipe thier Enderchest.§r\n\nPlayer's Online\n`, onlineList);
-                    ewipeui.show(player).then((ewipeResult) => {
-                        uiEWIPE(ewipeResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 9) {
-                    const freezeui = new ModalFormData();
-                    freezeui.title("§4Paradox - Freeze a player.§4");
-                    let onlineList: string[] = [];
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    freezeui.dropdown(`\n§rSelect a player to freeze.§r\n\nPlayer's Online\n`, onlineList);
-                    freezeui.show(player).then((freezeResult) => {
-                        uiFREEZE(freezeResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 10) {
-                    const flyui = new ModalFormData();
-                    flyui.title("§4Paradox - Grant a player fly abilities.§4");
-                    let onlineList: string[] = [];
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    flyui.dropdown(`\n§rSelect a player to allow the ability to fly.§r\n\nPlayer's Online\n`, onlineList);
-                    flyui.show(player).then((flyResult) => {
-                        uiFLY(flyResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 11) {
-                    const vanishui = new ModalFormData();
-                    vanishui.title("§4Paradox - Vanish from the server.§4");
-                    let onlineList: string[] = [];
-                    onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                    vanishui.dropdown(`\n§rSelect a player to vanish.§r\n\nPlayer's Online\n`, onlineList);
-                    vanishui.show(player).then((vanishResult) => {
-                        uiVANISH(vanishResult, onlineList, player);
-                    });
-                }
-                if (ModUIresult.selection === 12) {
-                    const despawnerui = new ModalFormData();
-                    despawnerui.title("§4Paradox - Despawn Entitys.§4");
-                    despawnerui.textField("Enter the name of a entity to despawn.", "creeper");
-                    despawnerui.toggle("Despawn all entities in the loaded chunks.", false);
-                    despawnerui.show(player).then((despawnerResult) => {
-                        uiDESPAWNER(despawnerResult, player);
-                    });
-                }
-            });
+                        kickui.show(player).then((kickResult) => {
+                            uiKICK(kickResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 8) {
+                        const ewipeui = new ModalFormData();
+                        ewipeui.title("§4Paradox - Wipe a player's Enderchest.§4");
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        ewipeui.dropdown(`\n§rSelect a player to wipe thier Enderchest.§r\n\nPlayer's Online\n`, onlineList);
+                        ewipeui.show(player).then((ewipeResult) => {
+                            uiEWIPE(ewipeResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 9) {
+                        const freezeui = new ModalFormData();
+                        freezeui.title("§4Paradox - Freeze a player.§4");
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        freezeui.dropdown(`\n§rSelect a player to freeze.§r\n\nPlayer's Online\n`, onlineList);
+                        freezeui.show(player).then((freezeResult) => {
+                            uiFREEZE(freezeResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 10) {
+                        const flyui = new ModalFormData();
+                        flyui.title("§4Paradox - Grant a player fly abilities.§4");
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        flyui.dropdown(`\n§rSelect a player to allow the ability to fly.§r\n\nPlayer's Online\n`, onlineList);
+                        flyui.show(player).then((flyResult) => {
+                            uiFLY(flyResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 11) {
+                        const vanishui = new ModalFormData();
+                        vanishui.title("§4Paradox - Vanish from the server.§4");
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        vanishui.dropdown(`\n§rSelect a player to vanish.§r\n\nPlayer's Online\n`, onlineList);
+                        vanishui.show(player).then((vanishResult) => {
+                            uiVANISH(vanishResult, onlineList, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 12) {
+                        const despawnerui = new ModalFormData();
+                        despawnerui.title("§4Paradox - Despawn Entitys.§4");
+                        despawnerui.textField("Enter the name of a entity to despawn.", "creeper");
+                        despawnerui.toggle("Despawn all entities in the loaded chunks.", false);
+                        despawnerui.show(player).then((despawnerResult) => {
+                            uiDESPAWNER(despawnerResult, player);
+                        });
+                    }
+                });
+            }
         }
         if (result.selection === 3) {
             //Modules ui
@@ -858,6 +920,55 @@ async function paradoxui(player: Player) {
                         uiTPRSEND(tprSendRequestResult, onlineList, player);
                     });
                 }
+            });
+        }
+        if (result.selection === 6) {
+            //Opped Menu to show Saved Locations this will allow the player to teleport to and delete the location
+            const savedlocationsui = new ModalFormData();
+            // Hash the coordinates for security
+            const salt = world.getDynamicProperty("crypt");
+            const tags = player.getTags();
+            let counter = 0;
+            let Locations: string[] = [];
+            let coordsArray: string[] = [];
+            for (let i = 0; i < tags.length; i++) {
+                /**
+                 * This first if statement is to verify if they have old coordinates
+                 * not encrypted. If so then we encrypt it now. This is only a temporary
+                 * patch to minimize players having to manually record and remove the old
+                 * tags. Eventually this will be removed.
+                 */
+                if (tags[i].startsWith("LocationHome:")) {
+                    player.removeTag(tags[i]);
+                    tags[i] = encryptString(tags[i], String(salt));
+                    player.addTag(tags[i]);
+                }
+                if (tags[i].startsWith("6f78")) {
+                    // Decode it so we can verify it
+                    tags[i] = decryptString(tags[i], String(salt));
+                    // If invalid then skip it
+                    if (tags[i].startsWith("LocationHome:") === false) {
+                        continue;
+                    }
+                    // Split string into array
+                    const coordinatesArray = tags[i].split(" ");
+                    counter = ++counter;
+                    for (let i = 0; i < coordinatesArray.length; i++) {
+                        // Get their location from the array
+                        coordsArray.push(coordinatesArray[i]);
+                        if (coordinatesArray[i].includes("LocationHome:")) {
+                            Locations.push(coordinatesArray[i].replace("LocationHome:", ""));
+                        }
+                        continue;
+                    }
+                }
+            }
+            savedlocationsui.title("§4Paradox - Saved Locations§4");
+            savedlocationsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, Locations);
+            savedlocationsui.toggle("Teleport to the selected location", false);
+            savedlocationsui.toggle("Deletes the selected Location!", false);
+            savedlocationsui.show(player).then((savedlocationsResult) => {
+                uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
             });
         }
 
