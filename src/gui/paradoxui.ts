@@ -2,7 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
 import { dynamicPropertyRegistry } from "../penrose/worldinitializeevent/registry";
-import { crypto, decryptString, encryptString, getScore } from "../util";
+import { crypto, decryptString, encryptString, getScore, sendMsgToPlayer } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiCLEARCHAT } from "./moderation/uiClearchat";
@@ -55,6 +55,7 @@ import { uiENCHANTEDARMOR } from "./modules/uiEnchantedArmor";
 import { uiHOTBAR } from "./modules/uiHotbar";
 import { uiDESPAWNER } from "./moderation/uiDespawner";
 import { uiSAVEDLOCATIONS } from "./playerui/uiSavedLocations";
+import { UIREPORTPLAYER } from "./playerui/uiReport";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -68,6 +69,7 @@ async function paradoxui(player: Player) {
         maingui.button("§0Op§2", "textures/ui/op");
         maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
         maingui.button("§0Saved Locations§2", "textures/items/compass_item");
+        maingui.button("§0Report§2", "textures/items/paper");
     } else if (config.ParadoxUIBeta === true) {
         maingui.button("§0Op§2", "textures/ui/op");
         maingui.button("§0Deop§2", "textures/items/ender_pearl");
@@ -214,9 +216,15 @@ async function paradoxui(player: Player) {
                 savedlocationsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, Locations);
                 savedlocationsui.toggle("Teleport to the selected location", false);
                 savedlocationsui.toggle("Deletes the selected Location!", false);
-                savedlocationsui.show(player).then((savedlocationsResult) => {
-                    uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
-                });
+                savedlocationsui.textField("Enter a name to save your current Location:", "");
+                if (config.customcommands.sethome === true && config.customcommands.delhome === true && config.customcommands.listhome === true && config.customcommands.gohome === true) {
+                    savedlocationsui.show(player).then((savedlocationsResult) => {
+                        uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
+                    });
+                } else {
+                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Saved Locations have been disabled by the Admins.`);
+                    return;
+                }
             } else {
                 //new window for Moderation
                 const moderationui = new ActionFormData();
@@ -461,398 +469,411 @@ async function paradoxui(player: Player) {
             }
         }
         if (result.selection === 3) {
-            //Modules ui
-            const modulesui = new ActionFormData();
-            modulesui.title("§4Paradox - Modules§4");
-            modulesui.button("Configure Anti Gamemodes", "textures/items/totem");
-            modulesui.button("Configure Movement Modules", "textures/ui/move");
-            modulesui.button("Configure Anti KillAura", "textures/items/diamond_sword");
-            modulesui.button("Configure Anti Nuker", "textures/blocks/tnt_side");
-            modulesui.button("Configure Anti Shulker", "textures/blocks/shulker_top_purple");
-            modulesui.button("Configure Anti Spam", "textures/ui/mute_off");
-            modulesui.button("Configure Anti AutoCliker", "textures/ui/cursor_gamecore");
-            modulesui.button("Configure Badpackets", "textures/ui/upload_glyph");
-            modulesui.button("Configure Bedrock Validation", "textures/blocks/bedrock");
-            modulesui.button("Configure Anti Crasher", "textures/ui/Ping_Red");
-            modulesui.button("Configure Enchanted Armor", "textures/items/diamond_leggings");
-            modulesui.button("Configure Illegal Items", "textures/items/netherite_pickaxe");
-            modulesui.button("Configure Lag Clearing", "textures/ui/interact");
-            modulesui.button("Configure Namespoofing", "textures/items/fishing_rod_uncast");
-            modulesui.button("Configure One Player Sleep(OPS)", "textures/items/bed_red");
-            modulesui.button("Configure Command Blocks", "textures/blocks/command_block");
-            modulesui.button("Configure Anti Reach", "textures/ui/crossout");
-            modulesui.button("Configure Exp Salvage System", "textures/blocks/smithing_table_front");
-            modulesui.button("Configure Spam Modules", "textures/ui/mute_on");
-            modulesui.button("Configure World Borders", "textures/blocks/barrier");
-            modulesui.button("Configure Xray", "textures/blocks/diamond_ore");
-            modulesui.button("Configure Hotbar", "textures/items/paper");
-            modulesui.show(player).then((ModulesUIResult) => {
-                if (ModulesUIResult.selection === 0) {
-                    //GameModes UI
-                    const gamemodesui = new ModalFormData();
-                    const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
-                    const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
-                    const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
-                    gamemodesui.title("§4Paradox - Configure gamemodes.§4");
-                    gamemodesui.toggle("Disable Adventure", adventureGMBoolean);
-                    gamemodesui.toggle("Disable Creative", creativeGMBoolean);
-                    gamemodesui.toggle("Disable Survival", survivalGMBoolean);
-                    gamemodesui.show(player).then((gamemodeResult) => {
-                        uiGAMEMODES(gamemodeResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 1) {
-                    const modulesmovementui = new ActionFormData();
-                    modulesmovementui.title("§4Paradox Modules-Movement§4");
-                    modulesmovementui.button("Anti Knockback", "textures/items/diamond_chestplate");
-                    modulesmovementui.button("Anti Fall", "textures/items/diamond_boots");
-                    modulesmovementui.button("Anti Fly", "textures/items/elytra");
-                    modulesmovementui.button("Invalid Sprint", "textures/items/diamond_boots");
-                    modulesmovementui.button("Noslow", "textures/items/diamond_boots");
-                    modulesmovementui.button("Anti Scaffold", "textures/blocks/scaffolding_top");
-                    modulesmovementui.button("Anti Jesusa", "textures/blocks/lava_placeholder");
-                    modulesmovementui.show(player).then((movementResult) => {
-                        if (movementResult.selection === 0) {
-                            //Anti Knockback UI
-                            const modulesantiknockbackui = new ModalFormData();
-                            const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
-                            modulesantiknockbackui.title("§4Paradox Modules-Anti KnockBack§4");
-                            modulesantiknockbackui.toggle("Anti Knockback: Anti Knockback for all players.", antikbBoolean);
-                            modulesantiknockbackui.show(player).then((antikbResult) => {
-                                uiANTIKNOCKBACK(antikbResult, player);
-                            });
-                        }
-                        if (movementResult.selection === 1) {
-                            //Anti Fall
-                            const modulesantifallui = new ModalFormData();
-                            const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b");
-                            modulesantifallui.title("§4Paradox Modules-Anti Fall§4");
-                            modulesantifallui.toggle("Anti Fall: Checks for taking no fall damage in survival. ", antifallABoolean);
-                            modulesantifallui.show(player).then((antifallResult) => {
-                                uiANTIFALL(antifallResult, player);
-                            });
-                        }
-                        if (movementResult.selection === 2) {
-                            //Anti Fly
-                            const modulesantiflyui = new ModalFormData();
-                            const flyABoolean = dynamicPropertyRegistry.get("flya_b");
-                            modulesantiflyui.title("§4Paradox Modules-Anti Fly§4");
-                            modulesantiflyui.toggle("Anti Fly: checks for illegal flying in survival.", flyABoolean);
-                            modulesantiflyui.show(player).then((antiflyResult) => {
-                                uiANTIFLY(antiflyResult, player);
-                            });
-                        }
-                        if (movementResult.selection === 3) {
-                            //Invalid Sprint
-                            const modulesinvalidsprintui = new ModalFormData();
-                            const invalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b");
-                            modulesinvalidsprintui.title("§4Paradox Modules-Invalid Sprint§4");
-                            modulesinvalidsprintui.toggle("Invalid Sprint: checks for illegal sprinting with blindness effect.", invalidSprintABoolean);
-                            modulesinvalidsprintui.show(player).then((invalidsprintResult) => {
-                                uiINVALIDSPRINT(invalidsprintResult, player);
-                            });
-                        }
-                        if (movementResult.selection === 4) {
-                            //NoSlowA
-                            const modulesnoslowui = new ModalFormData();
-                            const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
-                            modulesnoslowui.title("§4Paradox Modules-Noslow§4");
-                            modulesnoslowui.toggle("Noslow: checks for player's speed hacking.", noSlowBoolean);
-                            modulesnoslowui.show(player).then((invalidsprintResult) => {
-                                uiNOWSLOW(invalidsprintResult, player);
-                            });
-                        }
-                        if (movementResult.selection === 5) {
-                            //AntiScaffold
-                            const modulesantiscaffoldui = new ModalFormData();
-                            const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
-                            modulesantiscaffoldui.title("§4Paradox Modules-Anti Scaffold§4");
-                            modulesantiscaffoldui.toggle("Anti Scaffold: Checks player's for illegal scaffolding.", antiScaffoldABoolean);
-                            modulesantiscaffoldui.show(player).then((antiscaffoldResult) => {
-                                uiANTISCAFFOLD(antiscaffoldResult, player);
-                            });
-                        }
-                        if (movementResult.selection === 6) {
-                            //Jesus UI
-                            const modulesantijesusui = new ModalFormData();
-                            const jesusaBoolean = dynamicPropertyRegistry.get("jesusa_b");
-                            modulesantijesusui.title("§4Paradox Modules-Anti Jesus§4");
-                            modulesantijesusui.toggle("Anti Jesus: Toggles checks for walking/sprinting on water or lava.", jesusaBoolean);
-                            modulesantijesusui.show(player).then((antijesusResult) => {
-                                uiANTIJESUS(antijesusResult, player);
-                            });
-                        }
-                    });
-                }
-                if (ModulesUIResult.selection === 2) {
-                    const modulesantikillaura = new ModalFormData();
-                    const autoaurascore = getScore("autoaura", player);
-                    let autoauraBoolean: boolean = undefined;
-                    /**get the score value and then check to see if its already enable or already disabled
-                     * so we can then update the control boolean to disaply its current setting to the player
-                     * in the menu.
-                     */
-                    if (autoaurascore <= 0) {
-                        autoauraBoolean = false;
+            if (uniqueId !== player.name) {
+                //Non Opped player Report UI
+                const reportplayerui = new ModalFormData();
+                reportplayerui.title("§4Paradox - Report A Player§4");
+                let onlineList: string[] = [];
+                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                reportplayerui.dropdown(`\n§rSelect a player from the list, your report will then be sent to staff members.§r\n\nPlayer's Online\n`, onlineList);
+                reportplayerui.textField("Please provide a reason as to why you are reporting this player.", "");
+                reportplayerui.show(player).then((reportResult) => {
+                    UIREPORTPLAYER(reportResult, onlineList, player);
+                });
+            } else {
+                //Modules ui
+                const modulesui = new ActionFormData();
+                modulesui.title("§4Paradox - Modules§4");
+                modulesui.button("Configure Anti Gamemodes", "textures/items/totem");
+                modulesui.button("Configure Movement Modules", "textures/ui/move");
+                modulesui.button("Configure Anti KillAura", "textures/items/diamond_sword");
+                modulesui.button("Configure Anti Nuker", "textures/blocks/tnt_side");
+                modulesui.button("Configure Anti Shulker", "textures/blocks/shulker_top_purple");
+                modulesui.button("Configure Anti Spam", "textures/ui/mute_off");
+                modulesui.button("Configure Anti AutoCliker", "textures/ui/cursor_gamecore");
+                modulesui.button("Configure Badpackets", "textures/ui/upload_glyph");
+                modulesui.button("Configure Bedrock Validation", "textures/blocks/bedrock");
+                modulesui.button("Configure Anti Crasher", "textures/ui/Ping_Red");
+                modulesui.button("Configure Enchanted Armor", "textures/items/diamond_leggings");
+                modulesui.button("Configure Illegal Items", "textures/items/netherite_pickaxe");
+                modulesui.button("Configure Lag Clearing", "textures/ui/interact");
+                modulesui.button("Configure Namespoofing", "textures/items/fishing_rod_uncast");
+                modulesui.button("Configure One Player Sleep(OPS)", "textures/items/bed_red");
+                modulesui.button("Configure Command Blocks", "textures/blocks/command_block");
+                modulesui.button("Configure Anti Reach", "textures/ui/crossout");
+                modulesui.button("Configure Exp Salvage System", "textures/blocks/smithing_table_front");
+                modulesui.button("Configure Spam Modules", "textures/ui/mute_on");
+                modulesui.button("Configure World Borders", "textures/blocks/barrier");
+                modulesui.button("Configure Xray", "textures/blocks/diamond_ore");
+                modulesui.button("Configure Hotbar", "textures/items/paper");
+                modulesui.show(player).then((ModulesUIResult) => {
+                    if (ModulesUIResult.selection === 0) {
+                        //GameModes UI
+                        const gamemodesui = new ModalFormData();
+                        const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
+                        const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
+                        const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
+                        gamemodesui.title("§4Paradox - Configure gamemodes.§4");
+                        gamemodesui.toggle("Disable Adventure", adventureGMBoolean);
+                        gamemodesui.toggle("Disable Creative", creativeGMBoolean);
+                        gamemodesui.toggle("Disable Survival", survivalGMBoolean);
+                        gamemodesui.show(player).then((gamemodeResult) => {
+                            uiGAMEMODES(gamemodeResult, player);
+                        });
                     }
-                    if (autoaurascore >= 1) {
-                        autoauraBoolean = true;
+                    if (ModulesUIResult.selection === 1) {
+                        const modulesmovementui = new ActionFormData();
+                        modulesmovementui.title("§4Paradox Modules-Movement§4");
+                        modulesmovementui.button("Anti Knockback", "textures/items/diamond_chestplate");
+                        modulesmovementui.button("Anti Fall", "textures/items/diamond_boots");
+                        modulesmovementui.button("Anti Fly", "textures/items/elytra");
+                        modulesmovementui.button("Invalid Sprint", "textures/items/diamond_boots");
+                        modulesmovementui.button("Noslow", "textures/items/diamond_boots");
+                        modulesmovementui.button("Anti Scaffold", "textures/blocks/scaffolding_top");
+                        modulesmovementui.button("Anti Jesusa", "textures/blocks/lava_placeholder");
+                        modulesmovementui.show(player).then((movementResult) => {
+                            if (movementResult.selection === 0) {
+                                //Anti Knockback UI
+                                const modulesantiknockbackui = new ModalFormData();
+                                const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
+                                modulesantiknockbackui.title("§4Paradox Modules-Anti KnockBack§4");
+                                modulesantiknockbackui.toggle("Anti Knockback: Anti Knockback for all players.", antikbBoolean);
+                                modulesantiknockbackui.show(player).then((antikbResult) => {
+                                    uiANTIKNOCKBACK(antikbResult, player);
+                                });
+                            }
+                            if (movementResult.selection === 1) {
+                                //Anti Fall
+                                const modulesantifallui = new ModalFormData();
+                                const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b");
+                                modulesantifallui.title("§4Paradox Modules-Anti Fall§4");
+                                modulesantifallui.toggle("Anti Fall: Checks for taking no fall damage in survival. ", antifallABoolean);
+                                modulesantifallui.show(player).then((antifallResult) => {
+                                    uiANTIFALL(antifallResult, player);
+                                });
+                            }
+                            if (movementResult.selection === 2) {
+                                //Anti Fly
+                                const modulesantiflyui = new ModalFormData();
+                                const flyABoolean = dynamicPropertyRegistry.get("flya_b");
+                                modulesantiflyui.title("§4Paradox Modules-Anti Fly§4");
+                                modulesantiflyui.toggle("Anti Fly: checks for illegal flying in survival.", flyABoolean);
+                                modulesantiflyui.show(player).then((antiflyResult) => {
+                                    uiANTIFLY(antiflyResult, player);
+                                });
+                            }
+                            if (movementResult.selection === 3) {
+                                //Invalid Sprint
+                                const modulesinvalidsprintui = new ModalFormData();
+                                const invalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b");
+                                modulesinvalidsprintui.title("§4Paradox Modules-Invalid Sprint§4");
+                                modulesinvalidsprintui.toggle("Invalid Sprint: checks for illegal sprinting with blindness effect.", invalidSprintABoolean);
+                                modulesinvalidsprintui.show(player).then((invalidsprintResult) => {
+                                    uiINVALIDSPRINT(invalidsprintResult, player);
+                                });
+                            }
+                            if (movementResult.selection === 4) {
+                                //NoSlowA
+                                const modulesnoslowui = new ModalFormData();
+                                const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+                                modulesnoslowui.title("§4Paradox Modules-Noslow§4");
+                                modulesnoslowui.toggle("Noslow: checks for player's speed hacking.", noSlowBoolean);
+                                modulesnoslowui.show(player).then((invalidsprintResult) => {
+                                    uiNOWSLOW(invalidsprintResult, player);
+                                });
+                            }
+                            if (movementResult.selection === 5) {
+                                //AntiScaffold
+                                const modulesantiscaffoldui = new ModalFormData();
+                                const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
+                                modulesantiscaffoldui.title("§4Paradox Modules-Anti Scaffold§4");
+                                modulesantiscaffoldui.toggle("Anti Scaffold: Checks player's for illegal scaffolding.", antiScaffoldABoolean);
+                                modulesantiscaffoldui.show(player).then((antiscaffoldResult) => {
+                                    uiANTISCAFFOLD(antiscaffoldResult, player);
+                                });
+                            }
+                            if (movementResult.selection === 6) {
+                                //Jesus UI
+                                const modulesantijesusui = new ModalFormData();
+                                const jesusaBoolean = dynamicPropertyRegistry.get("jesusa_b");
+                                modulesantijesusui.title("§4Paradox Modules-Anti Jesus§4");
+                                modulesantijesusui.toggle("Anti Jesus: Toggles checks for walking/sprinting on water or lava.", jesusaBoolean);
+                                modulesantijesusui.show(player).then((antijesusResult) => {
+                                    uiANTIJESUS(antijesusResult, player);
+                                });
+                            }
+                        });
                     }
-                    modulesantikillaura.title("§4Paradox Modules-Anti KillAura§4");
-                    modulesantikillaura.toggle("Anti KillAura: Auto KillAura checks for all players.", autoauraBoolean);
-                    modulesantikillaura.show(player).then((antikillauraResult) => {
-                        uiANTIKILLAURA(antikillauraResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 3) {
-                    const modulesantinukerui = new ModalFormData();
-                    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
-                    modulesantinukerui.title("§4Paradox Modules-Anti Nuker§4");
-                    modulesantinukerui.toggle("Anti Nuker: Checks player's for nuking blocks.", antiNukerABoolean);
-                    modulesantinukerui.show(player).then((antinukerResult) => {
-                        uiANTINUKER(antinukerResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 4) {
-                    const modulesantishulkerui = new ModalFormData();
-                    const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
-                    modulesantishulkerui.title("§4Paradox Modules-Anti Shulker§4");
-                    modulesantishulkerui.toggle("Anti Shulker: Allows or denies shulker boxes in the world.", antiShulkerBoolean);
-                    modulesantishulkerui.show(player).then((antishulkerResult) => {
-                        uiANTISHULKER(antishulkerResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 5) {
-                    const modulesantispamui = new ModalFormData();
-                    const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
-                    modulesantispamui.title("§4Paradox Modules-Anti Spam§4");
-                    modulesantispamui.toggle("Anti Spam: Checks for spamming in chat with 2 second cooldown.", antiSpamBoolean);
-                    modulesantispamui.show(player).then((antispamResult) => {
-                        uiANTISPAM(antispamResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 6) {
-                    const autoclickerscore = getScore("autoclicker", player);
-                    let autoclickerBoolean: boolean = undefined;
-                    /**get the score value and then check to see if its already enable or already disabled
-                     * so we can then update the control boolean to disaply its current setting to the player
-                     * in the menu.
-                     */
-                    if (autoclickerscore <= 0) {
-                        autoclickerBoolean = false;
+                    if (ModulesUIResult.selection === 2) {
+                        const modulesantikillaura = new ModalFormData();
+                        const autoaurascore = getScore("autoaura", player);
+                        let autoauraBoolean: boolean = undefined;
+                        /**get the score value and then check to see if its already enable or already disabled
+                         * so we can then update the control boolean to disaply its current setting to the player
+                         * in the menu.
+                         */
+                        if (autoaurascore <= 0) {
+                            autoauraBoolean = false;
+                        }
+                        if (autoaurascore >= 1) {
+                            autoauraBoolean = true;
+                        }
+                        modulesantikillaura.title("§4Paradox Modules-Anti KillAura§4");
+                        modulesantikillaura.toggle("Anti KillAura: Auto KillAura checks for all players.", autoauraBoolean);
+                        modulesantikillaura.show(player).then((antikillauraResult) => {
+                            uiANTIKILLAURA(antikillauraResult, player);
+                        });
                     }
-                    if (autoclickerscore >= 1) {
-                        autoclickerBoolean = true;
+                    if (ModulesUIResult.selection === 3) {
+                        const modulesantinukerui = new ModalFormData();
+                        const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
+                        modulesantinukerui.title("§4Paradox Modules-Anti Nuker§4");
+                        modulesantinukerui.toggle("Anti Nuker: Checks player's for nuking blocks.", antiNukerABoolean);
+                        modulesantinukerui.show(player).then((antinukerResult) => {
+                            uiANTINUKER(antinukerResult, player);
+                        });
                     }
-                    const modulesantiautoclickerui = new ModalFormData();
-                    modulesantiautoclickerui.title("§4Paradox Modules-Anti AutoClicker§4");
-                    modulesantiautoclickerui.toggle("Anti AutoClicker: checks for players using autoclickers while attacking.", autoclickerBoolean);
-                    modulesantiautoclickerui.show(player).then((antiautoclickerResult) => {
-                        uiANTIAUTOCLICKER(antiautoclickerResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 7) {
-                    const modulesbadpacketsui = new ModalFormData();
-                    const badPackets1Boolean = dynamicPropertyRegistry.get("badpackets1_b");
-                    const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
-                    modulesbadpacketsui.title("§4Paradox Modules-Badpackets§4");
-                    modulesbadpacketsui.toggle("Badpackets1: checks for message lengths with each broadcast", badPackets1Boolean);
-                    modulesbadpacketsui.toggle("Badpackets2: checks for invalid selected slots by player", badPackets2Boolean);
-                    modulesbadpacketsui.show(player).then((badpacketsResult) => {
-                        uiBADPACKETS(badpacketsResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 8) {
-                    const modulesbedrockvalidateui = new ModalFormData();
-                    const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
-                    modulesbedrockvalidateui.title("§4Paradox Modules-Bedrock Validation§4");
-                    modulesbedrockvalidateui.toggle("Bedrock Validate: checks for bedrock validations", bedrockValidateBoolean);
-                    modulesbedrockvalidateui.show(player).then((bedrockvalidationResult) => {
-                        uiBEDROCKVALIDATION(bedrockvalidationResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 9) {
-                    const modulesanticrasherui = new ModalFormData();
-                    const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
-                    modulesanticrasherui.title("§4Paradox Modules-Anti Crasher§4");
-                    modulesanticrasherui.toggle("Anti Crasher: checks for the infamous Horion Crasher", crasherABoolean);
-                    modulesanticrasherui.show(player).then((anticrasherResult) => {
-                        uiANTICRASHER(anticrasherResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 10) {
-                    const modulesenchantedarmorui = new ModalFormData();
-                    const encharmorscore = getScore("encharmor", player);
-                    let enchantedarmorBoolean: boolean;
-                    /**get the score value and then check to see if its already enable or already disabled
-                     * so we can then update the control boolean to disaply its current setting to the player
-                     * in the menu.
-                     */
-                    if (encharmorscore <= 0) {
-                        enchantedarmorBoolean = false;
+                    if (ModulesUIResult.selection === 4) {
+                        const modulesantishulkerui = new ModalFormData();
+                        const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
+                        modulesantishulkerui.title("§4Paradox Modules-Anti Shulker§4");
+                        modulesantishulkerui.toggle("Anti Shulker: Allows or denies shulker boxes in the world.", antiShulkerBoolean);
+                        modulesantishulkerui.show(player).then((antishulkerResult) => {
+                            uiANTISHULKER(antishulkerResult, player);
+                        });
                     }
-                    if (encharmorscore >= 1) {
-                        enchantedarmorBoolean = true;
+                    if (ModulesUIResult.selection === 5) {
+                        const modulesantispamui = new ModalFormData();
+                        const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
+                        modulesantispamui.title("§4Paradox Modules-Anti Spam§4");
+                        modulesantispamui.toggle("Anti Spam: Checks for spamming in chat with 2 second cooldown.", antiSpamBoolean);
+                        modulesantispamui.show(player).then((antispamResult) => {
+                            uiANTISPAM(antispamResult, player);
+                        });
                     }
-                    modulesenchantedarmorui.title("§4Paradox Modules-Enchaneted Armor§4");
-                    modulesenchantedarmorui.toggle("Enchanted Armor: Anti Enchanted Armor for all players", enchantedarmorBoolean);
-                    modulesenchantedarmorui.show(player).then((enchantedarmorResult) => {
-                        uiENCHANTEDARMOR(enchantedarmorResult, player);
-                    });
-                }
+                    if (ModulesUIResult.selection === 6) {
+                        const autoclickerscore = getScore("autoclicker", player);
+                        let autoclickerBoolean: boolean = undefined;
+                        /**get the score value and then check to see if its already enable or already disabled
+                         * so we can then update the control boolean to disaply its current setting to the player
+                         * in the menu.
+                         */
+                        if (autoclickerscore <= 0) {
+                            autoclickerBoolean = false;
+                        }
+                        if (autoclickerscore >= 1) {
+                            autoclickerBoolean = true;
+                        }
+                        const modulesantiautoclickerui = new ModalFormData();
+                        modulesantiautoclickerui.title("§4Paradox Modules-Anti AutoClicker§4");
+                        modulesantiautoclickerui.toggle("Anti AutoClicker: checks for players using autoclickers while attacking.", autoclickerBoolean);
+                        modulesantiautoclickerui.show(player).then((antiautoclickerResult) => {
+                            uiANTIAUTOCLICKER(antiautoclickerResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 7) {
+                        const modulesbadpacketsui = new ModalFormData();
+                        const badPackets1Boolean = dynamicPropertyRegistry.get("badpackets1_b");
+                        const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
+                        modulesbadpacketsui.title("§4Paradox Modules-Badpackets§4");
+                        modulesbadpacketsui.toggle("Badpackets1: checks for message lengths with each broadcast", badPackets1Boolean);
+                        modulesbadpacketsui.toggle("Badpackets2: checks for invalid selected slots by player", badPackets2Boolean);
+                        modulesbadpacketsui.show(player).then((badpacketsResult) => {
+                            uiBADPACKETS(badpacketsResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 8) {
+                        const modulesbedrockvalidateui = new ModalFormData();
+                        const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
+                        modulesbedrockvalidateui.title("§4Paradox Modules-Bedrock Validation§4");
+                        modulesbedrockvalidateui.toggle("Bedrock Validate: checks for bedrock validations", bedrockValidateBoolean);
+                        modulesbedrockvalidateui.show(player).then((bedrockvalidationResult) => {
+                            uiBEDROCKVALIDATION(bedrockvalidationResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 9) {
+                        const modulesanticrasherui = new ModalFormData();
+                        const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
+                        modulesanticrasherui.title("§4Paradox Modules-Anti Crasher§4");
+                        modulesanticrasherui.toggle("Anti Crasher: checks for the infamous Horion Crasher", crasherABoolean);
+                        modulesanticrasherui.show(player).then((anticrasherResult) => {
+                            uiANTICRASHER(anticrasherResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 10) {
+                        const modulesenchantedarmorui = new ModalFormData();
+                        const encharmorscore = getScore("encharmor", player);
+                        let enchantedarmorBoolean: boolean;
+                        /**get the score value and then check to see if its already enable or already disabled
+                         * so we can then update the control boolean to disaply its current setting to the player
+                         * in the menu.
+                         */
+                        if (encharmorscore <= 0) {
+                            enchantedarmorBoolean = false;
+                        }
+                        if (encharmorscore >= 1) {
+                            enchantedarmorBoolean = true;
+                        }
+                        modulesenchantedarmorui.title("§4Paradox Modules-Enchaneted Armor§4");
+                        modulesenchantedarmorui.toggle("Enchanted Armor: Anti Enchanted Armor for all players", enchantedarmorBoolean);
+                        modulesenchantedarmorui.show(player).then((enchantedarmorResult) => {
+                            uiENCHANTEDARMOR(enchantedarmorResult, player);
+                        });
+                    }
 
-                if (ModulesUIResult.selection === 11) {
-                    //Illegal items this will cover a few modules so will group these into one UI.
-                    const modulesillegalitemsui = new ModalFormData();
-                    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
-                    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
-                    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
-                    const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
-                    const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
-                    const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
-                    const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
-                    modulesillegalitemsui.title("§4Paradox Modules-Illegal Items§4");
-                    modulesillegalitemsui.toggle("Illegal Items A: checks for player's that have illegal items in inventory.", illegalItemsABoolean);
-                    modulesillegalitemsui.toggle("Illegal Items B: checks for player's that use illegal items.", illegalItemsBBoolean);
-                    modulesillegalitemsui.toggle("Illegal Items C: hecks for player's that place illegal items.", illegalItemsCBoolean);
-                    modulesillegalitemsui.toggle("Illegal Items D: checks for illegal dropped items.", illegalItemsDBoolean);
-                    modulesillegalitemsui.toggle("Illegal Enchants: checks for items with illegal enchantments.", illegalEnchantmentBoolean);
-                    modulesillegalitemsui.toggle("Illegal Lores: checks for illegal Lores on items.", illegalLoresBoolean);
-                    modulesillegalitemsui.toggle("Stack Ban: checks for player's with illegal stacks over 64.", stackBanBoolean);
-                    modulesillegalitemsui.show(player).then((illegalitemsResult) => {
-                        uiILLEGALITEMS(illegalitemsResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 12) {
-                    //Lagclear
-                    const moduleslaglearui = new ModalFormData();
-                    const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
-                    moduleslaglearui.title("§4Paradox Modules-Clear Lag§4");
-                    moduleslaglearui.toggle("Clear Lag: Clears items and entities with timer", clearLagBoolean);
-                    moduleslaglearui.show(player).then((lagclearResult) => {
-                        uiLAGCLEAR(lagclearResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 13) {
-                    //Namespoofing
-                    const modulesnamespoofingui = new ModalFormData();
-                    const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
-                    const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
-                    modulesnamespoofingui.title("§4Paradox Modules-Namespoofing§4");
-                    modulesnamespoofingui.toggle("Name Spoofing A: checks for player's name exceeding character limitations.", nameSpoofABoolean);
-                    modulesnamespoofingui.toggle("Name Spoofing B: checks for player's name that has Non ASCII characters.", nameSpoofBBoolean);
-                    modulesnamespoofingui.show(player).then((namespoofingResult) => {
-                        uiNAMESPOOFING(namespoofingResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 14) {
-                    const modulesopsui = new ModalFormData();
-                    const opsBoolean = dynamicPropertyRegistry.get("ops_b");
-                    modulesopsui.title("§4Paradox Modules-One Player Sleep§4");
-                    modulesopsui.toggle("One Player Sleep: Allows 1 player to sleep through the night", opsBoolean);
-                    modulesopsui.show(player).then((opsResult) => {
-                        uiOPS(opsResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 15) {
-                    const modulescommandblocksui = new ModalFormData();
-                    const cmdsscore = getScore("cmds", player);
-                    const commandblocksscore = getScore("commandblocks", player);
-                    let removecmdblocksBoolean;
-                    Boolean;
-                    let cmdoBoolean: boolean;
-                    if (cmdsscore <= 0) {
-                        cmdoBoolean = false;
+                    if (ModulesUIResult.selection === 11) {
+                        //Illegal items this will cover a few modules so will group these into one UI.
+                        const modulesillegalitemsui = new ModalFormData();
+                        const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
+                        const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
+                        const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
+                        const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
+                        const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
+                        const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
+                        const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
+                        modulesillegalitemsui.title("§4Paradox Modules-Illegal Items§4");
+                        modulesillegalitemsui.toggle("Illegal Items A: checks for player's that have illegal items in inventory.", illegalItemsABoolean);
+                        modulesillegalitemsui.toggle("Illegal Items B: checks for player's that use illegal items.", illegalItemsBBoolean);
+                        modulesillegalitemsui.toggle("Illegal Items C: hecks for player's that place illegal items.", illegalItemsCBoolean);
+                        modulesillegalitemsui.toggle("Illegal Items D: checks for illegal dropped items.", illegalItemsDBoolean);
+                        modulesillegalitemsui.toggle("Illegal Enchants: checks for items with illegal enchantments.", illegalEnchantmentBoolean);
+                        modulesillegalitemsui.toggle("Illegal Lores: checks for illegal Lores on items.", illegalLoresBoolean);
+                        modulesillegalitemsui.toggle("Stack Ban: checks for player's with illegal stacks over 64.", stackBanBoolean);
+                        modulesillegalitemsui.show(player).then((illegalitemsResult) => {
+                            uiILLEGALITEMS(illegalitemsResult, player);
+                        });
                     }
-                    if (cmdsscore >= 1) {
-                        cmdoBoolean = true;
+                    if (ModulesUIResult.selection === 12) {
+                        //Lagclear
+                        const moduleslaglearui = new ModalFormData();
+                        const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
+                        moduleslaglearui.title("§4Paradox Modules-Clear Lag§4");
+                        moduleslaglearui.toggle("Clear Lag: Clears items and entities with timer", clearLagBoolean);
+                        moduleslaglearui.show(player).then((lagclearResult) => {
+                            uiLAGCLEAR(lagclearResult, player);
+                        });
                     }
-                    if (commandblocksscore <= 0) {
-                        removecmdblocksBoolean = false;
+                    if (ModulesUIResult.selection === 13) {
+                        //Namespoofing
+                        const modulesnamespoofingui = new ModalFormData();
+                        const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
+                        const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
+                        modulesnamespoofingui.title("§4Paradox Modules-Namespoofing§4");
+                        modulesnamespoofingui.toggle("Name Spoofing A: checks for player's name exceeding character limitations.", nameSpoofABoolean);
+                        modulesnamespoofingui.toggle("Name Spoofing B: checks for player's name that has Non ASCII characters.", nameSpoofBBoolean);
+                        modulesnamespoofingui.show(player).then((namespoofingResult) => {
+                            uiNAMESPOOFING(namespoofingResult, player);
+                        });
                     }
-                    if (commandblocksscore >= 1) {
-                        removecmdblocksBoolean = true;
+                    if (ModulesUIResult.selection === 14) {
+                        const modulesopsui = new ModalFormData();
+                        const opsBoolean = dynamicPropertyRegistry.get("ops_b");
+                        modulesopsui.title("§4Paradox Modules-One Player Sleep§4");
+                        modulesopsui.toggle("One Player Sleep: Allows 1 player to sleep through the night", opsBoolean);
+                        modulesopsui.show(player).then((opsResult) => {
+                            uiOPS(opsResult, player);
+                        });
                     }
-                    modulescommandblocksui.title("§4Paradox Modules-Command Blocks§4");
-                    modulescommandblocksui.toggle("Override Command Blocks: Forces the commandblocksenabled gamerule to be enabled or disabled at all times.", cmdoBoolean);
-                    modulescommandblocksui.toggle("Anti Command Blocks: Clears all Command Blocks when enabled.", removecmdblocksBoolean);
-                    modulescommandblocksui.show(player).then((commandblockResult) => {
-                        uiCOMMANDBLOCKS(commandblockResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 16) {
-                    const modulesreachui = new ModalFormData();
-                    const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
-                    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
-                    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
-                    modulesreachui.title("§4Paradox Modules-Reach§4");
-                    modulesreachui.toggle("Reach A: checks for player's placing blocks beyond reach.", reachABoolean);
-                    modulesreachui.toggle("Reach B: checks for player's breaking blocks beyond reach.", reachBBoolean);
-                    modulesreachui.toggle("Reach C: checks for player's attacking beyond reach.", reachCBoolean);
-                    modulesreachui.show(player).then((reachResult) => {
-                        uiREACH(reachResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 17) {
-                    //New Slavage System
-                    const modulesexpsavlagesystem = new ModalFormData();
-                    const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
-                    modulesexpsavlagesystem.title("§4Paradox Modules-Salvage System [Experimental]§4");
-                    modulesexpsavlagesystem.toggle("Salvage System: new salvage system [Experimental]", salvageBoolean);
-                    modulesexpsavlagesystem.show(player).then((salvagesystemResult) => {
-                        uiEXPSALVAGESYSTEM(salvagesystemResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 18) {
-                    const modulesspamui = new ModalFormData();
-                    const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
-                    const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
-                    const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
-                    const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b");
-                    modulesspamui.title("§4Paradox Modules-Spam Modules§4");
-                    modulesspamui.toggle("Spammer A: checks for messages sent while moving.", spammerABoolean);
-                    modulesspamui.toggle("Spammer B: checks for messages sent while swinging.", spammerBBoolean);
-                    modulesspamui.toggle("Spammer C: checks for messages sent while using items.", spammerCBoolean);
-                    modulesspamui.toggle("Spammer D: checks for messages sent while GUI is open.", spammerDBoolean);
-                    modulesspamui.show(player).then((spamResult) => {
-                        uiSPAMMER(spamResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 19) {
-                    const modulesworldborderui = new ModalFormData();
-                    const overWorldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
-                    let overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n");
-                    let netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
-                    modulesworldborderui.title("§4Paradox Modules-World Border§4");
-                    modulesworldborderui.textField("Over World Border: value in blocks", "1000", String(overworldBorderNumber));
-                    modulesworldborderui.textField("Nether World Border: values in blocks. Set to 0 if it needs to be disabled.", "0", String(netherworldBorderNumber));
-                    modulesworldborderui.toggle("Enable World Border", overWorldBorderBoolean);
-                    modulesworldborderui.show(player).then((spamResult) => {
-                        uiWORLDBORDER(spamResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 20) {
-                    const modulesxtrayui = new ModalFormData();
-                    modulesxtrayui.title("§4Paradox Modules-Xray§4");
-                    const xrayBoolean = dynamicPropertyRegistry.get("xraya_b");
-                    modulesxtrayui.toggle("Xray: Notify's staff when and where player's mine specific ores.", xrayBoolean);
-                    modulesxtrayui.show(player).then((xrayResult) => {
-                        uiXRAY(xrayResult, player);
-                    });
-                }
-                if (ModulesUIResult.selection === 21) {
-                    const moduleshotbarui = new ModalFormData();
-                    const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
-                    let CurrentHotbarConfig = config.modules.hotbar.message;
-                    moduleshotbarui.title("§4Paradox Modules-Hotbar§4");
-                    moduleshotbarui.textField("Hotbar Message: ", "", CurrentHotbarConfig);
-                    moduleshotbarui.toggle("Enable Hotbar:Displays a hotbar message for all player's currently online.", hotbarBoolean);
-                    moduleshotbarui.toggle("Restore to message stored in config.js", false);
-                    moduleshotbarui.show(player).then((hotbarResult) => {
-                        uiHOTBAR(hotbarResult, player);
-                    });
-                }
-            });
+                    if (ModulesUIResult.selection === 15) {
+                        const modulescommandblocksui = new ModalFormData();
+                        const cmdsscore = getScore("cmds", player);
+                        const commandblocksscore = getScore("commandblocks", player);
+                        let removecmdblocksBoolean;
+                        Boolean;
+                        let cmdoBoolean: boolean;
+                        if (cmdsscore <= 0) {
+                            cmdoBoolean = false;
+                        }
+                        if (cmdsscore >= 1) {
+                            cmdoBoolean = true;
+                        }
+                        if (commandblocksscore <= 0) {
+                            removecmdblocksBoolean = false;
+                        }
+                        if (commandblocksscore >= 1) {
+                            removecmdblocksBoolean = true;
+                        }
+                        modulescommandblocksui.title("§4Paradox Modules-Command Blocks§4");
+                        modulescommandblocksui.toggle("Override Command Blocks: Forces the commandblocksenabled gamerule to be enabled or disabled at all times.", cmdoBoolean);
+                        modulescommandblocksui.toggle("Anti Command Blocks: Clears all Command Blocks when enabled.", removecmdblocksBoolean);
+                        modulescommandblocksui.show(player).then((commandblockResult) => {
+                            uiCOMMANDBLOCKS(commandblockResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 16) {
+                        const modulesreachui = new ModalFormData();
+                        const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
+                        const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
+                        const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+                        modulesreachui.title("§4Paradox Modules-Reach§4");
+                        modulesreachui.toggle("Reach A: checks for player's placing blocks beyond reach.", reachABoolean);
+                        modulesreachui.toggle("Reach B: checks for player's breaking blocks beyond reach.", reachBBoolean);
+                        modulesreachui.toggle("Reach C: checks for player's attacking beyond reach.", reachCBoolean);
+                        modulesreachui.show(player).then((reachResult) => {
+                            uiREACH(reachResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 17) {
+                        //New Slavage System
+                        const modulesexpsavlagesystem = new ModalFormData();
+                        const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
+                        modulesexpsavlagesystem.title("§4Paradox Modules-Salvage System [Experimental]§4");
+                        modulesexpsavlagesystem.toggle("Salvage System: new salvage system [Experimental]", salvageBoolean);
+                        modulesexpsavlagesystem.show(player).then((salvagesystemResult) => {
+                            uiEXPSALVAGESYSTEM(salvagesystemResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 18) {
+                        const modulesspamui = new ModalFormData();
+                        const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
+                        const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
+                        const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
+                        const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b");
+                        modulesspamui.title("§4Paradox Modules-Spam Modules§4");
+                        modulesspamui.toggle("Spammer A: checks for messages sent while moving.", spammerABoolean);
+                        modulesspamui.toggle("Spammer B: checks for messages sent while swinging.", spammerBBoolean);
+                        modulesspamui.toggle("Spammer C: checks for messages sent while using items.", spammerCBoolean);
+                        modulesspamui.toggle("Spammer D: checks for messages sent while GUI is open.", spammerDBoolean);
+                        modulesspamui.show(player).then((spamResult) => {
+                            uiSPAMMER(spamResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 19) {
+                        const modulesworldborderui = new ModalFormData();
+                        const overWorldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
+                        let overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n");
+                        let netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
+                        modulesworldborderui.title("§4Paradox Modules-World Border§4");
+                        modulesworldborderui.textField("Over World Border: value in blocks", "1000", String(overworldBorderNumber));
+                        modulesworldborderui.textField("Nether World Border: values in blocks. Set to 0 if it needs to be disabled.", "0", String(netherworldBorderNumber));
+                        modulesworldborderui.toggle("Enable World Border", overWorldBorderBoolean);
+                        modulesworldborderui.show(player).then((spamResult) => {
+                            uiWORLDBORDER(spamResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 20) {
+                        const modulesxtrayui = new ModalFormData();
+                        modulesxtrayui.title("§4Paradox Modules-Xray§4");
+                        const xrayBoolean = dynamicPropertyRegistry.get("xraya_b");
+                        modulesxtrayui.toggle("Xray: Notify's staff when and where player's mine specific ores.", xrayBoolean);
+                        modulesxtrayui.show(player).then((xrayResult) => {
+                            uiXRAY(xrayResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 21) {
+                        const moduleshotbarui = new ModalFormData();
+                        const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
+                        let CurrentHotbarConfig = config.modules.hotbar.message;
+                        moduleshotbarui.title("§4Paradox Modules-Hotbar§4");
+                        moduleshotbarui.textField("Hotbar Message: ", "", CurrentHotbarConfig);
+                        moduleshotbarui.toggle("Enable Hotbar:Displays a hotbar message for all player's currently online.", hotbarBoolean);
+                        moduleshotbarui.toggle("Restore to message stored in config.js", false);
+                        moduleshotbarui.show(player).then((hotbarResult) => {
+                            uiHOTBAR(hotbarResult, player);
+                        });
+                    }
+                });
+            }
         }
         if (result.selection === 4) {
             //Prefix ui
@@ -967,6 +988,7 @@ async function paradoxui(player: Player) {
             savedlocationsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, Locations);
             savedlocationsui.toggle("Teleport to the selected location", false);
             savedlocationsui.toggle("Deletes the selected Location!", false);
+            savedlocationsui.textField("Enter a name to save your current Location:", "");
             savedlocationsui.show(player).then((savedlocationsResult) => {
                 uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
             });
