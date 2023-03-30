@@ -96,50 +96,49 @@ function registry(data: WorldInitializeEvent) {
     data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.player);
 
     let flag = false;
-    let booleanProps: string = "";
     // Loop through the identifiers in the array
-    defineBooleanProperties.forEach((booleanProps) => {
+    defineBooleanProperties.forEach((booleanProp) => {
         // Verify if identifier matches any module property in config
-        for (const configProperties in config.modules) {
-            if (booleanProps.replaceAll(/(_b)/g, "") === configProperties.toLowerCase()) {
+        for (const configProperty in config.modules) {
+            if (booleanProp.replaceAll(/(_b)/g, "") === configProperty.toLowerCase()) {
                 // Loop through the settings of each property in module
-                for (const setting in config.modules[configProperties]) {
+                for (const setting in config.modules[configProperty]) {
                     if (setting === "enabled") {
                         // We conditionally test if the dynamic property already exists
-                        const test = world.getDynamicProperty(booleanProps);
+                        const test = world.getDynamicProperty(booleanProp);
                         if (test === undefined) {
                             // Dynamic property doesn't exist so we create it with the default settings in config
-                            world.setDynamicProperty(booleanProps, config.modules[configProperties][setting]);
+                            world.setDynamicProperty(booleanProp, config.modules[configProperty][setting]);
                             // Set property with value as an element that we can use in other scripts
-                            dynamicPropertyRegistry.set(booleanProps, config.modules[configProperties][setting]);
+                            dynamicPropertyRegistry.set(booleanProp, config.modules[configProperty][setting]);
                         } else {
                             // Dynamic property exists so set property with value as an element that we can use in other scripts
-                            dynamicPropertyRegistry.set(booleanProps, test);
+                            dynamicPropertyRegistry.set(booleanProp, test);
                         }
                     }
                     // If a matching boolean property is found, set the flag and break out of the loop
                     flag = true;
-                    return;
+                    break;
                 }
             }
         }
-    });
-
-    // If no matching boolean property was found, execute the else block
-    if (!flag) {
-        // We conditionally test if the dynamic property already exists
-        const test = world.getDynamicProperty(booleanProps);
-        if (test === undefined) {
-            // Dynamic property doesn't exist so we create it and disable it by default
-            world.setDynamicProperty(booleanProps, false);
-            // Set property with value as an element that we can use in other scripts
-            dynamicPropertyRegistry.set(booleanProps, false);
-        } else {
-            // Dynamic property exists so set property with value as an element that we can use in other scripts
-            dynamicPropertyRegistry.set(booleanProps, test);
+        // If no matching boolean property was found, execute the else block
+        if (!flag) {
+            // We conditionally test if the dynamic property already exists
+            const test = world.getDynamicProperty(booleanProp);
+            if (test === undefined) {
+                // Dynamic property doesn't exist so we create it and disable it by default
+                world.setDynamicProperty(booleanProp, false);
+                // Set property with value as an element that we can use in other scripts
+                dynamicPropertyRegistry.set(booleanProp, false);
+            } else {
+                // Dynamic property exists so set property with value as an element that we can use in other scripts
+                dynamicPropertyRegistry.set(booleanProp, test);
+            }
         }
-    }
-
+        flag = false; // reset the flag for the next iteration
+    });
+    
     // Set additional properties for world border
     let worldborder_n = world.getDynamicProperty("worldborder_n");
     if (worldborder_n === undefined) {
