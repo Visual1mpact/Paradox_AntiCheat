@@ -2,45 +2,37 @@ import { world } from "@minecraft/server";
 import { sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
+// Chat filter function
 const ChatFilter = () => {
+    // Subscribe to the 'beforeChat' event
     world.events.beforeChat.subscribe((msg) => {
-        // Get Dynamic Property
-        const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
+        const { message, sender: player } = msg; // Destructure 'message' and 'sender' properties from the 'msg' object
+
+        const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b"); // Get the 'chatranks_b' dynamic property
 
         if (chatRanksBoolean === true) {
-            const message = msg.message;
-            const player = msg.sender;
-
+            // If 'chatranks_b' is true
             // Kill their broadcast if muted
             if (player.hasTag("isMuted")) {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are currently muted.`);
-                msg.cancel = true;
+                // Check if the player has the 'isMuted' tag
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are currently muted.`); // Send a message to the player
+                msg.cancel = true; // Cancel the chat message
                 return;
             }
 
-            const tags = player.getTags();
-            let rank: string;
-            for (const tag of tags) {
-                if (tag.startsWith("Rank:")) {
-                    rank = tag.replace("Rank:", "");
-                    rank = rank.replaceAll("--", "§r§4][§6");
-                }
-            }
-            if (!rank) {
-                rank = "Member";
-            }
-            // let nametag = `§4[§6${rank}§4]§r §7${player.name}§r`;
-            // player.nameTag = nametag;
-            if (!msg.cancel) {
-                sendMsg("@a", `§4[§6${rank}§4] §7${player.name}: §r${message}`);
-                msg.cancel = true;
-            }
-        } else if (!msg.cancel) {
-            const message = msg.message;
-            const player = msg.sender;
+            const tags = player.getTags(); // Get the player's tags
+            const rank =
+                tags
+                    .find((tag) => tag.startsWith("Rank:")) // Find the first tag that starts with 'Rank:'
+                    ?.replace("Rank:", "") // Remove 'Rank:' from the tag string
+                    ?.replaceAll("--", "§r§4][§6") || "Member"; // Replace '--' with '§r§4][§6' in the tag string, or use 'Member' as default
+            const formattedMessage = `§4[§6${rank}§4] §7${player.name}: §r${message}`; // Construct the formatted chat message
 
-            sendMsg("@a", `${player.name}: ${message}`);
-            msg.cancel = true;
+            sendMsg("@a", formattedMessage); // Send the formatted chat message to all players
+            msg.cancel = true; // Cancel the chat message
+        } else {
+            sendMsg("@a", `${player.name}: ${message}`); // Send the chat message to all players
+            msg.cancel = true; // Cancel the chat message
         }
     });
 };
