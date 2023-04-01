@@ -984,6 +984,13 @@ async function paradoxui(player: Player) {
                     }
                 }
             }
+            if (Locations.length === 0) {
+                /*No locations saved so it will crap its self!
+                So if there is no data we push a line to keep the array with at least 1 value.
+                If there are saved locations then it will continue as normal.
+                */
+                Locations.push("You have no saved Locations");
+            }
             savedlocationsui.title("§4Paradox - Saved Locations§4");
             savedlocationsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, Locations);
             savedlocationsui.toggle("Teleport to the selected location", false);
