@@ -3,42 +3,41 @@ import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 async function bedrockvalidate(id: number) {
-    // Get Dynamic Property
     const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
 
-    // Unsubscribe if disabled in-game
     if (bedrockValidateBoolean === false) {
         system.clearRun(id);
         return;
     }
-    // run as each player
+
+    const dimensions = {
+        overworld: {
+            dimension: world.getDimension("overworld"),
+            command1: "fill ~-5 -64 ~-5 ~5 -64 ~5 bedrock",
+            command2: "fill ~-4 -59 ~-4 ~4 319 ~4 air [] replace bedrock",
+            command3: "", // add an empty string as a placeholder
+            config: config.modules.bedrockValidate.overworld,
+        },
+        nether: {
+            dimension: world.getDimension("nether"),
+            command1: "fill ~-5 0 ~-5 ~5 0 ~5 bedrock",
+            command2: "fill ~-5 127 ~-5 ~5 127 ~5 bedrock",
+            command3: "fill ~-5 5 ~-5 ~5 120 ~5 air [] replace bedrock",
+            config: config.modules.bedrockValidate.nether,
+        },
+    };
+
     for (const player of world.getPlayers()) {
-        // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
-        // Skip if they have permission
         if (uniqueId === player.name) {
             continue;
         }
-        // bedrock validation
-        if (player.dimension === world.getDimension("overworld") && config.modules.bedrockValidate.overworld) {
-            try {
-                await player.runCommandAsync(`fill ~-20 -64 ~-20 ~20 -64 ~20 bedrock`);
-            } catch (error) {}
-        }
 
-        if (player.dimension === world.getDimension("nether") && config.modules.bedrockValidate.nether) {
-            try {
-                await player.runCommandAsync(`fill ~-10 0 ~-10 ~10 0 ~10 bedrock`);
-            } catch (error) {}
-
-            try {
-                await player.runCommandAsync(`fill ~-10 127 ~-10 ~10 127 ~10 bedrock`);
-            } catch (error) {}
-
-            try {
-                await player.runCommandAsync(`fill ~-5 5 ~-5 ~5 120 ~5 air [] replace bedrock`);
-            } catch (error) {}
+        for (const [_dimension, { dimension, command1, command2, command3, config }] of Object.entries(dimensions)) {
+            if (player?.dimension === dimension && config) {
+                await Promise.all([player?.runCommandAsync(command1), player?.runCommandAsync(command2), player?.runCommandAsync(command3)]);
+            }
         }
     }
 }
