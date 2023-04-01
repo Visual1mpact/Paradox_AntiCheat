@@ -7,7 +7,7 @@ export const queueUnban = new Set();
 
 function listQueue(queue: string, player: Player) {
     if (queue) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${player.nameTag}§r is queued to be unbanned`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${player.nameTag}§r is queued to be unbanned.`);
     }
 }
 
@@ -22,11 +22,12 @@ function unbanHelp(player: Player, prefix: string) {
         `\n§4[§6Command§4]§r: unban`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: unban [optional]`,
-        `§4[§6Optional§4]§r: username, list, help`,
+        `§4[§6Optional§4]§r: username, list, delete, help`,
         `§4[§6Description§4]§r: Allows specified players to join if banned (Doesn't include global ban).`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}unban ${player.name}`,
         `    ${prefix}unban list`,
+        `    ${prefix}unban delete`,
         `    ${prefix}unban help`,
     ]);
 }
@@ -68,6 +69,17 @@ export function unban(message: BeforeChatEvent, args: string[]) {
         return unbanHelp(player, prefix);
     } else if ((argCheck && args[0].toLowerCase() === "list") || !config.customcommands.unban) {
         queueUnban.forEach((queue: string) => listQueue(queue, player));
+        return;
+    } else if ((argCheck && args[0].toLowerCase() === "delete") || !config.customcommands.unban) {
+        const nameToDelete = args
+            .slice(1)
+            .join(" ")
+            .match(/^ *(?:"?@?"?)?(.*?)(?:"? *$)?$/)?.[1];
+        if (queueUnban.delete(nameToDelete)) {
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${nameToDelete} has been removed from the unban queue!`);
+        } else {
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${nameToDelete} is not in the unban queue!`);
+        }
         return;
     }
 
