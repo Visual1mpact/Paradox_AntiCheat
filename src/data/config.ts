@@ -250,11 +250,11 @@ export default {
         },
         showrules: {
             enabled: true,
-            rule1: "Rule1: No hacking",
-            rule2: "Rule2: No Greifing",
-            rule3: "Rule3: Be nice to all players!",
-            rule4: "Rule4:",
-            rule5: "Rule5:",
+            rule1: "Rule1: No hacking allowed.",
+            rule2: "Rule2: Don't grief other players' builds.",
+            rule3: "Rule3: Be kind to everyone on the server.",
+            rule4: "Rule4: Follow the staff's instructions.",
+            rule5: "Rule5: No spamming or advertising.",
         },
         paradoxui: {
             enabled: true,
