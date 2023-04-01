@@ -21,6 +21,7 @@ export function uiTPR(requester, player, respons) {
         const event = {
             sender: player,
             message: "approve",
+            cancel: true,
         } as BeforeChatEvent;
         TeleportRequestHandler(event, ["approve"]);
     }
@@ -28,6 +29,7 @@ export function uiTPR(requester, player, respons) {
         const event = {
             sender: player,
             message: "denied",
+            cancel: true,
         } as BeforeChatEvent;
         TeleportRequestHandler(event, ["denied"]);
     }

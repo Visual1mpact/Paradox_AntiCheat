@@ -412,7 +412,9 @@ const overworld = world.getDimension("overworld");
 
 export const sendMsg = async (target: string, message: string | string[]) => {
     try {
-        await overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
+        await overworld.runCommandAsync(
+            `tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`
+        );
     } catch {}
 };
 

@@ -36,15 +36,17 @@ function tprHelp(player: Player, prefix: string) {
 }
 
 // This handles the submission of requests
-function teleportRequestHandler({ sender, message }: BeforeChatEvent) {
+function teleportRequestHandler({ sender, message, cancel }: BeforeChatEvent) {
     const player = sender;
     const args = message.split(" ");
-    if (args.length !== 2) return;
-    const targetName = args[1];
+    if (args.length < 2) return;
+    const findName = args.indexOf(args[1]);
+    const targetName = args[1] + " " + args.slice(findName + 1).join(" ");
 
     const targets = world.getAllPlayers().filter((p: Player) => p.name === targetName);
     if (targets.length === 0) {
         sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r Target player not found.");
+        cancel = true;
         return;
     }
 
@@ -52,6 +54,7 @@ function teleportRequestHandler({ sender, message }: BeforeChatEvent) {
 
     if (teleportRequests.some((r) => r.target === target)) {
         sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r That player already has a teleport request pending.");
+        cancel = true;
         return;
     }
 
@@ -72,13 +75,12 @@ function teleportRequestHandler({ sender, message }: BeforeChatEvent) {
 
     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleport request sent to ${target.name}. Waiting for approval...`);
     sendMsgToPlayer(target, `§r§4[§6Paradox§4]§r You have received a teleport request from ${player.name}. Type 'approved' or 'denied' in chat to respond.`);
+    cancel = true;
 }
 
 // This handles requests pending approval
 function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatEvent) {
     if (message.toLowerCase().match(/^(approved|denied|approve|deny)$/)) {
-        cancel = true;
-
         const player = sender;
 
         const requestIndex = teleportRequests.findIndex((r) => r.target === player);
@@ -89,6 +91,7 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatE
         if (Date.now() >= request.expiresAt) {
             sendMsgToPlayer(request.requester, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
             teleportRequests.splice(requestIndex, 1);
+            cancel = true;
             return;
         }
 
@@ -98,8 +101,10 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatE
             setTimer(request.requester.name);
             request.requester.teleport(request.target.location, request.target.dimension, 0, 0, false);
             sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
+            cancel = true;
         } else {
             sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is denied.`);
+            cancel = true;
         }
 
         teleportRequests.splice(requestIndex, 1);
@@ -135,6 +140,7 @@ export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEv
         const event = {
             sender,
             message,
+            cancel,
         } as BeforeChatEvent;
         teleportRequestHandler(event);
         world.events.beforeChat.subscribe(teleportRequestApprovalHandler);
@@ -147,6 +153,7 @@ export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEv
         const event = {
             sender,
             message,
+            cancel,
         } as BeforeChatEvent;
         teleportRequestApprovalHandler(event);
     }

@@ -23,6 +23,7 @@ export function uiTPRSEND(tprSendRequestResult: ModalFormResponse, onlineList: s
     const event = {
         sender: player,
         message: prefix + "tpr " + member.name,
+        cancel: true,
     } as BeforeChatEvent;
     TeleportRequestHandler(event, [member.name]);
 
