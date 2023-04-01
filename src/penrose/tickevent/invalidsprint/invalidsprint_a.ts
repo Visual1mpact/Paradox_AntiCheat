@@ -1,15 +1,13 @@
 import { world, MinecraftEffectTypes, system } from "@minecraft/server";
-import { flag, isTimerExpired } from "../../../util.js";
+import { flag, isTimerExpired, startTimer } from "../../../util.js";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-let lastPosition: [number, number, number] = [0, 0, 0];
-let lastTimestamp: number = Date.now();
-let highestBps: number = 0;
+// Create a Map to store each player's last known position, timestamp, and highest speed
+const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: number; highestBps: number }>();
 
-function calculateMovementBPS(currentPosition: [number, number, number]): number {
-    const currentTimestamp = Date.now();
-    const timeElapsedInSeconds = (currentTimestamp - lastTimestamp) / 1000;
+function calculateMovementBPS(currentPosition: number[], lastPosition: number[], playerTimestamp: number, lastTimestamp: number): number {
+    const timeElapsedInSeconds = (playerTimestamp - lastTimestamp) / 1000;
 
     const [dx, dy, dz] = [currentPosition[0] - lastPosition[0], currentPosition[1] - lastPosition[1], currentPosition[2] - lastPosition[2]];
 
@@ -24,16 +22,7 @@ function calculateMovementBPS(currentPosition: [number, number, number]): number
     // Calculate speed
     const bps = distanceMoved / timeElapsedInSeconds;
 
-    // Update last position and timestamp
-    lastPosition = currentPosition;
-    lastTimestamp = currentTimestamp;
-
-    // Update highest speed
-    if (bps > highestBps) {
-        highestBps = bps;
-    }
-
-    return highestBps;
+    return bps;
 }
 
 function invalidsprinta(id: number) {
@@ -42,6 +31,7 @@ function invalidsprinta(id: number) {
 
     // Unsubscribe if disabled in-game
     if (invalidSprintABoolean === false) {
+        playerData.clear();
         system.clearRun(id);
         return;
     }
@@ -65,13 +55,38 @@ function invalidsprinta(id: number) {
             continue;
         }
 
-        const { x, y, z } = player.location;
-        highestBps = calculateMovementBPS([x, y, z]);
-        const verifyTpGrace = isTimerExpired(player.name);
+        const playerName = player.name;
+        const playerPosition = [player.location.x, player.location.y, player.location.z];
+        const playerTimestamp = Date.now();
+
+        // If playerData Map doesn't have a key for the player's name, add it with initial values
+        if (!playerData.has(playerName)) {
+            playerData.set(playerName, { lastPosition: playerPosition, lastTimestamp: playerTimestamp, highestBps: 0 });
+        }
+
+        /**
+         * startTimer will make sure the key is properly removed
+         * when the time for theVoid has expired. This will preserve
+         * the integrity of our Memory.
+         */
+        const timerExpired = startTimer("invalidsprinta", player.name, Date.now());
+        if (timerExpired.namespace.indexOf("invalidsprinta") !== -1 && timerExpired.expired) {
+            const deletedKey = timerExpired.key; // extract the key without the namespace prefix
+            playerData.delete(deletedKey);
+        }
+
+        const playerInfo = playerData.get(playerName);
+        const { lastPosition, lastTimestamp, highestBps } = playerInfo;
+        const bps = calculateMovementBPS(playerPosition, lastPosition, playerTimestamp, lastTimestamp);
+        playerInfo.lastPosition = playerPosition;
+        playerInfo.lastTimestamp = playerTimestamp;
+        playerInfo.highestBps = Math.max(bps, highestBps);
+
+        const verifyTpGrace = isTimerExpired(playerName);
         // We compare with a 20% buffer to minimize false flags
-        if (highestBps > config.modules.invalidsprintA.speed && player.getEffect(MinecraftEffectTypes.blindness) && verifyTpGrace === true) {
-            flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", highestBps.toFixed(2), true, null);
-            highestBps = 0;
+        if (bps > config.modules.noslowA.speed && player.getEffect(MinecraftEffectTypes.blindness) && verifyTpGrace === true) {
+            flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", playerInfo.highestBps.toFixed(2), true, null);
+            playerInfo.highestBps = 0;
         }
     }
     return;
