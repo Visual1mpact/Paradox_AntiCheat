@@ -40,8 +40,10 @@ function teleportRequestHandler({ sender, message, cancel }: BeforeChatEvent) {
     const player = sender;
     const args = message.split(" ");
     if (args.length < 2) return;
-    const findName = args.indexOf(args[1]);
-    const targetName = args[1] + " " + args.slice(findName + 1).join(" ");
+    const targetName = args
+        .slice(1)
+        .join(" ")
+        .match(/^ *(?:"?@?"?)?(.*?)(?:"? *$)?$/)?.[1];
 
     const targets = world.getAllPlayers().filter((p: Player) => p.name === targetName);
     if (targets.length === 0) {
