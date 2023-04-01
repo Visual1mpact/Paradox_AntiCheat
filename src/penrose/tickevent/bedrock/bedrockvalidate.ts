@@ -15,7 +15,7 @@ async function bedrockvalidate(id: number) {
             dimension: world.getDimension("overworld"),
             command1: "fill ~-5 -64 ~-5 ~5 -64 ~5 bedrock",
             command2: "fill ~-4 -59 ~-4 ~4 319 ~4 air [] replace bedrock",
-            command3: "", // add an empty string as a placeholder
+            command3: undefined,
             config: config.modules.bedrockValidate.overworld,
         },
         nether: {
@@ -36,7 +36,7 @@ async function bedrockvalidate(id: number) {
 
         for (const [_dimension, { dimension, command1, command2, command3, config }] of Object.entries(dimensions)) {
             if (player?.dimension === dimension && config) {
-                await Promise.all([player?.runCommandAsync(command1), player?.runCommandAsync(command2), player?.runCommandAsync(command3)]);
+                await Promise.all([player?.runCommandAsync(command1), player?.runCommandAsync(command2), command3 && player?.runCommandAsync(command3)]);
             }
         }
     }
