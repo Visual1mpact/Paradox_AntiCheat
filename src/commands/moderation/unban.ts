@@ -27,7 +27,7 @@ function unbanHelp(player: Player, prefix: string) {
         `§4[§6Examples§4]§r:`,
         `    ${prefix}unban ${player.name}`,
         `    ${prefix}unban list`,
-        `    ${prefix}unban delete`,
+        `    ${prefix}unban delete ${player.name}`,
         `    ${prefix}unban help`,
     ]);
 }
