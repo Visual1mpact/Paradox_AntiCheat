@@ -4,7 +4,6 @@ import config from "../../../data/config.js";
 import { flag, sendMsg, sendMsgToPlayer, startTimer, titleCase, toCamelCase } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
-import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
@@ -189,7 +188,7 @@ function illegalitemsa(id: number) {
                 continue;
             }
 
-            if (itemType && salvageBoolean && inventory_item.typeId in whitelist === false) {
+            if (itemType && salvageBoolean) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */

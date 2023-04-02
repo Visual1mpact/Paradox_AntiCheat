@@ -4,9 +4,7 @@ import config from "../../../data/config.js";
 import { flag, toCamelCase, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
-import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
-import { iicWhitelist } from "../../../data/illegalitemsc_whitelist.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
@@ -108,7 +106,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
-    if (block.typeId in illegalitems && block.typeId in iicWhitelist === false) {
+    if (block.typeId in illegalitems) {
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
@@ -230,7 +228,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
                 continue;
             }
 
-            if (itemType && salvageBoolean && inventory_item.typeId in whitelist === false) {
+            if (itemType && salvageBoolean) {
                 /**
                  * Salvage System to mitigate NBT's on every item in the game
                  */

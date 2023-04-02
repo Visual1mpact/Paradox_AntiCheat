@@ -4,7 +4,6 @@ import { flag, sendMsg, sendMsgToPlayer, titleCase, toCamelCase } from "../../..
 import config from "../../../data/config.js";
 import { enchantmentSlot } from "../../../data/enchantments.js";
 import salvageable from "../../../data/salvageable.js";
-import { whitelist } from "../../../data/whitelistitems.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
@@ -170,7 +169,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
         }
     }
 
-    if (itemType && salvageBoolean && item.typeId in whitelist === false) {
+    if (itemType && salvageBoolean) {
         /**
          * Salvage System to mitigate NBT's on every item in the game
          */
