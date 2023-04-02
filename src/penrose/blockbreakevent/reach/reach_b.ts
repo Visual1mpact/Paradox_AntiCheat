@@ -40,6 +40,9 @@ function reachb(object: BlockBreakEvent) {
 
     if (distanceSquared > config.modules.reachB.reach * config.modules.reachB.reach) {
         block.setPermutation(blockID);
+        player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=3,c=1,type=item]`).catch(() => {
+            // We are ignoring the error here as its not detrimental
+        });
         // flag(player, "Reach", "B", "Break", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
     }
 }
