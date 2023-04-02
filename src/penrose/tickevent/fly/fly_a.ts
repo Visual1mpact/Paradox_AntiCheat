@@ -31,23 +31,23 @@ function flya(id: number) {
         }
         const groundCheck = player.hasTag("ground");
         if (groundCheck) {
-            playersAirTimeStart.delete(player.name);
+            playersAirTimeStart.set(player.name, Date.now());
             continue;
         }
         const glideCheck = player.hasTag("gliding");
         if (glideCheck) {
-            playersAirTimeStart.delete(player.name);
+            playersAirTimeStart.set(player.name, Date.now());
             continue;
         }
         const velocity = player.getVelocity();
         if (velocity.y < 0) {
             // Player is falling, ignore them
-            playersAirTimeStart.delete(player.name);
+            playersAirTimeStart.set(player.name, Date.now());
             continue;
         }
         if (jumpCheck && playersAirTimeStart.has(player.name)) {
             const airTime = Date.now() - playersAirTimeStart.get(player.name);
-            if (airTime >= 2000) {
+            if (airTime >= 4000) {
                 const horizontalVelocity = new Vector(velocity.x, 0, velocity.z);
                 const xyVelocity = Math.hypot(horizontalVelocity.x, horizontalVelocity.y).toFixed(4);
                 const zyVelocity = Math.hypot(horizontalVelocity.z, horizontalVelocity.y).toFixed(4);
