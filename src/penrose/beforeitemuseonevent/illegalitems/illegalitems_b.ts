@@ -169,7 +169,18 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
         }
     }
 
-    if (itemType && salvageBoolean) {
+    /**
+     * These items need to be removed since data is not part of the API any longer.
+     *
+     * The developers are working on giving each item their own unique names and stepping
+     * away from data types.
+     *
+     * Until the API supports this new change such items need to be ignored so they are not
+     * salvaged and defaulted to data 0 of any given item in the array.
+     */
+    const uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull"];
+
+    if (itemType && salvageBoolean && !uniqueItems.includes(itemType.id)) {
         /**
          * Salvage System to mitigate NBT's on every item in the game
          */
@@ -240,7 +251,7 @@ async function illegalitemsb(object: BeforeItemUseOnEvent) {
                 }
             }
         } catch (error) {}
-    } else {
+    } else if (!uniqueItems.includes(itemType.id)) {
         // Used to contain data about Lores
         let loreData;
         if (salvageable[item.typeId]) {
