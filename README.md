@@ -2,7 +2,7 @@
   <img src="https://i.imgur.com/ZS38i7c.png" alt="Paradox AntiCheat Logo">
   <br><br>
   <div>
-    <em>Updated for 1.19.71</em>
+    <em>Updated for 1.19.73</em>
     <br>
     Paradox AntiCheat is a fork of Scythe AntiCheat, which was released under the GPLv3 License. Paradox was created to fix some differences within Scythe and to provide a more reliable and effective anti-cheat solution for Minecraft Bedrock. All original commit history pertaining to Scythe still exists within this project and is free to review.
   </div>
@@ -33,7 +33,6 @@
   <img src="https://img.shields.io/github/license/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="License">
 </div>
 
-  
 <h1><img src="https://i.imgur.com/5W2YXCD.png" border="0" width="150"></h1>
 <h1>Applying the Paradox AntiCheat Pack</h1>
 <p>When applying the pack to your world make sure the addon is at the top of the behavior pack list and Beta APIs is enabled. This is to ensure all checks and systems work properly. The versioning system for Paradox goes as follows:</p>
@@ -69,4 +68,3 @@
   <li>Paradox will kick you out if you have any illegal items in your inventory so if you think Paradox may flag you after installing then it is highly suggested to drop your entire inventory prior to activating this Anti Cheat!!!</li>
   <li>If you reset your world for any reason then it is recommended to change <code>password</code>.</li>
 </ul>
-
