@@ -92,7 +92,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     }
     const ignoreContainerPlace = ["minecraft:chest", "minecraft:trapped_chest"];
     // Check if place item is salvageable
-    if (salvageable[block.typeId] && block.typeId in ignoreContainerPlace === false) {
+    if (salvageable[block.typeId] && !ignoreContainerPlace.includes(block.typeId)) {
         // Block from specified location
         const blockLoc = dimension.getBlock(new Vector(x, y, z));
         // Get a copy of this blocks permutation
