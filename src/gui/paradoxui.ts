@@ -56,6 +56,7 @@ import { uiHOTBAR } from "./modules/uiHotbar";
 import { uiDESPAWNER } from "./moderation/uiDespawner";
 import { uiSAVEDLOCATIONS } from "./playerui/uiSavedLocations";
 import { UIREPORTPLAYER } from "./playerui/uiReport";
+import { uiSTATS } from "./moderation/uiStats";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -78,6 +79,7 @@ async function paradoxui(player: Player) {
         maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
         maingui.button("§0Teleport Requets§2", "textures/blocks/portal_placeholder");
         maingui.button("§0Saved Locations§2", "textures/items/compass_item");
+        maingui.button("Stats");
     } else {
         maingui.button("§0Op§2", "textures/ui/op");
         maingui.button("§0Deop§2", "textures/items/ender_pearl");
@@ -212,6 +214,13 @@ async function paradoxui(player: Player) {
                         }
                     }
                 }
+                if (Locations.length === 0) {
+                    /*No locations saved so it will crap its self!
+                    So if there is no data we push a line to keep the array with at least 1 value.
+                    If there are saved locations then it will continue as normal.
+                    */
+                    Locations.push("You have no saved Locations");
+                }
                 savedlocationsui.title("§4Paradox - Saved Locations§4");
                 savedlocationsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, Locations);
                 savedlocationsui.toggle("Teleport to the selected location", false);
@@ -262,6 +271,7 @@ async function paradoxui(player: Player) {
                         const unbanui = new ModalFormData();
                         unbanui.title("§4Unban A player!§4");
                         unbanui.textField(`Player`, `Enter a player's username to be unbanned.`);
+                        unbanui.toggle("Remove player from the unban queue", false);
                         unbanui.show(player).then((unbanResult) => {
                             uiUNBAN(unbanResult, player);
                         });
@@ -998,6 +1008,17 @@ async function paradoxui(player: Player) {
             savedlocationsui.textField("Enter a name to save your current Location:", "");
             savedlocationsui.show(player).then((savedlocationsResult) => {
                 uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
+            });
+        }
+        if (result.selection === 7) {
+            //UI Stats
+            const statsui = new ModalFormData();
+            let onlineList: string[] = [];
+            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+            statsui.title("§4Paradox - Player Stats§4");
+            statsui.dropdown(`\n§rSelect a Location.§r\n\nSaved Location's\n`, onlineList);
+            statsui.show(player).then((statsResult) => {
+                uiSTATS(statsResult, onlineList, player);
             });
         }
 
