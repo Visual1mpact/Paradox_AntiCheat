@@ -77,7 +77,7 @@ async function paradoxui(player: Player) {
         maingui.button("§0Moderation§2", "textures/items/book_normal");
         maingui.button("§0Modules§2", "textures/blocks/command_block");
         maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
-        maingui.button("§0Teleport Requets§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
         maingui.button("§0Saved Locations§2", "textures/items/compass_item");
         maingui.button("Stats");
     } else {
@@ -86,7 +86,7 @@ async function paradoxui(player: Player) {
         maingui.button("§0Moderation§2", "textures/items/book_normal");
         maingui.button("§0Modules§2", "textures/blocks/command_block");
         maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
-        maingui.button("§0Teleport Requets§2", "textures/blocks/portal_placeholder");
+        maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
         maingui.button("§0Saved Locations§2", "textures/items/compass_item");
     }
 
@@ -239,7 +239,7 @@ async function paradoxui(player: Player) {
                 const moderationui = new ActionFormData();
                 moderationui.title("§4Paradox Moderation§4");
                 moderationui.button("Ban", "textures/ui/hammer_l");
-                moderationui.button("Unban", "textures/ui/check");
+                moderationui.button("Un-ban", "textures/ui/check");
                 moderationui.button("Rules", "textures/items/book_writable");
                 moderationui.button("Chat", "textures/ui/newOffersIcon");
                 moderationui.button("Lockdown", "textures/ui/lock_color");
@@ -269,9 +269,9 @@ async function paradoxui(player: Player) {
                     if (ModUIresult.selection === 1) {
                         //show unban ui here
                         const unbanui = new ModalFormData();
-                        unbanui.title("§4Unban A player!§4");
-                        unbanui.textField(`Player`, `Enter a player's username to be unbanned.`);
-                        unbanui.toggle("Remove player from the unban queue", false);
+                        unbanui.title("§4Un-ban A player!§4");
+                        unbanui.textField(`Player`, `Enter a username.`);
+                        unbanui.toggle("Remove player from the un-ban queue", false);
                         unbanui.show(player).then((unbanResult) => {
                             uiUNBAN(unbanResult, player);
                         });
@@ -323,7 +323,7 @@ async function paradoxui(player: Player) {
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                                 let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
                                 chatranksui.dropdown(`\n§rSelect a player to change thier rank.§r\n\nPlayer's Online\n`, onlineList);
-                                chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on bellow.§r`, predefinedrank);
+                                chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on below.§r`, predefinedrank);
                                 chatranksui.textField("Enter a custom Rank", "VIP");
                                 chatranksui.toggle("Chat Ranks: Enables or Disables chat ranks.", chatRanksBoolean);
                                 chatranksui.show(player).then((chatranksResult) => {
@@ -378,7 +378,7 @@ async function paradoxui(player: Player) {
                         // Get Dynamic Property Boolean
                         const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
                         lockdownui.title("§4Paradox - Lockdown§4");
-                        lockdownui.textField("Reason", "Kicked all members but staff due to possible hacker.");
+                        lockdownui.textField("Reason", "Possible hacker in the world.");
                         lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
                         lockdownui.show(player).then((lockdownResult) => {
                             uiLOCKDOWN(lockdownResult, player);
@@ -388,7 +388,7 @@ async function paradoxui(player: Player) {
                         //Punish UI im going to use two forms one as a yes/no message so i can advise what this will do.
                         const punishprewarnui = new MessageFormData();
                         punishprewarnui.title("§4Paradox - Punish§4");
-                        punishprewarnui.body("This will allow you to wipe a player's ender chest as well as thier inventory.");
+                        punishprewarnui.body("This will allow you to wipe a player's Ender chest as well as their inventory.");
                         punishprewarnui.button1("Okay");
                         punishprewarnui.show(player).then((prewarnResult) => {
                             //show the Punish UI
@@ -431,7 +431,7 @@ async function paradoxui(player: Player) {
                         ewipeui.title("§4Paradox - Wipe a player's Enderchest.§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        ewipeui.dropdown(`\n§rSelect a player to wipe thier Enderchest.§r\n\nPlayer's Online\n`, onlineList);
+                        ewipeui.dropdown(`\n§rSelect a player to wipe their Enderchest.§r\n\nPlayer's Online\n`, onlineList);
                         ewipeui.show(player).then((ewipeResult) => {
                             uiEWIPE(ewipeResult, onlineList, player);
                         });
@@ -507,7 +507,7 @@ async function paradoxui(player: Player) {
                 modulesui.button("Configure Enchanted Armor", "textures/items/diamond_leggings");
                 modulesui.button("Configure Illegal Items", "textures/items/netherite_pickaxe");
                 modulesui.button("Configure Lag Clearing", "textures/ui/interact");
-                modulesui.button("Configure Namespoofing", "textures/items/fishing_rod_uncast");
+                modulesui.button("Configure Name spoofing", "textures/items/fishing_rod_uncast");
                 modulesui.button("Configure One Player Sleep(OPS)", "textures/items/bed_red");
                 modulesui.button("Configure Command Blocks", "textures/blocks/command_block");
                 modulesui.button("Configure Anti Reach", "textures/ui/crossout");
@@ -538,7 +538,7 @@ async function paradoxui(player: Player) {
                         modulesmovementui.button("Anti Fall", "textures/items/diamond_boots");
                         modulesmovementui.button("Anti Fly", "textures/items/elytra");
                         modulesmovementui.button("Invalid Sprint", "textures/items/diamond_boots");
-                        modulesmovementui.button("Noslow", "textures/items/diamond_boots");
+                        modulesmovementui.button("No-slow", "textures/items/diamond_boots");
                         modulesmovementui.button("Anti Scaffold", "textures/blocks/scaffolding_top");
                         modulesmovementui.button("Anti Jesusa", "textures/blocks/lava_placeholder");
                         modulesmovementui.show(player).then((movementResult) => {
@@ -768,7 +768,7 @@ async function paradoxui(player: Player) {
                         const modulesnamespoofingui = new ModalFormData();
                         const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
                         const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
-                        modulesnamespoofingui.title("§4Paradox Modules-Namespoofing§4");
+                        modulesnamespoofingui.title("§4Paradox Modules-Name spoofing§4");
                         modulesnamespoofingui.toggle("Name Spoofing A: checks for player's name exceeding character limitations.", nameSpoofABoolean);
                         modulesnamespoofingui.toggle("Name Spoofing B: checks for player's name that has Non ASCII characters.", nameSpoofBBoolean);
                         modulesnamespoofingui.show(player).then((namespoofingResult) => {
@@ -827,7 +827,7 @@ async function paradoxui(player: Player) {
                         //New Slavage System
                         const modulesexpsavlagesystem = new ModalFormData();
                         const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
-                        modulesexpsavlagesystem.title("§4Paradox Modules-Salvage System [Experimental]§4");
+                        modulesexpsavlagesystem.title("§4Paradox Modules-Salvage System [Exp]§4");
                         modulesexpsavlagesystem.toggle("Salvage System: new salvage system [Experimental]", salvageBoolean);
                         modulesexpsavlagesystem.show(player).then((salvagesystemResult) => {
                             uiEXPSALVAGESYSTEM(salvagesystemResult, player);
