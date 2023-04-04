@@ -1,6 +1,6 @@
 import { Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { getGamemode } from "../../commands/utility/getGamemode.js";
+import { getGamemode } from "../../util";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -65,9 +65,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     // build the report body for the ui.
     let reportBody = ["§6All Stats for " + member.name + "§r" + "\n" + "\n"];
     // get the target players gamemode
-    console.log("calling getGamemode(member)");
     let MembersGamemode = getGamemode(member);
-    console.log(MembersGamemode);
     reportBody.push("§6" + member.name + "§r is in Gamemode: " + MembersGamemode + "\n");
     //get the target players coords
     reportBody.push("§6" + member.name + "§r is currently at X= " + member.location.x.toFixed(0) + " Y= " + member.location.y.toFixed(0) + " Z= " + member.location.z.toFixed(0) + "\n");

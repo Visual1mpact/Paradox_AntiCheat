@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Player, system, Vector, world } from "@minecraft/server";
+import { BeforeChatEvent, GameMode, Player, system, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -406,6 +406,35 @@ export function startTimer(namespace: string, key: string, value: number): { exp
     theVoid.set(namespacedKey + ":intervalId", intervalId);
 
     return { expired, namespace, key };
+}
+
+/**
+ * Get the gamemode of a given player
+ * @param player - The player to get the gamemode of
+ * @returns The gamemode of the player as a string, or undefined if the player is not found
+ */
+export function getGamemode(player: Player): string | undefined {
+    // Loop through each gamemode in the GameMode enum
+    for (const gameMode of Object.values(GameMode)) {
+        // Use world.getPlayers() to get an iterator of all players in the world with the same name and game mode as the given player
+        const gameModePlayer = world.getPlayers({ name: player.name, gameMode });
+        console.log(gameModePlayer);
+        // If a player is found with the given name and game mode, return the corresponding string representation of the gamemode
+        if (gameModePlayer) {
+            switch (gameMode) {
+                case GameMode.creative:
+                    return "creative";
+                case GameMode.survival:
+                    return "survival";
+                case GameMode.adventure:
+                    return "adventure";
+                case GameMode.spectator:
+                    return "spectator";
+            }
+        }
+    }
+    // If no matching player is found, return undefined
+    return undefined;
 }
 
 const overworld = world.getDimension("overworld");
