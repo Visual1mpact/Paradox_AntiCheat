@@ -2,55 +2,51 @@ import { world, Block, EntityQueryOptions, GameMode, system, Vector } from "@min
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
+function isAir(block: Block): boolean {
+    return block.typeId === "minecraft:air";
+}
+
 function antifalla(id: number) {
     // Get Dynamic Property
     const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b");
 
     // Unsubscribe if disabled in-game
-    if (antifallABoolean === false) {
+    if (!antifallABoolean) {
         system.clearRun(id);
         return;
     }
+
     //exclude players who are in creative.
     const gm = new Object() as EntityQueryOptions;
     gm.excludeGameModes = [GameMode.creative];
+
     for (const player of world.getPlayers(gm)) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
         // Skip if they have permission
         if (uniqueId === player.name) {
-            return;
+            continue;
         }
-        const vy = player.getVelocity().y;
-        let CenBlockX: Block, CenBlockXTopLeft: Block, CenBlockXTopRight: Block, CenBlockXBottomLeft: Block, CenBlockXBottomRight: Block, NegBlockX: Block, PosBlockX: Block, CenBlockZ: Block, NegBlockZ: Block, PosBlockZ: Block;
-        CenBlockX = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
-        PosBlockX = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z));
-        NegBlockX = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z));
-        CenBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z));
-        PosBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z + 1));
-        NegBlockZ = player.dimension.getBlock(new Vector(player.location.x, player.location.y - 1, player.location.z - 1));
-        // if the player is in any corner of the block we move the block back to the center before hand and test for air
-        CenBlockXTopLeft = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z + 1));
-        CenBlockXTopRight = player.dimension.getBlock(new Vector(player.location.x - 1, player.location.y - 1, player.location.z - 1));
-        CenBlockXBottomLeft = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z + 1));
-        CenBlockXBottomRight = player.dimension.getBlock(new Vector(player.location.x + 1, player.location.y - 1, player.location.z - 1));
-        //we know that the NoFall hack keeps the players Velocity set to 0 at all times we can check for this while the player has air blocks and are not standing on a block or its edges etc.
-        if (
-            CenBlockX.typeId == "minecraft:air" &&
-            PosBlockX.typeId == "minecraft:air" &&
-            NegBlockX.typeId == "minecraft:air" &&
-            CenBlockZ.typeId == "minecraft:air" &&
-            PosBlockZ.typeId == "minecraft:air" &&
-            NegBlockZ.typeId == "minecraft:air" &&
-            CenBlockXTopLeft.typeId == "minecraft:air" &&
-            CenBlockXTopRight.typeId == "minecraft:air" &&
-            CenBlockXBottomLeft.typeId == "minecraft:air" &&
-            CenBlockXBottomRight.typeId == "minecraft:air" &&
-            vy == 0
-        ) {
-            //flag it as a hack and not a movement hack due to issues with flya.
 
+        const { x, y, z } = player.location;
+        const vy = player.getVelocity().y;
+        const blocksToCheck = [
+            new Vector(x, y - 1, z),
+            new Vector(x + 1, y - 1, z),
+            new Vector(x - 1, y - 1, z),
+            new Vector(x, y - 1, z + 1),
+            new Vector(x, y - 1, z - 1),
+            new Vector(x - 1, y - 1, z + 1),
+            new Vector(x - 1, y - 1, z - 1),
+            new Vector(x + 1, y - 1, z + 1),
+            new Vector(x + 1, y - 1, z - 1),
+        ];
+
+        const blocks = blocksToCheck.map((block) => player.dimension.getBlock(block));
+        const areAllBlocksAir = blocks.every(isAir);
+
+        if (areAllBlocksAir && vy === 0) {
             flag(player, "AntiFall", "A", "Exploit", null, null, null, null, false, null);
         }
     }
