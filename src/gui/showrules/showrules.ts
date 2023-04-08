@@ -76,7 +76,9 @@ async function showrules(id: number) {
 }
 
 export function ShowRules() {
-    const showrulesId = system.runInterval(() => {
-        showrules(showrulesId);
-    }, 200);
+    if (config.ParadoxUIBeta === true) {
+        const showrulesId = system.runInterval(() => {
+            showrules(showrulesId);
+        }, 200);
+    }
 }
