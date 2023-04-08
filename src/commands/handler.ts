@@ -84,6 +84,7 @@ import { antifallA } from "./settings/antifalla.js";
 import { showrules } from "./moderation/showrules.js";
 import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
+import { autoban } from "./moderation/autoban.js";
 const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
@@ -167,6 +168,7 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         showrules: showrules,
         paradoxui: paradoxUI,
         tpr: TeleportRequestHandler,
+        autoban: autoban,
     },
     null
 );

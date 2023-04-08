@@ -17,6 +17,13 @@ function rip(player: Player, reason: string) {
 }
 
 function autoban(id: number) {
+    const autoBanBoolean = dynamicPropertyRegistry.get("autoban_b");
+
+    // Unsubscribe if disabled in-game
+    if (autoBanBoolean === false) {
+        system.clearRun(id);
+        return;
+    }
     const scores = [
         "autoclickervl",
         "badpacketsvl",
