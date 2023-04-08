@@ -31,14 +31,14 @@ function autobanHelp(player: Player, prefix: string, autoBanBoolean: string | nu
 }
 
 /**
- * @name showrules
+ * @name autoban
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
 export function autoban(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/showrules.js:36)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/autoban.js:36)");
     }
 
     message.cancel = true;
