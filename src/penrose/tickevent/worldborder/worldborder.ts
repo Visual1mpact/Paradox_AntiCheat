@@ -104,23 +104,9 @@ function worldborder(id: number) {
                     player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
                 };
 
-                if (x >= overworldSize && z >= overworldSize) {
-                    teleportToBorder(border, border);
-                } else if (x <= -overworldSize && z <= -overworldSize) {
-                    teleportToBorder(-border + 6, -border + 6);
-                } else if (x >= overworldSize && z <= -overworldSize) {
-                    teleportToBorder(border, -border + 6);
-                } else if (x <= -overworldSize && z >= overworldSize) {
-                    teleportToBorder(-border + 6, border);
-                } else if (x >= overworldSize) {
-                    teleportToBorder(border, z);
-                } else if (z >= overworldSize) {
-                    teleportToBorder(x, border);
-                } else if (x <= -overworldSize) {
-                    teleportToBorder(-border + 6, z);
-                } else if (z <= -overworldSize) {
-                    teleportToBorder(x, -border + 6);
-                }
+                const targetX = x < -overworldSize ? -border + 6 : x >= overworldSize ? border - 6 : x;
+                const targetZ = z < -overworldSize ? -border + 6 : z >= overworldSize ? border - 6 : z;
+                teleportToBorder(targetX, targetZ);
             }
         }
 
@@ -141,23 +127,9 @@ function worldborder(id: number) {
                     player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
                 };
 
-                if (x >= netherSize && z >= netherSize) {
-                    teleportToBorder(border, border);
-                } else if (x <= -netherSize && z <= -netherSize) {
-                    teleportToBorder(-border + 6, -border + 6);
-                } else if (x >= netherSize && z <= -netherSize) {
-                    teleportToBorder(border, -border + 6);
-                } else if (x <= -netherSize && z >= netherSize) {
-                    teleportToBorder(-border + 6, border);
-                } else if (x >= netherSize) {
-                    teleportToBorder(border, z);
-                } else if (z >= netherSize) {
-                    teleportToBorder(x, border);
-                } else if (x <= -netherSize) {
-                    teleportToBorder(-border + 6, z);
-                } else if (z <= -netherSize) {
-                    teleportToBorder(x, -border + 6);
-                }
+                const targetX = x < -netherSize ? -border + 6 : x >= netherSize ? border - 6 : x;
+                const targetZ = z < -netherSize ? -border + 6 : z >= netherSize ? border - 6 : z;
+                teleportToBorder(targetX, targetZ);
             }
         }
     }
