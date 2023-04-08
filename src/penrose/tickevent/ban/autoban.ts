@@ -1,5 +1,6 @@
-import { EntityQueryOptions, Player, system, world } from "@minecraft/server";
+import { Player, system, world } from "@minecraft/server";
 import { kickablePlayers } from "../../../kickcheck";
+import { getScore } from "../../../util";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry";
 
 function rip(player: Player, reason: string) {
@@ -14,6 +15,7 @@ function rip(player: Player, reason: string) {
         player.triggerEvent("paradox:kick");
     }
 }
+
 function autoban(id: number) {
     const scores = [
         "autoclickervl",
@@ -35,8 +37,8 @@ function autoban(id: number) {
         "armorvl",
         "antikbvl",
     ];
-    const gm = new Object() as EntityQueryOptions;
-    for (const player of world.getPlayers(gm)) {
+
+    for (const player of world.getPlayers()) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
 
@@ -44,16 +46,12 @@ function autoban(id: number) {
         if (uniqueId === player.name) {
             return;
         }
+
         scores.forEach((score) => {
-            try {
-                const objective = world.scoreboard.getObjective(score);
-                const playerScore = player.scoreboard.getScore(objective);
-                if (playerScore > 50) {
-                    let reReason: string = score.replace("vl", "").toUpperCase() + "number of Violations: " + playerScore;
-                    return rip(player, reReason);
-                }
-            } catch {
-                // Ignore since this score doesn't exist for this player yet.
+            const playerScore = getScore(score, player);
+            if (playerScore > 50) {
+                let reReason = score.replace("vl", "").toUpperCase() + " Violations: " + playerScore;
+                return rip(player, reReason);
             }
         });
     }
