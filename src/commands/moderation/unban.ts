@@ -7,7 +7,7 @@ export const queueUnban = new Set();
 
 function listQueue(queue: string, player: Player) {
     if (queue) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${player.nameTag}§r is queued to be unbanned.`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${queue}§r is queued to be unbanned.`);
     }
 }
 
@@ -84,7 +84,7 @@ export function unban(message: BeforeChatEvent, args: string[]) {
     }
 
     // Add player to queue
-    const regexp = /["'`]/g;
+    const regexp = /["'`@]/g;
     queueUnban.add(args.join(" ").replace(regexp, ""));
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`);
 }
