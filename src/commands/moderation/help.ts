@@ -43,6 +43,7 @@ export function help(message: BeforeChatEvent) {
         `§l§6[§4Moderation Commands§6]§r`,
         `§6${prefix}help§r - Shows this help page.`,
         `§6${prefix}ban <username> <reason>§r - ${config.customcommands.ban ? `Ban the specified user.` : textDisabled}`,
+        `§6${prefix}autoban§r - ${config.customcommands.tpr ? `Will ban players automaticaly if they have a violation above 50.` : textDisabled}`,
         `§6${prefix}unban <username>§r - ${config.customcommands.unban ? `Allows specified players to join if banned (Doesn't include global ban).` : textDisabled}`,
         `§6${prefix}kick <username> <reason>§r - ${config.customcommands.kick ? `Kick the specified user.` : textDisabled}`,
         `§6${prefix}mute <username> <reason>§r - ${config.customcommands.mute ? `Mute the specified user.` : textDisabled}`,
