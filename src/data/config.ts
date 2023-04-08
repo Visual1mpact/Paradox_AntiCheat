@@ -249,7 +249,7 @@ export default {
             enabled: true,
         },
         showrules: {
-            enabled: true,
+            enabled: false,
             rule1: "Rule1: No hacking allowed.",
             rule2: "Rule2: Don't grief other players' builds.",
             rule3: "Rule3: Be kind to everyone on the server.",
@@ -264,6 +264,10 @@ export default {
             minutes: 2,
             hours: 0,
             days: 0,
+        },
+        banAppeal: {
+            enabled: false,
+            discordLink: "YOUR DISCORD LINK HERE!",
         },
         /**
          * Add a password in-between the quotes.

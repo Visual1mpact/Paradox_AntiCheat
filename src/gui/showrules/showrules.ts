@@ -10,7 +10,7 @@ async function showrules(id: number) {
     const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
 
     // Unsubscribe if disabled in-game
-    if (showrulesBoolean === false) {
+    if (showrulesBoolean === false && config.ParadoxUIBeta === false) {
         system.clearRun(id);
         return;
     }
