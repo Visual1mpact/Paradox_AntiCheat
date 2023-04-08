@@ -1,6 +1,7 @@
 import { PlayerSpawnEvent, world } from "@minecraft/server";
 import { ShowRules } from "../../showrules/showrules.js";
 import { dynamicPropertyRegistry } from "../../../penrose/worldinitializeevent/registry.js";
+import config from "../../../data/config.js";
 
 async function onJoinRules(object: PlayerSpawnEvent) {
     //Get Dynamic Property
@@ -24,7 +25,9 @@ async function onJoinRules(object: PlayerSpawnEvent) {
     }
 }
 const onJoinrules = () => {
-    world.events.playerSpawn.subscribe(onJoinRules);
+    if (config.ParadoxUIBeta === true) {
+        world.events.playerSpawn.subscribe(onJoinRules);
+    }
 };
 
 export { onJoinrules };
