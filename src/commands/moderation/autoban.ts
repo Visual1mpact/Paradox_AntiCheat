@@ -61,7 +61,7 @@ export function autoban(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.showrules) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.autoban) {
         return autobanHelp(player, prefix, autoBanBoolean);
     }
 

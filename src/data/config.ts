@@ -83,6 +83,7 @@ export default {
         showrules: true,
         paradoxiu: true,
         tpr: true,
+        autoban: true,
     },
     modules: {
         badpackets1: {
@@ -268,6 +269,9 @@ export default {
         banAppeal: {
             enabled: false,
             discordLink: "§9To appeal your ban visit our discord: §fhttps://discord.gg",
+        },
+        autoBan: {
+            enabled: false,
         },
         /**
          * Add a password in-between the quotes.
