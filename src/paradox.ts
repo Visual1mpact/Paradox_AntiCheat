@@ -36,6 +36,7 @@ import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.j
 import { BadPackets2 } from "./penrose/tickevent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/tickevent/clearlag/clearlag.js";
 import { AntiFallA } from "./penrose/tickevent/antifalla/antifall_a.js";
+import { AutoBan } from "./penrose/tickevent/ban/autoban.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
@@ -101,6 +102,7 @@ InvalidSprintA();
 FlyA();
 AntiKnockbackA();
 AntiFallA();
+AutoBan();
 
 /**
  * Freeze Check

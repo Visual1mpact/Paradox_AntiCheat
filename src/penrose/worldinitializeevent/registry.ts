@@ -61,6 +61,7 @@ function registry(data: WorldInitializeEvent) {
         "illegalenchantment_b",
         "showrules_b",
         "kickondecline_b",
+        "autoban_b",
     ];
 
     // String properties
@@ -138,7 +139,7 @@ function registry(data: WorldInitializeEvent) {
         }
         flag = false; // reset the flag for the next iteration
     });
-    
+
     // Set additional properties for world border
     let worldborder_n = world.getDynamicProperty("worldborder_n");
     if (worldborder_n === undefined) {
