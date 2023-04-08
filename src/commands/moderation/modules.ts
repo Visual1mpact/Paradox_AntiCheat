@@ -160,6 +160,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `World Border: ${worldBorderBoolean ? `§aENABLED§r (Overworld: ${worldBorderOverworldNumber} Nether: ${worldBorderNetherNumber})` : "§4DISABLED"}`,
         `ClearLag: ${status(clearLagBoolean)}`,
         `ShowRules: ${status(showrulesBoolean)}`,
-        `AutoBan: ${status(showrulesBoolean)}`,
+        `AutoBan: ${status(autobanBoolean)}`,
     ]);
 }
