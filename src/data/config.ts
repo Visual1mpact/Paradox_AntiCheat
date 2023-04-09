@@ -156,13 +156,13 @@ export default {
             enabled: true,
         },
         illegalitemsA: {
-            enabled: true,
+            enabled: false,
         },
         illegalitemsB: {
-            enabled: true,
+            enabled: false,
         },
         illegalitemsC: {
-            enabled: true,
+            enabled: false,
         },
         illegalitemsD: {
             enabled: true,
@@ -230,10 +230,10 @@ export default {
             days: 0,
         },
         illegalEnchantment: {
-            enabled: true,
+            enabled: false,
         },
         illegalLores: {
-            enabled: true,
+            enabled: false,
             exclude: "(+DATA)",
         },
         hotbar: {
