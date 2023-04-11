@@ -79,6 +79,6 @@ export function ShowRules() {
     if (config.ParadoxUIBeta === true) {
         const showrulesId = system.runInterval(() => {
             showrules(showrulesId);
-        }, 200);
+        }, 230);
     }
 }
