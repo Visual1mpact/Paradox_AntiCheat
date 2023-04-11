@@ -4,8 +4,12 @@
     "\\functions",
     "\\functions\\checks",
     "\\src",
-    "\\src\\penrose",
+    "\\src\\gui",
+    "\\src\\gui\\playerspawnevent",
+    "\\src\\gui\\playerspawnevent\\rules",
+    "\\src\\gui\\showrules",
     "\\src\\penrose\\entityhurtevent"
   ],
+  "SelectedNode": "\\src\\gui\\playerspawnevent\\rules\\rules.ts",
   "PreviewInSolutionExplorer": false
 }

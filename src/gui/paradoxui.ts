@@ -67,27 +67,27 @@ async function paradoxui(player: Player) {
     maingui.title("§4Paradox§4");
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e");
     if (uniqueId !== player.name) {
-        maingui.button("§0Op§2", "textures/ui/op");
-        maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
-        maingui.button("§0Saved Locations§2", "textures/items/compass_item");
-        maingui.button("§0Report§2", "textures/items/paper");
+        maingui.button("§rOp", "textures/ui/op");
+        maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
+        maingui.button("§rSaved Locations", "textures/items/compass_item");
+        maingui.button("§rReport", "textures/items/paper");
     } else if (config.ParadoxUIBeta === true) {
-        maingui.button("§0Op§2", "textures/ui/op");
-        maingui.button("§0Deop§2", "textures/items/ender_pearl");
-        maingui.button("§0Moderation§2", "textures/items/book_normal");
-        maingui.button("§0Modules§2", "textures/blocks/command_block");
-        maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
-        maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
-        maingui.button("§0Saved Locations§2", "textures/items/compass_item");
+        maingui.button("§rOp", "textures/ui/op");
+        maingui.button("§rDeop", "textures/items/ender_pearl");
+        maingui.button("§rModeration", "textures/items/book_normal");
+        maingui.button("§rModules", "textures/blocks/command_block");
+        maingui.button("§rPrefix", "textures/ui/UpdateGlyph");
+        maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
+        maingui.button("§rSaved Locations", "textures/items/compass_item");
         maingui.button("Stats");
     } else {
-        maingui.button("§0Op§2", "textures/ui/op");
-        maingui.button("§0Deop§2", "textures/items/ender_pearl");
-        maingui.button("§0Moderation§2", "textures/items/book_normal");
-        maingui.button("§0Modules§2", "textures/blocks/command_block");
-        maingui.button("§0Prefix§2", "textures/ui/UpdateGlyph");
-        maingui.button("§0Teleport Requests§2", "textures/blocks/portal_placeholder");
-        maingui.button("§0Saved Locations§2", "textures/items/compass_item");
+        maingui.button("§rOp", "textures/ui/op");
+        maingui.button("§rDeop", "textures/items/ender_pearl");
+        maingui.button("§rModeration", "textures/items/book_normal");
+        maingui.button("§rModules", "textures/blocks/command_block");
+        maingui.button("§rPrefix", "textures/ui/UpdateGlyph");
+        maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
+        maingui.button("§rSaved Locations", "textures/items/compass_item");
     }
 
     maingui.show(player).then((result) => {

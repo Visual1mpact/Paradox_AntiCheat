@@ -2,6 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player } from "@minecraft/server";
 import { paradoxui } from "../../gui/paradoxui.js";
+import { ShowRules } from "../../gui/showrules/showrules.js";
 
 function paradoxuiHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -39,6 +40,12 @@ export function paradoxUI(message: BeforeChatEvent, args: string[]) {
 
     if (!config.ParadoxUIBeta) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ParadoxUIBeta is not enabled.!`);
+    }
+    //check to see if the player has the rules tag incase they have been able to call the UI command before the
+    // rules have been displayed.
+    if (player.hasTag("ShowRulesOnJoin")) {
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§rYou have not agreed to the rules please try once these have been displayed.`);
+        return ShowRules();
     }
 
     // Check for custom prefix
