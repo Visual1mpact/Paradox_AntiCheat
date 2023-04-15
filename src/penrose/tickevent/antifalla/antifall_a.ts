@@ -22,7 +22,7 @@ function antifalla(id: number) {
 
     for (const player of world.getPlayers(gm)) {
         // Get unique ID
-        const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+        const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
         // Skip if they have permission
         if (uniqueId === player.name) {

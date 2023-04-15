@@ -14,14 +14,14 @@ function verifypermission() {
         const encode = crypto?.(salt, config?.modules?.encryption?.password);
         if (encode === hash) {
             // Make sure their unique ID exists in case of a reload
-            if (dynamicPropertyRegistry.has(player.scoreboard.id) === false) {
-                dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
+            if (dynamicPropertyRegistry.has(player.id) === false) {
+                dynamicPropertyRegistry.set(player.id, player.name);
+                dynamicPropertyRegistry.delete(player.id);
             }
             continue;
         } else {
             player.removeDynamicProperty("hash");
             player.removeDynamicProperty("salt");
-            dynamicPropertyRegistry.delete(player.scoreboard.id);
         }
         // If they have the basic permission but not the hash then remove it
         player.removeTag("paradoxOpped");

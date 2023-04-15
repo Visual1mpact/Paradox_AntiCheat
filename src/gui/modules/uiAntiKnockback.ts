@@ -8,7 +8,7 @@ import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
 export async function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, player: Player) {
     const [AntiKnockBackToggle] = antiknockbackResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

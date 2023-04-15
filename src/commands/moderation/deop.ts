@@ -40,7 +40,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
     const player = message.sender;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
@@ -87,7 +87,7 @@ export function deop(message: BeforeChatEvent, args: string[]) {
         member.removeDynamicProperty("hash");
         member.removeDynamicProperty("salt");
         member.removeTag("paradoxOpped");
-        dynamicPropertyRegistry.delete(member.scoreboard.id);
+        dynamicPropertyRegistry.delete(member.id);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your OP status has been revoked!`);
     }

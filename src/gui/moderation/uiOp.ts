@@ -19,7 +19,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             if (hash === undefined) {
                 encode = crypto?.(salt, config?.modules?.encryption?.password);
                 player.setDynamicProperty("hash", encode);
-                dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
+                dynamicPropertyRegistry.set(player.id, player.name);
                 hash = player.getDynamicProperty("hash");
             } else {
                 encode = crypto?.(salt, config?.modules?.encryption?.password);

@@ -82,7 +82,7 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
     const salt = world.getDynamicProperty("crypt");
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     let homex: number;
     let homey: number;

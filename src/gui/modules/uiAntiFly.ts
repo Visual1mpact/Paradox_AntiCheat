@@ -8,7 +8,7 @@ import { FlyA } from "../../penrose/tickevent/fly/fly_a.js";
 export function uiANTIFLY(antiflyResult: ModalFormResponse, player: Player) {
     const [AntiFlyToggle] = antiflyResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

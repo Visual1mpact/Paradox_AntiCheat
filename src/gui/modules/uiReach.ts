@@ -10,7 +10,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiREACH(reachResult: ModalFormResponse, player: Player) {
     const [ReachAToggle, ReachBToggle, ReachCToggle] = reachResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

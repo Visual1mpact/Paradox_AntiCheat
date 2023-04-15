@@ -11,7 +11,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Player) {
     const [IllegalItemsAToggle, IllegalItemsBToggle, IllegalItemsCToggle, IllegalItemsDToggle, IllegalEnchanmentsToggle, IllegalLoreToggle, IllegalStackBanToggle] = illegalitemsResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

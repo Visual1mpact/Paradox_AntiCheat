@@ -8,7 +8,7 @@ import { paradoxui } from "../paradoxui.js";
 export async function uiANTISCAFFOLD(antiscaffoldResult: ModalFormResponse, player: Player) {
     const [AntiScaffoldToggle] = antiscaffoldResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

@@ -17,7 +17,7 @@ function verification(object: PlayerSpawnEvent) {
     const encode = crypto?.(salt, config?.modules?.encryption?.password);
     if (hash !== undefined && encode === hash) {
         // Store as an element using player scoreboard id to uniquely identify them
-        dynamicPropertyRegistry.set(player.scoreboard.id, player.name);
+        dynamicPropertyRegistry.set(player.id, player.name);
     }
 }
 

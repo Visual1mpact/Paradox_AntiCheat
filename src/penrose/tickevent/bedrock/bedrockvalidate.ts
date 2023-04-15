@@ -28,7 +28,7 @@ async function bedrockvalidate(id: number) {
     };
 
     for (const player of world.getPlayers()) {
-        const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+        const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
         if (uniqueId === player.name) {
             continue;

@@ -11,7 +11,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiSPAMMER(spamResult: ModalFormResponse, player: Player) {
     const [SpammerAToggle, SpammerBToggle, SpammerCToggle, SpammerDToggle] = spamResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

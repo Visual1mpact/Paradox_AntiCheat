@@ -8,7 +8,7 @@ import { onJoinrules } from "../playerspawnevent/rules/rules.js";
 export function uiRULES(banResult: ModalFormResponse, player: Player) {
     const [EnabledRules, EnableKick] = banResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {

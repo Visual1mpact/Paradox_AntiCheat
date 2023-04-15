@@ -7,7 +7,7 @@ import { paradoxui } from "../paradoxui.js";
 export async function uiCOMMANDBLOCKS(commandblocksResult: ModalFormResponse, player: Player) {
     const [CommandBlockOverrideToggle, RemoveCommandBlocksToggle] = commandblocksResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

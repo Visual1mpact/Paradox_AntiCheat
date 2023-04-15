@@ -8,7 +8,7 @@ import { paradoxui } from "../paradoxui.js";
 export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Player) {
     const [reason, LockdownToggle] = lockdownResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {

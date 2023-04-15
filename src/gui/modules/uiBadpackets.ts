@@ -9,7 +9,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiBADPACKETS(badpacketsResult: ModalFormResponse, player: Player) {
     const [BadPackets1Toggle, BadPackets2Toggle] = badpacketsResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

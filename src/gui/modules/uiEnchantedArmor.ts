@@ -7,7 +7,7 @@ import { paradoxui } from "../paradoxui.js";
 export async function uiENCHANTEDARMOR(enchantedarmorResult: ModalFormResponse, player: Player) {
     const [EnchantedArmorToggle] = enchantedarmorResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

@@ -7,7 +7,7 @@ import { paradoxui } from "../paradoxui.js";
 export async function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, player: Player) {
     const [AntiKillAuraToggle] = antikillauraResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

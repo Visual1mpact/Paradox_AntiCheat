@@ -17,7 +17,7 @@ function xraya(object: BlockBreakEvent) {
     const { player, brokenBlockPermutation } = object;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Skip if they have permission
     if (uniqueId === player.name) {

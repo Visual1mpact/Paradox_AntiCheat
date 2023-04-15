@@ -20,7 +20,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The player is not online.`);
     }
 
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
     if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
     }

@@ -42,7 +42,7 @@ export async function kick(message: BeforeChatEvent, args: string[]) {
     const reason = args.slice(1).join(" ").replace("-s", "") || "No reason specified";
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {

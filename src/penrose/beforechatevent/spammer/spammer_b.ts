@@ -14,7 +14,7 @@ function spammerb(msg: BeforeChatEvent) {
     const player = msg.sender;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Skip if they have permission
     if (uniqueId === player.name) {

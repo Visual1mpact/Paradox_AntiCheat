@@ -8,7 +8,7 @@ import { AntiFallA } from "../../penrose/tickevent/antifalla/antifall_a.js";
 export async function uiANTIFALL(antifallResult: ModalFormResponse, player: Player) {
     const [AntiFallToggle] = antifallResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

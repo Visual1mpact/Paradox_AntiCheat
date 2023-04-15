@@ -31,7 +31,7 @@ function noperms() {
         if (encode === hash) {
             entity.removeDynamicProperty("hash");
             entity.removeDynamicProperty("salt");
-            dynamicPropertyRegistry.delete(entity.scoreboard.id);
+            dynamicPropertyRegistry.delete(entity.id);
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {

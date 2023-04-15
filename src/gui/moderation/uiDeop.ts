@@ -24,7 +24,7 @@ export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player
     if (memberHash !== undefined && memberHash === memberEncode) {
         member.removeDynamicProperty("hash");
         member.removeDynamicProperty("salt");
-        dynamicPropertyRegistry.delete(member.scoreboard.id);
+        dynamicPropertyRegistry.delete(member.id);
         member.removeTag("paradoxOpped");
         if (player.name !== member.name) {
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is no longer Paradox-Opped.`);

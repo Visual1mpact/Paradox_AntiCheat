@@ -8,7 +8,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiLAGCLEAR(lagclearResult: ModalFormResponse, player: Player) {
     const [LagClearToggle] = lagclearResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 

@@ -41,7 +41,7 @@ export async function mute(message: BeforeChatEvent, args: string[]) {
     const reason = args.slice(1).join(" ") || "No reason specified";
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
@@ -75,7 +75,7 @@ export async function mute(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get unique ID
-    const uniqueId2 = dynamicPropertyRegistry.get(member?.scoreboard?.id);
+    const uniqueId2 = dynamicPropertyRegistry.get(member?.id);
 
     // Make sure they dont mute themselves
     if (uniqueId2 === uniqueId) {

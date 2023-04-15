@@ -16,7 +16,7 @@ function badpackets1(msg: BeforeChatEvent) {
     const message = msg.message.toLowerCase();
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Skip if they have permission
     if (uniqueId === player.name) {

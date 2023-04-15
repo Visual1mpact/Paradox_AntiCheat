@@ -9,7 +9,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiNOWSLOW(noslowResult: ModalFormResponse, player: Player) {
     const [NoSlowToggle] = noslowResult.formValues;
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.scoreboard?.id);
+    const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
 
