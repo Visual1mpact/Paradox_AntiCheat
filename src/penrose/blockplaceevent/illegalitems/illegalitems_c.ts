@@ -7,6 +7,7 @@ import salvageable from "../../../data/salvageable.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { iicWhitelist } from "../../../data/iicwhitelist.js";
 
 function rip(player: Player, inventory_item: ItemStack, enchData: { id: string; level: number }, block: Block) {
     if (!enchData && !block) {
@@ -106,7 +107,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         blockLoc.setPermutation(blockPerm);
     }
     // Check if place item is illegal
-    if (block.typeId in illegalitems) {
+    if (block.typeId in illegalitems && block.typeId in iicWhitelist === false) {
         // Set block in world
         block.setType(block.type);
         // replace block in world since destroying would drop item entities
