@@ -22,6 +22,7 @@ function verifypermission() {
         } else {
             player.removeDynamicProperty("hash");
             player.removeDynamicProperty("salt");
+            dynamicPropertyRegistry.delete(player.id);
         }
         // If they have the basic permission but not the hash then remove it
         player.removeTag("paradoxOpped");
