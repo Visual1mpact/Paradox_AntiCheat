@@ -42,9 +42,11 @@ function jesusa(id: number) {
             blockAtPlayer1 = player.dimension.getBlock(new Vector(x, y, z));
         } catch (error) {}
 
+        const playerFeetY = Math.floor(y); // Round down to get the player's feet Y-coordinate
+
         if (
-            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water") ||
-            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava")
+            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water" && playerFeetY === blockAtPlayer1.y) ||
+            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava" && playerFeetY === blockAtPlayer1.y)
         ) {
             const count = playerCount.get(player.name) || 0;
             playerCount.set(player.name, count + 1);
