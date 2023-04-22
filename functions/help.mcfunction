@@ -13,9 +13,4 @@ tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username>
 
 tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"\n§l§6[§4Tools and Utilites§6]§r"}]}
 
-# Gametest disabled
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute <username> ~~~ tools/stats§r - View a specific players anticheat logs."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/execute @a ~~~ function tools/stats§r - View everyones anticheat logs."}]}
-tellraw @s[scores={gametestapi=..0}] {"rawtext":[{"text":"§6/function tools/clearchat§r - Clears chat."}]}
-
 tellraw @s {"rawtext":[{"text":"\n"}]}
