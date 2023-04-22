@@ -16,7 +16,6 @@ function verifypermission() {
             // Make sure their unique ID exists in case of a reload
             if (dynamicPropertyRegistry.has(player.id) === false) {
                 dynamicPropertyRegistry.set(player.id, player.name);
-                dynamicPropertyRegistry.delete(player.id);
             }
             continue;
         } else {
