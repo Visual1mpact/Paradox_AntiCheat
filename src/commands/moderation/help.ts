@@ -125,6 +125,7 @@ export function help(message: BeforeChatEvent) {
         `§6${prefix}hotbar <optional>§r - ${config.customcommands.hotbar ? `Toggles hotbar message for all players. Optional: Message` : textDisabled}`,
         `§6${prefix}paradoxui§r - ${config.customcommands.paradoxiu ? `Shows GUI for main menu.` : textDisabled}`,
         `§6${prefix}tpr§r - ${config.customcommands.tpr ? `Will send requests to tp to players.` : textDisabled}`,
+        `§6${prefix}version§r - Will print to chat the currently installed version of paradox.`,
         ` `,
         `§l§6[§4Debugging Utilites§6]§r`,
         `§6${prefix}listitems§r - ${config.debug ? `Prints every item in the game and their max stack.` : textDisabled}`,
