@@ -4,7 +4,7 @@ import { allscores, getScore } from "../../../util";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry";
 import config from "../../../data/config";
 
-const configTicks = config.modules.autoBan.banHammerInterval;
+const configTicks: number = config.modules.autoBan.banHammerInterval;
 function rip(player: Player, reason: string) {
     // Tag with reason and by who
     try {
