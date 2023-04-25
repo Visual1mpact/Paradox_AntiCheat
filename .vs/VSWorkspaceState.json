@@ -7,9 +7,7 @@
     "\\src\\gui",
     "\\src\\gui\\playerspawnevent",
     "\\src\\gui\\playerspawnevent\\rules",
-    "\\src\\gui\\showrules",
-    "\\src\\penrose\\entityhurtevent"
+    "\\src\\gui\\showrules"
   ],
-  "SelectedNode": "\\src\\gui\\playerspawnevent\\rules\\rules.ts",
   "PreviewInSolutionExplorer": false
 }

@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
-import { banMessage, sendMsg, sendMsgToPlayer } from "../../../util.js";
+import { banMessage, sendMsg, sendMsgToPlayer, setScore } from "../../../util.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
 function serverban() {
@@ -25,6 +25,41 @@ function serverban() {
 
             // Remove player from queue
             queueUnban.delete(player.nameTag);
+            //clear violations
+            const scores = [
+                "autoclickervl",
+                "badpacketsvl",
+                "killauravl",
+                "flyvl",
+                "illegalitemsvl",
+                "interactusevl",
+                "cbevl",
+                "gamemodevl",
+                "autototemvl",
+                "spammervl",
+                "namespoofvl",
+                "noslowvl",
+                "crashervl",
+                "reachvl",
+                "invmovevl",
+                "invalidsprintvl",
+                "armorvl",
+                "antikbvl",
+                "antifallvl",
+            ];
+            scores.forEach((score) => {
+                try {
+                    const objective = world.scoreboard.getObjective(score);
+                    const playerScore = player.scoreboard.getScore(objective);
+                    //if the player has a violation then we reset the score.
+                    if (playerScore > 0) {
+                        //reset the score
+                        setScore(player, score, 0);
+                    }
+                } catch {
+                    // Ignore since this score doesn't exist for this player yet.
+                }
+            });
 
             // Let staff and player know they are unbanned
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have been unbanned.`);
