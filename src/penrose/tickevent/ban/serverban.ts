@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
-import { banMessage, sendMsg, sendMsgToPlayer, setScore } from "../../../util.js";
+import { allscores, banMessage, sendMsg, sendMsgToPlayer, setScore } from "../../../util.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
 function serverban() {
@@ -26,27 +26,7 @@ function serverban() {
             // Remove player from queue
             queueUnban.delete(player.nameTag);
             //clear violations
-            const scores = [
-                "autoclickervl",
-                "badpacketsvl",
-                "killauravl",
-                "flyvl",
-                "illegalitemsvl",
-                "interactusevl",
-                "cbevl",
-                "gamemodevl",
-                "autototemvl",
-                "spammervl",
-                "namespoofvl",
-                "noslowvl",
-                "crashervl",
-                "reachvl",
-                "invmovevl",
-                "invalidsprintvl",
-                "armorvl",
-                "antikbvl",
-                "antifallvl",
-            ];
+            const scores = allscores;
             scores.forEach((score) => {
                 try {
                     const objective = world.scoreboard.getObjective(score);
