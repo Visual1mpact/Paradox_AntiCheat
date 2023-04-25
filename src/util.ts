@@ -462,3 +462,25 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
         await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
     } catch {}
 };
+
+export const allscores = [
+    "autoclickervl",
+    "badpacketsvl",
+    "killauravl",
+    "flyvl",
+    "illegalitemsvl",
+    "interactusevl",
+    "cbevl",
+    "gamemodevl",
+    "autototemvl",
+    "spammervl",
+    "namespoofvl",
+    "noslowvl",
+    "crashervl",
+    "reachvl",
+    "invmovevl",
+    "invalidsprintvl",
+    "armorvl",
+    "antikbvl",
+    "antifallvl",
+];

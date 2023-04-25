@@ -57,6 +57,7 @@ import { uiDESPAWNER } from "./moderation/uiDespawner";
 import { uiSAVEDLOCATIONS } from "./playerui/uiSavedLocations";
 import { UIREPORTPLAYER } from "./playerui/uiReport";
 import { uiSTATS } from "./moderation/uiStats";
+import versionFile from "../version.js";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -65,7 +66,7 @@ async function paradoxui(player: Player) {
     const encode = crypto(salt, config.modules.encryption.password) ?? null;
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     maingui.title("§4Paradox§4");
-    maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e");
+    maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§rVersion: §2" + versionFile.version);
     if (uniqueId !== player.name) {
         maingui.button("§rOp", "textures/ui/op");
         maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
@@ -79,7 +80,7 @@ async function paradoxui(player: Player) {
         maingui.button("§rPrefix", "textures/ui/UpdateGlyph");
         maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
         maingui.button("§rSaved Locations", "textures/items/compass_item");
-        maingui.button("Stats");
+        maingui.button("§rStats", "textures/items/book_normal");
     } else {
         maingui.button("§rOp", "textures/ui/op");
         maingui.button("§rDeop", "textures/items/ender_pearl");
@@ -88,6 +89,7 @@ async function paradoxui(player: Player) {
         maingui.button("§rPrefix", "textures/ui/UpdateGlyph");
         maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
         maingui.button("§rSaved Locations", "textures/items/compass_item");
+        maingui.button("§rStats", "textures/items/book_normal");
     }
 
     maingui.show(player).then((result) => {

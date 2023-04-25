@@ -1,6 +1,6 @@
 import { Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { getGamemode, getScore } from "../../util";
+import { allscores, getGamemode, getScore } from "../../util";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -25,32 +25,14 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
     }
 
-    const scores = [
-        "autoclickervl",
-        "badpacketsvl",
-        "killauravl",
-        "flyvl",
-        "illegalitemsvl",
-        "interactusevl",
-        "cbevl",
-        "gamemodevl",
-        "autototemvl",
-        "spammervl",
-        "namespoofvl",
-        "noslowvl",
-        "crashervl",
-        "reachvl",
-        "invmovevl",
-        "invalidsprintvl",
-        "armorvl",
-        "antikbvl",
-    ];
+    const scores = allscores;
 
     const reportBody = [
         `§6All Stats for ${member.name}§r\n\n`,
-        `§6${member.name}§r is in Gamemode: ${getGamemode(member)}\n`,
-        `§6${member.name}§r is currently at §4X= ${member.location.x.toFixed(0)} §2Y= ${member.location.y.toFixed(0)} §3Z= ${member.location.z.toFixed(0)}\n`,
+        `§rCurrent Gamemode:§6 ${getGamemode(member)}\n`,
+        `§rCurrently at: §4X= ${member.location.x.toFixed(0)} §2Y= ${member.location.y.toFixed(0)} §3Z= ${member.location.z.toFixed(0)}\n`,
         `§r§4--------------------------------§r\n`,
+        `§6${member.name}'s Current violations §r\n`,
     ];
 
     scores.forEach((score) => {
@@ -64,6 +46,8 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
             // Ignore since this score doesn't exist for this player yet.
         }
     });
+    reportBody.push(`§r§4--------------------------------§r\n`);
+
     // Define the armor types and materials you want to loop through
     const armorTypes = ["Helmet", "Chest", "Leggings", "Boots"];
     const armorMaterials = ["§7Leather", "§fChain", "§fIron", "§6Gold", "§bDiamond", "§8Netherite"];
