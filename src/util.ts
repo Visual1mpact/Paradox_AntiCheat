@@ -463,7 +463,7 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
     } catch {}
 };
 
-export const allscores = [
+export const allscores: string[] = [
     "autoclickervl",
     "badpacketsvl",
     "killauravl",
