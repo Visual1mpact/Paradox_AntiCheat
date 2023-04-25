@@ -272,6 +272,8 @@ export default {
         },
         autoBan: {
             enabled: false,
+            //Time interval in ticks 1 second = 20 ticks
+            banHammerInterval: 6000,
         },
         /**
          * Add a password in-between the quotes.

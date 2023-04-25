@@ -1,8 +1,10 @@
 import { Player, system, world } from "@minecraft/server";
 import { kickablePlayers } from "../../../kickcheck";
-import { getScore } from "../../../util";
+import { allscores, getScore } from "../../../util";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry";
+import config from "../../../data/config";
 
+const configTicks = config.modules.autoBan.banHammerInterval;
 function rip(player: Player, reason: string) {
     // Tag with reason and by who
     try {
@@ -24,26 +26,7 @@ function autoban(id: number) {
         system.clearRun(id);
         return;
     }
-    const scores = [
-        "autoclickervl",
-        "badpacketsvl",
-        "killauravl",
-        "flyvl",
-        "illegalitemsvl",
-        "interactusevl",
-        "cbevl",
-        "gamemodevl",
-        "autototemvl",
-        "spammervl",
-        "namespoofvl",
-        "noslowvl",
-        "crashervl",
-        "reachvl",
-        "invmovevl",
-        "invalidsprintvl",
-        "armorvl",
-        "antikbvl",
-    ];
+    const scores = allscores;
 
     for (const player of world.getPlayers()) {
         // Get unique ID
@@ -68,5 +51,5 @@ export function AutoBan() {
     const autoBanId = system.runInterval(() => {
         autoban(autoBanId);
         //set ticks to 6000 for 5 minutes.
-    }, 20);
+    }, configTicks);
 }
