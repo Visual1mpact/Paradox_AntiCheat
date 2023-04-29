@@ -26,7 +26,7 @@ for file in "$entity_dir"/*.json; do
             # If the file does not contain the "paradox:kick" component group, add it to the "component_groups" object
             sed -i '/"component_groups": {/a \
                 "paradox:kick": {\
-                    "minecraft:despawn": {\
+                    "minecraft:instant_despawn": {\
                         "remove_child_entities": true\
                     }\
                 },' "$file"
@@ -39,7 +39,7 @@ for file in "$entity_dir"/*.json; do
         sed -i '/"minecraft:entity": {/a \
             "component_groups": {\
                 "paradox:kick": {\
-                    "minecraft:despawn": {\
+                    "minecraft:instant_despawn": {\
                         "remove_child_entities": true\
                     }\
                 }\
