@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function autoauraHelp(player: Player, prefix: string, autoaurascore: string | number | boolean) {
+function autoauraHelp(player: Player, prefix: string, autoaurascore: number) {
     let commandStatus: string;
     if (!config.customcommands.autoaura) {
         commandStatus = "§6[§4DISABLED§6]§r";

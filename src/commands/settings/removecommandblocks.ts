@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function removeCBEHelp(player: Player, prefix: string, commandblocksscore: string | number | boolean) {
+function removeCBEHelp(player: Player, prefix: string, commandblocksscore: number) {
     let commandStatus: string;
     if (!config.customcommands.removecommandblocks) {
         commandStatus = "§6[§4DISABLED§6]§r";

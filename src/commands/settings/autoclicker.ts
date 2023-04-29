@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function autoclickerHelp(player: Player, prefix: string, autoclickerscore: string | number | boolean) {
+function autoclickerHelp(player: Player, prefix: string, autoclickerscore: number) {
     let commandStatus: string;
     if (!config.customcommands.autoclicker) {
         commandStatus = "§6[§4DISABLED§6]§r";

@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function overrideCBEHelp(player: Player, prefix: string, cmdsscore: string | number | boolean) {
+function overrideCBEHelp(player: Player, prefix: string, cmdsscore: number) {
     let commandStatus: string;
     if (!config.customcommands.overidecommandblocksenabled) {
         commandStatus = "§6[§4DISABLED§6]§r";

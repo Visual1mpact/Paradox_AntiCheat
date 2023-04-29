@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function enchantedArmorHelp(player: Player, prefix: string, encharmorscore: string | number | boolean) {
+function enchantedArmorHelp(player: Player, prefix: string, encharmorscore: number) {
     let commandStatus: string;
     if (!config.customcommands.enchantedarmor) {
         commandStatus = "§6[§4DISABLED§6]§r";
