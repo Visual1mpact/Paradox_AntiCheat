@@ -1,4 +1,4 @@
-import { world, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, InventoryComponentContainer, system } from "@minecraft/server";
+import { world, ItemStack, Items, MinecraftEnchantmentTypes, Enchantment, Player, EntityInventoryComponent, ItemEnchantsComponent, system, Container } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, sendMsg, sendMsgToPlayer, startTimer, titleCase, toCamelCase } from "../../../util.js";
@@ -87,7 +87,7 @@ function illegalitemsa(id: number) {
         }
     }
     let player: Player;
-    let container: InventoryComponentContainer;
+    let container: Container;
     for ([player, container] of storage.entries()) {
         /**
          * Once we get the player as the key and its relevant value from the map

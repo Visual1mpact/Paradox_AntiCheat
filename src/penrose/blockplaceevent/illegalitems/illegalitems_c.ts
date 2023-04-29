@@ -1,4 +1,4 @@
-import { world, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment, Player, Block, BlockPlaceEvent, BlockInventoryComponent, BlockInventoryComponentContainer, ItemEnchantsComponent, Vector } from "@minecraft/server";
+import { world, ItemStack, Items, MinecraftEnchantmentTypes, BlockProperties, Enchantment, Player, Block, BlockPlaceEvent, BlockInventoryComponent, ItemEnchantsComponent, Vector, Container } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, toCamelCase, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
@@ -119,7 +119,7 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         return rip(player, null, null, block);
     }
     // Check if placed item has a inventory container
-    let inventory: BlockInventoryComponentContainer;
+    let inventory: Container;
     try {
         const invComponent = block.getComponent("inventory") as BlockInventoryComponent;
         inventory = invComponent.container;
