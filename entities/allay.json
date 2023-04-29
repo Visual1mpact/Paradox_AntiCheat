@@ -9,7 +9,7 @@
         },
         "component_groups": {
             "paradox:kick": {
-                "minecraft:instant_despawn": {
+                "minecraft:despawn": {
                     "remove_child_entities": true
                 }
             },
@@ -159,6 +159,11 @@
                                         "test": "is_family",
                                         "subject": "other",
                                         "value": "player"
+                                    },
+                                    {
+                                        "test": "is_sneaking",
+                                        "subject": "other",
+                                        "value": false
                                     }
                                 ]
                             }

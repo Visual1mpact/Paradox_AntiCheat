@@ -9,7 +9,7 @@
         },
         "component_groups": {
             "paradox:kick": {
-                "minecraft:instant_despawn": {
+                "minecraft:despawn": {
                     "remove_child_entities": true
                 }
             },
@@ -356,8 +356,8 @@
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
             "minecraft:collision_box": {
-                "width": 1.7,
-                "height": 1.5
+                "width": 1.3,
+                "height": 1.25
             },
             "minecraft:nameable": {},
             "minecraft:health": {

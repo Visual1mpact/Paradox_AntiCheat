@@ -9,7 +9,7 @@
         },
         "component_groups": {
             "paradox:kick": {
-                "minecraft:instant_despawn": {
+                "minecraft:despawn": {
                     "remove_child_entities": true
                 }
             },
@@ -58,6 +58,7 @@
             }
         },
         "components": {
+            "minecraft:damage_sensor": {},
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
                 "on_death": "query.last_hit_by_player ? (query.is_baby ? 12 : 5) + (Math.die_roll(query.equipment_count,1,3)) : 0"
@@ -188,7 +189,8 @@
                                 {
                                     "any_of": [
                                         { "test": "on_fire", "subject": "self", "value": true },
-                                        { "test": "on_hot_block", "subject": "self", "value": true }
+                                        { "test": "on_hot_block", "subject": "self", "value": true },
+                                        { "test": "taking_fire_damage", "subject": "self", "value": true }
                                     ]
                                 },
                                 {
