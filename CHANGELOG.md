@@ -1,6 +1,10 @@
 # Changelog
 
-## [v3.0.22](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.21) (2023-04-10)
+## [v3.0.23](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.23) (2023-04-29)
+
+[Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.0.22...v3.0.23)
+
+## [v3.0.22](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.22) (2023-04-26)
 
 [Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.0.21...v3.0.22)
 
@@ -30,7 +34,7 @@
 
 **Merged pull requests:**
 
--   \[Part 2\] Update logic for hash \(dynamic properties\) [\#24](https://github.com/Pete9xi/Paradox_AntiCheat/pull/24) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[Part 2\] Update logic for hash \(dynamic properties\) [\#24](https://github.com/Pete9xi/Paradox_AntiCheat/pull/24) ([Visual1mpact](https://github.com/Visual1mpact))
 
 ## [v3.0.15](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.15) (2023-03-05)
 
@@ -42,29 +46,29 @@
 
 **Merged pull requests:**
 
--   Call hashCode function from main script [\#23](https://github.com/Pete9xi/Paradox_AntiCheat/pull/23) ([Visual1mpact](https://github.com/Visual1mpact))
--   \[Part 1\] Update logic for hash \(dynamic properties\) [\#22](https://github.com/Pete9xi/Paradox_AntiCheat/pull/22) ([Visual1mpact](https://github.com/Visual1mpact))
--   Fix TypeError in tick event for worldborder [\#21](https://github.com/Pete9xi/Paradox_AntiCheat/pull/21) ([Visual1mpact](https://github.com/Visual1mpact))
--   Fix mismatch for dynamic properties [\#20](https://github.com/Pete9xi/Paradox_AntiCheat/pull/20) ([Visual1mpact](https://github.com/Visual1mpact))
--   Fix setScore functionality [\#19](https://github.com/Pete9xi/Paradox_AntiCheat/pull/19) ([Visual1mpact](https://github.com/Visual1mpact))
--   \[Part 3\] Update usage for dynamic properties [\#18](https://github.com/Pete9xi/Paradox_AntiCheat/pull/18) ([Visual1mpact](https://github.com/Visual1mpact))
--   \[Part 2\] Update usage for dynamic properties [\#17](https://github.com/Pete9xi/Paradox_AntiCheat/pull/17) ([Visual1mpact](https://github.com/Visual1mpact))
--   Modify code for Dynamic Property Registry [\#16](https://github.com/Pete9xi/Paradox_AntiCheat/pull/16) ([Visual1mpact](https://github.com/Visual1mpact))
--   \[Part 1\] Update usage for dynamic properties [\#15](https://github.com/Pete9xi/Paradox_AntiCheat/pull/15) ([Visual1mpact](https://github.com/Visual1mpact))
--   Update command handler for antifalla [\#14](https://github.com/Pete9xi/Paradox_AntiCheat/pull/14) ([Visual1mpact](https://github.com/Visual1mpact))
--   \[bug\] playerspawnevent [\#13](https://github.com/Pete9xi/Paradox_AntiCheat/pull/13) ([Visual1mpact](https://github.com/Visual1mpact))
--   Fix callback error for antifalla [\#12](https://github.com/Pete9xi/Paradox_AntiCheat/pull/12) ([Visual1mpact](https://github.com/Visual1mpact))
--   Update scripts for Windows [\#11](https://github.com/Pete9xi/Paradox_AntiCheat/pull/11) ([Visual1mpact](https://github.com/Visual1mpact))
--   Development [\#10](https://github.com/Pete9xi/Paradox_AntiCheat/pull/10) ([Visual1mpact](https://github.com/Visual1mpact))
--   Development [\#9](https://github.com/Pete9xi/Paradox_AntiCheat/pull/9) ([Visual1mpact](https://github.com/Visual1mpact))
--   Various changes and fix for OP Password [\#8](https://github.com/Pete9xi/Paradox_AntiCheat/pull/8) ([Visual1mpact](https://github.com/Visual1mpact))
--   Ignore init arg length check for Hotbar [\#7](https://github.com/Pete9xi/Paradox_AntiCheat/pull/7) ([Visual1mpact](https://github.com/Visual1mpact))
--   Modify the logic for Hotbar [\#6](https://github.com/Pete9xi/Paradox_AntiCheat/pull/6) ([Visual1mpact](https://github.com/Visual1mpact))
--   Remove Realm Bot Chat Relay [\#5](https://github.com/Pete9xi/Paradox_AntiCheat/pull/5) ([Visual1mpact](https://github.com/Visual1mpact))
--   Implement Async [\#4](https://github.com/Pete9xi/Paradox_AntiCheat/pull/4) ([Visual1mpact](https://github.com/Visual1mpact))
--   Update tick events [\#3](https://github.com/Pete9xi/Paradox_AntiCheat/pull/3) ([Visual1mpact](https://github.com/Visual1mpact))
--   Small optimization and bug fix [\#2](https://github.com/Pete9xi/Paradox_AntiCheat/pull/2) ([Visual1mpact](https://github.com/Visual1mpact))
--   Cleaning up project environment [\#1](https://github.com/Pete9xi/Paradox_AntiCheat/pull/1) ([Visual1mpact](https://github.com/Visual1mpact))
+- Call hashCode function from main script [\#23](https://github.com/Pete9xi/Paradox_AntiCheat/pull/23) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[Part 1\] Update logic for hash \(dynamic properties\) [\#22](https://github.com/Pete9xi/Paradox_AntiCheat/pull/22) ([Visual1mpact](https://github.com/Visual1mpact))
+- Fix TypeError in tick event for worldborder [\#21](https://github.com/Pete9xi/Paradox_AntiCheat/pull/21) ([Visual1mpact](https://github.com/Visual1mpact))
+- Fix mismatch for dynamic properties [\#20](https://github.com/Pete9xi/Paradox_AntiCheat/pull/20) ([Visual1mpact](https://github.com/Visual1mpact))
+- Fix setScore functionality [\#19](https://github.com/Pete9xi/Paradox_AntiCheat/pull/19) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[Part 3\] Update usage for dynamic properties [\#18](https://github.com/Pete9xi/Paradox_AntiCheat/pull/18) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[Part 2\] Update usage for dynamic properties [\#17](https://github.com/Pete9xi/Paradox_AntiCheat/pull/17) ([Visual1mpact](https://github.com/Visual1mpact))
+- Modify code for Dynamic Property Registry [\#16](https://github.com/Pete9xi/Paradox_AntiCheat/pull/16) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[Part 1\] Update usage for dynamic properties [\#15](https://github.com/Pete9xi/Paradox_AntiCheat/pull/15) ([Visual1mpact](https://github.com/Visual1mpact))
+- Update command handler for antifalla [\#14](https://github.com/Pete9xi/Paradox_AntiCheat/pull/14) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[bug\] playerspawnevent [\#13](https://github.com/Pete9xi/Paradox_AntiCheat/pull/13) ([Visual1mpact](https://github.com/Visual1mpact))
+- Fix callback error for antifalla [\#12](https://github.com/Pete9xi/Paradox_AntiCheat/pull/12) ([Visual1mpact](https://github.com/Visual1mpact))
+- Update scripts for Windows [\#11](https://github.com/Pete9xi/Paradox_AntiCheat/pull/11) ([Visual1mpact](https://github.com/Visual1mpact))
+- Development [\#10](https://github.com/Pete9xi/Paradox_AntiCheat/pull/10) ([Visual1mpact](https://github.com/Visual1mpact))
+- Development [\#9](https://github.com/Pete9xi/Paradox_AntiCheat/pull/9) ([Visual1mpact](https://github.com/Visual1mpact))
+- Various changes and fix for OP Password [\#8](https://github.com/Pete9xi/Paradox_AntiCheat/pull/8) ([Visual1mpact](https://github.com/Visual1mpact))
+- Ignore init arg length check for Hotbar [\#7](https://github.com/Pete9xi/Paradox_AntiCheat/pull/7) ([Visual1mpact](https://github.com/Visual1mpact))
+- Modify the logic for Hotbar [\#6](https://github.com/Pete9xi/Paradox_AntiCheat/pull/6) ([Visual1mpact](https://github.com/Visual1mpact))
+- Remove Realm Bot Chat Relay [\#5](https://github.com/Pete9xi/Paradox_AntiCheat/pull/5) ([Visual1mpact](https://github.com/Visual1mpact))
+- Implement Async [\#4](https://github.com/Pete9xi/Paradox_AntiCheat/pull/4) ([Visual1mpact](https://github.com/Visual1mpact))
+- Update tick events [\#3](https://github.com/Pete9xi/Paradox_AntiCheat/pull/3) ([Visual1mpact](https://github.com/Visual1mpact))
+- Small optimization and bug fix [\#2](https://github.com/Pete9xi/Paradox_AntiCheat/pull/2) ([Visual1mpact](https://github.com/Visual1mpact))
+- Cleaning up project environment [\#1](https://github.com/Pete9xi/Paradox_AntiCheat/pull/1) ([Visual1mpact](https://github.com/Visual1mpact))
 
 ## [v3.0.13](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.13) (2023-02-18)
 
@@ -350,4 +354,6 @@
 
 [Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/b174b2960af08a4dbfab838f818df6e75e631811...0.1.0)
 
-\* _This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)_
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
