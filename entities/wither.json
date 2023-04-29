@@ -3,7 +3,7 @@
     "minecraft:entity": {
         "component_groups": {
             "paradox:kick": {
-                "minecraft:despawn": {
+                "minecraft:instant_despawn": {
                     "remove_child_entities": true
                 }
             }
