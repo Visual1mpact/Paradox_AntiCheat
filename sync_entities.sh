@@ -3,8 +3,25 @@
 # Define the directory where the entity JSON files are stored
 entity_dir="./entities"
 
+# Check if required utilities are installed
+if ! command -v grep > /dev/null; then
+    echo "Error: grep is not installed"
+    exit 1
+fi
+
+if ! command -v sed > /dev/null; then
+    echo "Error: sed is not installed"
+    exit 1
+fi
+
+if ! command -v jq > /dev/null; then
+    echo "Error: jq is not installed"
+    exit 1
+fi
+
 # Loop through all JSON files in the entity directory
 for file in "$entity_dir"/*.json; do
+    # Ignore player.json (we handle it manually)
     if [[ $file == "${entity_dir}/player.json" ]]; then
         continue;
     fi
