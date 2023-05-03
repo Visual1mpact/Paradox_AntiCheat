@@ -1,4 +1,4 @@
-import { Player, PlayerSpawnEvent, world } from "@minecraft/server";
+import { EntityQueryOptions, Player, PlayerSpawnEvent, world } from "@minecraft/server";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { getPrefix, setTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
@@ -50,11 +50,11 @@ async function onJoinTime(object: PlayerSpawnEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
-        const allPlayers = [...world.getPlayers()];
-        for (const player of allPlayers) {
-            if (player.hasTag("illegalitemsA")) {
-                player.removeTag("illegalitemsA");
-            }
+        const filter: EntityQueryOptions = {
+            tags: ["illegalitemsA"],
+        };
+        for (const player of world.getPlayers(filter)) {
+            player.removeTag("illegalitemsA");
         }
     }
 
