@@ -54,27 +54,17 @@ export function notify(message: BeforeChatEvent, args: string[]) {
         return notifyHelp(player, prefix);
     }
 
-    if (player.hasTag("notify")) {
-        player.addTag("nonotify");
-    }
+    const tagBoolean = player.hasTag("notify");
 
-    if (player.hasTag("nonotify")) {
+    // Disable
+    if (tagBoolean) {
         player.removeTag("notify");
-    }
-
-    if (player.hasTag("nonotify")) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have disabled cheat notifications.`);
     }
 
-    if (!player.hasTag("nonotify")) {
+    // Enable
+    if (!tagBoolean) {
         player.addTag("notify");
-    }
-
-    if (player.hasTag("notify") && !player.hasTag("nonotify")) {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have enabled cheat notifications.`);
-    }
-
-    if (player.hasTag("nonotify")) {
-        player.removeTag("nonotify");
     }
 }
