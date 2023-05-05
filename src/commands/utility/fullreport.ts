@@ -1,9 +1,7 @@
-/* eslint no-var: "off"*/
-
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getGamemode, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
+import { getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function fullReportHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -124,45 +122,55 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
             }
         });
 
-        // Define the armor types and materials you want to loop through
-        const armorTypes = ["Helmet", "Chest", "Leggings", "Boots"];
-        const armorMaterials = ["§7Leather", "§fChain", "§fIron", "§6Gold", "§bDiamond", "§8Netherite"];
-        const enchantedArmorScores = [
-            { type: "helmet", score: "ench_helmet" },
-            { type: "chest", score: "ench_chest" },
-            { type: "leggings", score: "ench_leggings" },
-            { type: "boots", score: "ench_boots" },
-        ];
+        const equipment = member.getComponent("equipment_inventory") as EntityEquipmentInventoryComponent;
+        const helmet = equipment.getEquipment("head" as EquipmentSlot);
+        const chest = equipment.getEquipment("chest" as EquipmentSlot);
+        const legs = equipment.getEquipment("legs" as EquipmentSlot);
+        const feet = equipment.getEquipment("feet" as EquipmentSlot);
+        const mainhand = equipment.getEquipment("mainhand" as EquipmentSlot);
+        const offhand = equipment.getEquipment("offhand" as EquipmentSlot);
 
-        // Loop through all possible combinations of armor types and materials
-        for (const armorType of armorTypes) {
-            let materialArray = armorMaterials;
+        const materialColors = {
+            golden: "§6", // gold
+            iron: "§7", // light gray
+            diamond: "§b", // aqua
+            leather: "§e", // yellow
+            chainmail: "§8", // dark gray
+            turtle: "§a", // green
+            netherite: "§4", // dark red
+            elytra: "§5", // purple
+            none: "§f", // white
+        };
 
-            // Check if the current armor piece is a chest or helmet
-            if (armorType === "Chest" || armorType === "Helmet") {
-                // Select either "§7Elytra" or "§2Turtle Shell" depending on the armor type
-                const materialString = armorType === "Chest" ? "§7Elytra" : "§2Turtle Shell";
-
-                // Replace the last element of the array with the selected material string
-                materialArray = armorMaterials.concat(materialString);
+        for (const [verification, armorType] of [
+            [helmet, "Helmet"],
+            [chest, "Chestplate"],
+            [legs, "Leggings"],
+            [feet, "Boots"],
+            [mainhand, "Mainhand"],
+            [offhand, "Offhand"],
+        ]) {
+            if (!(verification instanceof ItemStack)) {
+                continue;
             }
-
-            // Determine if the current armor piece is enchanted or not
+            const enchantedEquipment = verification.getComponent("enchantments") as ItemEnchantsComponent;
+            const enchantList = enchantedEquipment.enchantments;
+            if (!enchantList) {
+                continue;
+            }
             let isEnchanted = false;
-            const objective = enchantedArmorScores.find((a) => a.type === armorType.toLowerCase()).score;
-            const materialObjective = `detect_${armorType.toLowerCase()}`;
-            const armorScore = getScore(objective, player);
-            const materialScore = getScore(materialObjective, player);
-
-            if (armorScore > 0) {
-                isEnchanted = true;
+            for (const enchant in MinecraftEnchantmentTypes) {
+                const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant]);
+                if (enchantNumber > 0) {
+                    isEnchanted = true;
+                }
             }
-
-            if (materialScore > 0) {
-                const materialString = materialArray[materialScore - 1];
-                // Generate the tellraw message for this armor piece
-                reportBody.push(`§r§4[§6Paradox§4]§r ${armorType}: ${isEnchanted ? "§aEnchanted§r" : "§4Unenchanted§r"} ${materialString}`);
+            let materialType = verification.typeId.split(":")[1].replace(/_\w+/, "");
+            if (armorType === "Mainhand" || armorType === "Offhand") {
+                materialType = verification.typeId.split(":")[1];
             }
+            const materialColor = materialColors[materialType] || materialColors["none"];
+            reportBody.push(`§r§4[§6Paradox§4]§r ${armorType}: ${isEnchanted ? "§aEnchanted§r" : "§4Unenchanted§r"} || ${materialColor}${materialType}`);
         }
 
         sendMsgToPlayer(player, reportBody);
