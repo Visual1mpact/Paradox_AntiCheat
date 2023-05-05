@@ -2,7 +2,7 @@
 import { BeforeChatEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsgToPlayer, getGamemode } from "../../util.js";
+import { getPrefix, sendMsgToPlayer, getGamemode, allscores } from "../../util.js";
 
 function statsHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -76,27 +76,6 @@ export async function stats(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
     }
 
-    const scores = [
-        "autoclickervl",
-        "badpacketsvl",
-        "killauravl",
-        "flyvl",
-        "illegalitemsvl",
-        "interactusevl",
-        "cbevl",
-        "gamemodevl",
-        "autototemvl",
-        "spammervl",
-        "namespoofvl",
-        "noslowvl",
-        "crashervl",
-        "reachvl",
-        "invmovevl",
-        "invalidsprintvl",
-        "armorvl",
-        "antikbvl",
-    ];
-
     const reportBody = [
         `\n§r§4[§6Paradox§4]§r Getting all Paradox Logs from: §6${member.name}§r`,
         `§r§4[§6Paradox§4]§r §6${member.name}§r is in Gamemode: ${getGamemode(member)}`,
@@ -118,7 +97,7 @@ export async function stats(message: BeforeChatEvent, args: string[]) {
     let violationsFound = 0;
     let vlCount = 0;
     let divider = false;
-    scores.forEach((score) => {
+    allscores.forEach((score) => {
         vlCount++;
         try {
             const objective = world.scoreboard.getObjective(score);
@@ -134,7 +113,7 @@ export async function stats(message: BeforeChatEvent, args: string[]) {
         } catch {
             // Ignore since this score doesn't exist for this player yet.
         }
-        if (vlCount === scores.length && divider === true) {
+        if (vlCount === allscores.length && divider === true) {
             reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);
         }
     });

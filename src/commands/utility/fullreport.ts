@@ -1,7 +1,7 @@
 import { BeforeChatEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { allscores, getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function fullReportHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -58,27 +58,6 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
     }
 
-    const scores = [
-        "autoclickervl",
-        "badpacketsvl",
-        "killauravl",
-        "flyvl",
-        "illegalitemsvl",
-        "interactusevl",
-        "cbevl",
-        "gamemodevl",
-        "autototemvl",
-        "spammervl",
-        "namespoofvl",
-        "noslowvl",
-        "crashervl",
-        "reachvl",
-        "invmovevl",
-        "invalidsprintvl",
-        "armorvl",
-        "antikbvl",
-    ];
-
     for (const member of world.getPlayers()) {
         const reportBody = [
             `\n§r§4[§6Paradox§4]§r Getting all Paradox Logs from: §6${member.name}§r`,
@@ -101,7 +80,7 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
         let violationsFound = 0;
         let vlCount = 0;
         let divider = false;
-        scores.forEach((score) => {
+        allscores.forEach((score) => {
             vlCount++;
             try {
                 const objective = world.scoreboard.getObjective(score);
@@ -117,7 +96,7 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
             } catch {
                 // Ignore since this score doesn't exist for this player yet.
             }
-            if (vlCount === scores.length && divider === true) {
+            if (vlCount === allscores.length && divider === true) {
                 reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);
             }
         });
