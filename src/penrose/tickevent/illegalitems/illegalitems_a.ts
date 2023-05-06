@@ -40,11 +40,9 @@ function illegalitemsa(id: number) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsABoolean === false) {
-        const allPlayers = [...world.getPlayers()];
+        const allPlayers = world.getPlayers({ tags: ["illegalitemsA"] });
         for (const player of allPlayers) {
-            if (player.hasTag("illegalitemsA")) {
-                player.removeTag("illegalitemsA");
-            }
+            player.removeTag("illegalitemsA");
         }
         system.clearRun(id);
         return;
