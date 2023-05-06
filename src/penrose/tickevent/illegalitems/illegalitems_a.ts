@@ -129,7 +129,7 @@ function illegalitemsa(id: number) {
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} with lore from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
                 rip(player, playerItemStack, null, true);
-                continue;
+                break;
             }
 
             // Illegal Enchantments
