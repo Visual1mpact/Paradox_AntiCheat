@@ -156,9 +156,9 @@ function illegalitemsa(id: number) {
                         playerContainer.setItem(itemSlot);
                         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.typeId.replace("minecraft:", "")} with Illegal Enchantments from ${player.nameTag}.`);
                         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal Enchantments are not allowed!`);
-                        enchantmentPresenceMap.delete(enchantment);
-                        enchantmentDataMap.delete(enchantment);
-                        inventorySlotMap.delete(enchantment);
+                        enchantmentPresenceMap.clear();
+                        enchantmentDataMap.clear();
+                        inventorySlotMap.clear();
                         rip(player, itemStackId, enchData);
                         break;
                     }
