@@ -155,6 +155,7 @@ function illegalitemsa(id: number) {
 
         // Iterate through the enchantment presence map to perform any necessary operations
         if (illegalEnchantmentBoolean) {
+            let isPresent = false;
             for (const [enchantment, present] of enchantmentPresenceMap) {
                 if (present) {
                     // Do something with the present enchantment and its data
@@ -190,7 +191,15 @@ function illegalitemsa(id: number) {
                         rip(player, itemStackId, enchData);
                         break;
                     }
+                    isPresent = true;
                 }
+            }
+            // Clear these populated maps if Salvage System is disabled to prevent memory leaks
+            if (isPresent && !salvageBoolean) {
+                enchantmentPresenceMap.clear();
+                enchantmentDataMap.clear();
+                inventorySlotMap.clear();
+                itemStackDataMap.clear();
             }
         }
 
@@ -247,8 +256,13 @@ function illegalitemsa(id: number) {
                 // Set the new ItemStack in the player's container in the specified slot
                 playerContainer.setItem(slot, applyCustomProperties);
             }
+            // Clear these populated maps to prevent memory leaks
             if (salvagedList) {
                 unverifiedItemMap.clear();
+                enchantmentPresenceMap.clear();
+                enchantmentDataMap.clear();
+                inventorySlotMap.clear();
+                itemStackDataMap.clear();
             }
         }
     }
