@@ -142,7 +142,7 @@ function illegalitemsa(id: number) {
 
             // Salvage System
             if (salvageBoolean) {
-                const uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull", "minecraft:planks"];
+                const uniqueItems = ["minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion", "minecraft:skull", "minecraft:planks", "minecraft:banner"];
 
                 if (!uniqueItems.includes(itemStackId)) {
                     const verifiedItemName = playerItemStack.nameTag;
