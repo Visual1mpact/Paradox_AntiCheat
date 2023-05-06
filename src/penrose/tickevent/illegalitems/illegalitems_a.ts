@@ -146,7 +146,8 @@ function illegalitemsa(id: number) {
                     const getEnchantment = enchantmentData.getEnchantment(enchantment.type);
                     const currentLevel = getEnchantment.level;
                     const maxLevel = getEnchantment.type.maxLevel;
-                    if (currentLevel > maxLevel || currentLevel < 0) {
+                    const canAddEnchantBoolean = enchantmentData.canAddEnchantment(getEnchantment);
+                    if (currentLevel > maxLevel || currentLevel < 0 || !canAddEnchantBoolean) {
                         const itemSlot = inventorySlotMap.get(enchantment);
                         const enchData = {
                             id: getEnchantment.type.id,
