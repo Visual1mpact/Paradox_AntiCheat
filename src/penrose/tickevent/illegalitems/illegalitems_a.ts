@@ -75,14 +75,6 @@ function illegalitemsa(id: number) {
         // Create a map of enchantment types and a number type to signify slot value
         const inventorySlotMap = new Map<EnchantmentType, number>();
 
-        // Illegal Enchantments
-        if (illegalEnchantmentBoolean) {
-            for (const enchantment of Object.values(MinecraftEnchantmentTypes)) {
-                enchantmentPresenceMap.set(enchantment, false);
-                enchantmentDataMap.set(enchantment, null);
-            }
-        }
-
         // Iterate through each slot in the player's container
         for (let i = 0; i < playerContainerSize; i++) {
             let itemFlagged = false;
@@ -138,12 +130,13 @@ function illegalitemsa(id: number) {
                 const enchantmentData = enchantmentComponent.enchantments;
 
                 // Update the enchantment presence and data maps for each enchantment type
-                for (const enchantment of Object.values(MinecraftEnchantmentTypes)) {
-                    if (enchantmentData.hasEnchantment(enchantment)) {
-                        enchantmentPresenceMap.set(enchantment, true);
-                        enchantmentDataMap.set(enchantment, enchantmentData);
-                        inventorySlotMap.set(enchantment, i);
-                    }
+                let iteratorResult = enchantmentData.next();
+                while (!iteratorResult.done) {
+                    const enchantment: EnchantmentType = iteratorResult.value;
+                    enchantmentPresenceMap.set(enchantment, true);
+                    enchantmentDataMap.set(enchantment, enchantmentData);
+                    inventorySlotMap.set(enchantment, i);
+                    iteratorResult = enchantmentData.next();
                 }
             }
         }
@@ -167,6 +160,9 @@ function illegalitemsa(id: number) {
                         const itemStackId = playerContainer.getItem(itemSlot).typeId;
                         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} with Illegal Enchantments from ${player.nameTag}.`);
                         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal Enchantments are not allowed!`);
+                        enchantmentPresenceMap.delete(enchantment);
+                        enchantmentDataMap.delete(enchantment);
+                        inventorySlotMap.delete(enchantment);
                         rip(player, playerContainer.getItem(itemSlot), enchData);
                         break;
                     }
