@@ -428,7 +428,6 @@ export function getGamemode(player: Player): string | undefined {
     for (const gameMode of Object.values(GameMode)) {
         // Use world.getPlayers() to get an iterator of all players in the world with the same name and game mode as the given player
         const gameModePlayer = world.getPlayers({ name: player.name, gameMode });
-        console.log(gameModePlayer);
         // If a player is found with the given name and game mode, return the corresponding string representation of the gamemode
         if (gameModePlayer) {
             switch (gameMode) {
