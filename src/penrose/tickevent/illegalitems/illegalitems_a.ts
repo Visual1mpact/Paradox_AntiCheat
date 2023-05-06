@@ -160,6 +160,9 @@ function illegalitemsa(id: number) {
                             id: getEnchantment.type.id,
                             level: currentLevel,
                         };
+                        const itemStackId = playerContainer.getItem(itemSlot).typeId;
+                        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} with Illegal Enchantments from ${player.nameTag}.`);
+                        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal Enchantments are not allowed!`);
                         rip(player, playerContainer.getItem(itemSlot), enchData);
                         break;
                     }
