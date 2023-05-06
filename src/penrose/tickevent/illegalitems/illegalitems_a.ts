@@ -107,6 +107,8 @@ function illegalitemsa(id: number) {
             const maxStack = playerItemStack.maxAmount;
             if (stackBanBoolean && currentStack > maxStack) {
                 playerContainer.setItem(i);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} x ${currentStack} from ${player.nameTag}.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Stacks are not allowed!`);
                 rip(player, playerItemStack);
                 break;
             }
@@ -115,6 +117,8 @@ function illegalitemsa(id: number) {
             if (itemStackId in illegalitems) {
                 itemFlagged = true;
                 playerContainer.setItem(i);
+                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} from ${player.nameTag}.`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Items are not allowed!`);
                 rip(player, playerItemStack);
                 break;
             }
