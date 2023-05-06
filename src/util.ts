@@ -3,7 +3,16 @@ import { BeforeChatEvent, GameMode, Player, system, Vector, world } from "@minec
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
+const overworld = world.getDimension("overworld");
+const timerMap = new Map();
+// The Void
+const maxAge = 60000; // 1 minute
+const checkInterval = 300000; // 5 minutes
+const theVoid = new Map();
+
 /**
+ * Flag players who trigger certain checks or sub-checks, with information about the type of hack, the item involved, and any debug information available.
+ *
  * @name flag
  * @param {Player} player - The player object
  * @param {string} check - What check ran the function.
@@ -83,6 +92,8 @@ export async function flag(player: Player, check: string, checkType: string, hac
 }
 
 /**
+ * This function sends a kick message to a banned player, including the banning moderator and reason. If ban appeals are enabled, a Discord link will also be included in the message. If the player cannot be kicked, they will be despawned instantly.
+ *
  * @name banMessage
  * @param {Player} player - The player object
  */
@@ -92,7 +103,6 @@ export async function banMessage(player: Player) {
     let reason: string;
     let by: string;
 
-    // this removes old ban stuff
     for (const tag of tags) {
         if (tag.startsWith("By:")) {
             by = tag.slice(3);
@@ -121,21 +131,12 @@ export async function banMessage(player: Player) {
 }
 
 /**
+ * Returns the score of a player in the specified scoreboard objective.
+ *
  * @name getScore
  * @param {string} objective - Scoreboard objective
  * @param {Player} player - The player object
  */
-//export function getScore(objective: string, player: Player, { minimum, maximum } = { minimum: 0, maximum: 0 }) {
-//  try {
-//    const data = player.runCommandAsync(`scoreboard players test @s ${objective} ${minimum ? minimum : "*"} ${maximum ? maximum : "*"}`);
-//  return parseInt(data.statusMessage.match(/-?\d+/));
-
-//} catch (error) {
-//    return undefined;
-//}
-//}
-
-//provided by VisualImpact
 export function getScore(objective: string, player: Player) {
     try {
         return world.scoreboard.getObjective(objective).getScore(player.scoreboard);
@@ -146,6 +147,7 @@ export function getScore(objective: string, player: Player) {
 
 /**
  * Sets a players score.
+ *
  * @name setScore
  * @param {Player} target The player object.
  * @param {string} objective Scoreboard objective.
@@ -162,6 +164,8 @@ export function setScore(target: Player, objective: string, amount: number, stac
 }
 
 /**
+ * Gets the prefix tag of a player, if it exists.
+ *
  * @name getPrefix
  * @param {Player} player - The player object
  */
@@ -181,11 +185,12 @@ export function getPrefix(player: Player) {
 }
 
 /**
+ * Resets the rank tag of a player by removing any tags starting with "Rank:".
+ *
  * @name resetTag
- * @param {Player} player - The player object
  * @param {Player} member - The other player object
  */
-export function resetTag(player: Player, member: Player) {
+export function resetTag(member: Player) {
     let sanitize = member.getTags();
     for (let tag of sanitize) {
         if (tag.startsWith("Rank:")) {
@@ -197,6 +202,7 @@ export function resetTag(player: Player, member: Player) {
 
 /**
  * Fast UUID generator, RFC4122 version 4 compliant.
+ *
  * @author Jeff Ward (jcward.com).
  * @license MIT license
  * @link http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
@@ -240,6 +246,8 @@ export const UUID = (() => {
 })();
 
 /**
+ * Takes a string and converts it to camelCase.
+ *
  * @name toCamelCase
  * @param {string} str - Takes strings and converts to camelCase
  */
@@ -251,6 +259,8 @@ export function toCamelCase(str: string) {
 }
 
 /**
+ * Converts a string in snake_case format to Title Case format.
+ *
  * @name titleCase
  * @param {*} s - Takes snakeCase and converts it to titleCase
  * @returns
@@ -258,6 +268,8 @@ export function toCamelCase(str: string) {
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
 
 /**
+ * Hashes a given string with the specified salt value using an algorithm.
+ *
  * @name crypto
  * @param {string} salt - Hashes information
  * @param {string} text - String to be hashed
@@ -284,6 +296,8 @@ export const crypto = (salt: string | number | boolean, text: string) => {
 };
 
 /**
+ * Encrypts a string using an algorithm.
+ *
  * @name encryptString
  * @param {string} str - The string to encrypt
  * @param {string} salt - The salt to use for encryption
@@ -303,6 +317,8 @@ export function encryptString(str: string, salt: string): string {
 }
 
 /**
+ * Decrypts a string using an algorithm.
+ *
  * @name decryptString
  * @param {string} str - The string to decrypt
  * @param {string} salt - The salt to use for decryption
@@ -321,8 +337,6 @@ export function decryptString(str: string, salt: string): string {
     }
     return plaintext;
 }
-
-const timerMap = new Map();
 
 /**
  * Sets a timer for a given player.
@@ -380,11 +394,6 @@ export function isTimerExpired(player: string) {
 
     return false;
 }
-
-// The Void
-const maxAge = 60000; // 1 minute
-const checkInterval = 300000; // 5 minutes
-const theVoid = new Map();
 
 /**
  * Starts a timer for a given key-value pair in `theVoid` map with a namespace prefix.
@@ -446,8 +455,12 @@ export function getGamemode(player: Player): string | undefined {
     return undefined;
 }
 
-const overworld = world.getDimension("overworld");
-
+/**
+ * Sends a message to a target in Minecraft.
+ *
+ * @param target The target to send the message to. This can be a player's username, a selector, or a JSON string.
+ * @param message The message to send. This can be a string or an array of strings.
+ */
 export const sendMsg = async (target: string, message: string | string[]) => {
     try {
         await overworld.runCommandAsync(
@@ -456,6 +469,12 @@ export const sendMsg = async (target: string, message: string | string[]) => {
     } catch {}
 };
 
+/**
+ * Sends a message to a player in Minecraft.
+ *
+ * @param target The player to send the message to.
+ * @param message The message to send. This can be a string or an array of strings.
+ */
 export const sendMsgToPlayer = async (target: Player, message: string | string[]) => {
     try {
         await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
