@@ -1,4 +1,4 @@
-import { world, ItemStack, Player, EntityInventoryComponent, system, ItemEnchantsComponent, EnchantmentList, EnchantmentType } from "@minecraft/server";
+import { world, ItemStack, Player, EntityInventoryComponent, system, ItemEnchantsComponent, EnchantmentList, EnchantmentType, Enchantment } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import { kickablePlayers } from "../../../kickcheck.js";
@@ -69,11 +69,11 @@ function illegalitemsa(id: number) {
         const playerContainerSize = playerContainer.size;
 
         // Create a map of enchantment types and their presence in the player's inventory
-        const enchantmentPresenceMap = new Map<EnchantmentType, boolean>();
+        const enchantmentPresenceMap = new Map<Enchantment, boolean>();
         // Create a map of enchantment types and their data in the player's inventory
-        const enchantmentDataMap = new Map<EnchantmentType, EnchantmentList>();
+        const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
         // Create a map of enchantment types and a number type to signify slot value
-        const inventorySlotMap = new Map<EnchantmentType, number>();
+        const inventorySlotMap = new Map<Enchantment, number>();
 
         // Iterate through each slot in the player's container
         for (let i = 0; i < playerContainerSize; i++) {
@@ -130,13 +130,14 @@ function illegalitemsa(id: number) {
                 const enchantmentData = enchantmentComponent.enchantments;
 
                 // Update the enchantment presence and data maps for each enchantment type
-                let iteratorResult = enchantmentData.next();
+                const iterator = enchantmentData[Symbol.iterator]();
+                let iteratorResult = iterator.next();
                 while (!iteratorResult.done) {
-                    const enchantment: EnchantmentType = iteratorResult.value;
+                    const enchantment: Enchantment = iteratorResult.value;
                     enchantmentPresenceMap.set(enchantment, true);
                     enchantmentDataMap.set(enchantment, enchantmentData);
                     inventorySlotMap.set(enchantment, i);
-                    iteratorResult = enchantmentData.next();
+                    iteratorResult = iterator.next();
                 }
             }
         }
@@ -147,23 +148,23 @@ function illegalitemsa(id: number) {
                 if (present) {
                     // Do something with the present enchantment and its data
                     const enchantmentData = enchantmentDataMap.get(enchantment);
-                    const getEnchantment = enchantmentData.getEnchantment(enchantment);
+                    const getEnchantment = enchantmentData.getEnchantment(enchantment.type);
                     const currentLevel = getEnchantment.level;
                     const maxLevel = getEnchantment.type.maxLevel;
                     if (currentLevel > maxLevel || currentLevel < 0) {
                         const itemSlot = inventorySlotMap.get(enchantment);
-                        playerContainer.setItem(itemSlot);
                         const enchData = {
                             id: getEnchantment.type.id,
                             level: currentLevel,
                         };
-                        const itemStackId = playerContainer.getItem(itemSlot).typeId;
-                        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} with Illegal Enchantments from ${player.nameTag}.`);
+                        const itemStackId = playerContainer.getItem(itemSlot);
+                        playerContainer.setItem(itemSlot);
+                        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.typeId.replace("minecraft:", "")} with Illegal Enchantments from ${player.nameTag}.`);
                         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal Enchantments are not allowed!`);
                         enchantmentPresenceMap.delete(enchantment);
                         enchantmentDataMap.delete(enchantment);
                         inventorySlotMap.delete(enchantment);
-                        rip(player, playerContainer.getItem(itemSlot), enchData);
+                        rip(player, itemStackId, enchData);
                         break;
                     }
                 }
