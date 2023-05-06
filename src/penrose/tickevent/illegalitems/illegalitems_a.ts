@@ -77,8 +77,6 @@ function illegalitemsa(id: number) {
 
         // Iterate through each slot in the player's container
         for (let i = 0; i < playerContainerSize; i++) {
-            let itemFlagged = false;
-
             // Get the item in the current slot
             const playerItemStack = playerContainer.getItem(i);
             const itemStackId = playerItemStack?.typeId;
@@ -107,7 +105,6 @@ function illegalitemsa(id: number) {
 
             // If the item is in the "illegalitems" object, remove it from the player's inventory and run the "rip" function on it
             if (itemStackId in illegalitems) {
-                itemFlagged = true;
                 playerContainer.setItem(i);
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Items are not allowed!`);
@@ -125,7 +122,7 @@ function illegalitemsa(id: number) {
             }
 
             // Illegal Enchantments
-            if (!itemFlagged && illegalEnchantmentBoolean) {
+            if (illegalEnchantmentBoolean) {
                 const enchantmentComponent = playerItemStack.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
                 const enchantmentData = enchantmentComponent.enchantments;
 
