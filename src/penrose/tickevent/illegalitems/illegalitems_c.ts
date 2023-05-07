@@ -1,6 +1,5 @@
 import { EntityItemComponent, EntityQueryOptions, ItemStack, world, system } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
-import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function illegalitemsc(id: number) {
@@ -25,13 +24,11 @@ function illegalitemsc(id: number) {
 
         let itemName: ItemStack;
         // Get component of itemStack for dropped item
-        try {
-            const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
-            itemName = itemContainer.itemStack;
-        } catch (error) {}
+        const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
+        itemName = itemContainer?.itemStack;
 
         // Check if object returns undefined and skip if it does
-        if (itemName === undefined) {
+        if (!itemName) {
             continue;
         }
         if (entity.id === "minecraft:item") {
@@ -47,8 +44,9 @@ function illegalitemsc(id: number) {
                 continue;
             }
             // If it is an illegal stack then remove it
-            const maxStack = maxItemStack[itemName.typeId] ?? defaultMaxItemStack;
-            if (itemName.amount < 0 || itemName.amount > maxStack) {
+            const currentAmount = itemName.amount;
+            const maxAmount = itemName.maxAmount;
+            if (currentAmount < 0 || currentAmount > maxAmount) {
                 entity.kill();
                 continue;
             }
