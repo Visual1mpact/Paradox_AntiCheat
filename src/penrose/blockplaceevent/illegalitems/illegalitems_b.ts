@@ -4,6 +4,7 @@ import config from "../../../data/config.js";
 import { flag, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
 
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block) {
     let reason: string;
@@ -64,6 +65,13 @@ async function illegalitemsb(object: BlockPlaceEvent) {
     const itemStackDataMap = new Map<Enchantment, ItemStack>();
     // Create a map of itemstack types not verified by Paradox
     const unverifiedItemMap = new Map<number, ItemStack>();
+
+    // Check if placed item is illegal
+    if (illegalitems.has(block.typeId) && !illegalItemsBWhitelist.has(block.typeId)) {
+        await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
+        flag(player, "IllegalItems", "C", "Exploit", null, null, null, null, null, null);
+        return rip(player, null, null, block);
+    }
 
     // Get the block's inventory
     const blockInventory = block.getComponent("minecraft:inventory") as BlockInventoryComponent;

@@ -1,4 +1,4 @@
-const illegalitemList = [
+const illegalitemList = new Set([
     "minecraft:light_block",
     "minecraft:lit_smoker",
     "minecraft:daylight_detector_inverted",
@@ -150,6 +150,6 @@ const illegalitemList = [
     "minecraft:monster_egg",
     "minecraft:stone_monster_egg",
     "minecraft:farmland",
-];
+]);
 
-export const illegalitems = Object.setPrototypeOf(Object.fromEntries(illegalitemList.map((v) => [v, ""] as [string, ""])), null);
+export const illegalitems = illegalitemList;
