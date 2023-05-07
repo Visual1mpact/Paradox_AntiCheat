@@ -1,8 +1,7 @@
 /* eslint no-var: "off"*/
 
-import { BeforeChatEvent, Player, world, MinecraftItemTypes } from "@minecraft/server";
+import { BeforeChatEvent, Player, world, MinecraftItemTypes, ItemStack } from "@minecraft/server";
 import config from "../../data/config.js";
-import maxItemStack, { defaultMaxItemStack } from "../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
 
@@ -110,7 +109,9 @@ export function give(message: BeforeChatEvent, args: string[]) {
             args.splice(3, 1, "0");
         }
 
-        const maxStack = maxItemStack[itemStringConvert.replace(itemStringConvert, "minecraft:" + args[1])] ?? defaultMaxItemStack;
+        // Make a new ItemStack so we can validate the max allowed amount for that item
+        const newItemStack = new ItemStack(args[1]);
+        const maxStack = newItemStack.maxAmount;
         if (maxStack >= Number(args[2])) {
             player.runCommandAsync(`give ${member.name} ${args[1]} ${Number(args[2])} ${Number(args[3])}`);
             /* This is commented out because in 1.19.70 they removed the data parameter from ItemStack
