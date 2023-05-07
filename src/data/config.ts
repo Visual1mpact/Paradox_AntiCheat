@@ -54,7 +54,7 @@ export default {
         flya: true,
         antifalla: true,
         illegalitemsa: true,
-        illegalitemsb: false,
+        illegalitemsb: true,
         illegalitemsc: true,
         antiscaffolda: true,
         antinukera: true,
