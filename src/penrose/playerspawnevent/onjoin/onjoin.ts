@@ -1,4 +1,4 @@
-import { EntityQueryOptions, Player, PlayerSpawnEvent, world } from "@minecraft/server";
+import { Player, PlayerSpawnEvent, world } from "@minecraft/server";
 import { onJoinData } from "../../../data/onjoindata.js";
 import { getPrefix, setTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
