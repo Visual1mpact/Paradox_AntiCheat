@@ -739,15 +739,13 @@ async function paradoxui(player: Player) {
                         const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
                         const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
                         const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
-                        const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
                         const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
                         const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
                         const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
                         modulesillegalitemsui.title("§4Paradox Modules-Illegal Items§4");
                         modulesillegalitemsui.toggle("Illegal Items A: checks for player's that have illegal items in inventory.", illegalItemsABoolean);
-                        modulesillegalitemsui.toggle("Illegal Items B: checks for player's that use illegal items.", illegalItemsBBoolean);
-                        modulesillegalitemsui.toggle("Illegal Items C: hecks for player's that place illegal items.", illegalItemsCBoolean);
-                        modulesillegalitemsui.toggle("Illegal Items D: checks for illegal dropped items.", illegalItemsDBoolean);
+                        modulesillegalitemsui.toggle("Illegal Items C: hecks for player's that place illegal items.", illegalItemsBBoolean);
+                        modulesillegalitemsui.toggle("Illegal Items D: checks for illegal dropped items.", illegalItemsCBoolean);
                         modulesillegalitemsui.toggle("Illegal Enchants: checks for items with illegal enchantments.", illegalEnchantmentBoolean);
                         modulesillegalitemsui.toggle("Illegal Lores: checks for illegal Lores on items.", illegalLoresBoolean);
                         modulesillegalitemsui.toggle("Stack Ban: checks for player's with illegal stacks over 64.", stackBanBoolean);

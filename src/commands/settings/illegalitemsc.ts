@@ -1,7 +1,7 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { IllegalItemsC } from "../../penrose/blockplaceevent/illegalitems/illegalitems_c.js";
+import { IllegalItemsC } from "../../penrose/tickevent/illegalitems/illegalitems_c.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function illegalItemsCHelp(player: Player, prefix: string, illegalItemsCBoolean: string | number | boolean) {
@@ -12,7 +12,7 @@ function illegalItemsCHelp(player: Player, prefix: string, illegalItemsCBoolean:
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus: string;
-    if (illegalItemsCBoolean) {
+    if (illegalItemsCBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -23,7 +23,7 @@ function illegalItemsCHelp(player: Player, prefix: string, illegalItemsCBoolean:
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: illegalitemsc [optional]`,
         `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for player's that place illegal items.`,
+        `§4[§6Description§4]§r: Toggles checks for illegal dropped items.`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}illegalitemsc`,
         `    ${prefix}illegalitemsc help`,

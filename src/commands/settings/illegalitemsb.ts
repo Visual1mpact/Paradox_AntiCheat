@@ -1,7 +1,7 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { IllegalItemsB } from "../../penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
+import { IllegalItemsB } from "../../penrose/blockplaceevent/illegalitems/illegalitems_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function illegalItemsBHelp(player: Player, prefix: string, illegalItemsBBoolean: string | number | boolean) {
@@ -23,7 +23,7 @@ function illegalItemsBHelp(player: Player, prefix: string, illegalItemsBBoolean:
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: illegalitemsb [optional]`,
         `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for player's that use illegal items.`,
+        `§4[§6Description§4]§r: Toggles checks for player's that place illegal items.`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}illegalitemsb`,
         `    ${prefix}illegalitemsb help`,

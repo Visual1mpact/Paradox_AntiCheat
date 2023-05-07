@@ -54,9 +54,8 @@ export default {
         flya: true,
         antifalla: true,
         illegalitemsa: true,
-        illegalitemsb: true,
-        illegalitemsc: false,
-        illegalitemsd: true,
+        illegalitemsb: false,
+        illegalitemsc: true,
         antiscaffolda: true,
         antinukera: true,
         xraya: true,
@@ -162,9 +161,6 @@ export default {
             enabled: false,
         },
         illegalitemsC: {
-            enabled: false,
-        },
-        illegalitemsD: {
             enabled: true,
         },
         stackBan: {

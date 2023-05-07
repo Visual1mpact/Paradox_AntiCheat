@@ -1,15 +1,14 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { IllegalItemsB } from "../../penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
-import { IllegalItemsC } from "../../penrose/blockplaceevent/illegalitems/illegalitems_c.js";
+import { IllegalItemsB } from "../../penrose/blockplaceevent/illegalitems/illegalitems_b.js";
 import { IllegalItemsA } from "../../penrose/tickevent/illegalitems/illegalitems_a.js";
-import { IllegalItemsD } from "../../penrose/tickevent/illegalitems/illegalitems_d.js";
+import { IllegalItemsC } from "../../penrose/tickevent/illegalitems/illegalitems_c.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Player) {
-    const [IllegalItemsAToggle, IllegalItemsBToggle, IllegalItemsCToggle, IllegalItemsDToggle, IllegalEnchanmentsToggle, IllegalLoreToggle, IllegalStackBanToggle] = illegalitemsResult.formValues;
+    const [IllegalItemsAToggle, IllegalItemsBToggle, IllegalItemsCToggle, IllegalEnchanmentsToggle, IllegalLoreToggle, IllegalStackBanToggle] = illegalitemsResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
@@ -57,19 +56,6 @@ export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Pl
         world.setDynamicProperty("illegalitemsc_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsC§r!`);
     }
-    if (IllegalItemsDToggle === true) {
-        // Allow
-        dynamicPropertyRegistry.set("illegalitemsd_b", true);
-        world.setDynamicProperty("illegalitemsd_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsD§r!`);
-        IllegalItemsD();
-    }
-    if (IllegalItemsDToggle === false) {
-        // Deny
-        dynamicPropertyRegistry.set("illegalitemsd_b", false);
-        world.setDynamicProperty("illegalitemsd_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsD§r!`);
-    }
     if (IllegalEnchanmentsToggle === true) {
         dynamicPropertyRegistry.set("illegalenchantment_b", true);
         world.setDynamicProperty("illegalenchantment_b", true);
@@ -93,7 +79,7 @@ export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Pl
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalLores§r!`);
     }
     //Check to make sure that Illegal Items are on
-    if (!IllegalItemsAToggle === true && !IllegalItemsAToggle === true && !IllegalItemsCToggle === true && IllegalStackBanToggle === true) {
+    if (!IllegalItemsAToggle === true && !IllegalItemsAToggle === true && !IllegalItemsBToggle === true && IllegalStackBanToggle === true) {
         // Turn it off just incase!
         dynamicPropertyRegistry.set("stackban_b", false);
         world.setDynamicProperty("stackban_b", false);

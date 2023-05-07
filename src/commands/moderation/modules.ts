@@ -72,7 +72,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const jesusABoolean = dynamicPropertyRegistry.get("jesusa_b");
     const InvalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b");
     const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
-    const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
+    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
     const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
     const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
     const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
@@ -83,10 +83,9 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
     const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
-    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
+    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
     const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
-    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
     const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b");
     const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
     const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
@@ -137,8 +136,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `AntiFallA: ${status(antiFallABoolean)}`,
         `IllegalItemsA: ${illegalItemsABoolean ? `§aENABLED§r [Ban Illegal Stacks ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
         `IllegalItemsB: ${illegalItemsBBoolean ? `§aENABLED§r [Ban Illegal Stacks ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
-        `IllegalItemsC: ${illegalItemsCBoolean ? `§aENABLED§r [Ban Illegal Stacks ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
-        `IllegalItemsD: ${status(illegalItemsDBoolean)}`,
+        `IllegalItemsC: ${status(illegalItemsCBoolean)}`,
         `IllegalEnchantments: ${status(illegalEnchantmentBoolean)}`,
         `IllegalLores: ${status(illegalLoresBoolean)}`,
         `Anti-ScaffoldA: ${status(antiScaffoldABoolean)}`,

@@ -55,7 +55,6 @@ function registry(data: WorldInitializeEvent) {
         "illegalitemsa_b",
         "illegalitemsb_b",
         "illegalitemsc_b",
-        "illegalitemsd_b",
         "invalidsprinta_b",
         "bedrockvalidate_b",
         "illegalenchantment_b",

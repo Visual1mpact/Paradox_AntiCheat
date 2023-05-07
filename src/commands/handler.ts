@@ -52,10 +52,9 @@ import { noslowA } from "./settings/noslowa.js";
 import { invalidsprintA } from "./settings/invalidsprinta.js";
 import { flyA } from "./settings/flya.js";
 import { illegalitemsA } from "./settings/illegalitemsa.js";
-import { illegalitemsB } from "./settings/illegalitemsb.js";
 import { antiscaffoldA } from "./settings/antiscaffolda.js";
 import { antinukerA } from "./settings/antinukera.js";
-import { illegalitemsC } from "./settings/illegalitemsc.js";
+import { illegalitemsB } from "./settings/illegalitemsb.js";
 import { xrayA } from "./settings/xraya.js";
 import { unban } from "./moderation/unban.js";
 import { prefix } from "./moderation/prefix.js";
@@ -66,7 +65,7 @@ import { punish } from "./moderation/punish.js";
 import { sethome } from "./utility/sethome.js";
 import { gohome } from "./utility/gohome.js";
 import { tpa } from "./moderation/tpa.js";
-import { illegalitemsD } from "./settings/illegalitemsd.js";
+import { illegalitemsC } from "./settings/illegalitemsc.js";
 import { listhome } from "./utility/listhome.js";
 import { delhome } from "./utility/delhome.js";
 import { illegalEnchant } from "./settings/illegalenchant.js";
@@ -137,10 +136,9 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         flya: flyA,
         antifalla: antifallA,
         illegalitemsa: illegalitemsA,
-        illegalitemsb: illegalitemsB,
         antiscaffolda: antiscaffoldA,
         antinukera: antinukerA,
-        illegalitemsc: illegalitemsC,
+        illegalitemsb: illegalitemsB,
         xraya: xrayA,
         unban: unban,
         prefix: prefix,
@@ -152,7 +150,7 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         sethome: sethome,
         gohome: gohome,
         tpa: tpa,
-        illegalitemsd: illegalitemsD,
+        illegalitemsc: illegalitemsC,
         listhome: listhome,
         delhome: delhome,
         illegalenchant: illegalEnchant,

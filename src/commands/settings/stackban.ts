@@ -56,7 +56,6 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
     const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
     const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
     const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
-    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
 
     // Check for custom prefix
     const prefix = getPrefix(player);
@@ -67,7 +66,7 @@ export function stackban(message: BeforeChatEvent, args: string[]) {
         return stackBanHelp(player, prefix, stackBanBoolean);
     }
 
-    if (!illegalItemsABoolean && !illegalItemsBBoolean && !illegalItemsCBoolean) {
+    if (!illegalItemsABoolean && !illegalItemsBBoolean) {
         if (stackBanBoolean) {
             // In this stage they are likely turning it off so oblige their request
             dynamicPropertyRegistry.set("stackban_b", false);

@@ -3,13 +3,13 @@ import { illegalitems } from "../../../data/itemban.js";
 import maxItemStack, { defaultMaxItemStack } from "../../../data/maxstack.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-function illegalitemsd(id: number) {
+function illegalitemsc(id: number) {
     // Get Dynamic Property
-    const illegalItemsDBoolean = dynamicPropertyRegistry.get("illegalitemsd_b");
+    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
     const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
 
     // Unsubscribe if disabled in-game
-    if (illegalItemsDBoolean === false) {
+    if (illegalItemsCBoolean === false) {
         system.clearRun(id);
         return;
     }
@@ -59,8 +59,8 @@ function illegalitemsd(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export function IllegalItemsD() {
-    const illegalItemsDId = system.runInterval(() => {
-        illegalitemsd(illegalItemsDId);
+export function IllegalItemsC() {
+    const illegalItemsCId = system.runInterval(() => {
+        illegalitemsc(illegalItemsCId);
     });
 }

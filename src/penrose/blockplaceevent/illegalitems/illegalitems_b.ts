@@ -26,9 +26,9 @@ function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string;
     }
 }
 
-async function illegalitemsc(object: BlockPlaceEvent) {
+async function illegalitemsb(object: BlockPlaceEvent) {
     // Get Dynamic Property
-    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
+    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
     const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
     const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
     const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
@@ -36,8 +36,8 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
 
     // Unsubscribe if disabled in-game
-    if (illegalItemsCBoolean === false) {
-        world.events.blockPlace.unsubscribe(illegalitemsc);
+    if (illegalItemsBBoolean === false) {
+        world.events.blockPlace.unsubscribe(illegalitemsb);
         return;
     }
 
@@ -325,8 +325,8 @@ async function illegalitemsc(object: BlockPlaceEvent) {
     }
 }
 
-const IllegalItemsC = () => {
-    world.events.blockPlace.subscribe(illegalitemsc);
+const IllegalItemsB = () => {
+    world.events.blockPlace.subscribe(illegalitemsb);
 };
 
-export { IllegalItemsC };
+export { IllegalItemsB };

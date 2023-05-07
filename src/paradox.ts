@@ -29,7 +29,7 @@ import { Vanish } from "./penrose/tickevent/vanish/vanish.js";
 import { Survival } from "./penrose/tickevent/gamemode/survival.js";
 import { Adventure } from "./penrose/tickevent/gamemode/adventure.js";
 import { Creative } from "./penrose/tickevent/gamemode/creative.js";
-import { IllegalItemsD } from "./penrose/tickevent/illegalitems/illegalitems_d.js";
+import { IllegalItemsC } from "./penrose/tickevent/illegalitems/illegalitems_c.js";
 import { OPS } from "./penrose/tickevent/oneplayersleep/oneplayersleep.js";
 import { Hotbar } from "./penrose/tickevent/hotbar/hotbar.js";
 import { VerifyPermission } from "./penrose/tickevent/noperms/verifypermission.js";
@@ -49,10 +49,8 @@ import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
 import { onJoinrules } from "./gui/playerspawnevent/rules/rules.js";
 // Import BlockPlace Events
 import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
-import { IllegalItemsC } from "./penrose/blockplaceevent/illegalitems/illegalitems_c.js";
+import { IllegalItemsB } from "./penrose/blockplaceevent/illegalitems/illegalitems_b.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
-// Import BeforeItemUseOn Events
-import { IllegalItemsB } from "./penrose/beforeitemuseonevent/illegalitems/illegalitems_b.js";
 // Import EntityHit Events
 import { ReachC } from "./penrose/entityhitevent/reach_c.js";
 import { KillAura } from "./penrose/entityhitevent/killaura.js";
@@ -85,7 +83,7 @@ Hotbar();
 NoPerms;
 PlayerPosition;
 Vanish;
-IllegalItemsD();
+IllegalItemsC();
 Survival();
 Adventure();
 Creative();
@@ -134,11 +132,8 @@ hashCode();
 onJoinrules(); // GUI
 // BlockPlace Events
 ScaffoldA();
-IllegalItemsC();
-ReachA();
-
-// BeforeItemUseOn Events
 IllegalItemsB();
+ReachA();
 
 // EntityHit Events
 ReachC();
