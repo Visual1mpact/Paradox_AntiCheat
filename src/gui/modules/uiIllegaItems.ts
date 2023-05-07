@@ -18,61 +18,68 @@ export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Pl
     if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Illegal Items`);
     }
-    if (IllegalItemsAToggle === true) {
+    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
+    const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
+    const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
+    const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
+    const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
+    const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
+
+    if (IllegalItemsAToggle === true && illegalItemsABoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegalitemsa_b", true);
         world.setDynamicProperty("illegalitemsa_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`);
         IllegalItemsA();
     }
-    if (IllegalItemsAToggle === false) {
+    if (IllegalItemsAToggle === false && illegalItemsABoolean === true) {
         dynamicPropertyRegistry.set("illegalitemsa_b", false);
         world.setDynamicProperty("illegalitemsa_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`);
     }
-    if (IllegalItemsBToggle === true) {
+    if (IllegalItemsBToggle === true && illegalItemsBBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegalitemsb_b", true);
         world.setDynamicProperty("illegalitemsb_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsB§r!`);
         IllegalItemsB();
     }
-    if (IllegalItemsBToggle === false) {
+    if (IllegalItemsBToggle === false && illegalItemsBBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalitemsb_b", false);
         world.setDynamicProperty("illegalitemsb_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsB§r!`);
     }
-    if (IllegalItemsCToggle === true) {
+    if (IllegalItemsCToggle === true && illegalItemsCBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegalitemsc_b", true);
         world.setDynamicProperty("illegalitemsc_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsC§r!`);
         IllegalItemsC();
     }
-    if (IllegalItemsCToggle === false) {
+    if (IllegalItemsCToggle === false && illegalItemsABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalitemsc_b", false);
         world.setDynamicProperty("illegalitemsc_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsC§r!`);
     }
-    if (IllegalEnchanmentsToggle === true) {
+    if (IllegalEnchanmentsToggle === true && illegalEnchantmentBoolean === false) {
         dynamicPropertyRegistry.set("illegalenchantment_b", true);
         world.setDynamicProperty("illegalenchantment_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalEnchantments§r!`);
     }
-    if (IllegalEnchanmentsToggle === false) {
+    if (IllegalEnchanmentsToggle === false && illegalEnchantmentBoolean === true) {
         dynamicPropertyRegistry.set("illegalenchantment_b", false);
         world.setDynamicProperty("illegalenchantment_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalEnchantments§r!`);
     }
-    if (IllegalLoreToggle === true) {
+    if (IllegalLoreToggle === true && illegalLoresBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("illegallores_b", true);
         world.setDynamicProperty("illegallores_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalLores§r!`);
     }
-    if (IllegalLoreToggle === false) {
+    if (IllegalLoreToggle === false && illegalLoresBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegallores_b", false);
         world.setDynamicProperty("illegallores_b", false);
@@ -87,13 +94,13 @@ export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Pl
         return paradoxui(player);
     }
 
-    if (IllegalStackBanToggle === true) {
+    if (IllegalStackBanToggle === true && stackBanBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("stackban_b", true);
         world.setDynamicProperty("stackban_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6StackBans§r!`);
     }
-    if (IllegalStackBanToggle === false) {
+    if (IllegalStackBanToggle === false && stackBanBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("stackban_b", false);
         world.setDynamicProperty("stackban_b", false);
