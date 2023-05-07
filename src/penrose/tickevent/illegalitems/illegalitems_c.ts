@@ -42,7 +42,7 @@ function illegalitemsc(id: number) {
                 continue;
             }
             // If it is an illegal item then remove it
-            if (itemName.typeId in illegalitems) {
+            if (illegalitems.has(itemName.typeId)) {
                 entity.kill();
                 continue;
             }

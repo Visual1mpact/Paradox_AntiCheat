@@ -105,7 +105,7 @@ function illegalitemsa(id: number) {
             }
 
             // If the item is in the "illegalitems" object, remove it from the player's inventory and run the "rip" function on it
-            if (itemStackId in illegalitems) {
+            if (illegalitems.has(itemStackId)) {
                 playerContainer.setItem(i);
                 sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} from ${player.nameTag}.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Items are not allowed!`);
