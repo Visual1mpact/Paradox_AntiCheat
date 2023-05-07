@@ -6,49 +6,46 @@ function illegalitemsc(id: number) {
     // Get Dynamic Property
     const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
     const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
+    const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
 
     // Unsubscribe if disabled in-game
     if (illegalItemsCBoolean === false) {
         system.clearRun(id);
         return;
     }
+
     const filter: EntityQueryOptions = {
         type: "item",
     };
     const filteredEntities = world.getDimension("overworld").getEntities(filter);
-    for (const entity of filteredEntities) {
-        // Check if entity object returns undefined and skip it
-        if (entity === undefined) {
-            continue;
-        }
+    const filteredEntitiesLength = filteredEntities.length;
 
-        let itemName: ItemStack;
+    for (let i = 0; i < filteredEntitiesLength; i++) {
+        const entity = filteredEntities[i];
+
         // Get component of itemStack for dropped item
-        const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
-        itemName = itemContainer?.itemStack;
+        const itemContainer = entity.getComponent("item") as EntityItemComponent;
+        const itemName = itemContainer?.itemStack;
 
         // Check if object returns undefined and skip if it does
         if (!itemName) {
             continue;
         }
-        if (entity.id === "minecraft:item") {
+
+        if (entity.typeId === "minecraft:item") {
             // If shulker boxes are not allowed in the server then we handle this here
-            const shulkerItems = ["minecraft:shulker_box", "minecraft:undyed_shulker_box"];
-            if (antiShulkerBoolean && itemName.typeId in shulkerItems) {
+            if (antiShulkerBoolean && shulkerItems.includes(itemName.typeId)) {
                 entity.kill();
-                continue;
-            }
-            // If it is an illegal item then remove it
-            if (illegalitems.has(itemName.typeId)) {
+            } else if (illegalitems.has(itemName.typeId)) {
+                // If it is an illegal item then remove it
                 entity.kill();
-                continue;
-            }
-            // If it is an illegal stack then remove it
-            const currentAmount = itemName.amount;
-            const maxAmount = itemName.maxAmount;
-            if (currentAmount < 0 || currentAmount > maxAmount) {
-                entity.kill();
-                continue;
+            } else {
+                // If it is an illegal stack then remove it
+                const currentAmount = itemName.amount;
+                const maxAmount = itemName.maxAmount;
+                if (currentAmount < 0 || currentAmount > maxAmount) {
+                    entity.kill();
+                }
             }
         }
     }
