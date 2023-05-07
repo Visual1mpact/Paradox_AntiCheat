@@ -18,7 +18,7 @@ function antifalla(id: number) {
 
     //exclude players who are in creative.
     const gm: EntityQueryOptions = {
-        excludeGameModes: [GameMode.creative],
+        excludeGameModes: [GameMode.creative, GameMode.spectator],
     };
     const filteredPlayers = world.getPlayers(gm);
 
