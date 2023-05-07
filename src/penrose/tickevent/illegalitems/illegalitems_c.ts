@@ -13,9 +13,11 @@ function illegalitemsc(id: number) {
         system.clearRun(id);
         return;
     }
-    const filter = new Object() as EntityQueryOptions;
-    filter.type = "item";
-    for (const entity of world.getDimension("overworld").getEntities(filter)) {
+    const filter: EntityQueryOptions = {
+        type: "item",
+    };
+    const filteredEntities = world.getDimension("overworld").getEntities(filter);
+    for (const entity of filteredEntities) {
         // Check if entity object returns undefined and skip it
         if (entity === undefined) {
             continue;
