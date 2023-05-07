@@ -1,4 +1,4 @@
-import { EntityItemComponent, EntityQueryOptions, ItemStack, world, system } from "@minecraft/server";
+import { EntityItemComponent, EntityQueryOptions, world, system } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
