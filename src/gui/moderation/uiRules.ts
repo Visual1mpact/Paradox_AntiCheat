@@ -14,25 +14,26 @@ export function uiRULES(banResult: ModalFormResponse, player: Player) {
     if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure the rules.`);
     }
-
-    if (EnabledRules === true) {
+    const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
+    const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
+    if (EnabledRules === true && showrulesBoolean === false) {
         dynamicPropertyRegistry.set("showrules_b", true);
         world.setDynamicProperty("showrules_b", true);
         //remember to call the function!
         onJoinrules();
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6showrules§r!`);
     }
-    if (EnabledRules === false) {
+    if (EnabledRules === false && showrulesBoolean === true) {
         dynamicPropertyRegistry.set("showrules_b", false);
         world.setDynamicProperty("showrules_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4showrules§r!`);
     }
-    if (EnableKick === true) {
+    if (EnableKick === true && KickOnDeclineBoolean === false) {
         dynamicPropertyRegistry.set("kickondecline_b", true);
         world.setDynamicProperty("kickondecline_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §4KickOnDecline§r!`);
     }
-    if (EnableKick === false) {
+    if (EnableKick === false && KickOnDeclineBoolean === true) {
         dynamicPropertyRegistry.set("kickondecline_b", false);
         world.setDynamicProperty("kickondecline_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4KickOnDecline§r!`);
