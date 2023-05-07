@@ -438,7 +438,7 @@ export function getGamemode(player: Player): string | undefined {
         // Use world.getPlayers() to get an iterator of all players in the world with the same name and game mode as the given player
         const gameModePlayer = world.getPlayers({ name: player.name, gameMode });
         // If a player is found with the given name and game mode, return the corresponding string representation of the gamemode
-        if (gameModePlayer) {
+        if (gameModePlayer.length > 0) {
             switch (gameMode) {
                 case GameMode.creative:
                     return "creative";
