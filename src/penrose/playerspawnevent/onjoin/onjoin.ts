@@ -48,13 +48,16 @@ async function onJoinTime(object: PlayerSpawnEvent) {
         } catch (error) {}
     }
 
+    const hasTagPlayers = world.getPlayers({ tags: ["illegalitemsA"] });
+    const noHasTagPlayers = world.getPlayers({ excludeTags: ["illegalitemsA"] });
     // Unsubscribe if disabled in-game
-    if (illegalItemsABoolean === false) {
-        const filter: EntityQueryOptions = {
-            tags: ["illegalitemsA"],
-        };
-        for (const player of world.getPlayers(filter)) {
+    if (illegalItemsABoolean === false && hasTagPlayers.length > 0) {
+        for (const player of hasTagPlayers) {
             player.removeTag("illegalitemsA");
+        }
+    } else if (illegalItemsABoolean === true && noHasTagPlayers.length > 0) {
+        for (const player of noHasTagPlayers) {
+            player.addTag("illegalitemsA");
         }
     }
 

@@ -69,12 +69,20 @@ export function illegalitemsA(message: BeforeChatEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("illegalitemsa_b", true);
         world.setDynamicProperty("illegalitemsa_b", true);
+        const nohasTag = world.getPlayers({ excludeTags: ["illegalitemsA"] });
+        for (const temp of nohasTag) {
+            temp.addTag("illegalitemsA");
+        }
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`);
         IllegalItemsA();
     } else if (illegalItemsABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalitemsa_b", false);
         world.setDynamicProperty("illegalitemsa_b", false);
+        const hasTag = world.getPlayers({ tags: ["illegalitemsA"] });
+        for (const temp of hasTag) {
+            temp.removeTag("illegalitemsA");
+        }
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`);
     }
 }

@@ -47,10 +47,10 @@ function illegalitemsa(id: number) {
     }
 
     // Retrieve all players with the "illegalitemsA" tag from the "world" object
-    const allFilteredPlayers = world.getPlayers({ tags: ["illegalitemsA"] });
+    const allPlayers = world.getPlayers();
 
     // Iterate through each player
-    for (const player of allFilteredPlayers) {
+    for (const player of allPlayers) {
         // Get the player's unique ID from the "dynamicPropertyRegistry" object
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
