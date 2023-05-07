@@ -119,7 +119,9 @@ async function illegalitemsc(object: BlockPlaceEvent) {
         if (isFlagged) {
             return;
         }
-    } else if (blockIdentifiers.some((id) => block.typeId.indexOf(id) !== -1)) {
+    }
+
+    if (blockIdentifiers.some((id) => block.typeId.indexOf(id) !== -1) || isAdjacent) {
         // Check shulker boxes and ender chests for illegal nested items
         if (blockContainer) {
             // Cache the block's inventory size
