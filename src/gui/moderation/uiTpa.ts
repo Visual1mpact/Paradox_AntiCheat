@@ -8,7 +8,8 @@ import { paradoxui } from "../paradoxui.js";
 export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value, toggleToTarget, toggleTargetTo] = tpaResult.formValues;
     let member: Player = undefined;
-    for (let pl of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (let pl of players) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;

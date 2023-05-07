@@ -13,11 +13,12 @@ async function creative(id: number) {
         system.clearRun(id);
         return;
     }
-    const filter = new Object() as EntityQueryOptions;
-    // 1 = creative
-    filter.gameMode = GameMode.creative;
+    const filter: EntityQueryOptions = {
+        gameMode: GameMode.creative,
+    };
+    const filteredPlayers = world.getPlayers(filter);
     // Run as each player
-    for (const player of world.getPlayers(filter)) {
+    for (const player of filteredPlayers) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

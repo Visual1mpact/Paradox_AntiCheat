@@ -30,7 +30,8 @@ function worldborder(id: number) {
         system.clearRun(id);
         return;
     }
-    for (const player of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (const player of players) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

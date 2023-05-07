@@ -58,7 +58,8 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
     }
 
-    for (const member of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (const member of players) {
         const reportBody = [
             `\n§r§4[§6Paradox§4]§r Getting all Paradox Logs from: §6${member.name}§r`,
             `§r§4[§6Paradox§4]§r §6${member.name}§r is in Gamemode: ${getGamemode(member)}`,

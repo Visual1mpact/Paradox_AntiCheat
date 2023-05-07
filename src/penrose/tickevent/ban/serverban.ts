@@ -3,10 +3,12 @@ import { allscores, banMessage, sendMsg, sendMsgToPlayer, setScore } from "../..
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
 function serverban() {
-    const filter = new Object() as EntityQueryOptions;
-    filter.tags = ["isBanned"];
+    const filter: EntityQueryOptions = {
+        tags: ["isBanned"],
+    };
+    const filteredPlayers = world.getPlayers(filter);
     // run as each player
-    for (const player of world.getPlayers(filter)) {
+    for (const player of filteredPlayers) {
         if (queueUnban.has(player.nameTag)) {
             // Remove tag
             player.removeTag("isBanned");

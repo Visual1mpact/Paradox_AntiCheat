@@ -4,7 +4,8 @@ import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui";
 export function uiTPR(requester, player, respons) {
     let member = undefined;
-    for (let pl of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (let pl of players) {
         if (pl.nameTag.toLowerCase().includes(requester.toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;

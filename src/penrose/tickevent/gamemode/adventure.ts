@@ -13,12 +13,12 @@ async function adventure(id: number) {
         system.clearRun(id);
         return;
     }
-    const filter = new Object() as EntityQueryOptions;
-    // 2 = adventure
-    filter.gameMode = GameMode.adventure;
+    const filter: EntityQueryOptions = {
+        gameMode: GameMode.adventure,
+    };
+    const filteredPlayers = world.getPlayers(filter);
     // Run as each player
-    for (const player of world.getPlayers(filter)) {
-        // Get unique ID
+    for (const player of filteredPlayers) {
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
         // Skip if they have permission

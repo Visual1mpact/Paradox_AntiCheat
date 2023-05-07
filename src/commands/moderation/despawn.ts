@@ -63,13 +63,15 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     }
 
     // try to find the entity or despawn them all if requested
-    const filter = new Object() as EntityQueryOptions;
-    filter.excludeTypes = ["player"];
+    const filter: EntityQueryOptions = {
+        excludeTypes: ["player"],
+    };
+    const filteredEntities = world.getDimension("overworld").getEntities(filter);
     // Specified entity
     if (args[0] !== "all" && args.length > 0) {
         let counter = 0;
         let requestedEntity: string = "";
-        for (const entity of world.getDimension("overworld").getEntities(filter)) {
+        for (const entity of filteredEntities) {
             const filteredEntity = entity.typeId.replace("minecraft:", "");
             requestedEntity = args[0].replace("minecraft:", "");
             // If an entity was specified then handle it here
@@ -90,7 +92,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     // All entities
     if (args[0] === "all") {
         const entityCount = {};
-        for (const entity of world.getDimension("overworld").getEntities(filter)) {
+        for (const entity of filteredEntities) {
             let filteredEntity = entity.typeId.replace("minecraft:", "");
             if (filteredEntity === "item") {
                 const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;

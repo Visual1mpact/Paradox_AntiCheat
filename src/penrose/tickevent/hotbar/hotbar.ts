@@ -12,10 +12,12 @@ async function hotbar(id: number) {
         return;
     }
     let hotbarMessage: string;
-    const filter = new Object() as EntityQueryOptions;
-    filter.excludeTags = ["vanish"];
+    const filter: EntityQueryOptions = {
+        excludeTags: ["vanish"],
+    };
+    const filteredPlayers = world.getPlayers(filter);
     // run as each player
-    for (const player of world.getPlayers(filter)) {
+    for (const player of filteredPlayers) {
         hotbarMessage = config.modules.hotbar.message;
         await player.runCommandAsync(`titleraw @s actionbar {"rawtext":[{"text":${JSON.stringify(hotbarMessage)}}]}`);
     }

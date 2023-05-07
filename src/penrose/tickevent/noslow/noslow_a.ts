@@ -36,10 +36,12 @@ function noslowa(id: number) {
         return;
     }
 
-    const filter = new Object() as EntityQueryOptions;
+    const filter: EntityQueryOptions = {
+        excludeGameModes: [GameMode.creative, GameMode.spectator],
+    };
     // Exclude creative mode and spectator mode
-    filter.excludeGameModes = [GameMode.creative, GameMode.spectator];
-    for (const player of world.getPlayers(filter)) {
+    const filteredPlayers = world.getPlayers(filter);
+    for (const player of filteredPlayers) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

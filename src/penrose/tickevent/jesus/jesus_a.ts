@@ -24,7 +24,8 @@ function jesusa(id: number) {
         return;
     }
     // run as each player
-    for (const player of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (const player of players) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

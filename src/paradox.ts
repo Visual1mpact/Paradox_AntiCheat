@@ -108,7 +108,8 @@ AutoBan();
 system.runInterval(() => {
     let hastag: boolean;
     // run as each player
-    for (let player of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (let player of players) {
         try {
             hastag = player.hasTag("freeze");
         } catch (error) {}

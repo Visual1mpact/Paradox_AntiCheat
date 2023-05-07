@@ -62,7 +62,8 @@ export async function ecwipe(message: BeforeChatEvent, args: string[]) {
 
     // try to find the player requested
     let member: Player;
-    for (let pl of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (let pl of players) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }

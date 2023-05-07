@@ -16,7 +16,8 @@ export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Play
     }
     if (LockdownToggle === true) {
         // Lock it down
-        for (const pl of world.getPlayers()) {
+        const players = world.getPlayers();
+        for (const pl of players) {
             // Check for hash/salt and validate password
             const hash = pl.getDynamicProperty("hash");
             const salt = pl.getDynamicProperty("salt");

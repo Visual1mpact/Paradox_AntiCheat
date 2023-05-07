@@ -4,20 +4,23 @@ import { crypto, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
 function noperms() {
-    const filter = new Object() as EntityQueryOptions;
-    filter.tags = ["paradoxOpped"];
+    const filter: EntityQueryOptions = {
+        tags: ["paradoxOpped"],
+    };
     // We need a list of players for checking behind a bug in Minecraft
-    const playerArray = [...world.getPlayers(filter)];
+    const filteredPlayers = world.getPlayers(filter);
+
     // Let's check the entities for illegal permissions
     // Apparently all dimensions are checked even though we target overworld
-    for (const entity of world.getDimension("overworld").getEntities(filter)) {
+    const filteredEntities = world.getDimension("overworld").getEntities(filter);
+    for (const entity of filteredEntities) {
         // If it's a player then ignore
         if (entity instanceof Player) {
             continue;
         }
         // This covers a bug that exists in Minecraft where for a brief tick the player will not return as a player entity
         // This bug would essentially cause this script to remove permissions from staff unintentionally
-        if (playerArray.includes(entity as Player)) {
+        if (filteredPlayers.includes(entity as Player)) {
             // Skip to the next entity since this is a bug in Minecraft
             continue;
         }

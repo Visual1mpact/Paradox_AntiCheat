@@ -14,12 +14,14 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
     }
     // try to find the entity or despawn them all if requested
-    const filter = new Object() as EntityQueryOptions;
-    filter.excludeTypes = ["player"];
+    const filter: EntityQueryOptions = {
+        excludeTags: ["player"],
+    };
+    const filteredEntities = world.getDimension("overworld").getEntities(filter);
     // Specified entity
     let counter = 0;
     let requestedEntity: string = "";
-    for (const entity of world.getDimension("overworld").getEntities(filter)) {
+    for (const entity of filteredEntities) {
         const filteredEntity = entity.typeId.replace("minecraft:", "");
         requestedEntity = entityValue.replace("minecraft:", "");
         // If an entity was specified then handle it here
@@ -38,7 +40,7 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
     }
     if (DespawnAllToggle === true) {
         const entityCount = {};
-        for (const entity of world.getDimension("overworld").getEntities(filter)) {
+        for (const entity of filteredEntities) {
             let filteredEntity = entity.typeId.replace("minecraft:", "");
             if (filteredEntity === "item") {
                 const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;

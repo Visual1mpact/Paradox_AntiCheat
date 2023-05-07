@@ -40,7 +40,8 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
     } else {
         // Need player object
         let member: Player = undefined;
-        for (const pl of world.getPlayers()) {
+        const players = world.getPlayers();
+        for (const pl of players) {
             if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;

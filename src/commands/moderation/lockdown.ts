@@ -77,7 +77,8 @@ export async function lockdown(message: BeforeChatEvent, args: string[]) {
     const reason = "Under Maintenance! Sorry for the inconvenience.";
 
     // Lock it down
-    for (const pl of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (const pl of players) {
         // Check for hash/salt and validate password
         const hash = pl.getDynamicProperty("hash");
         const salt = pl.getDynamicProperty("salt");

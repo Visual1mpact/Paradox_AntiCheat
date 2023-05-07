@@ -72,7 +72,8 @@ export async function fly(message: BeforeChatEvent, args: string[]) {
     // try to find the player requested
     let member: Player;
     if (args.length) {
-        for (const pl of world.getPlayers()) {
+        const players = world.getPlayers();
+        for (const pl of players) {
             if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
             }

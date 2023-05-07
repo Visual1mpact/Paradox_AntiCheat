@@ -17,10 +17,12 @@ function antifalla(id: number) {
     }
 
     //exclude players who are in creative.
-    const gm = new Object() as EntityQueryOptions;
-    gm.excludeGameModes = [GameMode.creative];
+    const gm: EntityQueryOptions = {
+        excludeGameModes: [GameMode.creative],
+    };
+    const filteredPlayers = world.getPlayers(gm);
 
-    for (const player of world.getPlayers(gm)) {
+    for (const player of filteredPlayers) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

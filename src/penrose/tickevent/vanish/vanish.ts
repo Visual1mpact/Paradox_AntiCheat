@@ -4,10 +4,12 @@ import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js"
 
 async function vanish() {
     // Filter for only players who are vanished
-    let filter = new Object() as EntityQueryOptions;
-    filter.tags = ["vanish"];
+    let filter: EntityQueryOptions = {
+        tags: ["vanish"],
+    };
+    const filteredPlayers = world.getPlayers(filter);
     // Run as each player
-    for (let player of world.getPlayers(filter)) {
+    for (const player of filteredPlayers) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

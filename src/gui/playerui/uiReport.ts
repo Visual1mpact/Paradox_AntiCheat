@@ -5,7 +5,8 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 export function UIREPORTPLAYER(reportplayerResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value, reason] = reportplayerResult.formValues;
     let member: Player = undefined;
-    for (let pl of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (let pl of players) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;

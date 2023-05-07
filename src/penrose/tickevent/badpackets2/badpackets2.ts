@@ -12,7 +12,8 @@ function badpackets2(id: number) {
         return;
     }
     // run as each player
-    for (const player of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (const player of players) {
         // Invalid slot
         if (player.selectedSlot < 0 || player.selectedSlot > 8) {
             flag(player, "BadPackets", "2", "Exploit", null, null, "selectedSlot", `${player.selectedSlot}`, false, null);

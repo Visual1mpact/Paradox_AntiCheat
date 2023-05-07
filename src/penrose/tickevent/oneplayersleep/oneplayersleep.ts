@@ -21,8 +21,9 @@ function ops(opsID: number) {
     }
 
     const filter: EntityQueryOptions = { tags: ["sleeping"] };
+    const filteredPlayers = world.getPlayers(filter);
 
-    for (const player of world.getPlayers(filter)) {
+    for (const player of filteredPlayers) {
         const id = system.runInterval(() => {
             queueSleep(player, id);
         }, 40);

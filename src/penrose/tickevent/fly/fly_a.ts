@@ -14,11 +14,13 @@ function flya(id: number) {
         system.clearRun(id);
         return;
     }
-    // Exclude creative gamemode
-    const gm = new Object() as EntityQueryOptions;
-    gm.excludeGameModes = [GameMode.creative, GameMode.spectator];
+    // Exclude creative, and spectator gamemode
+    const gm: EntityQueryOptions = {
+        excludeGameModes: [GameMode.creative, GameMode.spectator],
+    };
+    const filteredPlayers = world.getPlayers(gm);
     // run as each player who are in survival
-    for (const player of world.getPlayers(gm)) {
+    for (const player of filteredPlayers) {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
         // Skip if they have permission

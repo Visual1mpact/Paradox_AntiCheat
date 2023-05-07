@@ -2,7 +2,8 @@ import { world, system } from "@minecraft/server";
 
 async function playerposition() {
     // run as each player
-    for (const player of world.getPlayers()) {
+    const players = world.getPlayers();
+    for (const player of players) {
         // player position
         try {
             await player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
