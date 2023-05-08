@@ -253,6 +253,7 @@ async function paradoxui(player: Player) {
                 moderationui.button("Allow a player to fly.", "textures/ui/flyingascend");
                 moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
                 moderationui.button("Despawn entities", "textures/ui/trash");
+                moderationui.button("Auto Ban", "textures/ui/hammer_l");
                 moderationui.show(player).then((ModUIresult) => {
                     if (ModUIresult.selection === 0) {
                         //show ban ui here
@@ -476,6 +477,12 @@ async function paradoxui(player: Player) {
                         despawnerui.show(player).then((despawnerResult) => {
                             uiDESPAWNER(despawnerResult, player);
                         });
+                    }
+                    if (ModUIresult.selection === 13) {
+                        const autoBanBoolean = dynamicPropertyRegistry.get("autoban_b");
+                        const autobanui = new ModalFormData();
+                        autobanui.title("§4Paradox - Auto Ban.§4");
+                        autobanui.toggle("Enable or disable auto ban.", autoBanBoolean);
                     }
                 });
             }
