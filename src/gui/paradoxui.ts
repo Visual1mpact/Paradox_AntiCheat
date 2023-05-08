@@ -58,6 +58,7 @@ import { uiSAVEDLOCATIONS } from "./playerui/uiSavedLocations";
 import { UIREPORTPLAYER } from "./playerui/uiReport";
 import { uiSTATS } from "./moderation/uiStats";
 import versionFile from "../version.js";
+import { uiAUTOBAN } from "./moderation/uiAutoBan";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -483,6 +484,9 @@ async function paradoxui(player: Player) {
                         const autobanui = new ModalFormData();
                         autobanui.title("§4Paradox - Auto Ban.§4");
                         autobanui.toggle("Enable or disable auto ban.", autoBanBoolean);
+                        autobanui.show(player).then((autobanResult) => {
+                            uiAUTOBAN(autobanResult, player);
+                        });
                     }
                 });
             }
