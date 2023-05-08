@@ -54,10 +54,16 @@ function teleportRequestHandler({ sender, message, cancel }: BeforeChatEvent) {
 
     const target = targets[0];
 
-    if (teleportRequests.some((r) => r.target === target)) {
-        sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r That player already has a teleport request pending.");
-        cancel = true;
-        return;
+    const requestIndex = teleportRequests.findIndex((r) => r.target === target);
+    if (requestIndex !== -1) {
+        const request = teleportRequests[requestIndex];
+        if (Date.now() >= request.expiresAt) {
+            teleportRequests.splice(requestIndex, 1);
+        } else {
+            sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r That player already has a teleport request pending.");
+            cancel = true;
+            return;
+        }
     }
 
     /**
