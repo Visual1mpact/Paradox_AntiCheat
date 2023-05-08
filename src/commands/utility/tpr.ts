@@ -98,6 +98,7 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatE
         const request = teleportRequests[requestIndex];
         if (Date.now() >= request.expiresAt) {
             sendMsgToPlayer(request.requester, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
+            sendMsgToPlayer(request.target, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
             teleportRequests.splice(requestIndex, 1);
             cancel = true;
             return;
