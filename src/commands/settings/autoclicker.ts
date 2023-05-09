@@ -1,9 +1,10 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { AutoClicker } from "../../penrose/entityhitevent/autoclicker.js";
 
-function autoclickerHelp(player: Player, prefix: string, autoclickerscore: number) {
+function autoclickerHelp(player: Player, prefix: string, autoClickerBoolean: boolean) {
     let commandStatus: string;
     if (!config.customcommands.autoclicker) {
         commandStatus = "§6[§4DISABLED§6]§r";
@@ -11,7 +12,7 @@ function autoclickerHelp(player: Player, prefix: string, autoclickerscore: numbe
         commandStatus = "§6[§aENABLED§6]§r";
     }
     let moduleStatus: string;
-    if (autoclickerscore <= 0) {
+    if (autoClickerBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§r";
     } else {
         moduleStatus = "§6[§aENABLED§6]§r";
@@ -52,7 +53,8 @@ export async function autoclick(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
-    const autoclickerscore = getScore("autoclicker", player);
+    // Get Dynamic Property Boolean
+    const autoClickerBoolean = dynamicPropertyRegistry.get("autoclicker_b");
 
     // Check for custom prefix
     const prefix = getPrefix(player);
@@ -60,17 +62,19 @@ export async function autoclick(message: BeforeChatEvent, args: string[]) {
     // Was help requested
     const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.autoclicker) {
-        return autoclickerHelp(player, prefix, autoclickerscore);
+        return autoclickerHelp(player, prefix, autoClickerBoolean);
     }
 
-    if (autoclickerscore <= 0) {
+    if (autoClickerBoolean === false) {
         // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config autoclicker 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Anti Autoclicker§r!`);
-    } else if (autoclickerscore >= 1) {
+        dynamicPropertyRegistry.set("autoclicker_b", true);
+        world.setDynamicProperty("autoclicker_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AutoClicker§r!`);
+        AutoClicker();
+    } else if (autoClickerBoolean === true) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config autoclicker 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Anti Autoclicker§r!`);
+        dynamicPropertyRegistry.set("autoclicker_b", false);
+        world.setDynamicProperty("autoclicker_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AutoClicker§r!`);
     }
-    return await player.runCommandAsync(`scoreboard players operation @a autoclicker = paradox:config autoclicker`);
 }

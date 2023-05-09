@@ -675,21 +675,14 @@ async function paradoxui(player: Player) {
                         });
                     }
                     if (ModulesUIResult.selection === 6) {
-                        const autoclickerscore = getScore("autoclicker", player);
-                        let autoclickerBoolean: boolean = undefined;
-                        /**get the score value and then check to see if its already enable or already disabled
-                         * so we can then update the control boolean to disaply its current setting to the player
+                        const autoClickerBoolean = dynamicPropertyRegistry.get("autoclicker_b");
+                        /**get the boolean and then check to see if its already enable or already disabled
+                         * so we can then update the control boolean to display its current setting to the player
                          * in the menu.
                          */
-                        if (autoclickerscore <= 0) {
-                            autoclickerBoolean = false;
-                        }
-                        if (autoclickerscore >= 1) {
-                            autoclickerBoolean = true;
-                        }
                         const modulesantiautoclickerui = new ModalFormData();
                         modulesantiautoclickerui.title("§4Paradox Modules-Anti AutoClicker§4");
-                        modulesantiautoclickerui.toggle("Anti AutoClicker: checks for players using autoclickers while attacking.", autoclickerBoolean);
+                        modulesantiautoclickerui.toggle("Anti AutoClicker: checks for players using autoclickers while attacking.", autoClickerBoolean);
                         modulesantiautoclickerui.show(player).then((antiautoclickerResult) => {
                             uiANTIAUTOCLICKER(antiautoclickerResult, player);
                         });

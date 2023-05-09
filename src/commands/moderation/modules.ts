@@ -57,7 +57,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     // scores
     const commandblocks = getScore("commandblocks", player);
     const cmds = getScore("cmds", player);
-    const autoclicker = getScore("autoclicker", player);
     const encharmor = getScore("encharmor", player);
     const autoaura = getScore("autoaura", player);
     const antikb = getScore("antikb", player);
@@ -104,6 +103,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const antiFallABoolean = dynamicPropertyRegistry.get("antifalla_b");
     const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
     const autobanBoolean = dynamicPropertyRegistry.get("autoban_b");
+    const autoclicker = dynamicPropertyRegistry.get("autoclicker_b");
 
     // Numbers
     const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");

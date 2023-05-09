@@ -6,10 +6,6 @@ function checks/others
 
 execute as @s[scores={autoaura=1..}] at @s run /function checks/killaura
 
-# Specific criteria checks
-
-execute as @s[type=player,scores={attacks=1..,autoclicker=1..}] at @s run /function checks/autoclicker
-
 # Optional checks
 execute as @s[scores={commandblocks=1..}] positioned as @s run function checks/optional/nocommandblocks
 execute as @s[scores={cmds=1..}] at @s run /function checks/optional/overridecommandblocksenabled
