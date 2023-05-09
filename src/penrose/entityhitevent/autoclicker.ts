@@ -83,8 +83,8 @@ const AutoClicker = (): void => {
     const maxCPS: number = 12;
     // Subscribe to the entityHit event to track player clicks
     world.events.entityHit.subscribe(autoclicker);
-    // Set a timeout to run the CPS validation function every 20ms
-    const id: number = system.runTimeout(() => {
+    // Set an interval to run the CPS validation function every 20 ticks
+    const id: number = system.runInterval(() => {
         cpsValidation(id, maxCPS);
     }, 20);
 };
