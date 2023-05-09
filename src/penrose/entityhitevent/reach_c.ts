@@ -30,7 +30,8 @@ function reachc(object: EntityHitEvent) {
     const uniqueId = dynamicPropertyRegistry.get(entity.scoreboard.id);
 
     // Skip if they have permission
-    if (uniqueId === entity.name) {
+    // .name doesn't exist on entity class so we use nameTag since we never modify .nameTag anyways
+    if (uniqueId === entity.nameTag) {
         return;
     }
 

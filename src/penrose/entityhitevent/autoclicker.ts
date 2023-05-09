@@ -65,6 +65,16 @@ function autoclicker(event: EntityHitEvent): void {
     }
 
     const { entity } = event;
+
+    // Get unique ID
+    const uniqueId = dynamicPropertyRegistry.get(entity.scoreboard.id);
+
+    // Skip if they have permission
+    // .name doesn't exist on entity class so we use nameTag since we never modify .nameTag anyways
+    if (uniqueId === entity.nameTag) {
+        return;
+    }
+
     // If the entity hit is a player, update their click object with a new timestamp
     if (entity.typeId === MinecraftEntityTypes.player.id) {
         const timestamp: number = new Date().getTime();
