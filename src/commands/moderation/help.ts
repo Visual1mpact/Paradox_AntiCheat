@@ -104,6 +104,7 @@ export function help(message: BeforeChatEvent) {
         `§6${prefix}badpackets2§r - ${config.customcommands.badpackets2 ? `Toggles checks for invalid selected slots by player.` : textDisabled}`,
         `§6${prefix}clearlag§r - ${config.customcommands.clearlag ? `Clears items and entities with timer.` : textDisabled}`,
         `§6${prefix}antifalla§r - ${config.customcommands.antifalla ? `Toggles checks for taking no fall damage in survival.` : textDisabled}`,
+        `§6${prefix}showrules§r - ${config.customcommands.showrules ? `Toggles showing the rules when the player loads in for the first time.` : textDisabled}`,
         ` `,
         `§l§6[§4Tools and Utilites§6]§r`,
         `§6${prefix}give <username> <item> <amount>§r - ${config.customcommands.give ? `Gives player items.` : textDisabled}`,
