@@ -88,36 +88,41 @@ function teleportRequestHandler({ sender, message, cancel }: BeforeChatEvent) {
 
 // This handles requests pending approval
 function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatEvent) {
-    if (message.toLowerCase().match(/^(approved|denied|approve|deny)$/)) {
-        const player = sender;
+    const lowercaseMessage = message.toLowerCase();
+    const isApprovalRequest = lowercaseMessage === "approved" || lowercaseMessage === "approve";
+    const isDenialRequest = lowercaseMessage === "denied" || lowercaseMessage === "deny";
 
-        const requestIndex = teleportRequests.findIndex((r) => r.target === player);
-        // Target doesn't exist so return
-        if (requestIndex === -1) return;
-
-        const request = teleportRequests[requestIndex];
-        if (Date.now() >= request.expiresAt) {
-            sendMsgToPlayer(request.requester, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
-            sendMsgToPlayer(request.target, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
-            teleportRequests.splice(requestIndex, 1);
-            cancel = true;
-            return;
-        }
-
-        const validMessages = ["approved", "approve"];
-
-        if (validMessages.some((msg) => msg === message)) {
-            setTimer(request.requester.name);
-            request.requester.teleport(request.target.location, request.target.dimension, 0, 0, false);
-            sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
-            cancel = true;
-        } else {
-            sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is denied.`);
-            cancel = true;
-        }
-
-        teleportRequests.splice(requestIndex, 1);
+    if (!isApprovalRequest && !isDenialRequest) {
+        return;
     }
+
+    const player = sender;
+
+    // Target is the player with the request and player is the same target responding to the request
+    const requestIndex = teleportRequests.findIndex((r) => r.target === player);
+    // Target doesn't exist so return
+    if (requestIndex === -1) return;
+
+    const request = teleportRequests[requestIndex];
+    if (Date.now() >= request.expiresAt) {
+        sendMsgToPlayer(request.requester, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
+        sendMsgToPlayer(request.target, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
+        teleportRequests.splice(requestIndex, 1);
+        cancel = true;
+        return;
+    }
+
+    if (isApprovalRequest) {
+        setTimer(request.requester.name);
+        request.requester.teleport(request.target.location, request.target.dimension, 0, 0, false);
+        sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
+        cancel = true;
+    } else {
+        sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is denied.`);
+        cancel = true;
+    }
+
+    teleportRequests.splice(requestIndex, 1);
 }
 
 export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEvent, args: string[]) {
