@@ -9,12 +9,12 @@ import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block) {
     let reason: string;
     if (block) {
-        reason = `Illegal Item C (${block.type.id.replace("minecraft:", "")})`;
+        reason = `Illegal Item B (${block.type.id.replace("minecraft:", "")})`;
     } else if (enchData) {
         const { id, level } = enchData;
-        reason = `Illegal Item C (${inventory_item.typeId.replace("minecraft:", "")}: ${id}=${level})`;
+        reason = `Illegal Item B (${inventory_item.typeId.replace("minecraft:", "")}: ${id}=${level})`;
     } else {
-        reason = `Illegal Item C (${inventory_item.typeId.replace("minecraft:", "")}=${inventory_item.amount})`;
+        reason = `Illegal Item B (${inventory_item.typeId.replace("minecraft:", "")}=${inventory_item.amount})`;
     }
 
     try {
@@ -69,7 +69,7 @@ async function illegalitemsb(object: BlockPlaceEvent) {
     // Check if placed item is illegal
     if (illegalitems.has(block.typeId) && !illegalItemsBWhitelist.has(block.typeId)) {
         await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
-        flag(player, "IllegalItems", "C", "Exploit", null, null, null, null, null, null);
+        flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null, null);
         return rip(player, null, null, block);
     }
 
@@ -118,7 +118,7 @@ async function illegalitemsb(object: BlockPlaceEvent) {
                 }
                 // Nested item has been found so flag it and remove the block from the world
                 await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
-                flag(player, "IllegalItems", "C", "Exploit", null, null, null, null, null, null);
+                flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null, null);
                 rip(player, null, null, block);
                 isFlagged = true;
                 break;
