@@ -66,12 +66,16 @@ function autoclicker(event: EntityHitEvent): void {
 
     const { entity } = event;
 
+    // If it's not a player then ignore
+    if (!(entity instanceof Player)) {
+        return;
+    }
+
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(entity.scoreboard.id);
+    const uniqueId = dynamicPropertyRegistry.get(entity?.id);
 
     // Skip if they have permission
-    // .name doesn't exist on entity class so we use nameTag since we never modify .nameTag anyways
-    if (uniqueId === entity.nameTag) {
+    if (uniqueId === entity.name) {
         return;
     }
 
