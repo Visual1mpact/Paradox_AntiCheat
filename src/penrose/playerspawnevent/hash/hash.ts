@@ -21,10 +21,10 @@ function verification(object: PlayerSpawnEvent) {
     } else if (hash !== undefined || salt !== undefined) {
         player.removeDynamicProperty("hash");
         player.removeDynamicProperty("salt");
-        const hasTag = player.hasTag("paradoxOpped");
-        if (hasTag) {
-            player.removeTag("paradoxOpped");
-        }
+    }
+    const hasTag = player.hasTag("paradoxOpped");
+    if (hasTag) {
+        player.removeTag("paradoxOpped");
     }
 }
 
