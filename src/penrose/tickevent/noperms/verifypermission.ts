@@ -20,13 +20,15 @@ function verifypermission() {
                 dynamicPropertyRegistry.set(player.id, player.name);
             }
             continue;
-        } else {
+        } else if (encode !== undefined || hash !== undefined) {
             player.removeDynamicProperty("hash");
             player.removeDynamicProperty("salt");
             dynamicPropertyRegistry.delete(player.id);
         }
-        // If they have the basic permission but not the hash then remove it
-        player.removeTag("paradoxOpped");
+        const hasTag = player.hasTag("paradoxOpped");
+        if (hasTag) {
+            player.removeTag("paradoxOpped");
+        }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
         try {
             sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.nameTag} had unauthorized permissions. Permissions removed!`);

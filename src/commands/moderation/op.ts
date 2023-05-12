@@ -108,7 +108,7 @@ export function op(message: BeforeChatEvent, args: string[]) {
     // If no hash then create one
     if (memberHash === undefined) {
         encode = crypto(memberSalt, config.modules.encryption.password);
-        dynamicPropertyRegistry.set(member.scoreboard.id, member.name);
+        dynamicPropertyRegistry.set(member.id, member.name);
         member.setDynamicProperty("hash", encode);
         memberHash = member.getDynamicProperty("hash");
     }
