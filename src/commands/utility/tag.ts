@@ -21,12 +21,12 @@ function tagHelp(player: Player, prefix: string, chatRanksBoolean: string | numb
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: tag <username> [optional]`,
-        `§4[§6Optional§4]§r: Rank:tag, Rank:tag--tag, reset, help`,
+        `§4[§6Optional§4]§r: rank, rank--rank, reset, help`,
         `§4[§6Description§4]§r: Gives one or more ranks to a specified player or resets it.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}tag ${player.name} Rank:Admin`,
-        `    ${prefix}tag ${player.name} Rank:Contributor--Mod`,
-        `    ${prefix}tag ${player.name} Rank:Staff--Mod--Helper`,
+        `    ${prefix}tag ${player.name} Admin`,
+        `    ${prefix}tag ${player.name} Contributor--Mod`,
+        `    ${prefix}tag ${player.name} Staff--Mod--Helper`,
         `    ${prefix}tag help`,
     ]);
 }
@@ -69,8 +69,8 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // Was help requested
-    const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
+    const argCheck = args[0].toLowerCase();
+    if (argCheck === "help" || !config.customcommands.tag || !chatRanksBoolean || !config.customcommands.chatranks) {
         return tagHelp(player, prefix, chatRanksBoolean);
     }
 
@@ -80,6 +80,7 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     for (const pl of players) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
+            break;
         }
     }
 
@@ -88,23 +89,19 @@ export function tag(message: BeforeChatEvent, args: string[]) {
     }
 
     // check if array contains the string 'reset'
-    const argcheck = args.includes("reset");
+    const argcheck = args[1].toLowerCase();
 
     // reset rank
-    if (argcheck === true) {
+    if (argcheck === "reset") {
         resetTag(member);
         return;
     }
 
-    let custom: string;
-    args.forEach((t) => {
-        if (t.startsWith("Rank:")) {
-            custom = t;
-        }
-    });
-    if (custom.startsWith("Rank:")) {
+    // Add new rank if command is utilize correctly
+    if (args.length === 2) {
+        const newRank = "Rank:" + args[1];
         resetTag(member);
-        member.addTag(`${custom}`);
+        member.addTag(newRank);
     } else {
         return tagHelp(player, prefix, chatRanksBoolean);
     }
