@@ -91,11 +91,11 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
     }
     // All entities
     if (args[0] === "all") {
-        const entityCount = {};
+        const entityCount: { [key: string]: number } = {};
         for (const entity of filteredEntities) {
             let filteredEntity = entity.typeId.replace("minecraft:", "");
             if (filteredEntity === "item") {
-                const itemContainer = entity.getComponent("item") as unknown as EntityItemComponent;
+                const itemContainer = entity.getComponent("item") as EntityItemComponent;
                 const itemName = itemContainer.itemStack;
                 if (itemName !== undefined) {
                     filteredEntity = itemName.typeId.replace("minecraft:", "");

@@ -8,7 +8,7 @@ import { paradoxui } from "../paradoxui.js";
 
 const configMessageBackup = new WeakMap();
 // Dummy object
-const dummy = [];
+const dummy: object = [];
 
 export function uiHOTBAR(hotbarResult: ModalFormResponse, player: Player) {
     const [HotbarMessage, HotbarToggle, HotbarRestDefaultMessageToggle] = hotbarResult.formValues;

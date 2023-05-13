@@ -3,7 +3,8 @@ import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
-export async function uiFREEZE(freezeResult, onlineList, player) {
+import { ModalFormResponse } from "@minecraft/server-ui";
+export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = freezeResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

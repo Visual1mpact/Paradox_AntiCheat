@@ -6,7 +6,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const configMessageBackup = new WeakMap();
 // Dummy object
-const dummy = [];
+const dummy: object = [];
 
 function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | number | boolean) {
     let commandStatus: string;

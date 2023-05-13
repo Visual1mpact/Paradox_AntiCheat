@@ -15,7 +15,7 @@ function resetPrefix(player: Player) {
     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset!`);
 }
 
-export function uiPREFIX(prefixResult: ModalFormResponse, onlineList, player: Player) {
+export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value, textField, toggle] = prefixResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

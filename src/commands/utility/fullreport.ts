@@ -1,4 +1,4 @@
-import { BeforeChatEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
+import { BeforeChatEvent, EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { allscores, getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
@@ -110,7 +110,7 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
         const mainhand = equipment.getEquipment("mainhand" as EquipmentSlot);
         const offhand = equipment.getEquipment("offhand" as EquipmentSlot);
 
-        const materialColors = {
+        const materialColors: { [key: string]: string } = {
             golden: "§6", // gold
             iron: "§7", // light gray
             diamond: "§b", // aqua
@@ -140,7 +140,7 @@ export async function fullreport(message: BeforeChatEvent, args: string[]) {
             }
             let isEnchanted = false;
             for (const enchant in MinecraftEnchantmentTypes) {
-                const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant]);
+                const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant as keyof typeof MinecraftEnchantmentTypes] as EnchantmentType);
                 if (enchantNumber > 0) {
                     isEnchanted = true;
                 }

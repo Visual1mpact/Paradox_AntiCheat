@@ -7,12 +7,16 @@ interface Click {
     timestamp: number;
 }
 
+interface PlayerWithClicks extends Player {
+    clicks?: Click[];
+}
+
 /**
  * Get a player's clicks per second
  * @param player - The player whose clicks per second to get
  * @returns The number of clicks per second
  */
-function getPlayerCPS(player: Player): number {
+function getPlayerCPS(player: PlayerWithClicks): number {
     console.log("confirmed");
     const timestamp: number = new Date().getTime();
     const clicks: Click[] = (player["clicks"] as Click[]) ?? [];
@@ -71,6 +75,9 @@ function autoclicker(event: EntityHitEvent): void {
         return;
     }
 
+    // Explicitly casting the entity variable to PlayerWithClicks
+    const playerWithClicks = entity as PlayerWithClicks;
+
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(entity?.id);
 
@@ -82,13 +89,13 @@ function autoclicker(event: EntityHitEvent): void {
     // If the entity hit is a player, update their click object with a new timestamp
     if (entity.typeId === MinecraftEntityTypes.player.id) {
         const timestamp: number = new Date().getTime();
-        const clicks: Click[] = (entity["clicks"] as Click[]) ?? [];
+        const clicks: Click[] = (playerWithClicks["clicks"] as Click[]) ?? [];
         // Remove clicks that are over 1 second old
         while (clicks.length > 0 && timestamp - clicks[0].timestamp >= 1000) {
             clicks.shift();
         }
         clicks.unshift({ timestamp });
-        entity["clicks"] = clicks;
+        playerWithClicks["clicks"] = clicks;
     }
 }
 

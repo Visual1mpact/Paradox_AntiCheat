@@ -2,8 +2,9 @@ import { Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { ModalFormResponse } from "@minecraft/server-ui";
 
-export async function uiVANISH(vanishResult, onlineList, player) {
+export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = vanishResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

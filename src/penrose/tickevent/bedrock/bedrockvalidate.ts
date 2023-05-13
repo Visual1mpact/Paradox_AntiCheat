@@ -1,6 +1,19 @@
-import { world, system } from "@minecraft/server";
+import { world, system, Dimension } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
+
+interface DimensionConfig {
+    dimension: Dimension;
+    command1: string;
+    command2: string;
+    command3?: string;
+    config: boolean;
+}
+
+interface Dimensions {
+    overworld: DimensionConfig;
+    nether: DimensionConfig;
+}
 
 async function bedrockvalidate(id: number) {
     const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
@@ -10,7 +23,7 @@ async function bedrockvalidate(id: number) {
         return;
     }
 
-    const dimensions = {
+    const dimensions: Dimensions = {
         overworld: {
             dimension: world.getDimension("overworld"),
             command1: "fill ~-5 -64 ~-5 ~5 -64 ~5 bedrock",

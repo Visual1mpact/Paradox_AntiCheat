@@ -1,4 +1,4 @@
-import { EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
+import { EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { allscores, getGamemode } from "../../util";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
@@ -57,7 +57,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     const mainhand = equipment.getEquipment("mainhand" as EquipmentSlot);
     const offhand = equipment.getEquipment("offhand" as EquipmentSlot);
 
-    const materialColors = {
+    const materialColors: { [key: string]: string } = {
         golden: "§6", // gold
         iron: "§7", // light gray
         diamond: "§b", // aqua
@@ -87,7 +87,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         }
         let isEnchanted = false;
         for (const enchant in MinecraftEnchantmentTypes) {
-            const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant]);
+            const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant as keyof typeof MinecraftEnchantmentTypes] as EnchantmentType);
             if (enchantNumber > 0) {
                 isEnchanted = true;
             }

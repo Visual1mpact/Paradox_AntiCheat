@@ -39,7 +39,7 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
     }
     if (DespawnAllToggle === true) {
-        const entityCount = {};
+        const entityCount: { [key: string]: number } = {};
         for (const entity of filteredEntities) {
             let filteredEntity = entity.typeId.replace("minecraft:", "");
             if (filteredEntity === "item") {

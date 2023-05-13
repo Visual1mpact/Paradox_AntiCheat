@@ -57,7 +57,7 @@ export function listitems(message: BeforeChatEvent, args: string[]) {
     }
 
     for (const item in MinecraftItemTypes) {
-        let itemInfo = new ItemStack(MinecraftItemTypes[item]);
+        let itemInfo = new ItemStack(MinecraftItemTypes[item as keyof typeof MinecraftItemTypes] as string);
         itemInfo.amount = 255;
         console.log("'" + itemInfo.typeId + "': " + itemInfo.amount + ",");
     }

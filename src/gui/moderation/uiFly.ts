@@ -2,6 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { ModalFormResponse } from "@minecraft/server-ui";
 function mayflydisable(player: Player, member: Player) {
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? "themselves" : member.nameTag}.`);
 }
@@ -9,7 +10,7 @@ function mayflydisable(player: Player, member: Player) {
 function mayflyenable(player: Player, member: Player) {
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? "themselves" : member.nameTag}.`);
 }
-export async function uiFLY(flyResult, onlineList, player) {
+export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = flyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

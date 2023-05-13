@@ -63,7 +63,7 @@ function worldborder(id: number) {
 
         const { x, y, z } = player.location;
 
-        const blockCoords = [
+        const blockCoords: [number, number, number][] = [
             [x, y - 1, z],
             [x, y - 1, z + 1],
             [x, y - 1, z - 1],
@@ -76,7 +76,7 @@ function worldborder(id: number) {
             [x - 1, y, z],
         ];
 
-        const portalBlocks = {};
+        const portalBlocks: { [key: string]: string } = {};
 
         for (const [x, y, z] of blockCoords) {
             const block = player.dimension.getBlock(new Vector(x, y, z));

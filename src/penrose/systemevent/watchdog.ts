@@ -1,7 +1,7 @@
 // @ts-ignore
-import { system } from "@minecraft/server";
+import { BeforeWatchdogTerminateEvent, system } from "@minecraft/server";
 
-function watchdog(terminator) {
+function watchdog(terminator: BeforeWatchdogTerminateEvent) {
     // Cancel watchdog from shutting down server/realm
     terminator.cancel = true;
 }
