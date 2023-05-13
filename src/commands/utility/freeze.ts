@@ -67,6 +67,7 @@ export async function freeze(message: BeforeChatEvent, args: string[]) {
     for (const pl of players) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
+            break;
         }
     }
 

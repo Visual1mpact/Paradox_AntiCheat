@@ -66,6 +66,7 @@ export async function ecwipe(message: BeforeChatEvent, args: string[]) {
     for (let pl of players) {
         if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
+            break;
         }
     }
 
