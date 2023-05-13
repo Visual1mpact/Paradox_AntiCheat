@@ -54,7 +54,7 @@ export async function autoclick(message: BeforeChatEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    const autoClickerBoolean = dynamicPropertyRegistry.get("autoclicker_b");
+    const autoClickerBoolean = dynamicPropertyRegistry.get("autoclicker_b") as boolean;
 
     // Check for custom prefix
     const prefix = getPrefix(player);

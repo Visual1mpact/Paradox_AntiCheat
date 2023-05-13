@@ -284,8 +284,8 @@ async function paradoxui(player: Player) {
                         //show rules ui
                         const rulesui = new ModalFormData();
                         rulesui.title("§4Paradox - Configure Rules!§4");
-                        const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
-                        const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
+                        const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b") as boolean;
+                        const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b") as boolean;
                         rulesui.toggle("Enable Rules", showrulesBoolean);
                         rulesui.toggle("Kick On Decline", KickOnDeclineBoolean);
                         rulesui.show(player).then((rulesResult) => {
@@ -322,7 +322,7 @@ async function paradoxui(player: Player) {
                                 //Chat Ranks ui
                                 const chatranksui = new ModalFormData();
                                 let onlineList: string[] = [];
-                                const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
+                                const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b") as boolean;
                                 chatranksui.title("§4Change a player's chat rank.§4");
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                                 let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
@@ -380,7 +380,7 @@ async function paradoxui(player: Player) {
                         //Lockdown ui
                         const lockdownui = new ModalFormData();
                         // Get Dynamic Property Boolean
-                        const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
+                        const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b") as boolean;
                         lockdownui.title("§4Paradox - Lockdown§4");
                         lockdownui.textField("Reason", "Possible hacker in the world.");
                         lockdownui.toggle("Enable or Disable Lockdown.", lockdownBoolean);
@@ -480,7 +480,7 @@ async function paradoxui(player: Player) {
                         });
                     }
                     if (ModUIresult.selection === 13) {
-                        const autoBanBoolean = dynamicPropertyRegistry.get("autoban_b");
+                        const autoBanBoolean = dynamicPropertyRegistry.get("autoban_b") as boolean;
                         const autobanui = new ModalFormData();
                         autobanui.title("§4Paradox - Auto Ban.§4");
                         autobanui.toggle("Enable or disable auto ban.", autoBanBoolean);
@@ -533,9 +533,9 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 0) {
                         //GameModes UI
                         const gamemodesui = new ModalFormData();
-                        const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b");
-                        const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
-                        const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
+                        const adventureGMBoolean = dynamicPropertyRegistry.get("adventuregm_b") as boolean;
+                        const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b") as boolean;
+                        const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b") as boolean;
                         gamemodesui.title("§4Paradox - Configure gamemodes.§4");
                         gamemodesui.toggle("Disable Adventure", adventureGMBoolean);
                         gamemodesui.toggle("Disable Creative", creativeGMBoolean);
@@ -558,7 +558,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 0) {
                                 //Anti Knockback UI
                                 const modulesantiknockbackui = new ModalFormData();
-                                const antikbBoolean = dynamicPropertyRegistry.get("antikb_b");
+                                const antikbBoolean = dynamicPropertyRegistry.get("antikb_b") as boolean;
                                 modulesantiknockbackui.title("§4Paradox Modules-Anti KnockBack§4");
                                 modulesantiknockbackui.toggle("Anti Knockback: Anti Knockback for all players.", antikbBoolean);
                                 modulesantiknockbackui.show(player).then((antikbResult) => {
@@ -568,7 +568,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 1) {
                                 //Anti Fall
                                 const modulesantifallui = new ModalFormData();
-                                const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b");
+                                const antifallABoolean = dynamicPropertyRegistry.get("antifalla_b") as boolean;
                                 modulesantifallui.title("§4Paradox Modules-Anti Fall§4");
                                 modulesantifallui.toggle("Anti Fall: Checks for taking no fall damage in survival. ", antifallABoolean);
                                 modulesantifallui.show(player).then((antifallResult) => {
@@ -578,7 +578,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 2) {
                                 //Anti Fly
                                 const modulesantiflyui = new ModalFormData();
-                                const flyABoolean = dynamicPropertyRegistry.get("flya_b");
+                                const flyABoolean = dynamicPropertyRegistry.get("flya_b") as boolean;
                                 modulesantiflyui.title("§4Paradox Modules-Anti Fly§4");
                                 modulesantiflyui.toggle("Anti Fly: checks for illegal flying in survival.", flyABoolean);
                                 modulesantiflyui.show(player).then((antiflyResult) => {
@@ -588,7 +588,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 3) {
                                 //Invalid Sprint
                                 const modulesinvalidsprintui = new ModalFormData();
-                                const invalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b");
+                                const invalidSprintABoolean = dynamicPropertyRegistry.get("invalidsprinta_b") as boolean;
                                 modulesinvalidsprintui.title("§4Paradox Modules-Invalid Sprint§4");
                                 modulesinvalidsprintui.toggle("Invalid Sprint: checks for illegal sprinting with blindness effect.", invalidSprintABoolean);
                                 modulesinvalidsprintui.show(player).then((invalidsprintResult) => {
@@ -598,7 +598,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 4) {
                                 //NoSlowA
                                 const modulesnoslowui = new ModalFormData();
-                                const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+                                const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b") as boolean;
                                 modulesnoslowui.title("§4Paradox Modules-Noslow§4");
                                 modulesnoslowui.toggle("Noslow: checks for player's speed hacking.", noSlowBoolean);
                                 modulesnoslowui.show(player).then((invalidsprintResult) => {
@@ -608,7 +608,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 5) {
                                 //AntiScaffold
                                 const modulesantiscaffoldui = new ModalFormData();
-                                const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
+                                const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b") as boolean;
                                 modulesantiscaffoldui.title("§4Paradox Modules-Anti Scaffold§4");
                                 modulesantiscaffoldui.toggle("Anti Scaffold: Checks player's for illegal scaffolding.", antiScaffoldABoolean);
                                 modulesantiscaffoldui.show(player).then((antiscaffoldResult) => {
@@ -618,7 +618,7 @@ async function paradoxui(player: Player) {
                             if (movementResult.selection === 6) {
                                 //Jesus UI
                                 const modulesantijesusui = new ModalFormData();
-                                const jesusaBoolean = dynamicPropertyRegistry.get("jesusa_b");
+                                const jesusaBoolean = dynamicPropertyRegistry.get("jesusa_b") as boolean;
                                 modulesantijesusui.title("§4Paradox Modules-Anti Jesus§4");
                                 modulesantijesusui.toggle("Anti Jesus: Toggles checks for walking/sprinting on water or lava.", jesusaBoolean);
                                 modulesantijesusui.show(player).then((antijesusResult) => {
@@ -649,7 +649,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 3) {
                         const modulesantinukerui = new ModalFormData();
-                        const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
+                        const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b") as boolean;
                         modulesantinukerui.title("§4Paradox Modules-Anti Nuker§4");
                         modulesantinukerui.toggle("Anti Nuker: Checks player's for nuking blocks.", antiNukerABoolean);
                         modulesantinukerui.show(player).then((antinukerResult) => {
@@ -658,7 +658,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 4) {
                         const modulesantishulkerui = new ModalFormData();
-                        const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b");
+                        const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b") as boolean;
                         modulesantishulkerui.title("§4Paradox Modules-Anti Shulker§4");
                         modulesantishulkerui.toggle("Anti Shulker: Allows or denies shulker boxes in the world.", antiShulkerBoolean);
                         modulesantishulkerui.show(player).then((antishulkerResult) => {
@@ -667,7 +667,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 5) {
                         const modulesantispamui = new ModalFormData();
-                        const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
+                        const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b") as boolean;
                         modulesantispamui.title("§4Paradox Modules-Anti Spam§4");
                         modulesantispamui.toggle("Anti Spam: Checks for spamming in chat with 2 second cooldown.", antiSpamBoolean);
                         modulesantispamui.show(player).then((antispamResult) => {
@@ -675,7 +675,7 @@ async function paradoxui(player: Player) {
                         });
                     }
                     if (ModulesUIResult.selection === 6) {
-                        const autoClickerBoolean = dynamicPropertyRegistry.get("autoclicker_b");
+                        const autoClickerBoolean = dynamicPropertyRegistry.get("autoclicker_b") as boolean;
                         /**get the boolean and then check to see if its already enable or already disabled
                          * so we can then update the control boolean to display its current setting to the player
                          * in the menu.
@@ -689,8 +689,8 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 7) {
                         const modulesbadpacketsui = new ModalFormData();
-                        const badPackets1Boolean = dynamicPropertyRegistry.get("badpackets1_b");
-                        const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
+                        const badPackets1Boolean = dynamicPropertyRegistry.get("badpackets1_b") as boolean;
+                        const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b") as boolean;
                         modulesbadpacketsui.title("§4Paradox Modules-Badpackets§4");
                         modulesbadpacketsui.toggle("Badpackets1: checks for message lengths with each broadcast", badPackets1Boolean);
                         modulesbadpacketsui.toggle("Badpackets2: checks for invalid selected slots by player", badPackets2Boolean);
@@ -700,7 +700,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 8) {
                         const modulesbedrockvalidateui = new ModalFormData();
-                        const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
+                        const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b") as boolean;
                         modulesbedrockvalidateui.title("§4Paradox Modules-Bedrock Validation§4");
                         modulesbedrockvalidateui.toggle("Bedrock Validate: checks for bedrock validations", bedrockValidateBoolean);
                         modulesbedrockvalidateui.show(player).then((bedrockvalidationResult) => {
@@ -709,7 +709,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 9) {
                         const modulesanticrasherui = new ModalFormData();
-                        const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
+                        const crasherABoolean = dynamicPropertyRegistry.get("crashera_b") as boolean;
                         modulesanticrasherui.title("§4Paradox Modules-Anti Crasher§4");
                         modulesanticrasherui.toggle("Anti Crasher: checks for the infamous Horion Crasher", crasherABoolean);
                         modulesanticrasherui.show(player).then((anticrasherResult) => {
@@ -740,12 +740,12 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 11) {
                         //Illegal items this will cover a few modules so will group these into one UI.
                         const modulesillegalitemsui = new ModalFormData();
-                        const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
-                        const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
-                        const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b");
-                        const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b");
-                        const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b");
-                        const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b");
+                        const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b") as boolean;
+                        const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b") as boolean;
+                        const illegalItemsCBoolean = dynamicPropertyRegistry.get("illegalitemsc_b") as boolean;
+                        const illegalEnchantmentBoolean = dynamicPropertyRegistry.get("illegalenchantment_b") as boolean;
+                        const illegalLoresBoolean = dynamicPropertyRegistry.get("illegallores_b") as boolean;
+                        const stackBanBoolean = dynamicPropertyRegistry.get("stackban_b") as boolean;
                         modulesillegalitemsui.title("§4Paradox Modules-Illegal Items§4");
                         modulesillegalitemsui.toggle("Illegal Items A: checks for player's that have illegal items in inventory.", illegalItemsABoolean);
                         modulesillegalitemsui.toggle("Illegal Items B: checks for player's that place illegal items.", illegalItemsBBoolean);
@@ -760,7 +760,7 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 12) {
                         //Lagclear
                         const moduleslaglearui = new ModalFormData();
-                        const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b");
+                        const clearLagBoolean = dynamicPropertyRegistry.get("clearlag_b") as boolean;
                         moduleslaglearui.title("§4Paradox Modules-Clear Lag§4");
                         moduleslaglearui.toggle("Clear Lag: Clears items and entities with timer", clearLagBoolean);
                         moduleslaglearui.show(player).then((lagclearResult) => {
@@ -770,8 +770,8 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 13) {
                         //Namespoofing
                         const modulesnamespoofingui = new ModalFormData();
-                        const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
-                        const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
+                        const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b") as boolean;
+                        const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b") as boolean;
                         modulesnamespoofingui.title("§4Paradox Modules-Name spoofing§4");
                         modulesnamespoofingui.toggle("Name Spoofing A: checks for player's name exceeding character limitations.", nameSpoofABoolean);
                         modulesnamespoofingui.toggle("Name Spoofing B: checks for player's name that has Non ASCII characters.", nameSpoofBBoolean);
@@ -781,7 +781,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 14) {
                         const modulesopsui = new ModalFormData();
-                        const opsBoolean = dynamicPropertyRegistry.get("ops_b");
+                        const opsBoolean = dynamicPropertyRegistry.get("ops_b") as boolean;
                         modulesopsui.title("§4Paradox Modules-One Player Sleep§4");
                         modulesopsui.toggle("One Player Sleep: Allows 1 player to sleep through the night", opsBoolean);
                         modulesopsui.show(player).then((opsResult) => {
@@ -816,9 +816,9 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 16) {
                         const modulesreachui = new ModalFormData();
-                        const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
-                        const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
-                        const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+                        const reachABoolean = dynamicPropertyRegistry.get("reacha_b") as boolean;
+                        const reachBBoolean = dynamicPropertyRegistry.get("reachb_b") as boolean;
+                        const reachCBoolean = dynamicPropertyRegistry.get("reachc_b") as boolean;
                         modulesreachui.title("§4Paradox Modules-Reach§4");
                         modulesreachui.toggle("Reach A: checks for player's placing blocks beyond reach.", reachABoolean);
                         modulesreachui.toggle("Reach B: checks for player's breaking blocks beyond reach.", reachBBoolean);
@@ -830,7 +830,7 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 17) {
                         //New Slavage System
                         const modulesexpsavlagesystem = new ModalFormData();
-                        const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
+                        const salvageBoolean = dynamicPropertyRegistry.get("salvage_b") as boolean;
                         modulesexpsavlagesystem.title("§4Paradox Modules-Salvage System [Exp]§4");
                         modulesexpsavlagesystem.toggle("Salvage System: new salvage system [Experimental]", salvageBoolean);
                         modulesexpsavlagesystem.show(player).then((salvagesystemResult) => {
@@ -839,10 +839,10 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 18) {
                         const modulesspamui = new ModalFormData();
-                        const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
-                        const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
-                        const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
-                        const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b");
+                        const spammerABoolean = dynamicPropertyRegistry.get("spammera_b") as boolean;
+                        const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b") as boolean;
+                        const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b") as boolean;
+                        const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b") as boolean;
                         modulesspamui.title("§4Paradox Modules-Spam Modules§4");
                         modulesspamui.toggle("Spammer A: checks for messages sent while moving.", spammerABoolean);
                         modulesspamui.toggle("Spammer B: checks for messages sent while swinging.", spammerBBoolean);
@@ -854,9 +854,9 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 19) {
                         const modulesworldborderui = new ModalFormData();
-                        const overWorldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
-                        let overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n");
-                        let netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
+                        const overWorldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b") as boolean;
+                        let overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n") as number;
+                        let netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n") as number;
                         modulesworldborderui.title("§4Paradox Modules-World Border§4");
                         modulesworldborderui.textField("Over World Border: value in blocks", "1000", String(overworldBorderNumber));
                         modulesworldborderui.textField("Nether World Border: values in blocks. Set to 0 if it needs to be disabled.", "0", String(netherworldBorderNumber));
@@ -868,7 +868,7 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 20) {
                         const modulesxtrayui = new ModalFormData();
                         modulesxtrayui.title("§4Paradox Modules-Xray§4");
-                        const xrayBoolean = dynamicPropertyRegistry.get("xraya_b");
+                        const xrayBoolean = dynamicPropertyRegistry.get("xraya_b") as boolean;
                         modulesxtrayui.toggle("Xray: Notify's staff when and where player's mine specific ores.", xrayBoolean);
                         modulesxtrayui.show(player).then((xrayResult) => {
                             uiXRAY(xrayResult, player);
@@ -876,7 +876,7 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 21) {
                         const moduleshotbarui = new ModalFormData();
-                        const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
+                        const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b") as boolean;
                         let CurrentHotbarConfig = config.modules.hotbar.message;
                         moduleshotbarui.title("§4Paradox Modules-Hotbar§4");
                         moduleshotbarui.textField("Hotbar Message: ", "", CurrentHotbarConfig);

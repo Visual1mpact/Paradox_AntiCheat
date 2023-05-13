@@ -61,7 +61,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
         if (memberHash !== encode) {
             let encode = crypto(memberSalt, config.modules.encryption.password);
             member.setDynamicProperty("hash", encode);
-            dynamicPropertyRegistry.set(member.scoreboard.id, member.name);
+            dynamicPropertyRegistry.set(member.id, member.name);
         }
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);

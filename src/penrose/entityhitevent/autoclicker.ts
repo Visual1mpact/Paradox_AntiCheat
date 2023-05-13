@@ -31,7 +31,7 @@ function getPlayerCPS(player: Player): number {
  */
 function cpsValidation(id: number, max: number): void {
     // Get Dynamic Property for autoclicker
-    const autoclickerBoolean: boolean | undefined = dynamicPropertyRegistry.get("autoclicker_b");
+    const autoclickerBoolean = dynamicPropertyRegistry.get("autoclicker_b") as boolean;
 
     // Unsubscribe if autoclicker is disabled in-game
     if (autoclickerBoolean === false) {
@@ -56,7 +56,7 @@ function cpsValidation(id: number, max: number): void {
  */
 function autoclicker(event: EntityHitEvent): void {
     // Get Dynamic Property for autoclicker
-    const autoclickerBoolean: boolean | undefined = dynamicPropertyRegistry.get("autoclicker_b");
+    const autoclickerBoolean = dynamicPropertyRegistry.get("autoclicker_b") as boolean;
 
     // Unsubscribe if autoclicker is disabled in-game
     if (autoclickerBoolean === false) {
