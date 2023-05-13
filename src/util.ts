@@ -208,7 +208,7 @@ export function resetTag(member: Player) {
  * @link http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
  **/
 export const UUID = (() => {
-    const lut = [];
+    const lut: string[] = [];
     for (let i = 0; i < 256; i++) {
         lut[i] = (i < 16 ? "0" : "") + i.toString(16);
     }

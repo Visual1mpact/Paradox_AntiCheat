@@ -100,18 +100,18 @@ function registry(data: WorldInitializeEvent) {
     // Loop through the identifiers in the array
     defineBooleanProperties.forEach((booleanProp) => {
         // Verify if identifier matches any module property in config
-        for (const configProperty in config.modules) {
+        for (const [configProperty, configPropertyValue] of Object.entries(config.modules)) {
             if (booleanProp.replaceAll(/(_b)/g, "") === configProperty.toLowerCase()) {
                 // Loop through the settings of each property in module
-                for (const setting in config.modules[configProperty]) {
+                for (const [setting, settingValue] of Object.entries(configPropertyValue)) {
                     if (setting === "enabled") {
                         // We conditionally test if the dynamic property already exists
                         const test = world.getDynamicProperty(booleanProp);
                         if (test === undefined) {
                             // Dynamic property doesn't exist so we create it with the default settings in config
-                            world.setDynamicProperty(booleanProp, config.modules[configProperty][setting]);
+                            world.setDynamicProperty(booleanProp, settingValue);
                             // Set property with value as an element that we can use in other scripts
-                            dynamicPropertyRegistry.set(booleanProp, config.modules[configProperty][setting]);
+                            dynamicPropertyRegistry.set(booleanProp, settingValue);
                         } else {
                             // Dynamic property exists so set property with value as an element that we can use in other scripts
                             dynamicPropertyRegistry.set(booleanProp, test);
