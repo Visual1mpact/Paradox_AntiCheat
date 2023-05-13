@@ -1,24 +1,27 @@
-import { world, BlockBreakEvent, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Enchantment, Vector } from "@minecraft/server";
-import config from "../../../data/config.js";
+import { world, BlockBreakEvent, Block, BlockPermutation } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
-let blockTimer = new Map();
+let lastBreakTime = new Map<string, number>();
+let blocksBroken = new Map<string, number>();
+let brokenBlockLocations = new Map<string, Array<Block>>();
+let blockIDMap = new Map<string, Map<Block, BlockPermutation>>();
 
 async function nukera(object: BlockBreakEvent) {
     // Get Dynamic Property
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
 
     if (antiNukerABoolean === false) {
-        blockTimer.clear();
+        lastBreakTime.clear();
+        blocksBroken.clear();
+        brokenBlockLocations.clear();
+        blockIDMap.clear();
         world.events.blockBreak.unsubscribe(nukera);
         return;
     }
 
     // Properties from class
     const { block, player, dimension, brokenBlockPermutation } = object;
-    // Block coordinates
-    const { x, y, z } = block.location;
 
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
@@ -28,131 +31,67 @@ async function nukera(object: BlockBreakEvent) {
         return;
     }
 
-    // Get the slot number in their possession
-    const hand = player.selectedSlot;
-
-    // Get the type of item from the slot number in their possession
-    const invContainer = player.getComponent("minecraft:inventory") as EntityInventoryComponent;
-    const item = invContainer.container.getItem(hand) as ItemStack;
-
-    // We get enchantment on this item
-    let enchantment: Enchantment;
-    if (item) {
-        const enchantComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
-        const item_enchants = enchantComponent.enchantments;
-        if (item_enchants.hasEnchantment(MinecraftEnchantmentTypes.efficiency)) {
-            enchantment = item_enchants.getEnchantment(MinecraftEnchantmentTypes.efficiency);
-        }
-    }
-
-    let timer: Date[];
-    if (blockTimer.has(player.nameTag)) {
-        timer = blockTimer.get(player.nameTag);
-    } else {
-        timer = [];
-    }
-
-    timer.push(new Date());
-
-    const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
-    blockTimer.set(player.nameTag, tiktok);
-
     /**
      * startTimer will make sure the key is properly removed
      * when the time for theVoid has expired. This will preserve
      * the integrity of our Memory.
      */
-    const timerExpired = startTimer("nukera", player.name, Date.now());
-    if (timerExpired.namespace.indexOf("nukera") !== -1 && timerExpired.expired) {
+    const timerExpired = startTimer("antinukera", player.id, Date.now());
+    if (timerExpired.namespace.indexOf("antinukera") !== -1 && timerExpired.expired) {
         const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-        blockTimer.delete(deletedKey);
+        blocksBroken.delete(deletedKey);
+        lastBreakTime.delete(deletedKey);
+        brokenBlockLocations.delete(deletedKey);
+        blockIDMap.delete(deletedKey);
     }
 
     // Get the properties of the blocks being destroyed
     const blockID = brokenBlockPermutation.clone();
 
     // Block dimension and location for permutation
-    const blockLoc = dimension.getBlock(new Vector(x, y, z));
+    const blockLoc = dimension.getBlock(block.location);
 
-    // Ignore vegetation
-    const vegetation = [
-        "minecraft:yellow_flower",
-        "minecraft:red_flower",
-        "minecraft:double_plant",
-        "minecraft:wither_rose",
-        "minecraft:tallgrass",
-        "minecraft:hanging_roots",
-        "minecraft:leaves",
-        "minecraft:leaves2",
-        "minecraft:azalea_leaves",
-        "minecraft:azalea_leaves_flowered",
-        "minecraft:deadbush",
-        "minecraft:cocoa",
-        "minecraft:chorus_plant",
-        "minecraft:chorus_flower",
-        "minecraft:cave_vines",
-        "minecraft:cave_vines_body_with_berries",
-        "minecraft:cave_vines_head_with_berries",
-        "minecraft:glow_berries",
-        "minecraft:carrots",
-        "minecraft:cactus",
-        "minecraft:big_dripleaf",
-        "minecraft:beetroot",
-        "minecraft:bamboo",
-        "minecraft:bamboo_sapling",
-        "minecraft:azalea",
-        "minecraft:flowering_azalea",
-        "minecraft:waterlily",
-        "minecraft:melon_block",
-        "minecraft:melon_stem",
-        "minecraft:potatoes",
-        "minecraft:pumpkin",
-        "minecraft:carved_pumpkin",
-        "minecraft:pumpkin_stem",
-        "minecraft:sapling",
-        "minecraft:seagrass",
-        "minecraft:small_dripleaf_block",
-        "minecraft:spore_blossom",
-        "minecraft:reeds",
-        "minecraft:sweet_berry_bush",
-        "minecraft:sweet_berries",
-        "minecraft:vine",
-        "minecraft:wheat",
-        "minecraft:kelp",
-        "minecraft:crimson_fungus",
-        "minecraft:warped_fungus",
-        "minecraft:glow_lichen",
-        "minecraft:brown_mushroom",
-        "minecraft:red_mushroom",
-        "minecraft:nether_wart",
-        "minecraft:nether_sprouts",
-        "minecraft:crimson_roots",
-        "minecraft:warped_roots",
-        "minecraft:twisting_vines",
-        "minecraft:weeping_vines",
-    ];
-
-    if (enchantment && enchantment.level >= MinecraftEnchantmentTypes.efficiency.maxLevel && tiktok.length < config.modules.antinukerA.max + 2) {
-        return undefined;
+    // Map block to its corresponding blockID
+    let playerBlockMap = blockIDMap.get(player.id);
+    if (!playerBlockMap) {
+        playerBlockMap = new Map<Block, BlockPermutation>();
+        blockIDMap.set(player.id, playerBlockMap);
     }
+    playerBlockMap.set(block, blockID);
 
-    // Flag and salvage broken blocks to their original forms
-    if (tiktok.length >= config.modules.antinukerA.max && vegetation.indexOf(brokenBlockPermutation.type.id) === -1) {
-        flag(player, "Nuker", "A", "Break", null, null, null, null, false, null);
-        blockLoc.setPermutation(blockID);
-        try {
-            // Remove dropped items after nuking because it will leave a mess of entities in the world
-            await player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
-        } catch (error) {}
-
-        /*
-        try {
-            await player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "Reason:Illegal Nuke"`);
-            await player.runCommandAsync(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
-            player.addTag('isBanned');
-        } catch (error) {
-            kickablePlayers.add(player); player.triggerEvent('paradox:kick');
-        } */
+    const now = Date.now();
+    const lastBreak = lastBreakTime.get(player.id);
+    if (lastBreak && now - lastBreak < 50) {
+        // less than 50 milliseconds since last break
+        const count = (blocksBroken.get(player.id) || 0) + 1;
+        blocksBroken.set(player.id, count);
+        if (count >= 2) {
+            // 2 or more blocks broken in less than one tick
+            flag(player, "Nuker", "A", "Break", null, null, null, null, false, null);
+            blocksBroken.delete(player.id);
+            const blocks: Block[] = brokenBlockLocations.get(player.id) || [];
+            for (const block of blocks) {
+                const playerBlockMap = blockIDMap.get(player.id);
+                for (const [loc, blockID] of playerBlockMap.entries()) {
+                    if (loc.x === block.location.x && loc.y === block.location.y && loc.z === block.location.z) {
+                        block.setPermutation(blockID);
+                        playerBlockMap.delete(loc);
+                        try {
+                            await player.runCommandAsync(`kill @e[x=${block.location.x},y=${block.location.y},z=${block.location.z},r=10,c=1,type=item]`);
+                        } catch (error) {}
+                        break;
+                    }
+                }
+            }
+            brokenBlockLocations.delete(player.id);
+            blockIDMap.delete(player.id);
+        }
+    } else {
+        lastBreakTime.set(player.id, now);
+        blocksBroken.set(player.id, 1);
+        const locations: Array<Block> = brokenBlockLocations.get(player.id) || [];
+        locations.push(blockLoc);
+        brokenBlockLocations.set(player.id, locations);
     }
 }
 
