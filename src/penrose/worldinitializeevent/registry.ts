@@ -2,7 +2,7 @@ import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitiali
 import config from "../../data/config.js";
 import { UUID } from "../../util.js";
 
-export const dynamicPropertyRegistry = new Map();
+export const dynamicPropertyRegistry = new Map<string, string | number | boolean>();
 
 function registry(data: WorldInitializeEvent) {
     // World instance

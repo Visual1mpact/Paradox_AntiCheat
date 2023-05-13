@@ -4,11 +4,11 @@ import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
 const overworld = world.getDimension("overworld");
-const timerMap = new Map();
+const timerMap = new Map<string, number>();
 // The Void
 const maxAge = 60000; // 1 minute
 const checkInterval = 300000; // 5 minutes
-const theVoid = new Map();
+const theVoid = new Map<string, number>();
 
 /**
  * Flag players who trigger certain checks or sub-checks, with information about the type of hack, the item involved, and any debug information available.
