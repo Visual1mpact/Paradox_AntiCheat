@@ -393,17 +393,22 @@ async function paradoxui(player: Player) {
                         const punishprewarnui = new MessageFormData();
                         punishprewarnui.title("§4Paradox - Punish§4");
                         punishprewarnui.body("This will allow you to wipe a player's Ender chest as well as their inventory.");
-                        punishprewarnui.button1("Okay");
+                        punishprewarnui.button1("Continue");
+                        punishprewarnui.button2("Back");
                         punishprewarnui.show(player).then((prewarnResult) => {
-                            //show the Punish UI
-                            const punishui = new ModalFormData();
-                            let onlineList: string[] = [];
-                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            punishui.title("§4Paradox - Punish§4");
-                            punishui.dropdown(`\n§rSelect a player to wipe:§r\n\nPlayer's Online\n`, onlineList);
-                            punishui.show(player).then((punishResult) => {
-                                uiPUNISH(punishResult, onlineList, player);
-                            });
+                            if (prewarnResult.selection === 1) {
+                                //show the Punish UI
+                                const punishui = new ModalFormData();
+                                let onlineList: string[] = [];
+                                onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                                punishui.title("§4Paradox - Punish§4");
+                                punishui.dropdown(`\n§rSelect a player to wipe:§r\n\nPlayer's Online\n`, onlineList);
+                                punishui.show(player).then((punishResult) => {
+                                    uiPUNISH(punishResult, onlineList, player);
+                                });
+                            } else if (prewarnResult.selection === 0 || prewarnResult.canceled) {
+                                paradoxui(player);
+                            }
                         });
                     }
                     if (ModUIresult.selection === 6) {
