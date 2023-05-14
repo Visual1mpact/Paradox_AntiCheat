@@ -3,11 +3,18 @@ import config from "../../data/config.js";
 import { BeforeChatEvent, Player } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
-export const queueUnban = new Set();
+export const queueUnban = new Set<string>();
 
-function listQueue(queue: string, player: Player) {
-    if (queue) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${queue}§r is queued to be unbanned.`);
+function listQueue(queued: Set<string>, player: Player) {
+    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Queued to be unbanned:`);
+    const setSize = queued.size;
+    if (setSize > 0) {
+        queued.forEach((queue: string) =>
+            // List the players that are queued to be unbanned
+            sendMsgToPlayer(player, ` §6|§r §4[§r${queue}§4]§r`)
+        );
+    } else {
+        sendMsgToPlayer(player, ` §6|§r §4[§rList Is Empty§4]§r`);
     }
 }
 
@@ -68,7 +75,7 @@ export function unban(message: BeforeChatEvent, args: string[]) {
     if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.unban) {
         return unbanHelp(player, prefix);
     } else if ((argCheck && args[0].toLowerCase() === "list") || !config.customcommands.unban) {
-        queueUnban.forEach((queue: string) => listQueue(queue, player));
+        listQueue(queueUnban, player);
         return;
     } else if ((argCheck && args[0].toLowerCase() === "delete") || !config.customcommands.unban) {
         const nameToDelete = args
