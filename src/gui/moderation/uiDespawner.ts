@@ -18,25 +18,27 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
         excludeTags: ["player"],
     };
     const filteredEntities = world.getDimension("overworld").getEntities(filter);
-    // Specified entity
-    let counter = 0;
-    let requestedEntity: string = "";
-    for (const entity of filteredEntities) {
-        const filteredEntity = entity.typeId.replace("minecraft:", "");
-        requestedEntity = entityValue.replace("minecraft:", "");
-        // If an entity was specified then handle it here
-        if (filteredEntity === requestedEntity || filteredEntity === entityValue) {
-            counter = ++counter;
-            // Despawn this entity
-            entity.triggerEvent("paradox:kick");
-            continue;
-            // If all entities were specified then handle this here
+    if (DespawnAllToggle === false) {
+        // Specified entity
+        let counter = 0;
+        let requestedEntity: string = "";
+        for (const entity of filteredEntities) {
+            const filteredEntity = entity.typeId.replace("minecraft:", "");
+            requestedEntity = entityValue.replace("minecraft:", "");
+            // If an entity was specified then handle it here
+            if (filteredEntity === requestedEntity || filteredEntity === entityValue) {
+                counter = ++counter;
+                // Despawn this entity
+                entity.triggerEvent("paradox:kick");
+                continue;
+                // If all entities were specified then handle this here
+            }
         }
-    }
-    if (counter > 0) {
-        sendMsgToPlayer(player, ` | §fDespawned§r §6=>§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
-    } else {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
+        if (counter > 0) {
+            sendMsgToPlayer(player, ` §6|§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
+        } else {
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
+        }
     }
     if (DespawnAllToggle === true) {
         const entityCount: { [key: string]: number } = {};
@@ -63,15 +65,16 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` | §fDespawned§r §6=>§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
+                    entityMessage += ` §6|§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
                     totalCounter += count;
                 }
             }
         }
         if (totalCounter > 0) {
-            return sendMsgToPlayer(player, entityMessage);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned:`);
+            sendMsgToPlayer(player, entityMessage);
         } else {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);
         }
     }
     return paradoxui;
