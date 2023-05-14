@@ -1,6 +1,5 @@
 export default {
     debug: false,
-    ParadoxUIBeta: false,
     customcommands: {
         prefix: "!",
         ban: true,

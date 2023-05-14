@@ -25,9 +25,7 @@ async function onJoinRules(object: PlayerSpawnEvent) {
     }
 }
 const onJoinrules = () => {
-    if (config.ParadoxUIBeta === true) {
-        world.events.playerSpawn.subscribe(onJoinRules);
-    }
+    world.events.playerSpawn.subscribe(onJoinRules);
 };
 
 export { onJoinrules };

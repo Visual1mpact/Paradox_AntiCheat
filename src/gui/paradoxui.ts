@@ -73,15 +73,6 @@ async function paradoxui(player: Player) {
         maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
         maingui.button("§rSaved Locations", "textures/items/compass_item");
         maingui.button("§rReport", "textures/items/paper");
-    } else if (config.ParadoxUIBeta === true) {
-        maingui.button("§rOp", "textures/ui/op");
-        maingui.button("§rDeop", "textures/items/ender_pearl");
-        maingui.button("§rModeration", "textures/items/book_normal");
-        maingui.button("§rModules", "textures/blocks/command_block");
-        maingui.button("§rPrefix", "textures/ui/UpdateGlyph");
-        maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
-        maingui.button("§rSaved Locations", "textures/items/compass_item");
-        maingui.button("§rStats", "textures/items/book_normal");
     } else {
         maingui.button("§rOp", "textures/ui/op");
         maingui.button("§rDeop", "textures/items/ender_pearl");

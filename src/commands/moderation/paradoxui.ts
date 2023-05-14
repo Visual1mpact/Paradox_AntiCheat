@@ -41,9 +41,6 @@ export function paradoxUI(message: BeforeChatEvent, args: string[]) {
 
     const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
 
-    if (!config.ParadoxUIBeta) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ParadoxUIBeta is not enabled.!`);
-    }
     //check to see if the player has the rules tag incase they have been able to call the UI command before the
     // rules have been displayed.
     if (player.hasTag("ShowRulesOnJoin") && showrulesBoolean === true) {
