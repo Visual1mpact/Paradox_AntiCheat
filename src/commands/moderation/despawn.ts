@@ -84,7 +84,7 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
             }
         }
         if (counter > 0) {
-            return sendMsgToPlayer(player, ` | §fDespawned§r §6=>§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
+            return sendMsgToPlayer(player, ` §6|§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
         } else {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
         }
@@ -115,12 +115,13 @@ export function despawn(message: BeforeChatEvent, args: string[]) {
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` | §fDespawned§r §6=>§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
+                    entityMessage += ` §6|§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
                     totalCounter += count;
                 }
             }
         }
         if (totalCounter > 0) {
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned:`);
             return sendMsgToPlayer(player, entityMessage);
         } else {
             return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);

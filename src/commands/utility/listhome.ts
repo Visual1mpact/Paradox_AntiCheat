@@ -100,9 +100,9 @@ export function listhome(message: BeforeChatEvent, args: string[]) {
                 } else {
                     verify = true;
                     if (counter === 1) {
-                        sendMsgToPlayer(player, `§l§6[§4List Of Homes§6]§r`);
+                        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r List Of Homes:`);
                     }
-                    sendMsgToPlayer(player, ` | §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`);
+                    sendMsgToPlayer(player, ` §6|§r §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`);
                     continue;
                 }
             }

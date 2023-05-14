@@ -112,7 +112,7 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const status = (b: string | number | boolean) => (b ? "§aENABLED" : "§4DISABLED");
 
     sendMsgToPlayer(player, [
-        `§l§6[§4Paradox§6]§r §l§6[§4List Of Modules§6]§r`,
+        `§r§4[§6Paradox§4]§r List Of Modules:`,
         `§6|§r Anti-GMA: ${status(adventureGMBoolean)}`,
         `§6|§r Anti-GMS: ${status(survivalGMBoolean)}`,
         `§6|§r Anti-GMC: ${status(creativeGMBoolean)}`,

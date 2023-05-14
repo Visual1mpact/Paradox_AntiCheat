@@ -84,7 +84,7 @@ export function invsee(message: BeforeChatEvent, args: string[]) {
         `§r§4[§6Paradox§4]§r ${member.nameTag}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
             const item = container.getItem(i);
-            return ` | §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r` : "§7(empty)"}`;
+            return ` §6|§r §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r` : "§7(empty)"}`;
         }),
         ` `,
     ]);
