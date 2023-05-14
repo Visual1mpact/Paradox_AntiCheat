@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.0](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.1.0) (2023-05-14)
+
+[Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.0.25...v3.1.0)
+
+**Closed issues:**
+
+- do yall still have the discord or another one? [\#25](https://github.com/Pete9xi/Paradox_AntiCheat/issues/25)
+
 ## [v3.0.25](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.0.25) (2023-05-08)
 
 [Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.0.24...v3.0.25)
