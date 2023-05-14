@@ -15,7 +15,7 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
     }
     // try to find the entity or despawn them all if requested
     const filter: EntityQueryOptions = {
-        excludeTags: ["player"],
+        excludeTypes: ["player"],
     };
     const filteredEntities = world.getDimension("overworld").getEntities(filter);
     if (DespawnAllToggle === false) {
