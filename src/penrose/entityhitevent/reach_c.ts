@@ -16,13 +16,8 @@ function reachc(object: EntityHitEvent) {
     // Properties from class
     const { hitEntity, hitBlock, entity } = object;
 
-    // If it's not a player then ignore
-    if (!(entity instanceof Player)) {
-        return;
-    }
-
-    // If a block is hit then ignore
-    if (hitBlock) {
+    // If a block or not a player entity then ignore
+    if (!(hitEntity instanceof Player) || hitBlock !== undefined || !(entity instanceof Player)) {
         return;
     }
 
