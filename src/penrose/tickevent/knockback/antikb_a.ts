@@ -63,7 +63,9 @@ async function antiknockbacka(id: number) {
  * if needed to do so.
  */
 export function AntiKnockbackA() {
-    const antiKnockbackAId = system.runInterval(() => {
-        antiknockbacka(antiKnockbackAId);
-    }, 40);
+    if (config.debug) {
+        const antiKnockbackAId = system.runInterval(() => {
+            antiknockbacka(antiKnockbackAId);
+        }, 40);
+    }
 }

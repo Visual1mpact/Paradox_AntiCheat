@@ -36,7 +36,6 @@ function registry(data: WorldInitializeEvent) {
         "spammera_b",
         "spammerb_b",
         "spammerc_b",
-        "spammerd_b",
         "stackban_b",
         "antifalla_b",
         "chatranks_b",

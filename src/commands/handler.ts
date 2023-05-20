@@ -40,7 +40,6 @@ import { badpackets1 } from "./settings/badpackets1.js";
 import { spammerA } from "./settings/spammera.js";
 import { spammerB } from "./settings/spammerb.js";
 import { spammerC } from "./settings/spammerc.js";
-import { spammerD } from "./settings/spammerd.js";
 import { antispam } from "./settings/antispam.js";
 import { crasherA } from "./settings/crashera.js";
 import { namespoofA } from "./settings/namespoofa.js";
@@ -122,7 +121,6 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         spammera: spammerA,
         spammerb: spammerB,
         spammerc: spammerC,
-        spammerd: spammerD,
         antispam: antispam,
         crashera: crasherA,
         namespoofa: namespoofA,

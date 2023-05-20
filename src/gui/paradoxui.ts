@@ -558,7 +558,11 @@ async function paradoxui(player: Player) {
                                 modulesantiknockbackui.title("§4Paradox Modules - Anti KnockBack§4");
                                 modulesantiknockbackui.toggle("Anti Knockback - Anti Knockback for all players:", antikbBoolean);
                                 modulesantiknockbackui.show(player).then((antikbResult) => {
-                                    uiANTIKNOCKBACK(antikbResult, player);
+                                    if (config.debug) {
+                                        uiANTIKNOCKBACK(antikbResult, player);
+                                    } else {
+                                        player.sendMessage("§r§4[§6Paradox§4]§r Anti-Knockback is in development and locked behing Debug Mode");
+                                    }
                                 });
                             }
                             if (movementResult.selection === 1) {
@@ -827,12 +831,10 @@ async function paradoxui(player: Player) {
                         const spammerABoolean = dynamicPropertyRegistry.get("spammera_b") as boolean;
                         const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b") as boolean;
                         const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b") as boolean;
-                        const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b") as boolean;
                         modulesspamui.title("§4Paradox Modules - Spam Modules§4");
                         modulesspamui.toggle("Spammer A - Checks for messages sent while moving:", spammerABoolean);
                         modulesspamui.toggle("Spammer B - Checks for messages sent while swinging:", spammerBBoolean);
                         modulesspamui.toggle("Spammer C - Checks for messages sent while using items:", spammerCBoolean);
-                        modulesspamui.toggle("Spammer D - Checks for messages sent while GUI is open:", spammerDBoolean);
                         modulesspamui.show(player).then((spamResult) => {
                             uiSPAMMER(spamResult, player);
                         });

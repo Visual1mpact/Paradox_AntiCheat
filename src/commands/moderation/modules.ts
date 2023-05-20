@@ -84,7 +84,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
     const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
-    const spammerDBoolean = dynamicPropertyRegistry.get("spammerd_b");
     const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
     const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
     const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
@@ -120,7 +119,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `§6|§r SpammerA: ${status(spammerABoolean)}`,
         `§6|§r SpammerB: ${status(spammerBBoolean)}`,
         `§6|§r SpammerC: ${status(spammerCBoolean)}`,
-        `§6|§r SpammerD: ${status(spammerDBoolean)}`,
         `§6|§r Anti-Spam: ${status(antiSpamBoolean)}`,
         `§6|§r CrasherA: ${status(crasherABoolean)}`,
         `§6|§r NamespoofA: ${status(nameSpoofABoolean)}`,

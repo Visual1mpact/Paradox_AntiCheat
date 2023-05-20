@@ -24,9 +24,6 @@ async function onJoinTime(object: PlayerSpawnEvent) {
     // Get Dynamic Property
     const lockdownBoolean = dynamicPropertyRegistry.get("lockdown_b");
 
-    // Get Dynamic Property
-    const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
-
     // Lock down the server if enabled
     if (lockdownBoolean) {
         const reason = "Under Maintenance! Sorry for the inconvenience.";
@@ -46,19 +43,6 @@ async function onJoinTime(object: PlayerSpawnEvent) {
         try {
             await player.runCommandAsync(`${onJoinData[i]}`);
         } catch (error) {}
-    }
-
-    const hasTagPlayers = world.getPlayers({ tags: ["illegalitemsA"] });
-    const noHasTagPlayers = world.getPlayers({ excludeTags: ["illegalitemsA"] });
-    // Unsubscribe if disabled in-game
-    if (illegalItemsABoolean === false && hasTagPlayers.length > 0) {
-        for (const player of hasTagPlayers) {
-            player.removeTag("illegalitemsA");
-        }
-    } else if (illegalItemsABoolean === true && noHasTagPlayers.length > 0) {
-        for (const player of noHasTagPlayers) {
-            player.addTag("illegalitemsA");
-        }
     }
 
     // Set up custom prefix

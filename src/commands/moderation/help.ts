@@ -77,7 +77,6 @@ export function help(message: BeforeChatEvent) {
         `§6${prefix}spammera§r - ${config.customcommands.spammera ? `Checks if message is sent while moving.` : textDisabled}`,
         `§6${prefix}spammerb§r - ${config.customcommands.spammerb ? `Checks if message is sent while swinging.` : textDisabled}`,
         `§6${prefix}spammerc§r - ${config.customcommands.spammerc ? `Checks if message is sent while using items.` : textDisabled}`,
-        `§6${prefix}spammerd§r - ${config.customcommands.spammerd ? `Checks if message is sent while GUI is open.` : textDisabled}`,
         `§6${prefix}antispam§r - ${config.customcommands.antispam ? `Checks for spamming in chat with 2 second cooldown.` : textDisabled}`,
         `§6${prefix}crashera§r - ${config.customcommands.crashera ? `Prevents Horion crasher.` : textDisabled}`,
         `§6${prefix}namespoofa§r - ${config.customcommands.namespoofa ? `Checks if player's name exceeds character limitations.` : textDisabled}`,

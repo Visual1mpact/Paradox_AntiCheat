@@ -45,6 +45,10 @@ export async function antiknockback(message: BeforeChatEvent, args: string[]) {
 
     const player = message.sender;
 
+    if (config.debug) {
+        player.sendMessage("§r§4[§6Paradox§4]§r Anti-Knockback is in development and locked behing Debug Mode");
+    }
+
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
 

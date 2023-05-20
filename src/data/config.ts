@@ -39,7 +39,6 @@ export default {
         spammera: true,
         spammerb: true,
         spammerc: true,
-        spammerd: true,
         antispam: true,
         crashera: true,
         namespoofa: true,
@@ -95,9 +94,6 @@ export default {
             enabled: true,
         },
         spammerC: {
-            enabled: true,
-        },
-        spammerD: {
             enabled: true,
         },
         antispam: {

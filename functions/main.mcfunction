@@ -13,8 +13,3 @@ execute as @s[scores={ench_helmet=1,encharmor=1..}] at @s run /function checks/o
 execute as @s[scores={ench_chest=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
 execute as @s[scores={ench_legs=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
 execute as @s[scores={ench_boots=1,encharmor=1..}] at @s run /function checks/optional/armorNBT
-
-#Anti-KB
-event entity @s[tag=attacked,scores={atcd=12..,antikb=1..}] paradox:reset_mark_variant
-tag @s[tag=attacked,scores={atcd=12..,antikb=1..}] remove attacked
-scoreboard players add @s[tag=attacked,scores={antikb=1..}] atcd 1

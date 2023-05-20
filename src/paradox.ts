@@ -6,7 +6,6 @@ import { BadPackets1 } from "./penrose/beforechatevent/spammer/badpackets_1.js";
 import { SpammerA } from "./penrose/beforechatevent/spammer/spammer_a.js";
 import { SpammerB } from "./penrose/beforechatevent/spammer/spammer_b.js";
 import { SpammerC } from "./penrose/beforechatevent/spammer/spammer_c.js";
-import { SpammerD } from "./penrose/beforechatevent/spammer/spammer_d.js";
 import { PrefixCommand } from "./penrose/beforechatevent/chat/prefixcommand.js";
 import { ChatFilter } from "./penrose/beforechatevent/chat/chatfilter.js";
 import { AntiSpam } from "./penrose/beforechatevent/chat/antispam.js";
@@ -42,7 +41,6 @@ import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
 import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
 // Import PlayerSpawn Events
-import { GametestCheck } from "./penrose/playerspawnevent/gametestloaded/gametestcheck.js";
 import { onJoin } from "./penrose/playerspawnevent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/playerspawnevent/ban/globalbanlist.js";
 import { hashCode } from "./penrose/playerspawnevent/hash/hash.js";
@@ -69,7 +67,6 @@ BadPackets1();
 SpammerA();
 SpammerB();
 SpammerC();
-SpammerD();
 AntiSpam();
 PrefixCommand();
 ChatFilter();
@@ -126,7 +123,6 @@ NukerA();
 ReachB();
 
 // playerSpawn Events
-GametestCheck();
 onJoin();
 GlobalBanList();
 hashCode();
