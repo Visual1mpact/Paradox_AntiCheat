@@ -58,7 +58,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const commandblocks = getScore("commandblocks", player);
     const cmds = getScore("cmds", player);
     const encharmor = getScore("encharmor", player);
-    const autoaura = getScore("autoaura", player);
     const antikb = getScore("antikb", player);
 
     // Booleans
@@ -103,7 +102,8 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const antiFallABoolean = dynamicPropertyRegistry.get("antifalla_b");
     const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
     const autobanBoolean = dynamicPropertyRegistry.get("autoban_b");
-    const autoclicker = dynamicPropertyRegistry.get("autoclicker_b");
+    const autoclickerBoolean = dynamicPropertyRegistry.get("autoclicker_b");
+    const antiKillAuraBoolean = dynamicPropertyRegistry.get("antikillaura_b");
 
     // Numbers
     const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
@@ -152,9 +152,9 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `§6|§r OverideCommandBlocksEnabled: ${status(cmds)}`,
         `§6|§r RemoveCommandBlocks: ${status(commandblocks)}`,
         `§6|§r Anti-Knockback: ${status(antikb)}`,
-        `§6|§r Autoaura: ${status(autoaura)}`,
+        `§6|§r Anti-KillAura: ${status(antiKillAuraBoolean)}`,
         `§6|§r Anti-Enchanted: ${status(encharmor)}`,
-        `§6|§r Autoclicker: ${status(autoclicker)}`,
+        `§6|§r Autoclicker: ${status(autoclickerBoolean)}`,
         `§6|§r World Border: ${worldBorderBoolean ? `§aENABLED§r (Overworld: §6${worldBorderOverworldNumber}§r Nether: §6${worldBorderNetherNumber}§r)` : "§4DISABLED"}`,
         `§6|§r ClearLag: ${status(clearLagBoolean)}`,
         `§6|§r ShowRules: ${status(showrulesBoolean)}`,

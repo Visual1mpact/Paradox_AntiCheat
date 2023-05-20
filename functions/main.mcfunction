@@ -4,8 +4,6 @@ gamerule randomtickspeed 1
 # Run all the checks
 function checks/others
 
-execute as @s[scores={autoaura=1..}] at @s run /function checks/killaura
-
 # Optional checks
 execute as @s[scores={commandblocks=1..}] positioned as @s run function checks/optional/nocommandblocks
 execute as @s[scores={cmds=1..}] at @s run /function checks/optional/overridecommandblocksenabled

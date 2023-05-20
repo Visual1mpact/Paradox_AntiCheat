@@ -32,8 +32,7 @@ export default {
         tag: true,
         vanish: true,
         enchantedarmor: true,
-        auracheck: true,
-        autoaura: true,
+        antikillaura: true,
         antikb: true,
         report: true,
         badpackets1: true,
@@ -269,6 +268,9 @@ export default {
             enabled: false,
             //Time interval in ticks 1 second = 20 ticks
             banHammerInterval: 6000,
+        },
+        antiKillAura: {
+            enabled: true,
         },
         /**
          * Add a password in-between the quotes.

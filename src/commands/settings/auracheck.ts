@@ -2,24 +2,25 @@
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { KillAura } from "../../penrose/entityhitevent/killaura.js";
 
 function auraCheckHelp(player: Player, prefix: string) {
     let commandStatus: string;
-    if (!config.customcommands.auracheck) {
+    if (!config.customcommands.antikillaura) {
         commandStatus = "§6[§4DISABLED§6]§r";
     } else {
         commandStatus = "§6[§aENABLED§6]§r";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: auracheck`,
+        `\n§4[§6Command§4]§r: antikillaura`,
         `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: auracheck [optional]`,
+        `§4[§6Usage§4]§r: antikillaura [optional]`,
         `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Will manually test player for killaura hack.`,
+        `§4[§6Description§4]§r: Toggles checks for attacks outside a 90 degree angle.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}auracheck ${player.name}`,
-        `    ${prefix}auracheck help`,
+        `    ${prefix}antikillaura ${player.name}`,
+        `    ${prefix}antikillaura help`,
     ]);
 }
 
@@ -46,6 +47,9 @@ export async function auracheck(message: BeforeChatEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
 
+    // Get Dynamic Property Boolean
+    const antiKillAuraBoolean = dynamicPropertyRegistry.get("antikillaura_b");
+
     // Check for custom prefix
     const prefix = getPrefix(player);
 
@@ -56,23 +60,20 @@ export async function auracheck(message: BeforeChatEvent, args: string[]) {
 
     // Was help requested
     const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.auracheck) {
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.antikillaura) {
         return auraCheckHelp(player, prefix);
     }
 
-    // try to find the player requested
-    let member: Player;
-    const players = world.getPlayers();
-    for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-            member = pl;
-            break;
-        }
+    if (antiKillAuraBoolean === true) {
+        // Deny
+        dynamicPropertyRegistry.set("antikillaura_b", false);
+        world.setDynamicProperty("antikillaura_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiKillAura§r!`);
+    } else if (antiKillAuraBoolean === false) {
+        // Allow
+        dynamicPropertyRegistry.set("antikillaura_b", true);
+        world.setDynamicProperty("antikillaura_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiKillAura§r!`);
+        KillAura();
     }
-
-    if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
-    }
-
-    return await member.runCommandAsync(`summon paradox:killaura ^ ^ ^-3`);
 }

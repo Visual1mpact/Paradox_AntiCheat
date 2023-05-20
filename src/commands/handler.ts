@@ -24,7 +24,6 @@ import { autoclick } from "./settings/autoclicker.js";
 import { jesusA } from "./settings/jesusa.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
-import { autokillaura } from "./settings/autoaura.js";
 import { antishulker } from "./settings/antishulker.js";
 import { tag } from "./utility/tag.js";
 import { ecwipe } from "./utility/ecwipe.js";
@@ -35,7 +34,7 @@ import { vanish } from "./utility/vanish.js";
 import { fly } from "./utility/fly.js";
 import { invsee } from "./utility/invsee.js";
 import { clearchat } from "./utility/clearchat.js";
-import { auracheck } from "./utility/auracheck.js";
+import { auracheck } from "./settings/auracheck.js";
 import { report } from "./utility/report.js";
 import { badpackets1 } from "./settings/badpackets1.js";
 import { spammerA } from "./settings/spammera.js";
@@ -116,8 +115,7 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         autoclicker: autoclick,
         jesusa: jesusA,
         enchantedarmor: enchantedarmor,
-        auracheck: auracheck,
-        autoaura: autokillaura,
+        antikillaura: auracheck,
         antikb: antiknockback,
         report: report,
         badpackets1: badpackets1,

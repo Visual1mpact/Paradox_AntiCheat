@@ -625,20 +625,9 @@ async function paradoxui(player: Player) {
                     }
                     if (ModulesUIResult.selection === 2) {
                         const modulesantikillaura = new ModalFormData();
-                        const autoaurascore = getScore("autoaura", player);
-                        let autoauraBoolean: boolean = undefined;
-                        /**get the score value and then check to see if its already enable or already disabled
-                         * so we can then update the control boolean to disaply its current setting to the player
-                         * in the menu.
-                         */
-                        if (autoaurascore <= 0) {
-                            autoauraBoolean = false;
-                        }
-                        if (autoaurascore >= 1) {
-                            autoauraBoolean = true;
-                        }
+                        const antiKillAuraBoolean = dynamicPropertyRegistry.get("antikillaura_b") as boolean;
                         modulesantikillaura.title("§4Paradox Modules - Anti KillAura§4");
-                        modulesantikillaura.toggle("Anti KillAura - Auto KillAura checks for all players:", autoauraBoolean);
+                        modulesantikillaura.toggle("Anti KillAura - Toggles checks for attacks outside a 90 degree angle:", antiKillAuraBoolean);
                         modulesantikillaura.show(player).then((antikillauraResult) => {
                             uiANTIKILLAURA(antikillauraResult, player);
                         });

@@ -1,8 +1,9 @@
-import { Player } from "@minecraft/server";
+import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { KillAura } from "../../penrose/entityhitevent/killaura";
 
 export async function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, player: Player) {
     const [AntiKillAuraToggle] = antikillauraResult.formValues;
@@ -15,17 +16,18 @@ export async function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, play
     if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Anti Killaura`);
     }
-    if (AntiKillAuraToggle === true) {
-        // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config autoaura 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Autoaura§r!`);
-    }
     if (AntiKillAuraToggle === false) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config autoaura 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Autoaura§r!`);
+        dynamicPropertyRegistry.set("antikillaura_b", false);
+        world.setDynamicProperty("antikillaura_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiKillAura§r!`);
+    } else if (AntiKillAuraToggle === true) {
+        // Allow
+        dynamicPropertyRegistry.set("antikillaura_b", true);
+        world.setDynamicProperty("antikillaura_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiKillAura§r!`);
+        KillAura();
     }
-    await player.runCommandAsync(`scoreboard players operation @a autoaura = paradox:config autoaura`);
     //show the main ui to the player once complete.
     return paradoxui(player);
 }
