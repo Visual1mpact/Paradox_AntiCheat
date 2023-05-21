@@ -26,7 +26,6 @@ function registry(data: WorldInitializeEvent) {
         "jesusa_b",
         "reacha_b",
         "reachb_b",
-        "reachc_b",
         "noslowa_b",
         "salvage_b",
         "antispam_b",

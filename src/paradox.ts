@@ -39,7 +39,6 @@ import { AutoBan } from "./penrose/tickevent/ban/autoban.js";
 // Import BlockBreak Events
 import { XrayA } from "./penrose/blockbreakevent/xray/xray_a.js";
 import { NukerA } from "./penrose/blockbreakevent/nuker/nuker_a.js";
-import { ReachB } from "./penrose/blockbreakevent/reach/reach_b.js";
 // Import PlayerSpawn Events
 import { onJoin } from "./penrose/playerspawnevent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/playerspawnevent/ban/globalbanlist.js";
@@ -50,7 +49,7 @@ import { ScaffoldA } from "./penrose/blockplaceevent/scaffold/scaffold_a.js";
 import { IllegalItemsB } from "./penrose/blockplaceevent/illegalitems/illegalitems_b.js";
 import { ReachA } from "./penrose/blockplaceevent/reach/reach_a.js";
 // Import EntityHit Events
-import { ReachC } from "./penrose/entityhitevent/reach_c.js";
+import { ReachB } from "./penrose/entityhitevent/reach_b.js";
 import { KillAura } from "./penrose/entityhitevent/killaura.js";
 // Import WorldInitialize Events
 import { Registry } from "./penrose/worldinitializeevent/registry.js";
@@ -120,7 +119,6 @@ system.runInterval(() => {
 // BlockBreak Events
 XrayA();
 NukerA();
-ReachB();
 
 // playerSpawn Events
 onJoin();
@@ -133,7 +131,7 @@ IllegalItemsB();
 ReachA();
 
 // EntityHit Events
-ReachC();
+ReachB();
 KillAura();
 
 // System Events

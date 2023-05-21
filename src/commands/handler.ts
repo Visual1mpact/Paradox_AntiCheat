@@ -45,7 +45,6 @@ import { crasherA } from "./settings/crashera.js";
 import { namespoofA } from "./settings/namespoofa.js";
 import { namespoofB } from "./settings/namespoofb.js";
 import { reachA } from "./settings/reacha.js";
-import { reachB } from "./settings/reachb.js";
 import { noslowA } from "./settings/noslowa.js";
 import { invalidsprintA } from "./settings/invalidsprinta.js";
 import { flyA } from "./settings/flya.js";
@@ -69,7 +68,7 @@ import { delhome } from "./utility/delhome.js";
 import { illegalEnchant } from "./settings/illegalenchant.js";
 import { illegalLores } from "./settings/illegallores.js";
 import { despawn } from "./moderation/despawn.js";
-import { reachC } from "./settings/reachc.js";
+import { reachB } from "./settings/reachb.js";
 import { hotbar } from "./utility/hotbar.js";
 import { ops } from "./settings/oneplayersleep.js";
 import { salvage } from "./settings/salvagesystem.js";
@@ -126,7 +125,6 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         namespoofa: namespoofA,
         namespoofb: namespoofB,
         reacha: reachA,
-        reachb: reachB,
         noslowa: noslowA,
         invalidsprinta: invalidsprintA,
         flya: flyA,
@@ -152,7 +150,7 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
         illegalenchant: illegalEnchant,
         illegallores: illegalLores,
         despawn: despawn,
-        reachc: reachC,
+        reachb: reachB,
         hotbar: hotbar,
         ops: ops,
         salvage: salvage,

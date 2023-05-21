@@ -45,7 +45,6 @@ export default {
         namespoofb: true,
         reacha: true,
         reachb: true,
-        reachc: true,
         noslowa: true,
         invalidsprinta: true,
         flya: true,
@@ -124,10 +123,6 @@ export default {
             reach: 6,
         },
         reachB: {
-            enabled: true,
-            reach: 6,
-        },
-        reachC: {
             enabled: true,
             reach: 5,
         },

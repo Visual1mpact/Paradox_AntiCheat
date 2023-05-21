@@ -3,13 +3,13 @@ import config from "../../data/config.js";
 import { flag } from "../../util.js";
 import { dynamicPropertyRegistry } from "../worldinitializeevent/registry.js";
 
-function reachc(object: EntityHitEvent) {
+function reachb(object: EntityHitEvent) {
     // Get Dynamic Property
-    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
 
     // Unsubscribe if disabled in-game
-    if (reachCBoolean === false) {
-        world.events.entityHit.unsubscribe(reachc);
+    if (reachBBoolean === false) {
+        world.events.entityHit.unsubscribe(reachb);
         return;
     }
 
@@ -39,13 +39,13 @@ function reachc(object: EntityHitEvent) {
     const dz = z - z1;
     const distanceSquared = dx * dx + dy * dy + dz * dz;
 
-    if (distanceSquared > config.modules.reachC.reach * config.modules.reachC.reach) {
-        flag(entity, "Reach", "C", "Attack", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
+    if (distanceSquared > config.modules.reachB.reach * config.modules.reachB.reach) {
+        flag(entity, "Reach", "B", "Attack", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
     }
 }
 
-const ReachC = () => {
-    world.events.entityHit.subscribe(reachc);
+const ReachB = () => {
+    world.events.entityHit.subscribe(reachb);
 };
 
-export { ReachC };
+export { ReachB };

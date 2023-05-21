@@ -78,11 +78,10 @@ export function modules(message: BeforeChatEvent, args: string[]) {
     const flyABoolean = dynamicPropertyRegistry.get("flya_b");
     const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
     const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
-    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
+    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
     const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
     const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
-    const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
     const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
     const spammerBBoolean = dynamicPropertyRegistry.get("spammerb_b");
@@ -126,7 +125,6 @@ export function modules(message: BeforeChatEvent, args: string[]) {
         `§6|§r Bedrock: ${status(bedrockValidateBoolean)}`,
         `§6|§r ReachA: ${status(reachABoolean)}`,
         `§6|§r ReachB: ${status(reachBBoolean)}`,
-        `§6|§r ReachC: ${status(reachCBoolean)}`,
         `§6|§r JesusA: ${status(jesusABoolean)}`,
         `§6|§r NoSlowA: ${status(noSlowBoolean)}`,
         `§6|§r InvalidSprintA: ${status(InvalidSprintABoolean)}`,

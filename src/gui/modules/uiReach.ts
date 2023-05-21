@@ -1,21 +1,19 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
 import { ReachA } from "../../penrose/blockplaceevent/reach/reach_a.js";
-import { ReachC } from "../../penrose/entityhitevent/reach_c.js";
+import { ReachB } from "../../penrose/entityhitevent/reach_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiREACH(reachResult: ModalFormResponse, player: Player) {
-    const [ReachAToggle, ReachBToggle, ReachCToggle] = reachResult.formValues;
+    const [ReachAToggle, ReachBToggle] = reachResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     // Get Dynamic Property Boolean
     const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
     const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
-    const reachCBoolean = dynamicPropertyRegistry.get("reachc_b");
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
@@ -36,27 +34,16 @@ export function uiREACH(reachResult: ModalFormResponse, player: Player) {
     }
     if (ReachBToggle === true && reachBBoolean === false) {
         // Allow
+        dynamicPropertyRegistry.set("reachb_b", true);
         world.setDynamicProperty("reachb_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachB§r!`);
         ReachB();
     }
     if (ReachBToggle === false && reachBBoolean === true) {
         // Deny
+        dynamicPropertyRegistry.set("reachb_b", false);
         world.setDynamicProperty("reachb_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachB§r!`);
-    }
-    if (ReachCToggle === true && reachCBoolean === false) {
-        // Allow
-        dynamicPropertyRegistry.set("reachc_b", true);
-        world.setDynamicProperty("reachc_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachC§r!`);
-        ReachC();
-    }
-    if (ReachCToggle === false && reachCBoolean === true) {
-        // Deny
-        dynamicPropertyRegistry.set("reachc_b", false);
-        world.setDynamicProperty("reachc_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachC§r!`);
     }
 
     //show the main ui to the player once complete.

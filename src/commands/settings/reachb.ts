@@ -1,7 +1,7 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { ReachB } from "../../penrose/blockbreakevent/reach/reach_b.js";
+import { ReachB } from "../../penrose/entityhitevent/reach_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 
 function reachBHelp(player: Player, prefix: string, reachBBoolean: string | number | boolean) {
@@ -23,7 +23,7 @@ function reachBHelp(player: Player, prefix: string, reachBBoolean: string | numb
         `§4[§6Module§4]§r: ${moduleStatus}`,
         `§4[§6Usage§4]§r: reachb [optional]`,
         `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for player's breaking blocks beyond reach.`,
+        `§4[§6Description§4]§r: Toggles checks for player's attacking beyond reach.`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}reachb`,
         `    ${prefix}reachb help`,
@@ -71,12 +71,10 @@ export function reachB(message: BeforeChatEvent, args: string[]) {
         world.setDynamicProperty("reachb_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ReachB§r!`);
         ReachB();
-        return;
     } else if (reachBBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("reachb_b", false);
         world.setDynamicProperty("reachb_b", false);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ReachB§r!`);
-        return;
     }
 }
