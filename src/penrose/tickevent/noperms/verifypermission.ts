@@ -20,13 +20,10 @@ function verifypermission() {
                 dynamicPropertyRegistry.set(player.id, player.name);
             }
             continue;
-        } else if (encode !== undefined || hash !== undefined) {
+        } else {
             player.removeDynamicProperty("hash");
             player.removeDynamicProperty("salt");
             dynamicPropertyRegistry.delete(player.id);
-        }
-        const hasTag = player.hasTag("paradoxOpped");
-        if (hasTag) {
             player.removeTag("paradoxOpped");
         }
         // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
