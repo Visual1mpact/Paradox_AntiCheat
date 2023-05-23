@@ -4,7 +4,7 @@ import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js"
 
 async function vanish() {
     // Filter for only players who are vanished
-    let filter: EntityQueryOptions = {
+    const filter: EntityQueryOptions = {
         tags: ["vanish"],
     };
     const filteredPlayers = world.getPlayers(filter);

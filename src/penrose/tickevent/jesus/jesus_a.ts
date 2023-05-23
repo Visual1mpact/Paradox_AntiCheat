@@ -4,7 +4,7 @@ import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js"
 
 let blockAtPlayer0: Block;
 let blockAtPlayer1: Block;
-let playerTags: string[] = ["vanish", "swimming", "riding", "flying", "ground"];
+const playerTags: string[] = ["vanish", "swimming", "riding", "flying", "ground"];
 
 const playerCount = new Map<string, number>();
 

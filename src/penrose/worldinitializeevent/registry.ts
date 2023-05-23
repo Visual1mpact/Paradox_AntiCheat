@@ -6,9 +6,9 @@ export const dynamicPropertyRegistry = new Map<string, string | number | boolean
 
 function registry(data: WorldInitializeEvent) {
     // World instance
-    let property = new DynamicPropertiesDefinition();
+    const property = new DynamicPropertiesDefinition();
     // Entity instance
-    let personal = new DynamicPropertiesDefinition();
+    const personal = new DynamicPropertiesDefinition();
 
     /**
      * Define property first
@@ -140,14 +140,14 @@ function registry(data: WorldInitializeEvent) {
     });
 
     // Set additional properties for world border
-    let worldborder_n = world.getDynamicProperty("worldborder_n");
+    const worldborder_n = world.getDynamicProperty("worldborder_n");
     if (worldborder_n === undefined) {
         world.setDynamicProperty("worldborder_n", config.modules.worldBorder.overworld);
         dynamicPropertyRegistry.set("worldborder_n", config.modules.worldBorder.overworld);
     } else {
         dynamicPropertyRegistry.set("worldborder_n", worldborder_n);
     }
-    let worldborderNether_n = world.getDynamicProperty("worldborder_nether_n");
+    const worldborderNether_n = world.getDynamicProperty("worldborder_nether_n");
     if (worldborderNether_n === undefined) {
         world.setDynamicProperty("worldborder_nether_n", config.modules.worldBorder.nether);
         dynamicPropertyRegistry.set("worldborder_nether_n", config.modules.worldBorder.nether);

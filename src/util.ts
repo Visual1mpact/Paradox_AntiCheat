@@ -98,7 +98,7 @@ export async function flag(player: Player, check: string, checkType: string, hac
  * @param {Player} player - The player object
  */
 export async function banMessage(player: Player) {
-    let tags = player.getTags();
+    const tags = player.getTags();
 
     let reason: string;
     let by: string;
@@ -191,8 +191,8 @@ export function getPrefix(player: Player) {
  * @param {Player} member - The other player object
  */
 export function resetTag(member: Player) {
-    let sanitize = member.getTags();
-    for (let tag of sanitize) {
+    const sanitize = member.getTags();
+    for (const tag of sanitize) {
         if (tag.startsWith("Rank:")) {
             member.removeTag(tag);
         }
@@ -307,9 +307,9 @@ export function encryptString(str: string, salt: string): string {
     let ciphertext = "";
     let keyIndex = 0;
     for (let i = 0; i < str.length; i++) {
-        let plainCharCode = str.charCodeAt(i);
-        let keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        let cipherCharCode = (plainCharCode + keyCharCode) % 256; // wrap around at 256
+        const plainCharCode = str.charCodeAt(i);
+        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+        const cipherCharCode = (plainCharCode + keyCharCode) % 256; // wrap around at 256
         ciphertext += String.fromCharCode(cipherCharCode);
         keyIndex++;
     }
@@ -329,9 +329,9 @@ export function decryptString(str: string, salt: string): string {
     let keyIndex = 0;
     str = str.slice(4);
     for (let i = 0; i < str.length; i++) {
-        let cipherCharCode = str.charCodeAt(i);
-        let keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        let plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
+        const cipherCharCode = str.charCodeAt(i);
+        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+        const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
         plaintext += String.fromCharCode(plainCharCode);
         keyIndex++;
     }

@@ -8,7 +8,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
     const [value, predefinedrankvalue, customrank, ChatRanksToggle] = notifyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
-    for (let pl of players) {
+    for (const pl of players) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
@@ -23,7 +23,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
     }
     if (!customrank) {
         try {
-            let memberscurrentags = member.getTags();
+            const memberscurrentags = member.getTags();
             let custom: string;
             memberscurrentags.forEach((t) => {
                 if (t.startsWith("Rank:")) {
@@ -43,7 +43,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
     }
     if (customrank) {
         try {
-            let memberscurrentags = member.getTags();
+            const memberscurrentags = member.getTags();
             let custom: string;
             memberscurrentags.forEach((t) => {
                 if (t.startsWith("Rank:")) {

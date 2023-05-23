@@ -174,8 +174,8 @@ async function paradoxui(player: Player) {
                 const salt = world.getDynamicProperty("crypt");
                 const tags = player.getTags();
                 let counter = 0;
-                let Locations: string[] = [];
-                let coordsArray: string[] = [];
+                const Locations: string[] = [];
+                const coordsArray: string[] = [];
                 for (let i = 0; i < tags.length; i++) {
                     /**
                      * This first if statement is to verify if they have old coordinates
@@ -316,7 +316,7 @@ async function paradoxui(player: Player) {
                                 const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b") as boolean;
                                 chatranksui.title("§4Change A Player's Chat Rank§4");
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                                let predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
+                                const predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
                                 chatranksui.dropdown(`\n§rSelect a player to change their rank:§r\n\nPlayer's Online\n`, onlineList);
                                 chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on below:§r`, predefinedrank);
                                 chatranksui.textField("Enter a custom Rank:", "VIP");
@@ -840,8 +840,8 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 19) {
                         const modulesworldborderui = new ModalFormData();
                         const overWorldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b") as boolean;
-                        let overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n") as number;
-                        let netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n") as number;
+                        const overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n") as number;
+                        const netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n") as number;
                         modulesworldborderui.title("§4Paradox Modules - World Border§4");
                         modulesworldborderui.textField("Over World Border - Value in blocks:", "1000", String(overworldBorderNumber));
                         modulesworldborderui.textField("Nether World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(netherworldBorderNumber));
@@ -862,7 +862,7 @@ async function paradoxui(player: Player) {
                     if (ModulesUIResult.selection === 21) {
                         const moduleshotbarui = new ModalFormData();
                         const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b") as boolean;
-                        let CurrentHotbarConfig = config.modules.hotbar.message;
+                        const CurrentHotbarConfig = config.modules.hotbar.message;
                         moduleshotbarui.title("§4Paradox Modules - Hotbar§4");
                         moduleshotbarui.textField("Hotbar Message: ", "", CurrentHotbarConfig);
                         moduleshotbarui.toggle("Enable Hotbar - Displays a hotbar message for all player's currently online:", hotbarBoolean);
@@ -949,8 +949,8 @@ async function paradoxui(player: Player) {
             const salt = world.getDynamicProperty("crypt");
             const tags = player.getTags();
             let counter = 0;
-            let Locations: string[] = [];
-            let coordsArray: string[] = [];
+            const Locations: string[] = [];
+            const coordsArray: string[] = [];
             for (let i = 0; i < tags.length; i++) {
                 /**
                  * This first if statement is to verify if they have old coordinates

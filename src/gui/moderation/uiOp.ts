@@ -48,9 +48,9 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             }
         }
         // Check for hash/salt and validate password
-        let memberHash = member.getDynamicProperty("hash");
+        const memberHash = member.getDynamicProperty("hash");
         let memberSalt = member.getDynamicProperty("salt");
-        let encode = crypto(memberSalt, config.modules.encryption.password) ?? null;
+        const encode = crypto(memberSalt, config.modules.encryption.password) ?? null;
         // If no salt then create one
         if (memberSalt === undefined) {
             member.setDynamicProperty("salt", UUID.generate());
@@ -59,7 +59,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
         }
         // If no hash then create one
         if (memberHash !== encode) {
-            let encode = crypto(memberSalt, config.modules.encryption.password);
+            const encode = crypto(memberSalt, config.modules.encryption.password);
             member.setDynamicProperty("hash", encode);
             dynamicPropertyRegistry.set(member.id, member.name);
         }

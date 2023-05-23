@@ -14,7 +14,7 @@ export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], 
     const [value] = flyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
-    for (let pl of players) {
+    for (const pl of players) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;

@@ -41,7 +41,7 @@ function autoban(id: number) {
         scores.forEach((score) => {
             const playerScore = getScore(score, player);
             if (playerScore > 50) {
-                let reReason = score.replace("vl", "").toUpperCase() + " Violations: " + playerScore;
+                const reReason = score.replace("vl", "").toUpperCase() + " Violations: " + playerScore;
                 return rip(player, reReason);
             }
         });

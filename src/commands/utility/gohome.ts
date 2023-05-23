@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
 import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
 
-let cooldownTimer = new WeakMap();
+const cooldownTimer = new WeakMap();
 
 function dhms(ms: number) {
     const days = Math.floor(ms / (24 * 60 * 60 * 1000));

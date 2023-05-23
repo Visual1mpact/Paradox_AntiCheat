@@ -7,7 +7,7 @@ export async function uiKICK(banResult: ModalFormResponse, onlineList: string[],
     const [value, reason] = banResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
-    for (let pl of players) {
+    for (const pl of players) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;

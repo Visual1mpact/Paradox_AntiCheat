@@ -36,11 +36,11 @@ export function listitems(message: BeforeChatEvent, args: string[]) {
 
     message.cancel = true;
 
-    let player = message.sender;
+    const player = message.sender;
 
     // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
+    const hash = player.getDynamicProperty("hash");
+    const salt = player.getDynamicProperty("salt");
     const encode = crypto?.(salt, config?.modules?.encryption?.password);
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
@@ -48,16 +48,16 @@ export function listitems(message: BeforeChatEvent, args: string[]) {
     }
 
     // Check for custom prefix
-    let prefix = getPrefix(player);
+    const prefix = getPrefix(player);
 
     // Was help requested
-    let argCheck = args[0];
+    const argCheck = args[0];
     if ((argCheck && args[0].toLowerCase() === "help") || !config.debug) {
         return listItems(player, prefix);
     }
 
     for (const item in MinecraftItemTypes) {
-        let itemInfo = new ItemStack(MinecraftItemTypes[item as keyof typeof MinecraftItemTypes] as string);
+        const itemInfo = new ItemStack(MinecraftItemTypes[item as keyof typeof MinecraftItemTypes] as string);
         console.log("'" + itemInfo.typeId + "': " + itemInfo.maxAmount + ",");
     }
     sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r List completed. Check console logs.");

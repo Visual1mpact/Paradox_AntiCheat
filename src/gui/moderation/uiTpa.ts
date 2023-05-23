@@ -9,7 +9,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
     const [value, toggleToTarget, toggleTargetTo] = tpaResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
-    for (let pl of players) {
+    for (const pl of players) {
         if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
