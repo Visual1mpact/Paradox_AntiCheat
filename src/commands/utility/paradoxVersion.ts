@@ -16,14 +16,14 @@ function versionHelp(player: Player, prefix: string) {
 }
 
 /**
- * @name clearchat
+ * @name paradoxVersion
  * @param {BeforeChatEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
 export function paradoxVersion(message: BeforeChatEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./utility/notify.js:26)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./utility/paradoxVersion.js:26)");
     }
 
     message.cancel = true;
