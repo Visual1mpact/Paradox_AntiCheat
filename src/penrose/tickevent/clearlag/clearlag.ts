@@ -17,6 +17,7 @@ const countdown = {
 };
 
 let warned = false; // variable to track whether the 60 second warning has been displayed
+let clearLagId: number = null;
 
 function clearEntityItems() {
     const filter = { type: "item" };
@@ -85,7 +86,11 @@ function clearLag(id: number) {
  * if needed to do so.
  */
 export function ClearLag() {
-    const clearLagId = system.runInterval(() => {
+    if (clearLagId !== null) {
+        system.clearRun(clearLagId);
+    }
+
+    clearLagId = system.runInterval(() => {
         clearLag(clearLagId);
     }, 20);
 }
