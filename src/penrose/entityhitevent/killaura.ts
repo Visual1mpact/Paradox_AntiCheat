@@ -63,7 +63,7 @@ function killaura(obj: EntityHitEvent) {
     const cosAngle = dotProduct / (entityMagnitude * vectorMagnitude);
     const angle = Math.acos(cosAngle) * (180 / Math.PI);
 
-    if (angle > 90) {
+    if (angle > 100) {
         // Entity is facing hitEntity at an angle greater than 90 degrees
         flag(entity, "KillAura", "A", "Combat", null, null, null, null, false, null);
         // Ban them
