@@ -83,7 +83,7 @@ function invalidsprinta(id: number) {
         playerInfo.lastTimestamp = playerTimestamp;
         playerInfo.highestBps = Math.max(bps, highestBps);
 
-        const verifyTpGrace = isTimerExpired(playerName);
+        const verifyTpGrace = isTimerExpired(player.id);
         // We compare with a 20% buffer to minimize false flags
         if (!isNaN(bps) && bps > config.modules.noslowA.speed && player.getEffect(MinecraftEffectTypes.blindness) && verifyTpGrace === true) {
             flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", playerInfo.highestBps.toFixed(2), true, null);
