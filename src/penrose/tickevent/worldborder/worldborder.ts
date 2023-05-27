@@ -4,17 +4,31 @@ import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js"
 
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {
-    const blockVerification = Math.ceil(y) + 1;
+    const testPositions = [
+        new Vector(x, y + 1, z), // Head position
+        new Vector(x, y, z), // Body position
+        new Vector(x, y - 1, z), // Feet position
+    ];
+
     let safe = null;
-    let i = blockVerification;
-    while (i < blockVerification + 100 && !safe) {
-        const testAir = player.dimension.getBlock(new Vector(x, i, z));
-        if (testAir.typeId === "minecraft:air") {
-            safe = testAir.y;
+    let consecutiveAir = 0;
+
+    for (const position of testPositions) {
+        let block = player.dimension.getBlock(position);
+        if (block.isAir) {
+            consecutiveAir++;
+        } else {
+            consecutiveAir = 0;
         }
-        i++;
     }
-    return safe || y;
+
+    if (consecutiveAir === testPositions.length) {
+        safe = testPositions[0].y;
+    } else {
+        safe = y;
+    }
+
+    return safe;
 }
 
 function worldborder(id: number) {
@@ -80,7 +94,7 @@ function worldborder(id: number) {
 
         for (const [x, y, z] of blockCoords) {
             const block = player.dimension.getBlock(new Vector(x, y, z));
-            portalBlocks[`${x},${y},${z}`] = block.typeId ?? "minecraft:air";
+            portalBlocks[`${x},${y},${z}`] = block?.typeId ?? "minecraft:air";
         }
 
         if (portalBlocks[MinecraftBlockTypes.portal.id] || portalBlocks[`${x},${y - 1},${z}`] === MinecraftBlockTypes.air.id) {
@@ -112,7 +126,7 @@ function worldborder(id: number) {
         }
 
         // Nether
-        if (player.dimension.id === "minecraft:the_nether") {
+        if (player.dimension.id === "minecraft:nether") {
             const border = netherSize - 3;
             const { x, y, z } = player.location;
 
