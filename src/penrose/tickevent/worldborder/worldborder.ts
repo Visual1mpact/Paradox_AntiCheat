@@ -15,7 +15,7 @@ function safetyProtocol(player: Player, x: number, y: number, z: number) {
 
     for (const position of testPositions) {
         let block = player.dimension.getBlock(position);
-        if (block.isAir) {
+        if (block?.isAir) {
             consecutiveAir++;
         } else {
             consecutiveAir = 0;
