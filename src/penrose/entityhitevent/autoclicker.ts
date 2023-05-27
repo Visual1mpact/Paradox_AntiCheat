@@ -17,7 +17,6 @@ interface PlayerWithClicks extends Player {
  * @returns The number of clicks per second
  */
 function getPlayerCPS(player: PlayerWithClicks): number {
-    console.log("confirmed");
     const timestamp: number = new Date().getTime();
     const clicks: Click[] = (player["clicks"] as Click[]) ?? [];
     // Remove clicks that are over 1 second old
