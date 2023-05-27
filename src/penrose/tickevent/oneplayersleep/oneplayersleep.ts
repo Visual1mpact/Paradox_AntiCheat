@@ -1,6 +1,10 @@
 import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../worldinitializeevent/registry.js";
 
+function setTimeoutAsync(delay: number): Promise<void> {
+    return new Promise((resolve) => system.runTimeout(resolve, delay));
+}
+
 async function queueSleep(player: Player) {
     await Promise.all([player.runCommandAsync(`time set 126553000`), player.runCommandAsync(`weather clear`)]);
     const hotbarBoolean = dynamicPropertyRegistry.get("hotbar_b");
@@ -9,29 +13,46 @@ async function queueSleep(player: Player) {
     }
 }
 
-function ops(opsID: number) {
+async function ops(opsId: number) {
     // Get Dynamic Property
     const opsBoolean = dynamicPropertyRegistry.get("ops_b");
 
     // Unsubscribe if disabled in-game
     if (opsBoolean === false) {
-        system.clearRun(opsID);
+        system.clearRun(opsId);
         return;
     }
 
     const filter: EntityQueryOptions = { tags: ["sleeping"] };
     const filteredPlayers = world.getPlayers(filter);
 
-    if (filteredPlayers.length > 0) {
-        const player = filteredPlayers[0];
+    for (const player of filteredPlayers) {
+        /**
+         * Check if player still has the "sleeping" tag
+         *
+         * This is necessary because the first player in the loop might have changed the time and weather,
+         * causing subsequent players to no longer be sleeping. By checking if the player still has the
+         * "sleeping" tag before calling the queueSleep function, we ensure that only players who are
+         * still considered to be sleeping have the time and weather changes applied to them.
+         */
+        const stillSleeping = player.hasTag("sleeping");
 
-        // Wait for 2 seconds
-        const startTime = Date.now();
-        while (Date.now() - startTime < 2000) {
-            // Do nothing
+        if (stillSleeping) {
+            // Wait for 2 seconds
+            await setTimeoutAsync(2000);
+
+            // Call queueSleep after 2 seconds
+            await queueSleep(player);
+            const stillSleeping = world.getPlayers({ name: player.name, tags: ["sleeping"] }).length > 0;
+
+            if (stillSleeping) {
+                // Wait for 2 seconds
+                await setTimeoutAsync(40);
+
+                // Call queueSleep after 2 seconds
+                await queueSleep(player);
+            }
         }
-        // Call queueSleep after 2 seconds
-        queueSleep(player);
     }
 }
 
