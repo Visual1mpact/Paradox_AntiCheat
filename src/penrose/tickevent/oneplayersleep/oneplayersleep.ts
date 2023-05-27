@@ -39,19 +39,10 @@ async function ops(opsId: number) {
 
         if (stillSleeping) {
             // Wait for 2 seconds
-            await setTimeoutAsync(2000);
+            await setTimeoutAsync(40);
 
             // Call queueSleep after 2 seconds
             await queueSleep(player);
-            const stillSleeping = world.getPlayers({ name: player.name, tags: ["sleeping"] }).length > 0;
-
-            if (stillSleeping) {
-                // Wait for 2 seconds
-                await setTimeoutAsync(40);
-
-                // Call queueSleep after 2 seconds
-                await queueSleep(player);
-            }
         }
     }
 }
