@@ -152,7 +152,7 @@ export async function gohome(message: BeforeChatEvent, args: string[]) {
         // If timer doesn't exist or has expired then grant permission to teleport and set the countdown
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || uniqueId === player.name) {
             // This timer is a grace period
-            setTimer(player.name);
+            setTimer(player.id);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
             player.teleport(new Vector(homex, homey, homez), world.getDimension(dimension), 0, 0);
             // Delete old key and value

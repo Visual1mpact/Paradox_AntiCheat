@@ -26,7 +26,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
     }
     if (teleportToSelectedLocation === true) {
         //Teleport the player to the location set in the dropdown.
-        setTimer(player.name);
+        setTimer(player.id);
         player.teleport(new Vector(x, y, z), world.getDimension(dimension), 0, 0);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
         return player;

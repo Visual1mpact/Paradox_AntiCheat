@@ -98,7 +98,7 @@ function worldborder(id: number) {
         }
 
         if (portalBlocks[MinecraftBlockTypes.portal.id] || portalBlocks[`${x},${y - 1},${z}`] === MinecraftBlockTypes.air.id) {
-            setTimer(player.name);
+            setTimer(player.id);
             continue;
         }
 
@@ -112,10 +112,10 @@ function worldborder(id: number) {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
 
                 const teleportToBorder = (x: number, z: number) => {
-                    setTimer(player.name);
+                    setTimer(player.id);
                     player.teleport(new Vector(x, y, z), player.dimension, 0, 0);
                     const safe = safetyProtocol(player, x, y, z);
-                    setTimer(player.name);
+                    setTimer(player.id);
                     player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
                 };
 
@@ -135,10 +135,10 @@ function worldborder(id: number) {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
 
                 const teleportToBorder = (x: number, z: number) => {
-                    setTimer(player.name);
+                    setTimer(player.id);
                     player.teleport(new Vector(x, y, z), player.dimension, 0, 0);
                     const safe = safetyProtocol(player, x, y, z);
-                    setTimer(player.name);
+                    setTimer(player.id);
                     player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
                 };
 
