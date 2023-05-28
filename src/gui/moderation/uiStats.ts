@@ -1,7 +1,8 @@
-import { EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
+import { EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
+import { MinecraftEnchantmentTypes } from "@minecraft/vanilla-data";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { allscores, getGamemode } from "../../util";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
@@ -11,7 +12,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -39,7 +40,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     scores.forEach((score) => {
         try {
             const objective = world.scoreboard.getObjective(score);
-            const playerScore = member.scoreboard.getScore(objective);
+            const playerScore = member.scoreboardIdentity.getScore(objective);
             if (playerScore > 0) {
                 reportBody.push(`§r§4[§6${score.replace("vl", "").toUpperCase()}§4]§r number of Violations: ${playerScore}\n`);
             }
@@ -87,7 +88,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         }
         let isEnchanted = false;
         for (const enchant in MinecraftEnchantmentTypes) {
-            const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant as keyof typeof MinecraftEnchantmentTypes] as EnchantmentType);
+            const enchantNumber = enchantList.hasEnchantment(enchant);
             if (enchantNumber > 0) {
                 isEnchanted = true;
             }

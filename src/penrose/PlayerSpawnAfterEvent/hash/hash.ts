@@ -1,7 +1,7 @@
 import { PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import config from "../../../data/config";
 import { crypto } from "../../../util";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry";
 
 function verification(object: PlayerSpawnAfterEvent) {
     // Properties from class

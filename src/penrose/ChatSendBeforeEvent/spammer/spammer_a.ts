@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { flag } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function spammera(msg: ChatSendBeforeEvent) {
     // Get Dynamic Property

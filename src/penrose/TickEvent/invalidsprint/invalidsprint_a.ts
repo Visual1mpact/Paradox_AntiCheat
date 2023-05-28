@@ -1,7 +1,8 @@
-import { world, MinecraftEffectTypes, system } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
+import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
 import { flag, isTimerExpired, startTimer } from "../../../util.js";
 import config from "../../../data/config.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Create a Map to store each player's last known position, timestamp, and highest speed
 const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: number; highestBps: number }>();
@@ -85,7 +86,7 @@ function invalidsprinta(id: number) {
 
         const verifyTpGrace = isTimerExpired(player.id);
         // We compare with a 20% buffer to minimize false flags
-        if (!isNaN(bps) && bps > config.modules.noslowA.speed && player.getEffect(MinecraftEffectTypes.blindness) && verifyTpGrace === true) {
+        if (!isNaN(bps) && bps > config.modules.noslowA.speed && player.getEffect(MinecraftEffectTypes.Blindness) && verifyTpGrace === true) {
             flag(player, "InvalidSprint", "A", "Movement", null, null, "BlindSprint", playerInfo.highestBps.toFixed(2), true, null);
             playerInfo.highestBps = 0;
         }

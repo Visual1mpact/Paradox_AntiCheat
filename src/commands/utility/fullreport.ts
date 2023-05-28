@@ -1,6 +1,7 @@
-import { ChatSendBeforeEvent, EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
+import { MinecraftEnchantmentTypes } from "@minecraft/vanilla-data";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { allscores, getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function fullReportHelp(player: Player, prefix: string) {
@@ -85,7 +86,7 @@ export async function fullreport(message: ChatSendBeforeEvent, args: string[]) {
             vlCount++;
             try {
                 const objective = world.scoreboard.getObjective(score);
-                const playerScore = member.scoreboard.getScore(objective);
+                const playerScore = member.scoreboardIdentity.getScore(objective);
                 if (playerScore > 0) {
                     violationsFound++;
                     if (violationsFound === 1) {
@@ -140,7 +141,7 @@ export async function fullreport(message: ChatSendBeforeEvent, args: string[]) {
             }
             let isEnchanted = false;
             for (const enchant in MinecraftEnchantmentTypes) {
-                const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant as keyof typeof MinecraftEnchantmentTypes] as EnchantmentType);
+                const enchantNumber = enchantList.hasEnchantment(enchant);
                 if (enchantNumber > 0) {
                     isEnchanted = true;
                 }

@@ -1,6 +1,6 @@
 import { world, Block, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
 import { flag } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function isAir(block: Block): boolean {
     return block.typeId === "minecraft:air";

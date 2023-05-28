@@ -1,7 +1,7 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
 import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
 import { sendMsg } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 async function vanish() {
     // Filter for only players who are vanished

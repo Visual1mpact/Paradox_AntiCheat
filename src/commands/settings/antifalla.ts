@@ -2,7 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { AntiFallA } from "../../penrose/TickEvent/antifalla/antifall_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function antifallaHelp(player: Player, prefix: string, antifallABoolean: string | number | boolean) {
     let commandStatus: string;

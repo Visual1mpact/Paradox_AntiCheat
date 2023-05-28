@@ -1,7 +1,7 @@
 import { world, system, EntityQueryOptions, GameMode } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, isTimerExpired, startTimer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Create a Map to store each player's last known position, timestamp, and highest speed
 const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: number; highestBps: number }>();

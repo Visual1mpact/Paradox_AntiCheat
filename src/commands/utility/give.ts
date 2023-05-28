@@ -1,9 +1,10 @@
 /* eslint no-var: "off"*/
 
-import { ChatSendBeforeEvent, Player, world, MinecraftItemTypes, ItemStack } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world, ItemStack } from "@minecraft/server";
+import { MinecraftItemTypes } from "@minecraft/vanilla-data";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
-import { getPrefix, sendMsgToPlayer, toCamelCase } from "../../util.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
+import { getPrefix, sendMsgToPlayer, toPascalCase } from "../../util.js";
 
 function giveHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -89,7 +90,7 @@ export function give(message: ChatSendBeforeEvent, args: string[]) {
      * args[3] = data (optional)
      */
     let confirmItem = false;
-    const itemStringConvert = toCamelCase(args[1]);
+    const itemStringConvert = toPascalCase(args[1]);
     for (const itemValidate in MinecraftItemTypes) {
         if (itemStringConvert === itemValidate) {
             confirmItem = true;

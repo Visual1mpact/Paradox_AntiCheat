@@ -1,5 +1,5 @@
 import { world, Player, EntityHitAfterEvent } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../WorldInitializeEvent/registry";
+import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
 import { kickablePlayers } from "../../kickcheck";
 

@@ -3,7 +3,7 @@ import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
 
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block) {

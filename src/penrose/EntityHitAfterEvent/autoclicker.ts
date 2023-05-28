@@ -1,5 +1,6 @@
-import { MinecraftEntityTypes, world, Player, EntityHitAfterEvent, system } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../WorldInitializeEvent/registry";
+import { world, Player, EntityHitAfterEvent, system } from "@minecraft/server";
+import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
+import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
 
 // Define interface for a player click object
@@ -85,8 +86,9 @@ function autoclicker(event: EntityHitAfterEvent): void {
         return;
     }
 
+    const modifiedTypeId = entity.typeId.replace("minecraft:", "");
     // If the entity hit is a player, update their click object with a new timestamp
-    if (entity.typeId === MinecraftEntityTypes.player.id) {
+    if (modifiedTypeId === MinecraftEntityTypes.Player) {
         const timestamp: number = new Date().getTime();
         const clicks: Click[] = (playerWithClicks["clicks"] as Click[]) ?? [];
         // Remove clicks that are over 1 second old

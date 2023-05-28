@@ -2,7 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { IllegalItemsC } from "../../penrose/TickEvent/illegalitems/illegalitems_c.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function illegalItemsCHelp(player: Player, prefix: string, illegalItemsCBoolean: string | number | boolean) {
     let commandStatus: string;

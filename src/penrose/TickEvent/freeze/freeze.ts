@@ -1,6 +1,6 @@
 import { world, Player, system, Vector } from "@minecraft/server";
 import { getScore, sendMsg } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 async function Freeze(id: number) {
     let posx: number;

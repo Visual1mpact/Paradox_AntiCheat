@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { BedrockValidate } from "../../penrose/TickEvent/bedrock/bedrockvalidate.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function bedrockValidateHelp(player: Player, prefix: string, bedrockValidateBoolean: string | number | boolean) {

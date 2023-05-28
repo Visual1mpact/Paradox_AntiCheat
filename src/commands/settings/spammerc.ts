@@ -2,7 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { SpammerC } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function spammerCHelp(player: Player, prefix: string, spammerCBoolean: string | number | boolean) {
     let commandStatus: string;

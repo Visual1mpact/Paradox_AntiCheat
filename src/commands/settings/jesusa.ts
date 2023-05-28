@@ -2,7 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { JesusA } from "../../penrose/TickEvent/jesus/jesus_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function jesusAHelp(player: Player, prefix: string, jesusaBoolean: string | number | boolean) {
     let commandStatus: string;

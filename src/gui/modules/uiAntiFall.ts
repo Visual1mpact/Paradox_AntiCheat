@@ -1,6 +1,6 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { paradoxui } from "../paradoxui.js";
 import { sendMsgToPlayer, sendMsg } from "../../util.js";
 import { AntiFallA } from "../../penrose/TickEvent/antifalla/antifall_a.js";

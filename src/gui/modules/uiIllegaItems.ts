@@ -3,7 +3,7 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import { IllegalItemsB } from "../../penrose/BlockPlaceAfterEvent/illegalitems/illegalitems_b.js";
 import { IllegalItemsA } from "../../penrose/TickEvent/illegalitems/illegalitems_a.js";
 import { IllegalItemsC } from "../../penrose/TickEvent/illegalitems/illegalitems_c.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

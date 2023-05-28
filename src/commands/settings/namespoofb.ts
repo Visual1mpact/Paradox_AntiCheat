@@ -2,7 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { NamespoofB } from "../../penrose/TickEvent/namespoof/namespoof_b.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function namespoofBHelp(player: Player, prefix: string, nameSpoofBoolean: string | number | boolean) {
     let commandStatus: string;

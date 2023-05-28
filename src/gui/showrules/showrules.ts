@@ -2,7 +2,7 @@ import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../data/config.js";
 import { sendMsgToPlayer } from "../../util.js";
 import { MessageFormData } from "@minecraft/server-ui";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function waitForTwentySeconds(): Promise<void> {
     return new Promise((resolve) => {

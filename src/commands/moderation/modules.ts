@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getScore, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function modulesHelp(player: Player, prefix: string) {

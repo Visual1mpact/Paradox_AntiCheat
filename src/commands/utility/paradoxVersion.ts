@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import versionFile from "../../version.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function versionHelp(player: Player, prefix: string) {

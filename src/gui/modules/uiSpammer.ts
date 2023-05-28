@@ -3,7 +3,7 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import { SpammerA } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_a.js";
 import { SpammerB } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_b.js";
 import { SpammerC } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

@@ -1,7 +1,7 @@
 import { world, Player, EntityHitAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
-import { dynamicPropertyRegistry } from "../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry.js";
 
 function reachb(object: EntityHitAfterEvent) {
     // Get Dynamic Property

@@ -1,7 +1,7 @@
 import { BlockBreakAfterEvent, world } from "@minecraft/server";
 import { xrayblocks } from "../../../data/xray.js";
 import { sendMsg } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function xraya(object: BlockBreakAfterEvent) {
     // Get Dynamic Property

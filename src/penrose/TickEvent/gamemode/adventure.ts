@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import { getScore, sendMsg, setScore } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 async function adventure(id: number) {
     // Get Dynamic Property

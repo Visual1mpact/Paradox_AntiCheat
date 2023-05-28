@@ -1,6 +1,7 @@
-import { MinecraftBlockTypes, Player, world, system, Vector } from "@minecraft/server";
+import { Player, world, system, Vector } from "@minecraft/server";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 import { sendMsgToPlayer, setTimer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {
@@ -97,7 +98,7 @@ function worldborder(id: number) {
             portalBlocks[`${x},${y},${z}`] = block?.typeId ?? "minecraft:air";
         }
 
-        if (portalBlocks[MinecraftBlockTypes.portal.id] || portalBlocks[`${x},${y - 1},${z}`] === MinecraftBlockTypes.air.id) {
+        if (portalBlocks[MinecraftBlockTypes.Portal] || portalBlocks[`${x},${y - 1},${z}`] === MinecraftBlockTypes.Air) {
             setTimer(player.id);
             continue;
         }

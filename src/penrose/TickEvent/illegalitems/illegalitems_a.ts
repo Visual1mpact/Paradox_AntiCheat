@@ -3,7 +3,7 @@ import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { sendMsg, sendMsgToPlayer, titleCase } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, lore = false) {
     let reason: string;

@@ -3,7 +3,7 @@
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function resetPrefix(player: Player) {
     const sanitize = player.getTags();

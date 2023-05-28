@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, Player, system } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function setTimeoutAsync(delay: number): Promise<void> {
     return new Promise((resolve) => system.runTimeout(resolve, delay));

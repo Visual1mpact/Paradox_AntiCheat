@@ -1,6 +1,6 @@
 import { world, BlockBreakAfterEvent, Vector } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 
 const lastBreakTime = new Map<string, number>();

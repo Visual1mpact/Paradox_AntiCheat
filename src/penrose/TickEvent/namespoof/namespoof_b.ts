@@ -2,7 +2,7 @@ import { Player, world, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import config from "../../../data/config.js";
 import { kickablePlayers } from "../../../kickcheck.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function rip(player: Player) {
     // Tag with reason and by who

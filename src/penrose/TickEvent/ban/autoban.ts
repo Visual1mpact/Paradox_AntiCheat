@@ -1,7 +1,7 @@
 import { Player, system, world } from "@minecraft/server";
 import { kickablePlayers } from "../../../kickcheck";
 import { allscores, getScore } from "../../../util";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry";
 import config from "../../../data/config";
 
 const configTicks: number = config.modules.autoBan.banHammerInterval;

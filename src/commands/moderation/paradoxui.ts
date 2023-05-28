@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { paradoxui } from "../../gui/paradoxui.js";
 import { ShowRules } from "../../gui/showrules/showrules.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function paradoxuiHelp(player: Player, prefix: string) {
     let commandStatus: string;

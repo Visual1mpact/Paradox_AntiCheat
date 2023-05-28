@@ -1,4 +1,5 @@
-import { ChatSendBeforeEvent, ItemStack, MinecraftItemTypes, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, ItemStack, Player } from "@minecraft/server";
+import { MinecraftItemTypes } from "@minecraft/vanilla-data";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
@@ -55,7 +56,7 @@ export function listitems(message: ChatSendBeforeEvent, args: string[]) {
     }
 
     for (const item in MinecraftItemTypes) {
-        const itemInfo = new ItemStack(MinecraftItemTypes[item as keyof typeof MinecraftItemTypes] as string);
+        const itemInfo = new ItemStack(item);
         console.log("'" + itemInfo.typeId + "': " + itemInfo.maxAmount + ",");
     }
     sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r List completed. Check console logs.");

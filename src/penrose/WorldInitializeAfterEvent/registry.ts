@@ -1,10 +1,10 @@
-import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeEvent } from "@minecraft/server";
+import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { UUID } from "../../util.js";
 
 export const dynamicPropertyRegistry = new Map<string, string | number | boolean>();
 
-function registry(data: WorldInitializeEvent) {
+function registry(data: WorldInitializeAfterEvent) {
     // World instance
     const property = new DynamicPropertiesDefinition();
     // Entity instance
@@ -165,7 +165,7 @@ function registry(data: WorldInitializeEvent) {
 }
 
 const Registry = () => {
-    world.events.worldInitialize.subscribe((data) => registry(data));
+    world.afterEvents.worldInitialize.subscribe((data) => registry(data));
 };
 
 export { Registry };

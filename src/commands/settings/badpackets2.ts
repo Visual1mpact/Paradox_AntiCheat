@@ -2,7 +2,7 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { BadPackets2 } from "../../penrose/TickEvent/badpackets2/badpackets2.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function badpackets2Help(player: Player, prefix: string, badPackets2Boolean: string | number | boolean) {
     let commandStatus: string;

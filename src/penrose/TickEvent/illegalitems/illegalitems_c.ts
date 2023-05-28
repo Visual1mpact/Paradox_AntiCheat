@@ -1,6 +1,6 @@
 import { EntityItemComponent, EntityQueryOptions, world, system } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function illegalitemsc(id: number) {
     // Get Dynamic Property

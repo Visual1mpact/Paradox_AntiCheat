@@ -1,6 +1,6 @@
 import { world, Player, ChatSendBeforeEvent, Vector } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
 
 const cooldownTimer = new WeakMap();

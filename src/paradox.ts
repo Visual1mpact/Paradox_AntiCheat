@@ -52,7 +52,7 @@ import { ReachA } from "./penrose/BlockPlaceAfterEvent/reach/reach_a.js";
 import { ReachB } from "./penrose/EntityHitAfterEvent/reach_b.js";
 import { KillAura } from "./penrose/EntityHitAfterEvent/killaura.js";
 // Import WorldInitialize Events
-import { Registry } from "./penrose/WorldInitializeEvent/registry.js";
+import { Registry } from "./penrose/WorldInitializeAfterEvent/registry.js";
 // Import System Events
 import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
 

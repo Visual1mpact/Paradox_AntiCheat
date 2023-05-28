@@ -3,7 +3,7 @@ import { world, system } from "@minecraft/server";
 import { sendMsg } from "../../../util.js";
 import { clearItems } from "../../../data/clearlag.js";
 import { kickablePlayers } from "../../../kickcheck.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 const cooldownTimer = new WeakMap();
 // Just a dummy object to use with set/get

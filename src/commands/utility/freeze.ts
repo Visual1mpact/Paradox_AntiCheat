@@ -1,8 +1,9 @@
 /* eslint no-var: "off"*/
-import { world, MinecraftEffectTypes, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { world, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
 import config from "../../data/config.js";
 import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function freezeHelp(player: Player, prefix: string) {
@@ -97,13 +98,13 @@ export async function freeze(message: ChatSendBeforeEvent, args: string[]) {
 
     if (!member.hasTag("nofreeze")) {
         // Blindness
-        member.addEffect(MinecraftEffectTypes.blindness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
         // Mining Fatigue
-        member.addEffect(MinecraftEffectTypes.miningFatigue, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
         // Weakness
-        member.addEffect(MinecraftEffectTypes.weakness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
-        member.addEffect(MinecraftEffectTypes.slowness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
     }
 
     if (!member.hasTag("nofreeze")) {

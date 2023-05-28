@@ -1,7 +1,7 @@
 import { Player, world } from "@minecraft/server";
 import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
-import { dynamicPropertyRegistry } from "../penrose/WorldInitializeEvent/registry";
+import { dynamicPropertyRegistry } from "../penrose/WorldInitializeAfterEvent/registry";
 import { crypto, decryptString, encryptString, getScore, sendMsgToPlayer } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";

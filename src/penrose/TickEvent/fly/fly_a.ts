@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 const playersOldCoordinates = new Map<string, Vector>();
 const playersAirTimeStart = new Map<string, number>();

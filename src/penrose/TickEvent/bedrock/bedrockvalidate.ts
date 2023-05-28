@@ -1,6 +1,6 @@
 import { world, system, Dimension } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 interface DimensionConfig {
     dimension: Dimension;

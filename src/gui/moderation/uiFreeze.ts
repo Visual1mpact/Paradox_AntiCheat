@@ -1,6 +1,7 @@
-import { MinecraftEffectTypes, Player, world } from "@minecraft/server";
+import { Player, world } from "@minecraft/server";
+import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
 import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
@@ -9,7 +10,7 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -48,13 +49,13 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
 
     if (!member.hasTag("nofreeze")) {
         // Blindness
-        member.addEffect(MinecraftEffectTypes.blindness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
         // Mining Fatigue
-        member.addEffect(MinecraftEffectTypes.miningFatigue, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
         // Weakness
-        member.addEffect(MinecraftEffectTypes.weakness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
-        member.addEffect(MinecraftEffectTypes.slowness, 1000000, 255);
+        member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
     }
 
     if (!member.hasTag("nofreeze")) {

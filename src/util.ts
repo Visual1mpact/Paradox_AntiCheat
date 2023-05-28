@@ -33,7 +33,7 @@ export async function flag(player: Player, check: string, checkType: string, hac
          * If they do not then this will catch the error.
          * We handle the objective in the catched error.
          */
-        world.scoreboard.getObjective(`${check.toLowerCase()}vl`).getScore(player.scoreboard);
+        world.scoreboard.getObjective(`${check.toLowerCase()}vl`).getScore(player.scoreboardIdentity);
     } catch {
         // Get the objective object in the world then validate if it exists
         const getObjective = world.scoreboard.getObjective(`${check.toLowerCase()}vl`);
@@ -45,7 +45,7 @@ export async function flag(player: Player, check: string, checkType: string, hac
              * This will make the player a participant of this objective so we can safely
              * detect, set, or get their score.
              */
-            player.scoreboard.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
+            player.scoreboardIdentity.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
         } else {
             /**
              * The objective object already exists but the player does not have a score.
@@ -53,7 +53,7 @@ export async function flag(player: Player, check: string, checkType: string, hac
              * The player will now be a participant to that objective object allowing us to now
              * safely detect, set, or get their score.
              */
-            player.scoreboard.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
+            player.scoreboardIdentity.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
         }
     }
 
@@ -157,9 +157,9 @@ export function getScore(objective: string, player: Player) {
  */
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
-    const score = scoreObj.getScore(target.scoreboard);
+    const score = scoreObj.getScore(target.scoreboardIdentity);
     const result = (stack ? score ?? 0 : 0) + amount;
-    target.scoreboard.setScore(scoreObj, result);
+    target.scoreboardIdentity.setScore(scoreObj, result);
     return score;
 }
 
@@ -259,10 +259,21 @@ export function toCamelCase(str: string) {
 }
 
 /**
+ * Takes a string and converts it to PascalCase.
+ *
+ * @name toCamelCase
+ * @param {string} str - Takes strings and converts to PascalCase
+ */
+export function toPascalCase(str: string) {
+    const camelCase = toCamelCase(str);
+    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+}
+
+/**
  * Converts a string in snake_case format to Title Case format.
  *
  * @name titleCase
- * @param {*} s - Takes snakeCase and converts it to titleCase
+ * @param {*} s - Takes snakeCase and converts it to Title Case
  * @returns
  */
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());

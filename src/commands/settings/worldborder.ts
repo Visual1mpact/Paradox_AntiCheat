@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { WorldBorder } from "../../penrose/TickEvent/worldborder/worldborder.js";
-import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: string | number | boolean) {

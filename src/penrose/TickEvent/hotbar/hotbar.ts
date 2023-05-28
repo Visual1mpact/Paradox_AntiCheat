@@ -1,6 +1,6 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeEvent/registry.js";
+import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 async function hotbar(id: number) {
     // Get Dynamic Property
