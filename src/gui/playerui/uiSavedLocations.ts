@@ -11,7 +11,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
     let z: number;
     let dimension: string;
     for (let i = 0; i < coordArray.length; i++) {
-        if (coordArray[i].includes("LocationHome:" && Locations[selectedLocationvalue])) {
+        if (coordArray[i].includes("LocationHome:" && Locations[selectedLocationvalue as number])) {
             x = parseInt(coordArray[i + 1].replace("X:", ""));
             y = parseInt(coordArray[i + 2].replace("Y:", ""));
             z = parseInt(coordArray[i + 3].replace("Z:", ""));
@@ -27,7 +27,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
     if (teleportToSelectedLocation === true) {
         //Teleport the player to the location set in the dropdown.
         setTimer(player.id);
-        player.teleport(new Vector(x, y, z), world.getDimension(dimension), 0, 0);
+        player.teleport(new Vector(x, y, z), { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
         return player;
     }
@@ -42,9 +42,9 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
                 // Decode it so we can verify it
                 tags[i] = decryptString(tags[i], String(salt));
             }
-            if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue] + " X", 13)) {
+            if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                 player.removeTag(encryptedString);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${Locations[selectedLocationvalue]}'!`);
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${Locations[selectedLocationvalue as number]}'!`);
                 break;
             }
         }
@@ -60,7 +60,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
             if (coordArray[i].includes("LocationHome:")) {
                 counter = ++counter;
             }
-            if (coordArray[i].includes("LocationHome:" && newLocationName)) {
+            if (coordArray[i].includes("LocationHome:" + newLocationName)) {
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This name already exists please try again.`);
                 return paradoxui(player);
             }
@@ -82,7 +82,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         // Hash the coordinates for security
         const salt = world.getDynamicProperty("crypt");
         //Check to make sure there are no spaces in the name that has been entered.
-        if (newLocationName.includes(" ")) {
+        if (typeof newLocationName === "string" && newLocationName.includes(" ")) {
             doSave = false;
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
             return paradoxui(player);

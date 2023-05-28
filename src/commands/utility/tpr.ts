@@ -114,7 +114,7 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: ChatSendBef
 
     if (isApprovalRequest) {
         setTimer(request.requester.name);
-        request.requester.teleport(request.target.location, request.target.dimension, 0, 0, false);
+        request.requester.teleport(request.target.location, { dimension: request.target.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
         cancel = true;
     } else {

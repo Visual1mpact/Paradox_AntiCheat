@@ -61,9 +61,9 @@ export async function flag(player: Player, check: string, checkType: string, hac
     if (message) message.cancel = true;
 
     if (shouldTP && check !== "Crasher") {
-        player.teleport(new Vector(player.location.x, player.location.y, player.location.z), player.dimension, 0, 0);
+        player.teleport(new Vector(player.location.x, player.location.y, player.location.z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     } else if (shouldTP && check === "Crasher") {
-        player.teleport(new Vector(30000000, 30000000, 30000000), player.dimension, 0, 0);
+        player.teleport(new Vector(30000000, 30000000, 30000000), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     }
 
     try {
@@ -139,7 +139,7 @@ export async function banMessage(player: Player) {
  */
 export function getScore(objective: string, player: Player) {
     try {
-        return world.scoreboard.getObjective(objective).getScore(player.scoreboard);
+        return world.scoreboard.getObjective(objective).getScore(player.scoreboardIdentity);
     } catch (error) {
         return 0;
     }

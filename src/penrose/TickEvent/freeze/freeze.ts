@@ -59,7 +59,7 @@ async function Freeze(id: number) {
         posy = Math.floor(245);
         posz = Math.floor(posz);
         // TP them at the new location in the overworld
-        player.teleport(new Vector(posx, posy, posz), world.getDimension("overworld"), 0, 0);
+        player.teleport(new Vector(posx, posy, posz), { dimension: world.getDimension("overworld"), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         // Create prison around player
         try {
             await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow`);
@@ -83,7 +83,7 @@ async function Freeze(id: number) {
     if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
         // If they move then tp them back
         try {
-            player.teleport(new Vector(posx1, posy1, posz1), world.getDimension("overworld"), 0, 0);
+            player.teleport(new Vector(posx1, posy1, posz1), { dimension: world.getDimension("overworld"), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         } catch (error) {}
     }
 
@@ -111,9 +111,9 @@ async function Freeze(id: number) {
         // Release from prison
         await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air [] hollow`);
         // Return them back to original coordinates
-        player.teleport(new Vector(backx, backy, backz), world.getDimension(realmIDString), 0, 0);
+        player.teleport(new Vector(backx, backy, backz), { dimension: world.getDimension(realmIDString), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         player.removeTag("freezeactive");
-        world.events.playerLeave.unsubscribe(() => StopTickFreeze(id));
+        world.afterEvents.playerLeave.unsubscribe(() => StopTickFreeze(id));
         system.clearRun(id);
     }
 }
@@ -139,7 +139,7 @@ function TickFreeze(data: Player) {
         const freezeId = system.runInterval(() => {
             Freeze(freezeId);
         });
-        world.events.playerLeave.subscribe(() => StopTickFreeze(freezeId));
+        world.afterEvents.playerLeave.subscribe(() => StopTickFreeze(freezeId));
     }
 }
 

@@ -24,7 +24,7 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
         let requestedEntity: string = "";
         for (const entity of filteredEntities) {
             const filteredEntity = entity.typeId.replace("minecraft:", "");
-            requestedEntity = entityValue.replace("minecraft:", "");
+            requestedEntity = (entityValue as string).replace("minecraft:", "");
             // If an entity was specified then handle it here
             if (filteredEntity === requestedEntity || filteredEntity === entityValue) {
                 counter = ++counter;

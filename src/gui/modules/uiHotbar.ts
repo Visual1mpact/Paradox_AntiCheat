@@ -28,7 +28,7 @@ export function uiHOTBAR(hotbarResult: ModalFormResponse, player: Player) {
         // Allow
         dynamicPropertyRegistry.set("hotbar_b", true);
         world.setDynamicProperty("hotbar_b", true);
-        config.modules.hotbar.message = HotbarMessage;
+        config.modules.hotbar.message = HotbarMessage as string;
         sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has enabled §6Hotbar`);
         Hotbar();
     }

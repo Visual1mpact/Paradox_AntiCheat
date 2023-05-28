@@ -9,7 +9,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -37,7 +37,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             //This will throw if the player has no tags
             //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
         }
-        member.addTag("Rank:" + predefinedrank[predefinedrankvalue]);
+        member.addTag("Rank:" + predefinedrank[predefinedrankvalue as number]);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has updated ${member.nameTag} Rank.`);
         return paradoxui(player);
     }

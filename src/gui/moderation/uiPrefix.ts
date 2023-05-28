@@ -20,7 +20,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -32,7 +32,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
     if (uniqueId !== player.name) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
     }
-    if (textField.length && !toggle) {
+    if ((textField as string).length && !toggle) {
         /**
          * Make sure we are not attempting to set a prefix that can break commands
          */
@@ -42,9 +42,9 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
         }
 
         // Change Prefix command under conditions
-        if (textField.length <= 1 && textField.length >= 1) {
+        if ((textField as string).length <= 1 && (textField as string).length >= 1) {
             resetPrefix(member);
-            config.customcommands.prefix = textField;
+            config.customcommands.prefix = textField as string;
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${textField}'! for ${member.nameTag}`);
             member.addTag("Prefix:" + textField);
         } else {

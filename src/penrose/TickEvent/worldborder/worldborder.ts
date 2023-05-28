@@ -115,7 +115,7 @@ function worldborder(id: number) {
                 const teleportToBorder = (x: number, z: number) => {
                     const safe = safetyProtocol(player, x, y, z);
                     setTimer(player.id);
-                    player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
+                    player.teleport(new Vector(x, safe, z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
                 };
 
                 const targetX = x < -overworldSize ? -border + 6 : x >= overworldSize ? border - 6 : x;
@@ -136,7 +136,7 @@ function worldborder(id: number) {
                 const teleportToBorder = (x: number, z: number) => {
                     const safe = safetyProtocol(player, x, y, z);
                     setTimer(player.id);
-                    player.teleport(new Vector(x, safe, z), player.dimension, 0, 0);
+                    player.teleport(new Vector(x, safe, z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
                 };
 
                 const targetX = x < -netherSize ? -border + 6 : x >= netherSize ? border - 6 : x;

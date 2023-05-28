@@ -88,7 +88,13 @@ function flya(id: number) {
                                 // Use try/catch since variables for cords could return undefined if player is loading in
                                 // and they meet the conditions. An example is them flagging this, logging off, then logging
                                 // back on again.
-                                player.teleport(new Vector(oldPlayerCoords.x, oldPlayerCoords.y, oldPlayerCoords.z), player.dimension, 0, 0);
+                                player.teleport(new Vector(oldPlayerCoords.x, oldPlayerCoords.y, oldPlayerCoords.z), {
+                                    dimension: player.dimension,
+                                    rotation: { x: 0, y: 0 },
+                                    facingLocation: { x: 0, y: 0, z: 0 },
+                                    checkForBlocks: false,
+                                    keepVelocity: false,
+                                });
                             } catch (error) {}
                             flag(player, "Fly", "A", "Exploit", null, null, null, null, false, null);
                         }

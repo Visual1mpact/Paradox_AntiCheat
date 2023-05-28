@@ -32,7 +32,7 @@ function serverban() {
             scores.forEach((score) => {
                 try {
                     const objective = world.scoreboard.getObjective(score);
-                    const playerScore = player.scoreboard.getScore(objective);
+                    const playerScore = player.scoreboardIdentity.getScore(objective);
                     //if the player has a violation then we reset the score.
                     if (playerScore > 0) {
                         //reset the score

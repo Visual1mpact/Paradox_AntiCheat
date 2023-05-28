@@ -9,7 +9,7 @@ const playerTags: string[] = ["vanish", "swimming", "riding", "flying", "ground"
 const playerCount = new Map<string, number>();
 
 function timer(player: Player, dimension: Dimension, x: number, y: number, z: number) {
-    player.teleport(new Vector(x, y - 2, z), dimension, 0, 0);
+    player.teleport(new Vector(x, y - 2, z), { dimension: dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     playerCount.set(player.name, 0);
 }
 

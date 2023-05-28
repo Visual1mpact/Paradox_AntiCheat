@@ -10,7 +10,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -40,7 +40,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
         // tp the op to the target
         // Let's teleport you to that player
         setTimer(player.id);
-        player.teleport(member.location, member.dimension, 0, 0);
+        player.teleport(member.location, { dimension: member.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         // Let you know that you have been teleported
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${player.name} to ${member.name}`);
     }
@@ -48,7 +48,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
     if (toggleTargetTo === true) {
         //tp the target to the op
         setTimer(member.id);
-        member.teleport(player.location, player.dimension, 0, 0);
+        member.teleport(player.location, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${member.name} to ${player.name}`);
     }
 
