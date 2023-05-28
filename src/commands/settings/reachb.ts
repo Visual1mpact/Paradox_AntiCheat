@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { ReachB } from "../../penrose/entityhitevent/reach_b.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ReachB } from "../../penrose/EntityHitAfterEvent/reach_b.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function reachBHelp(player: Player, prefix: string, reachBBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function reachBHelp(player: Player, prefix: string, reachBBoolean: string | numb
 
 /**
  * @name reachB
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function reachB(message: BeforeChatEvent, args: string[]) {
+export function reachB(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/reachb.js:36)");

@@ -1,8 +1,8 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
-import { Survival } from "../../penrose/tickevent/gamemode/survival.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
+import { Survival } from "../../penrose/TickEvent/gamemode/survival.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string | number | boolean) {
@@ -33,10 +33,10 @@ function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string 
 
 /**
  * @name allowgms
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function allowgms(message: BeforeChatEvent, args: string[]) {
+export function allowgms(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/allowGMS.js:37)");

@@ -1,6 +1,6 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import versionFile from "../../version.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function versionHelp(player: Player, prefix: string) {
@@ -17,10 +17,10 @@ function versionHelp(player: Player, prefix: string) {
 
 /**
  * @name paradoxVersion
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function paradoxVersion(message: BeforeChatEvent, args: string[]) {
+export function paradoxVersion(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./utility/paradoxVersion.js:26)");

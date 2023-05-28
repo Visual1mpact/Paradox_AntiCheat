@@ -1,6 +1,6 @@
-import { BeforeChatEvent, EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { allscores, getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function fullReportHelp(player: Player, prefix: string) {
@@ -24,10 +24,10 @@ function fullReportHelp(player: Player, prefix: string) {
 
 /**
  * @name fullreport
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function fullreport(message: BeforeChatEvent, args: string[]) {
+export async function fullreport(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fullreport.js:28)");

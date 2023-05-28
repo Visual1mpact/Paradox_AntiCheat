@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function muteHelp(player: Player, prefix: string) {
@@ -26,10 +26,10 @@ function muteHelp(player: Player, prefix: string) {
 
 /**
  * @name mute
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function mute(message: BeforeChatEvent, args: string[]) {
+export async function mute(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/mute.js:30)");

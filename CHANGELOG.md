@@ -80,7 +80,7 @@
 - Modify code for Dynamic Property Registry [\#16](https://github.com/Pete9xi/Paradox_AntiCheat/pull/16) ([Visual1mpact](https://github.com/Visual1mpact))
 - \[Part 1\] Update usage for dynamic properties [\#15](https://github.com/Pete9xi/Paradox_AntiCheat/pull/15) ([Visual1mpact](https://github.com/Visual1mpact))
 - Update command handler for antifalla [\#14](https://github.com/Pete9xi/Paradox_AntiCheat/pull/14) ([Visual1mpact](https://github.com/Visual1mpact))
-- \[bug\] playerspawnevent [\#13](https://github.com/Pete9xi/Paradox_AntiCheat/pull/13) ([Visual1mpact](https://github.com/Visual1mpact))
+- \[bug\] PlayerSpawnAfterEvent [\#13](https://github.com/Pete9xi/Paradox_AntiCheat/pull/13) ([Visual1mpact](https://github.com/Visual1mpact))
 - Fix callback error for antifalla [\#12](https://github.com/Pete9xi/Paradox_AntiCheat/pull/12) ([Visual1mpact](https://github.com/Visual1mpact))
 - Update scripts for Windows [\#11](https://github.com/Pete9xi/Paradox_AntiCheat/pull/11) ([Visual1mpact](https://github.com/Visual1mpact))
 - Development [\#10](https://github.com/Pete9xi/Paradox_AntiCheat/pull/10) ([Visual1mpact](https://github.com/Visual1mpact))

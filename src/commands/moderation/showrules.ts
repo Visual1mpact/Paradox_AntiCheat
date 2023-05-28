@@ -1,7 +1,7 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { ShowRules } from "../../gui/showrules/showrules.js";
 
 function showrulesHelp(player: Player, prefix: string, showrulesBoolean: string | number | boolean) {
@@ -32,10 +32,10 @@ function showrulesHelp(player: Player, prefix: string, showrulesBoolean: string 
 
 /**
  * @name showrules
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function showrules(message: BeforeChatEvent, args: string[]) {
+export function showrules(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/showrules.js:36)");

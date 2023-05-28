@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { NukerA } from "../../penrose/blockbreakevent/nuker/nuker_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { NukerA } from "../../penrose/BlockBreakAfterEvent/nuker/nuker_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function antinukeraHelp(player: Player, prefix: string, antiNukerABoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function antinukeraHelp(player: Player, prefix: string, antiNukerABoolean: strin
 
 /**
  * @name antinukerA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function antinukerA(message: BeforeChatEvent, args: string[]) {
+export function antinukerA(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antinukera.js:36)");

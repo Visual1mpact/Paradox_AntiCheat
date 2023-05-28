@@ -1,6 +1,4 @@
-/* eslint no-var: "off"*/
-/* eslint no-redeclare: "off"*/
-import { BeforeChatEvent, ItemStack, MinecraftItemTypes, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, ItemStack, MinecraftItemTypes, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
@@ -25,10 +23,10 @@ function listItems(player: Player, prefix: string) {
 
 /**
  * @name listitems
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function listitems(message: BeforeChatEvent, args: string[]) {
+export function listitems(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/debug_commands/listitems.js:30)");

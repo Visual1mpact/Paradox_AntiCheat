@@ -1,6 +1,6 @@
 import { MinecraftEffectTypes, Player, world } from "@minecraft/server";
-import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";

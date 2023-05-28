@@ -1,7 +1,7 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BedrockValidate } from "../../penrose/TickEvent/bedrock/bedrockvalidate.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function bedrockValidateHelp(player: Player, prefix: string, bedrockValidateBoolean: string | number | boolean) {
@@ -32,10 +32,10 @@ function bedrockValidateHelp(player: Player, prefix: string, bedrockValidateBool
 
 /**
  * @name bedrockvalidate
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function bedrockvalidate(message: BeforeChatEvent, args: string[]) {
+export function bedrockvalidate(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/bedrockValidate.js:36)");

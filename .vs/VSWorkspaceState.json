@@ -5,8 +5,8 @@
     "\\functions\\checks",
     "\\src",
     "\\src\\gui",
-    "\\src\\gui\\playerspawnevent",
-    "\\src\\gui\\playerspawnevent\\rules",
+    "\\src\\gui\\PlayerSpawnAfterEvent",
+    "\\src\\gui\\PlayerSpawnAfterEvent\\rules",
     "\\src\\gui\\showrules"
   ],
   "PreviewInSolutionExplorer": false

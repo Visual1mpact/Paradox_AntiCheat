@@ -1,7 +1,7 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { BedrockValidate } from "../../penrose/tickevent/bedrock/bedrockvalidate.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BedrockValidate } from "../../penrose/TickEvent/bedrock/bedrockvalidate.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

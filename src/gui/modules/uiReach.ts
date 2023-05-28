@@ -1,8 +1,8 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { ReachA } from "../../penrose/blockplaceevent/reach/reach_a.js";
-import { ReachB } from "../../penrose/entityhitevent/reach_b.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ReachA } from "../../penrose/BlockPlaceAfterEvent/reach/reach_a.js";
+import { ReachB } from "../../penrose/EntityHitAfterEvent/reach_b.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

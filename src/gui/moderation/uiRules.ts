@@ -1,9 +1,9 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
-import { onJoinrules } from "../playerspawnevent/rules/rules.js";
+import { onJoinrules } from "../PlayerSpawnAfterEvent/rules/rules.js";
 
 export function uiRULES(banResult: ModalFormResponse, player: Player) {
     const [EnabledRules, EnableKick] = banResult.formValues;

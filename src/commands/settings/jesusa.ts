@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { JesusA } from "../../penrose/tickevent/jesus/jesus_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { JesusA } from "../../penrose/TickEvent/jesus/jesus_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function jesusAHelp(player: Player, prefix: string, jesusaBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function jesusAHelp(player: Player, prefix: string, jesusaBoolean: string | numb
 
 /**
  * @name jesusA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function jesusA(message: BeforeChatEvent, args: string) {
+export function jesusA(message: ChatSendBeforeEvent, args: string) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/jesusa.js:36)");

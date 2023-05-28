@@ -1,8 +1,8 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function flyHelp(player: Player, prefix: string | number | boolean) {
@@ -34,10 +34,10 @@ function mayflyenable(player: Player, member: Player) {
 
 /**
  * @name fly
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - (Optional) Additional arguments provided (optional).
  */
-export async function fly(message: BeforeChatEvent, args: string[]) {
+export async function fly(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fly.js:38)");

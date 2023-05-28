@@ -1,8 +1,8 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, EntityInventoryComponent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, EntityInventoryComponent, Player, world } from "@minecraft/server";
 
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function invseeHelp(player: Player, prefix: string) {
@@ -27,10 +27,10 @@ function invseeHelp(player: Player, prefix: string) {
 // found the inventory viewing scipt in the bedrock addons discord, unsure of the original owner (not my code)
 /**
  * @name invsee
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function invsee(message: BeforeChatEvent, args: string[]) {
+export function invsee(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/invsee.js:30)");

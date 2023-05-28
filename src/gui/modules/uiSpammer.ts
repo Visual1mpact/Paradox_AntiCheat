@@ -1,9 +1,9 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { SpammerA } from "../../penrose/beforechatevent/spammer/spammer_a.js";
-import { SpammerB } from "../../penrose/beforechatevent/spammer/spammer_b.js";
-import { SpammerC } from "../../penrose/beforechatevent/spammer/spammer_c.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { SpammerA } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_a.js";
+import { SpammerB } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_b.js";
+import { SpammerC } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

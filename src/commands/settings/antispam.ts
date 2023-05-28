@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { AntiSpam } from "../../penrose/beforechatevent/chat/antispam.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { AntiSpam } from "../../penrose/ChatSendBeforeEvent/chat/antispam.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | 
 
 /**
  * @name antispam
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function antispam(message: BeforeChatEvent, args: string[]) {
+export function antispam(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antispam.js:36)");

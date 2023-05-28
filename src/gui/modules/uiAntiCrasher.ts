@@ -1,7 +1,7 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { CrasherA } from "../../penrose/tickevent/crasher/crasher_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { CrasherA } from "../../penrose/TickEvent/crasher/crasher_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

@@ -1,9 +1,9 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import { KillAura } from "../../penrose/entityhitevent/killaura.js";
+import { KillAura } from "../../penrose/EntityHitAfterEvent/killaura.js";
 
 function auraCheckHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -26,10 +26,10 @@ function auraCheckHelp(player: Player, prefix: string) {
 
 /**
  * @name auracheck
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function auracheck(message: BeforeChatEvent, args: string[]) {
+export async function auracheck(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/auracheck.js:29)");

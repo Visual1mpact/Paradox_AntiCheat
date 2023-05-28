@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { NoSlowA } from "../../penrose/tickevent/noslow/noslow_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { NoSlowA } from "../../penrose/TickEvent/noslow/noslow_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function noslowAHelp(player: Player, prefix: string, noSlowBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function noslowAHelp(player: Player, prefix: string, noSlowBoolean: string | num
 
 /**
  * @name noslowA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function noslowA(message: BeforeChatEvent, args: string[]) {
+export function noslowA(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/noslowa.js:36)");

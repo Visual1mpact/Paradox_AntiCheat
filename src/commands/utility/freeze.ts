@@ -1,8 +1,8 @@
 /* eslint no-var: "off"*/
-import { world, MinecraftEffectTypes, Player, BeforeChatEvent } from "@minecraft/server";
+import { world, MinecraftEffectTypes, Player, ChatSendBeforeEvent } from "@minecraft/server";
 import config from "../../data/config.js";
-import { TickFreeze } from "../../penrose/tickevent/freeze/freeze.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function freezeHelp(player: Player, prefix: string) {
@@ -26,10 +26,10 @@ function freezeHelp(player: Player, prefix: string) {
 
 /**
  * @name freeze
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function freeze(message: BeforeChatEvent, args: string[]) {
+export async function freeze(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/freeze.js:30)");

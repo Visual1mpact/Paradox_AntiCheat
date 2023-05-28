@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { AntiFallA } from "../../penrose/tickevent/antifalla/antifall_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { AntiFallA } from "../../penrose/TickEvent/antifalla/antifall_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function antifallaHelp(player: Player, prefix: string, antifallABoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function antifallaHelp(player: Player, prefix: string, antifallABoolean: string 
 
 /**
  * @name antifallA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function antifallA(message: BeforeChatEvent, args: string[]) {
+export function antifallA(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antifalla.js:36)");

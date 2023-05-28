@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, GameMode, Player, system, Vector, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, GameMode, Player, system, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -23,9 +23,9 @@ const theVoid = new Map<string, number>();
  * @param {string} debugName - Name for the debug value.
  * @param {string} debug - Debug info.
  * @param {boolean} shouldTP - Whever to tp the player to itself.
- * @param {BeforeChatEvent} message - The message object, used to cancel the message.
+ * @param {ChatSendBeforeEvent} message - The message object, used to cancel the message.
  */
-export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: BeforeChatEvent) {
+export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: ChatSendBeforeEvent) {
     // Make sure the vl objective exists
     try {
         /**

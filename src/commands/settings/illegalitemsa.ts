@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { IllegalItemsA } from "../../penrose/tickevent/illegalitems/illegalitems_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { IllegalItemsA } from "../../penrose/TickEvent/illegalitems/illegalitems_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function illegalItemsAHelp(player: Player, prefix: string, illegalItemsABoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function illegalItemsAHelp(player: Player, prefix: string, illegalItemsABoolean:
 
 /**
  * @name illegalitemsA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function illegalitemsA(message: BeforeChatEvent, args: string[]) {
+export function illegalitemsA(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/illegalitemsa.js:36)");

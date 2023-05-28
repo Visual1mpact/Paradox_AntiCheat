@@ -1,9 +1,9 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
-import { KillAura } from "../../penrose/entityhitevent/killaura";
+import { KillAura } from "../../penrose/EntityHitAfterEvent/killaura";
 
 export async function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, player: Player) {
     const [AntiKillAuraToggle] = antikillauraResult.formValues;

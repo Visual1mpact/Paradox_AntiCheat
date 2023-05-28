@@ -1,8 +1,8 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { BadPackets1 } from "../../penrose/beforechatevent/spammer/badpackets_1.js";
-import { BadPackets2 } from "../../penrose/tickevent/badpackets2/badpackets2.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { BadPackets1 } from "../../penrose/ChatSendBeforeEvent/spammer/badpackets_1.js";
+import { BadPackets2 } from "../../penrose/TickEvent/badpackets2/badpackets2.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

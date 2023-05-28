@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { CrasherA } from "../../penrose/tickevent/crasher/crasher_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { CrasherA } from "../../penrose/TickEvent/crasher/crasher_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function crasheraHelp(player: Player, prefix: string, crasherABoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function crasheraHelp(player: Player, prefix: string, crasherABoolean: string | 
 
 /**
  * @name crasherA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function crasherA(message: BeforeChatEvent, args: string[]) {
+export function crasherA(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/crashera.js:36)");

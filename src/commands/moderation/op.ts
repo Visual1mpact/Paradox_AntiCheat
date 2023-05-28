@@ -1,8 +1,8 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function opHelp(player: Player, prefix: string) {
@@ -26,10 +26,10 @@ function opHelp(player: Player, prefix: string) {
 
 /**
  * @name op
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function op(message: BeforeChatEvent, args: string[]) {
+export function op(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/op.js:30)");

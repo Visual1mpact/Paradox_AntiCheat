@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { BadPackets2 } from "../../penrose/tickevent/badpackets2/badpackets2.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { BadPackets2 } from "../../penrose/TickEvent/badpackets2/badpackets2.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function badpackets2Help(player: Player, prefix: string, badPackets2Boolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function badpackets2Help(player: Player, prefix: string, badPackets2Boolean: str
 
 /**
  * @name badpackets2
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function badpackets2(message: BeforeChatEvent, args: string[]) {
+export function badpackets2(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets2.js:36)");

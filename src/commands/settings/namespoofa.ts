@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { NamespoofA } from "../../penrose/tickevent/namespoof/namespoof_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { NamespoofA } from "../../penrose/TickEvent/namespoof/namespoof_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function namespoofAHelp(player: Player, prefix: string, nameSpoofBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function namespoofAHelp(player: Player, prefix: string, nameSpoofBoolean: string
 
 /**
  * @name namespoofA
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function namespoofA(message: BeforeChatEvent, args: string[]) {
+export function namespoofA(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/namespoofa.js:36)");

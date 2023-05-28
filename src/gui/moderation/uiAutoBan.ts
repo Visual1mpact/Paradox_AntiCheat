@@ -1,10 +1,10 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 //import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
-import { AutoBan } from "../../penrose/tickevent/ban/autoban.js";
+import { AutoBan } from "../../penrose/TickEvent/ban/autoban.js";
 
 export function uiAUTOBAN(autobanResult: ModalFormResponse, player: Player) {
     const [autobanToggle] = autobanResult.formValues;

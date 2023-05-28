@@ -1,7 +1,7 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { Adventure } from "../../penrose/tickevent/gamemode/adventure.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function allowgmaHelp(player: Player, prefix: string, adventureGMBoolean: string | number | boolean) {
@@ -32,10 +32,10 @@ function allowgmaHelp(player: Player, prefix: string, adventureGMBoolean: string
 
 /**
  * @name allowgma
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function allowgma(message: BeforeChatEvent, args: string) {
+export function allowgma(message: ChatSendBeforeEvent, args: string) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/allowGMA.js:36)");

@@ -1,6 +1,6 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function notifyHelp(player: Player, prefix: string) {
@@ -24,10 +24,10 @@ function notifyHelp(player: Player, prefix: string) {
 
 /**
  * @name notify
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function notify(message: BeforeChatEvent, args: string[]) {
+export function notify(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/notify.js:26)");

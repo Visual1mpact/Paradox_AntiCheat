@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { ClearLag } from "../../penrose/tickevent/clearlag/clearlag.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ClearLag } from "../../penrose/TickEvent/clearlag/clearlag.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 
 function clearlagHelp(player: Player, prefix: string, clearLagBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function clearlagHelp(player: Player, prefix: string, clearLagBoolean: string | 
 
 /**
  * @name clearlag
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {srting[]} args - Additional arguments provided (optional).
  */
-export function clearlag(message: BeforeChatEvent, args: string[]) {
+export function clearlag(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/clearlag.js:36)");

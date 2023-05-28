@@ -1,7 +1,7 @@
 import { EnchantmentType, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, MinecraftEnchantmentTypes, Player, world } from "@minecraft/server";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { allscores, getGamemode } from "../../util";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 

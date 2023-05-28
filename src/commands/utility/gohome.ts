@@ -1,6 +1,6 @@
-import { world, Player, BeforeChatEvent, Vector } from "@minecraft/server";
+import { world, Player, ChatSendBeforeEvent, Vector } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
 
 const cooldownTimer = new WeakMap();
@@ -46,10 +46,10 @@ function goHomeHelp(player: Player, prefix: string) {
 
 /**
  * @name gohome
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function gohome(message: BeforeChatEvent, args: string[]) {
+export async function gohome(message: ChatSendBeforeEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/gohome.js:52)");

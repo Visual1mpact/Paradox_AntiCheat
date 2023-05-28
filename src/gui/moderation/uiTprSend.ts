@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import { getPrefix, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -25,7 +25,7 @@ export function uiTPRSEND(tprSendRequestResult: ModalFormResponse, onlineList: s
         sender: player,
         message: prefix + "tpr " + member.name,
         cancel: true,
-    } as BeforeChatEvent;
+    } as ChatSendBeforeEvent;
     TeleportRequestHandler(event, [member.name]);
 
     return paradoxui(player);

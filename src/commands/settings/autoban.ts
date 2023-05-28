@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
-import { AutoBan } from "../../penrose/tickevent/ban/autoban.js";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
+import { AutoBan } from "../../penrose/TickEvent/ban/autoban.js";
 
 function autobanHelp(player: Player, prefix: string, autoBanBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -32,10 +32,10 @@ function autobanHelp(player: Player, prefix: string, autoBanBoolean: string | nu
 
 /**
  * @name autoban
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function autoban(message: BeforeChatEvent, args: string[]) {
+export function autoban(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/autoban.js:36)");

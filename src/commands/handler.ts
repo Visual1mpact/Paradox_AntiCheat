@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import config from "../data/config.js";
 import { sendMsgToPlayer } from "../util.js";
 
@@ -82,7 +82,7 @@ import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
 import { autoban } from "./settings/autoban.js";
 import { paradoxVersion } from "./utility/paradoxVersion.js";
-const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
+const commandDefinitions: Record<string, (data: ChatSendBeforeEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
         tag: tag,
@@ -170,10 +170,10 @@ const commandDefinitions: Record<string, (data: BeforeChatEvent, args: string[],
 /**
  * @name commandHandler
  * @param {Player} player - The player that has sent the message
- * @param {BeforeChatEvent} message - Message data
+ * @param {ChatSendBeforeEvent} message - Message data
  */
 
-export function commandHandler(player: Player, message: BeforeChatEvent) {
+export function commandHandler(player: Player, message: ChatSendBeforeEvent) {
     if (config.debug) {
         console.warn(`${new Date()} | did run command handler`);
     }

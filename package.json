@@ -5,8 +5,9 @@
     "description": "A utility to fight against malicious hackers on Bedrock Edition",
     "private": true,
     "devDependencies": {
-        "@minecraft/server-ui": "1.0.0-beta.1.19.80-stable",
-        "@minecraft/server": "1.2.0-beta.1.19.80-stable",
+        "@minecraft/server-ui": "1.1.0-beta.1.20.10-preview.20",
+        "@minecraft/server": "1.4.0-beta.1.20.10-preview.20",
+        "@minecraft/vanilla-data": "1.20.10-preview.20",
         "prettier": "2.8.8",
         "typescript": "5.0.4",
         "7zip-bin": "5.2.0"

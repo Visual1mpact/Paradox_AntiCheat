@@ -1,7 +1,7 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { Hotbar } from "../../penrose/tickevent/hotbar/hotbar.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { Hotbar } from "../../penrose/TickEvent/hotbar/hotbar.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 const configMessageBackup = new WeakMap();
@@ -38,10 +38,10 @@ function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | numb
 
 /**
  * @name hotbar
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function hotbar(message: BeforeChatEvent, args: string[]) {
+export function hotbar(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/hotbar.js:37)");

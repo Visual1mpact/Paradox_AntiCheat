@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
-import { BeforeChatEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function despawnHelp(player: Player, prefix: string) {
@@ -27,10 +27,10 @@ function despawnHelp(player: Player, prefix: string) {
 
 /**
  * @name despawn
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function despawn(message: BeforeChatEvent, args: string[]) {
+export function despawn(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/despawn.js:31)");

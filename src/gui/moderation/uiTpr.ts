@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { TeleportRequestHandler } from "../../commands/utility/tpr";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui";
@@ -23,7 +23,7 @@ export function uiTPR(requester: string, player: Player, respons: string) {
             sender: player,
             message: "approve",
             cancel: true,
-        } as BeforeChatEvent;
+        } as ChatSendBeforeEvent;
         TeleportRequestHandler(event, ["approve"]);
     }
     if (respons === "no") {
@@ -31,7 +31,7 @@ export function uiTPR(requester: string, player: Player, respons: string) {
             sender: player,
             message: "denied",
             cancel: true,
-        } as BeforeChatEvent;
+        } as ChatSendBeforeEvent;
         TeleportRequestHandler(event, ["denied"]);
     }
     return paradoxui(player);

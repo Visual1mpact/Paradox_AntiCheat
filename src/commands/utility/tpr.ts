@@ -1,4 +1,4 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config";
 import { getPrefix, sendMsgToPlayer, setTimer } from "../../util";
 
@@ -36,7 +36,7 @@ function tprHelp(player: Player, prefix: string) {
 }
 
 // This handles the submission of requests
-function teleportRequestHandler({ sender, message, cancel }: BeforeChatEvent) {
+function teleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent) {
     const player = sender;
     const args = message.split(" ");
     if (args.length < 2) return;
@@ -87,7 +87,7 @@ function teleportRequestHandler({ sender, message, cancel }: BeforeChatEvent) {
 }
 
 // This handles requests pending approval
-function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatEvent) {
+function teleportRequestApprovalHandler({ sender, message, cancel }: ChatSendBeforeEvent) {
     const lowercaseMessage = message.toLowerCase();
     const isApprovalRequest = lowercaseMessage === "approved" || lowercaseMessage === "approve";
     const isDenialRequest = lowercaseMessage === "denied" || lowercaseMessage === "deny";
@@ -125,7 +125,7 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: BeforeChatE
     teleportRequests.splice(requestIndex, 1);
 }
 
-export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEvent, args: string[]) {
+export function TeleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/tpr.js:71)");
@@ -155,9 +155,9 @@ export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEv
             sender,
             message,
             cancel,
-        } as BeforeChatEvent;
+        } as ChatSendBeforeEvent;
         teleportRequestHandler(event);
-        world.events.beforeChat.subscribe(teleportRequestApprovalHandler);
+        world.beforeEvents.chatSend.subscribe(teleportRequestApprovalHandler);
     }
 
     // This is for the GUI when sending approvals or denials
@@ -168,7 +168,7 @@ export function TeleportRequestHandler({ sender, message, cancel }: BeforeChatEv
             sender,
             message,
             cancel,
-        } as BeforeChatEvent;
+        } as ChatSendBeforeEvent;
         teleportRequestApprovalHandler(event);
     }
 }

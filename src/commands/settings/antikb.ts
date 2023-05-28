@@ -1,7 +1,7 @@
-import { BeforeChatEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { AntiKnockbackA } from "../../penrose/tickevent/knockback/antikb_a.js";
-import { dynamicPropertyRegistry } from "../../penrose/worldinitializeevent/registry.js";
+import { AntiKnockbackA } from "../../penrose/TickEvent/knockback/antikb_a.js";
+import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeEvent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function antikbHelp(player: Player, prefix: string, antikbBoolean: string | number | boolean) {
@@ -32,10 +32,10 @@ function antikbHelp(player: Player, prefix: string, antikbBoolean: string | numb
 
 /**
  * @name antiknockback
- * @param {BeforeChatEvent} message - Message object
+ * @param {ChatSendBeforeEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function antiknockback(message: BeforeChatEvent, args: string[]) {
+export async function antiknockback(message: ChatSendBeforeEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antikb.js:36)");
