@@ -1,4 +1,4 @@
-import { world, BlockBreakAfterEvent, Vector } from "@minecraft/server";
+import { world, BlockBreakAfterEvent } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { kickablePlayers } from "../../../kickcheck.js";
@@ -93,7 +93,7 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
     const now = Date.now();
     const lastBreak = lastBreakTime.get(player.id);
     if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && now - lastBreak < 15) {
-        const blockLoc = dimension.getBlock(new Vector(x, y, z));
+        const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
         const blockID = brokenBlockPermutation.clone();
 
         flag(player, "Nuker", "A", "Break", null, null, null, null, false, null);

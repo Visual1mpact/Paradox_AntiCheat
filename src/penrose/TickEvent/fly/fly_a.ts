@@ -1,8 +1,8 @@
-import { world, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
+import { world, EntityQueryOptions, GameMode, system, Vector3 } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
-const playersOldCoordinates = new Map<string, Vector>();
+const playersOldCoordinates = new Map<string, Vector3>();
 const playersAirTimeStart = new Map<string, number>();
 
 function flya(id: number) {
@@ -50,7 +50,7 @@ function flya(id: number) {
         if (jumpCheck && playersAirTimeStart.has(player.name)) {
             const airTime = Date.now() - playersAirTimeStart.get(player.name);
             if (airTime >= 4000) {
-                const horizontalVelocity = new Vector(velocity.x, 0, velocity.z);
+                const horizontalVelocity = { x: velocity.x, y: 0, z: velocity.z };
                 const xyVelocity = Math.hypot(horizontalVelocity.x, horizontalVelocity.y).toFixed(4);
                 const zyVelocity = Math.hypot(horizontalVelocity.z, horizontalVelocity.y).toFixed(4);
                 if (Number(xyVelocity) > 0 || Number(zyVelocity) > 0) {
@@ -58,7 +58,7 @@ function flya(id: number) {
                     const playerX = Math.trunc(player.location.x);
                     const playerY = Math.trunc(player.location.y);
                     const playerZ = Math.trunc(player.location.z);
-                    playersOldCoordinates.set(player.name, new Vector(playerX, playerY, playerZ));
+                    playersOldCoordinates.set(player.name, { x: playerX, y: playerY, z: playerZ });
                     /**
                      * startTimer will make sure the key is properly removed
                      * when the time for theVoid has expired. This will preserve
@@ -75,7 +75,7 @@ function flya(id: number) {
                         for (let x = -1; x <= 1; x++) {
                             for (let y = -1; y <= 1; y++) {
                                 for (let z = -1; z <= 1; z++) {
-                                    const block = player.dimension.getBlock(new Vector(player.location.x + x, player.location.y + y, player.location.z + z));
+                                    const block = player.dimension.getBlock({ x: player.location.x + x, y: player.location.y + y, z: player.location.z + z });
                                     if (block.typeId !== "minecraft:air") {
                                         isSurroundedByAir = false;
                                         break;
@@ -88,13 +88,16 @@ function flya(id: number) {
                                 // Use try/catch since variables for cords could return undefined if player is loading in
                                 // and they meet the conditions. An example is them flagging this, logging off, then logging
                                 // back on again.
-                                player.teleport(new Vector(oldPlayerCoords.x, oldPlayerCoords.y, oldPlayerCoords.z), {
-                                    dimension: player.dimension,
-                                    rotation: { x: 0, y: 0 },
-                                    facingLocation: { x: 0, y: 0, z: 0 },
-                                    checkForBlocks: false,
-                                    keepVelocity: false,
-                                });
+                                player.teleport(
+                                    { x: oldPlayerCoords.x, y: oldPlayerCoords.y, z: oldPlayerCoords.z },
+                                    {
+                                        dimension: player.dimension,
+                                        rotation: { x: 0, y: 0 },
+                                        facingLocation: { x: 0, y: 0, z: 0 },
+                                        checkForBlocks: false,
+                                        keepVelocity: false,
+                                    }
+                                );
                             } catch (error) {}
                             flag(player, "Fly", "A", "Exploit", null, null, null, null, false, null);
                         }

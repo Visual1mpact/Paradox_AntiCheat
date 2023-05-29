@@ -1,4 +1,4 @@
-import { world, Player, ChatSendBeforeEvent, Vector } from "@minecraft/server";
+import { world, Player, ChatSendBeforeEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
@@ -154,7 +154,7 @@ export async function gohome(message: ChatSendBeforeEvent, args: string[]) {
             // This timer is a grace period
             setTimer(player.id);
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
-            player.teleport(new Vector(homex, homey, homez), { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
+            player.teleport({ x: homex, y: homey, z: homez }, { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
             // Delete old key and value
             cooldownTimer.delete(player);
             // Create new key and value with current time in milliseconds

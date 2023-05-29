@@ -6,9 +6,9 @@ import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registr
 // Make sure they don't tp inside a solid block
 function safetyProtocol(player: Player, x: number, y: number, z: number) {
     const testPositions = [
-        new Vector(x, y + 1, z), // Head position
-        new Vector(x, y, z), // Body position
-        new Vector(x, y - 1, z), // Feet position
+        { x: x, y: y + 1, z: z }, // Head position
+        { x: x, y: y, z: z }, // Body position
+        { x: x, y: y - 1, z: z }, // Feet position
     ];
 
     let safe = null;
@@ -94,7 +94,7 @@ function worldborder(id: number) {
         const portalBlocks: { [key: string]: string } = {};
 
         for (const [x, y, z] of blockCoords) {
-            const block = player.dimension.getBlock(new Vector(x, y, z));
+            const block = player.dimension.getBlock({ x: x, y: y, z: z });
             portalBlocks[`${x},${y},${z}`] = block?.typeId ?? "minecraft:air";
         }
 
@@ -115,7 +115,7 @@ function worldborder(id: number) {
                 const teleportToBorder = (x: number, z: number) => {
                     const safe = safetyProtocol(player, x, y, z);
                     setTimer(player.id);
-                    player.teleport(new Vector(x, safe, z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
+                    player.teleport({ x: x, y: safe, z: z }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
                 };
 
                 const targetX = x < -overworldSize ? -border + 6 : x >= overworldSize ? border - 6 : x;
@@ -136,7 +136,7 @@ function worldborder(id: number) {
                 const teleportToBorder = (x: number, z: number) => {
                     const safe = safetyProtocol(player, x, y, z);
                     setTimer(player.id);
-                    player.teleport(new Vector(x, safe, z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
+                    player.teleport({ x: x, y: safe, z: z }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
                 };
 
                 const targetX = x < -netherSize ? -border + 6 : x >= netherSize ? border - 6 : x;

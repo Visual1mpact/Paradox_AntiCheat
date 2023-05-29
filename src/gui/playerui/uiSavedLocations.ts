@@ -1,4 +1,4 @@
-import { Player, Vector, world } from "@minecraft/server";
+import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import config from "../../data/config.js";
 import { decryptString, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
@@ -27,7 +27,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
     if (teleportToSelectedLocation === true) {
         //Teleport the player to the location set in the dropdown.
         setTimer(player.id);
-        player.teleport(new Vector(x, y, z), { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
+        player.teleport({ x: x, y: y, z: z }, { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
         return player;
     }

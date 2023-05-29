@@ -1,4 +1,4 @@
-import { world, Block, EntityQueryOptions, GameMode, system, Vector } from "@minecraft/server";
+import { world, Block, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
@@ -34,15 +34,15 @@ function antifalla(id: number) {
         const { x, y, z } = player.location;
         const vy = player.getVelocity().y;
         const blocksToCheck = [
-            new Vector(x, y - 1, z),
-            new Vector(x + 1, y - 1, z),
-            new Vector(x - 1, y - 1, z),
-            new Vector(x, y - 1, z + 1),
-            new Vector(x, y - 1, z - 1),
-            new Vector(x - 1, y - 1, z + 1),
-            new Vector(x - 1, y - 1, z - 1),
-            new Vector(x + 1, y - 1, z + 1),
-            new Vector(x + 1, y - 1, z - 1),
+            { x: x, y: y - 1, z: z },
+            { x: x + 1, y: y - 1, z: z },
+            { x: x - 1, y: y - 1, z: z },
+            { x: x, y: y - 1, z: z + 1 },
+            { x: x, y: y - 1, z: z - 1 },
+            { x: x - 1, y: y - 1, z: z + 1 },
+            { x: x - 1, y: y - 1, z: z - 1 },
+            { x: x + 1, y: y - 1, z: z + 1 },
+            { x: x + 1, y: y - 1, z: z - 1 },
         ];
 
         const blocks = blocksToCheck.map((block) => player.dimension.getBlock(block));

@@ -1,4 +1,4 @@
-import { world, ItemStack, Enchantment, Player, Block, BlockPlaceAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList, Vector } from "@minecraft/server";
+import { world, ItemStack, Enchantment, Player, Block, BlockPlaceAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
@@ -105,7 +105,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                     ];
 
                     for (const { dx, dy, dz } of adjacentBlocks) {
-                        const blockUp = world.getDimension("overworld").getBlock(new Vector(block.location.x + dx, block.location.y + dy, block.location.z + dz));
+                        const blockUp = world.getDimension("overworld").getBlock({ x: block.location.x + dx, y: block.location.y + dy, z: block.location.z + dz });
                         if (blockUp.typeId === "minecraft:chest" || blockUp.typeId === "minecraft:trapped_chest") {
                             // The new chest is adjacent to an existing chest
                             isAdjacent = true;
