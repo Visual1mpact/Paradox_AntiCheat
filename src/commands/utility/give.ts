@@ -1,7 +1,7 @@
 /* eslint no-var: "off"*/
 
 import { ChatSendBeforeEvent, Player, world, ItemStack } from "@minecraft/server";
-import { MinecraftItemTypes } from "@minecraft/vanilla-data";
+import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer, toPascalCase } from "../../util.js";

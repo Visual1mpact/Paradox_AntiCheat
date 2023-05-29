@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 import { ChatSendBeforeEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
-import { MinecraftEnchantmentTypes } from "@minecraft/vanilla-data";
+import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer, getGamemode, allscores } from "../../util.js";

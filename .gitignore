@@ -1,4 +1,8 @@
 scripts/
 types/
-node_modules/
 build/
+# Ignore the main node_modules directory
+node_modules/
+
+# Exclude src/node_modules from being ignored
+!src/node_modules/

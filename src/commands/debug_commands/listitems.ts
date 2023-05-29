@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, ItemStack, Player } from "@minecraft/server";
-import { MinecraftItemTypes } from "@minecraft/vanilla-data";
+import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 
