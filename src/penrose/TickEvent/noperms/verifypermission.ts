@@ -11,8 +11,18 @@ function verifypermission() {
     // Let's check the players for illegal permissions
     for (const player of filteredPlayers) {
         // Check for hash/salt and validate password
-        const hash = player.getDynamicProperty("hash");
-        const salt = player.getDynamicProperty("salt");
+        let hash, salt;
+        try {
+            hash = player.getDynamicProperty("hash");
+            salt = player.getDynamicProperty("salt");
+        } catch (error) {
+            if (config.debug) {
+                console.error(`Error retrieving dynamic properties for player: ${player.name}`);
+                console.error(error);
+                console.log("Player:", player.name);
+            }
+            continue; // Skip to the next player
+        }
         const encode = crypto?.(salt, config?.modules?.encryption?.password);
         if (encode === hash) {
             // Make sure their unique ID exists in case of a reload
