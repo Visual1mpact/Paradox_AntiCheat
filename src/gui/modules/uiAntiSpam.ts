@@ -1,6 +1,6 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { AntiSpam } from "../../penrose/ChatSendBeforeEvent/chat/antispam.js";
+import { AntiSpam } from "../../penrose/ChatSendAfterEvent/chat/antispam.js";
 
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";

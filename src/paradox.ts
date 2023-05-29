@@ -8,7 +8,7 @@ import { SpammerB } from "./penrose/ChatSendBeforeEvent/spammer/spammer_b.js";
 import { SpammerC } from "./penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
 import { BeforePrefixCommand } from "./penrose/ChatSendBeforeEvent/chat/beforeprefixcommand.js";
 import { ChatFilter } from "./penrose/ChatSendBeforeEvent/chat/chatfilter.js";
-import { AntiSpam } from "./penrose/ChatSendBeforeEvent/chat/antispam.js";
+import { AntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
 // Import Tick Events
 import { ServerBan } from "./penrose/TickEvent/ban/serverban.js";
 import { CrasherA } from "./penrose/TickEvent/crasher/crasher_a.js";

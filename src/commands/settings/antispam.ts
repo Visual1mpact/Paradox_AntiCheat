@@ -1,7 +1,7 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
-import { AntiSpam } from "../../penrose/ChatSendBeforeEvent/chat/antispam.js";
+import { AntiSpam } from "../../penrose/ChatSendAfterEvent/chat/antispam.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean) {

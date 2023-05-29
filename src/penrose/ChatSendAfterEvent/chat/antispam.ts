@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendAfterEvent, world } from "@minecraft/server";
 import { sendMsgToPlayer, startTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
@@ -17,7 +17,7 @@ interface ChatRecord {
 
 const chatRecords = new Map<string, ChatRecord>();
 
-function antispam(msg: ChatSendBeforeEvent) {
+function antispam(msg: ChatSendAfterEvent) {
     // Get Dynamic Property
     const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
 
@@ -61,7 +61,7 @@ function antispam(msg: ChatSendBeforeEvent) {
         }
 
         if (chatRecord.count > chatSpamLimit) {
-            msg.cancel = true;
+            msg.sendToTargets = true;
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
             chatRecord.offense++;
             chatRecord.lastOffenseTime = now;
@@ -83,7 +83,7 @@ function antispam(msg: ChatSendBeforeEvent) {
 }
 
 const AntiSpam = () => {
-    world.beforeEvents.chatSend.subscribe(antispam);
+    world.afterEvents.chatSend.subscribe(antispam);
 };
 
 export { AntiSpam };
