@@ -1,4 +1,4 @@
-import { world, Block, Player, Dimension, system, Vector } from "@minecraft/server";
+import { world, Block, Player, Dimension, system } from "@minecraft/server";
 import { startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 

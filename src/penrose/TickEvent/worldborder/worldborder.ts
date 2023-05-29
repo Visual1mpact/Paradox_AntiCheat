@@ -1,4 +1,4 @@
-import { Player, world, system, Vector } from "@minecraft/server";
+import { Player, world, system } from "@minecraft/server";
 import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 import { sendMsgToPlayer, setTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";

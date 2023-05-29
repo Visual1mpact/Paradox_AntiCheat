@@ -1,4 +1,4 @@
-import { world, Player, system, Vector } from "@minecraft/server";
+import { world, Player, system } from "@minecraft/server";
 import { getScore, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
