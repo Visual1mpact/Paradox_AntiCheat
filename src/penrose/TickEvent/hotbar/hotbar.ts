@@ -19,7 +19,7 @@ async function hotbar(id: number) {
     // run as each player
     for (const player of filteredPlayers) {
         hotbarMessage = config.modules.hotbar.message;
-        await player.runCommandAsync(`titleraw @s actionbar {"rawtext":[{"text":${JSON.stringify(hotbarMessage)}}]}`);
+        player.onScreenDisplay.setActionBar(hotbarMessage);
     }
 }
 
