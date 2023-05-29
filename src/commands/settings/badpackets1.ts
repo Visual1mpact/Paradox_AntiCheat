@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import { BadPackets1 } from "../../penrose/ChatSendBeforeEvent/spammer/badpackets_1.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
@@ -32,16 +32,14 @@ function badpackets1Help(player: Player, prefix: string, badPackets1Boolean: str
 
 /**
  * @name badpackets1
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function badpackets1(message: ChatSendBeforeEvent, args: string[]) {
+export function badpackets1(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/badpackets1.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

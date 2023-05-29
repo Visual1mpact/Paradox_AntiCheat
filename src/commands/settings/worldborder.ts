@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { WorldBorder } from "../../penrose/TickEvent/worldborder/worldborder.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -37,16 +37,14 @@ function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: str
 
 /**
  * @name worldborder
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function worldborders(message: ChatSendBeforeEvent, args: string[]) {
+export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/worldborder.js:38)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

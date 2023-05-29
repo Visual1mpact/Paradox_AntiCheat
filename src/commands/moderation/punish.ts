@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, Player, ChatSendBeforeEvent, EntityInventoryComponent } from "@minecraft/server";
+import { world, Player, ChatSendAfterEvent, EntityInventoryComponent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
@@ -26,16 +26,14 @@ function punishHelp(player: Player, prefix: string) {
 
 /**
  * @name punish
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function punish(message: ChatSendBeforeEvent, args: string[]) {
+export async function punish(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/punish.js:10)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

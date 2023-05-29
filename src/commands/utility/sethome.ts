@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { decryptString, getPrefix, encryptString, sendMsgToPlayer } from "../../util.js";
 
@@ -23,16 +23,14 @@ function setHomeHelp(player: Player, prefix: string) {
 
 /**
  * @name sethome
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function sethome(message: ChatSendBeforeEvent, args: string[]) {
+export function sethome(message: ChatSendAfterEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/sethome.js:26)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

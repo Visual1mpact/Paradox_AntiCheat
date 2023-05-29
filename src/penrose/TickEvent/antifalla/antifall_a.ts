@@ -49,7 +49,7 @@ function antifalla(id: number) {
         const areAllBlocksAir = blocks.every(isAir);
 
         if (areAllBlocksAir && vy === 0) {
-            flag(player, "AntiFall", "A", "Exploit", null, null, null, null, false, null);
+            flag(player, "AntiFall", "A", "Exploit", null, null, null, null, false);
         }
     }
 }

@@ -49,7 +49,7 @@ function cpsValidation(id: number, max: number): void {
     for (const player of players) {
         const current: number = getPlayerCPS(player);
         if (current > max) {
-            flag(player, "Autoclicker", "A", "Combat", null, null, "CPS", current.toString(), false, null);
+            flag(player, "Autoclicker", "A", "Combat", null, null, "CPS", current.toString(), false);
         }
     }
 }

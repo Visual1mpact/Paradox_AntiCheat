@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
@@ -24,16 +24,14 @@ function creditsHelp(player: Player, prefix: string) {
 
 /**
  * @name credits
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function credits(message: ChatSendBeforeEvent, args: string[]) {
+export function credits(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/credits.js:26)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

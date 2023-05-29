@@ -55,7 +55,7 @@ function scaffolda(object: BlockPlaceAfterEvent) {
 
     if (tiktok.length >= config.modules.antiscaffoldA.max) {
         dimension.getBlock({ x: x, y: y, z: z }).setType(MinecraftBlockTypes.air);
-        flag(player, "Scaffold", "A", "Placement", null, null, null, null, false, null);
+        flag(player, "Scaffold", "A", "Placement", null, null, null, null, false);
         /*
         try {
             player.runCommand(`tag "${disabler(player.nameTag)}" add "

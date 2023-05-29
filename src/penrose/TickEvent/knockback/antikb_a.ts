@@ -48,7 +48,7 @@ async function antiknockbacka(id: number) {
                 try {
                     // Make sure Anti Knockback is turned on
                     await player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);
-                    flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.getVelocity().y + player.getVelocity().x + player.getVelocity().z).toFixed(3), true, null);
+                    flag(player, "AntiKB", "A", "Movement", null, null, "Magnitude", (player.getVelocity().y + player.getVelocity().x + player.getVelocity().z).toFixed(3), true);
                     setScore(player, "velocityvl", 1, true);
                 } catch (error) {}
             }

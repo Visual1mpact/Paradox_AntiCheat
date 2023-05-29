@@ -25,7 +25,7 @@ function namespoofa(id: number) {
         // Namespoof/A = username length check.
         try {
             if (player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength) {
-                flag(player, "Namespoof", "A", "Exploit", null, null, "nameLength", String(player.name.length), false, null);
+                flag(player, "Namespoof", "A", "Exploit", null, null, "nameLength", String(player.name.length), false);
             }
         } catch (error) {}
     }

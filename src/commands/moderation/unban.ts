@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 export const queueUnban = new Set<string>();
@@ -41,16 +41,14 @@ function unbanHelp(player: Player, prefix: string) {
 
 /**
  * @name unban
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function unban(message: ChatSendBeforeEvent, args: string[]) {
+export function unban(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/unban.js:35)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

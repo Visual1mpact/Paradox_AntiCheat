@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Hotbar } from "../../penrose/TickEvent/hotbar/hotbar.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -38,16 +38,14 @@ function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | numb
 
 /**
  * @name hotbar
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function hotbar(message: ChatSendBeforeEvent, args: string[]) {
+export function hotbar(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/hotbar.js:37)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

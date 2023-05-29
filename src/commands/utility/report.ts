@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
@@ -24,16 +24,14 @@ function reportHelp(player: Player, prefix: string) {
 
 /**
  * @name report
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function report(message: ChatSendBeforeEvent, args: string[]) {
+export function report(message: ChatSendAfterEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/ban.js:29)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
     const reason = args.slice(1).join(" ") || "No reason specified";

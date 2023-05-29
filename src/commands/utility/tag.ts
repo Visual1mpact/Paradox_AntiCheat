@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { resetTag, getPrefix, sendMsgToPlayer, sendMsg } from "../../util.js";
@@ -33,16 +33,14 @@ function tagHelp(player: Player, prefix: string, chatRanksBoolean: string | numb
 
 /**
  * @name tag
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function tag(message: ChatSendBeforeEvent, args: string[]) {
+export function tag(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./utility/tag.js:37)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

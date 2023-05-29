@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import { ReachA } from "../../penrose/BlockPlaceAfterEvent/reach/reach_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
@@ -32,16 +32,14 @@ function reachAHelp(player: Player, prefix: string, reachABoolean: string | numb
 
 /**
  * @name reachA
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function reachA(message: ChatSendBeforeEvent, args: string[]) {
+export function reachA(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/reacha.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

@@ -27,13 +27,13 @@ const ChatFilter = () => {
                     ?.replace("Rank:", "") // Remove 'Rank:' from the tag string
                     ?.replaceAll("--", "§r§4][§6") || "Member"; // Replace '--' with '§r§4][§6' in the tag string, or use 'Member' as default
             const formattedMessage = `§4[§6${rank}§4] §7${player.name}: §r${message}`; // Construct the formatted chat message
-            if (!msg.cancel) {
+            if (!msg.sendToTargets) {
                 sendMsg("@a", formattedMessage); // Send the formatted chat message to all players
-                msg.cancel = true; // Cancel the chat message
+                msg.sendToTargets = true; // Cancel the chat message
             }
-        } else if (!msg.cancel) {
+        } else if (!msg.sendToTargets) {
             sendMsg("@a", `${player.name}: ${message}`); // Send the chat message to all players
-            msg.cancel = true; // Cancel the chat message
+            msg.sendToTargets = true; // Cancel the chat message
         }
     });
 };

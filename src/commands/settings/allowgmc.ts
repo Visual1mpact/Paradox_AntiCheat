@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
 import { Creative } from "../../penrose/TickEvent/gamemode/creative.js";
@@ -33,16 +33,14 @@ function allowgmcHelp(player: Player, prefix: string, creativeGMBoolean: string 
 
 /**
  * @name allowgmc
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function allowgmc(message: ChatSendBeforeEvent, args: string[]) {
+export function allowgmc(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/allowGMC.js:37)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

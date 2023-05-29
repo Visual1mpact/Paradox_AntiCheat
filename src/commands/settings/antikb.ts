@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/TickEvent/knockback/antikb_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -32,16 +32,14 @@ function antikbHelp(player: Player, prefix: string, antikbBoolean: string | numb
 
 /**
  * @name antiknockback
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function antiknockback(message: ChatSendBeforeEvent, args: string[]) {
+export async function antiknockback(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antikb.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config";
 import { getPrefix, sendMsgToPlayer, setTimer } from "../../util";
 
@@ -36,7 +36,7 @@ function tprHelp(player: Player, prefix: string) {
 }
 
 // This handles the submission of requests
-function teleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent) {
+function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
     const player = sender;
     const args = message.split(" ");
     if (args.length < 2) return;
@@ -48,7 +48,6 @@ function teleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent
     const targets = world.getAllPlayers().filter((p: Player) => p.name === targetName);
     if (targets.length === 0) {
         sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r Target player not found.");
-        cancel = true;
         return;
     }
 
@@ -61,7 +60,6 @@ function teleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent
             teleportRequests.splice(requestIndex, 1);
         } else {
             sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r That player already has a teleport request pending.");
-            cancel = true;
             return;
         }
     }
@@ -83,11 +81,10 @@ function teleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent
 
     sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleport request sent to ${target.name}. Waiting for approval...`);
     sendMsgToPlayer(target, `§r§4[§6Paradox§4]§r You have received a teleport request from ${player.name}. Type 'approved' or 'denied' in chat to respond.`);
-    cancel = true;
 }
 
 // This handles requests pending approval
-function teleportRequestApprovalHandler({ sender, message, cancel }: ChatSendBeforeEvent) {
+function teleportRequestApprovalHandler({ sender, message }: ChatSendAfterEvent) {
     const lowercaseMessage = message.toLowerCase();
     const isApprovalRequest = lowercaseMessage === "approved" || lowercaseMessage === "approve";
     const isDenialRequest = lowercaseMessage === "denied" || lowercaseMessage === "deny";
@@ -108,7 +105,6 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: ChatSendBef
         sendMsgToPlayer(request.requester, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
         sendMsgToPlayer(request.target, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
         teleportRequests.splice(requestIndex, 1);
-        cancel = true;
         return;
     }
 
@@ -116,22 +112,18 @@ function teleportRequestApprovalHandler({ sender, message, cancel }: ChatSendBef
         setTimer(request.requester.name);
         request.requester.teleport(request.target.location, { dimension: request.target.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
-        cancel = true;
     } else {
         sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is denied.`);
-        cancel = true;
     }
 
     teleportRequests.splice(requestIndex, 1);
 }
 
-export function TeleportRequestHandler({ sender, message, cancel }: ChatSendBeforeEvent, args: string[]) {
+export function TeleportRequestHandler({ sender, message }: ChatSendAfterEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/tpr.js:71)");
     }
-
-    cancel = true;
 
     const player = sender;
 
@@ -154,10 +146,9 @@ export function TeleportRequestHandler({ sender, message, cancel }: ChatSendBefo
         const event = {
             sender,
             message,
-            cancel,
-        } as ChatSendBeforeEvent;
+        } as ChatSendAfterEvent;
         teleportRequestHandler(event);
-        world.beforeEvents.chatSend.subscribe(teleportRequestApprovalHandler);
+        world.afterEvents.chatSend.subscribe(teleportRequestApprovalHandler);
     }
 
     // This is for the GUI when sending approvals or denials
@@ -167,8 +158,7 @@ export function TeleportRequestHandler({ sender, message, cancel }: ChatSendBefo
         const event = {
             sender,
             message,
-            cancel,
-        } as ChatSendBeforeEvent;
+        } as ChatSendAfterEvent;
         teleportRequestApprovalHandler(event);
     }
 }

@@ -65,7 +65,7 @@ function killaura(obj: EntityHitAfterEvent) {
 
     if (angle > 100) {
         // Entity is facing hitEntity at an angle greater than 90 degrees
-        flag(entity, "KillAura", "A", "Combat", null, null, null, null, false, null);
+        flag(entity, "KillAura", "A", "Combat", null, null, null, null, false);
         // Ban them
         rip(entity);
     }

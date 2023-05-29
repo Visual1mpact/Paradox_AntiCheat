@@ -17,7 +17,7 @@ function crashera(id: number) {
     for (const player of players) {
         // Crasher/A = invalid pos check
         if (Math.abs(player.location.x) > 30000000 || Math.abs(player.location.y) > 30000000 || Math.abs(player.location.z) > 30000000) {
-            flag(player, "Crasher", "A", "Exploit", null, null, null, null, true, null);
+            flag(player, "Crasher", "A", "Exploit", null, null, null, null, true);
             try {
                 player.addTag("Reason:Crasher");
                 player.addTag("By:Paradox");

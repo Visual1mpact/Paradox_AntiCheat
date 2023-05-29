@@ -1,14 +1,14 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendAfterEvent, world } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
-function spammera(msg: ChatSendBeforeEvent) {
+function spammera(msg: ChatSendAfterEvent) {
     // Get Dynamic Property
     const spammerABoolean = dynamicPropertyRegistry.get("spammera_b");
 
     // Unsubscribe if disabled in-game
     if (spammerABoolean === false) {
-        world.beforeEvents.chatSend.unsubscribe(spammera);
+        world.afterEvents.chatSend.unsubscribe(spammera);
         return;
     }
     const player = msg.sender;
@@ -23,12 +23,12 @@ function spammera(msg: ChatSendBeforeEvent) {
 
     // Spammer/A = checks if someone sends a message while moving and on ground
     if (player.hasTag("moving") && player.hasTag("ground") && !player.hasTag("jump")) {
-        flag(player, "Spammer", "A", "Movement", null, null, null, null, true, msg);
+        flag(player, "Spammer", "A", "Movement", null, null, null, null, true);
     }
 }
 
 const SpammerA = () => {
-    world.beforeEvents.chatSend.subscribe(spammera);
+    world.afterEvents.chatSend.subscribe(spammera);
 };
 
 export { SpammerA };

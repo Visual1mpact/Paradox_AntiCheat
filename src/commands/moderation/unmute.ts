@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
@@ -26,16 +26,14 @@ function unmuteHelp(player: Player, prefix: string) {
 
 /**
  * @name unmute
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function unmute(message: ChatSendBeforeEvent, args: string[]) {
+export async function unmute(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/unmute.js:30)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
     const reason = args.slice(1).join(" ") || "No reason specified";

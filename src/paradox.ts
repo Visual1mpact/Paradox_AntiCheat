@@ -6,7 +6,7 @@ import { BadPackets1 } from "./penrose/ChatSendBeforeEvent/spammer/badpackets_1.
 import { SpammerA } from "./penrose/ChatSendBeforeEvent/spammer/spammer_a.js";
 import { SpammerB } from "./penrose/ChatSendBeforeEvent/spammer/spammer_b.js";
 import { SpammerC } from "./penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
-import { PrefixCommand } from "./penrose/ChatSendBeforeEvent/chat/prefixcommand.js";
+import { BeforePrefixCommand } from "./penrose/ChatSendBeforeEvent/chat/beforeprefixcommand.js";
 import { ChatFilter } from "./penrose/ChatSendBeforeEvent/chat/chatfilter.js";
 import { AntiSpam } from "./penrose/ChatSendBeforeEvent/chat/antispam.js";
 // Import Tick Events
@@ -55,6 +55,8 @@ import { KillAura } from "./penrose/EntityHitAfterEvent/killaura.js";
 import { Registry } from "./penrose/WorldInitializeAfterEvent/registry.js";
 // Import System Events
 import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
+// Import ChatSendAfter Events
+import { AfterPrefixCommand } from "./penrose/ChatSendAfterEvent/chat/afterprefixcommand.js";
 
 // Self explanatory
 
@@ -67,8 +69,11 @@ SpammerA();
 SpammerB();
 SpammerC();
 AntiSpam();
-PrefixCommand();
+BeforePrefixCommand();
 ChatFilter();
+
+// ChatSendAfter Events
+AfterPrefixCommand();
 
 // Tick Events
 ClearLag();

@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { BedrockValidate } from "../../penrose/TickEvent/bedrock/bedrockvalidate.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -32,18 +32,16 @@ function bedrockValidateHelp(player: Player, prefix: string, bedrockValidateBool
 
 /**
  * @name bedrockvalidate
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function bedrockvalidate(message: ChatSendBeforeEvent, args: string[]) {
+export function bedrockvalidate(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/bedrockValidate.js:36)");
     }
 
     const player = message.sender;
-
-    message.cancel = true;
 
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

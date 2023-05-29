@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, ChatSendBeforeEvent, Player } from "@minecraft/server";
 import config from "../data/config.js";
 import { sendMsgToPlayer } from "../util.js";
 
@@ -82,7 +82,7 @@ import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
 import { autoban } from "./settings/autoban.js";
 import { paradoxVersion } from "./utility/paradoxVersion.js";
-const commandDefinitions: Record<string, (data: ChatSendBeforeEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
+const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
         tag: tag,
@@ -173,7 +173,7 @@ const commandDefinitions: Record<string, (data: ChatSendBeforeEvent, args: strin
  * @param {ChatSendBeforeEvent} message - Message data
  */
 
-export function commandHandler(player: Player, message: ChatSendBeforeEvent) {
+export function commandHandler(player: Player, message: ChatSendBeforeEvent): Promise<void> | void {
     if (config.debug) {
         console.warn(`${new Date()} | did run command handler`);
     }
@@ -187,15 +187,30 @@ export function commandHandler(player: Player, message: ChatSendBeforeEvent) {
 
     if (config.debug) console.warn(`${new Date()} | "${player.name}" used the command: ${config.customcommands.prefix}${commandName} ${args.join(" ")}`);
 
-    message.cancel = true;
-    message.setTargets([]);
+    if (!(commandName in commandDefinitions)) {
+        message.cancel = true;
+        message.sendToTargets = true;
+        message.setTargets([]);
+        message.message = "";
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
+    }
+
+    // Do not broadcast any message to any targets
     message.sendToTargets = true;
+}
 
-    if (!(commandName in commandDefinitions)) return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
+export function handleCommandAfterSend(chatSendAfterEvent: ChatSendAfterEvent): void {
+    // Logic for handling the command after the message is sent
+    if (!chatSendAfterEvent.message.startsWith(config.customcommands.prefix)) return;
 
-    commandDefinitions[commandName](message, args, message.message.slice(config.customcommands.prefix.length + commandName.length + 1));
+    // Do not broadcast any message to any targets
+    chatSendAfterEvent.sendToTargets = true;
 
-    message.message = "";
+    const args = chatSendAfterEvent.message.slice(config.customcommands.prefix.length).split(/ +/);
 
-    return void 0;
+    const commandName = args.shift().toLowerCase();
+
+    commandDefinitions[commandName](chatSendAfterEvent, args, chatSendAfterEvent.message.slice(config.customcommands.prefix.length + commandName.length + 1));
+
+    chatSendAfterEvent.message = "";
 }

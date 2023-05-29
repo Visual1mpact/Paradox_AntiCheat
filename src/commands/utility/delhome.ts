@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { decryptString, getPrefix, sendMsgToPlayer } from "../../util.js";
 
@@ -23,16 +23,14 @@ function delhomeHelp(player: Player, prefix: string) {
 
 /**
  * @name delhome
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function delhome(message: ChatSendBeforeEvent, args: string[]) {
+export function delhome(message: ChatSendAfterEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/delhome.js:26)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

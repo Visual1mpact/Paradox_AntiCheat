@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
@@ -27,16 +27,14 @@ function banHelp(player: Player, prefix: string) {
 
 /**
  * @name ban
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {array} args - Additional arguments provided (optional).
  */
-export function ban(message: ChatSendBeforeEvent, args: string[]) {
+export function ban(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/ban.js:31)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
     const reason = args.slice(1).join(" ") || "No reason specified";

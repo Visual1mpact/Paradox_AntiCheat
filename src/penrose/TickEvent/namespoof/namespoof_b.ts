@@ -42,7 +42,7 @@ function namespoofb(id: number) {
             rip(player);
         } else if (config.modules.namespoofB.kickregex.test(player.nameTag)) {
             player.nameTag = player.nameTag.replaceAll(config.modules.namespoofB.kickregex, "");
-            flag(player, "Namespoof", "B", "Exploit", null, null, null, null, false, null);
+            flag(player, "Namespoof", "B", "Exploit", null, null, null, null, false);
         }
     }
     return;

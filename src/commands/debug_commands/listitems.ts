@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, ItemStack, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, ItemStack, Player } from "@minecraft/server";
 import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
@@ -24,16 +24,14 @@ function listItems(player: Player, prefix: string) {
 
 /**
  * @name listitems
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function listitems(message: ChatSendBeforeEvent, args: string[]) {
+export function listitems(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/debug_commands/listitems.js:30)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

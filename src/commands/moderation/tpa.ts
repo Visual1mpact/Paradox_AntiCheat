@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 /* eslint no-redeclare: "off"*/
-import { world, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { world, Player, ChatSendAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer, setTimer } from "../../util.js";
@@ -27,16 +27,14 @@ function tpaHelp(player: Player, prefix: string) {
 
 /**
  * @name tpa
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function tpa(message: ChatSendBeforeEvent, args: string[]) {
+export function tpa(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/tpa.js:31)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

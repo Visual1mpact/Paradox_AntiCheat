@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
@@ -25,16 +25,14 @@ function ecWipeHelp(player: Player, prefix: string) {
 
 /**
  * @name ecwipe
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided.
  */
-export async function ecwipe(message: ChatSendBeforeEvent, args: string[]) {
+export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/ecwipe.js:29)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

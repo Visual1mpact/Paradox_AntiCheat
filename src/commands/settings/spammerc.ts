@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import { SpammerC } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
@@ -32,16 +32,14 @@ function spammerCHelp(player: Player, prefix: string, spammerCBoolean: string | 
 
 /**
  * @name spammerC
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function spammerC(message: ChatSendBeforeEvent, args: string[]) {
+export function spammerC(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/spammerC.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

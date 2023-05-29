@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
 import { Survival } from "../../penrose/TickEvent/gamemode/survival.js";
@@ -33,16 +33,14 @@ function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string 
 
 /**
  * @name allowgms
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function allowgms(message: ChatSendBeforeEvent, args: string[]) {
+export function allowgms(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/allowGMS.js:37)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

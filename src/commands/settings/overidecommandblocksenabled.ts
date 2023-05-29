@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
@@ -31,16 +31,14 @@ function overrideCBEHelp(player: Player, prefix: string, cmdsscore: number) {
 
 /**
  * @name overidecommandblocksenabled
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function overidecommandblocksenabled(message: ChatSendBeforeEvent, args: string[]) {
+export async function overidecommandblocksenabled(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/overideCommandBlocksEnabled.js:7)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

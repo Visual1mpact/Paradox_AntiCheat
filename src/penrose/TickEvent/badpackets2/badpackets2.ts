@@ -16,7 +16,7 @@ function badpackets2(id: number) {
     for (const player of players) {
         // Invalid slot
         if (player.selectedSlot < 0 || player.selectedSlot > 8) {
-            flag(player, "BadPackets", "2", "Exploit", null, null, "selectedSlot", `${player.selectedSlot}`, false, null);
+            flag(player, "BadPackets", "2", "Exploit", null, null, "selectedSlot", `${player.selectedSlot}`, false);
             player.selectedSlot = 0;
         }
     }

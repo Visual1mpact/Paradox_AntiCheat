@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import { XrayA } from "../../penrose/BlockBreakAfterEvent/xray/xray_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
@@ -32,16 +32,14 @@ function xrayAHelp(player: Player, prefix: string, xrayBoolean: string | number 
 
 /**
  * @name xrayA
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function xrayA(message: ChatSendBeforeEvent, args: string[]) {
+export function xrayA(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/xraya.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

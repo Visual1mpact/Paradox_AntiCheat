@@ -2,7 +2,7 @@
 /* eslint no-redeclare: "off"*/
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function resetPrefix(player: Player) {
@@ -32,16 +32,14 @@ function prefixHelp(player: Player, prefix: string) {
 
 /**
  * @name prefix
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function prefix(message: ChatSendBeforeEvent, args: string[]) {
+export function prefix(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/prefix.js:34)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

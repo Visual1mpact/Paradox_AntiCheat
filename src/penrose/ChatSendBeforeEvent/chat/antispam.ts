@@ -24,7 +24,7 @@ function antispam(msg: ChatSendBeforeEvent) {
     // Unsubscribe if disabled in-game
     if (antiSpamBoolean === false) {
         chatRecords.clear();
-        world.beforeEvents.chatSend.unsubscribe(antispam);
+        world.afterEvents.chatSend.unsubscribe(antispam);
         return;
     }
 

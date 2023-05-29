@@ -96,7 +96,7 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
         const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
         const blockID = brokenBlockPermutation.clone();
 
-        flag(player, "Nuker", "A", "Break", null, null, null, null, false, null);
+        flag(player, "Nuker", "A", "Break", null, null, null, null, false);
         blockLoc.setPermutation(blockID);
         lastBreakTime.delete(player.id);
 

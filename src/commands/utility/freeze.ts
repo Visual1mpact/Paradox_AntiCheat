@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { world, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { world, Player, ChatSendAfterEvent } from "@minecraft/server";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
@@ -27,16 +27,14 @@ function freezeHelp(player: Player, prefix: string) {
 
 /**
  * @name freeze
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function freeze(message: ChatSendBeforeEvent, args: string[]) {
+export async function freeze(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/freeze.js:30)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

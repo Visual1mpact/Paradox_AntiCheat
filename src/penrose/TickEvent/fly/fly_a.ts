@@ -99,7 +99,7 @@ function flya(id: number) {
                                     }
                                 );
                             } catch (error) {}
-                            flag(player, "Fly", "A", "Exploit", null, null, null, null, false, null);
+                            flag(player, "Fly", "A", "Exploit", null, null, null, null, false);
                         }
                     }
                 }

@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { ChatSendBeforeEvent, GameMode, Player, system, world } from "@minecraft/server";
+import { GameMode, Player, system, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -23,9 +23,8 @@ const theVoid = new Map<string, number>();
  * @param {string} debugName - Name for the debug value.
  * @param {string} debug - Debug info.
  * @param {boolean} shouldTP - Whever to tp the player to itself.
- * @param {ChatSendBeforeEvent} message - The message object, used to cancel the message.
  */
-export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean, message: ChatSendBeforeEvent) {
+export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean) {
     // Make sure the vl objective exists
     try {
         /**
@@ -56,9 +55,6 @@ export async function flag(player: Player, check: string, checkType: string, hac
             player.scoreboardIdentity.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
         }
     }
-
-    // cancel the message
-    if (message) message.cancel = true;
 
     if (shouldTP && check !== "Crasher") {
         player.teleport({ x: player.location.x, y: player.location.y, z: player.location.z }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });

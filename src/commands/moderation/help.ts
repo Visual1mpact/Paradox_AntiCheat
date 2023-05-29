@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
@@ -6,15 +6,13 @@ import { nonstaffhelp } from "./nonstaffhelp.js";
 
 /**
  * @name help
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  */
-export function help(message: ChatSendBeforeEvent) {
+export function help(message: ChatSendAfterEvent) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/help.js:8)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

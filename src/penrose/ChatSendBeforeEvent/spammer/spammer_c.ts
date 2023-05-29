@@ -1,14 +1,14 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendAfterEvent, world } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
-function spammerc(msg: ChatSendBeforeEvent) {
+function spammerc(msg: ChatSendAfterEvent) {
     // Get Dynamic Property
     const spammerCBoolean = dynamicPropertyRegistry.get("spammerc_b");
 
     // Unsubscribe if disabled in-game
     if (spammerCBoolean === false) {
-        world.beforeEvents.chatSend.unsubscribe(spammerc);
+        world.afterEvents.chatSend.unsubscribe(spammerc);
         return;
     }
     const player = msg.sender;
@@ -23,12 +23,12 @@ function spammerc(msg: ChatSendBeforeEvent) {
 
     // Spammer/C = checks if someone sends a message while using an item
     if (player.hasTag("right")) {
-        flag(player, "Spammer", "C", "Misc", null, null, null, null, false, msg);
+        flag(player, "Spammer", "C", "Misc", null, null, null, null, false);
     }
 }
 
 const SpammerC = () => {
-    world.beforeEvents.chatSend.subscribe(spammerc);
+    world.afterEvents.chatSend.subscribe(spammerc);
 };
 
 export { SpammerC };

@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import { NamespoofB } from "../../penrose/TickEvent/namespoof/namespoof_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
@@ -32,16 +32,14 @@ function namespoofBHelp(player: Player, prefix: string, nameSpoofBoolean: string
 
 /**
  * @name namespoofB
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function namespoofB(message: ChatSendBeforeEvent, args: string[]) {
+export function namespoofB(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/namespoofb.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

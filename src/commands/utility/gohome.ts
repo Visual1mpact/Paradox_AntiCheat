@@ -1,4 +1,4 @@
-import { world, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { world, Player, ChatSendAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
@@ -46,16 +46,14 @@ function goHomeHelp(player: Player, prefix: string) {
 
 /**
  * @name gohome
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function gohome(message: ChatSendBeforeEvent, args: string[]) {
+export async function gohome(message: ChatSendAfterEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/gohome.js:52)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

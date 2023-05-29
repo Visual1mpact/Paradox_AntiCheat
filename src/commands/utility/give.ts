@@ -1,6 +1,6 @@
 /* eslint no-var: "off"*/
 
-import { ChatSendBeforeEvent, Player, world, ItemStack } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, world, ItemStack } from "@minecraft/server";
 import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -30,16 +30,14 @@ function giveHelp(player: Player, prefix: string) {
 
 /**
  * @name give
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function give(message: ChatSendBeforeEvent, args: string[]) {
+export function give(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/give.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 

@@ -1,6 +1,6 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import { paradoxui } from "../../gui/paradoxui.js";
 import { ShowRules } from "../../gui/showrules/showrules.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -26,16 +26,14 @@ function paradoxuiHelp(player: Player, prefix: string) {
 
 /**
  * @name paradoxUI
- * @param {ChatSendBeforeEvent} message - Message object
+ * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function paradoxUI(message: ChatSendBeforeEvent, args: string[]) {
+export function paradoxUI(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/paradoxui.js:36)");
     }
-
-    message.cancel = true;
 
     const player = message.sender;
 
