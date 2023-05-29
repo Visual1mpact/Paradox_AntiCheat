@@ -3,7 +3,7 @@ import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function isAir(block: Block): boolean {
-    return block.typeId === "minecraft:air";
+    return block?.typeId === "minecraft:air";
 }
 
 function antifalla(id: number) {
