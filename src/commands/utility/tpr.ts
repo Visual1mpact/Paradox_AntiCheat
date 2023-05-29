@@ -84,7 +84,9 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
 }
 
 // This handles requests pending approval
-function teleportRequestApprovalHandler({ sender, message }: ChatSendAfterEvent) {
+function teleportRequestApprovalHandler(object: ChatSendAfterEvent) {
+    const { sender, message } = object;
+
     const lowercaseMessage = message.toLowerCase();
     const isApprovalRequest = lowercaseMessage === "approved" || lowercaseMessage === "approve";
     const isDenialRequest = lowercaseMessage === "denied" || lowercaseMessage === "deny";
@@ -94,6 +96,8 @@ function teleportRequestApprovalHandler({ sender, message }: ChatSendAfterEvent)
     }
 
     const player = sender;
+
+    object.sendToTargets = true;
 
     // Target is the player with the request and player is the same target responding to the request
     const requestIndex = teleportRequests.findIndex((r) => r.target === player);
@@ -148,7 +152,6 @@ export function TeleportRequestHandler({ sender, message }: ChatSendAfterEvent, 
             message,
         } as ChatSendAfterEvent;
         teleportRequestHandler(event);
-        world.afterEvents.chatSend.subscribe(teleportRequestApprovalHandler);
     }
 
     // This is for the GUI when sending approvals or denials
@@ -162,3 +165,14 @@ export function TeleportRequestHandler({ sender, message }: ChatSendAfterEvent, 
         teleportRequestApprovalHandler(event);
     }
 }
+
+// Subscribe to teleportRequestApprovalHandler
+const TpRequestListener = () => {
+    // If TPR is not disabled
+    const validate = config.customcommands.tpr;
+    if (validate) {
+        world.afterEvents.chatSend.subscribe(teleportRequestApprovalHandler);
+    }
+};
+
+export { TpRequestListener };

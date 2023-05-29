@@ -57,6 +57,7 @@ import { Registry } from "./penrose/WorldInitializeAfterEvent/registry.js";
 import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
 // Import ChatSendAfter Events
 import { AfterPrefixCommand } from "./penrose/ChatSendAfterEvent/chat/afterprefixcommand.js";
+import { TpRequestListener } from "./commands/utility/tpr.js";
 
 // Self explanatory
 
@@ -74,6 +75,7 @@ ChatFilter();
 
 // ChatSendAfter Events
 AfterPrefixCommand();
+TpRequestListener();
 
 // Tick Events
 ClearLag();
