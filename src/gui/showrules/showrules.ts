@@ -36,12 +36,12 @@ async function showrules(id: number) {
         form.button1("I Agree");
         form.button2("Decline");
         const r = await form.show(player);
-        if (r.selection === 1) {
+        if (r.selection === 0) {
             player.removeTag("ShowRulesOnJoin");
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Thank you for accepting the rules ${player.name}.`);
             return;
         }
-        if (r.selection === 0) {
+        if (r.selection === 1) {
             if (KickOnDeclineBoolean === true) {
                 const reason = "You must agree to the rules to join.";
                 try {

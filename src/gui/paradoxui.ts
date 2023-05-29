@@ -129,12 +129,12 @@ async function paradoxui(player: Player) {
                         tprinboxui.button1("Yes");
                         tprinboxui.button2("No");
                         tprinboxui.show(player).then((tprInboxResult) => {
-                            if (tprInboxResult.selection === 1) {
+                            if (tprInboxResult.selection === 0) {
                                 respons = "yes";
                                 uiTPR(request.requester.name, player, respons);
                             }
                             //beacuse for some reason the no button is 0 yet its the second control
-                            if (tprInboxResult.selection === 0) {
+                            if (tprInboxResult.selection === 1) {
                                 respons = "no";
                                 uiTPR(request.requester.name, player, respons);
                             }
@@ -357,10 +357,10 @@ async function paradoxui(player: Player) {
                                 clearchatui.button1("Yes");
                                 clearchatui.button2("No");
                                 clearchatui.show(player).then((clearchatResult) => {
-                                    if (clearchatResult.selection === 1) {
+                                    if (clearchatResult.selection === 0) {
                                         uiCLEARCHAT(player);
                                     }
-                                    if (clearchatResult.selection === 0) {
+                                    if (clearchatResult.selection === 1) {
                                         paradoxui(player);
                                     }
                                 });
@@ -387,7 +387,7 @@ async function paradoxui(player: Player) {
                         punishprewarnui.button1("Continue");
                         punishprewarnui.button2("Back");
                         punishprewarnui.show(player).then((prewarnResult) => {
-                            if (prewarnResult.selection === 1) {
+                            if (prewarnResult.selection === 0) {
                                 //show the Punish UI
                                 const punishui = new ModalFormData();
                                 let onlineList: string[] = [];
@@ -397,7 +397,7 @@ async function paradoxui(player: Player) {
                                 punishui.show(player).then((punishResult) => {
                                     uiPUNISH(punishResult, onlineList, player);
                                 });
-                            } else if (prewarnResult.selection === 0 || prewarnResult.canceled) {
+                            } else if (prewarnResult.selection === 1 || prewarnResult.canceled) {
                                 paradoxui(player);
                             }
                         });
@@ -916,12 +916,12 @@ async function paradoxui(player: Player) {
                     tprinboxui.button1("Yes");
                     tprinboxui.button2("No");
                     tprinboxui.show(player).then((tprInboxResult) => {
-                        if (tprInboxResult.selection === 1) {
+                        if (tprInboxResult.selection === 0) {
                             respons = "yes";
                             uiTPR(request.requester.name, player, respons);
                         }
                         //beacuse for some reason the no button is 0 yet its the second control
-                        if (tprInboxResult.selection === 0) {
+                        if (tprInboxResult.selection === 1) {
                             respons = "no";
                             uiTPR(request.requester.name, player, respons);
                         }
