@@ -18,7 +18,7 @@ async function vanish() {
         if (uniqueId === player.name) {
             player.addEffect(MinecraftEffectTypes.Invisibility, 1728000, { amplifier: 255, showParticles: false });
             player.addEffect(MinecraftEffectTypes.NightVision, 1728000, { amplifier: 255, showParticles: false });
-            await player.runCommandAsync(`title @s actionbar §6YOU ARE VANISHED!`);
+            player.onScreenDisplay.setActionBar("§6YOU ARE VANISHED!");
         }
         // Make sure they have permission to use Vanish
         if (uniqueId !== player.name) {
