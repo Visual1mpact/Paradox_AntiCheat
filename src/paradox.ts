@@ -14,7 +14,6 @@ import { ServerBan } from "./penrose/TickEvent/ban/serverban.js";
 import { CrasherA } from "./penrose/TickEvent/crasher/crasher_a.js";
 import { NamespoofA } from "./penrose/TickEvent/namespoof/namespoof_a.js";
 import { NamespoofB } from "./penrose/TickEvent/namespoof/namespoof_b.js";
-import { PlayerPosition } from "./penrose/TickEvent/coordinates/playerposition.js";
 import { BedrockValidate } from "./penrose/TickEvent/bedrock/bedrockvalidate.js";
 import { JesusA } from "./penrose/TickEvent/jesus/jesus_a.js";
 import { NoSlowA } from "./penrose/TickEvent/noslow/noslow_a.js";
@@ -58,6 +57,8 @@ import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
 // Import ChatSendAfter Events
 import { AfterPrefixCommand } from "./penrose/ChatSendAfterEvent/chat/afterprefixcommand.js";
 import { TpRequestListener } from "./commands/utility/tpr.js";
+// Import EntityDie Events
+import { DeathCoordinates } from "./penrose/EntityDieAfterEvent/death_coordinates.js";
 
 // Self explanatory
 
@@ -84,7 +85,6 @@ VerifyPermission;
 OPS();
 Hotbar();
 NoPerms;
-PlayerPosition;
 Vanish;
 IllegalItemsC();
 Survival();
@@ -140,6 +140,9 @@ ReachA();
 // EntityHit Events
 ReachB();
 KillAura();
+
+// EntityDie Events
+DeathCoordinates();
 
 // System Events
 WatchDog();

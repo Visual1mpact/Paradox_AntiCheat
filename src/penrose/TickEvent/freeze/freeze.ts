@@ -69,9 +69,9 @@ async function Freeze(id: number) {
         posy1 = player.location.y;
         posz1 = player.location.z;
         // We just need this in case they log off and log back on
-        await player.runCommandAsync(`scoreboard players set @s xPos1 ${Math.floor(posx1)}`);
-        await player.runCommandAsync(`scoreboard players set @s yPos1 ${Math.floor(posy1)}`);
-        await player.runCommandAsync(`scoreboard players set @s zPos1 ${Math.floor(posz1)}`);
+        await player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(posx1)}`);
+        await player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(posy1)}`);
+        await player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(posz1)}`);
         player.addTag("freezeactive");
     }
     // Since they could log off while frozen we store their coords and dimension as a score
