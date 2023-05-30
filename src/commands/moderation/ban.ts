@@ -37,7 +37,6 @@ export function ban(message: ChatSendAfterEvent, args: string[]) {
     }
 
     const player = message.sender;
-    const reason = args.slice(1).join(" ") || "No reason specified";
 
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
@@ -61,11 +60,27 @@ export function ban(message: ChatSendAfterEvent, args: string[]) {
         return banHelp(player, prefix);
     }
 
+    // Modify the argument handling
+    let playerName = args.shift();
+    let reason = "No reason specified";
+
+    // Check if the command has a reason provided
+    if (args.length > 1) {
+        // Remove double quotes from the reason if present
+        reason = args
+            .slice(1)
+            .join(" ")
+            .replace(/(^"|"$)/g, "");
+    }
+
+    // Remove double quotes from the player name if present
+    playerName = playerName.replace(/(^"|"$)/g, "");
+
     // try to find the player requested
     let member: Player;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(playerName.toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
