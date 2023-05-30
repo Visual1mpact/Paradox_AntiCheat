@@ -72,11 +72,14 @@ export function tag(message: ChatSendAfterEvent, args: string[]) {
         return tagHelp(player, prefix, chatRanksBoolean);
     }
 
+    const playerName = args.slice(0, -1).join(" "); // Combine all arguments except the last one as the player name
+    const rank = args[args.length - 1]; // Last argument is the rank
+
     // try to find the player requested
     let member: Player;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(playerName.toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -96,8 +99,8 @@ export function tag(message: ChatSendAfterEvent, args: string[]) {
     }
 
     // Add new rank if command is utilize correctly
-    if (args.length === 2) {
-        const newRank = "Rank:" + args[1];
+    if (args.length >= 2) {
+        const newRank = "Rank:" + rank;
         resetTag(member);
         member.addTag(newRank);
     } else {
