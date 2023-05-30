@@ -28,10 +28,12 @@
   <h2>Project Status</h2>
   <img src="https://www.codefactor.io/repository/github/pete9xi/paradox_anticheat/badge/main" alt="Grade">
   <img src="https://img.shields.io/github/downloads/Pete9xi/Paradox_AntiCheat/total?style=plastic&logo=appveyor" alt="Downloads">
+  <img src="https://img.shields.io/github/downloads/Pete9xi/Paradox_AntiCheat/latest/total?style=plastic&logo=appveyor" alt="Latest Downloads">
   <img src="https://img.shields.io/github/commit-activity/m/Pete9xi/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Commits Per Month">
   <img src="https://img.shields.io/github/last-commit/Pete9xi/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Last Commit">
   <img src="https://img.shields.io/github/license/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="License">
 </div>
+
 
 <h1><img src="https://i.imgur.com/5W2YXCD.png" border="0" width="150"></h1>
 <h1>Applying the Paradox AntiCheat Pack</h1>
