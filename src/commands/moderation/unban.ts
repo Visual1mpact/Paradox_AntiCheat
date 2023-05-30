@@ -29,25 +29,18 @@ function unbanHelp(player: Player, prefix: string) {
         `\n§4[§6Command§4]§r: unban`,
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: unban [optional]`,
-        `§4[§6Optional§4]§r: username, list, delete, help`,
+        `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Allows specified players to join if banned (Doesn't include global ban).`,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}unban ${player.name}`,
-        `    ${prefix}unban list`,
-        `    ${prefix}unban delete ${player.name}`,
         `    ${prefix}unban help`,
     ]);
 }
 
-/**
- * @name unban
- * @param {ChatSendAfterEvent} message - Message object
- * @param {string[]} args - Additional arguments provided (optional).
- */
 export function unban(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/unban.js:35)");
+        return console.warn(`${new Date()} | Error: ${message} isn't defined. Did you forget to pass it? (./commands/moderation/unban.js:35)`);
     }
 
     const player = message.sender;
@@ -63,23 +56,25 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
     // Check for custom prefix
     const prefix = getPrefix(player);
 
-    // Are there arguements
+    // Are there arguments
     if (!args.length) {
         return unbanHelp(player, prefix);
     }
 
     // Was help requested
     const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.unban) {
+    if (argCheck && args[0].toLowerCase() === "help") {
         return unbanHelp(player, prefix);
-    } else if ((argCheck && args[0].toLowerCase() === "list") || !config.customcommands.unban) {
-        listQueue(queueUnban, player);
-        return;
-    } else if ((argCheck && args[0].toLowerCase() === "delete") || !config.customcommands.unban) {
-        const nameToDelete = args
-            .slice(1)
-            .join(" ")
-            .match(/^ *(?:"?@?"?)?(.*?)(?:"? *$)?$/)?.[1];
+    }
+
+    // List the queue if requested
+    if (argCheck && args[0].toLowerCase() === "list") {
+        return listQueue(queueUnban, player);
+    }
+
+    // Delete player from the queue if requested
+    if (argCheck && args[0].toLowerCase() === "delete") {
+        const nameToDelete = args.slice(1).join(" ");
         if (queueUnban.delete(nameToDelete)) {
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${nameToDelete} has been removed from the unban queue!`);
         } else {
@@ -88,8 +83,12 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
         return;
     }
 
-    // Add player to queue
-    const regexp = /["'`@]/g;
-    queueUnban.add(args.join(" ").replace(regexp, ""));
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${args.join(" ").replace(regexp, "")} is queued to be unbanned!`);
+    // Extract the username from the command and perform the unban action
+    let username = args.join(" ");
+    if (username.startsWith('"') && username.endsWith('"')) {
+        username = username.slice(1, -1);
+    }
+
+    queueUnban.add(username);
+    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Player queued to be unbanned: ${username}`);
 }
