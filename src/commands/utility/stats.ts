@@ -157,7 +157,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
         }
         let isEnchanted = false;
         for (const enchant in MinecraftEnchantmentTypes) {
-            const enchantNumber = enchantList.hasEnchantment(enchant);
+            const enchantNumber = enchantList.hasEnchantment(MinecraftEnchantmentTypes[enchant as keyof typeof MinecraftEnchantmentTypes]);
             if (enchantNumber > 0) {
                 isEnchanted = true;
             }
