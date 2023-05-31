@@ -69,19 +69,19 @@ async function paradoxui(player: Player) {
     maingui.title("§4Paradox§4");
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§rVersion: §2" + versionFile.version);
     if (uniqueId !== player.name) {
-        maingui.button("§rOp", "textures/ui/op");
-        maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
-        maingui.button("§rSaved Locations", "textures/items/compass_item");
-        maingui.button("§rReport", "textures/items/paper");
+        maingui.button("Op", "textures/ui/op");
+        maingui.button("Teleport Requests", "textures/blocks/portal_placeholder");
+        maingui.button("Saved Locations", "textures/items/compass_item");
+        maingui.button("Report", "textures/items/paper");
     } else {
-        maingui.button("§rOp", "textures/ui/op");
-        maingui.button("§rDeop", "textures/items/ender_pearl");
-        maingui.button("§rModeration", "textures/items/book_normal");
-        maingui.button("§rModules", "textures/blocks/command_block");
-        maingui.button("§rPrefix", "textures/ui/UpdateGlyph");
-        maingui.button("§rTeleport Requests", "textures/blocks/portal_placeholder");
-        maingui.button("§rSaved Locations", "textures/items/compass_item");
-        maingui.button("§rStats", "textures/items/book_normal");
+        maingui.button("Op", "textures/ui/op");
+        maingui.button("Deop", "textures/items/ender_pearl");
+        maingui.button("Moderation", "textures/items/book_normal");
+        maingui.button("Modules", "textures/blocks/command_block");
+        maingui.button("Prefix", "textures/ui/UpdateGlyph");
+        maingui.button("Teleport Requests", "textures/blocks/portal_placeholder");
+        maingui.button("Saved Locations", "textures/items/compass_item");
+        maingui.button("Stats", "textures/items/book_normal");
     }
 
     maingui.show(player).then((result) => {
