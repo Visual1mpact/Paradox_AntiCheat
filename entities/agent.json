@@ -14,7 +14,13 @@
             "is_summonable": false,
             "is_experimental": false
         },
-        "component_groups": {},
+        "component_groups": {
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
+            }
+        },
         "paradox:kick": {
             "minecraft:instant_despawn": {
                 "remove_child_entities": true
