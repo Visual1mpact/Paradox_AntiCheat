@@ -25,11 +25,11 @@ function flyHelp(player: Player, prefix: string | number | boolean) {
 }
 
 function mayflydisable(player: Player, member: Player) {
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled fly mode for ${player === member ? "themselves" : member.nameTag}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled fly mode for ${player === member ? "themselves" : member.name}.`);
 }
 
 function mayflyenable(player: Player, member: Player) {
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled fly mode for ${player === member ? "themselves" : member.nameTag}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled fly mode for ${player === member ? "themselves" : member.name}.`);
 }
 
 /**
@@ -72,7 +72,7 @@ export async function fly(message: ChatSendAfterEvent, args: string[]) {
     if (args.length) {
         const players = world.getPlayers();
         for (const pl of players) {
-            if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
             }

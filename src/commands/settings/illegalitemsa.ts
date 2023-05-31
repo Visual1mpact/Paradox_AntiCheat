@@ -71,7 +71,7 @@ export function illegalitemsA(message: ChatSendAfterEvent, args: string[]) {
         for (const temp of nohasTag) {
             temp.addTag("illegalitemsA");
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalItemsA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6IllegalItemsA§r!`);
         IllegalItemsA();
     } else if (illegalItemsABoolean === true) {
         // Deny
@@ -81,6 +81,6 @@ export function illegalitemsA(message: ChatSendAfterEvent, args: string[]) {
         for (const temp of hasTag) {
             temp.removeTag("illegalitemsA");
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalItemsA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4IllegalItemsA§r!`);
     }
 }

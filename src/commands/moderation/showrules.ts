@@ -67,12 +67,12 @@ export function showrules(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("showrules_b", true);
         world.setDynamicProperty("showrules_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6showrules§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6showrules§r!`);
         ShowRules();
     } else if (showrulesBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("showrules_b", false);
         world.setDynamicProperty("showrules_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4showrules§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4showrules§r!`);
     }
 }

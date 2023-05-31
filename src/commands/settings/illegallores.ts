@@ -66,11 +66,11 @@ export function illegalLores(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("illegallores_b", true);
         world.setDynamicProperty("illegallores_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6IllegalLores§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6IllegalLores§r!`);
     } else if (illegalLoresBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegallores_b", false);
         world.setDynamicProperty("illegallores_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4IllegalLores§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4IllegalLores§r!`);
     }
 }

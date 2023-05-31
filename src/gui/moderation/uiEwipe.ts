@@ -8,7 +8,7 @@ export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -43,6 +43,6 @@ export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your Enderchest has been wiped!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r Wiped ${member.nameTag}'s enderchest!`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r Wiped ${member.name}'s enderchest!`);
     return paradoxui(player);
 }

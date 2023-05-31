@@ -67,12 +67,12 @@ export function flyA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("flya_b", true);
         world.setDynamicProperty("flya_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6FlyA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6FlyA§r!`);
         FlyA();
     } else if (flyABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("flya_b", false);
         world.setDynamicProperty("flya_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4FlyA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4FlyA§r!`);
     }
 }

@@ -21,14 +21,14 @@ export async function uiANTISCAFFOLD(antiscaffoldResult: ModalFormResponse, play
         // Allow
         dynamicPropertyRegistry.set("antiscaffolda_b", true);
         world.setDynamicProperty("antiscaffolda_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiScaffoldA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6AntiScaffoldA§r!`);
         ScaffoldA();
     }
     if (AntiScaffoldToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("antiscaffolda_b", false);
         world.setDynamicProperty("antiscaffolda_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiScaffoldA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4AntiScaffoldA§r!`);
     }
 
     //show the main ui to the player once complete.

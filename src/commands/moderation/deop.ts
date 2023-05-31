@@ -64,7 +64,7 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
     if (args.length) {
         const players = world.getPlayers();
         for (const pl of players) {
-            if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
             }
@@ -88,8 +88,8 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
         member.removeDynamicProperty("salt");
         member.removeTag("paradoxOpped");
         dynamicPropertyRegistry.delete(member.id);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag} is no longer Paradox-Opped.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name} is no longer Paradox-Opped.`);
         return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your OP status has been revoked!`);
     }
-    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.nameTag} never had permission to use Paradox.`);
+    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} never had permission to use Paradox.`);
 }

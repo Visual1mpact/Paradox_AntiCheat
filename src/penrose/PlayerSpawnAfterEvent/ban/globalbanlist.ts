@@ -16,7 +16,7 @@ function banHammerTime(object: PlayerSpawnAfterEvent) {
     const player = object.player;
 
     // Check if the player who is joining is on the global ban list, and kick them out if they are
-    if (bannedPlayers.has(player.nameTag)) {
+    if (bannedPlayers.has(player.name)) {
         const playerTags = player.getTags();
         if (!playerTags.includes("By:Paradox Anticheat")) {
             player.addTag("By:Paradox Anticheat");

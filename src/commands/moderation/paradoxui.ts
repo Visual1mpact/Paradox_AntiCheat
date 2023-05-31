@@ -55,6 +55,6 @@ export function paradoxUI(message: ChatSendAfterEvent, args: string[]) {
         return paradoxuiHelp(player, prefix);
     }
 
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has requested §6ParadoxUI§r!`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has requested §6ParadoxUI§r!`);
     paradoxui(player);
 }

@@ -25,7 +25,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
                 encode = crypto?.(salt, config?.modules?.encryption?.password);
             }
             if (hash === encode) {
-                sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
+                sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r is now Paradox-Opped.`);
                 sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
                 player.addTag("paradoxOpped");
                 paradoxui(player);
@@ -42,7 +42,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
         let member: Player = undefined;
         const players = world.getPlayers();
         for (const pl of players) {
-            if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
             }
@@ -64,7 +64,7 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             dynamicPropertyRegistry.set(member.id, member.name);
         }
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name}§r is now Paradox-Opped.`);
         member.addTag("paradoxOpped");
         paradoxui(player);
     }

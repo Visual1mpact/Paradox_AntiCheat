@@ -62,7 +62,7 @@ export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
     let member: Player;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -78,5 +78,5 @@ export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
             await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
         } catch (error) {}
     }
-    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wiped ${member.nameTag}'s enderchest!`);
+    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wiped ${member.name}'s enderchest!`);
 }

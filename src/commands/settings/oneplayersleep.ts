@@ -67,12 +67,12 @@ export function ops(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("ops_b", true);
         world.setDynamicProperty("ops_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6OPS§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6OPS§r!`);
         OPS();
     } else if (opsBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("ops_b", false);
         world.setDynamicProperty("ops_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4OPS§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4OPS§r!`);
     }
 }

@@ -67,12 +67,12 @@ export function antifallA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("antifalla_b", true);
         world.setDynamicProperty("antifalla_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6AntiFallA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6AntiFallA§r!`);
         AntiFallA();
     } else if (antifallABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antifalla_b", false);
         world.setDynamicProperty("antifalla_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4AntiFallA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4AntiFallA§r!`);
     }
 }

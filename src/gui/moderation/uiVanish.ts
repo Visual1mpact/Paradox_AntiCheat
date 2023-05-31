@@ -9,7 +9,7 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -37,7 +37,7 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
         member.triggerEvent("unvanish");
         await member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer in vanish.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer in vanish.`);
     }
 
     if (!member.hasTag("novanish")) {
@@ -47,7 +47,7 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
     if (member.hasTag("vanish") && !member.hasTag("novanish")) {
         member.triggerEvent("vanish");
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now vanished!`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is now vanished!`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now vanished!`);
     }
 
     if (member.hasTag("novanish")) {

@@ -66,10 +66,10 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
     // Try to find the player requested
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             artificalPlayer = pl;
         }
-        if (pl.nameTag.toLowerCase().includes(args[1].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(args[1].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
         }
         if (artificalPlayer && member) {

@@ -22,27 +22,27 @@ export function uiBADPACKETS(badpacketsResult: ModalFormResponse, player: Player
         // Allow
         dynamicPropertyRegistry.set("badpackets1_b", true);
         world.setDynamicProperty("badpackets1_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets1§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Badpackets1§r!`);
         BadPackets1();
     }
     if (BadPackets1Toggle === false && badPackets1Boolean === true) {
         // Deny
         dynamicPropertyRegistry.set("badpackets1_b", false);
         world.setDynamicProperty("badpackets1_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets1§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Badpackets1§r!`);
     }
     if (BadPackets2Toggle === true && badPackets2Boolean === false) {
         // Allow
         dynamicPropertyRegistry.set("badpackets2_b", true);
         world.setDynamicProperty("badpackets2_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6Badpackets2§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Badpackets2§r!`);
         BadPackets2();
     }
     if (BadPackets2Toggle === false && badPackets2Boolean === true) {
         // Deny
         dynamicPropertyRegistry.set("badpackets2_b", false);
         world.setDynamicProperty("badpackets2_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4Badpackets2§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Badpackets2§r!`);
     }
 
     //show the main ui to the player once complete.

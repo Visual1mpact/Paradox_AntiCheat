@@ -9,7 +9,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -38,7 +38,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
         }
         member.addTag("Rank:" + predefinedrank[predefinedrankvalue as number]);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has updated ${member.nameTag} Rank.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has updated ${member.name} Rank.`);
         return paradoxui(player);
     }
     if (customrank) {
@@ -58,18 +58,18 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
         }
         member.addTag("Rank:" + customrank);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has updated ${member.nameTag} Rank.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has updated ${member.name} Rank.`);
         if (ChatRanksToggle === true && chatRanksBoolean === false) {
             // Allow
             dynamicPropertyRegistry.set("chatranks_b", true);
             world.setDynamicProperty("chatranks_b", true);
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled §6ChatRanks§r!`);
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6ChatRanks§r!`);
         }
         if (ChatRanksToggle === false && chatRanksBoolean === true) {
             // Deny
             dynamicPropertyRegistry.set("chatranks_b", false);
             world.setDynamicProperty("chatranks_b", false);
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled §4ChatRanks§r!`);
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4ChatRanks§r!`);
         }
         return paradoxui(player);
     }

@@ -87,20 +87,20 @@ export function hotbar(message: ChatSendAfterEvent, args: string[]) {
         } else {
             config.modules.hotbar.message = configMessageBackup.get(dummy);
         }
-        sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has enabled §6Hotbar`);
+        sendMsg("@a[tag=paradoxOpped]", `${player.name} has enabled §6Hotbar`);
         Hotbar();
     } else if (hotbarBoolean === true && args.length === 1 && args[0].toLowerCase() === "disable") {
         // Deny
         dynamicPropertyRegistry.set("hotbar_b", false);
         world.setDynamicProperty("hotbar_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has disabled §6Hotbar`);
+        sendMsg("@a[tag=paradoxOpped]", `${player.name} has disabled §6Hotbar`);
     } else if ((hotbarBoolean === true && args.length >= 1) || (hotbarBoolean === true && !args.length)) {
         if (args.length >= 1) {
             config.modules.hotbar.message = args.join(" ");
         } else {
             config.modules.hotbar.message = configMessageBackup.get(dummy);
         }
-        sendMsg("@a[tag=paradoxOpped]", `${player.nameTag} has updated §6Hotbar`);
+        sendMsg("@a[tag=paradoxOpped]", `${player.name} has updated §6Hotbar`);
     } else {
         return hotbarHelp(player, prefix, hotbarBoolean);
     }

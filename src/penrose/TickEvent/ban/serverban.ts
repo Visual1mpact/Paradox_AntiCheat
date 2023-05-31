@@ -9,7 +9,7 @@ function serverban() {
     const filteredPlayers = world.getPlayers(filter);
     // run as each player
     for (const player of filteredPlayers) {
-        if (queueUnban.has(player.nameTag)) {
+        if (queueUnban.has(player.name)) {
             // Remove tag
             player.removeTag("isBanned");
 
@@ -26,7 +26,7 @@ function serverban() {
             });
 
             // Remove player from queue
-            queueUnban.delete(player.nameTag);
+            queueUnban.delete(player.name);
             //clear violations
             const scores = allscores;
             scores.forEach((score) => {
@@ -45,7 +45,7 @@ function serverban() {
 
             // Let staff and player know they are unbanned
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have been unbanned.`);
-            sendMsg(`@a[tag=paradoxOpped]`, `§r§4[§6Paradox§4]§r ${player.nameTag} has been unbanned.`);
+            sendMsg(`@a[tag=paradoxOpped]`, `§r§4[§6Paradox§4]§r ${player.name} has been unbanned.`);
             continue;
         }
         // Ban message

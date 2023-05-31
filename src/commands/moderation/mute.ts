@@ -113,5 +113,5 @@ export async function mute(message: ChatSendAfterEvent, args: string[]) {
         await member.runCommandAsync(`ability @s mute true`);
     } catch (error) {}
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`);
-    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has muted ${member.nameTag}§r. Reason: ${reason}`);
+    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has muted ${member.name}§r. Reason: ${reason}`);
 }

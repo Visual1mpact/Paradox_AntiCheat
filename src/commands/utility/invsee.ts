@@ -64,7 +64,7 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
     let member: Player;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -79,7 +79,7 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
 
     sendMsgToPlayer(player, [
         ` `,
-        `§r§4[§6Paradox§4]§r ${member.nameTag}'s inventory:`,
+        `§r§4[§6Paradox§4]§r ${member.name}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
             const item = container.getItem(i);
             return ` §6|§r §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r` : "§7(empty)"}`;

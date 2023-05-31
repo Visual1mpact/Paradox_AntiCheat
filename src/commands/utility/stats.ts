@@ -67,7 +67,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
     let member: Player;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }

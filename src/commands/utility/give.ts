@@ -68,7 +68,7 @@ export function give(message: ChatSendAfterEvent, args: string[]) {
     if (args.length) {
         const players = world.getPlayers();
         for (const pl of players) {
-            if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
             }

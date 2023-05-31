@@ -76,7 +76,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     // Shutdown worldborder
     if (argCheck === "disable") {
         // Disable Worldborder
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disabled the §6World Border§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled the §6World Border§r!`);
         dynamicPropertyRegistry.set("worldborder_b", false);
         dynamicPropertyRegistry.set("worldborder_n", 0);
         dynamicPropertyRegistry.set("worldborder_nether_n", 0);
@@ -94,7 +94,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
      */
     if ((args[0] === "-overworld" || args[0] === "-o") && isNaN(Number(args[1])) === false && (args[2] === "-nether" || args[2] === "-n") && isNaN(Number(args[3])) === false) {
         // Build the wall
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Overworld: ${args[1]} Nether: ${args[3]}`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${args[1]} Nether: ${args[3]}`);
         dynamicPropertyRegistry.set("worldborder_b", true);
         dynamicPropertyRegistry.set("worldborder_n", Math.abs(Number(args[1])));
         dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(Number(args[3])));
@@ -113,7 +113,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
      */
     if ((args[0] === "-nether" || args[0] === "-n") && isNaN(Number(args[1])) === false && (args[2] === "-overworld" || args[2] === "-o") && isNaN(Number(args[3])) === false) {
         // Build the wall
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Overworld: ${args[3]} Nether: ${args[1]}`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${args[3]} Nether: ${args[1]}`);
         dynamicPropertyRegistry.set("worldborder_b", true);
         dynamicPropertyRegistry.set("worldborder_n", Math.abs(Number(args[3])));
         dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(Number(args[1])));
@@ -130,7 +130,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
      */
     if (isNaN(Number(args[0])) === false && isNaN(Number(args[1])) === false) {
         // Build the wall
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Overworld: ${args[0]} Nether: ${args[1]}`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${args[0]} Nether: ${args[1]}`);
         dynamicPropertyRegistry.set("worldborder_b", true);
         dynamicPropertyRegistry.set("worldborder_n", Math.abs(Number(args[0])));
         dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(Number(args[1])));
@@ -147,7 +147,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
      */
     if ((args[0] === "-nether" || args[0] === "-n") && isNaN(Number(args[1])) === false) {
         // Build the wall
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Nether: ${args[1]}`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Nether: ${args[1]}`);
         dynamicPropertyRegistry.set("worldborder_b", true);
         dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(Number(args[1])));
         world.setDynamicProperty("worldborder_b", true);
@@ -162,7 +162,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
      */
     if ((args[0] === "-overworld" || args[0] === "-o") && isNaN(Number(args[1])) === false) {
         // Build the wall
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has set the §6World Border§r! Overworld: ${args[1]}`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${args[1]}`);
         dynamicPropertyRegistry.set("worldborder_b", true);
         dynamicPropertyRegistry.set("worldborder_n", Math.abs(Number(args[1])));
         world.setDynamicProperty("worldborder_b", true);

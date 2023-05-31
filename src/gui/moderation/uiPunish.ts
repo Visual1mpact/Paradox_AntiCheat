@@ -8,7 +8,7 @@ export async function uiPUNISH(punishResult: ModalFormResponse, onlineList: stri
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -57,6 +57,6 @@ export async function uiPUNISH(punishResult: ModalFormResponse, onlineList: stri
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been punished for your behavior!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has punished ${member.nameTag}§r`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has punished ${member.name}§r`);
     return paradoxui(player);
 }

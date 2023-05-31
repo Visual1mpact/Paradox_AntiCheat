@@ -64,7 +64,7 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
     let member: Player;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -91,7 +91,7 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
     if (member.hasTag("nofreeze")) {
         await member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is no longer frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer frozen.`);
     }
 
     if (!member.hasTag("nofreeze")) {
@@ -107,7 +107,7 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
 
     if (!member.hasTag("nofreeze")) {
         member.addTag("freeze");
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.nameTag}§r is now frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
         return TickFreeze(member);
     }
 

@@ -6,7 +6,7 @@ export function uiTPR(requester: string, player: Player, respons: string) {
     let member = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(requester.toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(requester.toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }

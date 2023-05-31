@@ -20,7 +20,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -45,7 +45,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
         if ((textField as string).length <= 1 && (textField as string).length >= 1) {
             resetPrefix(member);
             config.customcommands.prefix = textField as string;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${textField}'! for ${member.nameTag}`);
+            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${textField}'! for ${member.name}`);
             member.addTag("Prefix:" + textField);
         } else {
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix length cannot be more than 2 characters!`);
@@ -55,7 +55,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
     // Reset has been toggled
     if (toggle) {
         resetPrefix(player);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset for ${member.nameTag}!`);
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset for ${member.name}!`);
     }
     return paradoxui(player);
 }

@@ -9,7 +9,7 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -31,7 +31,7 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
             paradoxui(player);
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled notifications.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled notifications.`);
         paradoxui(player);
     }
     if (Enabled === false) {
@@ -44,7 +44,7 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
             paradoxui(player);
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has enabled notifications.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled notifications.`);
         paradoxui(player);
     }
     return paradoxui(player);

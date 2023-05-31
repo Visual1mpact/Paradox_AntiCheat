@@ -12,7 +12,7 @@ export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -28,7 +28,7 @@ export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player
         dynamicPropertyRegistry.delete(member.id);
         member.removeTag("paradoxOpped");
         if (player.name !== member.name) {
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is no longer Paradox-Opped.`);
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name}§r is no longer Paradox-Opped.`);
         }
         sendMsgToPlayer(member, `r§4[§6Paradox§4]§r Your OP status has been revoked!`);
         return paradoxui(player);

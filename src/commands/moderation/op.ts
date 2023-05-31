@@ -61,7 +61,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     } else if (hash === encode && args[0] === config.modules.encryption.password) {
         // Old stuff that makes up for less than 5% of the project
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r is now Paradox-Opped.`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r is now Paradox-Opped.`);
         player.addTag("paradoxOpped");
         return;
     }
@@ -85,7 +85,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     if (args.length) {
         const players = world.getPlayers();
         for (const pl of players) {
-            if (pl.nameTag.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
             }
@@ -112,6 +112,6 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
         memberHash = member.getDynamicProperty("hash");
     }
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.nameTag}§r is now Paradox-Opped.`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name}§r is now Paradox-Opped.`);
     member.addTag("paradoxOpped");
 }

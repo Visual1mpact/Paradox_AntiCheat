@@ -8,7 +8,7 @@ export async function uiKICK(banResult: ModalFormResponse, onlineList: string[],
     let member: Player = undefined;
     const players = world.getPlayers();
     for (const pl of players) {
-        if (pl.nameTag.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
             member = pl;
             break;
         }
@@ -31,6 +31,6 @@ export async function uiKICK(banResult: ModalFormResponse, onlineList: string[],
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
     }
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has kicked ${member.nameTag}§r. Reason: ${reason}`);
+    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has kicked ${member.name}§r. Reason: ${reason}`);
     return paradoxui(player);
 }

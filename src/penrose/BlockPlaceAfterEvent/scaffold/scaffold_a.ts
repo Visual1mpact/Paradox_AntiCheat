@@ -31,8 +31,8 @@ function scaffolda(object: BlockPlaceAfterEvent) {
     const { x, y, z } = block.location;
 
     let timer: Date[];
-    if (blockTimer.has(player.nameTag)) {
-        timer = blockTimer.get(player.nameTag);
+    if (blockTimer.has(player.name)) {
+        timer = blockTimer.get(player.name);
     } else {
         timer = [];
     }
@@ -40,7 +40,7 @@ function scaffolda(object: BlockPlaceAfterEvent) {
     timer.push(new Date());
 
     const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
-    blockTimer.set(player.nameTag, tiktok);
+    blockTimer.set(player.name, tiktok);
 
     /**
      * startTimer will make sure the key is properly removed
@@ -58,9 +58,9 @@ function scaffolda(object: BlockPlaceAfterEvent) {
         flag(player, "Scaffold", "A", "Placement", null, null, null, null, false);
         /*
         try {
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "
+            player.runCommand(`tag "${disabler(player.name)}" add "
             :Illegal Scaffolding"`);
-            player.runCommand(`tag "${disabler(player.nameTag)}" add "By:Paradox"`);
+            player.runCommand(`tag "${disabler(player.name)}" add "By:Paradox"`);
             player.addTag('isBanned');
         } catch (error) {
             kickablePlayers.add(player); player.triggerEvent('paradox:kick');

@@ -37,14 +37,14 @@ export function uiGAMEMODES(gamemodeResult: ModalFormResponse, player: Player) {
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 2 (Adventure)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disallowed §4Gamemode 2 (Adventure)§r to be used!`);
         Adventure();
     }
     if (AdventureGM === false && adventureGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("adventuregm_b", false);
         world.setDynamicProperty("adventuregm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has allowed §6Gamemode 2 (Adventure)§r to be used!`);
     }
     //Creative gamemode
     if (CreativeGM === true && creativeGMBoolean === false) {
@@ -59,14 +59,14 @@ export function uiGAMEMODES(gamemodeResult: ModalFormResponse, player: Player) {
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 1 (Creative)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disallowed §4Gamemode 1 (Creative)§r to be used!`);
         Creative();
     }
     if (CreativeGM === false && creativeGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("creativegm_b", false);
         world.setDynamicProperty("creativegm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 1 (Creative)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has allowed §6Gamemode 1 (Creative)§r to be used!`);
     }
     if (SurvivalGM === true && survivalGMBoolean === false) {
         // Allow
@@ -80,14 +80,14 @@ export function uiGAMEMODES(gamemodeResult: ModalFormResponse, player: Player) {
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has disallowed §4Gamemode 0 (Survival)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disallowed §4Gamemode 0 (Survival)§r to be used!`);
         Survival();
     }
     if (SurvivalGM === false && survivalGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("survivalgm_b", false);
         world.setDynamicProperty("survivalgm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.nameTag}§r has allowed §6Gamemode 0 (Survival)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has allowed §6Gamemode 0 (Survival)§r to be used!`);
     }
 
     //show the main ui to the player one complete.
