@@ -24,16 +24,32 @@
                     "liquid_blocks": ["minecraft:water", "minecraft:flowing_water"]
                 }
             },
-            "minecraft:can_ride": {
+            "minecraft:can_ride_default": {
                 "minecraft:rideable": {
                     "seat_count": 1,
                     "passenger_max_width": 1.375,
                     "interact_text": "action.interact.ride.boat",
                     "pull_in_entities": true,
-
                     "seats": [
                         {
                             "position": [0.2, -0.2, 0.0],
+                            "min_rider_count": 0,
+                            "max_rider_count": 1,
+                            "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0",
+                            "lock_rider_rotation": 90
+                        }
+                    ]
+                }
+            },
+            "minecraft:can_ride_bamboo": {
+                "minecraft:rideable": {
+                    "seat_count": 1,
+                    "passenger_max_width": 1.375,
+                    "interact_text": "action.interact.ride.boat",
+                    "pull_in_entities": true,
+                    "seats": [
+                        {
+                            "position": [0.2, 0.1, 0.0],
                             "min_rider_count": 0,
                             "max_rider_count": 1,
                             "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0",
@@ -104,23 +120,6 @@
                 "container_type": "chest_boat",
                 "inventory_size": 27,
                 "can_be_siphoned_from": true
-            },
-            "minecraft:rideable": {
-                "seat_count": 1,
-                "passenger_max_width": 1.375,
-                "interact_text": "action.interact.ride.boat",
-                "pull_in_entities": true,
-
-                "seats": [
-                    {
-                        "position": [0.2, -0.2, 0.0],
-                        "min_rider_count": 0,
-                        "max_rider_count": 1,
-
-                        "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0",
-                        "lock_rider_rotation": 90
-                    }
-                ]
             },
             "minecraft:is_stackable": {},
             "minecraft:physics": {},
@@ -202,6 +201,35 @@
                     "component_groups": ["paradox:kick"]
                 }
             },
+            "minecraft:entity_spawned": {
+                "trigger": "minecraft:add_can_ride"
+            },
+            "minecraft:add_can_ride": {
+                "sequence": [
+                    {
+                        "filters": {
+                            "test": "is_variant",
+                            "subject": "self",
+                            "operator": "!=",
+                            "value": 7
+                        },
+                        "add": {
+                            "component_groups": ["minecraft:can_ride_default"]
+                        }
+                    },
+                    {
+                        "filters": {
+                            "test": "is_variant",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": 7
+                        },
+                        "add": {
+                            "component_groups": ["minecraft:can_ride_bamboo"]
+                        }
+                    }
+                ]
+            },
             "minecraft:entered_bubble_column_down": {
                 "remove": {
                     "component_groups": ["minecraft:floating"]
@@ -223,12 +251,13 @@
                     "component_groups": ["minecraft:above_bubble_column_down", "minecraft:above_bubble_column_up"]
                 },
                 "add": {
-                    "component_groups": ["minecraft:floating", "minecraft:can_ride"]
-                }
+                    "component_groups": ["minecraft:floating"]
+                },
+                "trigger": "minecraft:add_can_ride"
             },
             "minecraft:sink": {
                 "remove": {
-                    "component_groups": ["minecraft:floating", "minecraft:can_ride", "minecraft:above_bubble_column_down", "minecraft:above_bubble_column_up"]
+                    "component_groups": ["minecraft:floating", "minecraft:can_ride_default", "minecraft:can_ride_bamboo", "minecraft:above_bubble_column_down", "minecraft:above_bubble_column_up"]
                 }
             }
         }

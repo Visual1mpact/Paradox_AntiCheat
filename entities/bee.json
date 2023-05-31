@@ -37,7 +37,11 @@
                         "minecraft:double_plant:5",
                         "minecraft:flowering_azalea",
                         "minecraft:azalea_leaves_flowered",
-                        "minecraft:mangrove_propagule"
+                        "minecraft:mangrove_propagule",
+                        "minecraft:pitcher_plant",
+                        "minecraft:torchflower",
+                        "minecraft:cherry_leaves",
+                        "minecraft:pink_petals"
                     ],
                     "grow_up": {
                         "event": "minecraft:ageable_grow_up",
@@ -78,7 +82,11 @@
                         "minecraft:double_plant:5",
                         "minecraft:flowering_azalea",
                         "minecraft:azalea_leaves_flowered",
-                        "minecraft:mangrove_propagule"
+                        "minecraft:mangrove_propagule",
+                        "minecraft:pitcher_plant",
+                        "minecraft:torchflower",
+                        "minecraft:cherry_leaves",
+                        "minecraft:pink_petals"
                     ]
                 }
             },
@@ -205,7 +213,11 @@
                         "minecraft:double_plant:13",
                         "minecraft:flowering_azalea",
                         "minecraft:azalea_leaves_flowered",
-                        "minecraft:mangrove_propagule"
+                        "minecraft:mangrove_propagule",
+                        "minecraft:pitcher_plant",
+                        "minecraft:torchflower",
+                        "minecraft:cherry_leaves",
+                        "minecraft:pink_petals"
                     ],
                     "on_stay_completed": [
                         {
@@ -405,7 +417,11 @@
                     "minecraft:double_plant:5",
                     "minecraft:flowering_azalea",
                     "minecraft:azalea_leaves_flowered",
-                    "minecraft:mangrove_propagule"
+                    "minecraft:mangrove_propagule",
+                    "minecraft:pitcher_plant",
+                    "minecraft:torchflower",
+                    "minecraft:cherry_leaves",
+                    "minecraft:pink_petals"
                 ]
             },
             "minecraft:behavior.move_towards_home_restriction": {

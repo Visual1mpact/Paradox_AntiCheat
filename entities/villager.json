@@ -516,6 +516,11 @@
             "minecraft:conditional_bandwidth_optimization": {}
         },
         "events": {
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
+            },
             "become_witch": {
                 "add": {
                     "component_groups": ["become_witch"]

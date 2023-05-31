@@ -20,7 +20,7 @@
                 },
                 "minecraft:ageable": {
                     "duration": 1200,
-                    "feed_items": ["wheat_seeds", "beetroot_seeds", "melon_seeds", "pumpkin_seeds"],
+                    "feed_items": ["wheat_seeds", "beetroot_seeds", "melon_seeds", "pumpkin_seeds", "pitcher_pod", "torchflower_seeds"],
                     "grow_up": {
                         "event": "minecraft:ageable_grow_up",
                         "target": "self"
@@ -50,7 +50,7 @@
                             "target": "baby"
                         }
                     },
-                    "breed_items": ["wheat_seeds", "beetroot_seeds", "melon_seeds", "pumpkin_seeds"]
+                    "breed_items": ["wheat_seeds", "beetroot_seeds", "melon_seeds", "pumpkin_seeds", "pitcher_pod", "torchflower_seeds"]
                 },
                 "minecraft:behavior.breed": {
                     "priority": 3,
@@ -150,7 +150,7 @@
             "minecraft:behavior.tempt": {
                 "priority": 4,
                 "speed_multiplier": 1.0,
-                "items": ["wheat_seeds", "beetroot_seeds", "melon_seeds", "pumpkin_seeds"]
+                "items": ["wheat_seeds", "beetroot_seeds", "melon_seeds", "pumpkin_seeds", "pitcher_pod", "torchflower_seeds"]
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 6,

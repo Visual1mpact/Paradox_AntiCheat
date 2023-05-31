@@ -9,6 +9,11 @@
         },
 
         "component_groups": {
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
+            },
             "minecraft:squid_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -102,6 +107,11 @@
         },
 
         "events": {
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
+            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
