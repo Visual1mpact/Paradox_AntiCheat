@@ -25,37 +25,6 @@ const theVoid = new Map<string, number>();
  * @param {boolean} shouldTP - Whever to tp the player to itself.
  */
 export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean) {
-    // Make sure the vl objective exists
-    try {
-        /**
-         * Check if the player has a score for the objective.
-         * If they do not then this will catch the error.
-         * We handle the objective in the catched error.
-         */
-        world.scoreboard.getObjective(`${check.toLowerCase()}vl`).getScore(player.scoreboardIdentity);
-    } catch {
-        // Get the objective object in the world then validate if it exists
-        const getObjective = world.scoreboard.getObjective(`${check.toLowerCase()}vl`);
-        if (!getObjective) {
-            // The objective object does not exist so we create it
-            world.scoreboard.addObjective(`${check.toLowerCase()}vl`, `${check.toLowerCase()}vl`);
-            /**
-             * After the objective object is created we now set the score to 0 for the player.
-             * This will make the player a participant of this objective so we can safely
-             * detect, set, or get their score.
-             */
-            player.scoreboardIdentity.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
-        } else {
-            /**
-             * The objective object already exists but the player does not have a score.
-             * This means the player is not a participant so we set the score to 0 to add them.
-             * The player will now be a participant to that objective object allowing us to now
-             * safely detect, set, or get their score.
-             */
-            player.scoreboardIdentity.setScore(world.scoreboard.getObjective(`${check.toLowerCase()}vl`), 0);
-        }
-    }
-
     if (shouldTP && check !== "Crasher") {
         player.teleport({ x: player.location.x, y: player.location.y, z: player.location.z }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     } else if (shouldTP && check === "Crasher") {
