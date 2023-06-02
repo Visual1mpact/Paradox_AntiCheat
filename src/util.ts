@@ -122,7 +122,12 @@ export function getScore(objective: string, player: Player) {
  */
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
-    const score = scoreObj.getScore(target.scoreboardIdentity);
+    let score;
+    try {
+        score = scoreObj.getScore(target.scoreboardIdentity);
+    } catch {
+        target.scoreboardIdentity.setScore(scoreObj, 0);
+    }
     const result = (stack ? score ?? 0 : 0) + amount;
     target.scoreboardIdentity.setScore(scoreObj, result);
     return score;
