@@ -3,7 +3,6 @@ import { onJoinPrimaryData, onJoinSecondaryData } from "../../../data/onjoindata
 import { getPrefix, setScore, setTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-import config from "../../../data/config.js";
 
 async function onJoinTime(object: PlayerSpawnAfterEvent) {
     /**
