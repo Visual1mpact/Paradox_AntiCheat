@@ -1,8 +1,16 @@
-import { world, Player, system } from "@minecraft/server";
+import { world, Player, system, EntityQueryOptions } from "@minecraft/server";
 import { getScore, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
-async function Freeze(id: number) {
+const freezeDataMap: Map<string, FreezeData> = new Map();
+
+type FreezeData = {
+    player: Player;
+    freezeId: number;
+};
+
+async function Freeze(playerData: FreezeData) {
+    const { player, freezeId } = playerData;
     let posx: number;
     let posy: number;
     let posz: number;
@@ -14,7 +22,6 @@ async function Freeze(id: number) {
     let backx: number;
     let backy: number;
     let backz: number;
-    let player: Player;
     let hastag: boolean;
 
     // Record their location
@@ -42,7 +49,7 @@ async function Freeze(id: number) {
             player.removeTag("freeze");
             await player.runCommandAsync(`effect @s clear`);
             sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.name}.`);
-            system.clearRun(id);
+            system.clearRun(freezeId);
             return;
         }
         // We just need this in case they log off and log back on
@@ -63,7 +70,7 @@ async function Freeze(id: number) {
         // Create prison around player
         try {
             await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow`);
-        } catch (erro) {}
+        } catch (error) {}
         // Save coordinates at prison
         posx1 = player.location.x;
         posy1 = player.location.y;
@@ -113,8 +120,7 @@ async function Freeze(id: number) {
         // Return them back to original coordinates
         player.teleport({ x: backx, y: backy, z: backz }, { dimension: world.getDimension(realmIDString), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         player.removeTag("freezeactive");
-        world.afterEvents.playerLeave.unsubscribe(() => StopTickFreeze(id));
-        system.clearRun(id);
+        system.clearRun(freezeId);
     }
 }
 
@@ -123,24 +129,47 @@ function StopTickFreeze(id: number) {
     system.clearRun(id);
 }
 
+// Subscribe to the playerLeave event once
+export const freezeLeave = () => {
+    world.afterEvents.playerLeave.subscribe((player) => {
+        // Check if the player is frozen
+        const freezeDataBoolean = freezeDataMap.has(player.playerId);
+        const freezeData = freezeDataMap.get(player.playerId);
+        if (freezeDataBoolean) {
+            // Perform any necessary cleanup
+            StopTickFreeze(freezeData.freezeId);
+        }
+    });
+};
+
 // Where the magic begins
-function TickFreeze(data: Player) {
-    const player = data;
-    // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(player?.id);
+export const freeze = system.runInterval(() => {
+    const filter: EntityQueryOptions = {
+        tags: ["freeze"],
+    };
 
-    // Skip if they have permission
-    if (uniqueId !== player.name) {
-        /**
-         * We store the identifier in a variable
-         * to cancel the execution of this scheduled run
-         * if needed to do so.
-         */
-        const freezeId = system.runInterval(() => {
-            Freeze(freezeId);
-        });
-        world.afterEvents.playerLeave.subscribe(() => StopTickFreeze(freezeId));
+    const players = world.getPlayers(filter);
+    for (const player of players) {
+        const uniqueId = dynamicPropertyRegistry.get(player?.id);
+
+        const freezeData = freezeDataMap.get(player.id);
+
+        if (uniqueId !== player.name) {
+            if (!freezeData) {
+                const freezeId = system.runInterval(() => {
+                    const updatedFreezeData = freezeDataMap.get(player.id);
+                    if (updatedFreezeData) {
+                        Freeze(updatedFreezeData);
+                    }
+                });
+                freezeDataMap.set(player.id, { player, freezeId });
+            }
+        } else {
+            player.removeTag("freeze");
+            if (freezeData) {
+                StopTickFreeze(freezeData.freezeId);
+                freezeDataMap.delete(player.id);
+            }
+        }
     }
-}
-
-export { TickFreeze };
+}, 60); // Executes every 3 seconds

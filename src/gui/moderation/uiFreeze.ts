@@ -1,6 +1,5 @@
 import { Player, world } from "@minecraft/server";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
-import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -61,12 +60,12 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
     if (!member.hasTag("nofreeze")) {
         member.addTag("freeze");
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
-        return TickFreeze(member);
+        return;
     }
 
     if (member.hasTag("nofreeze")) {
         member.removeTag("nofreeze");
-        return TickFreeze(member);
+        return;
     }
 
     return paradoxui(player);

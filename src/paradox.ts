@@ -1,6 +1,3 @@
-// Import Customs
-import { world, system } from "@minecraft/server";
-import { TickFreeze } from "./penrose/TickEvent/freeze/freeze.js";
 // Import ChatSendBefore Events
 import { BadPackets1 } from "./penrose/ChatSendBeforeEvent/spammer/badpackets_1.js";
 import { SpammerA } from "./penrose/ChatSendBeforeEvent/spammer/spammer_a.js";
@@ -35,22 +32,22 @@ import { BadPackets2 } from "./penrose/TickEvent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/TickEvent/clearlag/clearlag.js";
 import { AntiFallA } from "./penrose/TickEvent/antifalla/antifall_a.js";
 import { AutoBan } from "./penrose/TickEvent/ban/autoban.js";
-// Import BlockBreak Events
+// Import BlockBreakAfter Events
 import { XrayA } from "./penrose/BlockBreakAfterEvent/xray/xray_a.js";
 import { NukerA } from "./penrose/BlockBreakAfterEvent/nuker/nuker_a.js";
-// Import PlayerSpawn Events
+// Import PlayerSpawnAfter Events
 import { onJoin } from "./penrose/PlayerSpawnAfterEvent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/PlayerSpawnAfterEvent/ban/globalbanlist.js";
 import { hashCode } from "./penrose/PlayerSpawnAfterEvent/hash/hash.js";
 import { onJoinrules } from "./gui/PlayerSpawnAfterEvent/rules/rules.js";
-// Import BlockPlace Events
+// Import BlockPlaceAfter Events
 import { ScaffoldA } from "./penrose/BlockPlaceAfterEvent/scaffold/scaffold_a.js";
 import { IllegalItemsB } from "./penrose/BlockPlaceAfterEvent/illegalitems/illegalitems_b.js";
 import { ReachA } from "./penrose/BlockPlaceAfterEvent/reach/reach_a.js";
-// Import EntityHit Events
+// Import EntityHitAfter Events
 import { ReachB } from "./penrose/EntityHitAfterEvent/reach_b.js";
 import { KillAura } from "./penrose/EntityHitAfterEvent/killaura.js";
-// Import WorldInitialize Events
+// Import WorldInitializeAfter Events
 import { Registry } from "./penrose/WorldInitializeAfterEvent/registry.js";
 // Import System Events
 import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
@@ -58,12 +55,12 @@ import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
 import { AfterPrefixCommand } from "./penrose/ChatSendAfterEvent/chat/afterprefixcommand.js";
 import { TpRequestListener } from "./commands/utility/tpr.js";
 import { afterAntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
-// Import EntityDie Events
+// Import EntityDieAfter Events
 import { DeathCoordinates } from "./penrose/EntityDieAfterEvent/death_coordinates.js";
+import { freeze, freezeLeave } from "./penrose/TickEvent/freeze/freeze.js";
+import config from "./data/config.js";
 
-// Self explanatory
-
-// WorldInitialize Events
+// WorldInitializeAfter Events
 Registry();
 
 // ChatSendBefore Events
@@ -106,44 +103,31 @@ FlyA();
 AntiKnockbackA();
 AntiFallA();
 AutoBan();
+if (config.customcommands.freeze) {
+    freeze;
+    freezeLeave();
+}
 
-/**
- * Freeze Check
- */
-system.runInterval(() => {
-    let hastag: boolean;
-    // run as each player
-    const players = world.getPlayers();
-    for (const player of players) {
-        try {
-            hastag = player.hasTag("freeze");
-        } catch (error) {}
-        if (hastag) {
-            TickFreeze(player);
-            hastag = null;
-        }
-    }
-}, 60); // Executes every 3 seconds
-
-// BlockBreak Events
+// BlockBreakAfter Events
 XrayA();
 NukerA();
 
-// playerSpawn Events
+// playerSpawnAfter Events
 onJoin();
 GlobalBanList();
 hashCode();
 onJoinrules(); // GUI
-// BlockPlace Events
+
+// BlockPlaceAfter Events
 ScaffoldA();
 IllegalItemsB();
 ReachA();
 
-// EntityHit Events
+// EntityHitAfter Events
 ReachB();
 KillAura();
 
-// EntityDie Events
+// EntityDieAfter Events
 DeathCoordinates();
 
 // System Events

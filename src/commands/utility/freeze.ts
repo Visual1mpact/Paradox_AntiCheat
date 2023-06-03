@@ -2,7 +2,6 @@
 import { world, Player, ChatSendAfterEvent } from "@minecraft/server";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
-import { TickFreeze } from "../../penrose/TickEvent/freeze/freeze.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
@@ -108,11 +107,11 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
     if (!member.hasTag("nofreeze")) {
         member.addTag("freeze");
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
-        return TickFreeze(member);
+        return;
     }
 
     if (member.hasTag("nofreeze")) {
         member.removeTag("nofreeze");
-        return TickFreeze(member);
+        return;
     }
 }
