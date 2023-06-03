@@ -1,6 +1,6 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { AntiSpam } from "../../penrose/ChatSendAfterEvent/chat/antispam.js";
+import { beforeAntiSpam } from "../../penrose/ChatSendBeforeEvent/chat/antispam.js";
 
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
@@ -22,7 +22,7 @@ export function uiANTISPAM(antispamResult: ModalFormResponse, player: Player) {
         dynamicPropertyRegistry.set("antispam_b", true);
         world.setDynamicProperty("antispam_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Spam§r!`);
-        AntiSpam();
+        beforeAntiSpam();
     }
     if (AntiSpamToggle === false) {
         // Deny

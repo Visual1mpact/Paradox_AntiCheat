@@ -1,8 +1,9 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
-import { AntiSpam } from "../../penrose/ChatSendAfterEvent/chat/antispam.js";
+import { beforeAntiSpam } from "../../penrose/ChatSendBeforeEvent/chat/antispam.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
+import { afterAntiSpam } from "../../penrose/ChatSendAfterEvent/chat/antispam.js";
 
 function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -68,7 +69,8 @@ export function antispam(message: ChatSendAfterEvent, args: string[]) {
         dynamicPropertyRegistry.set("antispam_b", true);
         world.setDynamicProperty("antispam_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Spam§r!`);
-        AntiSpam();
+        beforeAntiSpam();
+        afterAntiSpam();
     } else if (antiSpamBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antispam_b", false);

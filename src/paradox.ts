@@ -8,7 +8,7 @@ import { SpammerB } from "./penrose/ChatSendBeforeEvent/spammer/spammer_b.js";
 import { SpammerC } from "./penrose/ChatSendBeforeEvent/spammer/spammer_c.js";
 import { BeforePrefixCommand } from "./penrose/ChatSendBeforeEvent/chat/beforeprefixcommand.js";
 import { ChatFilter } from "./penrose/ChatSendBeforeEvent/chat/chatfilter.js";
-import { AntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
+import { beforeAntiSpam } from "./penrose/ChatSendBeforeEvent/chat/antispam.js";
 // Import Tick Events
 import { ServerBan } from "./penrose/TickEvent/ban/serverban.js";
 import { CrasherA } from "./penrose/TickEvent/crasher/crasher_a.js";
@@ -57,6 +57,7 @@ import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
 // Import ChatSendAfter Events
 import { AfterPrefixCommand } from "./penrose/ChatSendAfterEvent/chat/afterprefixcommand.js";
 import { TpRequestListener } from "./commands/utility/tpr.js";
+import { afterAntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
 // Import EntityDie Events
 import { DeathCoordinates } from "./penrose/EntityDieAfterEvent/death_coordinates.js";
 
@@ -70,13 +71,14 @@ BadPackets1();
 SpammerA();
 SpammerB();
 SpammerC();
-AntiSpam();
+beforeAntiSpam();
 BeforePrefixCommand();
 ChatFilter();
 
 // ChatSendAfter Events
 AfterPrefixCommand();
 TpRequestListener();
+afterAntiSpam();
 
 // Tick Events
 ClearLag();
