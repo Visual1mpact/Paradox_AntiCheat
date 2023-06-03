@@ -26,7 +26,7 @@ function afterantispam(msg: ChatSendAfterEvent) {
 
     // Unsubscribe if disabled in-game
     if (antiSpamBoolean === false) {
-        world.afterEvents.chatSend.unsubscribe(afterAntiSpam);
+        world.afterEvents.chatSend.unsubscribe(afterantispam);
         return;
     }
 
