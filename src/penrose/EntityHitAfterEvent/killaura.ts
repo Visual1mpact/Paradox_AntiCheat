@@ -60,7 +60,10 @@ function killaura(obj: EntityHitAfterEvent) {
         entity.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
         entity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-        entity.addTag("freeze");
+        const boolean = entity.hasTag("freeze");
+        if (!boolean) {
+            entity.addTag("freeze");
+        }
     }
 }
 
