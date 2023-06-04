@@ -49,8 +49,8 @@ function killaura(obj: EntityHitAfterEvent) {
     const cosAngle = dotProduct / (entityMagnitude * vectorMagnitude);
     const angle = Math.acos(cosAngle) * (180 / Math.PI);
 
-    if (angle > 100) {
-        // Entity is facing hitEntity at an angle greater than 90 degrees
+    if (angle > 160) {
+        // Entity is facing hitEntity at an angle greater than 160 degrees
         flag(entity, "KillAura", "A", "Combat", null, null, null, null, false);
         // Blindness
         entity.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
