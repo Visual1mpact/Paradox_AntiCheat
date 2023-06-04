@@ -1,21 +1,7 @@
 import { world, Player, EntityHitAfterEvent } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
-import { kickablePlayers } from "../../kickcheck";
-
-function rip(player: Player) {
-    // Reason for hack
-    const reason = "KillAura";
-
-    try {
-        player.addTag(`Reason:${reason}`);
-        player.addTag("By:Paradox");
-        player.addTag("isBanned");
-    } catch (error) {
-        kickablePlayers.add(player);
-        player.triggerEvent("paradox:kick");
-    }
-}
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 function killaura(obj: EntityHitAfterEvent) {
     // Get Dynamic Property
@@ -66,8 +52,15 @@ function killaura(obj: EntityHitAfterEvent) {
     if (angle > 100) {
         // Entity is facing hitEntity at an angle greater than 90 degrees
         flag(entity, "KillAura", "A", "Combat", null, null, null, null, false);
-        // Ban them
-        rip(entity);
+        // Blindness
+        entity.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
+        // Mining Fatigue
+        entity.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
+        // Weakness
+        entity.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
+        // Slowness
+        entity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+        entity.addTag("freeze");
     }
 }
 

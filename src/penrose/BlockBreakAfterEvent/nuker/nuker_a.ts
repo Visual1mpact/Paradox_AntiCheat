@@ -1,7 +1,7 @@
 import { world, BlockBreakAfterEvent } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-import { kickablePlayers } from "../../../kickcheck.js";
+import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const lastBreakTime = new Map<string, number>();
 
@@ -103,14 +103,17 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
         try {
             await player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
         } catch (error) {}
-
-        try {
-            player.addTag("Reason:Anti-NukerA");
-            player.addTag("By:Paradox");
-            player.addTag("isBanned");
-        } catch (error) {
-            kickablePlayers.add(player);
-            player.triggerEvent("paradox:kick");
+        // Blindness
+        player.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
+        // Mining Fatigue
+        player.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
+        // Weakness
+        player.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
+        // Slowness
+        player.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+        const boolean = player.hasTag("freeze");
+        if (!boolean) {
+            player.addTag("freeze");
         }
         return;
     } else {
