@@ -61,6 +61,22 @@ function unfreezePlayer(player: Player) {
     freezeDataMap.delete(player.id);
 }
 
+// Function to unfreeze a player by their ID
+function unfreezePlayerById(playerId: string) {
+    const player = world.getPlayers().find((check) => {
+        return check.id === playerId;
+    });
+    if (!player) {
+        return; // Player not found
+    }
+
+    try {
+        unfreezePlayer(player);
+    } catch (error) {
+        console.error(`Error unfreezing player: ${error}`);
+    }
+}
+
 // Function to periodically check and freeze players
 const freezePlayers = () => {
     const filter: EntityQueryOptions = {
@@ -93,12 +109,22 @@ const freezePlayers = () => {
             }
         }
     }
+
     // Unfreeze players who no longer have the "freeze" tag
-    for (const [, freezeData] of freezeDataMap.entries()) {
-        const player = freezeData?.player;
-        const hasTag = player && player.hasTag("freeze");
-        if (!hasTag) {
-            unfreezePlayer(player);
+    for (const playerId of freezeDataMap.keys()) {
+        const player = world.getPlayers().find((check) => {
+            return check.id === playerId;
+        });
+        if (!player) {
+            continue; // Skip this iteration if player is not available
+        }
+        try {
+            const hasTag = player?.hasTag && player.hasTag("freeze");
+            if (!hasTag) {
+                unfreezePlayerById(playerId);
+            }
+        } catch (error) {
+            console.error(`Error unfreezing player with ID ${playerId}: ${error}`);
         }
     }
 };
