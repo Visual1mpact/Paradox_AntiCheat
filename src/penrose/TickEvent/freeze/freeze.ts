@@ -77,10 +77,10 @@ const freezePlayers = () => {
                 continue; // Skip this player if freeze data is missing
             }
 
-            const { x: originalX, y: originalY, z: originalZ } = originalLocation;
+            const { x: originalX, y: _, z: originalZ } = originalLocation;
             const { x: currentX, y: currentY, z: currentZ } = player.location;
 
-            if (currentX !== originalX || currentY !== originalY || currentZ !== originalZ) {
+            if (currentX !== originalX || currentY !== 245 || currentZ !== originalZ) {
                 // Teleport the player to the freezing location
                 player.teleport(new Vector(originalX, 245, originalZ), {
                     dimension: world.getDimension("overworld"),
