@@ -35,6 +35,10 @@ function freezePlayer(player: Player) {
 }
 
 function unfreezePlayer(player: Player) {
+    if (!player) {
+        return; // Player object is undefined or null
+    }
+
     const freezeData = freezeDataMap.get(player.id);
     if (!freezeData) {
         return; // Player not frozen
@@ -62,25 +66,20 @@ const freezePlayers = () => {
     const filter: EntityQueryOptions = {
         tags: ["freeze"],
     };
-
     const players = world.getPlayers(filter);
     for (const player of players) {
-        const booleanDataMap = freezeDataMap.has(player.id);
-        const playerData = freezeDataMap.get(player.id);
-
+        const booleanDataMap = freezeDataMap.has(player?.id);
+        const playerData = freezeDataMap.get(player?.id);
         if (!booleanDataMap) {
             freezePlayer(player);
         } else {
             const originalLocation = playerData?.originalLocation;
-
             if (!originalLocation) {
                 continue; // Skip this player if freeze data is missing
             }
-
             const { x: originalX, y: _, z: originalZ } = originalLocation;
             const { x: currentX, y: currentY, z: currentZ } = player.location;
-
-            if (currentX !== originalX || currentY !== 245 || currentZ !== originalZ) {
+            if (Math.floor(currentX) !== Math.floor(originalX) || Math.floor(currentY) !== 245 || Math.floor(currentZ) !== Math.floor(originalZ)) {
                 // Teleport the player to the freezing location
                 player.teleport(new Vector(originalX, 245, originalZ), {
                     dimension: world.getDimension("overworld"),
@@ -89,17 +88,16 @@ const freezePlayers = () => {
                     checkForBlocks: false,
                     keepVelocity: false,
                 });
-
                 // Create prison around the player again
                 player.runCommand("fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow");
             }
         }
     }
-
     // Unfreeze players who no longer have the "freeze" tag
     for (const [, freezeData] of freezeDataMap.entries()) {
-        const player = freezeData.player;
-        if (!player.hasTag("freeze")) {
+        const player = freezeData?.player;
+        const hasTag = player && player.hasTag("freeze");
+        if (!hasTag) {
             unfreezePlayer(player);
         }
     }
