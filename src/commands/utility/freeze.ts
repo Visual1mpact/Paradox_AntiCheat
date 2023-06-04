@@ -81,19 +81,17 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze staff members.`);
     }
 
-    if (member.hasTag("freeze")) {
-        member.addTag("nofreeze");
-    }
-    if (member.hasTag("nofreeze")) {
+    const boolean = member.hasTag("freeze");
+
+    if (boolean) {
         member.removeTag("freeze");
-    }
-    if (member.hasTag("nofreeze")) {
         await member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer frozen.`);
+        return;
     }
 
-    if (!member.hasTag("nofreeze")) {
+    if (!boolean) {
         // Blindness
         member.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
         // Mining Fatigue
@@ -102,16 +100,9 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
         member.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
         member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-    }
-
-    if (!member.hasTag("nofreeze")) {
         member.addTag("freeze");
+        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
-        return;
-    }
-
-    if (member.hasTag("nofreeze")) {
-        member.removeTag("nofreeze");
         return;
     }
 }

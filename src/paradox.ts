@@ -32,6 +32,7 @@ import { BadPackets2 } from "./penrose/TickEvent/badpackets2/badpackets2.js";
 import { ClearLag } from "./penrose/TickEvent/clearlag/clearlag.js";
 import { AntiFallA } from "./penrose/TickEvent/antifalla/antifall_a.js";
 import { AutoBan } from "./penrose/TickEvent/ban/autoban.js";
+import { freeze, freezeJoin, freezeLeave } from "./penrose/TickEvent/freeze/freeze.js";
 // Import BlockBreakAfter Events
 import { XrayA } from "./penrose/BlockBreakAfterEvent/xray/xray_a.js";
 import { NukerA } from "./penrose/BlockBreakAfterEvent/nuker/nuker_a.js";
@@ -57,7 +58,7 @@ import { TpRequestListener } from "./commands/utility/tpr.js";
 import { afterAntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
 // Import EntityDieAfter Events
 import { DeathCoordinates } from "./penrose/EntityDieAfterEvent/death_coordinates.js";
-import { freeze, freezeLeave } from "./penrose/TickEvent/freeze/freeze.js";
+// Custom
 import config from "./data/config.js";
 
 // WorldInitializeAfter Events
@@ -106,6 +107,7 @@ AutoBan();
 if (config.customcommands.freeze) {
     freeze;
     freezeLeave();
+    freezeJoin();
 }
 
 // BlockBreakAfter Events

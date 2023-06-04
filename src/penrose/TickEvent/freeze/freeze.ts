@@ -1,175 +1,129 @@
-import { world, Player, system, EntityQueryOptions } from "@minecraft/server";
-import { getScore, sendMsg } from "../../../util.js";
-import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { world, Player, system, EntityQueryOptions, Vector } from "@minecraft/server";
+import { sendMsg } from "../../../util";
 
 const freezeDataMap: Map<string, FreezeData> = new Map();
 
 type FreezeData = {
     player: Player;
     freezeId: number;
+    originalLocation: { x: number; y: number; z: number };
 };
 
-async function Freeze(playerData: FreezeData) {
-    const { player, freezeId } = playerData;
-    let posx: number;
-    let posy: number;
-    let posz: number;
-    let posx1: number;
-    let posy1: number;
-    let posz1: number;
-    let realmID: number;
-    let realmIDString: string;
-    let backx: number;
-    let backy: number;
-    let backz: number;
-    let hastag: boolean;
+function freezePlayer(player: Player) {
+    // Record the player's original location
+    const originalLocation = player.location;
 
-    // Record their location
-    try {
-        posx = player.location.x;
-        posy = player.location.y;
-        posz = player.location.z;
-    } catch (error) {}
-
-    try {
-        hastag = player.hasTag("freezeactive");
-    } catch (error) {}
-
-    if (!hastag) {
-        // Save which dimension they were in
-        // realm 0 = overworld, realm 1 = nether, realm 2 = the end
-        if (player.dimension.id === "minecraft:overworld") {
-            await player.runCommandAsync(`scoreboard players set @s realm 0`);
-        } else if (player.dimension.id === "minecraft:nether") {
-            await player.runCommandAsync(`scoreboard players set @s realm 1`);
-        } else if (player.dimension.id === "minecraft:the_end") {
-            await player.runCommandAsync(`scoreboard players set @s realm 2`);
-        } else {
-            player.removeTag("freezeactive");
-            player.removeTag("freeze");
-            await player.runCommandAsync(`effect @s clear`);
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Cannot determine dimension for ${player.name}.`);
-            system.clearRun(freezeId);
-            return;
-        }
-        // We just need this in case they log off and log back on
-        await player.runCommandAsync(`scoreboard players set @s xPosFreeze ${Math.floor(posx)}`);
-        await player.runCommandAsync(`scoreboard players set @s yPosFreeze ${Math.floor(posy)}`);
-        await player.runCommandAsync(`scoreboard players set @s zPosFreeze ${Math.floor(posz)}`);
-        // Backup coords for returning home
-        backx = Math.floor(posx);
-        backy = Math.floor(posy);
-        backz = Math.floor(posz);
-        // Set them up high in the sky
-        // We target Y only but can use X and Z if desired
-        posx = Math.floor(posx);
-        posy = Math.floor(245);
-        posz = Math.floor(posz);
-        // TP them at the new location in the overworld
-        player.teleport({ x: posx, y: posy, z: posz }, { dimension: world.getDimension("overworld"), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        // Create prison around player
-        try {
-            await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow`);
-        } catch (error) {}
-        // Save coordinates at prison
-        posx1 = player.location.x;
-        posy1 = player.location.y;
-        posz1 = player.location.z;
-        // We just need this in case they log off and log back on
-        await player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(posx1)}`);
-        await player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(posy1)}`);
-        await player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(posz1)}`);
-        player.addTag("freezeactive");
-    }
-    // Since they could log off while frozen we store their coords and dimension as a score
-    // Then we use this to insure we know their last location when we unfreeze
-    posx1 = getScore("xPos1", player);
-    posy1 = getScore("yPos1", player);
-    posz1 = getScore("zPos1", player);
-    // Verify if player moved from the prison
-    if (posx1 !== posx || posy1 !== posy || posz1 !== posz) {
-        // If they move then tp them back
-        try {
-            player.teleport({ x: posx1, y: posy1, z: posz1 }, { dimension: world.getDimension("overworld"), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        } catch (error) {}
-    }
-
-    try {
-        hastag = player.hasTag("freeze");
-    } catch (error) {}
-
-    // Check if they no longer have the tag freeze
-    if (!hastag) {
-        // We use this in case they log off and return later
-        backx = getScore("xPosFreeze", player);
-        backy = getScore("yPosFreeze", player);
-        backz = getScore("zPosFreeze", player);
-        realmID = getScore("realm", player);
-        // Convert dimension score to realm dimension
-        if (realmID === 0) {
-            realmIDString = "overworld";
-        }
-        if (realmID === 1) {
-            realmIDString = "nether";
-        }
-        if (realmID === 2) {
-            realmIDString = "the end";
-        }
-        // Release from prison
-        await player.runCommandAsync(`fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air [] hollow`);
-        // Return them back to original coordinates
-        player.teleport({ x: backx, y: backy, z: backz }, { dimension: world.getDimension(realmIDString), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        player.removeTag("freezeactive");
-        system.clearRun(freezeId);
-    }
-}
-
-// If they log off then unsubscribe Freeze
-function StopTickFreeze(id: number) {
-    system.clearRun(id);
-}
-
-// Subscribe to the playerLeave event once
-export const freezeLeave = () => {
-    world.afterEvents.playerLeave.subscribe((player) => {
-        // Check if the player is frozen
-        const freezeDataBoolean = freezeDataMap.has(player.playerId);
-        const freezeData = freezeDataMap.get(player.playerId);
-        if (freezeDataBoolean) {
-            // Perform any necessary cleanup
-            StopTickFreeze(freezeData.freezeId);
-        }
+    // Teleport the player to the freezing location
+    player.teleport(new Vector(originalLocation.x, 245, originalLocation.z), {
+        dimension: world.getDimension("overworld"),
+        rotation: { x: 0, y: 0 },
+        facingLocation: { x: 0, y: 0, z: 0 },
+        checkForBlocks: false,
+        keepVelocity: false,
     });
-};
 
-// Where the magic begins
-export const freeze = system.runInterval(() => {
+    // Create prison around the player
+    player.runCommand("fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow");
+
+    // Save the player's freeze data
+    const freezeData: FreezeData = {
+        player,
+        freezeId: -1, // Placeholder value, will be updated later
+        originalLocation,
+    };
+    freezeDataMap.set(player.id, freezeData);
+}
+
+function unfreezePlayer(player: Player) {
+    const freezeData = freezeDataMap.get(player.id);
+    if (!freezeData) {
+        return; // Player not frozen
+    }
+
+    // Remove the prison blocks
+    player.runCommand("fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air [] hollow");
+
+    // Teleport the player back to their original location
+    const { originalLocation } = freezeData;
+    player.teleport(originalLocation, {
+        dimension: world.getDimension("overworld"),
+        rotation: { x: 0, y: 0 },
+        facingLocation: { x: 0, y: 0, z: 0 },
+        checkForBlocks: false,
+        keepVelocity: false,
+    });
+
+    // Remove the freeze data
+    freezeDataMap.delete(player.id);
+}
+
+// Function to periodically check and freeze players
+const freezePlayers = () => {
     const filter: EntityQueryOptions = {
         tags: ["freeze"],
     };
 
     const players = world.getPlayers(filter);
     for (const player of players) {
-        const uniqueId = dynamicPropertyRegistry.get(player?.id);
+        const booleanDataMap = freezeDataMap.has(player.id);
+        const playerData = freezeDataMap.get(player.id);
 
-        const freezeData = freezeDataMap.get(player.id);
-
-        if (uniqueId !== player.name) {
-            if (!freezeData) {
-                const freezeId = system.runInterval(() => {
-                    const updatedFreezeData = freezeDataMap.get(player.id);
-                    if (updatedFreezeData) {
-                        Freeze(updatedFreezeData);
-                    }
-                });
-                freezeDataMap.set(player.id, { player, freezeId });
-            }
+        if (!booleanDataMap) {
+            freezePlayer(player);
         } else {
-            player.removeTag("freeze");
-            if (freezeData) {
-                StopTickFreeze(freezeData.freezeId);
-                freezeDataMap.delete(player.id);
+            const originalLocation = playerData?.originalLocation;
+
+            if (!originalLocation) {
+                continue; // Skip this player if freeze data is missing
+            }
+
+            const { x: originalX, y: originalY, z: originalZ } = originalLocation;
+            const { x: currentX, y: currentY, z: currentZ } = player.location;
+
+            if (currentX !== originalX || currentY !== originalY || currentZ !== originalZ) {
+                // Teleport the player to the freezing location
+                player.teleport(new Vector(originalX, 245, originalZ), {
+                    dimension: world.getDimension("overworld"),
+                    rotation: { x: 0, y: 0 },
+                    facingLocation: { x: 0, y: 0, z: 0 },
+                    checkForBlocks: false,
+                    keepVelocity: false,
+                });
+
+                // Create prison around the player again
+                player.runCommand("fill ~1 ~2 ~1 ~-1 ~-1 ~-1 barrier [] hollow");
             }
         }
     }
-}, 60); // Executes every 3 seconds
+
+    // Unfreeze players who no longer have the "freeze" tag
+    for (const [, freezeData] of freezeDataMap.entries()) {
+        const player = freezeData.player;
+        if (!player.hasTag("freeze")) {
+            unfreezePlayer(player);
+        }
+    }
+};
+
+// Subscribe to the playerLeave event to handle frozen players leaving
+export const freezeLeave = (): void => {
+    world.afterEvents.playerLeave.subscribe((player) => {
+        const boolean = freezeDataMap.has(player.playerId);
+        if (boolean) {
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.playerName}§r was frozen and left the server.`);
+        }
+    });
+};
+
+// Subscribe to the playerJoin event to handle frozen players returning
+export const freezeJoin = (): void => {
+    world.afterEvents.playerJoin.subscribe((player) => {
+        const boolean = freezeDataMap.has(player.playerId);
+        if (boolean) {
+            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.playerName}§r was frozen and returned to the server.`);
+        }
+    });
+};
+
+// Run the freezePlayers function every 3 seconds
+export const freeze = system.runInterval(freezePlayers, 60); // 20 ticks = 1 second

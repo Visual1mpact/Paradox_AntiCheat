@@ -21,32 +21,17 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
     }
 
-    // Are they online?
-    if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
-    }
+    const boolean = member.hasTag("freeze");
 
-    // Make sure they don't freeze themselves
-    if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze yourself.`);
-    }
-    //Make sure they don't freeze staff!
-    if (member.hasTag("paradoxOpped")) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze Staff.`);
-    }
-    if (member.hasTag("freeze")) {
-        member.addTag("nofreeze");
-    }
-    if (member.hasTag("nofreeze")) {
+    if (boolean) {
         member.removeTag("freeze");
-    }
-    if (member.hasTag("nofreeze")) {
         await member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer frozen.`);
+        return;
     }
 
-    if (!member.hasTag("nofreeze")) {
+    if (!boolean) {
         // Blindness
         member.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
         // Mining Fatigue
@@ -55,16 +40,9 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
         member.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
         member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-    }
-
-    if (!member.hasTag("nofreeze")) {
         member.addTag("freeze");
+        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
-        return;
-    }
-
-    if (member.hasTag("nofreeze")) {
-        member.removeTag("nofreeze");
         return;
     }
 
