@@ -104,7 +104,7 @@ FlyA();
 AntiKnockbackA();
 AntiFallA();
 AutoBan();
-if (config.customcommands.freeze) {
+if (config.customcommands.freeze || config.modules.antiKillAura || config.modules.antinukerA) {
     freeze;
     freezeLeave();
     freezeJoin();
