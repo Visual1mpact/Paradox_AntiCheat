@@ -25,7 +25,7 @@ function freezePlayer(player: Player) {
     });
 
     // Create prison around the player
-    player.runCommand(`fill ${originalLocation.x + 1} ${245 + 2} ${originalLocation.z + 1} ${originalLocation.x - 1} ${245 - 1} ${originalLocation.z - 1} barrier [] hollow`);
+    player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
 
     // Save the player's freeze data
     const freezeData: FreezeData = {
@@ -50,7 +50,7 @@ function unfreezePlayer(player: Player) {
     const { originalLocation, originalDimension } = freezeData;
 
     // Remove the prison blocks
-    player.runCommand(`fill ${originalLocation.x + 1} ${245 + 2} ${originalLocation.z + 1} ${originalLocation.x - 1} ${245 - 1} ${originalLocation.z - 1} air [] hollow`);
+    player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} air [] hollow`);
 
     // Teleport the player back to their original location
     player.teleport(originalLocation, {
@@ -114,7 +114,7 @@ const freezePlayers = () => {
                     keepVelocity: false,
                 });
                 // Create prison around the player again
-                player.runCommand(`fill ${originalLocation.x + 1} ${245 + 2} ${originalLocation.z + 1} ${originalLocation.x - 1} ${245 - 1} ${originalLocation.z - 1} barrier [] hollow`);
+                player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
             }
         }
     }
