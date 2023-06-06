@@ -1,4 +1,4 @@
-import { world, Player, system, EntityQueryOptions, Vector } from "@minecraft/server";
+import { world, Player, system, EntityQueryOptions, Vector, Vector3, Dimension } from "@minecraft/server";
 import { sendMsg } from "../../../util";
 
 const freezeDataMap: Map<string, FreezeData> = new Map();
@@ -6,18 +6,20 @@ const freezeDataMap: Map<string, FreezeData> = new Map();
 type FreezeData = {
     player: Player;
     freezeId: number;
-    originalLocation: { x: number; y: number; z: number };
+    originalLocation: Vector3;
+    originalDimension: Dimension;
 };
 
 function freezePlayer(player: Player) {
     // Record the player's original location
     const originalLocation = player.location;
+    const originalDimension = player.dimension;
 
     // Teleport the player to the freezing location
     player.teleport(new Vector(originalLocation.x, 245, originalLocation.z), {
-        dimension: world.getDimension("overworld"),
-        rotation: { x: 0, y: 0 },
-        facingLocation: { x: 0, y: 0, z: 0 },
+        dimension: player.dimension,
+        rotation: player.getRotation(),
+        facingLocation: player.getViewDirection(),
         checkForBlocks: false,
         keepVelocity: false,
     });
@@ -30,6 +32,7 @@ function freezePlayer(player: Player) {
         player,
         freezeId: -1, // Placeholder value, will be updated later
         originalLocation,
+        originalDimension,
     };
     freezeDataMap.set(player.id, freezeData);
 }
@@ -48,11 +51,11 @@ function unfreezePlayer(player: Player) {
     player.runCommand("fill ~1 ~2 ~1 ~-1 ~-1 ~-1 air [] hollow");
 
     // Teleport the player back to their original location
-    const { originalLocation } = freezeData;
+    const { originalLocation, originalDimension } = freezeData;
     player.teleport(originalLocation, {
-        dimension: world.getDimension("overworld"),
-        rotation: { x: 0, y: 0 },
-        facingLocation: { x: 0, y: 0, z: 0 },
+        dimension: originalDimension,
+        rotation: player.getRotation(),
+        facingLocation: player.getViewDirection(),
         checkForBlocks: false,
         keepVelocity: false,
     });
@@ -62,9 +65,9 @@ function unfreezePlayer(player: Player) {
 }
 
 // Function to unfreeze a player by their ID
-function unfreezePlayerById(playerId: string) {
+function unfreezePlayerById(id: string) {
     const player = world.getPlayers().find((check) => {
-        return check.id === playerId;
+        return check.id === id;
     });
     if (!player) {
         return; // Player not found
@@ -84,18 +87,23 @@ const freezePlayers = () => {
     };
     const players = world.getPlayers(filter);
     for (const player of players) {
-        const booleanDataMap = freezeDataMap.has(player?.id);
-        const playerData = freezeDataMap.get(player?.id);
-        if (!booleanDataMap) {
+        const freezeData = freezeDataMap.get(player.id);
+        const hasFreezeTag = player.hasTag("freeze");
+
+        if (!freezeData && hasFreezeTag) {
             freezePlayer(player);
-        } else {
-            const originalLocation = playerData?.originalLocation;
+        } else if (freezeData && !hasFreezeTag) {
+            unfreezePlayer(player);
+        } else if (freezeData && hasFreezeTag) {
+            const originalLocation = freezeData.originalLocation;
             if (!originalLocation) {
                 continue; // Skip this player if freeze data is missing
             }
-            const { x: originalX, y: _, z: originalZ } = originalLocation;
+            const { x: originalX, z: originalZ } = originalLocation;
             const { x: currentX, y: currentY, z: currentZ } = player.location;
             if (Math.floor(currentX) !== Math.floor(originalX) || Math.floor(currentY) !== 245 || Math.floor(currentZ) !== Math.floor(originalZ)) {
+                //
+
                 // Teleport the player to the freezing location
                 player.teleport(new Vector(originalX, 245, originalZ), {
                     dimension: world.getDimension("overworld"),
@@ -111,9 +119,9 @@ const freezePlayers = () => {
     }
 
     // Unfreeze players who no longer have the "freeze" tag
-    for (const playerId of freezeDataMap.keys()) {
+    for (const id of freezeDataMap.keys()) {
         const player = world.getPlayers().find((check) => {
-            return check.id === playerId;
+            return check.id === id;
         });
         if (!player) {
             continue; // Skip this iteration if player is not available
@@ -121,10 +129,10 @@ const freezePlayers = () => {
         try {
             const hasTag = player?.hasTag && player.hasTag("freeze");
             if (!hasTag) {
-                unfreezePlayerById(playerId);
+                unfreezePlayerById(id);
             }
         } catch (error) {
-            console.error(`Error unfreezing player with ID ${playerId}: ${error}`);
+            console.error(`Error unfreezing player with ID ${id}: ${error}`);
         }
     }
 };
