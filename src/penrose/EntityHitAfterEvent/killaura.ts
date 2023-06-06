@@ -7,7 +7,7 @@ function isAttackingFromOutsideView(player1: Player, player2: Player) {
     // Calculate the distance between the two players
     const distance = Math.sqrt(Math.pow(player2.location.x - player1.location.x, 2) + Math.pow(player2.location.y - player1.location.y, 2) + Math.pow(player2.location.z - player1.location.z, 2));
 
-    // Check if the distance is greater than or equal to 1.5 blocks
+    // Check if the distance is greater than or equal to 2 blocks
     if (distance >= 2) {
         // Get the view direction vectors of both players
         const player1ViewDir = player1.getViewDirection();
