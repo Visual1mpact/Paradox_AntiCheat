@@ -4,6 +4,9 @@ import { flag } from "../../util";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 function isAttackingFromOutsideView(player1: Player, player2: Player) {
+    if (!player1 || !player2) {
+        return false; // Invalid player objects
+    }
     // Calculate the distance between the two players
     const distance = Math.sqrt(Math.pow(player2.location.x - player1.location.x, 2) + Math.pow(player2.location.y - player1.location.y, 2) + Math.pow(player2.location.z - player1.location.z, 2));
 
