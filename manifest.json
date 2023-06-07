@@ -5,7 +5,7 @@
         "description": "A utility to fight against malicious hackers on Bedrock Edition ~ v3.1.3",
         "uuid": "54edfea5-ab51-47ca-b992-724e255b5560",
         "version": [3, 1, 3],
-        "min_engine_version": [1, 20, 10]
+        "min_engine_version": [1, 20, 0]
     },
     "metadata": {
         "authors": ["MrDiamond64, Visual1mpact"],
