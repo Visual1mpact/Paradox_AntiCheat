@@ -5,7 +5,7 @@ gamerule randomtickspeed 1
 function checks/others
 
 # Optional checks
-execute as @s[scores={commandblocks=1..}] positioned as @s run function checks/optional/nocommandblocks
+execute as @s[scores={commandblocks=1..}] at @s run function checks/optional/nocommandblocks
 execute as @s[scores={cmds=1..}] at @s run /function checks/optional/overridecommandblocksenabled
 
 # Armor system
