@@ -81,7 +81,7 @@
                                             "value": "player"
                                         },
                                         {
-                                            "test": "is_sneak_held",
+                                            "test": "is_sneaking",
                                             "subject": "other",
                                             "value": false
                                         }
