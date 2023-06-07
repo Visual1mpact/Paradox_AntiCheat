@@ -21,7 +21,6 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "components": {
             "minecraft:damage_sensor": {
                 "triggers": {
@@ -45,7 +44,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 0,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:persistent": {},

@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "dragon_sitting": {
                 "minecraft:behavior.dragonlanding": {
                     "priority": 0
@@ -47,9 +41,13 @@
                 "minecraft:behavior.dragondeath": {
                     "priority": 0
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -108,13 +106,7 @@
                 "emit_flap": true
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "remove": {},
                 "add": {
@@ -143,6 +135,11 @@
                 },
                 "add": {
                     "component_groups": ["dragon_death"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

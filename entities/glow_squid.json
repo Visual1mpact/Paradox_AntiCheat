@@ -7,21 +7,19 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:squid_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
                     "value": 0.5
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -75,11 +73,10 @@
             "minecraft:movement.basic": {},
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
-
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {
                 "mass": 0.5
@@ -105,13 +102,7 @@
                 "is_pushable_by_piston": true
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -127,6 +118,11 @@
                         }
                     }
                 ]
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

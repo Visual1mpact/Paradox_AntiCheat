@@ -45,7 +45,7 @@
                 "height": 0.8
             },
             "minecraft:movement": {
-                "value": 1.0
+                "value": 1
             },
             "minecraft:navigation.walk": {
                 "can_path_over_water": true
@@ -69,9 +69,21 @@
                     {
                         "filters": {
                             "any_of": [
-                                { "test": "is_family", "subject": "other", "value": "player" },
-                                { "test": "is_family", "subject": "other", "value": "irongolem" },
-                                { "test": "is_family", "subject": "other", "value": "wandering_trader" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "player"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "irongolem"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "wandering_trader"
+                                }
                             ]
                         },
                         "max_dist": 70
@@ -79,8 +91,17 @@
                     {
                         "filters": {
                             "all_of": [
-                                { "test": "is_family", "subject": "other", "value": "villager" },
-                                { "test": "has_component", "subject": "other", "operator": "!=", "value": "minecraft:is_baby" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "villager"
+                                },
+                                {
+                                    "test": "has_component",
+                                    "subject": "other",
+                                    "operator": "!=",
+                                    "value": "minecraft:is_baby"
+                                }
                             ]
                         },
                         "max_dist": 70
@@ -90,14 +111,18 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 9,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.look_at_entity": {
                 "priority": 9,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02,
-                "filters": { "test": "is_family", "subject": "other", "value": "mob" }
+                "filters": {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "mob"
+                }
             },
             "minecraft:behavior.hurt_by_target": {
                 "priority": 1

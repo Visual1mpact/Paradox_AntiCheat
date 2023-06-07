@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "zombification_sensor": {
                 "minecraft:environment_sensor": {
                     "triggers": {
@@ -27,7 +21,6 @@
                     }
                 }
             },
-
             "start_zombification": {
                 "minecraft:is_shaking": {},
                 "minecraft:environment_sensor": {
@@ -49,7 +42,6 @@
                     }
                 }
             },
-
             "become_zombie": {
                 "minecraft:transformation": {
                     "into": "minecraft:zoglin",
@@ -57,7 +49,6 @@
                     "keep_level": true
                 }
             },
-
             "angry_hoglin": {
                 "minecraft:angry": {
                     "duration": 10,
@@ -69,14 +60,14 @@
                     },
                     "angry_sound": "angry",
                     "sound_interval": {
-                        "range_min": 2.0,
-                        "range_max": 5.0
+                        "range_min": 2,
+                        "range_max": 5
                     }
                 }
             },
             "attack_cooldown": {
                 "minecraft:attack_cooldown": {
-                    "attack_cooldown_time": [10.0, 15.0],
+                    "attack_cooldown_time": [10, 15],
                     "attack_cooldown_complete_event": {
                         "event": "attack_cooldown_complete_event",
                         "target": "self"
@@ -95,11 +86,11 @@
                     "priority": 4,
                     "speed_multiplier": 1,
                     "track_target": true,
-                    "reach_multiplier": 1.0,
+                    "reach_multiplier": 1,
                     "cooldown_time": 0.75
                 },
                 "minecraft:attack": {
-                    "damage": 1.0
+                    "damage": 1
                 },
                 "minecraft:scale": {
                     "value": 0.5
@@ -111,7 +102,7 @@
                 "minecraft:custom_hit_test": {
                     "hitboxes": [
                         {
-                            "width": 1.0,
+                            "width": 1,
                             "height": 0.85,
                             "pivot": [0, 0.5, 0]
                         }
@@ -134,15 +125,15 @@
                     "family_types": ["piglin"],
                     "seats": [
                         {
-                            "position": [0.0, 0.9, -0.3],
+                            "position": [0, 0.9, -0.3],
                             "lock_rider_rotation": 0
                         },
                         {
-                            "position": [0.0, 2.4, -0.3],
+                            "position": [0, 2.4, -0.3],
                             "lock_rider_rotation": 0
                         },
                         {
-                            "position": [0.0, 3.9, -0.3],
+                            "position": [0, 3.9, -0.3],
                             "lock_rider_rotation": 0
                         }
                     ]
@@ -163,7 +154,7 @@
                 "minecraft:custom_hit_test": {
                     "hitboxes": [
                         {
-                            "width": 2.0,
+                            "width": 2,
                             "height": 1.75,
                             "pivot": [0, 1, 0]
                         }
@@ -237,9 +228,13 @@
                 "minecraft:type_family": {
                     "family": ["hoglin", "hoglin_adult", "hoglin_huntable", "mob"]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:nameable": {},
@@ -256,7 +251,7 @@
             },
             "minecraft:behavior.nearest_attackable_target": {
                 "priority": 4,
-                "within_radius": 16.0,
+                "within_radius": 16,
                 "entity_types": [
                     {
                         "filters": {
@@ -323,8 +318,8 @@
                 ],
                 "avoid_mob_sound": "retreat",
                 "sound_interval": {
-                    "range_min": 2.0,
-                    "range_max": 5.0
+                    "range_min": 2,
+                    "range_max": 5
                 }
             },
             "minecraft:behavior.avoid_block": {
@@ -336,8 +331,8 @@
                 "sprint_speed_modifier": 1,
                 "avoid_block_sound": "retreat",
                 "sound_interval": {
-                    "range_min": 2.0,
-                    "range_max": 5.0
+                    "range_min": 2,
+                    "range_max": 5
                 },
                 "target_selection_method": "nearest",
                 "target_blocks": ["minecraft:warped_fungus", "minecraft:portal", "minecraft:respawn_anchor"],
@@ -357,9 +352,9 @@
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:despawn": {
                 "despawn_from_distance": {}
@@ -373,7 +368,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 8,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:balloonable": {},
@@ -384,13 +379,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -450,7 +439,6 @@
                     "component_groups": ["minecraft:hoglin_adult", "huntable_adult"]
                 }
             },
-
             "become_angry_event": {
                 "add": {
                     "component_groups": ["angry_hoglin"]
@@ -472,6 +460,11 @@
             "attack_cooldown_complete_event": {
                 "remove": {
                     "component_groups": ["attack_cooldown"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

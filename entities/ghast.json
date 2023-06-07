@@ -21,7 +21,6 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {

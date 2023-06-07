@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "scale_small": {
                 "minecraft:scale": {
                     "value": 0.5
@@ -30,7 +24,6 @@
                     "table": "loot_tables/entities/salmon_normal.json"
                 }
             },
-
             "scale_large": {
                 "minecraft:scale": {
                     "value": 1.5
@@ -38,9 +31,13 @@
                 "minecraft:loot": {
                     "table": "loot_tables/entities/salmon_large.json"
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -66,7 +63,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -87,7 +89,7 @@
                 "can_sink": false
             },
             "minecraft:movement.sway": {
-                "sway_amplitude": 0.0
+                "sway_amplitude": 0
             },
             "minecraft:physics": {
                 "has_gravity": false
@@ -123,30 +125,28 @@
                         "max_dist": 3,
                         "max_flee": 10,
                         "walk_speed_multiplier": 1.5,
-                        "sprint_speed_multiplier": 2.0
+                        "sprint_speed_multiplier": 2
                     }
                 ]
             },
             "minecraft:behavior.swim_idle": {
                 "priority": 5,
-                "idle_time": 5.0,
+                "idle_time": 5,
                 "success_rate": 0.1
             },
-
             "minecraft:behavior.random_swim": {
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "priority": 3,
                 "xz_dist": 16,
                 "y_dist": 4,
                 "interval": 0
             },
-
             "minecraft:behavior.swim_wander": {
                 "priority": 4,
                 "interval": 0.0166,
-                "look_ahead": 5.0,
+                "look_ahead": 5,
                 "speed_multiplier": 0.014,
-                "wander_time": 5.0
+                "wander_time": 5
             },
             "minecraft:flocking": {
                 "in_water": true,
@@ -154,30 +154,24 @@
                 "use_center_of_mass": false,
                 "low_flock_limit": 4,
                 "high_flock_limit": 8,
-                "goal_weight": 2.0,
+                "goal_weight": 2,
                 "loner_chance": 0.1,
-                "influence_radius": 3.0,
-                "breach_influence": 7.0,
+                "influence_radius": 3,
+                "breach_influence": 7,
                 "separation_weight": 0.65,
                 "separation_threshold": 0.15,
                 "cohesion_weight": 2.25,
                 "cohesion_threshold": 1.5,
                 "innner_cohesion_threshold": 1.5,
-                "min_height": 4.0,
-                "max_height": 4.0,
-                "block_distance": 1.0,
+                "min_height": 4,
+                "max_height": 4,
+                "block_distance": 1,
                 "block_weight": 0.75
             },
             "minecraft:nameable": {},
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -199,6 +193,11 @@
                         }
                     }
                 ]
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

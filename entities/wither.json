@@ -14,7 +14,6 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -61,7 +60,7 @@
                 "avoid_water": true
             },
             "minecraft:movement.basic": {
-                "max_turn": 180.0
+                "max_turn": 180
             },
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
@@ -82,7 +81,11 @@
                 "priority": 3,
                 "entity_types": [
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "player" },
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "player"
+                        },
                         "max_dist": 70
                     },
                     {
@@ -132,14 +135,13 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
+            "minecraft:entity_spawned": {},
             "paradox:kick": {
                 "add": {
                     "component_groups": ["paradox:kick"]
                 }
-            },
-            "minecraft:entity_spawned": {}
+            }
         }
     }
 }

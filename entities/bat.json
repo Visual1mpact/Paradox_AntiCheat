@@ -14,7 +14,6 @@
                 }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -37,7 +36,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -60,7 +64,7 @@
             "minecraft:behavior.float_wander": {
                 "xz_dist": 10,
                 "y_dist": 7,
-                "y_offset": -2.0,
+                "y_offset": -2,
                 "random_reselect": true,
                 "float_duration": [0.1, 0.35]
             },
@@ -76,7 +80,6 @@
                 "emit_flap": true
             }
         },
-
         "events": {
             "paradox:kick": {
                 "add": {

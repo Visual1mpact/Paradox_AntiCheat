@@ -7,26 +7,24 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "from_explosion": {
                 "minecraft:explode": {
                     "fuse_length": {
                         "range_min": 0.5,
-                        "range_max": 2.0
+                        "range_max": 2
                     },
                     "fuse_lit": true,
                     "power": 4,
                     "causes_fire": false
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:type_family": {
                 "family": ["tnt", "inanimate"]
@@ -35,7 +33,6 @@
                 "width": 0.98,
                 "height": 0.98
             },
-
             "minecraft:explode": {
                 "fuse_length": 4,
                 "fuse_lit": true,
@@ -49,22 +46,21 @@
             },
             "minecraft:conditional_bandwidth_optimization": {
                 "default_values": {
-                    "max_optimized_distance": 80.0,
+                    "max_optimized_distance": 80,
                     "max_dropped_ticks": 5,
                     "use_motion_prediction_hints": true
                 }
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "from_explosion": {
                 "add": {
                     "component_groups": ["from_explosion"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:loot_sheared": {
                 "minecraft:loot": {
                     "table": "loot_tables/entities/sheep_sheared.json"
@@ -28,7 +23,7 @@
                     "seat_count": 1,
                     "family_types": ["zombie"],
                     "seats": {
-                        "position": [0.0, 0.9, 0.0]
+                        "position": [0, 0.9, 0]
                     }
                 }
             },
@@ -37,7 +32,7 @@
                     "seat_count": 1,
                     "family_types": ["zombie"],
                     "seats": {
-                        "position": [0.0, 0.975, 0.0]
+                        "position": [0, 0.975, 0]
                     }
                 }
             },
@@ -59,7 +54,6 @@
                     "speed_multiplier": 1.1
                 }
             },
-
             "minecraft:sheep_adult": {
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -67,7 +61,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 3,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:breedable": {
                     "require_tame": false,
@@ -120,9 +114,13 @@
                 "minecraft:color": {
                     "value": 14
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -144,7 +142,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -166,17 +169,35 @@
                         "cooldown": 2.5,
                         "use_item": false,
                         "hurt_item": 1,
-                        "spawn_items": { "table": "loot_tables/entities/sheep_shear.json" },
+                        "spawn_items": {
+                            "table": "loot_tables/entities/sheep_shear.json"
+                        },
                         "play_sounds": "shear",
                         "interact_text": "action.interact.shear",
                         "vibration": "shear",
                         "on_interact": {
                             "filters": {
                                 "all_of": [
-                                    { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "shears" },
-                                    { "test": "is_family", "subject": "other", "value": "player" },
-                                    { "test": "has_component", "operator": "!=", "value": "minecraft:is_baby" },
-                                    { "test": "has_component", "value": "minecraft:is_dyeable" }
+                                    {
+                                        "test": "has_equipment",
+                                        "subject": "other",
+                                        "domain": "hand",
+                                        "value": "shears"
+                                    },
+                                    {
+                                        "test": "is_family",
+                                        "subject": "other",
+                                        "value": "player"
+                                    },
+                                    {
+                                        "test": "has_component",
+                                        "operator": "!=",
+                                        "value": "minecraft:is_baby"
+                                    },
+                                    {
+                                        "test": "has_component",
+                                        "value": "minecraft:is_dyeable"
+                                    }
                                 ]
                             },
                             "event": "minecraft:on_sheared",
@@ -186,9 +207,9 @@
                 ]
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {
                 "mass": 0.75
@@ -206,7 +227,7 @@
             "minecraft:behavior.mount_pathing": {
                 "priority": 2,
                 "speed_multiplier": 1.5,
-                "target_dist": 0.0,
+                "target_dist": 0,
                 "track_target": true
             },
             "minecraft:behavior.tempt": {
@@ -223,8 +244,14 @@
                 "success_chance": "query.is_baby ? 0.02 : 0.001",
                 "time_until_eat": 1.8,
                 "eat_and_replace_block_pairs": [
-                    { "eat_block": "grass", "replace_block": "dirt" },
-                    { "eat_block": "tallgrass", "replace_block": "air" }
+                    {
+                        "eat_block": "grass",
+                        "replace_block": "dirt"
+                    },
+                    {
+                        "eat_block": "tallgrass",
+                        "replace_block": "air"
+                    }
                 ],
                 "on_eat": {
                     "event": "minecraft:on_eat_block",
@@ -237,7 +264,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 8,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -251,11 +278,6 @@
             "minecraft:conditional_bandwidth_optimization": {}
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -330,7 +352,6 @@
                     "component_groups": ["minecraft:sheep_baby", "minecraft:sheep_dyeable", "minecraft:rideable_sheared"]
                 }
             },
-
             "minecraft:ageable_grow_up": {
                 "remove": {
                     "component_groups": ["minecraft:sheep_baby"]
@@ -376,6 +397,11 @@
             "wololo": {
                 "add": {
                     "component_groups": ["minecraft:sheep_red"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

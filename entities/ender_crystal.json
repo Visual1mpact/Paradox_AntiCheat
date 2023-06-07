@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "crystal_exploding": {
                 "minecraft:explode": {
                     "fuse_length": 0,
@@ -22,9 +16,13 @@
                     "causes_fire": false,
                     "destroy_affected_by_griefing": true
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:collision_box": {
                 "width": 2,
@@ -46,17 +44,16 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:crystal_explode": {
                 "remove": {},
                 "add": {
                     "component_groups": ["crystal_exploding"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

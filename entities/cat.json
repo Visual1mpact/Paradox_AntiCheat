@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:cat_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -27,7 +22,6 @@
                     }
                 }
             },
-
             "minecraft:cat_adult": {
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -41,7 +35,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 3,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:breedable": {
                     "require_tame": true,
@@ -75,13 +69,13 @@
                     "seat_count": 1,
                     "family_types": ["zombie"],
                     "seats": {
-                        "position": [0.0, 0.35, 0.0]
+                        "position": [0, 0.35, 0]
                     }
                 },
                 "minecraft:behavior.nearest_attackable_target": {
                     "priority": 1,
                     "reselect_targets": true,
-                    "within_radius": 16.0,
+                    "within_radius": 16,
                     "entity_types": [
                         {
                             "filters": {
@@ -158,7 +152,7 @@
                 },
                 "minecraft:behavior.follow_owner": {
                     "priority": 4,
-                    "speed_multiplier": 1.0,
+                    "speed_multiplier": 1,
                     "start_distance": 10,
                     "stop_distance": 2
                 },
@@ -167,14 +161,14 @@
                 },
                 "minecraft:behavior.ocelot_sit_on_block": {
                     "priority": 7,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:behavior.pet_sleep_with_owner": {
                     "priority": 2,
                     "speed_multiplier": 1.2,
                     "search_radius": 10,
                     "search_height": 10,
-                    "goal_radius": 1.0
+                    "goal_radius": 1
                 },
                 "minecraft:on_wake_with_owner": {
                     "event": "minecraft:pet_slept_with_owner",
@@ -184,23 +178,27 @@
             "minecraft:cat_gift_for_owner": {
                 "minecraft:behavior.drop_item_for": {
                     "priority": 1,
-                    "seconds_before_pickup": 0.0,
+                    "seconds_before_pickup": 0,
                     "cooldown": 0.25,
                     "drop_item_chance": 0.7,
-                    "offering_distance": 5.0,
-                    "minimum_teleport_distance": 2.0,
-                    "max_head_look_at_height": 10.0,
-                    "target_range": [5.0, 5.0, 5.0],
-                    "teleport_offset": [0.0, 1.0, 0.0],
+                    "offering_distance": 5,
+                    "minimum_teleport_distance": 2,
+                    "max_head_look_at_height": 10,
+                    "target_range": [5, 5, 5],
+                    "teleport_offset": [0, 1, 0],
                     "time_of_day_range": [0.74999, 0.8],
-                    "speed_multiplier": 1.0,
+                    "speed_multiplier": 1,
                     "search_range": 5,
                     "search_height": 2,
                     "search_count": 0,
-                    "goal_radius": 1.0,
+                    "goal_radius": 1,
                     "entity_types": [
                         {
-                            "filters": { "test": "is_family", "subject": "other", "value": "player" },
+                            "filters": {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "player"
+                            },
                             "max_dist": 6
                         }
                     ],
@@ -265,14 +263,18 @@
                 "minecraft:variant": {
                     "value": 10
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {
                 "mass": 0.6
@@ -308,7 +310,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -362,13 +369,13 @@
             },
             "minecraft:behavior.ocelotattack": {
                 "priority": 4,
-                "cooldown_time": 1.0,
-                "x_max_rotation": 30.0,
-                "y_max_head_rotation": 30.0,
-                "max_distance": 15.0,
-                "max_sneak_range": 15.0,
-                "max_sprint_range": 4.0,
-                "reach_multiplier": 2.0,
+                "cooldown_time": 1,
+                "x_max_rotation": 30,
+                "y_max_head_rotation": 30,
+                "max_distance": 15,
+                "max_sneak_range": 15,
+                "max_sprint_range": 4,
+                "reach_multiplier": 2,
                 "sneak_speed_multiplier": 0.6,
                 "sprint_speed_multiplier": 1.33,
                 "walk_speed_multiplier": 0.8
@@ -387,13 +394,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -486,7 +487,6 @@
                     }
                 ]
             },
-
             "minecraft:spawn_from_village": {
                 "sequence": [
                     {
@@ -573,7 +573,6 @@
                     }
                 ]
             },
-
             "minecraft:spawn_midnight_cat": {
                 "sequence": [
                     {
@@ -583,7 +582,6 @@
                     }
                 ]
             },
-
             "minecraft:entity_born": {
                 "sequence": [
                     {
@@ -599,7 +597,6 @@
                     }
                 ]
             },
-
             "minecraft:ageable_grow_up": {
                 "remove": {
                     "component_groups": ["minecraft:cat_baby"]
@@ -630,6 +627,11 @@
             "minecraft:cat_gifted_owner": {
                 "remove": {
                     "component_groups": ["minecraft:cat_gift_for_owner"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

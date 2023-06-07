@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "goat_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -193,6 +188,11 @@
                         "target": "self"
                     }
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
         "components": {
@@ -360,11 +360,6 @@
             }
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -412,6 +407,11 @@
             "attack_cooldown_complete_event": {
                 "remove": {
                     "component_groups": ["attack_cooldown"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

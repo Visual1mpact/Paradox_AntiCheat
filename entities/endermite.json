@@ -31,7 +31,6 @@
                 "suffocate_time": 0
             },
             "minecraft:nameable": {},
-
             "minecraft:type_family": {
                 "family": ["endermite", "arthropod", "monster", "lightweight", "mob"]
             },
@@ -39,7 +38,6 @@
                 "width": 0.4,
                 "height": 0.3
             },
-
             "minecraft:movement": {
                 "value": 0.25
             },
@@ -56,7 +54,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -71,16 +74,14 @@
             "minecraft:behavior.float": {
                 "priority": 0
             },
-
             "minecraft:behavior.melee_attack": {
                 "priority": 3,
                 "track_target": true
             },
-
             "minecraft:behavior.nearest_attackable_target": {
                 "priority": 5,
                 "must_see": true,
-                "within_radius": 16.0,
+                "within_radius": 16,
                 "entity_types": [
                     {
                         "filters": {

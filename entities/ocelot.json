@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:ocelot_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -28,7 +22,6 @@
                     }
                 }
             },
-
             "minecraft:ocelot_adult": {
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -96,14 +89,14 @@
                     "seat_count": 1,
                     "family_types": ["zombie"],
                     "seats": {
-                        "position": [0.0, 0.35, 0.0]
+                        "position": [0, 0.35, 0]
                     }
                 }
             },
             "minecraft:ocelot_trusting": {
                 "minecraft:behavior.breed": {
                     "priority": 3,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:behavior.tempt": {
                     "priority": 4,
@@ -124,7 +117,6 @@
                     "breed_items": ["fish", "salmon"]
                 }
             },
-
             "minecraft:ocelot_tame": {
                 "minecraft:is_tamed": {},
                 "minecraft:health": {
@@ -134,7 +126,7 @@
                 "minecraft:sittable": {},
                 "minecraft:behavior.follow_owner": {
                     "priority": 4,
-                    "speed_multiplier": 1.0,
+                    "speed_multiplier": 1,
                     "start_distance": 10,
                     "stop_distance": 2
                 },
@@ -143,11 +135,15 @@
                 },
                 "minecraft:behavior.ocelot_sit_on_block": {
                     "priority": 6,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
+                }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:health": {
@@ -157,7 +153,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -249,13 +250,13 @@
             },
             "minecraft:behavior.ocelotattack": {
                 "priority": 4,
-                "cooldown_time": 1.0,
-                "x_max_rotation": 30.0,
-                "y_max_head_rotation": 30.0,
-                "max_distance": 15.0,
-                "max_sneak_range": 15.0,
-                "max_sprint_range": 4.0,
-                "reach_multiplier": 2.0,
+                "cooldown_time": 1,
+                "x_max_rotation": 30,
+                "y_max_head_rotation": 30,
+                "max_distance": 15,
+                "max_sneak_range": 15,
+                "max_sprint_range": 4,
+                "reach_multiplier": 2,
                 "sneak_speed_multiplier": 0.6,
                 "sprint_speed_multiplier": 1.33,
                 "walk_speed_multiplier": 0.8
@@ -268,9 +269,9 @@
                 "priority": 9
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0,
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10,
                 "on_leash": {
                     "event": "minecraft:on_leash",
                     "target": "self"
@@ -290,13 +291,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -319,7 +314,6 @@
                     }
                 ]
             },
-
             "minecraft:entity_born": {
                 "sequence": [
                     {
@@ -330,7 +324,6 @@
                     }
                 ]
             },
-
             "minecraft:entity_born_wild": {
                 "remove": {
                     "component_groups": ["minecraft:ocelot_trusting"]
@@ -339,7 +332,6 @@
                     "component_groups": ["minecraft:ocelot_baby", "minecraft:ocelot_wild"]
                 }
             },
-
             "minecraft:ageable_grow_up": {
                 "remove": {
                     "component_groups": ["minecraft:ocelot_baby"]
@@ -362,7 +354,6 @@
                     }
                 ]
             },
-
             "minecraft:on_leash": {
                 "add": {
                     "component_groups": ["minecraft:ocelot_leashed"]
@@ -371,6 +362,11 @@
             "minecraft:on_unleash": {
                 "remove": {
                     "component_groups": ["minecraft:ocelot_leashed"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

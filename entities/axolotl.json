@@ -7,16 +7,10 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "attack_cooldown": {
                 "minecraft:attack_cooldown": {
-                    "attack_cooldown_time": 120.0,
+                    "attack_cooldown_time": 120,
                     "attack_cooldown_complete_event": {
                         "event": "attack_cooldown_complete_event",
                         "target": "self"
@@ -24,21 +18,30 @@
                 }
             },
             "axolotl_lucy": {
-                "minecraft:variant": { "value": 0 }
+                "minecraft:variant": {
+                    "value": 0
+                }
             },
             "axolotl_cyan": {
-                "minecraft:variant": { "value": 1 }
+                "minecraft:variant": {
+                    "value": 1
+                }
             },
             "axolotl_gold": {
-                "minecraft:variant": { "value": 2 }
+                "minecraft:variant": {
+                    "value": 2
+                }
             },
             "axolotl_wild": {
-                "minecraft:variant": { "value": 3 }
+                "minecraft:variant": {
+                    "value": 3
+                }
             },
             "axolotl_blue": {
-                "minecraft:variant": { "value": 4 }
+                "minecraft:variant": {
+                    "value": 4
+                }
             },
-
             "axolotl_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -65,7 +68,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 1,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:breedable": {
                     "require_tame": false,
@@ -84,12 +87,15 @@
                     }
                 }
             },
-
             "axolotl_in_water": {
                 "minecraft:environment_sensor": {
                     "triggers": [
                         {
-                            "filters": { "test": "in_water", "operator": "!=", "value": true },
+                            "filters": {
+                                "test": "in_water",
+                                "operator": "!=",
+                                "value": true
+                            },
                             "event": "start_drying_out"
                         }
                     ]
@@ -120,18 +126,30 @@
                 "minecraft:environment_sensor": {
                     "triggers": [
                         {
-                            "filters": { "test": "in_water_or_rain", "operator": "!=", "value": true },
+                            "filters": {
+                                "test": "in_water_or_rain",
+                                "operator": "!=",
+                                "value": true
+                            },
                             "event": "start_drying_out"
                         },
                         {
-                            "filters": { "test": "in_water", "operator": "==", "value": true },
+                            "filters": {
+                                "test": "in_water",
+                                "operator": "==",
+                                "value": true
+                            },
                             "event": "enter_water"
                         }
                     ]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -156,7 +174,7 @@
                 "triggers": {
                     "cause": "lightning",
                     "deals_damage": true,
-                    "damage_multiplier": 2000.0
+                    "damage_multiplier": 2000
                 }
             },
             "minecraft:hurt_on_condition": {
@@ -182,7 +200,7 @@
                 "avoid_damage_blocks": true
             },
             "minecraft:movement.amphibious": {
-                "max_turn": 15.0
+                "max_turn": 15
             },
             "minecraft:movement": {
                 "value": 0.1
@@ -197,9 +215,9 @@
                 "is_pushable_by_piston": true
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:despawn": {
                 "despawn_from_distance": {}
@@ -208,7 +226,6 @@
                 "damage": 2
             },
             "minecraft:combat_regeneration": {},
-
             "minecraft:behavior.play_dead": {
                 "priority": 0,
                 "duration": 10,
@@ -217,7 +234,11 @@
                 "random_damage_range": [0, 2],
                 "damage_sources": ["contact", "entity_attack", "entity_explosion", "magic", "projectile", "thorns", "wither"],
                 "apply_regeneration": true,
-                "filters": { "test": "in_water", "operator": "==", "value": true }
+                "filters": {
+                    "test": "in_water",
+                    "operator": "==",
+                    "value": true
+                }
             },
             "minecraft:behavior.tempt": {
                 "priority": 2,
@@ -229,19 +250,40 @@
                 "priority": 3,
                 "must_see": true,
                 "reselect_targets": true,
-                "within_radius": 20.0,
-                "must_see_forget_duration": 17.0,
+                "within_radius": 20,
+                "must_see_forget_duration": 17,
                 "entity_types": [
                     {
                         "filters": {
                             "all_of": [
-                                { "test": "in_water", "subject": "other", "value": true },
-                                { "test": "has_component", "subject": "self", "operator": "!=", "value": "minecraft:attack_cooldown" },
+                                {
+                                    "test": "in_water",
+                                    "subject": "other",
+                                    "value": true
+                                },
+                                {
+                                    "test": "has_component",
+                                    "subject": "self",
+                                    "operator": "!=",
+                                    "value": "minecraft:attack_cooldown"
+                                },
                                 {
                                     "any_of": [
-                                        { "test": "is_family", "subject": "other", "value": "squid" },
-                                        { "test": "is_family", "subject": "other", "value": "fish" },
-                                        { "test": "is_family", "subject": "other", "value": "tadpole" }
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "squid"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "fish"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "tadpole"
+                                        }
                                     ]
                                 }
                             ]
@@ -251,12 +293,28 @@
                     {
                         "filters": {
                             "all_of": [
-                                { "test": "in_water", "subject": "other", "value": true },
+                                {
+                                    "test": "in_water",
+                                    "subject": "other",
+                                    "value": true
+                                },
                                 {
                                     "any_of": [
-                                        { "test": "is_family", "subject": "other", "value": "drowned" },
-                                        { "test": "is_family", "subject": "other", "value": "guardian" },
-                                        { "test": "is_family", "subject": "other", "value": "guardian_elder" }
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "drowned"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "guardian"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "guardian_elder"
+                                        }
                                     ]
                                 }
                             ]
@@ -281,7 +339,7 @@
             },
             "minecraft:behavior.swim_idle": {
                 "priority": 7,
-                "idle_time": 5.0,
+                "idle_time": 5,
                 "success_rate": 0.05
             },
             "minecraft:behavior.random_swim": {
@@ -296,17 +354,11 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 10,
-                "target_distance": 6.0,
+                "target_distance": 6,
                 "probability": 0.02
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -370,16 +422,20 @@
                             "operator": "!=",
                             "value": "minecraft:variant"
                         },
-                        "add": { "component_groups": ["axolotl_blue"] }
+                        "add": {
+                            "component_groups": ["axolotl_blue"]
+                        }
                     }
                 ]
             },
-
             "minecraft:ageable_grow_up": {
-                "remove": { "component_groups": ["axolotl_baby"] },
-                "add": { "component_groups": ["axolotl_adult"] }
+                "remove": {
+                    "component_groups": ["axolotl_baby"]
+                },
+                "add": {
+                    "component_groups": ["axolotl_adult"]
+                }
             },
-
             "stop_drying_out": {
                 "remove": {
                     "component_groups": ["axolotl_on_land", "axolotl_dried"]
@@ -412,6 +468,11 @@
                 },
                 "add": {
                     "component_groups": ["axolotl_in_water"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

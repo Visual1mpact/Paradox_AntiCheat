@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:slime_large": {
                 "minecraft:variant": {
                     "value": 4
@@ -38,14 +33,25 @@
                     "cause": "entity_attack",
                     "entity_filter": {
                         "any_of": [
-                            { "test": "is_family", "subject": "other", "value": "player" },
-                            { "test": "is_family", "subject": "other", "value": "irongolem" },
-                            { "test": "is_family", "subject": "other", "value": "snowgolem" }
+                            {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "player"
+                            },
+                            {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "irongolem"
+                            },
+                            {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "snowgolem"
+                            }
                         ]
                     }
                 }
             },
-
             "minecraft:slime_medium": {
                 "minecraft:variant": {
                     "value": 2
@@ -71,14 +77,25 @@
                     "cause": "entity_attack",
                     "entity_filter": {
                         "any_of": [
-                            { "test": "is_family", "subject": "other", "value": "player" },
-                            { "test": "is_family", "subject": "other", "value": "irongolem" },
-                            { "test": "is_family", "subject": "other", "value": "snowgolem" }
+                            {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "player"
+                            },
+                            {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "irongolem"
+                            },
+                            {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "snowgolem"
+                            }
                         ]
                     }
                 }
             },
-
             "minecraft:slime_small": {
                 "minecraft:variant": {
                     "value": 1
@@ -101,7 +118,6 @@
                     "table": "loot_tables/entities/slime.json"
                 }
             },
-
             "minecraft:slime_calm": {
                 "minecraft:movement.jump": {
                     "jump_delay": [0.5, 1.5]
@@ -111,9 +127,13 @@
                 "minecraft:movement.jump": {
                     "jump_delay": [0.16, 0.5]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:collision_box": {
                 "width": 2.08,
@@ -139,7 +159,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -172,11 +197,11 @@
                 "priority": 4,
                 "add_random_time_range": 3,
                 "turn_range": 360,
-                "min_change_direction_time": 2.0
+                "min_change_direction_time": 2
             },
             "minecraft:behavior.slime_keep_on_jumping": {
                 "priority": 5,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.nearest_attackable_target": {
                 "priority": 2,
@@ -213,13 +238,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -259,6 +278,11 @@
             "minecraft:become_aggressive": {
                 "add": {
                     "component_groups": ["minecraft:slime_aggressive"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

@@ -7,14 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
-
             "minecraft:tropicalfish_variant_a": {
                 "minecraft:variant": {
                     "value": 0
@@ -25,7 +18,6 @@
                     "value": 1
                 }
             },
-
             "minecraft:tropicalfish_variant_pattern_1": {
                 "minecraft:mark_variant": {
                     "value": 0
@@ -56,7 +48,6 @@
                     "value": 5
                 }
             },
-
             "minecraft:tropicalfish_base_white": {
                 "minecraft:color": {
                     "value": 0
@@ -132,7 +123,6 @@
                     "value": 14
                 }
             },
-
             "minecraft:tropicalfish_pattern_white": {
                 "minecraft:color2": {
                     "value": 0
@@ -208,7 +198,6 @@
                     "value": 14
                 }
             },
-
             "minecraft:anenonme": {
                 "minecraft:variant": {
                     "value": 1
@@ -516,9 +505,13 @@
                 "minecraft:color2": {
                     "value": 4
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -538,7 +531,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -571,7 +569,7 @@
                 "can_sink": false
             },
             "minecraft:movement.sway": {
-                "sway_amplitude": 0.0
+                "sway_amplitude": 0
             },
             "minecraft:physics": {
                 "has_gravity": false
@@ -588,12 +586,12 @@
             },
             "minecraft:behavior.swim_idle": {
                 "priority": 5,
-                "idle_time": 5.0,
+                "idle_time": 5,
                 "success_rate": 0.1
             },
             "minecraft:behavior.random_swim": {
                 "priority": 3,
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "xz_dist": 16,
                 "y_dist": 4,
                 "interval": 0
@@ -618,16 +616,16 @@
                         },
                         "max_dist": 6,
                         "walk_speed_multiplier": 1.5,
-                        "sprint_speed_multiplier": 2.0
+                        "sprint_speed_multiplier": 2
                     }
                 ]
             },
             "minecraft:behavior.swim_wander": {
                 "priority": 4,
                 "interval": 0.1,
-                "look_ahead": 2.0,
-                "speed_multiplier": 1.0,
-                "wander_time": 5.0
+                "look_ahead": 2,
+                "speed_multiplier": 1,
+                "wander_time": 5
             },
             "minecraft:flocking": {
                 "in_water": true,
@@ -635,97 +633,134 @@
                 "use_center_of_mass": false,
                 "low_flock_limit": 4,
                 "high_flock_limit": 8,
-                "goal_weight": 2.0,
+                "goal_weight": 2,
                 "loner_chance": 0.1,
-                "influence_radius": 3.0,
-                "breach_influence": 7.0,
+                "influence_radius": 3,
+                "breach_influence": 7,
                 "separation_weight": 0.65,
                 "separation_threshold": 0.15,
                 "cohesion_weight": 2.75,
                 "cohesion_threshold": 1.5,
                 "innner_cohesion_threshold": 1.5,
                 "min_height": 1.5,
-                "max_height": 6.0,
-                "block_distance": 2.0,
+                "max_height": 6,
+                "block_distance": 2,
                 "block_weight": 0.85
             },
             "minecraft:nameable": {},
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
+            "minecraft:become_anenonme": {
                 "add": {
-                    "component_groups": ["paradox:kick"]
+                    "component_groups": ["minecraft:anenonme"]
                 }
             },
-            "minecraft:become_anenonme": {
-                "add": { "component_groups": ["minecraft:anenonme"] }
-            },
             "minecraft:become_black_tang": {
-                "add": { "component_groups": ["minecraft:black_tang"] }
+                "add": {
+                    "component_groups": ["minecraft:black_tang"]
+                }
             },
             "minecraft:become_blue_dory": {
-                "add": { "component_groups": ["minecraft:blue_dory"] }
+                "add": {
+                    "component_groups": ["minecraft:blue_dory"]
+                }
             },
             "minecraft:become_butterfly_fish": {
-                "add": { "component_groups": ["minecraft:butterfly_fish"] }
+                "add": {
+                    "component_groups": ["minecraft:butterfly_fish"]
+                }
             },
             "minecraft:become_cichlid": {
-                "add": { "component_groups": ["minecraft:cichlid"] }
+                "add": {
+                    "component_groups": ["minecraft:cichlid"]
+                }
             },
             "minecraft:become_clownfish": {
-                "add": { "component_groups": ["minecraft:clownfish"] }
+                "add": {
+                    "component_groups": ["minecraft:clownfish"]
+                }
             },
             "minecraft:become_cc_betta": {
-                "add": { "component_groups": ["minecraft:cc_betta"] }
+                "add": {
+                    "component_groups": ["minecraft:cc_betta"]
+                }
             },
             "minecraft:become_dog_fish": {
-                "add": { "component_groups": ["minecraft:dog_fish"] }
+                "add": {
+                    "component_groups": ["minecraft:dog_fish"]
+                }
             },
             "minecraft:become_e_red_snapper": {
-                "add": { "component_groups": ["minecraft:e_red_snapper"] }
+                "add": {
+                    "component_groups": ["minecraft:e_red_snapper"]
+                }
             },
             "minecraft:become_goat_fish": {
-                "add": { "component_groups": ["minecraft:goat_fish"] }
+                "add": {
+                    "component_groups": ["minecraft:goat_fish"]
+                }
             },
             "minecraft:become_moorish_idol": {
-                "add": { "component_groups": ["minecraft:moorish_idol"] }
+                "add": {
+                    "component_groups": ["minecraft:moorish_idol"]
+                }
             },
             "minecraft:become_ornate_butterfly": {
-                "add": { "component_groups": ["minecraft:ornate_butterfly"] }
+                "add": {
+                    "component_groups": ["minecraft:ornate_butterfly"]
+                }
             },
             "minecraft:become_parrot_fish": {
-                "add": { "component_groups": ["minecraft:parrot_fish"] }
+                "add": {
+                    "component_groups": ["minecraft:parrot_fish"]
+                }
             },
             "minecraft:become_queen_angel_fish": {
-                "add": { "component_groups": ["minecraft:queen_angel_fish"] }
+                "add": {
+                    "component_groups": ["minecraft:queen_angel_fish"]
+                }
             },
             "minecraft:become_red_cichlid": {
-                "add": { "component_groups": ["minecraft:red_cichlid"] }
+                "add": {
+                    "component_groups": ["minecraft:red_cichlid"]
+                }
             },
             "minecraft:become_red_lipped_benny": {
-                "add": { "component_groups": ["minecraft:red_lipped_benny"] }
+                "add": {
+                    "component_groups": ["minecraft:red_lipped_benny"]
+                }
             },
             "minecraft:become_red_snapper": {
-                "add": { "component_groups": ["minecraft:red_snapper"] }
+                "add": {
+                    "component_groups": ["minecraft:red_snapper"]
+                }
             },
             "minecraft:become_threadfin": {
-                "add": { "component_groups": ["minecraft:threadfin"] }
+                "add": {
+                    "component_groups": ["minecraft:threadfin"]
+                }
             },
             "minecraft:become_tomato_clown": {
-                "add": { "component_groups": ["minecraft:tomato_clown"] }
+                "add": {
+                    "component_groups": ["minecraft:tomato_clown"]
+                }
             },
             "minecraft:become_triggerfish": {
-                "add": { "component_groups": ["minecraft:triggerfish"] }
+                "add": {
+                    "component_groups": ["minecraft:triggerfish"]
+                }
             },
             "minecraft:become_yellow_tang": {
-                "add": { "component_groups": ["minecraft:yellow_tang"] }
+                "add": {
+                    "component_groups": ["minecraft:yellow_tang"]
+                }
             },
             "minecraft:become_yellow_tail_parrot": {
-                "add": { "component_groups": ["minecraft:yellow_tail_parrot"] }
+                "add": {
+                    "component_groups": ["minecraft:yellow_tail_parrot"]
+                }
             },
-
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -978,6 +1013,11 @@
                         ]
                     }
                 ]
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

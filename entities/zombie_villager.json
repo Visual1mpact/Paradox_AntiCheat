@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "become_zombie_villager_v2": {
                 "minecraft:transformation": {
                     "into": "minecraft:zombie_villager_v2",
@@ -31,7 +26,6 @@
                     "value": 0.35
                 }
             },
-
             "adult": {
                 "minecraft:experience_reward": {
                     "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
@@ -43,28 +37,25 @@
                     "seat_count": 1,
                     "family_types": ["zombie"],
                     "seats": {
-                        "position": [0.0, 1.1, -0.35]
+                        "position": [0, 1.1, -0.35]
                     }
                 },
                 "minecraft:behavior.mount_pathing": {
                     "priority": 5,
                     "speed_multiplier": 1.25,
-                    "target_dist": 0.0,
+                    "target_dist": 0,
                     "track_target": true
                 }
             },
-
             "jockey": {
                 "minecraft:behavior.find_mount": {
                     "priority": 1,
                     "within_radius": 16
                 }
             },
-
             "can_break_doors": {
                 "minecraft:annotation.break_door": {}
             },
-
             "from_abandoned_village": {
                 "minecraft:navigation.walk": {
                     "is_amphibious": true,
@@ -78,7 +69,6 @@
                     "speed_multiplier": 1
                 }
             },
-
             "to_villager": {
                 "minecraft:transformation": {
                     "into": "minecraft:villager",
@@ -107,7 +97,6 @@
                 },
                 "minecraft:is_shaking": {}
             },
-
             "farmer": {
                 "minecraft:type_family": {
                     "family": ["farmer", "zombie", "zombie_villager", "undead", "monster", "mob"]
@@ -140,7 +129,6 @@
                     "value": 0
                 }
             },
-
             "librarian": {
                 "minecraft:type_family": {
                     "family": ["librarian", "zombie_villager", "zombie", "undead", "monster", "mob"]
@@ -149,7 +137,6 @@
                     "value": 1
                 }
             },
-
             "cartographer": {
                 "minecraft:type_family": {
                     "family": ["cartographer", "zombie_villager", "zombie", "undead", "monster", "mob"]
@@ -158,7 +145,6 @@
                     "value": 1
                 }
             },
-
             "cleric": {
                 "minecraft:type_family": {
                     "family": ["cleric", "zombie_villager", "zombie", "undead", "monster", "mob"]
@@ -167,7 +153,6 @@
                     "value": 2
                 }
             },
-
             "armorer": {
                 "minecraft:type_family": {
                     "family": ["armorer", "zombie_villager", "zombie", "undead", "monster", "mob"]
@@ -192,7 +177,6 @@
                     "value": 3
                 }
             },
-
             "butcher": {
                 "minecraft:type_family": {
                     "family": ["butcher", "zombie_villager", "zombie", "undead", "monster", "mob"]
@@ -208,12 +192,15 @@
                 "minecraft:variant": {
                     "value": 4
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
-
             "minecraft:navigation.walk": {
                 "is_amphibious": true,
                 "can_pass_doors": true,
@@ -237,7 +224,6 @@
                 "height": 1.9
             },
             "minecraft:burns_in_daylight": {},
-
             "minecraft:health": {
                 "value": 20,
                 "max": 20
@@ -469,7 +455,6 @@
                     }
                 ]
             },
-
             "minecraft:interact": {
                 "interactions": {
                     "on_interact": {
@@ -498,7 +483,6 @@
             "minecraft:despawn": {
                 "despawn_from_distance": {}
             },
-
             "minecraft:behavior.melee_attack": {
                 "priority": 6
             },
@@ -517,7 +501,7 @@
                 "priority": 8,
                 "max_dist": 3,
                 "goal_radius": 2,
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "pickup_based_on_chance": true,
                 "can_pickup_any_item": true,
                 "excluded_items": ["minecraft:glow_ink_sac"]
@@ -609,13 +593,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "villager_converted": {
                 "remove": {},
                 "add": {
@@ -625,7 +603,11 @@
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
-                        "filters": { "test": "has_component", "operator": "!=", "value": "minecraft:variant" },
+                        "filters": {
+                            "test": "has_component",
+                            "operator": "!=",
+                            "value": "minecraft:variant"
+                        },
                         "randomize": [
                             {
                                 "weight": 9500,
@@ -651,55 +633,83 @@
                         ]
                     },
                     {
-                        "filters": { "test": "has_component", "operator": "!=", "value": "minecraft:variant" },
+                        "filters": {
+                            "test": "has_component",
+                            "operator": "!=",
+                            "value": "minecraft:variant"
+                        },
                         "randomize": [
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["farmer"] }
+                                "add": {
+                                    "component_groups": ["farmer"]
+                                }
                             },
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["fisherman"] }
+                                "add": {
+                                    "component_groups": ["fisherman"]
+                                }
                             },
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["shepherd"] }
+                                "add": {
+                                    "component_groups": ["shepherd"]
+                                }
                             },
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["fletcher"] }
+                                "add": {
+                                    "component_groups": ["fletcher"]
+                                }
                             },
                             {
                                 "weight": 20,
-                                "add": { "component_groups": ["librarian"] }
+                                "add": {
+                                    "component_groups": ["librarian"]
+                                }
                             },
                             {
                                 "weight": 20,
-                                "add": { "component_groups": ["cartographer"] }
+                                "add": {
+                                    "component_groups": ["cartographer"]
+                                }
                             },
                             {
                                 "weight": 20,
-                                "add": { "component_groups": ["cleric"] }
+                                "add": {
+                                    "component_groups": ["cleric"]
+                                }
                             },
                             {
                                 "weight": 6,
-                                "add": { "component_groups": ["armorer"] }
+                                "add": {
+                                    "component_groups": ["armorer"]
+                                }
                             },
                             {
                                 "weight": 6,
-                                "add": { "component_groups": ["weaponsmith"] }
+                                "add": {
+                                    "component_groups": ["weaponsmith"]
+                                }
                             },
                             {
                                 "weight": 6,
-                                "add": { "component_groups": ["toolsmith"] }
+                                "add": {
+                                    "component_groups": ["toolsmith"]
+                                }
                             },
                             {
                                 "weight": 10,
-                                "add": { "component_groups": ["butcher"] }
+                                "add": {
+                                    "component_groups": ["butcher"]
+                                }
                             },
                             {
                                 "weight": 10,
-                                "add": { "component_groups": ["leatherworker"] }
+                                "add": {
+                                    "component_groups": ["leatherworker"]
+                                }
                             }
                         ]
                     },
@@ -718,86 +728,161 @@
                     }
                 ]
             },
-
             "minecraft:entity_transformed": {
-                "filters": { "test": "has_component", "operator": "!=", "value": "minecraft:variant" },
+                "filters": {
+                    "test": "has_component",
+                    "operator": "!=",
+                    "value": "minecraft:variant"
+                },
                 "sequence": [
                     {
-                        "filters": { "test": "has_component", "subject": "other", "value": "minecraft:is_baby" },
-                        "add": { "component_groups": ["baby"] }
+                        "filters": {
+                            "test": "has_component",
+                            "subject": "other",
+                            "value": "minecraft:is_baby"
+                        },
+                        "add": {
+                            "component_groups": ["baby"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "has_component", "subject": "other", "operator": "!=", "value": "minecraft:is_baby" },
-                        "add": { "component_groups": ["adult"] }
+                        "filters": {
+                            "test": "has_component",
+                            "subject": "other",
+                            "operator": "!=",
+                            "value": "minecraft:is_baby"
+                        },
+                        "add": {
+                            "component_groups": ["adult"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "farmer" },
-                        "add": { "component_groups": ["farmer"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "farmer"
+                        },
+                        "add": {
+                            "component_groups": ["farmer"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "fisherman" },
-                        "add": { "component_groups": ["fisherman"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "fisherman"
+                        },
+                        "add": {
+                            "component_groups": ["fisherman"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "shepherd" },
-                        "add": { "component_groups": ["shepherd"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "shepherd"
+                        },
+                        "add": {
+                            "component_groups": ["shepherd"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "fletcher" },
-                        "add": { "component_groups": ["fletcher"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "fletcher"
+                        },
+                        "add": {
+                            "component_groups": ["fletcher"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "librarian" },
-                        "add": { "component_groups": ["librarian"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "librarian"
+                        },
+                        "add": {
+                            "component_groups": ["librarian"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "cartographer" },
-                        "add": { "component_groups": ["cartographer"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "cartographer"
+                        },
+                        "add": {
+                            "component_groups": ["cartographer"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "cleric" },
-                        "add": { "component_groups": ["cleric"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "cleric"
+                        },
+                        "add": {
+                            "component_groups": ["cleric"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "armorer" },
-                        "add": { "component_groups": ["armorer"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "armorer"
+                        },
+                        "add": {
+                            "component_groups": ["armorer"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "weaponsmith" },
-                        "add": { "component_groups": ["weaponsmith"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "weaponsmith"
+                        },
+                        "add": {
+                            "component_groups": ["weaponsmith"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "toolsmith" },
-                        "add": { "component_groups": ["toolsmith"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "toolsmith"
+                        },
+                        "add": {
+                            "component_groups": ["toolsmith"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "butcher" },
-                        "add": { "component_groups": ["butcher"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "butcher"
+                        },
+                        "add": {
+                            "component_groups": ["butcher"]
+                        }
                     },
-
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "leatherworker" },
-                        "add": { "component_groups": ["leatherworker"] }
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "leatherworker"
+                        },
+                        "add": {
+                            "component_groups": ["leatherworker"]
+                        }
                     }
                 ]
             },
-
             "minecraft:become_cleric": {
-                "add": { "component_groups": ["cleric"] }
+                "add": {
+                    "component_groups": ["cleric"]
+                }
             },
-
             "from_village": {
                 "sequence": [
                     {
@@ -839,56 +924,89 @@
                         "randomize": [
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["farmer"] }
+                                "add": {
+                                    "component_groups": ["farmer"]
+                                }
                             },
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["fisherman"] }
+                                "add": {
+                                    "component_groups": ["fisherman"]
+                                }
                             },
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["shepherd"] }
+                                "add": {
+                                    "component_groups": ["shepherd"]
+                                }
                             },
                             {
                                 "weight": 5,
-                                "add": { "component_groups": ["fletcher"] }
+                                "add": {
+                                    "component_groups": ["fletcher"]
+                                }
                             },
                             {
                                 "weight": 20,
-                                "add": { "component_groups": ["librarian"] }
+                                "add": {
+                                    "component_groups": ["librarian"]
+                                }
                             },
                             {
                                 "weight": 20,
-                                "add": { "component_groups": ["cartographer"] }
+                                "add": {
+                                    "component_groups": ["cartographer"]
+                                }
                             },
                             {
                                 "weight": 20,
-                                "add": { "component_groups": ["cleric"] }
+                                "add": {
+                                    "component_groups": ["cleric"]
+                                }
                             },
                             {
                                 "weight": 6,
-                                "add": { "component_groups": ["armorer"] }
+                                "add": {
+                                    "component_groups": ["armorer"]
+                                }
                             },
                             {
                                 "weight": 6,
-                                "add": { "component_groups": ["weaponsmith"] }
+                                "add": {
+                                    "component_groups": ["weaponsmith"]
+                                }
                             },
                             {
                                 "weight": 6,
-                                "add": { "component_groups": ["toolsmith"] }
+                                "add": {
+                                    "component_groups": ["toolsmith"]
+                                }
                             },
                             {
                                 "weight": 10,
-                                "add": { "component_groups": ["butcher"] }
+                                "add": {
+                                    "component_groups": ["butcher"]
+                                }
                             },
                             {
                                 "weight": 10,
-                                "add": { "component_groups": ["leatherworker"] }
+                                "add": {
+                                    "component_groups": ["leatherworker"]
+                                }
                             }
                         ]
                     },
-                    { "add": { "component_groups": ["from_abandoned_village"] } }
+                    {
+                        "add": {
+                            "component_groups": ["from_abandoned_village"]
+                        }
+                    }
                 ]
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

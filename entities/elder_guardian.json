@@ -50,7 +50,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -81,15 +86,27 @@
                     {
                         "filters": {
                             "any_of": [
-                                { "test": "is_family", "subject": "other", "value": "player" },
-                                { "test": "is_family", "subject": "other", "value": "squid" },
-                                { "test": "is_family", "subject": "other", "value": "axolotl" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "player"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "squid"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "axolotl"
+                                }
                             ]
                         },
                         "max_dist": 16
                     }
                 ],
-                "attack_interval_min": 1.0,
+                "attack_interval_min": 1,
                 "must_see": true
             },
             "minecraft:behavior.guardian_attack": {
@@ -97,7 +114,7 @@
             },
             "minecraft:behavior.move_towards_home_restriction": {
                 "priority": 5,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.random_swim": {
                 "priority": 7,
@@ -106,7 +123,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 8,
-                "look_distance": 12.0,
+                "look_distance": 12,
                 "probability": 0.01
             },
             "minecraft:behavior.random_look_around": {

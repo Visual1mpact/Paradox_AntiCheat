@@ -8,14 +8,9 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "emerging": {
                 "minecraft:behavior.emerge": {
-                    "duration": 7.0,
+                    "duration": 7,
                     "on_done": {
                         "event": "minecraft:emerged",
                         "target": "self"
@@ -26,6 +21,11 @@
                 "minecraft:pushable": {
                     "is_pushable": true,
                     "is_pushable_by_piston": true
+                }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
             }
         },
@@ -48,17 +48,33 @@
                 "angry_threshold": 80,
                 "remove_targets_below_angry_threshold": true,
                 "angry_boost": 20,
-                "anger_decrement_interval": 1.0,
+                "anger_decrement_interval": 1,
                 "default_annoyingness": 35,
                 "default_projectile_annoyingness": 10,
                 "on_increase_sounds": [
-                    { "sound": "listening_angry", "condition": "query.anger_level(this) >= 40" },
-                    { "sound": "listening", "condition": "query.anger_level(this) >= 0" }
+                    {
+                        "sound": "listening_angry",
+                        "condition": "query.anger_level(this) >= 40"
+                    },
+                    {
+                        "sound": "listening",
+                        "condition": "query.anger_level(this) >= 0"
+                    }
                 ],
                 "nuisance_filter": {
                     "all_of": [
-                        { "test": "is_family", "subject": "other", "operator": "not", "value": "warden" },
-                        { "test": "is_family", "subject": "other", "operator": "not", "value": "inanimate" }
+                        {
+                            "test": "is_family",
+                            "subject": "other",
+                            "operator": "not",
+                            "value": "warden"
+                        },
+                        {
+                            "test": "is_family",
+                            "subject": "other",
+                            "operator": "not",
+                            "value": "inanimate"
+                        }
                     ]
                 }
             },
@@ -79,8 +95,8 @@
                 "max_fall_blocks": 20
             },
             "minecraft:ambient_sound_interval": {
-                "value": 2.0,
-                "range": 4.0,
+                "value": 2,
+                "range": 4,
                 "event_name": "ambient",
                 "event_names": [
                     {
@@ -111,7 +127,7 @@
                 "value": 0.3
             },
             "minecraft:knockback_resistance": {
-                "value": 1.0
+                "value": 1
             },
             "minecraft:behavior.float": {
                 "priority": 0
@@ -119,7 +135,7 @@
             "minecraft:behavior.dig": {
                 "priority": 1,
                 "duration": 5.5,
-                "idle_time": 60.0,
+                "idle_time": 60,
                 "vibration_is_disturbance": true,
                 "suspicion_is_disturbance": true,
                 "digs_in_daylight": false,
@@ -134,7 +150,7 @@
             },
             "minecraft:behavior.sonic_boom": {
                 "priority": 3,
-                "duration": 3.0,
+                "duration": 3,
                 "speed_multiplier": 1.2,
                 "attack_damage": 10,
                 "attack_range_horizontal": 15,
@@ -159,10 +175,10 @@
             "minecraft:behavior.sniff": {
                 "priority": 6,
                 "duration": 4.16,
-                "sniffing_radius": 24.0,
-                "suspicion_radius_horizontal": 6.0,
-                "suspicion_radius_vertical": 20.0,
-                "cooldown_range": [5.0, 10.0]
+                "sniffing_radius": 24,
+                "suspicion_radius_horizontal": 6,
+                "suspicion_radius_vertical": 20,
+                "cooldown_range": [5, 10]
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 9,
@@ -179,8 +195,17 @@
                 "cooldown_time": 6,
                 "entity_filter": {
                     "all_of": [
-                        { "test": "is_family", "subject": "other", "value": "player" },
-                        { "operator": "not", "test": "has_ability", "subject": "other", "value": "invulnerable" }
+                        {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "player"
+                        },
+                        {
+                            "operator": "not",
+                            "test": "has_ability",
+                            "subject": "other",
+                            "value": "invulnerable"
+                        }
                     ]
                 }
             },
@@ -192,11 +217,6 @@
             }
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:spawn_emerging": {
                 "add": {
                     "component_groups": ["emerging"]
@@ -218,6 +238,11 @@
             "on_digging_event": {
                 "remove": {
                     "component_groups": ["pushable"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

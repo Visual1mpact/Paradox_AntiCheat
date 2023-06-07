@@ -21,7 +21,6 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "components": {
             "minecraft:collision_box": {
                 "width": 0.25,
@@ -59,7 +58,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {
                 "default_values": {
-                    "max_optimized_distance": 80.0,
+                    "max_optimized_distance": 80,
                     "max_dropped_ticks": 7,
                     "use_motion_prediction_hints": true
                 }

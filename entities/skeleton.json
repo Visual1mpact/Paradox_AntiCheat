@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "in_powder_snow": {
                 "minecraft:is_shaking": {},
                 "minecraft:timer": {
@@ -82,7 +77,11 @@
             "minecraft:lightning_immune": {
                 "minecraft:damage_sensor": {
                     "triggers": {
-                        "on_damage": { "filters": { "other_with_families": "lightning" } },
+                        "on_damage": {
+                            "filters": {
+                                "other_with_families": "lightning"
+                            }
+                        },
                         "deals_damage": false
                     }
                 }
@@ -99,9 +98,9 @@
             "minecraft:ranged_attack": {
                 "minecraft:behavior.ranged_attack": {
                     "priority": 0,
-                    "attack_interval_min": 1.0,
-                    "attack_interval_max": 3.0,
-                    "attack_radius": 15.0
+                    "attack_interval_min": 1,
+                    "attack_interval_max": 3,
+                    "attack_radius": 15
                 },
                 "minecraft:shooter": {
                     "def": "minecraft:arrow"
@@ -179,9 +178,13 @@
                         }
                     ]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -200,9 +203,7 @@
                 "suffocate_time": 0,
                 "breathes_water": true
             },
-
             "minecraft:burns_in_daylight": {},
-
             "minecraft:health": {
                 "value": 20,
                 "max": 20
@@ -210,7 +211,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -487,9 +493,9 @@
             },
             "minecraft:behavior.ranged_attack": {
                 "priority": 0,
-                "attack_interval_min": 1.0,
-                "attack_interval_max": 3.0,
-                "attack_radius": 15.0
+                "attack_interval_min": 1,
+                "attack_interval_max": 3,
+                "attack_radius": 15
             },
             "minecraft:behavior.hurt_by_target": {
                 "priority": 1
@@ -561,7 +567,7 @@
                 "priority": 5,
                 "max_dist": 3,
                 "goal_radius": 2,
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "pickup_based_on_chance": true,
                 "can_pickup_any_item": true
             },
@@ -583,13 +589,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "add": {
                     "component_groups": ["minecraft:ranged_attack"]
@@ -632,6 +632,11 @@
                 },
                 "add": {
                     "component_groups": ["minecraft:ranged_attack"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

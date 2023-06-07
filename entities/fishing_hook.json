@@ -7,27 +7,27 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "loot_jungle": {
                 "minecraft:loot": {
                     "table": "loot_tables/gameplay/jungle_fishing.json"
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:collision_box": {
                 "width": 0.15,
                 "height": 0.15
             },
             "minecraft:projectile": {
-                "on_hit": { "stick_in_ground": {} }
+                "on_hit": {
+                    "stick_in_ground": {}
+                }
             },
             "minecraft:loot": {
                 "table": "loot_tables/gameplay/fishing.json"
@@ -39,19 +39,13 @@
             },
             "minecraft:conditional_bandwidth_optimization": {
                 "default_values": {
-                    "max_optimized_distance": 80.0,
+                    "max_optimized_distance": 80,
                     "max_dropped_ticks": 7,
                     "use_motion_prediction_hints": true
                 }
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -59,9 +53,16 @@
                             "test": "is_biome",
                             "value": "jungle"
                         },
-                        "add": { "component_groups": ["loot_jungle"] }
+                        "add": {
+                            "component_groups": ["loot_jungle"]
+                        }
                     }
                 ]
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

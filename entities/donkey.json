@@ -8,16 +8,11 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:donkey_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale_by_age": {
                     "start_scale": 0.5,
-                    "end_scale": 1.0
+                    "end_scale": 1
                 },
                 "minecraft:ageable": {
                     "duration": 1200,
@@ -58,10 +53,9 @@
                 },
                 "minecraft:behavior.follow_parent": {
                     "priority": 4,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 }
             },
-
             "minecraft:donkey_adult": {
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -76,23 +70,22 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 2,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 }
             },
-
             "minecraft:donkey_wild": {
                 "minecraft:rideable": {
                     "seat_count": 1,
                     "family_types": ["player", "zombie"],
                     "interact_text": "action.interact.mount",
                     "seats": {
-                        "position": [0.0, 0.925, -0.2]
+                        "position": [0, 0.925, -0.2]
                     }
                 },
                 "minecraft:behavior.mount_pathing": {
                     "priority": 2,
                     "speed_multiplier": 1.5,
-                    "target_dist": 0.0,
+                    "target_dist": 0,
                     "track_target": true
                 },
                 "minecraft:tamemount": {
@@ -149,7 +142,6 @@
                     }
                 }
             },
-
             "minecraft:donkey_tamed": {
                 "minecraft:is_tamed": {},
                 "minecraft:equippable": {
@@ -174,10 +166,29 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "self", "domain": "inventory", "operator": "not", "value": "saddle" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "saddle" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_sneaking", "subject": "other", "value": false }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "self",
+                                            "domain": "inventory",
+                                            "operator": "not",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_sneaking",
+                                            "subject": "other",
+                                            "value": false
+                                        }
                                     ]
                                 },
                                 "target": "self"
@@ -193,7 +204,7 @@
                     "family_types": ["player"],
                     "interact_text": "action.interact.ride.horse",
                     "seats": {
-                        "position": [0.0, 0.925, -0.2]
+                        "position": [0, 0.925, -0.2]
                     }
                 },
                 "minecraft:behavior.player_ride_tamed": {},
@@ -231,7 +242,6 @@
                     "items": ["apple", "carrot", "golden_apple", "appleEnchanted", "golden_carrot", "carrotOnAStick", "hay_block", "sugar", "bread", "wheat"]
                 }
             },
-
             "minecraft:donkey_unchested": {
                 "minecraft:interact": {
                     "interactions": [
@@ -240,10 +250,29 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "self", "domain": "inventory", "operator": "not", "value": "saddle" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "saddle" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_sneaking", "subject": "other", "value": false }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "self",
+                                            "domain": "inventory",
+                                            "operator": "not",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_sneaking",
+                                            "subject": "other",
+                                            "value": false
+                                        }
                                     ]
                                 },
                                 "target": "self"
@@ -256,9 +285,22 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_sneaking", "subject": "other", "value": false },
-                                        { "test": "has_equipment", "domain": "hand", "subject": "other", "value": "chest" }
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_sneaking",
+                                            "subject": "other",
+                                            "value": false
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "domain": "hand",
+                                            "subject": "other",
+                                            "value": "chest"
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:on_chest",
@@ -270,7 +312,6 @@
                     ]
                 }
             },
-
             "minecraft:donkey_chested": {
                 "minecraft:is_chested": {},
                 "minecraft:interact": {
@@ -280,10 +321,29 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "self", "domain": "inventory", "operator": "not", "value": "saddle" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "saddle" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_sneaking", "subject": "other", "value": false }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "self",
+                                            "domain": "inventory",
+                                            "operator": "not",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_sneaking",
+                                            "subject": "other",
+                                            "value": false
+                                        }
                                     ]
                                 },
                                 "target": "self"
@@ -294,14 +354,17 @@
                     ]
                 }
             },
-
             "minecraft:donkey_saddled": {
                 "minecraft:is_saddled": {},
                 "minecraft:input_ground_controlled": {},
                 "minecraft:can_power_jump": {}
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -350,9 +413,9 @@
                 "value": 0.5
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {},
             "minecraft:healable": {
@@ -403,7 +466,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 7,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -416,13 +479,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -439,13 +496,11 @@
                     }
                 ]
             },
-
             "minecraft:entity_born": {
                 "add": {
                     "component_groups": ["minecraft:donkey_baby"]
                 }
             },
-
             "minecraft:on_tame": {
                 "remove": {
                     "component_groups": ["minecraft:donkey_wild"]
@@ -454,7 +509,6 @@
                     "component_groups": ["minecraft:donkey_tamed", "minecraft:donkey_unchested"]
                 }
             },
-
             "minecraft:ageable_grow_up": {
                 "remove": {
                     "component_groups": ["minecraft:donkey_baby"]
@@ -463,7 +517,6 @@
                     "component_groups": ["minecraft:donkey_adult", "minecraft:donkey_wild"]
                 }
             },
-
             "minecraft:on_chest": {
                 "remove": {
                     "component_groups": ["minecraft:donkey_unchested"]
@@ -472,7 +525,6 @@
                     "component_groups": ["minecraft:donkey_chested"]
                 }
             },
-
             "minecraft:donkey_saddled": {
                 "add": {
                     "component_groups": ["minecraft:donkey_saddled"]
@@ -481,6 +533,11 @@
             "minecraft:donkey_unsaddled": {
                 "remove": {
                     "component_groups": ["minecraft:donkey_saddled"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

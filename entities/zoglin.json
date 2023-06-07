@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "zoglin_baby": {
                 "minecraft:type_family": {
                     "family": ["zoglin", "zoglin_baby", "undead", "mob"]
@@ -32,7 +26,7 @@
                 "minecraft:custom_hit_test": {
                     "hitboxes": [
                         {
-                            "width": 1.0,
+                            "width": 1,
                             "height": 0.85,
                             "pivot": [0, 0.5, 0]
                         }
@@ -50,7 +44,7 @@
                 "minecraft:custom_hit_test": {
                     "hitboxes": [
                         {
-                            "width": 2.0,
+                            "width": 2,
                             "height": 1.75,
                             "pivot": [0, 1, 0]
                         }
@@ -62,9 +56,13 @@
                 "minecraft:attack": {
                     "damage": [3, 8]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:nameable": {},
@@ -84,7 +82,7 @@
             },
             "minecraft:behavior.nearest_attackable_target": {
                 "priority": 3,
-                "within_radius": 16.0,
+                "within_radius": 16,
                 "entity_types": [
                     {
                         "filters": {
@@ -133,9 +131,9 @@
             "minecraft:can_climb": {},
             "minecraft:fire_immune": {},
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {},
             "minecraft:despawn": {
@@ -181,14 +179,14 @@
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 7,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.random_look_around": {
                 "priority": 9
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 8,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:physics": {},
@@ -198,13 +196,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_transformed": {
                 "sequence": [
                     {
@@ -246,7 +238,6 @@
                     }
                 ]
             },
-
             "minecraft:as_adult": {
                 "add": {
                     "component_groups": ["zoglin_adult"]
@@ -255,6 +246,11 @@
             "minecraft:as_baby": {
                 "add": {
                     "component_groups": ["zoglin_baby"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

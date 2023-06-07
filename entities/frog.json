@@ -8,24 +8,25 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
+            "temperate_frog": {
+                "minecraft:variant": {
+                    "value": 0
                 }
             },
-            "temperate_frog": {
-                "minecraft:variant": { "value": 0 }
-            },
             "cold_frog": {
-                "minecraft:variant": { "value": 1 }
+                "minecraft:variant": {
+                    "value": 1
+                }
             },
             "warm_frog": {
-                "minecraft:variant": { "value": 2 }
+                "minecraft:variant": {
+                    "value": 2
+                }
             },
             "pregnant": {
                 "minecraft:behavior.lay_egg": {
                     "priority": 2,
-                    "speed_multiplier": 1.0,
+                    "speed_multiplier": 1,
                     "search_range": 10,
                     "search_height": 3,
                     "goal_radius": 1.7,
@@ -46,6 +47,11 @@
                     "search_range": 20,
                     "search_height": 5,
                     "goal_radius": 1.5
+                }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
             }
         },
@@ -130,7 +136,7 @@
             },
             "minecraft:behavior.panic": {
                 "priority": 1,
-                "speed_multiplier": 2.0
+                "speed_multiplier": 2
             },
             "minecraft:behavior.breed": {
                 "priority": 4
@@ -150,7 +156,7 @@
             },
             "minecraft:behavior.eat_mob": {
                 "priority": 7,
-                "run_speed": 2.0,
+                "run_speed": 2,
                 "eat_animation_time": 0.3,
                 "pull_in_force": 0.75,
                 "reach_mob_distance": 1.75,
@@ -235,16 +241,11 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 12,
-                "target_distance": 6.0,
+                "target_distance": 6,
                 "probability": 0.02
             }
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -512,6 +513,11 @@
             "laid_egg": {
                 "remove": {
                     "component_groups": ["pregnant"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

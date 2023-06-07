@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:mooshroom_become_cow": {
                 "minecraft:transformation": {
                     "into": "minecraft:cow"
@@ -37,7 +31,6 @@
                     "speed_multiplier": 1.1
                 }
             },
-
             "minecraft:cow_adult": {
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -48,7 +41,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 3,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:breedable": {
                     "require_tame": false,
@@ -67,16 +60,28 @@
                         "max_variant": 1
                     }
                 },
-
                 "minecraft:interact": {
                     "interactions": [
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "bowl" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "has_component", "operator": "!=", "value": "minecraft:transformation" }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "bowl"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "has_component",
+                                            "operator": "!=",
+                                            "value": "minecraft:transformation"
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:flowerless",
@@ -93,10 +98,29 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:2" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 7 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:2"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 7
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_allium",
@@ -104,17 +128,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:3" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 3 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:3"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 3
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_bluet",
@@ -122,17 +169,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:1" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 6 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:1"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 6
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_orchid",
@@ -140,17 +210,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:9" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 1 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:9"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 1
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_cornflower",
@@ -158,17 +251,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "yellow_flower" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 5 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "yellow_flower"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 5
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_dandelion",
@@ -176,17 +292,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:10" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 4 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:10"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 4
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_lily",
@@ -194,17 +333,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:8" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 8 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:8"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 8
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_daisy",
@@ -212,17 +374,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:0" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 0 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:0"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 0
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_poppy",
@@ -230,22 +415,60 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "any_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:4" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:5" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:6" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "red_flower:7" }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:4"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:5"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:6"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "red_flower:7"
+                                        }
                                     ],
                                     "all_of": [
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 2 }
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 2
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_tulip",
@@ -253,17 +476,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "wither_rose" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 9 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "wither_rose"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 9
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_rose",
@@ -271,17 +517,40 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "torchflower" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 },
-                                        { "test": "is_mark_variant", "subject": "self", "operator": "!=", "value": 10 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "torchflower"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        },
+                                        {
+                                            "test": "is_mark_variant",
+                                            "subject": "self",
+                                            "operator": "!=",
+                                            "value": 10
+                                        }
                                     ]
                                 },
                                 "event": "minecraft:ate_torchflower",
@@ -289,16 +558,34 @@
                             },
                             "use_item": true,
                             "play_sounds": "eat",
-                            "particle_on_start": { "particle_type": "smoke", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "particle_on_start": {
+                                "particle_type": "smoke",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.feed"
                         },
                         {
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "shears" },
-                                        { "test": "has_component", "operator": "!=", "value": "minecraft:transformation" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 0 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "shears"
+                                        },
+                                        {
+                                            "test": "has_component",
+                                            "operator": "!=",
+                                            "value": "minecraft:transformation"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 0
+                                        }
                                     ]
                                 },
                                 "event": "become_cow",
@@ -307,8 +594,14 @@
                             "use_item": false,
                             "hurt_item": 1,
                             "play_sounds": "shear",
-                            "spawn_items": { "table": "loot_tables/entities/mooshroom_shear.json" },
-                            "particle_on_start": { "particle_type": "largeexplode", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "spawn_items": {
+                                "table": "loot_tables/entities/mooshroom_shear.json"
+                            },
+                            "particle_on_start": {
+                                "particle_type": "largeexplode",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.mooshear",
                             "vibration": "shear"
                         },
@@ -316,9 +609,23 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "shears" },
-                                        { "test": "has_component", "operator": "!=", "value": "minecraft:transformation" },
-                                        { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "shears"
+                                        },
+                                        {
+                                            "test": "has_component",
+                                            "operator": "!=",
+                                            "value": "minecraft:transformation"
+                                        },
+                                        {
+                                            "test": "is_variant",
+                                            "subject": "self",
+                                            "operator": "==",
+                                            "value": 1
+                                        }
                                     ]
                                 },
                                 "event": "become_cow",
@@ -327,8 +634,14 @@
                             "use_item": false,
                             "hurt_item": 1,
                             "play_sounds": "shear",
-                            "spawn_items": { "table": "loot_tables/entities/brown_mooshroom_shear.json" },
-                            "particle_on_start": { "particle_type": "largeexplode", "particle_y_offset": 0.25, "particle_offset_towards_interactor": true },
+                            "spawn_items": {
+                                "table": "loot_tables/entities/brown_mooshroom_shear.json"
+                            },
+                            "particle_on_start": {
+                                "particle_type": "largeexplode",
+                                "particle_y_offset": 0.25,
+                                "particle_offset_towards_interactor": true
+                            },
                             "interact_text": "action.interact.mooshear",
                             "vibration": "shear"
                         },
@@ -336,8 +649,17 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "bucket:0" },
-                                        { "test": "is_family", "subject": "other", "value": "player" }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "bucket:0"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        }
                                     ]
                                 }
                             },
@@ -349,92 +671,82 @@
                     ]
                 }
             },
-
             "minecraft:mooshroom_fed_nothing": {
                 "minecraft:mark_variant": {
                     "value": -1
                 }
             },
-
             "minecraft:mooshroom_brown_fed_poppy": {
                 "minecraft:mark_variant": {
                     "value": 0
                 }
             },
-
             "minecraft:mooshroom_brown_fed_cornflower": {
                 "minecraft:mark_variant": {
                     "value": 1
                 }
             },
-
             "minecraft:mooshroom_brown_fed_tulips": {
                 "minecraft:mark_variant": {
                     "value": 2
                 }
             },
-
             "minecraft:mooshroom_brown_fed_azure_bluet": {
                 "minecraft:mark_variant": {
                     "value": 3
                 }
             },
-
             "minecraft:mooshroom_brown_fed_lily_of_the_valley": {
                 "minecraft:mark_variant": {
                     "value": 4
                 }
             },
-
             "minecraft:mooshroom_brown_fed_dandelion": {
                 "minecraft:mark_variant": {
                     "value": 5
                 }
             },
-
             "minecraft:mooshroom_brown_fed_blue_orchid": {
                 "minecraft:mark_variant": {
                     "value": 6
                 }
             },
-
             "minecraft:mooshroom_brown_fed_allium": {
                 "minecraft:mark_variant": {
                     "value": 7
                 }
             },
-
             "minecraft:mooshroom_brown_fed_oxeye_daisy": {
                 "minecraft:mark_variant": {
                     "value": 8
                 }
             },
-
             "minecraft:mooshroom_brown_fed_wither_rose": {
                 "minecraft:mark_variant": {
                     "value": 9
                 }
             },
-
             "minecraft:mooshroom_brown_fed_torchflower": {
                 "minecraft:mark_variant": {
                     "value": 10
                 }
             },
-
             "minecraft:mooshroom_red": {
                 "minecraft:variant": {
                     "value": 0
                 }
             },
-
             "minecraft:mooshroom_brown": {
                 "minecraft:variant": {
                     "value": 1
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -459,7 +771,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -477,16 +794,16 @@
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {},
             "minecraft:rideable": {
                 "seat_count": 1,
                 "family_types": ["zombie"],
                 "seats": {
-                    "position": [0.0, 1.105, 0.0]
+                    "position": [0, 1.105, 0]
                 }
             },
             "minecraft:despawn": {
@@ -502,12 +819,12 @@
             "minecraft:behavior.mount_pathing": {
                 "priority": 2,
                 "speed_multiplier": 1.5,
-                "target_dist": 0.0,
+                "target_dist": 0,
                 "track_target": true
             },
             "minecraft:behavior.breed": {
                 "priority": 3,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.tempt": {
                 "priority": 4,
@@ -524,7 +841,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 7,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -542,8 +859,17 @@
                         "on_damage": {
                             "filters": {
                                 "all_of": [
-                                    { "test": "is_family", "subject": "other", "value": "lightning" },
-                                    { "test": "is_variant", "subject": "self", "operator": "==", "value": 0 }
+                                    {
+                                        "test": "is_family",
+                                        "subject": "other",
+                                        "value": "lightning"
+                                    },
+                                    {
+                                        "test": "is_variant",
+                                        "subject": "self",
+                                        "operator": "==",
+                                        "value": 0
+                                    }
                                 ]
                             },
                             "event": "minecraft:become_brown"
@@ -555,8 +881,17 @@
                         "on_damage": {
                             "filters": {
                                 "all_of": [
-                                    { "test": "is_family", "subject": "other", "value": "lightning" },
-                                    { "test": "is_variant", "subject": "self", "operator": "==", "value": 1 }
+                                    {
+                                        "test": "is_family",
+                                        "subject": "other",
+                                        "value": "lightning"
+                                    },
+                                    {
+                                        "test": "is_variant",
+                                        "subject": "self",
+                                        "operator": "==",
+                                        "value": 1
+                                    }
                                 ]
                             },
                             "event": "minecraft:become_red"
@@ -567,13 +902,7 @@
                 ]
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "become_cow": {
                 "remove": {},
                 "add": {
@@ -598,14 +927,12 @@
                     }
                 ]
             },
-
             "minecraft:entity_born": {
                 "remove": {},
                 "add": {
                     "component_groups": ["minecraft:cow_baby"]
                 }
             },
-
             "minecraft:ageable_grow_up": {
                 "remove": {
                     "component_groups": ["minecraft:cow_baby"]
@@ -614,79 +941,66 @@
                     "component_groups": ["minecraft:cow_adult"]
                 }
             },
-
             "minecraft:flowerless": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_fed_nothing"]
                 }
             },
-
             "minecraft:ate_allium": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_allium"]
                 }
             },
-
             "minecraft:ate_cornflower": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_cornflower"]
                 }
             },
-
             "minecraft:ate_lily": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_lily_of_the_valley"]
                 }
             },
-
             "minecraft:ate_rose": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_wither_rose"]
                 }
             },
-
             "minecraft:ate_torchflower": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_torchflower"]
                 }
             },
-
             "minecraft:ate_orchid": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_blue_orchid"]
                 }
             },
-
             "minecraft:ate_daisy": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_oxeye_daisy"]
                 }
             },
-
             "minecraft:ate_tulip": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_tulips"]
                 }
             },
-
             "minecraft:ate_bluet": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_azure_bluet"]
                 }
             },
-
             "minecraft:ate_poppy": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_poppy"]
                 }
             },
-
             "minecraft:ate_dandelion": {
                 "add": {
                     "component_groups": ["minecraft:mooshroom_brown_fed_dandelion"]
                 }
             },
-
             "minecraft:become_red": {
                 "remove": {
                     "component_groups": ["minecraft:mooshroom_brown"]
@@ -695,7 +1009,6 @@
                     "component_groups": ["minecraft:mooshroom_red", "minecraft:mooshroom_fed_nothing"]
                 }
             },
-
             "minecraft:become_brown": {
                 "remove": {
                     "component_groups": ["minecraft:mooshroom_red"]
@@ -704,7 +1017,6 @@
                     "component_groups": ["minecraft:mooshroom_brown", "minecraft:mooshroom_fed_nothing"]
                 }
             },
-
             "minecraft:become_brown_adult": {
                 "remove": {
                     "component_groups": ["minecraft:mooshroom_red"]
@@ -713,13 +1025,17 @@
                     "component_groups": ["minecraft:mooshroom_brown", "minecraft:cow_adult", "minecraft:mooshroom_fed_nothing"]
                 }
             },
-
             "minecraft:become_red_adult": {
                 "remove": {
                     "component_groups": ["minecraft:mooshroom_brown", "minecraft:cow_baby"]
                 },
                 "add": {
                     "component_groups": ["minecraft:mooshroom_red", "minecraft:cow_adult"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

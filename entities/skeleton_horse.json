@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:skeleton_horse_r5_upgrade": {
                 "minecraft:rideable": {}
             },
@@ -20,7 +15,7 @@
                 "minecraft:is_baby": {},
                 "minecraft:scale_by_age": {
                     "start_scale": 0.5,
-                    "end_scale": 1.0
+                    "end_scale": 1
                 },
                 "minecraft:ageable": {
                     "duration": 1200,
@@ -31,7 +26,7 @@
                 },
                 "minecraft:behavior.follow_parent": {
                     "priority": 4,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 }
             },
             "minecraft:skeleton_horse_adult": {
@@ -50,19 +45,17 @@
                     "family_types": ["player", "skeleton", "zombie"],
                     "interact_text": "action.interact.ride.horse",
                     "seats": {
-                        "position": [0.0, 1.2, -0.2]
+                        "position": [0, 1.2, -0.2]
                     }
                 }
             },
-
             "minecraft:skeleton_trap": {
                 "minecraft:behavior.skeleton_horse_trap": {
-                    "within_radius": 10.0,
-                    "duration": 900.0,
+                    "within_radius": 10,
+                    "duration": 900,
                     "priority": 2
                 }
             },
-
             "minecraft:lightning_immune": {
                 "minecraft:damage_sensor": {
                     "triggers": {
@@ -76,9 +69,13 @@
                         "deals_damage": false
                     }
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -96,7 +93,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -118,20 +120,20 @@
             "minecraft:horse.jump_strength": {
                 "value": {
                     "range_min": 0.4,
-                    "range_max": 1.0
+                    "range_max": 1
                 }
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:rideable": {
                 "seat_count": 1,
                 "family_types": ["player", "skeleton", "zombie"],
                 "interact_text": "action.interact.ride.horse",
                 "seats": {
-                    "position": [0.0, 1.2, -0.2]
+                    "position": [0, 1.2, -0.2]
                 }
             },
             "minecraft:despawn": {
@@ -140,7 +142,7 @@
             "minecraft:behavior.mount_pathing": {
                 "priority": 2,
                 "speed_multiplier": 1.5,
-                "target_dist": 4.0,
+                "target_dist": 4,
                 "track_target": true
             },
             "minecraft:behavior.player_ride_tamed": {},
@@ -157,7 +159,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 7,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -171,13 +173,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -197,13 +193,20 @@
                     }
                 ]
             },
-
             "minecraft:set_trap": {
-                "add": { "component_groups": ["minecraft:skeleton_trap", "minecraft:lightning_immune"] }
+                "add": {
+                    "component_groups": ["minecraft:skeleton_trap", "minecraft:lightning_immune"]
+                }
             },
-
             "minecraft:spring_trap": {
-                "add": { "component_groups": ["minecraft:skeleton_horse_adult", "minecraft:lightning_immune"] }
+                "add": {
+                    "component_groups": ["minecraft:skeleton_horse_adult", "minecraft:lightning_immune"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

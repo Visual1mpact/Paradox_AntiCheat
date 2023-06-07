@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:spider_jockey": {
                 "minecraft:addrider": {
                     "entity_type": "minecraft:skeleton"
@@ -22,11 +16,10 @@
                     "seat_count": 1,
                     "family_types": ["skeleton"],
                     "seats": {
-                        "position": [0.0, 0.54, 0.0]
+                        "position": [0, 0.54, 0]
                     }
                 }
             },
-
             "minecraft:spider_stray_jockey": {
                 "minecraft:addrider": {
                     "entity_type": "minecraft:skeleton.stray"
@@ -35,11 +28,10 @@
                     "seat_count": 1,
                     "family_types": ["skeleton"],
                     "seats": {
-                        "position": [0.0, 0.54, 0.0]
+                        "position": [0, 0.54, 0]
                     }
                 }
             },
-
             "minecraft:spider_wither_jockey": {
                 "minecraft:addrider": {
                     "entity_type": "minecraft:skeleton.wither"
@@ -48,11 +40,10 @@
                     "seat_count": 1,
                     "family_types": ["skeleton"],
                     "seats": {
-                        "position": [0.0, 0.54, 0.0]
+                        "position": [0, 0.54, 0]
                     }
                 }
             },
-
             "minecraft:spider_neutral": {
                 "minecraft:environment_sensor": {
                     "triggers": {
@@ -68,7 +59,6 @@
                     "event": "minecraft:become_angry"
                 }
             },
-
             "minecraft:spider_hostile": {
                 "minecraft:environment_sensor": {
                     "triggers": {
@@ -113,7 +103,6 @@
                     ]
                 }
             },
-
             "minecraft:spider_angry": {
                 "minecraft:angry": {
                     "duration": 10,
@@ -133,9 +122,13 @@
                     "track_target": true,
                     "reach_multiplier": 0.8
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -163,7 +156,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -190,7 +188,7 @@
             "minecraft:behavior.mount_pathing": {
                 "priority": 5,
                 "speed_multiplier": 1.25,
-                "target_dist": 0.0,
+                "target_dist": 0,
                 "track_target": true
             },
             "minecraft:behavior.random_stroll": {
@@ -199,7 +197,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 7,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -212,7 +210,7 @@
                 "seat_count": 1,
                 "family_types": ["zombie"],
                 "seats": {
-                    "position": [0.0, 0.54, -0.1]
+                    "position": [0, 0.54, -0.1]
                 }
             },
             "minecraft:physics": {},
@@ -222,13 +220,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -298,7 +290,6 @@
                     }
                 ]
             },
-
             "minecraft:become_hostile": {
                 "remove": {
                     "component_groups": ["minecraft:spider_neutral"]
@@ -307,7 +298,6 @@
                     "component_groups": ["minecraft:spider_hostile"]
                 }
             },
-
             "minecraft:become_neutral": {
                 "remove": {
                     "component_groups": ["minecraft:spider_hostile"]
@@ -316,7 +306,6 @@
                     "component_groups": ["minecraft:spider_neutral"]
                 }
             },
-
             "minecraft:become_angry": {
                 "add": {
                     "component_groups": ["minecraft:spider_angry"]
@@ -325,6 +314,11 @@
             "minecraft:become_calm": {
                 "remove": {
                     "component_groups": ["minecraft:spider_angry"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

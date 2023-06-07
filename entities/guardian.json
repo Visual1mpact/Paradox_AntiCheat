@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:guardian_aggressive": {
                 "minecraft:behavior.nearest_attackable_target": {
                     "priority": 1,
@@ -21,20 +15,32 @@
                         {
                             "filters": {
                                 "any_of": [
-                                    { "test": "is_family", "subject": "other", "value": "player" },
-                                    { "test": "is_family", "subject": "other", "value": "squid" },
-                                    { "test": "is_family", "subject": "other", "value": "axolotl" }
+                                    {
+                                        "test": "is_family",
+                                        "subject": "other",
+                                        "value": "player"
+                                    },
+                                    {
+                                        "test": "is_family",
+                                        "subject": "other",
+                                        "value": "squid"
+                                    },
+                                    {
+                                        "test": "is_family",
+                                        "subject": "other",
+                                        "value": "axolotl"
+                                    }
                                 ]
                             },
                             "max_dist": 16
                         }
                     ],
-                    "attack_interval_min": 1.0,
+                    "attack_interval_min": 1,
                     "must_see": true
                 },
                 "minecraft:target_nearby_sensor": {
-                    "inside_range": 3.0,
-                    "outside_range": 4.0,
+                    "inside_range": 3,
+                    "outside_range": 4,
                     "on_inside_range": {
                         "event": "minecraft:target_too_close",
                         "target": "self"
@@ -44,7 +50,6 @@
                     "priority": 4
                 }
             },
-
             "minecraft:guardian_passive": {
                 "minecraft:timer": {
                     "time": [1, 3],
@@ -58,16 +63,24 @@
                     "priority": 1,
                     "entity_types": [
                         {
-                            "filters": { "test": "is_family", "subject": "other", "value": "player" },
+                            "filters": {
+                                "test": "is_family",
+                                "subject": "other",
+                                "value": "player"
+                            },
                             "max_dist": 8,
                             "walk_speed_multiplier": 1,
                             "sprint_speed_multiplier": 1
                         }
                     ]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -85,7 +98,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -131,20 +149,32 @@
                     {
                         "filters": {
                             "any_of": [
-                                { "test": "is_family", "subject": "other", "value": "player" },
-                                { "test": "is_family", "subject": "other", "value": "squid" },
-                                { "test": "is_family", "subject": "other", "value": "axolotl" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "player"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "squid"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "axolotl"
+                                }
                             ]
                         },
                         "max_dist": 16
                     }
                 ],
-                "attack_interval_min": 1.0,
+                "attack_interval_min": 1,
                 "must_see": true
             },
             "minecraft:target_nearby_sensor": {
-                "inside_range": 3.0,
-                "outside_range": 4.0,
+                "inside_range": 3,
+                "outside_range": 4,
                 "on_inside_range": {
                     "event": "minecraft:target_too_close",
                     "target": "self"
@@ -155,17 +185,17 @@
             },
             "minecraft:behavior.move_towards_home_restriction": {
                 "priority": 5,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.random_swim": {
                 "priority": 7,
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "interval": 80,
                 "avoid_surface": false
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 8,
-                "look_distance": 12.0,
+                "look_distance": 12,
                 "probability": 0.01
             },
             "minecraft:behavior.random_look_around": {
@@ -181,13 +211,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:target_too_close": {
                 "remove": {
                     "component_groups": ["minecraft:guardian_aggressive"]
@@ -202,6 +226,11 @@
                 },
                 "add": {
                     "component_groups": ["minecraft:guardian_aggressive"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

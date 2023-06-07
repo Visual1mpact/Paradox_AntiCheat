@@ -7,26 +7,20 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:celebrate": {
                 "minecraft:behavior.celebrate": {
                     "priority": 5,
                     "celebration_sound": "celebrate",
                     "sound_interval": {
-                        "range_min": 2.0,
-                        "range_max": 7.0
+                        "range_min": 2,
+                        "range_max": 7
                     },
                     "jump_interval": {
-                        "range_min": 1.0,
+                        "range_min": 1,
                         "range_max": 3.5
                     },
-                    "duration": 30.0,
+                    "duration": 30,
                     "on_celebration_end_event": {
                         "event": "minecraft:stop_celebrating",
                         "target": "self"
@@ -36,9 +30,9 @@
             "minecraft:ranged_attack": {
                 "minecraft:behavior.ranged_attack": {
                     "priority": 4,
-                    "attack_interval_min": 1.0,
-                    "attack_interval_max": 1.0,
-                    "attack_radius": 8.0
+                    "attack_interval_min": 1,
+                    "attack_interval_max": 1,
+                    "attack_radius": 8
                 },
                 "minecraft:shooter": {
                     "def": "minecraft:arrow"
@@ -87,15 +81,15 @@
                 },
                 "minecraft:behavior.move_to_village": {
                     "priority": 5,
-                    "speed_multiplier": 1.0,
-                    "goal_radius": 2.0
+                    "speed_multiplier": 1,
+                    "goal_radius": 2
                 },
                 "minecraft:loot": {
                     "table": "loot_tables/entities/pillager_raid.json"
                 },
                 "minecraft:ambient_sound_interval": {
-                    "value": 2.0,
-                    "range": 4.0,
+                    "value": 2,
+                    "range": 4,
                     "event_name": "ambient.in.raid"
                 }
             },
@@ -112,7 +106,7 @@
                     "slot_drop_chance": [
                         {
                             "slot": "slot.armor.chest",
-                            "drop_chance": 1.0
+                            "drop_chance": 1
                         }
                     ]
                 },
@@ -156,7 +150,7 @@
                     "slot_drop_chance": [
                         {
                             "slot": "slot.armor.chest",
-                            "drop_chance": 1.0
+                            "drop_chance": 1
                         }
                     ]
                 },
@@ -239,9 +233,13 @@
                     "event": "minecraft:calm",
                     "target": "self"
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -328,7 +326,7 @@
                 "priority": 2,
                 "must_see": true,
                 "reselect_targets": true,
-                "within_radius": 16.0,
+                "within_radius": 16,
                 "entity_types": [
                     {
                         "filters": {
@@ -379,7 +377,7 @@
                 "priority": 7,
                 "max_dist": 3,
                 "goal_radius": 2,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 8,
@@ -405,13 +403,7 @@
                 "value": 64
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "add": {
                     "component_groups": ["minecraft:ranged_attack"]
@@ -449,37 +441,66 @@
                 }
             },
             "minecraft:melee_mode": {
-                "remove": { "component_groups": ["minecraft:ranged_attack"] },
-                "add": { "component_groups": ["minecraft:melee_attack"] }
+                "remove": {
+                    "component_groups": ["minecraft:ranged_attack"]
+                },
+                "add": {
+                    "component_groups": ["minecraft:melee_attack"]
+                }
             },
             "minecraft:ranged_mode": {
-                "remove": { "component_groups": ["minecraft:melee_attack"] },
-                "add": { "component_groups": ["minecraft:ranged_attack"] }
+                "remove": {
+                    "component_groups": ["minecraft:melee_attack"]
+                },
+                "add": {
+                    "component_groups": ["minecraft:ranged_attack"]
+                }
             },
             "minecraft:start_celebrating": {
                 "sequence": [
                     {
-                        "add": { "component_groups": ["minecraft:celebrate"] }
+                        "add": {
+                            "component_groups": ["minecraft:celebrate"]
+                        }
                     },
                     {
-                        "filters": { "test": "has_nametag", "value": false },
-                        "remove": { "component_groups": ["minecraft:raid_persistence"] }
+                        "filters": {
+                            "test": "has_nametag",
+                            "value": false
+                        },
+                        "remove": {
+                            "component_groups": ["minecraft:raid_persistence"]
+                        }
                     }
                 ]
             },
             "minecraft:stop_celebrating": {
-                "remove": { "component_groups": ["minecraft:celebrate"] }
+                "remove": {
+                    "component_groups": ["minecraft:celebrate"]
+                }
             },
             "minecraft:raid_expired": {
                 "sequence": [
                     {
-                        "filters": { "test": "has_nametag", "value": false },
-                        "remove": { "component_groups": ["minecraft:raid_persistence"] }
+                        "filters": {
+                            "test": "has_nametag",
+                            "value": false
+                        },
+                        "remove": {
+                            "component_groups": ["minecraft:raid_persistence"]
+                        }
                     }
                 ]
             },
             "minecraft:calm": {
-                "remove": { "component_groups": ["minecraft:melee_attack", "minecraft:ranged_attack"] }
+                "remove": {
+                    "component_groups": ["minecraft:melee_attack", "minecraft:ranged_attack"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

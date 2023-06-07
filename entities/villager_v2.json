@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:celebrate": {
                 "minecraft:behavior.celebrate_survive": {
                     "priority": 5,
@@ -1631,6 +1626,11 @@
             "taiga_villager": {
                 "minecraft:mark_variant": {
                     "value": 6
+                }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
             }
         },

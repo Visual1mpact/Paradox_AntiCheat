@@ -7,25 +7,23 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:exploding": {
                 "minecraft:explode": {
                     "fuse_length": 0,
                     "fuse_lit": true,
                     "power": 1,
                     "causes_fire": false,
-                    "max_resistance": 4.0,
+                    "max_resistance": 4,
                     "destroy_affected_by_griefing": true
+                }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
             }
         },
-
         "components": {
             "minecraft:collision_box": {
                 "width": 0.15,
@@ -49,7 +47,7 @@
                     }
                 },
                 "power": 0.6,
-                "gravity": 0.0,
+                "gravity": 0,
                 "uncertainty_base": 7.5,
                 "uncertainty_multiplier": 1,
                 "shoot_sound": "bow",
@@ -57,8 +55,8 @@
                 "anchor": 1,
                 "offset": [0, -0.1, 0],
                 "is_dangerous": true,
-                "inertia": 1.0,
-                "liquid_inertia": 1.0,
+                "inertia": 1,
+                "liquid_inertia": 1,
                 "shoot_target": false,
                 "reflect_on_hurt": true
             },
@@ -69,21 +67,21 @@
             },
             "minecraft:conditional_bandwidth_optimization": {
                 "default_values": {
-                    "max_optimized_distance": 80.0,
+                    "max_optimized_distance": 80,
                     "max_dropped_ticks": 7,
                     "use_motion_prediction_hints": true
                 }
             }
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:explode": {
                 "add": {
                     "component_groups": ["minecraft:exploding"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

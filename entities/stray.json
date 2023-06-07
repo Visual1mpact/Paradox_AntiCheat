@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:revert_to_skeleton": {
                 "minecraft:transformation": {
                     "into": "minecraft:skeleton",
@@ -23,9 +17,9 @@
             "minecraft:ranged_attack": {
                 "minecraft:behavior.ranged_attack": {
                     "priority": 0,
-                    "attack_interval_min": 1.0,
-                    "attack_interval_max": 3.0,
-                    "attack_radius": 15.0
+                    "attack_interval_min": 1,
+                    "attack_interval_max": 3,
+                    "attack_radius": 15
                 },
                 "minecraft:shooter": {
                     "def": "minecraft:arrow",
@@ -88,9 +82,13 @@
                         }
                     ]
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -115,7 +113,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -383,9 +386,9 @@
             },
             "minecraft:behavior.ranged_attack": {
                 "priority": 0,
-                "attack_interval_min": 1.0,
-                "attack_interval_max": 3.0,
-                "attack_radius": 15.0
+                "attack_interval_min": 1,
+                "attack_interval_max": 3,
+                "attack_radius": 15
             },
             "minecraft:behavior.hurt_by_target": {
                 "priority": 1
@@ -394,7 +397,6 @@
                 "priority": 2,
                 "must_see": true,
                 "reselect_targets": true,
-
                 "entity_types": [
                     {
                         "filters": {
@@ -432,7 +434,6 @@
                     }
                 ]
             },
-
             "minecraft:behavior.flee_sun": {
                 "priority": 2,
                 "speed_multiplier": 1
@@ -459,7 +460,7 @@
                 "priority": 5,
                 "max_dist": 3,
                 "goal_radius": 2,
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "pickup_based_on_chance": true,
                 "can_pickup_any_item": true
             },
@@ -484,13 +485,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "add": {
                     "component_groups": ["minecraft:ranged_attack"]
@@ -527,12 +522,25 @@
                 ]
             },
             "minecraft:melee_mode": {
-                "remove": { "component_groups": ["minecraft:ranged_attack"] },
-                "add": { "component_groups": ["minecraft:melee_attack"] }
+                "remove": {
+                    "component_groups": ["minecraft:ranged_attack"]
+                },
+                "add": {
+                    "component_groups": ["minecraft:melee_attack"]
+                }
             },
             "minecraft:ranged_mode": {
-                "remove": { "component_groups": ["minecraft:melee_attack"] },
-                "add": { "component_groups": ["minecraft:ranged_attack"] }
+                "remove": {
+                    "component_groups": ["minecraft:melee_attack"]
+                },
+                "add": {
+                    "component_groups": ["minecraft:ranged_attack"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

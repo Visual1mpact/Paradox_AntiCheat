@@ -8,17 +8,12 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:camel_saddled": {
                 "minecraft:is_saddled": {},
                 "minecraft:input_ground_controlled": {},
                 "minecraft:dash": {
                     "cooldown_time": 2.75,
-                    "horizontal_momentum": 20.0,
+                    "horizontal_momentum": 20,
                     "vertical_momentum": 0.6
                 },
                 "minecraft:behavior.player_ride_tamed": {}
@@ -67,10 +62,29 @@
                             "on_interact": {
                                 "filters": {
                                     "all_of": [
-                                        { "test": "has_equipment", "subject": "self", "domain": "inventory", "operator": "not", "value": "saddle" },
-                                        { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "saddle" },
-                                        { "test": "is_family", "subject": "other", "value": "player" },
-                                        { "test": "is_sneak_held", "subject": "other", "value": false }
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "self",
+                                            "domain": "inventory",
+                                            "operator": "not",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "subject": "other",
+                                            "domain": "hand",
+                                            "value": "saddle"
+                                        },
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "is_sneak_held",
+                                            "subject": "other",
+                                            "value": false
+                                        }
                                     ]
                                 },
                                 "target": "self"
@@ -82,7 +96,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 2,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -112,12 +126,12 @@
                         {
                             "min_rider_count": 0,
                             "max_rider_count": 2,
-                            "position": [0.0, 1.905, 0.5]
+                            "position": [0, 1.905, 0.5]
                         },
                         {
                             "min_rider_count": 1,
                             "max_rider_count": 2,
-                            "position": [0.0, 1.905, -0.5]
+                            "position": [0, 1.905, -0.5]
                         }
                     ]
                 }
@@ -142,6 +156,11 @@
                     "width": 1.7,
                     "height": 0.945
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
         "components": {
@@ -155,9 +174,9 @@
                 ]
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:type_family": {
                 "family": ["camel", "mob"]
@@ -232,7 +251,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 7,
-                "target_distance": 6.0,
+                "target_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -245,11 +264,6 @@
             }
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -304,6 +318,11 @@
                 },
                 "remove": {
                     "component_groups": ["minecraft:camel_sitting"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

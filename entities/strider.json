@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:strider_saddled": {
                 "minecraft:is_saddled": {},
                 "minecraft:loot": {
@@ -20,7 +15,7 @@
                 },
                 "minecraft:boostable": {
                     "speed_multiplier": 1.35,
-                    "duration": 16.0,
+                    "duration": 16,
                     "boost_items": [
                         {
                             "item": "warped_fungus_on_a_stick",
@@ -35,7 +30,7 @@
                     "family_types": ["player"],
                     "interact_text": "action.interact.ride.strider",
                     "seats": {
-                        "position": [0.0, 1.6, -0.2]
+                        "position": [0, 1.6, -0.2]
                     }
                 },
                 "minecraft:item_controllable": {
@@ -46,7 +41,6 @@
                     "mount_speed_multiplier": 1.45
                 }
             },
-
             "minecraft:strider_unsaddled": {
                 "minecraft:interact": {
                     "interactions": [
@@ -67,7 +61,6 @@
                     ]
                 }
             },
-
             "minecraft:strider_piglin_jockey": {
                 "minecraft:addrider": {
                     "entity_type": "minecraft:zombie_pigman",
@@ -79,7 +72,7 @@
                     "family_types": ["player", "zombie_pigman"],
                     "interact_text": "action.interact.ride.strider",
                     "seats": {
-                        "position": [0.0, 1.65, -0.2]
+                        "position": [0, 1.65, -0.2]
                     }
                 }
             },
@@ -92,7 +85,7 @@
                     "seat_count": 1,
                     "family_types": ["strider"],
                     "seats": {
-                        "position": [0.0, 1.6, 0.0]
+                        "position": [0, 1.6, 0]
                     }
                 }
             },
@@ -123,7 +116,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 4,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:loot": {
                     "table": "loot_tables/entities/strider.json"
@@ -190,7 +183,6 @@
                     ]
                 }
             },
-
             "minecraft:detect_suffocating": {
                 "minecraft:environment_sensor": {
                     "triggers": [
@@ -245,7 +237,6 @@
                     ]
                 }
             },
-
             "minecraft:strider_pathing_behaviors": {
                 "minecraft:behavior.rise_to_liquid_level": {
                     "priority": 0,
@@ -265,9 +256,13 @@
                     "priority": 8,
                     "speed_multiplier": 0.8
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:type_family": {
@@ -295,9 +290,9 @@
                 ]
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {},
             "minecraft:despawn": {
@@ -326,7 +321,7 @@
             "minecraft:physics": {},
             "minecraft:behavior.look_at_player": {
                 "priority": 9,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -337,8 +332,8 @@
                 "speed_multiplier": 1.1,
                 "panic_sound": "panic",
                 "sound_interval": {
-                    "range_min": 1.0,
-                    "range_max": 3.0
+                    "range_min": 1,
+                    "range_max": 3
                 }
             },
             "minecraft:behavior.tempt": {
@@ -348,19 +343,13 @@
                 "can_tempt_while_ridden": true,
                 "tempt_sound": "tempt",
                 "sound_interval": {
-                    "range_min": 2.0,
-                    "range_max": 5.0
+                    "range_min": 2,
+                    "range_max": 5
                 }
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -417,7 +406,6 @@
                     "component_groups": ["minecraft:strider_adult", "minecraft:strider_unsaddled"]
                 }
             },
-
             "minecraft:on_saddled": {
                 "remove": {
                     "component_groups": ["minecraft:strider_unsaddled"]
@@ -426,13 +414,11 @@
                     "component_groups": ["minecraft:strider_saddled"]
                 }
             },
-
             "start_suffocating": {
                 "add": {
                     "component_groups": ["minecraft:start_suffocating"]
                 }
             },
-
             "stop_suffocating": {
                 "add": {
                     "component_groups": ["minecraft:detect_suffocating"]
@@ -444,6 +430,11 @@
             "on_not_riding_parent": {
                 "add": {
                     "component_groups": ["minecraft:strider_pathing_behaviors"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

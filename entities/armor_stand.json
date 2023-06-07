@@ -29,14 +29,19 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
                 ]
             },
             "minecraft:knockback_resistance": {
-                "value": 1.0
+                "value": 1
             },
             "minecraft:loot": {
                 "table": "loot_tables/entities/armor_stand.json"
@@ -50,7 +55,6 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
             "paradox:kick": {
                 "add": {

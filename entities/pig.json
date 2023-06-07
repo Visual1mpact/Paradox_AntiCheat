@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:pig_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -26,20 +21,17 @@
                         "target": "self"
                     }
                 },
-
                 "minecraft:behavior.follow_parent": {
                     "priority": 6,
                     "speed_multiplier": 1.1
                 }
             },
-
             "minecraft:pig_transform": {
                 "minecraft:transformation": {
                     "into": "minecraft:pig_zombie",
                     "delay": 0.5
                 }
             },
-
             "minecraft:pig_adult": {
                 "minecraft:experience_reward": {
                     "on_bred": "Math.Random(1,7)",
@@ -50,7 +42,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 4,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:breedable": {
                     "require_tame": false,
@@ -65,13 +57,17 @@
                     "breed_items": ["carrot", "beetroot", "potato"]
                 }
             },
-
             "minecraft:pig_unsaddled": {
                 "minecraft:interact": {
                     "interactions": [
                         {
                             "on_interact": {
-                                "filters": { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "saddle" },
+                                "filters": {
+                                    "test": "has_equipment",
+                                    "subject": "other",
+                                    "domain": "hand",
+                                    "value": "saddle"
+                                },
                                 "event": "minecraft:on_saddled"
                             },
                             "use_item": true,
@@ -84,11 +80,10 @@
                     "seat_count": 1,
                     "family_types": ["zombie"],
                     "seats": {
-                        "position": [0.0, 0.63, 0.0]
+                        "position": [0, 0.63, 0]
                     }
                 }
             },
-
             "minecraft:pig_saddled": {
                 "minecraft:is_saddled": {},
                 "minecraft:loot": {
@@ -96,7 +91,7 @@
                 },
                 "minecraft:boostable": {
                     "speed_multiplier": 1.35,
-                    "duration": 3.0,
+                    "duration": 3,
                     "boost_items": [
                         {
                             "item": "carrotOnAStick",
@@ -110,7 +105,7 @@
                     "interact_text": "action.interact.ride.horse",
                     "family_types": ["player"],
                     "seats": {
-                        "position": [0.0, 0.63, 0.0]
+                        "position": [0, 0.63, 0]
                     }
                 },
                 "minecraft:item_controllable": {
@@ -119,9 +114,13 @@
                 "minecraft:behavior.controlled_by_player": {
                     "priority": 0
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:damage_sensor": {
@@ -159,7 +158,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -181,9 +185,9 @@
                 "height": 0.9
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10
             },
             "minecraft:balloonable": {
                 "mass": 0.9
@@ -194,7 +198,7 @@
             "minecraft:behavior.mount_pathing": {
                 "priority": 1,
                 "speed_multiplier": 1.25,
-                "target_dist": 0.0,
+                "target_dist": 0,
                 "track_target": true
             },
             "minecraft:behavior.float": {
@@ -211,11 +215,11 @@
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 7,
-                "speed_multiplier": 1.0
+                "speed_multiplier": 1
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 8,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -228,13 +232,7 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "become_zombie": {
                 "remove": {},
                 "add": {
@@ -256,14 +254,12 @@
                     }
                 ]
             },
-
             "minecraft:entity_born": {
                 "remove": {},
                 "add": {
                     "component_groups": ["minecraft:pig_baby"]
                 }
             },
-
             "minecraft:ageable_grow_up": {
                 "remove": {
                     "component_groups": ["minecraft:pig_baby"]
@@ -272,7 +268,6 @@
                     "component_groups": ["minecraft:pig_adult", "minecraft:pig_unsaddled"]
                 }
             },
-
             "minecraft:on_saddled": {
                 "remove": {
                     "component_groups": ["minecraft:pig_unsaddled"]
@@ -284,6 +279,11 @@
             "minecraft:spawn_adult": {
                 "add": {
                     "component_groups": ["minecraft:pig_adult", "minecraft:pig_unsaddled"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

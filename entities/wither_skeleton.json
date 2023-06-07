@@ -14,7 +14,6 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:experience_reward": {
@@ -489,7 +488,7 @@
                 "priority": 5,
                 "max_dist": 3,
                 "goal_radius": 2,
-                "speed_multiplier": 1.0,
+                "speed_multiplier": 1,
                 "pickup_based_on_chance": true
             },
             "minecraft:behavior.random_stroll": {
@@ -513,14 +512,13 @@
             },
             "minecraft:conditional_bandwidth_optimization": {}
         },
-
         "events": {
+            "minecraft:entity_spawned": {},
             "paradox:kick": {
                 "add": {
                     "component_groups": ["paradox:kick"]
                 }
-            },
-            "minecraft:entity_spawned": {}
+            }
         }
     }
 }

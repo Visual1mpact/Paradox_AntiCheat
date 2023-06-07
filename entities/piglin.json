@@ -7,13 +7,7 @@
             "is_summonable": false,
             "is_experimental": false
         },
-
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "zombification_sensor": {
                 "minecraft:environment_sensor": {
                     "triggers": {
@@ -27,7 +21,6 @@
                     }
                 }
             },
-
             "start_zombification": {
                 "minecraft:is_shaking": {},
                 "minecraft:environment_sensor": {
@@ -49,7 +42,6 @@
                     }
                 }
             },
-
             "become_zombie": {
                 "minecraft:transformation": {
                     "into": "minecraft:zombie_pigman",
@@ -59,7 +51,6 @@
                     "preserve_equipment": true
                 }
             },
-
             "ranged_unit": {
                 "minecraft:behavior.ranged_attack": {
                     "priority": 8,
@@ -67,7 +58,7 @@
                     "attack_interval_max": 1,
                     "attack_radius": 8,
                     "attack_radius_min": 4,
-                    "speed_multiplier": 1.0,
+                    "speed_multiplier": 1,
                     "target_in_sight_time": 0.1
                 },
                 "minecraft:shooter": {
@@ -84,11 +75,10 @@
                     "value": 0
                 }
             },
-
             "melee_unit": {
                 "minecraft:behavior.melee_attack": {
                     "priority": 8,
-                    "speed_multiplier": 1.0,
+                    "speed_multiplier": 1,
                     "track_target": true
                 },
                 "minecraft:attack": {
@@ -101,7 +91,6 @@
                     "value": 1
                 }
             },
-
             "angry": {
                 "minecraft:angry": {
                     "duration": 30,
@@ -132,22 +121,20 @@
                     },
                     "angry_sound": "angry",
                     "sound_interval": {
-                        "range_min": 2.0,
-                        "range_max": 5.0
+                        "range_min": 2,
+                        "range_max": 5
                     }
                 }
             },
-
             "attack_cooldown": {
                 "minecraft:attack_cooldown": {
-                    "attack_cooldown_time": [30.0, 120.0],
+                    "attack_cooldown_time": [30, 120],
                     "attack_cooldown_complete_event": {
                         "event": "attack_cooldown_complete_event",
                         "target": "self"
                     }
                 }
             },
-
             "piglin_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -164,7 +151,6 @@
                     "speed_multiplier": 1.1
                 }
             },
-
             "piglin_adult": {
                 "minecraft:group_size": {
                     "radius": 32,
@@ -205,8 +191,8 @@
                     "duration": 10,
                     "celebrate_sound": "celebrate",
                     "sound_interval": {
-                        "range_min": 2.0,
-                        "range_max": 5.0
+                        "range_min": 2,
+                        "range_max": 5
                     },
                     "radius": 16
                 },
@@ -233,7 +219,6 @@
                     ]
                 }
             },
-
             "interactable_piglin": {
                 "minecraft:interact": {
                     "interactions": [
@@ -270,24 +255,21 @@
                     ]
                 }
             },
-
             "hunter": {
                 "minecraft:type_family": {
                     "family": ["piglin", "piglin_hunter", "monster"]
                 }
             },
-
             "not_hunter": {
                 "minecraft:type_family": {
                     "family": ["piglin", "monster"]
                 }
             },
-
             "alert_for_attack_targets": {
                 "minecraft:behavior.nearest_attackable_target": {
                     "priority": 7,
-                    "within_radius": 16.0,
-                    "persist_time": 0.0,
+                    "within_radius": 16,
+                    "persist_time": 0,
                     "entity_types": [
                         {
                             "filters": {
@@ -388,7 +370,6 @@
                     "must_see": true
                 }
             },
-
             "take_target_as_response_to_block_break": {
                 "minecraft:behavior.nearest_attackable_target": {
                     "priority": 7,
@@ -404,7 +385,6 @@
                     ]
                 }
             },
-
             "piglin_jockey": {
                 "minecraft:behavior.find_mount": {
                     "priority": 1,
@@ -412,9 +392,13 @@
                     "start_delay": 15,
                     "max_failed_attempts": 20
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
-
         "components": {
             "minecraft:is_hidden_when_invisible": {},
             "minecraft:equip_item": {},
@@ -476,8 +460,8 @@
                 "priority": 2,
                 "admire_item_sound": "admire",
                 "sound_interval": {
-                    "range_min": 2.0,
-                    "range_max": 5.0
+                    "range_min": 2,
+                    "range_max": 5
                 },
                 "on_admire_item_start": {
                     "event": "admire_item_started_event",
@@ -545,8 +529,8 @@
                 },
                 "avoid_mob_sound": "retreat",
                 "sound_interval": {
-                    "range_min": 2.0,
-                    "range_max": 5.0
+                    "range_min": 2,
+                    "range_max": 5
                 }
             },
             "minecraft:behavior.equip_item": {
@@ -559,7 +543,7 @@
                 "speed_multiplier": 0.8,
                 "pickup_based_on_chance": false,
                 "can_pickup_any_item": false,
-                "cooldown_after_being_attacked": 20.0
+                "cooldown_after_being_attacked": 20
             },
             "minecraft:behavior.avoid_block": {
                 "priority": 9,
@@ -571,8 +555,8 @@
                 "target_blocks": ["minecraft:soul_fire", "minecraft:soul_lantern", "minecraft:soul_torch", "minecraft:item.soul_campfire"],
                 "avoid_block_sound": "retreat",
                 "sound_interval": {
-                    "range_min": 2.0,
-                    "range_max": 5.0
+                    "range_min": 2,
+                    "range_max": 5
                 }
             },
             "minecraft:behavior.random_stroll": {
@@ -958,13 +942,7 @@
                 ]
             }
         },
-
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "randomize": [
                     {
@@ -1095,6 +1073,11 @@
             "admire_item_stopped_event": {
                 "add": {
                     "component_groups": ["interactable_piglin"]
+                }
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
                 }
             }
         }

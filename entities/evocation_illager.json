@@ -8,24 +8,19 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:celebrate": {
                 "minecraft:behavior.celebrate": {
                     "priority": 5,
                     "celebration_sound": "celebrate",
                     "sound_interval": {
-                        "range_min": 2.0,
-                        "range_max": 7.0
+                        "range_min": 2,
+                        "range_max": 7
                     },
                     "jump_interval": {
-                        "range_min": 1.0,
+                        "range_min": 1,
                         "range_max": 3.5
                     },
-                    "duration": 30.0,
+                    "duration": 30,
                     "on_celebration_end_event": {
                         "event": "minecraft:stop_celebrating",
                         "target": "self"
@@ -47,8 +42,8 @@
                     "speed_multiplier": 0.7
                 },
                 "minecraft:ambient_sound_interval": {
-                    "value": 2.0,
-                    "range": 4.0,
+                    "value": 2,
+                    "range": 4,
                     "event_name": "ambient.in.raid"
                 }
             },
@@ -58,6 +53,11 @@
             "minecraft:raid_despawn": {
                 "minecraft:despawn": {
                     "despawn_from_distance": {}
+                }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
                 }
             }
         },
@@ -84,7 +84,12 @@
             "minecraft:hurt_on_condition": {
                 "damage_conditions": [
                     {
-                        "filters": { "test": "in_lava", "subject": "self", "operator": "==", "value": true },
+                        "filters": {
+                            "test": "in_lava",
+                            "subject": "self",
+                            "operator": "==",
+                            "value": true
+                        },
                         "cause": "lava",
                         "damage_per_tick": 4
                     }
@@ -111,22 +116,21 @@
             },
             "minecraft:behavior.summon_entity": {
                 "priority": 2,
-
                 "summon_choices": [
                     {
-                        "min_activation_range": 0.0,
-                        "max_activation_range": 3.0,
-                        "cooldown_time": 5.0,
+                        "min_activation_range": 0,
+                        "max_activation_range": 3,
+                        "cooldown_time": 5,
                         "weight": 3,
-                        "cast_duration": 2.0,
+                        "cast_duration": 2,
                         "particle_color": "#FF664D59",
                         "start_sound_event": "cast.spell",
                         "sequence": [
                             {
                                 "shape": "circle",
                                 "target": "self",
-                                "base_delay": 1.0,
-                                "delay_per_summon": 0.0,
+                                "base_delay": 1,
+                                "delay_per_summon": 0,
                                 "num_entities_spawned": 5,
                                 "entity_type": "minecraft:evocation_fang",
                                 "size": 1.5,
@@ -137,7 +141,7 @@
                                 "shape": "circle",
                                 "target": "self",
                                 "base_delay": 0.15,
-                                "delay_per_summon": 0.0,
+                                "delay_per_summon": 0,
                                 "num_entities_spawned": 8,
                                 "entity_type": "minecraft:evocation_fang",
                                 "size": 2.5,
@@ -146,17 +150,17 @@
                         ]
                     },
                     {
-                        "min_activation_range": 3.0,
+                        "min_activation_range": 3,
                         "weight": 3,
-                        "cooldown_time": 5.0,
-                        "cast_duration": 2.0,
+                        "cooldown_time": 5,
+                        "cast_duration": 2,
                         "particle_color": "#FF664D59",
                         "start_sound_event": "cast.spell",
                         "sequence": [
                             {
                                 "shape": "line",
                                 "target": "self",
-                                "base_delay": 1.0,
+                                "base_delay": 1,
                                 "delay_per_summon": 0.05,
                                 "num_entities_spawned": 16,
                                 "entity_type": "minecraft:evocation_fang",
@@ -167,19 +171,19 @@
                     },
                     {
                         "weight": 1,
-                        "cooldown_time": 17.0,
-                        "cast_duration": 5.0,
+                        "cooldown_time": 17,
+                        "cast_duration": 5,
                         "particle_color": "#FFB3B3CC",
                         "sequence": [
                             {
                                 "shape": "circle",
                                 "target": "self",
-                                "base_delay": 5.0,
+                                "base_delay": 5,
                                 "num_entities_spawned": 3,
                                 "entity_type": "minecraft:vex",
                                 "summon_cap": 8,
-                                "summon_cap_radius": 16.0,
-                                "size": 1.0,
+                                "summon_cap_radius": 16,
+                                "size": 1,
                                 "sound_event": "prepare.summon"
                             }
                         ]
@@ -190,22 +194,30 @@
                 "priority": 3,
                 "event_choices": [
                     {
-                        "min_activation_range": 0.0,
-                        "max_activation_range": 16.0,
-                        "cooldown_time": 5.0,
-                        "cast_duration": 3.0,
+                        "min_activation_range": 0,
+                        "max_activation_range": 16,
+                        "cooldown_time": 5,
+                        "cast_duration": 3,
                         "particle_color": "#FFB38033",
                         "weight": 3,
                         "filters": {
                             "all_of": [
-                                { "test": "is_family", "subject": "other", "value": "sheep" },
-                                { "test": "is_color", "subject": "other", "value": "blue" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "sheep"
+                                },
+                                {
+                                    "test": "is_color",
+                                    "subject": "other",
+                                    "value": "blue"
+                                }
                             ]
                         },
                         "start_sound_event": "cast.spell",
                         "sequence": [
                             {
-                                "base_delay": 2.0,
+                                "base_delay": 2,
                                 "event": "wololo",
                                 "sound_event": "prepare.wololo"
                             }
@@ -217,10 +229,14 @@
                 "priority": 5,
                 "entity_types": [
                     {
-                        "filters": { "test": "is_family", "subject": "other", "value": "player" },
+                        "filters": {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "player"
+                        },
                         "max_dist": 8,
                         "walk_speed_multiplier": 0.6,
-                        "sprint_speed_multiplier": 1.0
+                        "sprint_speed_multiplier": 1
                     }
                 ]
             },
@@ -234,10 +250,26 @@
                     {
                         "filters": {
                             "any_of": [
-                                { "test": "is_family", "subject": "other", "value": "player" },
-                                { "test": "is_family", "subject": "other", "value": "snowgolem" },
-                                { "test": "is_family", "subject": "other", "value": "irongolem" },
-                                { "test": "is_family", "subject": "other", "value": "wandering_trader" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "player"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "snowgolem"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "irongolem"
+                                },
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "wandering_trader"
+                                }
                             ]
                         },
                         "max_dist": 20
@@ -245,8 +277,17 @@
                     {
                         "filters": {
                             "all_of": [
-                                { "test": "is_family", "subject": "other", "value": "villager" },
-                                { "test": "has_component", "subject": "other", "operator": "!=", "value": "minecraft:is_baby" }
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "villager"
+                                },
+                                {
+                                    "test": "has_component",
+                                    "subject": "other",
+                                    "operator": "!=",
+                                    "value": "minecraft:is_baby"
+                                }
                             ]
                         },
                         "max_dist": 20
@@ -254,16 +295,19 @@
                 ],
                 "must_see": true
             },
-
             "minecraft:behavior.look_at_player": {
                 "priority": 9,
-                "look_distance": 3.0,
-                "probability": 1.0
+                "look_distance": 3,
+                "probability": 1
             },
             "minecraft:behavior.look_at_entity": {
                 "priority": 10,
-                "look_distance": 8.0,
-                "filters": { "test": "is_family", "subject": "other", "value": "mob" }
+                "look_distance": 8,
+                "filters": {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "mob"
+                }
             },
             "minecraft:behavior.hurt_by_target": {
                 "priority": 1
@@ -280,11 +324,6 @@
             "minecraft:conditional_bandwidth_optimization": {}
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:spawn_for_raid": {
                 "add": {
                     "component_groups": ["minecraft:raid_configuration", "minecraft:raid_despawn", "minecraft:raid_persistence"]
@@ -293,24 +332,43 @@
             "minecraft:start_celebrating": {
                 "sequence": [
                     {
-                        "add": { "component_groups": ["minecraft:celebrate"] }
+                        "add": {
+                            "component_groups": ["minecraft:celebrate"]
+                        }
                     },
                     {
-                        "filters": { "test": "has_nametag", "value": false },
-                        "remove": { "component_groups": ["minecraft:raid_persistence"] }
+                        "filters": {
+                            "test": "has_nametag",
+                            "value": false
+                        },
+                        "remove": {
+                            "component_groups": ["minecraft:raid_persistence"]
+                        }
                     }
                 ]
             },
             "minecraft:stop_celebrating": {
-                "remove": { "component_groups": ["minecraft:celebrate"] }
+                "remove": {
+                    "component_groups": ["minecraft:celebrate"]
+                }
             },
             "minecraft:raid_expired": {
                 "sequence": [
                     {
-                        "filters": { "test": "has_nametag", "value": false },
-                        "remove": { "component_groups": ["minecraft:raid_persistence"] }
+                        "filters": {
+                            "test": "has_nametag",
+                            "value": false
+                        },
+                        "remove": {
+                            "component_groups": ["minecraft:raid_persistence"]
+                        }
                     }
                 ]
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }

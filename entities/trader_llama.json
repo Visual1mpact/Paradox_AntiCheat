@@ -8,11 +8,6 @@
             "is_experimental": false
         },
         "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            },
             "minecraft:llama_baby": {
                 "minecraft:is_baby": {},
                 "minecraft:scale": {
@@ -37,7 +32,7 @@
                 },
                 "minecraft:behavior.follow_parent": {
                     "priority": 5,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 }
             },
             "minecraft:llama_adult": {
@@ -50,7 +45,7 @@
                 },
                 "minecraft:behavior.breed": {
                     "priority": 4,
-                    "speed_multiplier": 1.0
+                    "speed_multiplier": 1
                 },
                 "minecraft:breedable": {
                     "require_tame": true,
@@ -82,7 +77,7 @@
                     "family_types": ["player"],
                     "interact_text": "action.interact.mount",
                     "seats": {
-                        "position": [0.0, 1.17, -0.3]
+                        "position": [0, 1.17, -0.3]
                     }
                 },
                 "minecraft:tamemount": {
@@ -230,7 +225,7 @@
                     "family_types": ["player"],
                     "interact_text": "action.interact.ride.horse",
                     "seats": {
-                        "position": [0.0, 1.17, -0.3]
+                        "position": [0, 1.17, -0.3]
                     }
                 },
                 "minecraft:inventory": {
@@ -335,6 +330,11 @@
                         "deals_damage": true
                     }
                 }
+            },
+            "paradox:kick": {
+                "minecraft:instant_despawn": {
+                    "remove_child_entities": true
+                }
             }
         },
         "components": {
@@ -348,7 +348,7 @@
             "minecraft:behavior.mount_pathing": {
                 "priority": 1,
                 "speed_multiplier": 1.25,
-                "target_dist": 0.0,
+                "target_dist": 0,
                 "track_target": true
             },
             "minecraft:behavior.hurt_by_target": {
@@ -411,7 +411,7 @@
             },
             "minecraft:behavior.look_at_player": {
                 "priority": 7,
-                "look_distance": 6.0,
+                "look_distance": 6,
                 "probability": 0.02
             },
             "minecraft:behavior.random_look_around": {
@@ -463,9 +463,9 @@
                 "max": 40
             },
             "minecraft:leashable": {
-                "soft_distance": 4.0,
-                "hard_distance": 6.0,
-                "max_distance": 10.0,
+                "soft_distance": 4,
+                "hard_distance": 6,
+                "max_distance": 10,
                 "can_be_stolen": true
             },
             "minecraft:balloonable": {},
@@ -560,11 +560,6 @@
             }
         },
         "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            },
             "minecraft:entity_spawned": {
                 "sequence": [
                     {
@@ -734,6 +729,11 @@
                     "component_groups": ["minecraft:llama_adult", "minecraft:llama_wild"]
                 },
                 "trigger": "minecraft:add_attributes"
+            },
+            "paradox:kick": {
+                "add": {
+                    "component_groups": ["paradox:kick"]
+                }
             }
         }
     }
