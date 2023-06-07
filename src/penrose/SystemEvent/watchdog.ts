@@ -8,7 +8,7 @@ function watchdog(terminator: WatchdogTerminateBeforeEvent) {
 
 const WatchDog = () => {
     // Listen to watchdog
-    system.beforeEvents.watchdogTerminate.subscribe(watchdog);
+    system.events.beforeWatchdogTerminate.subscribe(watchdog);
 };
 
 export { WatchDog };

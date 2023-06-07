@@ -51,7 +51,7 @@ import { KillAura } from "./penrose/EntityHitAfterEvent/killaura.js";
 // Import WorldInitializeAfter Events
 import { Registry } from "./penrose/WorldInitializeAfterEvent/registry.js";
 // Import SystemBefore Events
-import { WatchDog } from "./penrose/SystemBeforeEvent/watchdog.js";
+import { WatchDog } from "./penrose/SystemEvent/watchdog.js";
 // Import ChatSendAfter Events
 import { AfterPrefixCommand } from "./penrose/ChatSendAfterEvent/chat/afterprefixcommand.js";
 import { TpRequestListener } from "./commands/utility/tpr.js";
