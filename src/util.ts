@@ -216,6 +216,20 @@ export const UUID = (() => {
 })();
 
 /**
+ * Validates whether a given string is a valid UUID.
+ *
+ * @param {string} uuid - The string to validate as a UUID.
+ * @returns {boolean} - Returns true if the string is a valid UUID, false otherwise.
+ */
+export function isValidUUID(uuid: string): boolean {
+    // Regular expression to match the UUID pattern
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    // Test if the UUID matches the pattern and return the result
+    return uuidRegex.test(uuid);
+}
+
+/**
  * Takes a string and converts it to camelCase.
  *
  * @name toCamelCase
@@ -273,7 +287,9 @@ export const crypto = (salt: string | number | boolean, text: string) => {
         resultChars[i] = applySaltToChar(textChars.slice(i, i + 1));
     }
 
-    return [...resultChars].map(byteHex).join("");
+    const joinedResult = [...resultChars].map(byteHex).join("");
+    // Ensure it is no more than 50 characters as set for dynamic property strings
+    return joinedResult.substring(0, 50);
 };
 
 /**

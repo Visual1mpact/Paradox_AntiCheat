@@ -3,7 +3,7 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer, isValidUUID } from "../../util.js";
 
 function opHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -41,11 +41,13 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     let hash = player.getDynamicProperty("hash");
     let salt = player.getDynamicProperty("salt");
     let encode: string;
-    // If no salt then create one
-    if (salt === undefined && args[0] === config.modules.encryption.password) {
-        player.setDynamicProperty("salt", UUID.generate());
-        salt = player.getDynamicProperty("salt");
+
+    // Validate salt or generate a new one
+    if (!salt || !isValidUUID(salt as string)) {
+        salt = UUID.generate();
+        player.setDynamicProperty("salt", salt);
     }
+
     // If no hash then create one
     if (hash === undefined && args[0] === config.modules.encryption.password) {
         encode = crypto?.(salt, config?.modules?.encryption?.password);
@@ -55,6 +57,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     } else {
         encode = crypto?.(salt, config?.modules?.encryption?.password);
     }
+
     // Make sure the user has permissions to run the command
     if (hash === undefined || (hash !== encode && args[0] !== config.modules.encryption.password)) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
@@ -99,11 +102,13 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     // Check for hash/salt and validate password
     let memberHash = member.getDynamicProperty("hash");
     let memberSalt = member.getDynamicProperty("salt");
-    // If no salt then create one
-    if (memberSalt === undefined) {
-        member.setDynamicProperty("salt", UUID.generate());
-        memberSalt = member.getDynamicProperty("salt");
+
+    // Validate salt or generate a new one
+    if (!memberSalt || !isValidUUID(memberSalt as string)) {
+        memberSalt = UUID.generate();
+        member.setDynamicProperty("salt", memberSalt);
     }
+
     // If no hash then create one
     if (memberHash === undefined) {
         encode = crypto(memberSalt, config.modules.encryption.password);
