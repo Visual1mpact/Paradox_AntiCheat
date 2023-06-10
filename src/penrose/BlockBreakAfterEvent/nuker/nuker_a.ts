@@ -92,7 +92,7 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
 
     const now = Date.now();
     const lastBreak = lastBreakTime.get(player.id);
-    if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && now - lastBreak < 15) {
+    if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && now - lastBreak < 5) {
         const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
         const blockID = brokenBlockPermutation.clone();
 
