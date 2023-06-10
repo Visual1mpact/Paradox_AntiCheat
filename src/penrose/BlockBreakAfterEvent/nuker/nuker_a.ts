@@ -4,32 +4,29 @@ import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registr
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const lastBreakTime = new Map<string, number>();
+const breakCounter = new Map<string, number>();
 
 async function nukera(object: BlockBreakAfterEvent): Promise<void> {
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
     if (antiNukerABoolean === false) {
         lastBreakTime.clear();
+        breakCounter.clear();
         world.afterEvents.blockBreak.unsubscribe(nukera);
         return;
     }
 
     const { block, player, dimension, brokenBlockPermutation } = object;
     const { x, y, z } = block.location;
-
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     if (uniqueId === player.name) {
         return;
     }
 
-    /**
-     * startTimer will make sure the key is properly removed
-     * when the time for theVoid has expired. This will preserve
-     * the integrity of our Memory.
-     */
     const timerExpired = startTimer("nukera", player.id, Date.now());
     if (timerExpired.namespace.indexOf("nukera") !== -1 && timerExpired.expired) {
-        const deletedKey = timerExpired.key; // extract the key without the namespace prefix
+        const deletedKey = timerExpired.key;
         lastBreakTime.delete(deletedKey);
+        breakCounter.delete(deletedKey);
     }
 
     // Ignore vegetation
@@ -92,32 +89,39 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
 
     const now = Date.now();
     const lastBreak = lastBreakTime.get(player.id);
+    const counter = breakCounter.get(player.id) || 0;
+
     if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && now - lastBreak < 5) {
-        const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
-        const blockID = brokenBlockPermutation.clone();
+        if (counter >= 3) {
+            const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
+            const blockID = brokenBlockPermutation.clone();
 
-        flag(player, "Nuker", "A", "Break", null, null, null, null, false);
-        blockLoc.setPermutation(blockID);
-        lastBreakTime.delete(player.id);
+            flag(player, "Nuker", "A", "Break", null, null, null, null, false);
+            blockLoc.setPermutation(blockID);
+            lastBreakTime.delete(player.id);
+            breakCounter.delete(player.id);
 
-        try {
-            await player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
-        } catch (error) {}
-        // Blindness
-        player.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
-        // Mining Fatigue
-        player.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
-        // Weakness
-        player.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
-        // Slowness
-        player.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-        const boolean = player.hasTag("freeze");
-        if (!boolean) {
-            player.addTag("freeze");
+            try {
+                await player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
+            } catch (error) {}
+
+            // Apply effects or actions for three or more consecutive block breaks
+            player.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
+            player.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
+            player.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
+            player.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+
+            const hasFreezeTag = player.hasTag("freeze");
+            if (!hasFreezeTag) {
+                player.addTag("freeze");
+            }
+            return;
+        } else {
+            breakCounter.set(player.id, counter + 1);
         }
-        return;
     } else {
         lastBreakTime.set(player.id, now);
+        breakCounter.set(player.id, 1);
     }
 }
 
