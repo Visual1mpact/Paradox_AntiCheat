@@ -31,12 +31,13 @@ function clearEntityItems() {
 }
 
 function clearEntities() {
+    const entityException = ["minecraft:ender_dragon", "minecraft:shulker", "minecraft:hoglin", "minecraft:zoglin", "minecraft:piglin_brute", "minecraft:evocation_illager", "minecraft:vindicator"];
     const filter = { families: ["monster"] };
     const entitiesCache = world.getDimension("overworld").getEntities(filter);
     for (const entity of entitiesCache) {
-        // Ignore entity if they are tagged
-        if (entity.nameTag) {
-            return;
+        // Ignore entity
+        if (entityException.includes(entity.typeId) || entity.nameTag) {
+            continue;
         }
         kickablePlayers.add(entity);
         entity.triggerEvent("paradox:kick");
