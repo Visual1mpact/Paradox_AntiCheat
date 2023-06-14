@@ -31,7 +31,7 @@ function clearEntityItems() {
 }
 
 function clearEntities() {
-    const entityException = ["minecraft:ender_dragon", "minecraft:shulker", "minecraft:hoglin", "minecraft:zoglin", "minecraft:piglin_brute", "minecraft:evocation_illager", "minecraft:vindicator"];
+    const entityException = ["minecraft:ender_dragon", "minecraft:shulker", "minecraft:hoglin", "minecraft:zoglin", "minecraft:piglin_brute", "minecraft:evocation_illager", "minecraft:vindicator", "minecraft:elder_guardian"];
     const filter = { families: ["monster"] };
     const entitiesCache = world.getDimension("overworld").getEntities(filter);
     for (const entity of entitiesCache) {
