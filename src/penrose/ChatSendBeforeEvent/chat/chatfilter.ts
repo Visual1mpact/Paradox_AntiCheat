@@ -61,7 +61,7 @@ const ChatFilter = () => {
                 const obfuscatedPassword = obfuscateString();
                 formattedMessage = `${player.name}: ${message}`.replace(password, obfuscatedPassword);
             }
-            sendMsg("@a", `${player.name}: ${formattedMessage}`); // Send the chat message to all players
+            sendMsg("@a", `${formattedMessage}`); // Send the chat message to all players
             msg.sendToTargets = true; // Cancel the chat message
         }
     });
