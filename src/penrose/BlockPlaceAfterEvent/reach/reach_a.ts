@@ -1,6 +1,7 @@
 import { world, MinecraftBlockTypes, BlockPlaceAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { flag } from "../../../util.js";
 // import { flag } from "../../../util.js";
 
 function reacha(object: BlockPlaceAfterEvent) {
@@ -37,7 +38,7 @@ function reacha(object: BlockPlaceAfterEvent) {
 
     if (distanceSquared > config.modules.reachA.reach * config.modules.reachA.reach) {
         dimension.getBlock({ x: x, y: y, z: z }).setType(MinecraftBlockTypes.air);
-        // flag(player, "Reach", "A", "Placement", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false, null);
+        flag(player, "Reach", "A", "Placement", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false);
     }
 }
 
