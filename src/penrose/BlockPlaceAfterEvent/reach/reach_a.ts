@@ -2,7 +2,6 @@ import { world, MinecraftBlockTypes, BlockPlaceAfterEvent } from "@minecraft/ser
 import config from "../../../data/config.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { flag } from "../../../util.js";
-// import { flag } from "../../../util.js";
 
 function reacha(object: BlockPlaceAfterEvent) {
     // Get Dynamic Property
