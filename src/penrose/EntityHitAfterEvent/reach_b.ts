@@ -37,7 +37,7 @@ function reachb(object: EntityHitAfterEvent) {
     const dx = x - x1;
     const dy = y - y1;
     const dz = z - z1;
-    const distanceSquared = dx * dx + dy * dy + dz * dz;
+    const distanceSquared = Math.floor(dx * dx + dy * dy + dz * dz);
 
     if (distanceSquared > config.modules.reachB.reach * config.modules.reachB.reach) {
         flag(entity, "Reach", "B", "Attack", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false);

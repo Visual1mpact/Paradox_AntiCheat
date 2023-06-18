@@ -33,7 +33,7 @@ function reacha(object: BlockPlaceAfterEvent) {
     const dx = x - x1;
     const dy = y - y1;
     const dz = z - z1;
-    const distanceSquared = dx * dx + dy * dy + dz * dz;
+    const distanceSquared = Math.floor(dx * dx + dy * dy + dz * dz);
 
     if (distanceSquared > config.modules.reachA.reach * config.modules.reachA.reach) {
         dimension.getBlock({ x: x, y: y, z: z }).setType(MinecraftBlockTypes.air);
