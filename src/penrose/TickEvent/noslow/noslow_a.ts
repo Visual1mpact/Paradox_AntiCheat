@@ -89,7 +89,7 @@ function noslowa(id: number) {
 
         const verifyTpGrace = isTimerExpired(player.id);
         // We compare with a 20% buffer to minimize false flags
-        if (!isNaN(bps) && bps > config.modules.noslowA.speed && verifyTpGrace === true) {
+        if (!isNaN(playerInfo.highestBps) && playerInfo.highestBps > config.modules.noslowA.speed && verifyTpGrace === true) {
             flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", playerInfo.highestBps.toFixed(2), true);
             playerInfo.highestBps = 0;
         }
