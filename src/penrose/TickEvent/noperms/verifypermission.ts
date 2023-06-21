@@ -36,10 +36,8 @@ function verifypermission() {
             dynamicPropertyRegistry.delete(player.id);
             player.removeTag("paradoxOpped");
         }
-        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-        try {
-            sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} had unauthorized permissions. Permissions removed!`);
-        } catch (error) {}
+
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} had unauthorized permissions. Permissions removed!`);
     }
 }
 

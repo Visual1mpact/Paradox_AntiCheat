@@ -34,10 +34,8 @@ function noperms() {
             entity.removeDynamicProperty("salt");
             dynamicPropertyRegistry.delete(entity.id);
         }
-        // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-        try {
-            sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
-        } catch (error) {}
+
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
     }
 }
 
