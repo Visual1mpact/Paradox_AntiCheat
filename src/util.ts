@@ -123,13 +123,15 @@ export function getScore(objective: string, player: Player) {
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
     let score;
-    try {
+    const isParticipant = scoreObj.getParticipants().some((target) => target.id === target.id);
+    if (isParticipant !== undefined) {
         score = scoreObj.getScore(target.scoreboardIdentity);
-    } catch {
-        target.scoreboardIdentity.setScore(scoreObj, 0);
+    } else {
+        target.runCommand(`scoreboard players add @s ${objective} 0`);
+        return 0;
     }
     const result = (stack ? score ?? 0 : 0) + amount;
-    target.scoreboardIdentity.setScore(scoreObj, result);
+    scoreObj.setScore(target.scoreboardIdentity, result);
     return score;
 }
 
