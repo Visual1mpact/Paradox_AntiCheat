@@ -37,6 +37,10 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
 
     const player = message.sender;
 
+    if (config.modules.encryption.password === "") {
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to create a password!`);
+    }
+
     // Check for hash/salt and validate password
     let hash = player.getDynamicProperty("hash");
     let salt = player.getDynamicProperty("salt");

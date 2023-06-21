@@ -31,9 +31,7 @@ export async function flag(player: Player, check: string, checkType: string, hac
         player.teleport({ x: 30000000, y: 30000000, z: 30000000 }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     }
 
-    try {
-        setScore(player, `${check.toLowerCase()}vl`, 1, true);
-    } catch {}
+    setScore(player, `${check.toLowerCase()}vl`, 1, true);
 
     try {
         if (debug) {

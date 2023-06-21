@@ -6,8 +6,12 @@ import { crypto, sendMsg, sendMsgToPlayer, UUID } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 //Function provided by Visual1mpact
-export function uiOP(opResult: ModalFormResponse, salt: string | number | boolean, hash: string | number | boolean, encode: string, onlineList: string[], player: Player) {
+export function uiOP(opResult: ModalFormResponse, salt: string | number | boolean, hash: string | number | boolean, encode: string, onlineList: string[], player: Player): void {
     const [value] = opResult.formValues;
+    if (config.modules.encryption.password === "") {
+        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to create a password!`);
+        return void 0;
+    }
     if (hash !== encode) {
         if (value === config.modules.encryption.password) {
             // If no salt then create one
