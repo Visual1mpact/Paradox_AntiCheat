@@ -48,6 +48,7 @@ function cpsValidation(id: number, max: number): void {
     // Check each player's clicks per second and raise a flag if it's too high
     for (const player of players) {
         const current: number = getPlayerCPS(player);
+        player.sendMessage(String(current));
         if (current > max) {
             flag(player, "Autoclicker", "A", "Combat", null, null, "CPS", current.toString(), false);
         }
@@ -102,7 +103,7 @@ function autoclicker(event: EntityHitAfterEvent): void {
 
 // Define the AutoClicker function
 const AutoClicker = (): void => {
-    const maxCPS: number = 12;
+    const maxCPS: number = 30;
     // Subscribe to the entityHit event to track player clicks
     world.afterEvents.entityHit.subscribe(autoclicker);
     // Set an interval to run the CPS validation function every 20 ticks
