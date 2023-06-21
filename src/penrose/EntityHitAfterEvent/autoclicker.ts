@@ -48,7 +48,6 @@ function cpsValidation(id: number, max: number): void {
     // Check each player's clicks per second and raise a flag if it's too high
     for (const player of players) {
         const current: number = getPlayerCPS(player);
-        player.sendMessage(String(current));
         if (current > max) {
             flag(player, "Autoclicker", "A", "Combat", null, null, "CPS", current.toString(), false);
         }
