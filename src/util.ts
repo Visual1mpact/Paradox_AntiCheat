@@ -33,15 +33,13 @@ export async function flag(player: Player, check: string, checkType: string, hac
 
     setScore(player, `${check.toLowerCase()}vl`, 1, true);
 
-    try {
-        if (debug) {
-            sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
-        } else if (item && stack) {
-            sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
-        } else {
-            sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
-        }
-    } catch {}
+    if (debug) {
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+    } else if (item && stack) {
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+    } else {
+        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+    }
 
     try {
         if (check === "Namespoof") {
