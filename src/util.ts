@@ -1,5 +1,5 @@
 /* eslint no-var: "off"*/
-import { GameMode, Player, system, world } from "@minecraft/server";
+import { GameMode, Player, Vector, system, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
@@ -26,7 +26,7 @@ const theVoid = new Map<string, number>();
  */
 export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean) {
     if (shouldTP && check !== "Crasher") {
-        player.teleport({ x: player.location.x, y: player.location.y, z: player.location.z }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
+        player.teleport(new Vector(player.location.x, player.location.y, player.location.z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     } else if (shouldTP && check === "Crasher") {
         player.teleport({ x: 30000000, y: 30000000, z: 30000000 }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     }
