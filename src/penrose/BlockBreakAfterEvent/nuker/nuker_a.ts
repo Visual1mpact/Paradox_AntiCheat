@@ -1,4 +1,4 @@
-import { world, BlockBreakAfterEvent } from "@minecraft/server";
+import { world, BlockBreakAfterEvent, system, Player, EntityQueryOptions, TitleDisplayOptions } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
@@ -112,8 +112,12 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
             player.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
 
             const hasFreezeTag = player.hasTag("freeze");
+            const hasNukerFreeze = player.hasTag("freezeNukerA");
             if (!hasFreezeTag) {
                 player.addTag("freeze");
+            }
+            if (!hasNukerFreeze) {
+                player.addTag("freezeNukerA");
             }
             return;
         } else {
@@ -125,8 +129,36 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
     }
 }
 
+function freeze(id: number) {
+    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
+    if (antiNukerABoolean === false) {
+        system.clearRun(id);
+        return;
+    }
+
+    const filter: EntityQueryOptions = {
+        tags: ["freezeNukerA"],
+        excludeTags: ["freezeAura"],
+    };
+    const players = world.getPlayers(filter);
+    for (const player of players) {
+        if (!player) {
+            return;
+        }
+        const tagBoolean = player.hasTag("freeze");
+        if (!tagBoolean) {
+            player.removeTag("freezeNukerA");
+            return;
+        }
+        player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f You have been frozen!", { subtitle: "§fContact Staff §4[§6AntiNukerA§4]§f", fadeInSeconds: 0, fadeOutSeconds: 0, staySeconds: 3 } as TitleDisplayOptions);
+    }
+}
+
 const NukerA = () => {
     world.afterEvents.blockBreak.subscribe(nukera);
+    const id = system.runInterval(() => {
+        freeze(id);
+    }, 20);
 };
 
 export { NukerA };

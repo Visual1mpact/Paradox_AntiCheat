@@ -1,4 +1,4 @@
-import { world, Player, EntityHitAfterEvent } from "@minecraft/server";
+import { world, Player, EntityHitAfterEvent, EntityQueryOptions, TitleDisplayOptions, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
@@ -93,12 +93,44 @@ function killaura(obj: EntityHitAfterEvent) {
         // Slowness
         entity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
         const boolean = entity.hasTag("freeze");
+        const hasAuraFreeze = entity.hasTag("freezeAura");
         if (!boolean) {
             entity.addTag("freeze");
         }
+        if (!hasAuraFreeze) {
+            entity.addTag("freezeAura");
+        }
+    }
+}
+
+function freeze(id: number) {
+    const antiKillAuraBoolean = dynamicPropertyRegistry.get("antikillaura_b");
+    if (antiKillAuraBoolean === false) {
+        system.clearRun(id);
+        return;
+    }
+
+    const filter: EntityQueryOptions = {
+        tags: ["freezeAura"],
+        excludeTags: ["freezeNukerA"],
+    };
+    const players = world.getPlayers(filter);
+    for (const player of players) {
+        if (!player) {
+            return;
+        }
+        const tagBoolean = player.hasTag("freeze");
+        if (!tagBoolean) {
+            player.removeTag("freezeAura");
+            return;
+        }
+        player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f You have been frozen!", { subtitle: "§fContact Staff §4[§6AntiKillAura§4]§f", fadeInSeconds: 0, fadeOutSeconds: 0, staySeconds: 3 } as TitleDisplayOptions);
     }
 }
 
 export const KillAura = () => {
     world.afterEvents.entityHit.subscribe(killaura);
+    const id = system.runInterval(() => {
+        freeze(id);
+    }, 20);
 };
