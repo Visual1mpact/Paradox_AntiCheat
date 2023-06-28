@@ -1,4 +1,4 @@
-import { world, BlockBreakAfterEvent, system, Player, EntityQueryOptions, TitleDisplayOptions } from "@minecraft/server";
+import { world, BlockBreakAfterEvent, system, EntityQueryOptions, TitleDisplayOptions } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";

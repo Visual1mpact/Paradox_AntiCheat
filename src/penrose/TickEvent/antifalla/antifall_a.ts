@@ -1,4 +1,4 @@
-import { world, Block, EntityQueryOptions, GameMode, system } from "@minecraft/server";
+import { world, Block, EntityQueryOptions, GameMode, system, EntityEquipmentInventoryComponent, EquipmentSlot } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
@@ -34,6 +34,8 @@ function antifalla(id: number) {
         const { x, y, z } = player.location;
         const vy = player.getVelocity().y;
         const blocksToCheck = [
+            //check for a half block that the player maybe standing on if its a lower slab
+            { x: x, y: y - 0.5, z: z },
             { x: x, y: y - 1, z: z },
             { x: x + 1, y: y - 1, z: z },
             { x: x - 1, y: y - 1, z: z },
