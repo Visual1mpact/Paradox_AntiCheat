@@ -1204,6 +1204,1980 @@
                     "on_entry": ["/tag @s add sleeping", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SLEEP§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
                 }
             }
+        },
+        "controller.animation.facing_north": {
+            "initial_state": "is_not_facing",
+            "states": {
+                "is_facing": {
+                    "transitions": [
+                        {
+                            "is_not_facing": "query.cardinal_facing_2d != 2"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add North"]
+                },
+                "is_not_facing": {
+                    "transitions": [
+                        {
+                            "is_facing": "query.cardinal_facing_2d == 2"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove North"]
+                }
+            }
+        },
+        "controller.animation.facing_south": {
+            "initial_state": "is_not_facing",
+            "states": {
+                "is_facing": {
+                    "transitions": [
+                        {
+                            "is_not_facing": "query.cardinal_facing_2d != 3"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add South"]
+                },
+                "is_not_facing": {
+                    "transitions": [
+                        {
+                            "is_facing": "query.cardinal_facing_2d == 3"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove South"]
+                }
+            }
+        },
+        "controller.animation.facing_east": {
+            "initial_state": "is_not_facing",
+            "states": {
+                "is_facing": {
+                    "transitions": [
+                        {
+                            "is_not_facing": "query.cardinal_facing_2d != 5"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add East"]
+                },
+                "is_not_facing": {
+                    "transitions": [
+                        {
+                            "is_facing": "query.cardinal_facing_2d == 5"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove East"]
+                }
+            }
+        },
+        "controller.animation.facing_west": {
+            "initial_state": "is_not_facing",
+            "states": {
+                "is_facing": {
+                    "transitions": [
+                        {
+                            "is_not_facing": "query.cardinal_facing_2d != 4"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add West"]
+                },
+                "is_not_facing": {
+                    "transitions": [
+                        {
+                            "is_facing": "query.cardinal_facing_2d == 4"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove West"]
+                }
+            }
+        },
+        "controller.animation.basalt_deltas": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('basalt_deltas') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove basalt_deltas"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('basalt_deltas') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add basalt_deltas"]
+                }
+            }
+        },
+        "controller.animation.bamboo_jungle": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('bamboo') == 1 && query.biome_has_any_tag('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove bamboo_jungle"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('bamboo') != 1 || query.biome_has_any_tag('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add bamboo_jungle"]
+                }
+            }
+        },
+        "controller.animation.bamboo_jungle_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('bamboo') == 1 && query.biome_has_any_tag('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove bamboo_jungle_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('bamboo') != 1 || query.biome_has_any_tag('hills') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add bamboo_jungle_hills"]
+                }
+            }
+        },
+        "controller.animation.beach": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('beach') == 1 && query.biome_has_any_tag('stone', 'cold') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove beach"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('beach') != 1 || query.biome_has_any_tag('stone', 'cold') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add beach"]
+                }
+            }
+        },
+        "controller.animation.birch_forest": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('birch') == 1 && query.biome_has_any_tag('hills', 'mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove birch_forest"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('birch') != 1 || query.biome_has_any_tag('hills', 'mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add birch_forest"]
+                }
+            }
+        },
+        "controller.animation.birch_forest_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('birch') == 1 && query.biome_has_all_tags('hills') == 1 && query.biome_has_any_tag('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove birch_forest_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('birch') != 1 || query.biome_has_all_tags('hills') != 1 || query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add birch_forest_hills"]
+                }
+            }
+        },
+        "controller.animation.birch_forest_hills_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('birch') == 1 && query.biome_has_all_tags('hills') == 1 && query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove birch_forest_hills_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('birch') != 1 || query.biome_has_all_tags('hills') != 1 || query.biome_has_any_tag('mutated') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add birch_forest_hills_mutated"]
+                }
+            }
+        },
+        "controller.animation.birch_forest_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('birch') == 1 && query.biome_has_any_tag('hills') == 0 && query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove birch_forest_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('birch') != 1 || query.biome_has_all_tags('mutated') != 1 || query.biome_has_any_tag('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add birch_forest_mutated"]
+                }
+            }
+        },
+        "controller.animation.cold_beach": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('beach') == 1 && query.biome_has_any_tag('cold') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove cold_beach"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('beach') != 1 || query.biome_has_all_tags('cold') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add cold_beach"]
+                }
+            }
+        },
+        "controller.animation.cold_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('cold') == 1 && query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove cold_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('cold') == 0 || query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add cold_ocean"]
+                }
+            }
+        },
+        "controller.animation.cold_taiga": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('taiga') == 1 && query.biome_has_all_tags('cold') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove cold_taiga"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('taiga') == 0 || query.biome_has_all_tags('cold') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add cold_taiga"]
+                }
+            }
+        },
+        "controller.animation.cold_taiga_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('taiga') == 1 && query.biome_has_all_tags('cold') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove cold_taiga_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('taiga') == 0 || query.biome_has_all_tags('cold') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add cold_taiga_hills"]
+                }
+            }
+        },
+        "controller.animation.cold_taiga_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('taiga') == 1 && query.biome_has_all_tags('cold') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove cold_taiga_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('taiga') == 0 || query.biome_has_all_tags('cold') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add cold_taiga_mutated"]
+                }
+            }
+        },
+        "controller.animation.crimson_forest": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('crimson_forest') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove crimson_forest"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('crimson_forest') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add crimson_forest"]
+                }
+            }
+        },
+        "controller.animation.deep_cold_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('cold') == 1 && query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove deep_cold_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('cold') == 0 || query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add deep_cold_ocean"]
+                }
+            }
+        },
+        "controller.animation.deep_frozen_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('frozen') == 1 && query.biome_has_all_tags('monster') == 1 && query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove deep_frozen_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('frozen') == 0 || query.biome_has_all_tags('monster') == 0 || query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add deep_frozen_ocean"]
+                }
+            }
+        },
+        "controller.animation.deep_lukewarm_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('lukewarm') == 1 && query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove deep_lukewarm_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('lukewarm') == 0 || query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add deep_lukewarm_ocean"]
+                }
+            }
+        },
+        "controller.animation.deep_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('lukewarm') == 0 && query.biome_has_all_tags('frozen') == 0 && query.biome_has_all_tags('cold') == 0 && query.biome_has_all_tags('warm') == 0 && query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove deep_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('lukewarm') == 1 || query.biome_has_all_tags('frozen') == 1 || query.biome_has_all_tags('cold') == 1 || query.biome_has_all_tags('warm') == 1 || query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add deep_ocean"]
+                }
+            }
+        },
+        "controller.animation.deep_warm_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('warm') == 1 && query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove deep_warm_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('warm') == 0 || query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add deep_warm_ocean"]
+                }
+            }
+        },
+        "controller.animation.desert": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('desert') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove desert"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('desert') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add desert"]
+                }
+            }
+        },
+        "controller.animation.desert_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('desert') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove desert_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('desert') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add desert_hills"]
+                }
+            }
+        },
+        "controller.animation.desert_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('desert') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove desert_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('desert') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add desert_mutated"]
+                }
+            }
+        },
+        "controller.animation.extreme_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('extreme_hills') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('forest') == 0 && query.biome_has_all_tags('edge') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove extreme_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('extreme_hills') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('forest') == 1 || query.biome_has_all_tags('edge') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add extreme_hills"]
+                }
+            }
+        },
+        "controller.animation.extreme_hills_edge": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('extreme_hills') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('forest') == 0 && query.biome_has_all_tags('edge') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove extreme_hills_edge"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('extreme_hills') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('forest') == 1 || query.biome_has_all_tags('edge') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add extreme_hills_edge"]
+                }
+            }
+        },
+        "controller.animation.extreme_hills_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('extreme_hills') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('forest') == 0 && query.biome_has_all_tags('edge') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove extreme_hills_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('extreme_hills') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('forest') == 1 || query.biome_has_all_tags('edge') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add extreme_hills_mutated"]
+                }
+            }
+        },
+        "controller.animation.extreme_hills_plus_trees": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('extreme_hills') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('forest') == 1 && query.biome_has_all_tags('edge') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove extreme_hills_plus_trees"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('extreme_hills') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('forest') == 0 || query.biome_has_all_tags('edge') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add extreme_hills_plus_trees"]
+                }
+            }
+        },
+        "controller.animation.extreme_hills_plus_trees_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('extreme_hills') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('forest') == 1 && query.biome_has_all_tags('edge') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove extreme_hills_plus_trees_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('extreme_hills') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('forest') == 0 || query.biome_has_all_tags('edge') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add extreme_hills_plus_trees_mutated"]
+                }
+            }
+        },
+        "controller.animation.flower_forest": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('flower_forest') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove flower_forest"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('flower_forest') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add flower_forest"]
+                }
+            }
+        },
+        "controller.animation.forest": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('forest') == 1 && query.biome_has_any_tag('birch', 'taiga', 'roofed', 'extreme_hills') == 0 && query.biome_has_any_tag('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove forest"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('forest') != 1 || query.biome_has_any_tag('birch', 'taiga', 'roofed', 'extreme_hills') == 1 || query.biome_has_any_tag('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add forest"]
+                }
+            }
+        },
+        "controller.animation.forest_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('forest') == 1 && query.biome_has_any_tag('birch', 'taiga', 'roofed', 'extreme_hills') == 0 && query.biome_has_any_tag('hills') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove forest_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('forest') != 1 || query.biome_has_any_tag('birch', 'taiga', 'roofed', 'extreme_hills') == 1 || query.biome_has_any_tag('hills') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add forest_hills"]
+                }
+            }
+        },
+        "controller.animation.frozen_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('frozen') == 1 && query.biome_has_all_tags('monster') == 1 && query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove frozen_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('frozen') == 0 || query.biome_has_all_tags('monster') == 0 || query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add frozen_ocean"]
+                }
+            }
+        },
+        "controller.animation.frozen_river": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('river') == 1 && query.biome_has_all_tags('frozen') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove frozen_river"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('river') == 0 || query.biome_has_all_tags('frozen') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add frozen_river"]
+                }
+            }
+        },
+        "controller.animation.ice_mountains": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ice') == 1 && query.biome_has_all_tags('mountain') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove ice_mountains"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ice') == 0 || query.biome_has_all_tags('mountain') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add ice_mountains"]
+                }
+            }
+        },
+        "controller.animation.ice_plains": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ice_plains') == 1 && query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove ice_plains"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ice_plains') == 0 || query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add ice_plains"]
+                }
+            }
+        },
+        "controller.animation.ice_plains_spikes": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ice_plains') == 1 && query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove ice_plains_spikes"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ice_plains') == 0 || query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add ice_plains_spikes"]
+                }
+            }
+        },
+        "controller.animation.jungle": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('jungle') == 1 && query.biome_has_all_tags('edge') == 0 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('bamboo') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove jungle"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('jungle') == 0 || query.biome_has_all_tags('edge') == 1 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('bamboo') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add jungle"]
+                }
+            }
+        },
+        "controller.animation.jungle_edge": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('jungle') == 1 && query.biome_has_all_tags('edge') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('bamboo') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove jungle_edge"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('jungle') == 0 || query.biome_has_all_tags('edge') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('bamboo') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add jungle_edge"]
+                }
+            }
+        },
+        "controller.animation.jungle_edge_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('jungle') == 1 && query.biome_has_all_tags('edge') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('bamboo') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove jungle_edge_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('jungle') == 0 || query.biome_has_all_tags('edge') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('bamboo') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add jungle_edge_mutated"]
+                }
+            }
+        },
+        "controller.animation.jungle_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('jungle') == 1 && query.biome_has_all_tags('edge') == 0 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('hills') == 1 && query.biome_has_all_tags('bamboo') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove jungle_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('jungle') == 0 || query.biome_has_all_tags('edge') == 1 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('hills') == 0 || query.biome_has_all_tags('bamboo') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add jungle_hills"]
+                }
+            }
+        },
+        "controller.animation.jungle_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('jungle') == 1 && query.biome_has_all_tags('edge') == 0 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('bamboo') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove jungle_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('jungle') == 0 || query.biome_has_all_tags('edge') == 1 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('bamboo') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add jungle_mutated"]
+                }
+            }
+        },
+        "controller.animation.legacy_frozen_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('frozen') == 1 && query.biome_has_all_tags('monster') == 0 && query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove legacy_frozen_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('frozen') == 0 || query.biome_has_all_tags('monster') == 1 || query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add legacy_frozen_ocean"]
+                }
+            }
+        },
+        "controller.animation.lofty_peaks": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('lofty_peaks') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove lofty_peaks"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('lofty_peaks') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add lofty_peaks"]
+                }
+            }
+        },
+        "controller.animation.lukewarm_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('lukewarm') == 1 && query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove lukewarm_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('lukewarm') == 0 || query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add lukewarm_ocean"]
+                }
+            }
+        },
+        "controller.animation.mega_spruce_taiga": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mega') == 1 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mega_spruce_taiga"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mega') == 0 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mega_spruce_taiga"]
+                }
+            }
+        },
+        "controller.animation.mega_spruce_taiga_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mega') == 1 && query.biome_has_all_tags('hills') == 1 && query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mega_spruce_taiga_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mega') == 0 || query.biome_has_all_tags('hills') == 0 || query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mega_spruce_taiga_hills"]
+                }
+            }
+        },
+        "controller.animation.mega_taiga": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mega') == 1 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mega_taiga"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mega') == 0 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mega_taiga"]
+                }
+            }
+        },
+        "controller.animation.mega_taiga_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mega') == 1 && query.biome_has_all_tags('hills') == 1 && query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mega_taiga_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mega') == 0 || query.biome_has_all_tags('hills') == 0 || query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mega_taiga_hills"]
+                }
+            }
+        },
+        "controller.animation.mesa": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mesa') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('plateau') == 0 && query.biome_has_all_tags('stone') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mesa"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mesa') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('plateau') == 1 || query.biome_has_all_tags('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mesa"]
+                }
+            }
+        },
+        "controller.animation.mesa_bryce": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mesa') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('plateau') == 0 && query.biome_has_all_tags('stone') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mesa_bryce"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mesa') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('plateau') == 1 || query.biome_has_all_tags('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mesa_bryce"]
+                }
+            }
+        },
+        "controller.animation.mesa_plateau": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mesa') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('plateau') == 1 && query.biome_has_all_tags('stone') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mesa_plateau"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mesa') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('plateau') == 0 || query.biome_has_all_tags('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mesa_plateau"]
+                }
+            }
+        },
+        "controller.animation.mesa_plateau_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mesa') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('plateau') == 1 && query.biome_has_all_tags('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mesa_plateau_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mesa') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('plateau') == 0 || query.biome_has_all_tags('stone') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mesa_plateau_mutated"]
+                }
+            }
+        },
+        "controller.animation.mesa_plateau_stone": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mesa') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('plateau') == 1 && query.biome_has_all_tags('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mesa_plateau_stone"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mesa') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('plateau') == 0 || query.biome_has_all_tags('stone') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mesa_plateau_stone"]
+                }
+            }
+        },
+        "controller.animation.mesa_plateau_stone_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mesa') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('plateau') == 1 && query.biome_has_all_tags('stone') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mesa_plateau_stone_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mesa') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('plateau') == 0 || query.biome_has_all_tags('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mesa_plateau_stone_mutated"]
+                }
+            }
+        },
+        "controller.animation.mountain_grove": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mountain_grove') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mountain_grove"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mountain_grove') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mountain_grove"]
+                }
+            }
+        },
+        "controller.animation.mountain_meadow": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mountain_meadow') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mountain_meadow"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mountain_meadow') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mountain_meadow"]
+                }
+            }
+        },
+        "controller.animation.mountain_peaks": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mountains') == 1 && query.biome_has_all_tags('mountain_grove') == 0 && query.biome_has_all_tags('mountain_meadow') == 0 && query.biome_has_all_tags('snowy_slopes') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mountain_peaks"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mountains') == 0 || query.biome_has_all_tags('mountain_grove') == 1 || query.biome_has_all_tags('mountain_meadow') == 1 || query.biome_has_all_tags('snowy_slopes') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mountain_peaks"]
+                }
+            }
+        },
+        "controller.animation.mushroom_island": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mooshroom_island') == 1 && query.biome_has_any_tag('shore') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mushroom_island"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mooshroom_island') == 0 || query.biome_has_any_tag('shore') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mushroom_island"]
+                }
+            }
+        },
+        "controller.animation.mushroom_island_shore": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mooshroom_island') == 1 && query.biome_has_any_tag('shore') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mushroom_island_shore"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mooshroom_island') == 0 || query.biome_has_any_tag('shore') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mushroom_island_shore"]
+                }
+            }
+        },
+        "controller.animation.nether_wastes": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('nether_wastes') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove nether_wastes"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('nether_wastes') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add nether_wastes"]
+                }
+            }
+        },
+        "controller.animation.ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_any_tag('deep', 'warm', 'frozen', 'lukewarm', 'cold') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') != 1 || query.biome_has_any_tag('deep', 'warm', 'frozen', 'lukewarm', 'cold') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add ocean"]
+                }
+            }
+        },
+        "controller.animation.plains": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('plains') == 1 && query.biome_has_any_tag('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove plains"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('plains') != 1 || query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add plains"]
+                }
+            }
+        },
+        "controller.animation.river": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('river') == 1 && query.biome_has_all_tags('frozen') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove river"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('river') == 0 || query.biome_has_all_tags('frozen') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add river"]
+                }
+            }
+        },
+        "controller.animation.roofed_forest_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('roofed') == 1 && query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove roofed_forest_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('roofed') == 0 || query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add roofed_forest_mutated"]
+                }
+            }
+        },
+        "controller.animation.savanna": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('savanna') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('plateau') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove savanna"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('savanna') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('plateau') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add savanna"]
+                }
+            }
+        },
+        "controller.animation.savanna_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('savanna') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('plateau') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove savanna_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('savanna') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('plateau') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add savanna_mutated"]
+                }
+            }
+        },
+        "controller.animation.savanna_plateau": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('savanna') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('plateau') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove savanna_plateau"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('savanna') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('plateau') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add savanna_plateau"]
+                }
+            }
+        },
+        "controller.animation.savanna_plateau_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('savanna') == 1 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('plateau') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove savanna_plateau_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('savanna') == 0 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('plateau') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add savanna_plateau_mutated"]
+                }
+            }
+        },
+        "controller.animation.snow_capped_peaks": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('snow_capped_peaks') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove snow_capped_peaks"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('snow_capped_peaks') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add snow_capped_peaks"]
+                }
+            }
+        },
+        "controller.animation.snowy_slopes": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('snowy_slopes') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove snowy_slopes"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('snowy_slopes') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add snowy_slopes"]
+                }
+            }
+        },
+        "controller.animation.soulsand_valley": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('soulsand_valley') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove soulsand_valley"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('soulsand_valley') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add soulsand_valley"]
+                }
+            }
+        },
+        "controller.animation.stone_beach": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('beach') == 1 && query.biome_has_any_tag('stone') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove stone_beach"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('beach') != 1 || query.biome_has_all_tags('stone') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add stone_beach"]
+                }
+            }
+        },
+        "controller.animation.sunflower_plains": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('plains') == 1 && query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove sunflower_plains"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('plains') != 1 || query.biome_has_any_tag('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add sunflower_plains"]
+                }
+            }
+        },
+        "controller.animation.swamp": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('swamp') == 1 && query.biome_has_any_tag('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove swamp"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('swamp') != 1 || query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add swamp"]
+                }
+            }
+        },
+        "controller.animation.swamp_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('swamp') == 1 && query.biome_has_any_tag('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove swamp_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('swamp') != 1 || query.biome_has_any_tag('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add swamp_mutated"]
+                }
+            }
+        },
+        "controller.animation.taiga": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('taiga') == 1 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('cold') == 0 && query.biome_has_all_tags('mega') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove taiga"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('taiga') == 0 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('cold') == 1 || query.biome_has_all_tags('mega') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add taiga"]
+                }
+            }
+        },
+        "controller.animation.taiga_hills": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('taiga') == 1 && query.biome_has_all_tags('hills') == 1 && query.biome_has_all_tags('mutated') == 0 && query.biome_has_all_tags('cold') == 0 && query.biome_has_all_tags('mega') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove taiga_hills"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('taiga') == 0 || query.biome_has_all_tags('hills') == 0 || query.biome_has_all_tags('mutated') == 1 || query.biome_has_all_tags('cold') == 1 || query.biome_has_all_tags('mega') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add taiga_hills"]
+                }
+            }
+        },
+        "controller.animation.taiga_mutated": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('taiga') == 1 && query.biome_has_all_tags('hills') == 0 && query.biome_has_all_tags('mutated') == 1 && query.biome_has_all_tags('cold') == 0 && query.biome_has_all_tags('mega') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove taiga_mutated"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('taiga') == 0 || query.biome_has_all_tags('hills') == 1 || query.biome_has_all_tags('mutated') == 0 || query.biome_has_all_tags('cold') == 1 || query.biome_has_all_tags('mega') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add taiga_mutated"]
+                }
+            }
+        },
+        "controller.animation.the_end": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('the_end') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove the_end"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('the_end') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add the_end"]
+                }
+            }
+        },
+        "controller.animation.warm_ocean": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('ocean') == 1 && query.biome_has_all_tags('warm') == 1 && query.biome_has_all_tags('deep') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove warm_ocean"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('ocean') == 0 || query.biome_has_all_tags('warm') == 0 || query.biome_has_all_tags('deep') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add warm_ocean"]
+                }
+            }
+        },
+        "controller.animation.warped_forest": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('warped_forest') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove warped_forest"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('warped_forest') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add warped_forest"]
+                }
+            }
+        },
+        "controller.animation.deep_dark": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('deep_dark') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove deep_dark"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('deep_dark') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add deep_dark"]
+                }
+            }
+        },
+        "controller.animation.lush_caves": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('lush_caves') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove lush_caves"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('lush_caves') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add lush_caves"]
+                }
+            }
+        },
+        "controller.animation.jagged_peaks": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('jagged_peaks') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove jagged_peaks"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('jagged_peaks') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add jagged_peaks"]
+                }
+            }
+        },
+        "controller.animation.dripstone_caves": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('dripstone_caves') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove dripstone_caves"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('dripstone_caves') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add dripstone_caves"]
+                }
+            }
+        },
+        "controller.animation.meadow": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('meadow') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove meadow"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('meadow') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add meadow"]
+                }
+            }
+        },
+        "controller.animation.mangrove_swamp": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('mangrove_swamp') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove mangrove_swamp"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('mangrove_swamp') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add mangrove_swamp"]
+                }
+            }
+        },
+        "controller.animation.cherry_grove": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('cherry_grove') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove cherry_grove"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('cherry_grove') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add cherry_grove"]
+                }
+            }
+        },
+        "controller.animation.roofed_forest": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('roofed') == 1 && query.biome_has_all_tags('mutated') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove roofed_forest"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('roofed') == 0 || query.biome_has_all_tags('mutated') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add roofed_forest"]
+                }
+            }
+        },
+        "controller.animation.grove": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('grove') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove grove"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('grove') != 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add grove"]
+                }
+            }
+        },
+        "controller.animation.stony_peaks": {
+            "initial_state": "not_in_biome",
+            "states": {
+                "not_in_biome": {
+                    "transitions": [
+                        {
+                            "in_biome": "query.biome_has_all_tags('stony_peaks') == 1"
+                        }
+                    ],
+                    "on_entry": ["/tag @s remove stony_peaks"]
+                },
+                "in_biome": {
+                    "transitions": [
+                        {
+                            "not_in_biome": "query.biome_has_all_tags('stony_peaks') == 0"
+                        }
+                    ],
+                    "on_entry": ["/tag @s add stony_peaks"]
+                }
+            }
         }
     }
 }
