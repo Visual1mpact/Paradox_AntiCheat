@@ -44,4 +44,4 @@ export declare enum MinecraftEnchantmentTypes {
 /**
  * Union type equivalent of the MinecraftEnchantmentTypes enum.
  */
-export declare type MinecraftEnchantmentTypesUnion = keyof typeof MinecraftEnchantmentTypes;
+export type MinecraftEnchantmentTypesUnion = keyof typeof MinecraftEnchantmentTypes;

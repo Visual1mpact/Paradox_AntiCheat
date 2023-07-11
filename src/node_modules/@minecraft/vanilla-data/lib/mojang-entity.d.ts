@@ -120,4 +120,4 @@ export declare enum MinecraftEntityTypes {
 /**
  * Union type equivalent of the MinecraftEntityTypes enum.
  */
-export declare type MinecraftEntityTypesUnion = keyof typeof MinecraftEntityTypes;
+export type MinecraftEntityTypesUnion = keyof typeof MinecraftEntityTypes;

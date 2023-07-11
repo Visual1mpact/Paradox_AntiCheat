@@ -37,4 +37,4 @@ export declare enum MinecraftEffectTypes {
 /**
  * Union type equivalent of the MinecraftEffectTypes enum.
  */
-export declare type MinecraftEffectTypesUnion = keyof typeof MinecraftEffectTypes;
+export type MinecraftEffectTypesUnion = keyof typeof MinecraftEffectTypes;

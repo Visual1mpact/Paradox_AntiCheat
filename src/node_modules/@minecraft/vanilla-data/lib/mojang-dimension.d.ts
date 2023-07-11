@@ -9,4 +9,4 @@ export declare enum MinecraftDimensionTypes {
 /**
  * Union type equivalent of the MinecraftDimensionTypes enum.
  */
-export declare type MinecraftDimensionTypesUnion = keyof typeof MinecraftDimensionTypes;
+export type MinecraftDimensionTypesUnion = keyof typeof MinecraftDimensionTypes;
