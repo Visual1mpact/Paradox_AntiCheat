@@ -79,6 +79,7 @@ export default {
         paradoxiu: true,
         tpr: true,
         autoban: true,
+        biome: true,
     },
     modules: {
         badpackets1: {

@@ -82,6 +82,7 @@ import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
 import { autoban } from "./settings/autoban.js";
 import { paradoxVersion } from "./utility/paradoxVersion.js";
+import { biome } from "./utility/biome.js";
 const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
@@ -163,6 +164,7 @@ const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, arg
         tpr: TeleportRequestHandler,
         autoban: autoban,
         version: paradoxVersion,
+        biome: biome,
     },
     null
 );

@@ -1,4 +1,4 @@
-import { world, Block, EntityQueryOptions, GameMode, system, EntityEquipmentInventoryComponent, EquipmentSlot } from "@minecraft/server";
+import { world, Block, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
