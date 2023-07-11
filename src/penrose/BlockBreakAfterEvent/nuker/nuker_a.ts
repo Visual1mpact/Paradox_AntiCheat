@@ -1,4 +1,4 @@
-import { world, BlockBreakAfterEvent, system, EntityQueryOptions, TitleDisplayOptions } from "@minecraft/server";
+import { world, BlockBreakAfterEvent, system, EntityQueryOptions } from "@minecraft/server";
 import { flag, startTimer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
@@ -150,7 +150,7 @@ function freeze(id: number) {
             player.removeTag("freezeNukerA");
             return;
         }
-        player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f You have been frozen!", { subtitle: "§fContact Staff §4[§6AntiNukerA§4]§f", fadeInSeconds: 0, fadeOutSeconds: 0, staySeconds: 3 } as TitleDisplayOptions);
+        player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f You have been frozen!", { subtitle: "§fContact Staff §4[§6AntiNukerA§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 3 });
     }
 }
 

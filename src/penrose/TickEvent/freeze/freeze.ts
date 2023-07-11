@@ -1,4 +1,4 @@
-import { world, Player, system, EntityQueryOptions, Vector, Vector3, Dimension, TitleDisplayOptions } from "@minecraft/server";
+import { world, Player, system, EntityQueryOptions, Vector, Vector3, Dimension } from "@minecraft/server";
 import { sendMsg } from "../../../util";
 
 const freezeDataMap: Map<string, FreezeData> = new Map();
@@ -118,7 +118,7 @@ const freezePlayers = () => {
                 player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
             }
 
-            player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f You have been frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInSeconds: 0, fadeOutSeconds: 0, staySeconds: 3 } as TitleDisplayOptions);
+            player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f You have been frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 3 });
         }
     }
 
