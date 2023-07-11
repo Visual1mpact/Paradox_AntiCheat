@@ -1,5 +1,5 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
-import { allscores, banMessage, sendMsg, sendMsgToPlayer, setScore } from "../../../util.js";
+import { allscores, banMessage, getScore, sendMsg, sendMsgToPlayer, setScore } from "../../../util.js";
 import { queueUnban } from "../../../commands/moderation/unban.js";
 
 function serverban() {
@@ -29,17 +29,12 @@ function serverban() {
             queueUnban.delete(player.name);
             //clear violations
             const scores = allscores;
-            scores.forEach((score) => {
-                try {
-                    const objective = world.scoreboard.getObjective(score);
-                    const playerScore = player.scoreboardIdentity.getScore(objective);
-                    //if the player has a violation then we reset the score.
-                    if (playerScore > 0) {
-                        //reset the score
-                        setScore(player, score, 0);
-                    }
-                } catch {
-                    // Ignore since this score doesn't exist for this player yet.
+            scores.forEach((objective) => {
+                const score = getScore(objective, player);
+                //if the player has a violation then we reset the score.
+                if (score > 0) {
+                    //reset the score
+                    setScore(player, objective, 0);
                 }
             });
 
