@@ -83,7 +83,6 @@ async function paradoxui(player: Player) {
         maingui.button("Saved Locations", "textures/items/compass_item");
         maingui.button("Stats", "textures/items/book_normal");
     }
-
     maingui.show(player).then((result) => {
         if (result.selection === 0) {
             // New window for op
@@ -1012,7 +1011,7 @@ async function paradoxui(player: Player) {
         }
 
         // We looping here so don't mind me while I dance a little
-        if (result.canceled && result.cancelationReason === "userBusy") {
+        if (result.canceled && result.cancelationReason === "UserBusy") {
             /**
              * Continue to call the function with the player object
              * until the user is no longer busy. This should mean
