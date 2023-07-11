@@ -2,7 +2,7 @@ import { ChatSendAfterEvent, EntityEquipmentInventoryComponent, EquipmentSlot, I
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { allscores, getGamemode, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { allscores, getGamemode, getPrefix, getScore, sendMsgToPlayer } from "../../util.js";
 
 function fullReportHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -80,21 +80,16 @@ export async function fullreport(message: ChatSendAfterEvent, args: string[]) {
         let violationsFound = 0;
         let vlCount = 0;
         let divider = false;
-        allscores.forEach((score) => {
+        allscores.forEach((objective) => {
             vlCount++;
-            try {
-                const objective = world.scoreboard.getObjective(score);
-                const playerScore = member.scoreboardIdentity.getScore(objective);
-                if (playerScore > 0) {
-                    violationsFound++;
-                    if (violationsFound === 1) {
-                        divider = true;
-                        reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);
-                    }
-                    reportBody.push(`§r§4[§6Paradox§4]§r §r§4[§6${score.replace("vl", "").toUpperCase()}§4]§r Violations: ${playerScore}`);
+            const score = getScore(objective, member);
+            if (score > 0) {
+                violationsFound++;
+                if (violationsFound === 1) {
+                    divider = true;
+                    reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);
                 }
-            } catch {
-                // Ignore since this score doesn't exist for this player yet.
+                reportBody.push(`§r§4[§6Paradox§4]§r §r§4[§6${objective.replace("vl", "").toUpperCase()}§4]§r Violations: ${score}`);
             }
             if (vlCount === allscores.length && divider === true) {
                 reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);

@@ -1,7 +1,7 @@
 import { EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { allscores, getGamemode } from "../../util";
+import { allscores, getGamemode, getScore } from "../../util";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -27,7 +27,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
     }
 
-    const scores = allscores;
+    const allObjectives = allscores;
 
     const reportBody = [
         `§6All Stats for ${member.name}§r\n\n`,
@@ -37,15 +37,10 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         `§6${member.name}'s Current violations §r\n`,
     ];
 
-    scores.forEach((score) => {
-        try {
-            const objective = world.scoreboard.getObjective(score);
-            const playerScore = member.scoreboardIdentity.getScore(objective);
-            if (playerScore > 0) {
-                reportBody.push(`§r§4[§6${score.replace("vl", "").toUpperCase()}§4]§r number of Violations: ${playerScore}\n`);
-            }
-        } catch {
-            // Ignore since this score doesn't exist for this player yet.
+    allObjectives.forEach((objective) => {
+        const score = getScore(objective, member);
+        if (score > 0) {
+            reportBody.push(`§r§4[§6${objective.replace("vl", "").toUpperCase()}§4]§r number of Violations: ${score}\n`);
         }
     });
     reportBody.push(`§r§4--------------------------------§r\n`);
