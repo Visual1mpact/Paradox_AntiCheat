@@ -1,5 +1,7 @@
 # Changelog
+## [v3.1.7](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.1.7) (2023-07-11)
 
+[Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.1.6...v3.1.7)
 ## [v3.1.6](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.1.6) (2023-06-21)
 
 [Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.1.5...v3.1.6)
