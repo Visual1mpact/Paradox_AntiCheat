@@ -1,7 +1,7 @@
-import { world, Player, EntityHitAfterEvent, EntityQueryOptions, system } from "@minecraft/server";
+import { world, Player, EntityHitEntityAfterEvent, EntityQueryOptions, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
-import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
 
 function isAttackingFromOutsideView(player1: Player, player2: Player) {
     if (!player1 || !player2) {
@@ -53,52 +53,52 @@ function isAttackingFromOutsideView(player1: Player, player2: Player) {
     return false;
 }
 
-function killaura(obj: EntityHitAfterEvent) {
+function killaura(obj: EntityHitEntityAfterEvent) {
     // Get Dynamic Property
     const antiKillAuraBoolean = dynamicPropertyRegistry.get("antikillaura_b");
 
     // Unsubscribe if disabled in-game
     if (antiKillAuraBoolean === false) {
-        world.afterEvents.entityHit.unsubscribe(killaura);
+        world.afterEvents.entityHitEntity.unsubscribe(killaura);
         return;
     }
 
     // Properties from class
-    const { entity, hitBlock, hitEntity } = obj;
+    const { damagingEntity, hitEntity } = obj;
 
-    // If a block or not a player entity then ignore
-    if (!(hitEntity instanceof Player) || hitBlock !== undefined || !(entity instanceof Player)) {
+    // If not a player entity then ignore
+    if (!(hitEntity instanceof Player) || !(damagingEntity instanceof Player)) {
         return;
     }
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(entity?.id);
+    const uniqueId = dynamicPropertyRegistry.get(damagingEntity?.id);
 
     // Skip if they have permission
-    if (uniqueId === entity.name) {
+    if (uniqueId === damagingEntity.name) {
         return;
     }
 
-    const angleBoolean = isAttackingFromOutsideView(entity, hitEntity);
+    const angleBoolean = isAttackingFromOutsideView(damagingEntity, hitEntity);
 
     if (angleBoolean) {
         // Entity is facing hitEntity at an angle greater than 90 degrees
-        flag(entity, "KillAura", "A", "Combat", null, null, null, null, false);
+        flag(damagingEntity, "KillAura", "A", "Combat", null, null, null, null, false);
         // Blindness
-        entity.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
+        damagingEntity.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
         // Mining Fatigue
-        entity.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
+        damagingEntity.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
         // Weakness
-        entity.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
+        damagingEntity.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
-        entity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-        const boolean = entity.hasTag("freeze");
-        const hasAuraFreeze = entity.hasTag("freezeAura");
+        damagingEntity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+        const boolean = damagingEntity.hasTag("freeze");
+        const hasAuraFreeze = damagingEntity.hasTag("freezeAura");
         if (!boolean) {
-            entity.addTag("freeze");
+            damagingEntity.addTag("freeze");
         }
         if (!hasAuraFreeze) {
-            entity.addTag("freezeAura");
+            damagingEntity.addTag("freezeAura");
         }
     }
 }

@@ -1,38 +1,38 @@
-import { world, Player, EntityHitAfterEvent } from "@minecraft/server";
+import { world, Player, EntityHitEntityAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry.js";
 
-function reachb(object: EntityHitAfterEvent) {
+function reachb(object: EntityHitEntityAfterEvent) {
     // Get Dynamic Property
     const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
 
     // Unsubscribe if disabled in-game
     if (reachBBoolean === false) {
-        world.afterEvents.entityHit.unsubscribe(reachb);
+        world.afterEvents.entityHitEntity.unsubscribe(reachb);
         return;
     }
 
     // Properties from class
-    const { hitEntity, hitBlock, entity } = object;
+    const { hitEntity, damagingEntity } = object;
 
     // If a block or not a player entity then ignore
-    if (!(hitEntity instanceof Player) || hitBlock !== undefined || !(entity instanceof Player)) {
+    if (!(hitEntity instanceof Player) || !(damagingEntity instanceof Player)) {
         return;
     }
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(entity?.id);
+    const uniqueId = dynamicPropertyRegistry.get(damagingEntity?.id);
 
     // Skip if they have permission
-    if (uniqueId === entity.name) {
+    if (uniqueId === damagingEntity.name) {
         return;
     }
 
     // Entity coordinates
     const { x, y, z } = hitEntity.location;
     // Player coordinates
-    const { x: x1, y: y1, z: z1 } = entity.location;
+    const { x: x1, y: y1, z: z1 } = damagingEntity.location;
 
     const dx = x - x1;
     const dy = y - y1;
@@ -40,7 +40,7 @@ function reachb(object: EntityHitAfterEvent) {
     const distanceSquared = Math.floor(dx * dx + dy * dy + dz * dz);
 
     if (distanceSquared > config.modules.reachB.reach * config.modules.reachB.reach) {
-        flag(entity, "Reach", "B", "Attack", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false);
+        flag(damagingEntity, "Reach", "B", "Attack", null, null, "reach", Math.sqrt(distanceSquared).toFixed(3), false);
     }
 }
 

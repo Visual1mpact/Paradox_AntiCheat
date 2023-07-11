@@ -3,7 +3,7 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
-import { AutoClicker } from "../../penrose/EntityHitAfterEvent/autoclicker";
+import { AutoClicker } from "../../penrose/EntityHitEntityAfterEvent/autoclicker";
 
 export async function uiANTIAUTOCLICKER(antiautoclickerResult: ModalFormResponse, player: Player) {
     const [AntiAutoClickerToggle] = antiautoclickerResult.formValues;

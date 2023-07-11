@@ -1,5 +1,5 @@
-import { world, Player, EntityHitAfterEvent, system } from "@minecraft/server";
-import { MinecraftEntityTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import { world, Player, EntityHitEntityAfterEvent, system } from "@minecraft/server";
+import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
 
@@ -58,35 +58,35 @@ function cpsValidation(id: number, max: number): void {
  * Track player clicks and update click object with new timestamp on each hit
  * @param event - The EntityHitAfterEvent object
  */
-function autoclicker(event: EntityHitAfterEvent): void {
+function autoclicker(event: EntityHitEntityAfterEvent): void {
     // Get Dynamic Property for autoclicker
     const autoclickerBoolean = dynamicPropertyRegistry.get("autoclicker_b") as boolean;
 
     // Unsubscribe if autoclicker is disabled in-game
     if (autoclickerBoolean === false) {
-        world.afterEvents.entityHit.unsubscribe(autoclicker);
+        world.afterEvents.entityHitEntity.unsubscribe(autoclicker);
         return;
     }
 
-    const { entity } = event;
+    const { damagingEntity } = event;
 
     // If it's not a player then ignore
-    if (!(entity instanceof Player)) {
+    if (!(damagingEntity instanceof Player)) {
         return;
     }
 
     // Explicitly casting the entity variable to PlayerWithClicks
-    const playerWithClicks = entity as PlayerWithClicks;
+    const playerWithClicks = damagingEntity as PlayerWithClicks;
 
     // Get unique ID
-    const uniqueId = dynamicPropertyRegistry.get(entity?.id);
+    const uniqueId = dynamicPropertyRegistry.get(damagingEntity?.id);
 
     // Skip if they have permission
-    if (uniqueId === entity.name) {
+    if (uniqueId === damagingEntity.name) {
         return;
     }
 
-    const modifiedTypeId = entity.typeId.replace("minecraft:", "");
+    const modifiedTypeId = damagingEntity.typeId.replace("minecraft:", "");
     // If the entity hit is a player, update their click object with a new timestamp
     if (modifiedTypeId === MinecraftEntityTypes.Player) {
         const timestamp: number = new Date().getTime();
@@ -104,7 +104,7 @@ function autoclicker(event: EntityHitAfterEvent): void {
 const AutoClicker = (): void => {
     const maxCPS: number = 30;
     // Subscribe to the entityHit event to track player clicks
-    world.afterEvents.entityHit.subscribe(autoclicker);
+    world.afterEvents.entityHitEntity.subscribe(autoclicker);
     // Set an interval to run the CPS validation function every 20 ticks
     const id: number = system.runInterval(() => {
         cpsValidation(id, maxCPS);

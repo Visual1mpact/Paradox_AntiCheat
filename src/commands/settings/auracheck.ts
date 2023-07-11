@@ -3,7 +3,7 @@ import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import { KillAura } from "../../penrose/EntityHitAfterEvent/killaura.js";
+import { KillAura } from "../../penrose/EntityHitEntityAfterEvent/killaura.js";
 
 function auraCheckHelp(player: Player, prefix: string) {
     let commandStatus: string;
