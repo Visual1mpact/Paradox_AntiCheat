@@ -1011,6 +1011,7 @@ async function paradoxui(player: Player) {
         }
 
         // We looping here so don't mind me while I dance a little
+        // @ts-ignore
         if (result.canceled && result.cancelationReason === "UserBusy") {
             /**
              * Continue to call the function with the player object
