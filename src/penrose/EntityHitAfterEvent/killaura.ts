@@ -129,7 +129,8 @@ function freeze(id: number) {
 }
 
 export const KillAura = () => {
-    world.afterEvents.entityHit.subscribe(killaura);
+    // @ts-ignore:
+    world.afterEvents.entityHitEntity.subscribe(killaura);
     const id = system.runInterval(() => {
         freeze(id);
     }, 20);
