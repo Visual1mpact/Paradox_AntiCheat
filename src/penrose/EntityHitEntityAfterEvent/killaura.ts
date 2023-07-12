@@ -1,7 +1,7 @@
 import { world, Player, EntityHitEntityAfterEvent, EntityQueryOptions, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry";
 import { flag } from "../../util";
-import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 function isAttackingFromOutsideView(player1: Player, player2: Player) {
     if (!player1 || !player2) {
