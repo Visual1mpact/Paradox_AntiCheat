@@ -5,7 +5,7 @@ import { sendMsgToPlayer, startTimer } from "../../../util.js";
 const chatSpamLimit = 3; // The maximum number of messages a player can send in the spamTime frame.
 const spamTime = 2 * 1000; // The time frame during which the player's messages will be counted.
 const offenseCount = 3; // Total strikes until you are kicked out.
-const strikeReset = 60 * 1000; // The time frame until the strike is reduced
+const strikeReset = 30 * 1000; // The time frame until the strike is reduced
 
 interface ChatRecord {
     count: number;
