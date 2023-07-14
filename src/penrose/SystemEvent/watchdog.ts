@@ -1,4 +1,3 @@
-// @ts-ignore
 import { WatchdogTerminateBeforeEvent, system } from "@minecraft/server";
 
 function watchdog(terminator: WatchdogTerminateBeforeEvent) {
@@ -8,7 +7,6 @@ function watchdog(terminator: WatchdogTerminateBeforeEvent) {
 
 const WatchDog = () => {
     // Listen to watchdog
-    // @ts-ignore
     system.beforeEvents.watchdogTerminate.subscribe(watchdog);
 };
 

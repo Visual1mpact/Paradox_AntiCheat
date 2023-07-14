@@ -45,7 +45,6 @@ function reachb(object: EntityHitEntityAfterEvent) {
 }
 
 const ReachB = () => {
-    // @ts-ignore:
     world.afterEvents.entityHitEntity.subscribe(reachb);
 };
 
