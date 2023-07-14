@@ -50,7 +50,7 @@ function noslowa(id: number) {
             continue;
         }
 
-        const glideCheck = player.hasTag("gliding");
+        const glideCheck = player.isGliding;
         if (glideCheck) {
             continue;
         }

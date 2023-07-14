@@ -21,46 +21,6 @@
                 }
             }
         },
-        "controller.animation.jump": {
-            "states": {
-                "default": {
-                    "transitions": [
-                        {
-                            "jump": "query.is_jumping"
-                        }
-                    ],
-                    "on_entry": ["/tag @s remove jump", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6JUMP§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"]
-                },
-                "jump": {
-                    "transitions": [
-                        {
-                            "default": "!query.is_jumping && query.is_on_ground"
-                        }
-                    ],
-                    "on_entry": ["/tag @s add jump", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6JUMP§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
-                }
-            }
-        },
-        "controller.animation.glide": {
-            "states": {
-                "default": {
-                    "transitions": [
-                        {
-                            "glide": "query.is_gliding"
-                        }
-                    ],
-                    "on_entry": ["/tag @s remove gliding", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6GLIDE§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"]
-                },
-                "glide": {
-                    "transitions": [
-                        {
-                            "default": "!query.is_gliding"
-                        }
-                    ],
-                    "on_entry": ["/tag @s add gliding", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6GLIDE§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
-                }
-            }
-        },
         "controller.animation.levitate": {
             "states": {
                 "default": {
@@ -78,26 +38,6 @@
                         }
                     ],
                     "on_entry": ["/tag @s add levitating", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6LEVITATE§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
-                }
-            }
-        },
-        "controller.animation.ground": {
-            "states": {
-                "default": {
-                    "transitions": [
-                        {
-                            "ground": "query.is_on_ground"
-                        }
-                    ],
-                    "on_entry": ["/tag @s remove ground", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6GROUND§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"]
-                },
-                "ground": {
-                    "transitions": [
-                        {
-                            "default": "!query.is_on_ground"
-                        }
-                    ],
-                    "on_entry": ["/tag @s add ground", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6GROUND§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
                 }
             }
         },
@@ -1162,26 +1102,6 @@
                         }
                     ],
                     "on_entry": ["/scoreboard players set @s detect_boots 6"]
-                }
-            }
-        },
-        "controller.animation.swim": {
-            "states": {
-                "default": {
-                    "transitions": [
-                        {
-                            "swim": "query.is_swimming || query.is_in_water"
-                        }
-                    ],
-                    "on_entry": ["/tag @s remove swimming", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SWIM§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=stop)\"}]}"]
-                },
-                "swim": {
-                    "transitions": [
-                        {
-                            "default": "!query.is_swimming && !query.is_in_water"
-                        }
-                    ],
-                    "on_entry": ["/tag @s add swimming", "/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§߈§r§4[§6Paradox§4]§r §bRecieved §6SWIM§r packet from: §g\"},{\"selector\":\"@s\"},{\"text\":\" §7(type=start)\"}]}"]
                 }
             }
         },

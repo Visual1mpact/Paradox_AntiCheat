@@ -4,7 +4,7 @@ import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registr
 
 let blockAtPlayer0: Block;
 let blockAtPlayer1: Block;
-const playerTags: string[] = ["vanish", "swimming", "riding", "flying", "ground"];
+const playerTags: string[] = ["vanish", "riding", "flying"];
 
 const playerCount = new Map<string, number>();
 
@@ -45,31 +45,34 @@ function jesusa(id: number) {
 
         const playerFeetY = Math.floor(y); // Round down to get the player's feet Y-coordinate
 
-        if (
-            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water" && playerFeetY === blockAtPlayer1.y) ||
-            (playerTags.every((tag) => !player.hasTag(tag)) && blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava" && playerFeetY === blockAtPlayer1.y)
-        ) {
-            const count = playerCount.get(player.name) || 0;
-            playerCount.set(player.name, count + 1);
+        const swimming = player.isSwimming;
+        const inWater = player.isInWater;
+        if (!swimming && !inWater) {
+            const isWaterOrLava = (blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water") || (blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava");
+            if (isWaterOrLava && playerFeetY === blockAtPlayer1.y && playerTags.every((tag) => !player.hasTag(tag))) {
+                const count = (playerCount.get(player.name) || 0) + 1;
+                playerCount.set(player.name, count);
 
-            /**
-             * startTimer will make sure the key is properly removed
-             * when the time for theVoid has expired. This will preserve
-             * the integrity of our Memory.
-             */
-            const timerExpired = startTimer("jesusa", player.name, Date.now());
-            if (timerExpired.namespace.indexOf("jesusa") !== -1 && timerExpired.expired) {
-                const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-                playerCount.delete(deletedKey);
-            }
+                /**
+                 * startTimer will make sure the key is properly removed
+                 * when the time for theVoid has expired. This will preserve
+                 * the integrity of our Memory.
+                 */
+                const timerExpired = startTimer("jesusa", player.name, Date.now());
+                if (timerExpired.namespace.includes("jesusa") && timerExpired.expired) {
+                    const deletedKey = timerExpired.key; // extract the key without the namespace prefix
+                    playerCount.delete(deletedKey);
+                }
 
-            // Flag them after 2 seconds of activity
-            if (count === 1) {
-                timer(player, dimension, x, y, z);
+                // Flag them after 2 seconds of activity
+                if (count === 1) {
+                    timer(player, dimension, x, y, z);
+                }
             }
         }
+
         // Reset count
-        if (player.hasTag("ground")) {
+        if (player.isOnGround) {
             playerCount.delete(player.name);
         }
     }

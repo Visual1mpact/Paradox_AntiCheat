@@ -22,7 +22,7 @@ function spammera(msg: ChatSendAfterEvent) {
     }
 
     // Spammer/A = checks if someone sends a message while moving and on ground
-    if (player.hasTag("moving") && player.hasTag("ground") && !player.hasTag("jump")) {
+    if (player.hasTag("moving") && player.isOnGround && !player.isJumping) {
         flag(player, "Spammer", "A", "Movement", null, null, null, null, true);
     }
 }

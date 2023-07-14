@@ -44,7 +44,7 @@ async function antiknockbacka(id: number) {
 
         // antikb/a = checks for anti knockback and flags it
         if (velocitySum <= config.modules.antikbA.magnitude) {
-            if (player.hasTag("attacked") && !player.hasTag("dead") && !player.hasTag("gliding") && !player.hasTag("levitating") && !player.hasTag("flying")) {
+            if (player.hasTag("attacked") && !player.hasTag("dead") && !player.isGliding && !player.hasTag("levitating") && !player.hasTag("flying")) {
                 try {
                     // Make sure Anti Knockback is turned on
                     await player.runCommandAsync(`testfor @s[scores={antikb=1..}]`);

@@ -27,22 +27,22 @@ function flya(id: number) {
         if (uniqueId === player.name) {
             continue;
         }
-        const jumpCheck = player.hasTag("jump");
+        const jumpCheck = player.isJumping;
         if (jumpCheck && !playersAirTimeStart.has(player.name)) {
             playersAirTimeStart.set(player.name, Date.now());
         }
-        const groundCheck = player.hasTag("ground");
+        const groundCheck = player.isOnGround;
         if (groundCheck) {
             playersAirTimeStart.set(player.name, Date.now());
             continue;
         }
-        const glideCheck = player.hasTag("gliding");
+        const glideCheck = player.isGliding;
         if (glideCheck) {
             playersAirTimeStart.set(player.name, Date.now());
             continue;
         }
-        const velocity = player.getVelocity();
-        if (velocity.y < 0) {
+        const fallCheck = player.isFalling;
+        if (fallCheck) {
             // Player is falling, ignore them
             playersAirTimeStart.set(player.name, Date.now());
             continue;
@@ -50,6 +50,7 @@ function flya(id: number) {
         if (jumpCheck && playersAirTimeStart.has(player.name)) {
             const airTime = Date.now() - playersAirTimeStart.get(player.name);
             if (airTime >= 4000) {
+                const velocity = player.getVelocity();
                 const horizontalVelocity = { x: velocity.x, y: 0, z: velocity.z };
                 const xyVelocity = Math.hypot(horizontalVelocity.x, horizontalVelocity.y).toFixed(4);
                 const zyVelocity = Math.hypot(horizontalVelocity.z, horizontalVelocity.y).toFixed(4);
