@@ -48,8 +48,8 @@ function afterantispam(msg: ChatSendAfterEvent) {
     if (tagInfo && tagInfo.playerName === player.name) {
         // Add tags to the player
         try {
-            player.addTag(tagInfo.reason);
-            player.addTag(tagInfo.by);
+            player.addTag(`Reason:${tagInfo.reason}`);
+            player.addTag(`By:${tagInfo.by}`);
             player.addTag(tagInfo.isBanned);
         } catch {
             kickablePlayers.add(player);
