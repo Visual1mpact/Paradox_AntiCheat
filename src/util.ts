@@ -107,7 +107,7 @@ export function getScore(objective: string, player: Player) {
 }
 
 /**
- * Sets a players score.
+ * Sets a player's score.
  *
  * @name setScore
  * @param {Player} target The player object.
@@ -119,17 +119,11 @@ export function getScore(objective: string, player: Player) {
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
     if (scoreObj) {
-        let score;
         const isParticipant = !!target.scoreboardIdentity;
-        if (isParticipant) {
-            score = scoreObj.getScore(target.scoreboardIdentity);
-        } else {
-            target.runCommand(`scoreboard players add @s ${objective} 0`);
-            score = 0;
-        }
-        const result = (stack ? score ?? 0 : 0) + amount;
+        let score = isParticipant ? scoreObj.getScore(target.scoreboardIdentity) : 0;
+        const result = stack ? score + amount : amount;
         scoreObj.setScore(target.scoreboardIdentity, result);
-        return score;
+        return result;
     } else {
         return 0;
     }
