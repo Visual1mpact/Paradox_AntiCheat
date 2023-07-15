@@ -41,11 +41,11 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
     // We execute each command in the list
     for (let i = 0; i < onJoinPrimaryData.length; i++) {
         // Create the objective
-        try {
+        const verifyObjective = world.scoreboard.getObjective(onJoinPrimaryData[i]);
+        if (!verifyObjective) {
             world.scoreboard.addObjective(onJoinPrimaryData[i], onJoinPrimaryData[i]);
-        } catch {}
-
-        setScore(player, onJoinPrimaryData[i], 0, true);
+            setScore(player, onJoinPrimaryData[i], 0, true);
+        }
     }
 
     // We execute each command in the list

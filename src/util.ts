@@ -118,17 +118,21 @@ export function getScore(objective: string, player: Player) {
  */
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
-    let score;
-    const isParticipant = scoreObj.getParticipants().some((target) => target.id === target.id);
-    if (isParticipant !== undefined) {
-        score = scoreObj.getScore(target.scoreboardIdentity);
+    if (scoreObj) {
+        let score;
+        const isParticipant = !!target.scoreboardIdentity;
+        if (isParticipant) {
+            score = scoreObj.getScore(target.scoreboardIdentity);
+        } else {
+            target.runCommand(`scoreboard players add @s ${objective} 0`);
+            score = 0;
+        }
+        const result = (stack ? score ?? 0 : 0) + amount;
+        scoreObj.setScore(target.scoreboardIdentity, result);
+        return score;
     } else {
-        target.runCommand(`scoreboard players add @s ${objective} 0`);
         return 0;
     }
-    const result = (stack ? score ?? 0 : 0) + amount;
-    scoreObj.setScore(target.scoreboardIdentity, result);
-    return score;
 }
 
 /**
