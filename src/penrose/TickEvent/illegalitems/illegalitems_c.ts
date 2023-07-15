@@ -59,5 +59,5 @@ function illegalitemsc(id: number) {
 export function IllegalItemsC() {
     const illegalItemsCId = system.runInterval(() => {
         illegalitemsc(illegalItemsCId);
-    });
+    }, 20);
 }

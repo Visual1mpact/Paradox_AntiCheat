@@ -46,4 +46,4 @@ function noperms() {
  */
 export const NoPerms = system.runInterval(() => {
     noperms();
-});
+}, 20);

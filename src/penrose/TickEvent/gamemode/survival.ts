@@ -59,5 +59,5 @@ async function survival(id: number) {
 export function Survival() {
     const survivalId = system.runInterval(() => {
         survival(survivalId);
-    });
+    }, 20);
 }

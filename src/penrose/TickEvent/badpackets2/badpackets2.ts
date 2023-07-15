@@ -30,5 +30,5 @@ function badpackets2(id: number) {
 export function BadPackets2() {
     const badPackets2Id = system.runInterval(() => {
         badpackets2(badPackets2Id);
-    });
+    }, 20);
 }

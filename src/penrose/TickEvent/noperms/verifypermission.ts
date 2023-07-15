@@ -48,4 +48,4 @@ function verifypermission() {
  */
 export const VerifyPermission = system.runInterval(() => {
     verifypermission();
-});
+}, 20);

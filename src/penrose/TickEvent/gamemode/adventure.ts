@@ -58,5 +58,5 @@ async function adventure(id: number) {
 export function Adventure() {
     const adventureId = system.runInterval(() => {
         adventure(adventureId);
-    });
+    }, 20);
 }

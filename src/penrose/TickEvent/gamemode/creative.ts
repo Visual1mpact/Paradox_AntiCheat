@@ -59,5 +59,5 @@ async function creative(id: number) {
 export function Creative() {
     const creativeId = system.runInterval(() => {
         creative(creativeId);
-    });
+    }, 20);
 }

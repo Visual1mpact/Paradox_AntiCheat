@@ -155,5 +155,5 @@ function worldborder(id: number) {
 export function WorldBorder() {
     const worldborderId = system.runInterval(() => {
         worldborder(worldborderId);
-    });
+    }, 20);
 }

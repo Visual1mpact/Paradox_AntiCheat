@@ -276,5 +276,5 @@ function illegalitemsa(id: number) {
 export function IllegalItemsA() {
     const illegalItemsAId = system.runInterval(() => {
         illegalitemsa(illegalItemsAId);
-    });
+    }, 20);
 }
