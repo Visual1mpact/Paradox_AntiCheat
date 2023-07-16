@@ -83,7 +83,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
     ];
 
     switch (true) {
-        case member.hasTag("freeze"):
+        case member.hasTag("paradoxFreeze"):
             reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is frozen by Staff`);
             break;
         case member.hasTag("flying"):

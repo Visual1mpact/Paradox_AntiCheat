@@ -80,10 +80,10 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot freeze staff members.`);
     }
 
-    const boolean = member.hasTag("freeze");
+    const boolean = member.hasTag("paradoxFreeze");
 
     if (boolean) {
-        member.removeTag("freeze");
+        member.removeTag("paradoxFreeze");
         await member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer frozen.`);
@@ -99,7 +99,7 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
         member.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
         member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-        member.addTag("freeze");
+        member.addTag("paradoxFreeze");
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
         return;

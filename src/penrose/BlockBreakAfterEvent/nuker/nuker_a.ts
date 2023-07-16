@@ -111,10 +111,10 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
             player.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
             player.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
 
-            const hasFreezeTag = player.hasTag("freeze");
+            const hasFreezeTag = player.hasTag("paradoxFreeze");
             const hasNukerFreeze = player.hasTag("freezeNukerA");
             if (!hasFreezeTag) {
-                player.addTag("freeze");
+                player.addTag("paradoxFreeze");
             }
             if (!hasNukerFreeze) {
                 player.addTag("freezeNukerA");
@@ -145,7 +145,7 @@ function freeze(id: number) {
         if (!player) {
             return;
         }
-        const tagBoolean = player.hasTag("freeze");
+        const tagBoolean = player.hasTag("paradoxFreeze");
         if (!tagBoolean) {
             player.removeTag("freezeNukerA");
             return;

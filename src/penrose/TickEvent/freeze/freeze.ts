@@ -84,13 +84,13 @@ function unfreezePlayerById(id: string) {
 // Function to periodically check and freeze players
 const freezePlayers = () => {
     const filter: EntityQueryOptions = {
-        tags: ["freeze"],
+        tags: ["paradoxFreeze"],
         excludeTags: ["freezeNukerA", "freezeAura"],
     };
     const players = world.getPlayers(filter);
     for (const player of players) {
         const freezeData = freezeDataMap.get(player.id);
-        const hasFreezeTag = player.hasTag("freeze");
+        const hasFreezeTag = player.hasTag("paradoxFreeze");
 
         if (!freezeData && hasFreezeTag) {
             freezePlayer(player);
@@ -122,7 +122,7 @@ const freezePlayers = () => {
         }
     }
 
-    // Unfreeze players who no longer have the "freeze" tag
+    // Unfreeze players who no longer have the "paradoxFreeze" tag
     for (const id of freezeDataMap.keys()) {
         const player = world.getPlayers().find((check) => {
             return check.id === id;
@@ -131,7 +131,7 @@ const freezePlayers = () => {
             continue; // Skip this iteration if player is not available
         }
         try {
-            const hasTag = player?.hasTag && player.hasTag("freeze");
+            const hasTag = player?.hasTag && player.hasTag("paradoxFreeze");
             if (!hasTag) {
                 unfreezePlayerById(id);
             }

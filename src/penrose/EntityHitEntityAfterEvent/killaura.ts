@@ -92,10 +92,10 @@ function killaura(obj: EntityHitEntityAfterEvent) {
         damagingEntity.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
         // Slowness
         damagingEntity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
-        const boolean = damagingEntity.hasTag("freeze");
+        const boolean = damagingEntity.hasTag("paradoxFreeze");
         const hasAuraFreeze = damagingEntity.hasTag("freezeAura");
         if (!boolean) {
-            damagingEntity.addTag("freeze");
+            damagingEntity.addTag("paradoxFreeze");
         }
         if (!hasAuraFreeze) {
             damagingEntity.addTag("freezeAura");
@@ -119,7 +119,7 @@ function freeze(id: number) {
         if (!player) {
             return;
         }
-        const tagBoolean = player.hasTag("freeze");
+        const tagBoolean = player.hasTag("paradoxFreeze");
         if (!tagBoolean) {
             player.removeTag("freezeAura");
             return;
