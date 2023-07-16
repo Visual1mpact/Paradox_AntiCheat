@@ -46,7 +46,7 @@ function flya(id: number) {
             if (fallCheck) {
                 // Player is falling, subtract a specified amount of time from the air time
                 const airTimeStart = playersAirTimeStart.get(player.name);
-                if (!airTimeStart) {
+                if (airTimeStart) {
                     const newAirTimeStart = Math.max(airTimeStart - 500, 0); // Subtract 500 milliseconds (adjust as needed) and ensure it's not negative
                     playersAirTimeStart.set(player.name, newAirTimeStart);
                 }
