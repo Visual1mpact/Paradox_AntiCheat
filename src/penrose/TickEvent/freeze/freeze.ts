@@ -118,7 +118,7 @@ const freezePlayers = () => {
                 player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
             }
 
-            player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 3 });
+            player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
         }
     }
 
