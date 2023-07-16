@@ -1,5 +1,3 @@
-/* eslint no-var: "off"*/
-
 import { ChatSendAfterEvent, Player, world, ItemStack } from "@minecraft/server";
 import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";

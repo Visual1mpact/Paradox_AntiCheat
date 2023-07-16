@@ -1,4 +1,3 @@
-/* eslint no-var: "off"*/
 import { world, Player, ChatSendAfterEvent } from "@minecraft/server";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";

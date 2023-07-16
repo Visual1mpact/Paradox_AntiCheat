@@ -1,4 +1,3 @@
-/* eslint no-var: "off"*/
 import { GameMode, Player, Vector, system, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";

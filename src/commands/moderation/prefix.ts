@@ -1,5 +1,3 @@
-/* eslint no-var: "off"*/
-/* eslint no-redeclare: "off"*/
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player } from "@minecraft/server";

@@ -1,4 +1,3 @@
-/* eslint no-var: "off"*/
 import { ChatSendAfterEvent, EntityInventoryComponent, Player, world } from "@minecraft/server";
 
 import config from "../../data/config.js";

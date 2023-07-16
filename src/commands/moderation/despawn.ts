@@ -1,4 +1,3 @@
-/* eslint no-var: "off"*/
 import { ChatSendAfterEvent, EntityItemComponent, EntityQueryOptions, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
