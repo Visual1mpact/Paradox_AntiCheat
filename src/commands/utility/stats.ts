@@ -84,7 +84,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
 
     switch (true) {
         case member.hasTag("paradoxFreeze"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is frozen by Staff`);
+            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
             break;
         case member.hasTag("flying"):
             reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is flying`);

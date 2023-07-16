@@ -37,6 +37,18 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         `§6${member.name}'s Current violations §r\n`,
     ];
 
+    switch (true) {
+        case member.hasTag("paradoxFreeze"):
+            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
+            break;
+        case member.hasTag("flying"):
+            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is flying`);
+            break;
+        case member.hasTag("vanish"):
+            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is vanished`);
+            break;
+    }
+
     allObjectives.forEach((objective) => {
         const score = getScore(objective, member);
         if (score > 0) {
