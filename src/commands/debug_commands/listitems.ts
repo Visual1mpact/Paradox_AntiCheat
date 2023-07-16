@@ -54,8 +54,7 @@ export function listitems(message: ChatSendAfterEvent, args: string[]) {
     }
 
     for (const item in MinecraftItemTypes) {
-        const itemInfo = new ItemStack(item);
+        const itemInfo = new ItemStack(MinecraftItemTypes[item as keyof typeof MinecraftItemTypes]);
         console.log("'" + itemInfo.typeId + "': " + itemInfo.maxAmount + ",");
     }
-    sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r List completed. Check console logs.");
 }
