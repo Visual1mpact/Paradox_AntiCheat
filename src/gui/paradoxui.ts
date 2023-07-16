@@ -59,6 +59,7 @@ import { UIREPORTPLAYER } from "./playerui/uiReport";
 import { uiSTATS } from "./moderation/uiStats";
 import versionFile from "../version.js";
 import { uiAUTOBAN } from "./moderation/uiAutoBan";
+import { uiINVENTORY } from "./moderation/uiInventory";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -245,6 +246,7 @@ async function paradoxui(player: Player) {
                 moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
                 moderationui.button("Despawn entities", "textures/ui/trash");
                 moderationui.button("Auto Ban", "textures/ui/hammer_l");
+                moderationui.button("Inventory", "textures/blocks/chest_front");
                 moderationui.show(player).then((ModUIresult) => {
                     if (ModUIresult.selection === 0) {
                         //show ban ui here
@@ -481,6 +483,16 @@ async function paradoxui(player: Player) {
                         autobanui.toggle("Enable or disable auto ban:", autoBanBoolean);
                         autobanui.show(player).then((autobanResult) => {
                             uiAUTOBAN(autobanResult, player);
+                        });
+                    }
+                    if (ModUIresult.selection === 14) {
+                        const inventoryUI = new ModalFormData();
+                        inventoryUI.title("§4Paradox - Inventory Managment§4");
+                        let onlineList: string[] = [];
+                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                        inventoryUI.dropdown(`\n§rSelect a player:§r\n\nPlayer's Online\n`, onlineList);
+                        inventoryUI.show(player).then((inventoryUIResult) => {
+                            uiINVENTORY(inventoryUIResult, onlineList, player);
                         });
                     }
                 });
