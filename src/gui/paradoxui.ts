@@ -486,14 +486,16 @@ async function paradoxui(player: Player) {
                         });
                     }
                     if (ModUIresult.selection === 14) {
-                        const inventoryUI = new ModalFormData();
-                        inventoryUI.title("§4Paradox - Inventory Managment§4");
-                        let onlineList: string[] = [];
-                        onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        inventoryUI.dropdown(`\n§rSelect a player:§r\n\nPlayer's Online\n`, onlineList);
-                        inventoryUI.show(player).then((inventoryUIResult) => {
-                            uiINVENTORY(inventoryUIResult, onlineList, player);
-                        });
+                        if (config.debug === true) {
+                            const inventoryUI = new ModalFormData();
+                            inventoryUI.title("§4Paradox - Inventory Managment§4");
+                            let onlineList: string[] = [];
+                            onlineList = Array.from(world.getPlayers(), (player) => player.name);
+                            inventoryUI.dropdown(`\n§rSelect a player:§r\n\nPlayer's Online\n`, onlineList);
+                            inventoryUI.show(player).then((inventoryUIResult) => {
+                                uiINVENTORY(inventoryUIResult, onlineList, player);
+                            });
+                        }
                     }
                 });
             }
