@@ -39,6 +39,7 @@ function worldborder(id: number) {
     // Dynamic Properties for number
     const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
     const worldBorderNetherNumber = dynamicPropertyRegistry.get("worldborder_nether_n");
+    const worldBorderEndNumber = dynamicPropertyRegistry.get("worldborder_end_n");
 
     // Unsubscribe if disabled in-game
     if (worldBorderBoolean === false) {
@@ -58,6 +59,7 @@ function worldborder(id: number) {
         // What is it currently set to
         let overworldSize = Number(worldBorderOverworldNumber);
         let netherSize = Number(worldBorderNetherNumber);
+        let endSize = Number(worldBorderEndNumber);
 
         // Make sure it's not a negative
         if (overworldSize < 0) {
@@ -66,13 +68,12 @@ function worldborder(id: number) {
         if (netherSize < 0) {
             netherSize = Math.abs(netherSize);
         }
+        if (endSize < 0) {
+            endSize = Math.abs(endSize);
+        }
 
         // If overworld or nether is 0 then ignore
-        if ((overworldSize === 0 && player.dimension.id === "minecraft:overworld") || (netherSize === 0 && player.dimension.id === "minecraft:nether")) {
-            continue;
-        }
-        // If the player is in the end then ignore the world border
-        if (player.dimension.id === "minecraft:the_end") {
+        if ((overworldSize === 0 && player.dimension.id === "minecraft:overworld") || (netherSize === 0 && player.dimension.id === "minecraft:nether") || (endSize === 0 && player.dimension.id === "minecraft:the_end")) {
             continue;
         }
 
@@ -141,6 +142,27 @@ function worldborder(id: number) {
 
                 const targetX = x < -netherSize ? -border + 6 : x >= netherSize ? border - 6 : x;
                 const targetZ = z < -netherSize ? -border + 6 : z >= netherSize ? border - 6 : z;
+                teleportToBorder(targetX, targetZ);
+            }
+        }
+
+        // Nether
+        if (player.dimension.id === "minecraft:the_end") {
+            const border = endSize - 3;
+            const { x, y, z } = player.location;
+
+            // Make sure nobody climbs over the wall
+            if (x > endSize || x < -endSize || z > endSize || z < -endSize) {
+                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have reached the world border.`);
+
+                const teleportToBorder = (x: number, z: number) => {
+                    const safe = safetyProtocol(player, x, y, z);
+                    setTimer(player.id);
+                    player.teleport({ x: x, y: safe, z: z }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
+                };
+
+                const targetX = x < -endSize ? -border + 6 : x >= endSize ? border - 6 : x;
+                const targetZ = z < -endSize ? -border + 6 : z >= endSize ? border - 6 : z;
                 teleportToBorder(targetX, targetZ);
             }
         }

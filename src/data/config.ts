@@ -126,6 +126,7 @@ export default {
         reachB: {
             enabled: true,
             reach: 5,
+            maxSpeed: 10,
         },
         jesusA: {
             enabled: false,
@@ -183,6 +184,7 @@ export default {
             enabled: false,
             nether: 0,
             overworld: 0,
+            end: 0,
         },
         antiTeleport: {
             enabled: true,

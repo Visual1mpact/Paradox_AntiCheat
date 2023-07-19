@@ -67,7 +67,7 @@ function registry(data: WorldInitializeAfterEvent) {
     const defineStringProperties = ["hash", "salt"];
 
     // Number properties
-    const defineNumberProperties = ["worldborder_n", "worldborder_nether_n"];
+    const defineNumberProperties = ["worldborder_n", "worldborder_nether_n", "worldborder_end_n"];
 
     // Define booleans (property)
     for (let b = 0; b < defineBooleanProperties.length; b++) {
@@ -153,6 +153,13 @@ function registry(data: WorldInitializeAfterEvent) {
         dynamicPropertyRegistry.set("worldborder_nether_n", config.modules.worldBorder.nether);
     } else {
         dynamicPropertyRegistry.set("worldborder_nether_n", worldborderNether_n);
+    }
+    const worldborderEnd_n = world.getDynamicProperty("worldborder_end_n");
+    if (worldborderEnd_n === undefined) {
+        world.setDynamicProperty("worldborder_end_n", config.modules.worldBorder.end);
+        dynamicPropertyRegistry.set("worldborder_end_n", config.modules.worldBorder.end);
+    } else {
+        dynamicPropertyRegistry.set("worldborder_end_n", worldborderEnd_n);
     }
 
     /**

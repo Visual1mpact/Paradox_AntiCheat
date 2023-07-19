@@ -65,7 +65,7 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}removecb§r - ${config.customcommands.removecommandblocks ? `Toggles Anti Command Blocks (Clears all when enabled).` : textDisabled}`,
         `§6${prefix}bedrockvalidate§r - ${config.customcommands.bedrockvalidate ? `Checks validation of bedrock.` : textDisabled}`,
         `§6${prefix}overridecbe§r - ${config.customcommands.overidecommandblocksenabled ? `Forces the commandblocksenabled gamerule to be enabled or disabled at all times.` : textDisabled}`,
-        `§6${prefix}worldborder <value>§r - ${config.customcommands.worldborder ? `Sets the World Border for Overworld or Nether.` : textDisabled}`,
+        `§6${prefix}worldborder <value>§r - ${config.customcommands.worldborder ? `Sets the World Border for Overworld, Nether or End.` : textDisabled}`,
         `§6${prefix}autoclicker§r - ${config.customcommands.autoclicker ? `Toggles Anti Autoclicker.` : textDisabled}`,
         `§6${prefix}jesusa§r - ${config.customcommands.jesusa ? `Checks if player's are walking on water and lava.` : textDisabled}`,
         `§6${prefix}enchantedarmor§r - ${config.customcommands.enchantedarmor ? `Toggles Anti Enchanted Armor for all players.` : textDisabled}`,

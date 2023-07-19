@@ -6,7 +6,7 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Player) {
-    const [OverworldValueTextfield, NetherValueTextfield, WorldBorderToggle] = worldborderResult.formValues;
+    const [OverworldValueTextfield, NetherValueTextfield, EndValueTextfield, WorldBorderToggle] = worldborderResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
@@ -20,19 +20,23 @@ export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Play
         dynamicPropertyRegistry.set("worldborder_b", true);
         dynamicPropertyRegistry.set("worldborder_n", Math.abs(Number(OverworldValueTextfield)));
         dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(Number(NetherValueTextfield)));
+        dynamicPropertyRegistry.set("worldborder_end_n", Math.abs(Number(EndValueTextfield)));
         world.setDynamicProperty("worldborder_b", true);
         world.setDynamicProperty("worldborder_n", Math.abs(Number(OverworldValueTextfield)));
         world.setDynamicProperty("worldborder_nether_n", Math.abs(Number(NetherValueTextfield)));
+        world.setDynamicProperty("worldborder_end_n", Math.abs(Number(EndValueTextfield)));
         WorldBorder();
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${OverworldValueTextfield} Nether: ${NetherValueTextfield}`);
+        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${OverworldValueTextfield} Nether: ${NetherValueTextfield} End: ${EndValueTextfield}`);
     }
     if (WorldBorderToggle === false) {
         dynamicPropertyRegistry.set("worldborder_b", false);
         dynamicPropertyRegistry.set("worldborder_n", 0);
         dynamicPropertyRegistry.set("worldborder_nether_n", 0);
+        dynamicPropertyRegistry.set("worldborder_end_n", 0);
         world.setDynamicProperty("worldborder_b", false);
         world.setDynamicProperty("worldborder_n", 0);
         world.setDynamicProperty("worldborder_nether_n", 0);
+        world.setDynamicProperty("worldborder_end_n", 0);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled the §6World Border§r!`);
     }
 
