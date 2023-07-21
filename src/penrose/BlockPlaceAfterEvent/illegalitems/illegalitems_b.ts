@@ -6,10 +6,10 @@ import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
 
-function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block) {
+function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block, nested: boolean = false) {
     let reason: string;
     if (block) {
-        reason = `Illegal Item B (${block.type.id.replace("minecraft:", "")})`;
+        reason = nested ? `Illegal Item B (Nested ${block.type.id.replace("minecraft:", "")})` : `Illegal Item B (${block.type.id.replace("minecraft:", "")})`;
     } else if (enchData) {
         const { id, level } = enchData;
         reason = `Illegal Item B (${inventory_item.typeId.replace("minecraft:", "")}: ${id}=${level})`;
@@ -119,7 +119,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // Nested item has been found so flag it and remove the block from the world
                 await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
                 flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null);
-                rip(player, null, null, block);
+                rip(player, null, null, block, true);
                 isFlagged = true;
                 break;
             }
