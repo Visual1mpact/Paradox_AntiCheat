@@ -26,6 +26,13 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
 
     // Lock down the server if enabled
     if (lockdownBoolean) {
+        // Get unique ID
+        const uniqueId = dynamicPropertyRegistry.get(player?.id);
+
+        if (uniqueId === player.name) {
+            return;
+        }
+
         const reason = "Under Maintenance! Sorry for the inconvenience.";
         try {
             // Kick players from server
