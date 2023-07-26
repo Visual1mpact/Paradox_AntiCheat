@@ -91,7 +91,6 @@ function noslowa(id: number) {
         playerInfo.lastPosition = playerPosition;
         playerInfo.lastTimestamp = playerTimestamp;
         playerInfo.highestBps = Math.max(bps, highestBps);
-        console.log(playerInfo.highestBps);
 
         const verifyTpGrace = isTimerExpired(player.id);
         // We compare with a 20% buffer to minimize false flags
