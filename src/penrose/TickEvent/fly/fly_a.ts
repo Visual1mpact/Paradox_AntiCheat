@@ -43,15 +43,13 @@ function flya(id: number) {
         }
         const fallCheck = player.isFalling;
         if (fallCheck) {
-            if (fallCheck) {
-                // Player is falling, subtract a specified amount of time from the air time
-                const airTimeStart = playersAirTimeStart.get(player.name);
-                if (airTimeStart) {
-                    const newAirTimeStart = Math.max(airTimeStart - 500, 0); // Subtract 500 milliseconds (adjust as needed) and ensure it's not negative
-                    playersAirTimeStart.set(player.name, newAirTimeStart);
-                }
-                continue;
+            // Player is falling, subtract a specified amount of time from the air time
+            const airTimeStart = playersAirTimeStart.get(player.name);
+            if (airTimeStart) {
+                const newAirTimeStart = Math.max(airTimeStart - 500, 0); // Subtract 500 milliseconds (adjust as needed) and ensure it's not negative
+                playersAirTimeStart.set(player.name, newAirTimeStart);
             }
+            continue;
         }
         const waterCheck = player.isInWater || player.isSwimming;
         if (waterCheck) {
@@ -59,7 +57,7 @@ function flya(id: number) {
             playersAirTimeStart.set(player.name, Date.now());
             continue;
         }
-        if (playersAirTimeStart.has(player.name)) {
+        if (!jumpCheck && playersAirTimeStart.has(player.name)) {
             const airTime = Date.now() - playersAirTimeStart.get(player.name);
             if (airTime >= 4000) {
                 const velocity = player.getVelocity();
