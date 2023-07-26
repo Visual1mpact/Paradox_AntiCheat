@@ -73,10 +73,12 @@ function reachb(object: EntityHitEntityAfterEvent) {
     if (roundedReachDistance > config.modules.reachB.reach) {
         // Flagging is done, now we can remove the player entity from previousData
         removePlayerData(damagingEntity);
+        removePlayerData(hitEntity);
         flag(damagingEntity, "Reach", "B", "Attack", null, null, "reach", reachDistance.toString(), false);
     }
     // Flagging is done, now we can remove the player entity from previousData
     removePlayerData(damagingEntity);
+    removePlayerData(hitEntity);
 }
 
 function isWithinReach(
