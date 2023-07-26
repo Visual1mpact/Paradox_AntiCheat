@@ -20,6 +20,10 @@ function recordPlayerData(player: Player) {
     });
 }
 
+function removePlayerData(player: Player) {
+    previousData.delete(player);
+}
+
 function reachb(object: EntityHitEntityAfterEvent) {
     // Get Dynamic Property
     const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
@@ -67,8 +71,12 @@ function reachb(object: EntityHitEntityAfterEvent) {
     // Round down the reachDistance to the nearest integer
     const roundedReachDistance = Math.floor(reachDistance);
     if (roundedReachDistance > config.modules.reachB.reach) {
+        // Flagging is done, now we can remove the player entity from previousData
+        removePlayerData(damagingEntity);
         flag(damagingEntity, "Reach", "B", "Attack", null, null, "reach", reachDistance.toString(), false);
     }
+    // Flagging is done, now we can remove the player entity from previousData
+    removePlayerData(damagingEntity);
 }
 
 function isWithinReach(

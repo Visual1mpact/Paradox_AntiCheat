@@ -27,6 +27,10 @@ function recordPlayerData(entity: PlayerOrBlock) {
     // If it's not a Player (i.e., it's a Block), we can ignore it for now
 }
 
+function removePlayerData(player: Player) {
+    previousData.delete(player);
+}
+
 function reacha(object: BlockPlaceAfterEvent) {
     // Get Dynamic Property
     const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
@@ -74,9 +78,13 @@ function reacha(object: BlockPlaceAfterEvent) {
     // Round down the reachDistance to the nearest integer
     const roundedReachDistance = Math.floor(reachDistance);
     if (roundedReachDistance > config.modules.reachA.reach) {
+        // Flagging is done, now we can remove the player entity from previousData
+        removePlayerData(player);
         dimension.getBlock(block.location).setType(MinecraftBlockTypes.air);
         flag(player, "Reach", "A", "Placement", null, null, "reach", roundedReachDistance.toString(), false);
     }
+    // Flagging is done, now we can remove the player entity from previousData
+    removePlayerData(player);
 }
 
 function isWithinReach(
