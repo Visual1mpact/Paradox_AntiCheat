@@ -39,6 +39,7 @@ function xraya(object: BlockBreakAfterEvent) {
         xrayData.clear();
         blocksBrokenCount.clear();
         world.afterEvents.blockBreak.unsubscribe(xraya);
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         return;
     }
 
