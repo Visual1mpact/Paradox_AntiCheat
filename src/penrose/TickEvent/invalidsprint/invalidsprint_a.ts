@@ -10,6 +10,11 @@ const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: numb
 function calculateMovementBPS(currentPosition: number[], lastPosition: number[], playerTimestamp: number, lastTimestamp: number): number {
     const timeElapsedInSeconds = (playerTimestamp - lastTimestamp) / 1000;
 
+    // Check for valid timeElapsedInSeconds
+    if (timeElapsedInSeconds <= 0 || !isFinite(timeElapsedInSeconds)) {
+        return 0;
+    }
+
     const [dx, dy, dz] = [currentPosition[0] - lastPosition[0], currentPosition[1] - lastPosition[1], currentPosition[2] - lastPosition[2]];
 
     // Ignore purely vertical movement and downward vertical movement only
