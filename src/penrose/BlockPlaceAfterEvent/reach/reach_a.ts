@@ -3,21 +3,28 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
-// Store the previous locations and velocities of block and player
+// Define a union type for Player and Block
+type PlayerOrBlock = Player | Block;
+
+// Store the previous locations and velocities of player and block
 const previousData: Map<
-    Player,
+    PlayerOrBlock,
     {
         location: { x: number; y: number; z: number };
         velocity: { x: number; y: number; z: number };
     }
 > = new Map();
 
-function recordPlayerData(player: Player) {
-    // Store the current location and velocity of the player
-    previousData.set(player, {
-        location: { ...player.location },
-        velocity: { ...player.getVelocity() },
-    });
+function recordPlayerData(entity: PlayerOrBlock) {
+    // Check if the entity is a Player
+    if (entity instanceof Player) {
+        // Store the current location and velocity of the player
+        previousData.set(entity, {
+            location: { ...entity.location },
+            velocity: { ...entity.getVelocity() },
+        });
+    }
+    // If it's not a Player (i.e., it's a Block), we can ignore it for now
 }
 
 function reacha(object: BlockPlaceAfterEvent) {
