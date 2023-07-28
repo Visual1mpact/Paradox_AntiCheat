@@ -1,10 +1,16 @@
-import { world, system, EntityQueryOptions, GameMode } from "@minecraft/server";
+import { world, system, EntityQueryOptions, GameMode, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, isTimerExpired, startTimer } from "../../../util.js";
+import { flag, isTimerExpired } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Create a Map to store each player's last known position, timestamp, and highest speed
 const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: number; highestBps: number }>();
+
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    const playerName = event.playerId;
+    playerData.delete(playerName);
+}
 
 function calculateMovementBPS(currentPosition: number[], lastPosition: number[], playerTimestamp: number, lastTimestamp: number): number {
     const timeElapsedInSeconds = (playerTimestamp - lastTimestamp) / 1000;
@@ -37,6 +43,7 @@ function noslowa(id: number) {
     // Unsubscribe if disabled in-game
     if (noSlowBoolean === false) {
         playerData.clear();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         system.clearRun(id);
         return;
     }
@@ -65,24 +72,13 @@ function noslowa(id: number) {
             continue;
         }
 
-        const playerName = player.name;
+        const playerName = player.id;
         const playerPosition = [player.location.x, player.location.y, player.location.z];
         const playerTimestamp = Date.now();
 
         // If playerData Map doesn't have a key for the player's name, add it with initial values
         if (!playerData.has(playerName)) {
             playerData.set(playerName, { lastPosition: playerPosition, lastTimestamp: playerTimestamp, highestBps: 0 });
-        }
-
-        /**
-         * startTimer will make sure the key is properly removed
-         * when the time for theVoid has expired. This will preserve
-         * the integrity of our Memory.
-         */
-        const timerExpired = startTimer("noslowa", player.name, Date.now());
-        if (timerExpired.namespace.indexOf("noslowa") !== -1 && timerExpired.expired) {
-            const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-            playerData.delete(deletedKey);
         }
 
         const playerInfo = playerData.get(playerName);
@@ -108,6 +104,7 @@ function noslowa(id: number) {
  * if needed to do so.
  */
 export function NoSlowA() {
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout); // Subscribe to player logout events
     const noSlowAId = system.runInterval(() => {
         noslowa(noSlowAId);
     }, 10);

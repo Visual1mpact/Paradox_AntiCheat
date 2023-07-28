@@ -9,7 +9,7 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
      * This is to give the player a grace period
      * in case they previously died and spawned again
      */
-    setTimer(object.player.name, true);
+    setTimer(object.player.id, true);
 
     /**
      * We only want to execute this when it's a players initial spawn

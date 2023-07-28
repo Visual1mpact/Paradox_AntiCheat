@@ -1,6 +1,6 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, PlayerLeaveAfterEvent, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-import { sendMsgToPlayer, startTimer } from "../../../util.js";
+import { sendMsgToPlayer } from "../../../util.js";
 
 const chatSpamLimit = 3; // The maximum number of messages a player can send in the spamTime frame.
 const spamTime = 2 * 1000; // The time frame during which the player's messages will be counted.
@@ -16,6 +16,12 @@ interface ChatRecord {
 
 const chatRecords = new Map<string, ChatRecord>();
 
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    const playerName = event.playerId;
+    chatRecords.delete(playerName);
+}
+
 function beforeantispam(msg: ChatSendBeforeEvent) {
     // Get Dynamic Property
     const antiSpamBoolean = dynamicPropertyRegistry.get("antispam_b");
@@ -23,6 +29,7 @@ function beforeantispam(msg: ChatSendBeforeEvent) {
     // Unsubscribe if disabled in-game
     if (antiSpamBoolean === false) {
         chatRecords.clear();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         world.beforeEvents.chatSend.unsubscribe(beforeantispam);
         return;
     }
@@ -36,7 +43,7 @@ function beforeantispam(msg: ChatSendBeforeEvent) {
     // Ignore those with permissions
     if (uniqueId !== player.name) {
         const now = Date.now();
-        const chatRecord = chatRecords.get(player.name) ?? { count: 0, lastTime: now, offense: 0, lastOffenseTime: now };
+        const chatRecord = chatRecords.get(player.id) ?? { count: 0, lastTime: now, offense: 0, lastOffenseTime: now };
 
         if (now - chatRecord.lastTime > spamTime) {
             // Reset count if time frame has expired
@@ -46,17 +53,7 @@ function beforeantispam(msg: ChatSendBeforeEvent) {
         chatRecord.count++;
         chatRecord.lastTime = now;
 
-        chatRecords.set(player.name, chatRecord);
-        /**
-         * startTimer will make sure the key is properly removed
-         * when the time for theVoid has expired. This will preserve
-         * the integrity of our Memory.
-         */
-        const timerExpired = startTimer("antispam", player.name, Date.now());
-        if (timerExpired.namespace.indexOf("antispam") !== -1 && timerExpired.expired) {
-            const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-            chatRecords.delete(deletedKey);
-        }
+        chatRecords.set(player.id, chatRecord);
 
         if (chatRecord.count > chatSpamLimit) {
             msg.sendToTargets = true;
@@ -76,6 +73,7 @@ function beforeantispam(msg: ChatSendBeforeEvent) {
 }
 
 const beforeAntiSpam = () => {
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     world.beforeEvents.chatSend.subscribe(beforeantispam);
 };
 

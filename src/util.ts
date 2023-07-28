@@ -1,13 +1,16 @@
-import { GameMode, Player, Vector, system, world } from "@minecraft/server";
+import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
-// The Void
-const maxAge = 60000; // 1 minute
-const checkInterval = 300000; // 5 minutes
-const theVoid = new Map<string, number>();
+
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    const playerName = event.playerId;
+    timerMap.delete(playerName);
+}
+world.afterEvents.playerLeave.subscribe(onPlayerLogout);
 
 /**
  * Flag players who trigger certain checks or sub-checks, with information about the type of hack, the item involved, and any debug information available.
@@ -353,17 +356,6 @@ export function setTimer(player: string, spawn: boolean = false) {
 
     // Store the timer in the map
     timerMap.set(player, timer);
-
-    /**
-     * startTimer will make sure the key is properly removed
-     * when the time for theVoid has expired. This will preserve
-     * the integrity of our Memory.
-     */
-    const timerExpired = startTimer("util", player, Date.now());
-    if (timerExpired.namespace.indexOf("util") !== -1 && timerExpired.expired) {
-        const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-        timerMap.delete(deletedKey);
-    }
 }
 
 /**
@@ -388,38 +380,6 @@ export function isTimerExpired(player: string) {
     }
 
     return false;
-}
-
-/**
- * Starts a timer for a given key-value pair in `theVoid` map with a namespace prefix.
- *
- * @param namespace - The namespace prefix to use for the key in `theVoid` map.
- * @param key - The key of the key-value pair in `theVoid` map.
- * @param value - The value of the key-value pair in `theVoid` map, which should be a `Date` object representing the start time of the timer.
- * @returns An object containing a boolean indicating whether the timer has expired, and the namespace and key that were used to start the timer.
- */
-export function startTimer(namespace: string, key: string, value: number): { expired: boolean; namespace: string; key: string } {
-    const namespacedKey = `${namespace}:${key}`;
-    theVoid.set(namespacedKey, value);
-
-    let expired = false;
-
-    const intervalId = system.runInterval(() => {
-        const now = Date.now();
-        const timeElapsed = now - theVoid.get(namespacedKey);
-
-        if (timeElapsed > maxAge) {
-            const cache = theVoid.get(namespacedKey + ":intervalId");
-            theVoid.delete(namespacedKey);
-            theVoid.delete(namespacedKey + ":intervalId");
-            expired = true;
-            system.clearRun(cache);
-        }
-    }, checkInterval);
-
-    theVoid.set(namespacedKey + ":intervalId", intervalId);
-
-    return { expired, namespace, key };
 }
 
 /**

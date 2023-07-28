@@ -1,16 +1,24 @@
-import { world, BlockBreakAfterEvent, system, EntityQueryOptions } from "@minecraft/server";
-import { flag, startTimer } from "../../../util.js";
+import { world, BlockBreakAfterEvent, system, EntityQueryOptions, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const lastBreakTime = new Map<string, number>();
 const breakCounter = new Map<string, number>();
 
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    const playerName = event.playerId;
+    lastBreakTime.delete(playerName);
+    breakCounter.delete(playerName);
+}
+
 async function nukera(object: BlockBreakAfterEvent): Promise<void> {
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
     if (antiNukerABoolean === false) {
         lastBreakTime.clear();
         breakCounter.clear();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         world.afterEvents.blockBreak.unsubscribe(nukera);
         return;
     }
@@ -20,13 +28,6 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     if (uniqueId === player.name) {
         return;
-    }
-
-    const timerExpired = startTimer("nukera", player.id, Date.now());
-    if (timerExpired.namespace.indexOf("nukera") !== -1 && timerExpired.expired) {
-        const deletedKey = timerExpired.key;
-        lastBreakTime.delete(deletedKey);
-        breakCounter.delete(deletedKey);
     }
 
     // Ignore vegetation
@@ -156,6 +157,7 @@ function freeze(id: number) {
 
 const NukerA = () => {
     world.afterEvents.blockBreak.subscribe(nukera);
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     const id = system.runInterval(() => {
         freeze(id);
     }, 20);
