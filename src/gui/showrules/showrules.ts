@@ -1,8 +1,17 @@
-import { world, EntityQueryOptions, system } from "@minecraft/server";
+import { world, EntityQueryOptions, system, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { sendMsgToPlayer } from "../../util.js";
 import { MessageFormData } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
+
+const playersAwaitingResponse: Set<string> = new Set();
+
+/**
+ * Event handler for player login
+ */
+function onPlayerLeave(event: PlayerLeaveAfterEvent) {
+    playersAwaitingResponse.delete(event.playerId);
+}
 
 function waitForTwentySeconds(): Promise<void> {
     return new Promise((resolve) => {
@@ -17,6 +26,8 @@ async function showrules(id: number) {
     const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
 
     if (showrulesBoolean === false) {
+        playersAwaitingResponse.clear();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLeave);
         system.clearRun(id);
         return;
     }
@@ -30,18 +41,26 @@ async function showrules(id: number) {
 
     const players = world.getPlayers(filter);
     const promises = players.map(async (player) => {
+        if (playersAwaitingResponse.has(player.id)) {
+            // Player is already being shown the rules, skip this player.
+            return;
+        }
+
         const form = new MessageFormData();
         form.title("Server Rules");
         form.body(CompleteRules);
         form.button1("I Agree");
         form.button2("Decline");
         const r = await form.show(player);
+
         if (r.selection === 0) {
+            playersAwaitingResponse.delete(player.id); // Player has responded, remove from set.
             player.removeTag("ShowRulesOnJoin");
             sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Thank you for accepting the rules ${player.name}.`);
             return;
         }
         if (r.selection === 1) {
+            playersAwaitingResponse.delete(player.id); // Player has responded, remove from set.
             if (KickOnDeclineBoolean === true) {
                 const reason = "You must agree to the rules to join.";
                 try {
@@ -52,14 +71,24 @@ async function showrules(id: number) {
             }
             return;
         }
+        if (r.canceled) {
+            playersAwaitingResponse.delete(player.id); // Player has responded, remove from set.
+        }
     });
 
     const allPromises = Promise.all(promises);
     const twentySecondsPromise = waitForTwentySeconds();
+
+    // Add the player IDs to the set to indicate they are being shown the rules.
+    players.forEach((player) => playersAwaitingResponse.add(player.id));
+
     await Promise.race([allPromises, twentySecondsPromise]);
 }
 
 export function ShowRules() {
+    // Subscribe to the player leave event
+    world.afterEvents.playerLeave.subscribe(onPlayerLeave);
+
     const showrulesId = system.runInterval(() => {
         showrules(showrulesId);
     }, 230);
