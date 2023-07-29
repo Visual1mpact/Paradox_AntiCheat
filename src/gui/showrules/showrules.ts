@@ -3,6 +3,7 @@ import config from "../../data/config.js";
 import { sendMsgToPlayer } from "../../util.js";
 import { MessageFormData } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
+import { kickablePlayers } from "../../kickcheck.js";
 
 const playersAwaitingResponse: Set<string> = new Set();
 
@@ -66,6 +67,7 @@ async function showrules(id: number) {
                 try {
                     player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
                 } catch (error) {
+                    kickablePlayers.add(player);
                     player.triggerEvent("paradox:kick");
                 }
             }
