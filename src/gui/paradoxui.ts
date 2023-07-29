@@ -60,6 +60,7 @@ import { uiSTATS } from "./moderation/uiStats";
 import versionFile from "../version.js";
 import { uiAUTOBAN } from "./moderation/uiAutoBan";
 import { uiINVENTORY } from "./moderation/uiInventory";
+import { uiAFK } from "./modules/uiAFK";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
@@ -538,6 +539,7 @@ async function paradoxui(player: Player) {
                 modulesui.button("Configure World Borders", "textures/blocks/barrier");
                 modulesui.button("Configure Xray", "textures/blocks/diamond_ore");
                 modulesui.button("Configure Hotbar", "textures/items/paper");
+                modulesui.button("Configure AFK", "textures/ui/keyboard_and_mouse_glyph_color");
                 modulesui.show(player).then((ModulesUIResult) => {
                     if (ModulesUIResult.selection === 0) {
                         //GameModes UI
@@ -884,6 +886,16 @@ async function paradoxui(player: Player) {
                         moduleshotbarui.toggle("Restore to message stored in config.js:", false);
                         moduleshotbarui.show(player).then((hotbarResult) => {
                             uiHOTBAR(hotbarResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 22) {
+                        const modulesafkui = new ModalFormData();
+                        const currentAFKConifg = config.modules.afk.minutes;
+                        const afkBoolean = dynamicPropertyRegistry.get("afk_b") as boolean;
+                        modulesafkui.title("§4Paradox Modules - AFK§4");
+                        modulesafkui.toggle("Enable AFK - Kicks players that are AFK for " + currentAFKConifg + " minutes:", afkBoolean);
+                        modulesafkui.show(player).then((afkResult) => {
+                            uiAFK(afkResult, player);
                         });
                     }
                 });
