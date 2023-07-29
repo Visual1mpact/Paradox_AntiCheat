@@ -495,7 +495,9 @@ async function paradoxui(player: Player) {
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
                         inventoryUI.dropdown(`\n§rSelect a player:§r\n\nPlayer's Online\n`, onlineList);
                         inventoryUI.show(player).then((inventoryUIResult) => {
-                            uiINVENTORY(inventoryUIResult, onlineList, player);
+                            if (config.debug === true) {
+                                uiINVENTORY(inventoryUIResult, onlineList, player);
+                            }
                         });
                     }
                 });
