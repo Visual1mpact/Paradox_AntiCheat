@@ -13,6 +13,8 @@ function checkAndRemoveAFKPlayers(id: number) {
     // Unsubscribe if disabled in-game
     if (!afkBoolean) {
         playerActivityMap.clear();
+        world.afterEvents.playerJoin.unsubscribe(onPlayerLogin);
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         system.clearRun(id);
         return;
     }
@@ -57,6 +59,8 @@ function updatePlayerActivityFrequently(id: number) {
     // Unsubscribe if disabled in-game
     if (!afkBoolean) {
         playerActivityMap.clear();
+        world.afterEvents.playerJoin.unsubscribe(onPlayerLogin);
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         system.clearRun(id);
         return;
     }
