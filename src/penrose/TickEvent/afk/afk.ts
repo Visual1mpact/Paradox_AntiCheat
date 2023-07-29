@@ -12,6 +12,7 @@ function checkAndRemoveAFKPlayers(id: number) {
 
     // Unsubscribe if disabled in-game
     if (!afkBoolean) {
+        playerActivityMap.clear();
         system.clearRun(id);
         return;
     }
