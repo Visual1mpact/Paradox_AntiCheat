@@ -14,14 +14,6 @@ function onPlayerLeave(event: PlayerLeaveAfterEvent) {
     playersAwaitingResponse.delete(event.playerId);
 }
 
-function waitForTwentySeconds(): Promise<void> {
-    return new Promise((resolve) => {
-        system.runTimeout(() => {
-            resolve();
-        }, 20 * 20); // 20 ticks per second, so 20 * 20 ticks = 20 seconds
-    });
-}
-
 async function showrules(id: number) {
     const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
     const KickOnDeclineBoolean = dynamicPropertyRegistry.get("kickondecline_b");
@@ -78,13 +70,7 @@ async function showrules(id: number) {
         }
     });
 
-    const allPromises = Promise.all(promises);
-    const twentySecondsPromise = waitForTwentySeconds();
-
-    // Add the player IDs to the set to indicate they are being shown the rules.
-    players.forEach((player) => playersAwaitingResponse.add(player.id));
-
-    await Promise.race([allPromises, twentySecondsPromise]);
+    await Promise.all(promises);
 }
 
 export function ShowRules() {
