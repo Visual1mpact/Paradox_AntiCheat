@@ -1,4 +1,4 @@
-import { PlayerJoinAfterEvent, PlayerLeaveAfterEvent, system, world, Vector3 } from "@minecraft/server";
+import { PlayerJoinAfterEvent, PlayerLeaveAfterEvent, system, world, Vector3, Player } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry";
 import config from "../../../data/config";
 
@@ -45,9 +45,6 @@ function checkAndRemoveAFKPlayers(id: number) {
         if (isPlayerAFK(velocity) && lastActivityTime && accumulatedTime > lowerBound) {
             const kickMessage = "You were kicked for being AFK!";
             player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n\n${kickMessage}`);
-        } else {
-            // Update player activity timestamp if the player is active
-            updatePlayerActivity(player.id);
         }
     }
 }
@@ -66,14 +63,36 @@ function updatePlayerActivityFrequently(id: number) {
 
     const onlinePlayers = world.getPlayers();
     for (const player of onlinePlayers) {
-        updatePlayerActivity(player.id);
+        updatePlayerActivity(player);
     }
 }
 
 // Function to update player activity timestamp
-function updatePlayerActivity(playerName: string) {
+function updatePlayerActivity(player: Player | PlayerJoinAfterEvent) {
+    // Extract the actual player object from PlayerJoinAfterEvent
+    const actualPlayer = player instanceof PlayerJoinAfterEvent ? world.getPlayers({ name: player.playerName })[0] : player;
+
+    // Check if the player is valid (not null or undefined)
+    if (!actualPlayer) {
+        return;
+    }
+
+    // Get the player's velocity
+    const velocity = actualPlayer.getVelocity();
+
+    // Get the current timestamp in milliseconds
     const currentTime = Date.now();
-    playerActivityMap.set(playerName, currentTime);
+
+    // Get the last activity timestamp from the playerActivityMap
+    const lastActivityTime = playerActivityMap.get(actualPlayer.id);
+
+    // Check if lastActivityTime is not set (i.e., the player's activity is being tracked for the first time)
+    if (lastActivityTime === undefined) {
+        playerActivityMap.set(actualPlayer.id, currentTime); // Set the initial activity timestamp
+    } else if (!isPlayerAFK(velocity)) {
+        // Update the player's activity timestamp in the playerActivityMap
+        playerActivityMap.set(actualPlayer.id, currentTime); // Update with the current timestamp
+    }
 }
 
 // Function to check if the player is AFK based on their velocity
@@ -85,7 +104,7 @@ function isPlayerAFK(velocity: Vector3): boolean {
  * Event handler for player login
  */
 function onPlayerLogin(event: PlayerJoinAfterEvent) {
-    updatePlayerActivity(event.playerId);
+    updatePlayerActivity(event);
 }
 
 /**
@@ -111,7 +130,7 @@ export function AFK() {
     // Initialize player activity timestamps for online players when the script starts
     const onlinePlayers = world.getPlayers();
     for (const player of onlinePlayers) {
-        updatePlayerActivity(player.id);
+        updatePlayerActivity(player);
     }
 
     // Start the timer to check for AFK players at regular intervals
