@@ -36,10 +36,10 @@ function checkAndRemoveAFKPlayers(id: number) {
         // Calculate the accumulated time since the last activity
         const accumulatedTime = currentTime - lastActivityTime;
 
-        // Define the tolerance percentage (10% in this case)
-        const tolerancePercentage = 0.1;
+        // Define the tolerance percentage (1% in this case)
+        const tolerancePercentage = 0.01;
 
-        // Calculate the lower bound for the 10 percent tolerance
+        // Calculate the lower bound for the 1 percent tolerance
         const lowerBound = Math.max(inactiveThreshold - inactiveThreshold * tolerancePercentage, 0);
 
         if (isPlayerAFK(velocity) && lastActivityTime && accumulatedTime > lowerBound) {
