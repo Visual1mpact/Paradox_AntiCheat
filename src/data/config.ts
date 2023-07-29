@@ -268,7 +268,7 @@ export default {
         },
         afk: {
             enabled: true,
-            minutes: 1,
+            minutes: 10,
         },
         /**
          * Add a password in-between the quotes.
