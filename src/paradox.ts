@@ -60,6 +60,7 @@ import { afterAntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
 import { DeathCoordinates } from "./penrose/EntityDieAfterEvent/death_coordinates.js";
 // Custom
 import config from "./data/config.js";
+import { AFK } from "./penrose/TickEvent/afk/afk.js";
 
 // WorldInitializeAfter Events
 Registry();
@@ -104,6 +105,7 @@ FlyA();
 AntiKnockbackA();
 AntiFallA();
 AutoBan();
+AFK();
 if (config.customcommands.freeze || config.modules.antiKillAura || config.modules.antinukerA) {
     freeze;
     freezeLeave();

@@ -80,6 +80,7 @@ export default {
         tpr: true,
         autoban: true,
         biome: true,
+        afk: true,
     },
     modules: {
         badpackets1: {
@@ -264,6 +265,10 @@ export default {
         },
         antiKillAura: {
             enabled: true,
+        },
+        afk: {
+            enabled: true,
+            minutes: 1,
         },
         /**
          * Add a password in-between the quotes.

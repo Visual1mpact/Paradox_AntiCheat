@@ -61,6 +61,7 @@ function registry(data: WorldInitializeAfterEvent) {
         "autoban_b",
         "autoclicker_b",
         "antikillaura_b",
+        "afk_b",
     ];
 
     // String properties

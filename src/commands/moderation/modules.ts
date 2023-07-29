@@ -100,6 +100,7 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
     const autobanBoolean = dynamicPropertyRegistry.get("autoban_b");
     const autoclickerBoolean = dynamicPropertyRegistry.get("autoclicker_b");
     const antiKillAuraBoolean = dynamicPropertyRegistry.get("antikillaura_b");
+    const afkBoolean = dynamicPropertyRegistry.get("afk_b");
 
     // Numbers
     const worldBorderOverworldNumber = dynamicPropertyRegistry.get("worldborder_n");
@@ -154,5 +155,6 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
         `§6|§r ClearLag: ${status(clearLagBoolean)}`,
         `§6|§r ShowRules: ${status(showrulesBoolean)}`,
         `§6|§r AutoBan: ${status(autobanBoolean)}`,
+        `§6|§r AFK: ${status(afkBoolean)}`,
     ]);
 }
