@@ -29,15 +29,13 @@ function autoban(id: number) {
     const scores = allscores;
 
     const players = world.getPlayers();
-    for (const player of players) {
+    players.forEach((player) => {
         // Get unique ID
         const uniqueId = dynamicPropertyRegistry.get(player?.id);
-
         // Skip if they have permission
         if (uniqueId === player.name) {
             return;
         }
-
         scores.forEach((score) => {
             const playerScore = getScore(score, player);
             if (playerScore > 50) {
@@ -45,7 +43,7 @@ function autoban(id: number) {
                 return rip(player, reReason);
             }
         });
-    }
+    });
 }
 
 export function AutoBan() {
