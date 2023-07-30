@@ -92,6 +92,8 @@ const freezePlayers = () => {
     for (const player of players) {
         const freezeData = freezeDataMap.get(player.id);
         const hasFreezeTag = player.hasTag("paradoxFreeze");
+        const hasAuraTag = player.hasTag("freezeAura");
+        const hasNukerTag = player.hasTag("freezeNukerA");
 
         if (!freezeData && hasFreezeTag) {
             freezePlayer(player);
@@ -118,7 +120,12 @@ const freezePlayers = () => {
                 player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
             }
 
-            player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+            // If both tags exist display custom message
+            if (hasAuraTag && hasNukerTag) {
+                player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6KA§4]§f§4[§6NA§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+            } else {
+                player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+            }
         }
     }
 
