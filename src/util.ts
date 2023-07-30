@@ -466,4 +466,6 @@ export const allscores: string[] = [
     "armorvl",
     "antikbvl",
     "antifallvl",
+    "nukervl",
+    "scaffoldvl",
 ];
