@@ -27,7 +27,7 @@ export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Play
             }
             try {
                 // Kick players from server
-                await pl.runCommandAsync(`kick ${JSON.stringify(pl.name)} ${reason}`);
+                await pl.runCommandAsync(`kick ${pl.id} §r\n\n${reason}`);
             } catch (error) {
                 // Despawn players from server
                 pl.triggerEvent("paradox:kick");

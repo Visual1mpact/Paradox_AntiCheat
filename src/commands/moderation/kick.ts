@@ -95,7 +95,7 @@ export async function kick(message: ChatSendAfterEvent, args: string[]) {
     }
 
     try {
-        await player.runCommandAsync(`kick ${JSON.stringify(member.name)} ${reason}`);
+        await player.runCommandAsync(`kick ${member.id} §r\n\n${reason}`);
     } catch (error) {
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);

@@ -46,7 +46,7 @@ function checkAndRemoveAFKPlayers(id: number) {
 
         if (isPlayerAFK(velocity) && lastActivityTime && accumulatedTime > lowerBound) {
             const kickMessage = "You were kicked for being AFK!";
-            player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n\n${kickMessage}`);
+            player.runCommandAsync(`kick ${player.id} §r\n\n${kickMessage}`);
         }
     }
 }

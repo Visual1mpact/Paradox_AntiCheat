@@ -57,7 +57,7 @@ async function showrules(id: number) {
             if (KickOnDeclineBoolean === true) {
                 const reason = "You must agree to the rules to join.";
                 try {
-                    player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
+                    player.runCommandAsync(`kick ${player.id} §r\n\n${reason}`);
                 } catch (error) {
                     kickablePlayers.add(player);
                     player.triggerEvent("paradox:kick");

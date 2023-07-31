@@ -36,7 +36,7 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
         const reason = "Under Maintenance! Sorry for the inconvenience.";
         try {
             // Kick players from server
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
+            await player.runCommandAsync(`kick ${player.id} §r\n\n${reason}`);
         } catch (error) {
             // Despawn players from server
             kickablePlayers.add(player);
