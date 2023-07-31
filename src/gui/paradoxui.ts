@@ -861,7 +861,7 @@ async function paradoxui(player: Player) {
                         modulesworldborderui.title("§4Paradox Modules - World Border§4");
                         modulesworldborderui.textField("Over World Border - Value in blocks:", "1000", String(overworldBorderNumber));
                         modulesworldborderui.textField("Nether World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(netherworldBorderNumber));
-                        modulesworldborderui.textField("Nether End Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(endworldBorderNumber));
+                        modulesworldborderui.textField("End World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(endworldBorderNumber));
                         modulesworldborderui.toggle("Enable World Border:", overWorldBorderBoolean);
                         modulesworldborderui.show(player).then((spamResult) => {
                             uiWORLDBORDER(spamResult, player);
