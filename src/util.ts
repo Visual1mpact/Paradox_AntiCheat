@@ -432,20 +432,17 @@ export const sendMsg = async (target: string, message: string | string[]) => {
  */
 export const sendMsgToPlayer = async (target: Player, message: string | string[]) => {
     try {
+        const isArray = Array.isArray(message);
+
         let modifiedMessage: string | string[];
 
-        const isArray = Array.isArray(message);
         if (isArray) {
-            // If "message" is an array, add §o to the beginning of each element
-            modifiedMessage = message.map((text) => `\u00a7o${text}`);
+            modifiedMessage = (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n");
         } else {
-            // If "message" is a single string, add §o to the beginning
-            modifiedMessage = `\u00a7o${message}`;
+            modifiedMessage = (message as string).replace(/§r/g, "§r§o");
         }
 
-        // Now, use the modified message in the command
-        const commandMessage = isArray ? (modifiedMessage as string[]).join("\n\u00a7r") : modifiedMessage;
-        await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(commandMessage)}}]}`);
+        await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
     } catch {}
 };
 
