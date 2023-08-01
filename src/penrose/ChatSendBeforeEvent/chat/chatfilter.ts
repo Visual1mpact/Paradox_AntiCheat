@@ -20,7 +20,7 @@ function obfuscateString() {
 const ChatFilter = () => {
     // Subscribe to the 'beforeChat' event
     world.beforeEvents.chatSend.subscribe((msg) => {
-        const { message, sender: player } = msg; // Destructure 'message' and 'sender' properties from the 'msg' object
+        let { message, sender: player } = msg; // Destructure 'message' and 'sender' properties from the 'msg' object
 
         const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b"); // Get the 'chatranks_b' dynamic property
 
@@ -53,16 +53,13 @@ const ChatFilter = () => {
                 sendMsg("@a", formattedMessage); // Send the formatted chat message to all players
                 msg.sendToTargets = true; // Cancel the chat message
             }
-        } else if (!msg.sendToTargets) {
+        } else {
             // Obfuscate the password in the message
-            let formattedMessage = message;
             const password = config.modules.encryption.password;
             if (password.length > 0) {
                 const obfuscatedPassword = obfuscateString();
-                formattedMessage = `${player.name}: ${message}`.replace(password, obfuscatedPassword);
+                msg.message = message.replace(password, obfuscatedPassword);
             }
-            sendMsg("@a", `${formattedMessage}`); // Send the chat message to all players
-            msg.sendToTargets = true; // Cancel the chat message
         }
     });
 };
