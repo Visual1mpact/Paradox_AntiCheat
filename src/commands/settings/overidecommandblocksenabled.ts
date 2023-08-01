@@ -63,16 +63,16 @@ export async function overidecommandblocksenabled(message: ChatSendAfterEvent, a
 
     if (cmdsscore <= 0) {
         // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config cmds 1`);
+        player.runCommand(`scoreboard players set paradox:config cmds 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set CommandBlocksEnabled as §6enabled§r!`);
     } else if (cmdsscore === 1) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config cmds 2`);
+        player.runCommand(`scoreboard players set paradox:config cmds 2`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set CommandBlocksEnabled as §4disabled§r!`);
     } else if (cmdsscore >= 2) {
         // Force
-        await player.runCommandAsync(`scoreboard players set paradox:config cmds 0`);
+        player.runCommand(`scoreboard players set paradox:config cmds 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has §etoggled§r Force-CommandBlocksEnabled!`);
     }
-    return await player.runCommandAsync(`scoreboard players operation @a cmds = paradox:config cmds`);
+    return player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

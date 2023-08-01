@@ -57,7 +57,7 @@ export async function vanish(message: ChatSendAfterEvent, args: string[]) {
     if (vanishBoolean) {
         player.removeTag("vanish");
         player.triggerEvent("unvanish");
-        await player.runCommandAsync(`effect @s clear`);
+        player.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
         sendMsg(`@a[tag=paradoxOpped]`, `§r§4[§6Paradox§4]§r ${player.name}§r is no longer in vanish.`);
     } else {

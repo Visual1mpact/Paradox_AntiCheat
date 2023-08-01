@@ -68,7 +68,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
 
     // Check if placed item is illegal
     if (illegalitems.has(block.typeId) && !illegalItemsBWhitelist.has(block.typeId)) {
-        await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
+        player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
         flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null);
         return rip(player, null, null, block);
     }
@@ -117,7 +117,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                     break;
                 }
                 // Nested item has been found so flag it and remove the block from the world
-                await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
+                player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
                 flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null);
                 rip(player, null, null, block, true);
                 isFlagged = true;

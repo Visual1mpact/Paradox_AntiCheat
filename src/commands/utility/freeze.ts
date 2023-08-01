@@ -84,7 +84,7 @@ export async function freeze(message: ChatSendAfterEvent, args: string[]) {
 
     if (boolean) {
         member.removeTag("paradoxFreeze");
-        await member.runCommandAsync(`effect @s clear`);
+        member.runCommand(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer frozen.`);
         return;

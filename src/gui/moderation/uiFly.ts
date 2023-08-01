@@ -34,13 +34,16 @@ export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], 
     const membertag = member.getTags();
 
     if (!membertag.includes("noflying") && !membertag.includes("flying")) {
-        try {
-            await member.runCommandAsync(`ability @s mayfly true`);
-            member.addTag("flying");
-            mayflyenable(player, member);
-        } catch (Error) {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
-        }
+        member
+            .runCommandAsync(`ability @s mayfly true`)
+            .then(() => {
+                member.addTag("flying");
+                mayflyenable(player, member);
+            })
+            .catch(() => {
+                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
+            });
+
         return;
     }
 
@@ -49,14 +52,16 @@ export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], 
     }
 
     if (member.hasTag("noflying")) {
-        try {
-            await member.runCommandAsync(`ability @s mayfly false`);
-            member.removeTag("flying");
-            mayflydisable(player, member);
-            member.removeTag("noflying");
-        } catch (error) {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
-        }
+        member
+            .runCommandAsync(`ability @s mayfly false`)
+            .then(() => {
+                member.removeTag("flying");
+                mayflydisable(player, member);
+                member.removeTag("noflying");
+            })
+            .catch(() => {
+                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
+            });
         return;
     }
 

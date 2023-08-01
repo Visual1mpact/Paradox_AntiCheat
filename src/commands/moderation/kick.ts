@@ -93,12 +93,9 @@ export async function kick(message: ChatSendAfterEvent, args: string[]) {
     if (member === player) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot kick yourself.`);
     }
-
-    try {
-        await player.runCommandAsync(`kick ${member.id} §r\n\n${reason}`);
-    } catch (error) {
+    player.runCommandAsync(`kick ${member.id} §r\n\n${reason}`).catch((error) => {
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
-    }
+    });
     return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has kicked ${member.name}§r. Reason: ${reason}`);
 }

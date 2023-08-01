@@ -43,14 +43,12 @@ export async function flag(player: Player, check: string, checkType: string, hac
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     }
 
-    try {
-        if (check === "Namespoof") {
-            await player.runCommandAsync(`kick ${player.id} §r\n\n§4[§6Paradox§4]§r You have illegal characters in your name!`);
-        }
-    } catch (error) {
-        // if we cant kick them with /kick then we instant despawn them
-        kickablePlayers.add(player);
-        player.triggerEvent("paradox:kick");
+    if (check === "Namespoof") {
+        player.runCommandAsync(`kick ${player.id} §r\n\n§4[§6Paradox§4]§r You have illegal characters in your name!`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
+            kickablePlayers.add(player);
+            player.triggerEvent("paradox:kick");
+        });
     }
 }
 
@@ -75,21 +73,17 @@ export async function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        try {
-            await player.runCommandAsync(`kick ${player.id} §r\n§l§cYOU ARE BANNED!\n§r§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`);
-        } catch (error) {
-            // if we cant kick them with /kick then we instant despawn them
+        player.runCommandAsync(`kick ${player.id} §r\n§l§cYOU ARE BANNED!\n§r§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
     } else {
-        try {
-            await player.runCommandAsync(`kick ${player.id} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
-        } catch (error) {
-            // if we cant kick them with /kick then we instant despawn them
+        player.runCommandAsync(`kick ${player.id} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
     }
 }
 
@@ -417,14 +411,12 @@ export function getGamemode(player: Player): string | undefined {
  * @param message The message to send. This can be a string or an array of strings.
  */
 export const sendMsg = async (target: string, message: string | string[]) => {
-    try {
-        const isArray = Array.isArray(message);
+    const isArray = Array.isArray(message);
 
-        // Check if target is equal to "@a"
-        const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n") : (message as string).replace(/§r/g, "§r§o"));
+    // Check if target is equal to "@a"
+    const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n") : (message as string).replace(/§r/g, "§r§o"));
 
-        await overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
-    } catch {}
+    overworld.runCommand(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
 };
 
 /**
@@ -434,19 +426,17 @@ export const sendMsg = async (target: string, message: string | string[]) => {
  * @param message The message to send. This can be a string or an array of strings.
  */
 export const sendMsgToPlayer = async (target: Player, message: string | string[]) => {
-    try {
-        const isArray = Array.isArray(message);
+    const isArray = Array.isArray(message);
 
-        let modifiedMessage: string | string[];
+    let modifiedMessage: string | string[];
 
-        if (isArray) {
-            modifiedMessage = (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n");
-        } else {
-            modifiedMessage = (message as string).replace(/§r/g, "§r§o");
-        }
+    if (isArray) {
+        modifiedMessage = (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n");
+    } else {
+        modifiedMessage = (message as string).replace(/§r/g, "§r§o");
+    }
 
-        await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
-    } catch {}
+    target.runCommand(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
 };
 
 export const allscores: string[] = [

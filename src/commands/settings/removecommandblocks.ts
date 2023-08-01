@@ -63,12 +63,12 @@ export async function removecommandblocks(message: ChatSendAfterEvent, args: str
 
     if (commandblocksscore <= 0) {
         // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config commandblocks 1`);
+        player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Command Blocks§r!`);
     } else if (commandblocksscore >= 1) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config commandblocks 0`);
+        player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Command Blocks§r!`);
     }
-    return await player.runCommandAsync(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
+    return player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
 }

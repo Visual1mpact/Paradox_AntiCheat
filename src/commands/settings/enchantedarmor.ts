@@ -63,12 +63,12 @@ export async function enchantedarmor(message: ChatSendAfterEvent, args: string[]
 
     if (encharmorscore <= 0) {
         // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config encharmor 1`);
+        player.runCommand(`scoreboard players set paradox:config encharmor 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Enchanted Armor§r!`);
     } else if (encharmorscore >= 1) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config encharmor 0`);
+        player.runCommand(`scoreboard players set paradox:config encharmor 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Enchanted Armor§r!`);
     }
-    return await player.runCommandAsync(`scoreboard players operation @a encharmor = paradox:config encharmor`);
+    return player.runCommand(`scoreboard players operation @a encharmor = paradox:config encharmor`);
 }

@@ -35,7 +35,7 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
 
     if (member.hasTag("novanish")) {
         member.triggerEvent("unvanish");
-        await member.runCommandAsync(`effect @s clear`);
+        member.runCommandAsync(`effect @s clear`);
         sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer in vanish.`);
     }

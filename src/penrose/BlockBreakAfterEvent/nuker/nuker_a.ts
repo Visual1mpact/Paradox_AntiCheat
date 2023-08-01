@@ -102,9 +102,7 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
             lastBreakTime.delete(player.id);
             breakCounter.delete(player.id);
 
-            try {
-                await player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
-            } catch (error) {}
+            player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
 
             // Apply effects or actions for three or more consecutive block breaks
             player.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });

@@ -34,14 +34,13 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
         }
 
         const reason = "Under Maintenance! Sorry for the inconvenience.";
-        try {
-            // Kick players from server
-            await player.runCommandAsync(`kick ${player.id} §r\n\n${reason}`);
-        } catch (error) {
+
+        // Kick players from server
+        player.runCommandAsync(`kick ${player.id} §r\n\n${reason}`).catch(() => {
             // Despawn players from server
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
         return;
     }
 
@@ -57,9 +56,10 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
 
     // We execute each command in the list
     for (let i = 0; i < onJoinSecondaryData.length; i++) {
-        try {
-            await player.runCommandAsync(`${onJoinSecondaryData[i]}`);
-        } catch {}
+        player.runCommandAsync(`${onJoinSecondaryData[i]}`).catch(() => {
+            // Certain things like "ability" will cause errors if not enabled properly.
+            // We ignore those errors since they are expected and have no impact.
+        });
     }
 
     // Set up custom prefix

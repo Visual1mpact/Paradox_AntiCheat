@@ -82,13 +82,12 @@ export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
         if (hash !== undefined && encode === hash) {
             continue;
         }
-        try {
-            // Kick players from server
-            await pl.runCommandAsync(`kick ${pl.id} §r\n\n${reason}`);
-        } catch (error) {
+
+        // Kick players from server
+        pl.runCommandAsync(`kick ${pl.id} §r\n\n${reason}`).catch(() => {
             // Despawn players from server
             pl.triggerEvent("paradox:kick");
-        }
+        });
     }
     // Shutting it down
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is in lockdown!`);

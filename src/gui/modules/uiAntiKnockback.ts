@@ -21,7 +21,7 @@ export async function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, pl
         // Allow
         dynamicPropertyRegistry.set("antikb_b", true);
         world.setDynamicProperty("antikb_b", true);
-        await player.runCommandAsync(`scoreboard players set paradox:config antikb 1`);
+        player.runCommand(`scoreboard players set paradox:config antikb 1`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Knockback§r!`);
         AntiKnockbackA();
     }
@@ -29,10 +29,10 @@ export async function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, pl
         // Deny
         dynamicPropertyRegistry.set("antikb_b", false);
         world.setDynamicProperty("antikb_b", false);
-        await player.runCommandAsync(`scoreboard players set paradox:config antikb 0`);
+        player.runCommand(`scoreboard players set paradox:config antikb 0`);
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Knockback§r!`);
     }
-    await player.runCommandAsync(`scoreboard players operation @a antikb = paradox:config antikb`);
+    player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 
     //show the main ui to the player once complete.
     return paradoxui(player);
