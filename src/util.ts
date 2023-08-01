@@ -416,7 +416,7 @@ export const sendMsg = async (target: string, message: string | string[]) => {
     // Check if target is equal to "@a"
     const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n") : (message as string).replace(/§r/g, "§r§o"));
 
-    overworld.runCommand(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
+    overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
 };
 
 /**
@@ -436,7 +436,7 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
         modifiedMessage = (message as string).replace(/§r/g, "§r§o");
     }
 
-    target.runCommand(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
+    target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
 };
 
 export const allscores: string[] = [
