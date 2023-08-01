@@ -418,9 +418,12 @@ export function getGamemode(player: Player): string | undefined {
  */
 export const sendMsg = async (target: string, message: string | string[]) => {
     try {
-        await overworld.runCommandAsync(
-            `tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`
-        );
+        const isArray = Array.isArray(message);
+
+        // Check if target is equal to "@a"
+        const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n") : (message as string).replace(/§r/g, "§r§o"));
+
+        await overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
     } catch {}
 };
 
