@@ -259,7 +259,7 @@ export function toPascalCase(str: string) {
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
 
 /**
- * Hashes a given string with the specified salt value using AES encryption.
+ * Hashes a given string with the specified salt value using SHA-3 (SHA3-256) encryption.
  *
  * @name crypto
  * @param {string | number | boolean} salt - Hashes information
@@ -268,12 +268,12 @@ export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpp
 export const crypto = (salt: string | number | boolean, text: string) => {
     // Convert the salt to a string representation
     const saltString = String(salt);
-    // Encrypt the text using AES with the salt as the key
-    const encryptedBytes = CryptoJS.AES.encrypt(text, saltString);
-    // Convert the encrypted bytes to a hex representation
-    const joinedResult = encryptedBytes.ciphertext.toString(CryptoJS.enc.Hex);
+    // Combine salt and text
+    const combinedString = saltString + text;
+    // Hash the combined string using SHA-3 (SHA3-256)
+    const hash = CryptoJS.SHA3(combinedString, { outputLength: 256 }).toString();
     // Ensure it is no more than 50 characters as set for dynamic property strings
-    return joinedResult.substring(0, 50);
+    return hash.substring(0, 50);
 };
 
 
