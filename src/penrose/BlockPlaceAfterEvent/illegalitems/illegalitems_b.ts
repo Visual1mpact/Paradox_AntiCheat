@@ -6,6 +6,17 @@ import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
 
+// Create a map of enchantment types and their presence in the player's inventory
+const enchantmentPresenceMap = new Map<Enchantment, boolean>();
+// Create a map of enchantment types and their data in the player's inventory
+const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
+// Create a map of enchantment types and a number type to signify slot value
+const inventorySlotMap = new Map<Enchantment, number>();
+// Create a map of enchantment types and a ItemStack type to test new instance of ItemStack type
+const itemStackDataMap = new Map<Enchantment, ItemStack>();
+// Create a map of itemstack types not verified by Paradox
+const unverifiedItemMap = new Map<number, ItemStack>();
+
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block, nested: boolean = false) {
     let reason: string;
     if (block) {
@@ -38,6 +49,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
+        resetMaps(); // Clear the maps
         world.afterEvents.blockPlace.unsubscribe(illegalitemsb);
         return;
     }
@@ -54,17 +66,6 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
     if (uniqueId === player.name) {
         return;
     }
-
-    // Create a map of enchantment types and their presence in the player's inventory
-    const enchantmentPresenceMap = new Map<Enchantment, boolean>();
-    // Create a map of enchantment types and their data in the player's inventory
-    const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
-    // Create a map of enchantment types and a number type to signify slot value
-    const inventorySlotMap = new Map<Enchantment, number>();
-    // Create a map of enchantment types and a ItemStack type to test new instance of ItemStack type
-    const itemStackDataMap = new Map<Enchantment, ItemStack>();
-    // Create a map of itemstack types not verified by Paradox
-    const unverifiedItemMap = new Map<number, ItemStack>();
 
     // Check if placed item is illegal
     if (illegalitems.has(block.typeId) && !illegalItemsBWhitelist.has(block.typeId)) {
@@ -331,6 +332,14 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
             itemStackDataMap.clear();
         }
     }
+}
+
+function resetMaps() {
+    enchantmentPresenceMap.clear();
+    enchantmentDataMap.clear();
+    inventorySlotMap.clear();
+    itemStackDataMap.clear();
+    unverifiedItemMap.clear();
 }
 
 const IllegalItemsB = () => {
