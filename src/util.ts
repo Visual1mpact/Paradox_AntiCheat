@@ -1,6 +1,7 @@
 import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
+import CryptoJS from "./node_modules/crypto-es/lib/index.js"
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
@@ -258,58 +259,39 @@ export function toPascalCase(str: string) {
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
 
 /**
- * Hashes a given string with the specified salt value using an algorithm.
+ * Hashes a given string with the specified salt value using AES encryption.
  *
  * @name crypto
- * @param {string} salt - Hashes information
+ * @param {string | number | boolean} salt - Hashes information
  * @param {string} text - String to be hashed
  */
 export const crypto = (salt: string | number | boolean, text: string) => {
-    const textToChars = (text: string) => new Uint8Array([...text].map((c) => c.charCodeAt(0)));
-    const byteHex = (n: number) => ("0" + n.toString(16)).substring(-2);
-    const applySaltToChar = (code: Uint8Array) => {
-        const saltChars = textToChars(String(salt));
-        let result = 0;
-        for (let i = 0; i < code.length; i++) {
-            result ^= saltChars[i % saltChars.length] ^ code[i];
-        }
-        return result;
-    };
-
-    const textChars = textToChars(text);
-    const resultChars = new Uint8Array(textChars.length);
-    for (let i = 0; i < textChars.length; i++) {
-        resultChars[i] = applySaltToChar(textChars.slice(i, i + 1));
-    }
-
-    const joinedResult = [...resultChars].map(byteHex).join("");
+    // Convert the salt to a string representation
+    const saltString = String(salt);
+    // Encrypt the text using AES with the salt as the key
+    const encryptedBytes = CryptoJS.AES.encrypt(text, saltString);
+    // Convert the encrypted bytes to a hex representation
+    const joinedResult = encryptedBytes.ciphertext.toString(CryptoJS.enc.Hex);
     // Ensure it is no more than 50 characters as set for dynamic property strings
     return joinedResult.substring(0, 50);
 };
 
+
 /**
- * Encrypts a string using an algorithm.
+ * Encrypts a string using AES encryption with the specified salt as the key.
  *
  * @name encryptString
  * @param {string} str - The string to encrypt
- * @param {string} salt - The salt to use for encryption
+ * @param {string} salt - The salt to use as the key for encryption
  * @returns {string} The encrypted string
  */
 export function encryptString(str: string, salt: string): string {
-    let ciphertext = "";
-    let keyIndex = 0;
-    for (let i = 0; i < str.length; i++) {
-        const plainCharCode = str.charCodeAt(i);
-        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        const cipherCharCode = (plainCharCode + keyCharCode) % 256; // wrap around at 256
-        ciphertext += String.fromCharCode(cipherCharCode);
-        keyIndex++;
-    }
-    return "6f78" + ciphertext;
+    const encrypted = CryptoJS.AES.encrypt(str, salt).toString();
+    return '1337' + encrypted;
 }
 
 /**
- * Decrypts a string using an algorithm.
+ * Decrypts a string using AES encryption with the specified salt as the key.
  *
  * @name decryptString
  * @param {string} str - The string to decrypt
@@ -317,17 +299,30 @@ export function encryptString(str: string, salt: string): string {
  * @returns {string} The decrypted string
  */
 export function decryptString(str: string, salt: string): string {
-    let plaintext = "";
-    let keyIndex = 0;
-    str = str.slice(4);
-    for (let i = 0; i < str.length; i++) {
-        const cipherCharCode = str.charCodeAt(i);
-        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
-        plaintext += String.fromCharCode(plainCharCode);
-        keyIndex++;
+    // Check if the string is using the old encryption (tag '6f78')
+    if (str.startsWith('6f78')) {
+        // Use the old decryption logic
+        let plaintext = "";
+        let keyIndex = 0;
+        str = str.slice(4);
+        for (let i = 0; i < str.length; i++) {
+            const cipherCharCode = str.charCodeAt(i);
+            const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+            const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
+            plaintext += String.fromCharCode(plainCharCode);
+            keyIndex++;
+        }
+        return plaintext;
+    } else {
+        // Use the new decryption logic with AES
+        // Remove the prefix added in the encryptString function
+        str = str.slice(4);
+        // Decrypt using AES
+        const decryptedBytes = CryptoJS.AES.decrypt(str, salt);
+        // Convert the decrypted bytes to a UTF-8 string
+        const plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        return plaintext;
     }
-    return plaintext;
 }
 
 /**
