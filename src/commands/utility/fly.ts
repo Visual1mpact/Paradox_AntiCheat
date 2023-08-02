@@ -91,7 +91,7 @@ export async function fly(message: ChatSendAfterEvent, args: string[]) {
                 mayflyenable(player, member);
             })
             .catch(() => {
-                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
+                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r§4[Fly]§r Education Edition is disabled in this world.`);
             });
         return;
     }
@@ -109,7 +109,7 @@ export async function fly(message: ChatSendAfterEvent, args: string[]) {
                 member.removeTag("noflying");
             })
             .catch(() => {
-                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
+                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r§4[Fly]§r Education Edition is disabled in this world.`);
             });
         return;
     }
