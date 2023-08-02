@@ -5,6 +5,17 @@ import { kickablePlayers } from "../../../kickcheck.js";
 import { sendMsg, sendMsgToPlayer, titleCase } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
+// Create a map of enchantment types and their presence in the player's inventory
+const enchantmentPresenceMap = new Map<Enchantment, boolean>();
+// Create a map of enchantment types and their data in the player's inventory
+const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
+// Create a map of enchantment types and a number type to signify slot value
+const inventorySlotMap = new Map<Enchantment, number>();
+// Create a map of enchantment types and a ItemStack type to test new instance of ItemStack type
+const itemStackDataMap = new Map<Enchantment, ItemStack>();
+// Create a map of itemstack types not verified by Paradox
+const unverifiedItemMap = new Map<number, ItemStack>();
+
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, lore = false) {
     let reason: string;
     if (enchData) {
@@ -42,6 +53,7 @@ function illegalitemsa(id: number) {
         for (const player of allPlayers) {
             player.removeTag("illegalitemsA");
         }
+        resetMaps(); // Clear the maps
         system.clearRun(id);
         return;
     }
@@ -64,17 +76,6 @@ function illegalitemsa(id: number) {
         const playerContainer = playerInventory.container;
         // Cache the player's inventory size
         const playerContainerSize = playerContainer.size;
-
-        // Create a map of enchantment types and their presence in the player's inventory
-        const enchantmentPresenceMap = new Map<Enchantment, boolean>();
-        // Create a map of enchantment types and their data in the player's inventory
-        const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
-        // Create a map of enchantment types and a number type to signify slot value
-        const inventorySlotMap = new Map<Enchantment, number>();
-        // Create a map of enchantment types and a ItemStack type to test new instance of ItemStack type
-        const itemStackDataMap = new Map<Enchantment, ItemStack>();
-        // Create a map of itemstack types not verified by Paradox
-        const unverifiedItemMap = new Map<number, ItemStack>();
 
         // Iterate through each slot in the player's container
         for (let i = 0; i < playerContainerSize; i++) {
@@ -266,6 +267,14 @@ function illegalitemsa(id: number) {
             }
         }
     }
+}
+
+function resetMaps() {
+    enchantmentPresenceMap.clear();
+    enchantmentDataMap.clear();
+    inventorySlotMap.clear();
+    itemStackDataMap.clear();
+    unverifiedItemMap.clear();
 }
 
 /**
