@@ -56,7 +56,7 @@ async function showrules(id: number) {
             playersAwaitingResponse.delete(player.id); // Player has responded, remove from set.
             if (KickOnDeclineBoolean === true) {
                 const reason = "You must agree to the rules to join.";
-                player.runCommandAsync(`kick ${player.id} §r\n\n${reason}`).catch(() => {
+                player.runCommandAsync(`kick ${player.name} §r\n\n${reason}`).catch(() => {
                     kickablePlayers.add(player);
                     player.triggerEvent("paradox:kick");
                 });

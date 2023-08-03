@@ -84,7 +84,7 @@ export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
         }
 
         // Kick players from server
-        pl.runCommandAsync(`kick ${pl.id} §r\n\n${reason}`).catch(() => {
+        pl.runCommandAsync(`kick ${pl.name} §r\n\n${reason}`).catch(() => {
             // Despawn players from server
             pl.triggerEvent("paradox:kick");
         });
