@@ -35,8 +35,6 @@ function isAttackingFromOutsideView(player1: Player, player2: Player) {
         // Convert dot product to angle in degrees
         const angle2 = Math.acos(normalizedDotProduct2) * (180 / Math.PI);
 
-        console.log("Them: " + angle2);
-
         // Check if angle2 is greater than 90 degrees
         return angle2 > 90;
     }
