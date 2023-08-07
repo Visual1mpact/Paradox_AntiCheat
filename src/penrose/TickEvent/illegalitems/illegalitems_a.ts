@@ -1,20 +1,20 @@
-import { world, ItemStack, Player, EntityInventoryComponent, system, ItemEnchantsComponent, EnchantmentList, Enchantment } from "@minecraft/server";
+import { world, ItemStack, Player, EntityInventoryComponent, system, ItemEnchantsComponent, EnchantmentList, Enchantment, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { sendMsg, sendMsgToPlayer, titleCase } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
-// Create a map of enchantment types and their presence in the player's inventory
-const enchantmentPresenceMap = new Map<Enchantment, boolean>();
-// Create a map of enchantment types and their data in the player's inventory
-const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
-// Create a map of enchantment types and a number type to signify slot value
-const inventorySlotMap = new Map<Enchantment, number>();
-// Create a map of enchantment types and a ItemStack type to test new instance of ItemStack type
-const itemStackDataMap = new Map<Enchantment, ItemStack>();
-// Create a map of itemstack types not verified by Paradox
-const unverifiedItemMap = new Map<number, ItemStack>();
+// Create a map of player objects and their enchantment presence
+const enchantmentPresenceMap = new Map<string, Map<Enchantment, boolean>>();
+// Create a map of player objects and their enchantment data
+const enchantmentDataMap = new Map<string, Map<Enchantment, EnchantmentList>>();
+// Create a map of player objects and their inventory slot value
+const inventorySlotMap = new Map<string, Map<Enchantment, number>>();
+// Create a map of player objects and their ItemStack data
+const itemStackDataMap = new Map<string, Map<Enchantment, ItemStack>>();
+// Create a map of player objects and their unverified ItemStack
+const unverifiedItemMap = new Map<string, Map<number, ItemStack>>();
 
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, lore = false) {
     let reason: string;
@@ -38,6 +38,15 @@ function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string;
     }
 }
 
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    enchantmentPresenceMap.delete(event.playerId);
+    enchantmentDataMap.delete(event.playerId);
+    inventorySlotMap.delete(event.playerId);
+    itemStackDataMap.delete(event.playerId);
+    unverifiedItemMap.delete(event.playerId);
+}
+
 function illegalitemsa(id: number) {
     // Get Dynamic Property
     const illegalItemsABoolean = dynamicPropertyRegistry.get("illegalitemsa_b");
@@ -54,6 +63,7 @@ function illegalitemsa(id: number) {
             player.removeTag("illegalitemsA");
         }
         resetMaps(); // Clear the maps
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         system.clearRun(id);
         return;
     }
@@ -133,10 +143,10 @@ function illegalitemsa(id: number) {
                 let iteratorResult = iterator.next();
                 while (!iteratorResult.done) {
                     const enchantment: Enchantment = iteratorResult.value;
-                    enchantmentPresenceMap.set(enchantment, true);
-                    enchantmentDataMap.set(enchantment, enchantmentData);
-                    inventorySlotMap.set(enchantment, i);
-                    itemStackDataMap.set(enchantment, playerItemStack);
+                    enchantmentPresenceMap.get(player.id).set(enchantment, true);
+                    enchantmentDataMap.get(player.id).set(enchantment, enchantmentData);
+                    inventorySlotMap.get(player.id).set(enchantment, i);
+                    itemStackDataMap.get(player.id).set(enchantment, playerItemStack);
                     iteratorResult = iterator.next();
                 }
             }
@@ -148,8 +158,10 @@ function illegalitemsa(id: number) {
                 if (!uniqueItems.includes(itemStackId)) {
                     const verifiedItemName = playerItemStack.nameTag;
                     if (!verifiedItemName) {
-                        unverifiedItemMap.set(i, playerItemStack);
+                        unverifiedItemMap.set(player.id, new Map<number, ItemStack>());
                     }
+                    const playerMap = unverifiedItemMap.get(player.id);
+                    playerMap.set(i, playerItemStack);
                 }
             }
         }
@@ -157,11 +169,11 @@ function illegalitemsa(id: number) {
         // Iterate through the enchantment presence map to perform any necessary operations
         if (illegalEnchantmentBoolean) {
             let isPresent = false;
-            for (const [enchantment, present] of enchantmentPresenceMap) {
+            for (const [enchantment, present] of enchantmentPresenceMap.get(player.id)) {
                 if (present) {
                     // Do something with the present enchantment and its data
-                    const itemStackData = itemStackDataMap.get(enchantment);
-                    const enchantmentData = enchantmentDataMap.get(enchantment);
+                    const itemStackData = itemStackDataMap.get(player.id).get(enchantment);
+                    const enchantmentData = enchantmentDataMap.get(player.id).get(enchantment);
                     const getEnchantment = enchantmentData.getEnchantment(enchantment.type);
                     const currentLevel = getEnchantment.level;
                     const maxLevel = getEnchantment.type.maxLevel;
@@ -175,7 +187,7 @@ function illegalitemsa(id: number) {
                     const canAddEnchantBoolean = newEnchantmentData.canAddEnchantment(getEnchantment);
                     // Flag for illegal enchantments
                     if (currentLevel > maxLevel || currentLevel < 0 || !canAddEnchantBoolean) {
-                        const itemSlot = inventorySlotMap.get(enchantment);
+                        const itemSlot = inventorySlotMap.get(player.id).get(enchantment);
                         const enchData = {
                             id: getEnchantment.type.id,
                             level: currentLevel,
@@ -208,7 +220,7 @@ function illegalitemsa(id: number) {
         if (salvageBoolean) {
             let salvagedList = false;
             // Iterate over the unverifiedItemMap
-            for (const [slot, itemStackData] of unverifiedItemMap) {
+            for (const [slot, itemStackData] of unverifiedItemMap.get(player.id)) {
                 // Create a new name tag for the item
                 const newNameTag = titleCase(itemStackData.typeId.replace("minecraft:", ""));
                 // Create a new ItemStack with the same type as the original item
@@ -283,6 +295,7 @@ function resetMaps() {
  * if needed to do so.
  */
 export function IllegalItemsA() {
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     const illegalItemsAId = system.runInterval(() => {
         illegalitemsa(illegalItemsAId);
     }, 20);
