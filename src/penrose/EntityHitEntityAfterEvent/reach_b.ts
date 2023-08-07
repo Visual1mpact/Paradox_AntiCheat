@@ -1,11 +1,11 @@
-import { world, Player, EntityHitEntityAfterEvent, system } from "@minecraft/server";
+import { world, Player, EntityHitEntityAfterEvent, system, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { flag } from "../../util.js";
 import { dynamicPropertyRegistry } from "../WorldInitializeAfterEvent/registry.js";
 
 // Store the previous locations and velocities of hitEntity and damagingEntity
 const previousData: Map<
-    Player,
+    string,
     {
         location: { x: number; y: number; z: number };
         velocity: { x: number; y: number; z: number };
@@ -14,14 +14,21 @@ const previousData: Map<
 
 function recordPlayerData(player: Player) {
     // Store the current location and velocity of the player
-    previousData.set(player, {
+    previousData.set(player.id, {
         location: { ...player.location },
         velocity: { ...player.getVelocity() },
     });
 }
 
-function removePlayerData(player: Player) {
-    previousData.delete(player);
+function onPlayerLogout(event: PlayerLeaveAfterEvent | string): void {
+    // Remove the player's data from the map when they log off
+    if (typeof event === "string") {
+        const playerName = event;
+        previousData.delete(playerName);
+    } else {
+        const playerName = event.playerId;
+        previousData.delete(playerName);
+    }
 }
 
 function reachb(object: EntityHitEntityAfterEvent) {
@@ -30,8 +37,10 @@ function reachb(object: EntityHitEntityAfterEvent) {
 
     // Unsubscribe if disabled in-game and stop the interval
     if (reachBBoolean === false) {
-        world.afterEvents.entityHitEntity.unsubscribe(reachb);
+        previousData.clear();
         stopLocationRecordingInterval();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
+        world.afterEvents.entityHitEntity.unsubscribe(reachb);
         return;
     }
 
@@ -52,8 +61,8 @@ function reachb(object: EntityHitEntityAfterEvent) {
     }
 
     // Get the previous recorded data of hitEntity and damagingEntity
-    const previousHitEntityData = previousData.get(hitEntity);
-    const previousDamagingEntityData = previousData.get(damagingEntity);
+    const previousHitEntityData = previousData.get(hitEntity.id);
+    const previousDamagingEntityData = previousData.get(damagingEntity.id);
 
     if (previousHitEntityData && previousDamagingEntityData && isWithinReach(previousHitEntityData, previousDamagingEntityData, hitEntity.location, damagingEntity.location)) {
         // Update the recorded data for hitEntity and damagingEntity
@@ -72,13 +81,13 @@ function reachb(object: EntityHitEntityAfterEvent) {
     const roundedReachDistance = Math.floor(reachDistance);
     if (roundedReachDistance > config.modules.reachB.reach) {
         // Flagging is done, now we can remove the player entity from previousData
-        removePlayerData(damagingEntity);
-        removePlayerData(hitEntity);
+        onPlayerLogout(damagingEntity.id);
+        onPlayerLogout(hitEntity.id);
         flag(damagingEntity, "Reach", "B", "Attack", null, null, "reach", reachDistance.toString(), false);
     }
     // Flagging is done, now we can remove the player entity from previousData
-    removePlayerData(damagingEntity);
-    removePlayerData(hitEntity);
+    onPlayerLogout(damagingEntity.id);
+    onPlayerLogout(hitEntity.id);
 }
 
 function isWithinReach(
@@ -160,6 +169,7 @@ const ReachB = () => {
     // Subscribe to the tick event to record player locations and velocities
     startLocationRecordingInterval();
 
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     world.afterEvents.entityHitEntity.subscribe(reachb);
 };
 

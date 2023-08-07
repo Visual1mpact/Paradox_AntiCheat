@@ -1,10 +1,10 @@
-import { world, Player, system, BlockPlaceAfterEvent, MinecraftBlockTypes, Block } from "@minecraft/server";
+import { world, Player, system, BlockPlaceAfterEvent, MinecraftBlockTypes, Block, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Define a union type for Player and Block
-type PlayerOrBlock = Player | Block;
+type PlayerOrBlock = string | Block;
 
 // Store the previous locations and velocities of player and block
 const previousData: Map<
@@ -19,7 +19,7 @@ function recordPlayerData(entity: PlayerOrBlock) {
     // Check if the entity is a Player
     if (entity instanceof Player) {
         // Store the current location and velocity of the player
-        previousData.set(entity, {
+        previousData.set(entity.id, {
             location: { ...entity.location },
             velocity: { ...entity.getVelocity() },
         });
@@ -27,8 +27,15 @@ function recordPlayerData(entity: PlayerOrBlock) {
     // If it's not a Player (i.e., it's a Block), we can ignore it for now
 }
 
-function removePlayerData(player: Player) {
-    previousData.delete(player);
+function onPlayerLogout(event: PlayerLeaveAfterEvent | string): void {
+    // Remove the player's data from the map when they log off
+    if (typeof event === "string") {
+        const playerName = event;
+        previousData.delete(playerName);
+    } else {
+        const playerName = event.playerId;
+        previousData.delete(playerName);
+    }
 }
 
 function reacha(object: BlockPlaceAfterEvent) {
@@ -37,8 +44,10 @@ function reacha(object: BlockPlaceAfterEvent) {
 
     // Unsubscribe if disabled in-game and stop the interval
     if (reachABoolean === false) {
-        world.afterEvents.blockPlace.unsubscribe(reacha);
+        previousData.clear();
         stopLocationRecordingInterval();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
+        world.afterEvents.blockPlace.unsubscribe(reacha);
         return;
     }
 
@@ -60,12 +69,12 @@ function reacha(object: BlockPlaceAfterEvent) {
 
     // Get the previous recorded data of block and player
     const previousblockData = previousData.get(block);
-    const previousplayerData = previousData.get(player);
+    const previousplayerData = previousData.get(player.id);
 
     if (previousblockData && previousplayerData && isWithinReach(previousblockData, previousplayerData, block.location, player.location)) {
         // Update the recorded data for block and player
         recordPlayerData(block);
-        recordPlayerData(player);
+        recordPlayerData(player.id);
         return;
     }
 
@@ -79,12 +88,12 @@ function reacha(object: BlockPlaceAfterEvent) {
     const roundedReachDistance = Math.floor(reachDistance);
     if (roundedReachDistance > config.modules.reachA.reach) {
         // Flagging is done, now we can remove the player entity from previousData
-        removePlayerData(player);
+        onPlayerLogout(player.id);
         dimension.getBlock(block.location).setType(MinecraftBlockTypes.air);
         flag(player, "Reach", "A", "Placement", null, null, "reach", roundedReachDistance.toString(), false);
     }
     // Flagging is done, now we can remove the player entity from previousData
-    removePlayerData(player);
+    onPlayerLogout(player.id);
 }
 
 function isWithinReach(
@@ -144,7 +153,7 @@ function calculateReachDistanceWithVelocity(
 
 function resetReachDistance(player: Player) {
     // Reset the previous location and velocity of the player to the current location and velocity
-    recordPlayerData(player);
+    recordPlayerData(player.id);
 }
 
 // Interval ID to stop the recording
@@ -153,7 +162,7 @@ let locationRecordingInterval: number;
 function startLocationRecordingInterval() {
     locationRecordingInterval = system.runInterval(() => {
         for (const player of world.getAllPlayers()) {
-            recordPlayerData(player);
+            recordPlayerData(player.id);
         }
     }, 20);
 }
@@ -166,6 +175,7 @@ const ReachA = () => {
     // Subscribe to the tick event to record player locations and velocities
     startLocationRecordingInterval();
 
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     world.afterEvents.blockPlace.subscribe(reacha);
 };
 
