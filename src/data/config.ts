@@ -110,10 +110,10 @@ export default {
         },
         namespoofB: {
             enabled: true,
-            banregex: /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/,
+            banregex: /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/g,
             // Deny any invalid character not within the scope of this regex
             // Only kick because playstation and switch consoles are able to rename themselves
-            kickregex: /^((?![a-zA-Z0-9_]{3,16}$).)*$/,
+            kickregex: /^((?![a-zA-Z0-9_]{3,16}$).)*$/g,
         },
         bedrockValidate: {
             enabled: true,
