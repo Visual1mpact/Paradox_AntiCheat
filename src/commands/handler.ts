@@ -77,12 +77,13 @@ import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
 import { antifallA } from "./settings/antifalla.js";
-import { showrules } from "./moderation/showrules.js";
+import { showrules } from "./settings/showrules.js";
 import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
 import { autoban } from "./settings/autoban.js";
 import { paradoxVersion } from "./utility/paradoxVersion.js";
 import { biome } from "./utility/biome.js";
+import { afk } from "./settings/afk.js";
 const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
@@ -165,6 +166,7 @@ const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, arg
         autoban: autoban,
         version: paradoxVersion,
         biome: biome,
+        afk: afk,
     },
     null
 );

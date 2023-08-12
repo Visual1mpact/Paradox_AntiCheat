@@ -1,6 +1,5 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { crypto, sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -21,17 +20,15 @@ export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Play
             // Check for hash/salt and validate password
             const hash = pl.getDynamicProperty("hash");
             const salt = pl.getDynamicProperty("salt");
-            const encode = crypto?.(salt, config?.modules?.encryption?.password);
+            const encode = crypto?.(salt, pl.id);
             if (hash !== undefined && encode === hash) {
                 continue;
             }
-            try {
-                // Kick players from server
-                await pl.runCommandAsync(`kick ${JSON.stringify(pl.name)} ${reason}`);
-            } catch (error) {
+            // Kick players from server
+            pl.runCommandAsync(`kick ${pl.name} §r\n\n${reason}`).catch(() => {
                 // Despawn players from server
                 pl.triggerEvent("paradox:kick");
-            }
+            });
         }
         // Shutting it down
         sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is in lockdown!`);

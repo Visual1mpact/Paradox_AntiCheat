@@ -1,9 +1,15 @@
-import { world, MinecraftBlockTypes, BlockPlaceAfterEvent } from "@minecraft/server";
+import { world, MinecraftBlockTypes, BlockPlaceAfterEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, startTimer } from "../../../util.js";
+import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 const blockTimer = new Map<string, Date[]>();
+
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    const playerName = event.playerId;
+    blockTimer.delete(playerName);
+}
 
 function scaffolda(object: BlockPlaceAfterEvent) {
     // Get Dynamic Property
@@ -12,6 +18,7 @@ function scaffolda(object: BlockPlaceAfterEvent) {
     // Unsubscribe if disabled in-game
     if (antiScaffoldABoolean === false) {
         blockTimer.clear();
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         world.afterEvents.blockPlace.unsubscribe(scaffolda);
         return;
     }
@@ -31,8 +38,8 @@ function scaffolda(object: BlockPlaceAfterEvent) {
     const { x, y, z } = block.location;
 
     let timer: Date[];
-    if (blockTimer.has(player.name)) {
-        timer = blockTimer.get(player.name);
+    if (blockTimer.has(player.id)) {
+        timer = blockTimer.get(player.id);
     } else {
         timer = [];
     }
@@ -40,18 +47,7 @@ function scaffolda(object: BlockPlaceAfterEvent) {
     timer.push(new Date());
 
     const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
-    blockTimer.set(player.name, tiktok);
-
-    /**
-     * startTimer will make sure the key is properly removed
-     * when the time for theVoid has expired. This will preserve
-     * the integrity of our Memory.
-     */
-    const timerExpired = startTimer("scaffolda", player.name, Date.now());
-    if (timerExpired.namespace.indexOf("scaffolda") !== -1 && timerExpired.expired) {
-        const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-        blockTimer.delete(deletedKey);
-    }
+    blockTimer.set(player.id, tiktok);
 
     if (tiktok.length >= config.modules.antiscaffoldA.max) {
         dimension.getBlock({ x: x, y: y, z: z }).setType(MinecraftBlockTypes.air);
@@ -69,6 +65,7 @@ function scaffolda(object: BlockPlaceAfterEvent) {
 }
 
 const ScaffoldA = () => {
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     world.afterEvents.blockPlace.subscribe(scaffolda);
 };
 

@@ -36,9 +36,7 @@ export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string
     // There are 30 slots ranging from 0 to 29
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
-        try {
-            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your Enderchest has been wiped!`);

@@ -34,16 +34,16 @@ async function adventure(id: number) {
         // Are they in adventure? Fix it.
         if (survivalGMBoolean === true && creativeGMBoolean === false) {
             // Creative is allowed so set them to creative
-            await player.runCommandAsync(`gamemode c`);
+            player.runCommandAsync(`gamemode c`);
         }
         if (survivalGMBoolean === false && creativeGMBoolean === true) {
             // Survival is allowed so set them to survival
-            await player.runCommandAsync(`gamemode survival`);
+            player.runCommandAsync(`gamemode survival`);
         }
         // If both are allowed then default to survival
         if (survivalGMBoolean === false && creativeGMBoolean === false) {
             // Survival is allowed so set them to survival
-            await player.runCommandAsync(`gamemode survival`);
+            player.runCommandAsync(`gamemode survival`);
         }
         setScore(player, "gamemodevl", 1, true);
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has tried to change their gamemode §7(Gamemode_A)§6.§4 VL= ${getScore("gamemodevl", player)}`);

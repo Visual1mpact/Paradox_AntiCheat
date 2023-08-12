@@ -25,7 +25,7 @@ async function vanish() {
             // They have been busted!
             player.removeTag("vanish");
             if (player.getEffect(MinecraftEffectTypes.Invisibility) || player.getEffect(MinecraftEffectTypes.NightVision)) {
-                await player.runCommandAsync(`effect @s clear`);
+                player.runCommandAsync(`effect @s clear`);
             }
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {

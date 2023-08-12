@@ -82,7 +82,7 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
     // Check if teleporting to them or vice versa then set it up
     if (args[0] && args[1]) {
         // Let's teleport you to that player
-        setTimer(artificalPlayer.name);
+        setTimer(artificalPlayer.id);
         artificalPlayer.teleport(member.location, { dimension: member.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         // Let you know that you have been teleported
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${artificalPlayer.name} to ${member.name}`);

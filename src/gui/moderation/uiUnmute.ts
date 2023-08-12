@@ -30,9 +30,7 @@ export async function uiUNMUTE(muteResult: ModalFormResponse, onlineList: string
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is already unmuted.`);
     }
     // If Education Edition is enabled then legitimately unmute them
-    try {
-        await member.runCommandAsync(`ability @s mute false`);
-    } catch (error) {}
+    member.runCommandAsync(`ability @s mute false`);
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted. Reason: ${reason}`);
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has unmuted ${member.name}§r. Reason: ${reason}`);
     return paradoxui(player);

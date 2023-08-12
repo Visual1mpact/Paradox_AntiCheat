@@ -33,6 +33,7 @@ import { ClearLag } from "./penrose/TickEvent/clearlag/clearlag.js";
 import { AntiFallA } from "./penrose/TickEvent/antifalla/antifall_a.js";
 import { AutoBan } from "./penrose/TickEvent/ban/autoban.js";
 import { freeze, freezeJoin, freezeLeave } from "./penrose/TickEvent/freeze/freeze.js";
+import { AFK } from "./penrose/TickEvent/afk/afk.js";
 // Import BlockBreakAfter Events
 import { XrayA } from "./penrose/BlockBreakAfterEvent/xray/xray_a.js";
 import { NukerA } from "./penrose/BlockBreakAfterEvent/nuker/nuker_a.js";
@@ -104,6 +105,7 @@ FlyA();
 AntiKnockbackA();
 AntiFallA();
 AutoBan();
+AFK();
 if (config.customcommands.freeze || config.modules.antiKillAura || config.modules.antinukerA) {
     freeze;
     freezeLeave();

@@ -95,9 +95,7 @@ export async function unmute(message: ChatSendAfterEvent, args: string[]) {
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is not muted.`);
     }
     // If Education Edition is enabled then legitimately unmute
-    try {
-        await member.runCommandAsync(`ability @s mute false`);
-    } catch (error) {}
+    member.runCommandAsync(`ability @s mute false`);
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted.`);
     return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has unmuted ${member.name}§r. Reason: ${reason}`);
 }

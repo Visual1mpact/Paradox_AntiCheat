@@ -9,7 +9,7 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
      * This is to give the player a grace period
      * in case they previously died and spawned again
      */
-    setTimer(object.player.name, true);
+    setTimer(object.player.id, true);
 
     /**
      * We only want to execute this when it's a players initial spawn
@@ -26,15 +26,21 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
 
     // Lock down the server if enabled
     if (lockdownBoolean) {
+        // Get unique ID
+        const uniqueId = dynamicPropertyRegistry.get(player?.id);
+
+        if (uniqueId === player.name) {
+            return;
+        }
+
         const reason = "Under Maintenance! Sorry for the inconvenience.";
-        try {
-            // Kick players from server
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
-        } catch (error) {
+
+        // Kick players from server
+        player.runCommandAsync(`kick ${player.name} §r\n\n${reason}`).catch(() => {
             // Despawn players from server
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
         return;
     }
 
@@ -50,9 +56,10 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
 
     // We execute each command in the list
     for (let i = 0; i < onJoinSecondaryData.length; i++) {
-        try {
-            await player.runCommandAsync(`${onJoinSecondaryData[i]}`);
-        } catch {}
+        player.runCommandAsync(`${onJoinSecondaryData[i]}`).catch(() => {
+            // Certain things like "ability" will cause errors if not enabled properly.
+            // We ignore those errors since they are expected and have no impact.
+        });
     }
 
     // Set up custom prefix

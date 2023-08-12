@@ -46,24 +46,24 @@ export function listhome(message: ChatSendAfterEvent, args: string[]) {
     // Hash the coordinates for security
     const salt = world.getDynamicProperty("crypt");
 
+    // Create an array to store the home location messages
+    const homeMessages: string[] = [];
+
     const tags = player.getTags();
     let counter = 0;
-    let verify = false;
     for (let i = 0; i < tags.length; i++) {
-        /**
-         * This first if statement is to verify if they have old coordinates
-         * not encrypted. If so then we encrypt it now. This is only a temporary
-         * patch to minimize players having to manually record and remove the old
-         * tags. Eventually this will be removed.
-         */
-        if (tags[i].startsWith("LocationHome:")) {
-            player.removeTag(tags[i]);
-            tags[i] = encryptString(tags[i], String(salt));
-            player.addTag(tags[i]);
-        }
+        // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
+            // Remove old encryption
+            player.removeTag(tags[i])
+            // Change to AES Encryption so we can abandon the old method
+            tags[i] = decryptString(tags[i], salt as string);
+            tags[i] = encryptString(tags[i], salt as string)
+            player.addTag(tags[i])
+        }
+        if (tags[i].startsWith("1337")) {
             // Decode it so we can verify it
-            tags[i] = decryptString(tags[i], String(salt));
+            tags[i] = decryptString(tags[i], salt as string);
             // If invalid then skip it
             if (tags[i].startsWith("LocationHome:") === false) {
                 continue;
@@ -76,39 +76,40 @@ export function listhome(message: ChatSendAfterEvent, args: string[]) {
             let homez: number;
             let dimension: string;
             counter = ++counter;
-            for (let i = 0; i < coordinatesArray.length; i++) {
+            for (let j = 0; j < coordinatesArray.length; j++) {
                 // Get their location from the array
-                if (coordinatesArray[i].includes("LocationHome:")) {
-                    home = coordinatesArray[i].replace("LocationHome:", "");
+                if (coordinatesArray[j].includes("LocationHome:")) {
+                    home = coordinatesArray[j].replace("LocationHome:", "");
                 }
-                if (coordinatesArray[i].includes("X:")) {
-                    homex = parseInt(coordinatesArray[i].replace("X:", ""));
+                if (coordinatesArray[j].includes("X:")) {
+                    homex = parseInt(coordinatesArray[j].replace("X:", ""));
                 }
-                if (coordinatesArray[i].includes("Y:")) {
-                    homey = parseInt(coordinatesArray[i].replace("Y:", ""));
+                if (coordinatesArray[j].includes("Y:")) {
+                    homey = parseInt(coordinatesArray[j].replace("Y:", ""));
                 }
-                if (coordinatesArray[i].includes("Z:")) {
-                    homez = parseInt(coordinatesArray[i].replace("Z:", ""));
+                if (coordinatesArray[j].includes("Z:")) {
+                    homez = parseInt(coordinatesArray[j].replace("Z:", ""));
                 }
-                if (coordinatesArray[i].includes("Dimension:")) {
-                    dimension = coordinatesArray[i].replace("Dimension:", "");
+                if (coordinatesArray[j].includes("Dimension:")) {
+                    dimension = coordinatesArray[j].replace("Dimension:", "");
                 }
+                // Inside the loop where you are processing each home location
                 if (!homex || !homey || !homez || !dimension) {
                     continue;
                 } else {
-                    verify = true;
                     if (counter === 1) {
-                        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r List Of Homes:`);
+                        homeMessages.push(`§r§4[§6Paradox§4]§r List Of Homes:`);
                     }
-                    sendMsgToPlayer(player, ` §6|§r §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`);
-                    continue;
+                    homeMessages.push(` §6|§r §4[§f${home}§4]§r §6=>§r ${homex} ${homey} ${homez} §6<=§r §4[§f${dimension}§4]§r`);
                 }
             }
-            continue;
         }
         continue;
     }
-    if (verify === false) {
+    if (homeMessages.length > 0) {
+        // Send all the home location messages at once using sendMsgToPlayer
+        sendMsgToPlayer(player, homeMessages);
+    } else {
         sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You have none saved locations.`);
     }
     return;

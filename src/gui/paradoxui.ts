@@ -60,12 +60,13 @@ import { uiSTATS } from "./moderation/uiStats";
 import versionFile from "../version.js";
 import { uiAUTOBAN } from "./moderation/uiAutoBan";
 import { uiINVENTORY } from "./moderation/uiInventory";
+import { uiAFK } from "./modules/uiAFK";
 async function paradoxui(player: Player) {
     const maingui = new ActionFormData();
 
     const hash = player.getDynamicProperty("hash");
     const salt = player.getDynamicProperty("salt");
-    const encode = crypto(salt, config.modules.encryption.password) ?? null;
+    const encode = crypto(salt, player.id) ?? null;
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     maingui.title("§4Paradox§4");
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§rVersion: §2" + versionFile.version);
@@ -246,7 +247,9 @@ async function paradoxui(player: Player) {
                 moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
                 moderationui.button("Despawn entities", "textures/ui/trash");
                 moderationui.button("Auto Ban", "textures/ui/hammer_l");
-                moderationui.button("Inventory", "textures/blocks/chest_front");
+                if (config.debug) {
+                    moderationui.button("Inventory", "textures/blocks/chest_front");
+                }
                 moderationui.show(player).then((ModUIresult) => {
                     if (ModUIresult.selection === 0) {
                         //show ban ui here
@@ -538,6 +541,7 @@ async function paradoxui(player: Player) {
                 modulesui.button("Configure World Borders", "textures/blocks/barrier");
                 modulesui.button("Configure Xray", "textures/blocks/diamond_ore");
                 modulesui.button("Configure Hotbar", "textures/items/paper");
+                modulesui.button("Configure AFK", "textures/ui/keyboard_and_mouse_glyph_color");
                 modulesui.show(player).then((ModulesUIResult) => {
                     if (ModulesUIResult.selection === 0) {
                         //GameModes UI
@@ -855,9 +859,11 @@ async function paradoxui(player: Player) {
                         const overWorldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b") as boolean;
                         const overworldBorderNumber = dynamicPropertyRegistry.get("worldborder_n") as number;
                         const netherworldBorderNumber = dynamicPropertyRegistry.get("worldborder_nether_n") as number;
+                        const endworldBorderNumber = dynamicPropertyRegistry.get("worldborder_end_n") as number;
                         modulesworldborderui.title("§4Paradox Modules - World Border§4");
                         modulesworldborderui.textField("Over World Border - Value in blocks:", "1000", String(overworldBorderNumber));
                         modulesworldborderui.textField("Nether World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(netherworldBorderNumber));
+                        modulesworldborderui.textField("End World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(endworldBorderNumber));
                         modulesworldborderui.toggle("Enable World Border:", overWorldBorderBoolean);
                         modulesworldborderui.show(player).then((spamResult) => {
                             uiWORLDBORDER(spamResult, player);
@@ -882,6 +888,16 @@ async function paradoxui(player: Player) {
                         moduleshotbarui.toggle("Restore to message stored in config.js:", false);
                         moduleshotbarui.show(player).then((hotbarResult) => {
                             uiHOTBAR(hotbarResult, player);
+                        });
+                    }
+                    if (ModulesUIResult.selection === 22) {
+                        const modulesafkui = new ModalFormData();
+                        const currentAFKConifg = config.modules.afk.minutes;
+                        const afkBoolean = dynamicPropertyRegistry.get("afk_b") as boolean;
+                        modulesafkui.title("§4Paradox Modules - AFK§4");
+                        modulesafkui.toggle("Enable AFK - Kicks players that are AFK for " + currentAFKConifg + " minutes:", afkBoolean);
+                        modulesafkui.show(player).then((afkResult) => {
+                            uiAFK(afkResult, player);
                         });
                     }
                 });

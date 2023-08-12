@@ -23,7 +23,7 @@ function verifypermission() {
             }
             continue; // Skip to the next player
         }
-        const encode = crypto?.(salt, config?.modules?.encryption?.password);
+        const encode = crypto?.(salt, player.id);
         if (encode === hash) {
             // Make sure their unique ID exists in case of a reload
             if (dynamicPropertyRegistry.has(player.id) === false) {

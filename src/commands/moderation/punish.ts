@@ -82,9 +82,7 @@ export async function punish(message: ChatSendAfterEvent, args: string[]) {
     // There are 30 slots ranging from 0 to 29
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
-        try {
-            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
 
     // Get requested player's inventory so we can wipe it out

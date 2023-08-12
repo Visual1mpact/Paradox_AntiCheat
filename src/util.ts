@@ -1,13 +1,17 @@
-import { GameMode, Player, Vector, system, world } from "@minecraft/server";
+import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
+import CryptoJS from "./node_modules/crypto-es/lib/index.js"
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
-// The Void
-const maxAge = 60000; // 1 minute
-const checkInterval = 300000; // 5 minutes
-const theVoid = new Map<string, number>();
+
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    const playerName = event.playerId;
+    timerMap.delete(playerName);
+}
+world.afterEvents.playerLeave.subscribe(onPlayerLogout);
 
 /**
  * Flag players who trigger certain checks or sub-checks, with information about the type of hack, the item involved, and any debug information available.
@@ -40,14 +44,12 @@ export async function flag(player: Player, check: string, checkType: string, hac
         sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     }
 
-    try {
-        if (check === "Namespoof") {
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r You have illegal characters in your name!`);
-        }
-    } catch (error) {
-        // if we cant kick them with /kick then we instant despawn them
-        kickablePlayers.add(player);
-        player.triggerEvent("paradox:kick");
+    if (check === "Namespoof") {
+        player.runCommandAsync(`kick ${player.name} §r\n\n§4[§6Paradox§4]§r You have illegal characters in your name!`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
+            kickablePlayers.add(player);
+            player.triggerEvent("paradox:kick");
+        });
     }
 }
 
@@ -72,21 +74,17 @@ export async function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        try {
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`);
-        } catch (error) {
-            // if we cant kick them with /kick then we instant despawn them
+        player.runCommandAsync(`kick ${player.name} §r\n§l§cYOU ARE BANNED!\n§r§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
     } else {
-        try {
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
-        } catch (error) {
-            // if we cant kick them with /kick then we instant despawn them
+        player.runCommandAsync(`kick ${player.name} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
     }
 }
 
@@ -261,58 +259,39 @@ export function toPascalCase(str: string) {
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
 
 /**
- * Hashes a given string with the specified salt value using an algorithm.
+ * Hashes a given string with the specified salt value using SHA-3 (SHA3-256) encryption.
  *
  * @name crypto
- * @param {string} salt - Hashes information
+ * @param {string | number | boolean} salt - Hashes information
  * @param {string} text - String to be hashed
  */
 export const crypto = (salt: string | number | boolean, text: string) => {
-    const textToChars = (text: string) => new Uint8Array([...text].map((c) => c.charCodeAt(0)));
-    const byteHex = (n: number) => ("0" + n.toString(16)).substring(-2);
-    const applySaltToChar = (code: Uint8Array) => {
-        const saltChars = textToChars(String(salt));
-        let result = 0;
-        for (let i = 0; i < code.length; i++) {
-            result ^= saltChars[i % saltChars.length] ^ code[i];
-        }
-        return result;
-    };
-
-    const textChars = textToChars(text);
-    const resultChars = new Uint8Array(textChars.length);
-    for (let i = 0; i < textChars.length; i++) {
-        resultChars[i] = applySaltToChar(textChars.slice(i, i + 1));
-    }
-
-    const joinedResult = [...resultChars].map(byteHex).join("");
+    // Convert the salt to a string representation
+    const saltString = String(salt);
+    // Combine salt and text
+    const combinedString = saltString + text;
+    // Hash the combined string using SHA-3 (SHA3-256)
+    const hash = CryptoJS.SHA3(combinedString, { outputLength: 256 }).toString();
     // Ensure it is no more than 50 characters as set for dynamic property strings
-    return joinedResult.substring(0, 50);
+    return hash.substring(0, 50);
 };
 
+
 /**
- * Encrypts a string using an algorithm.
+ * Encrypts a string using AES encryption with the specified salt as the key.
  *
  * @name encryptString
  * @param {string} str - The string to encrypt
- * @param {string} salt - The salt to use for encryption
+ * @param {string} salt - The salt to use as the key for encryption
  * @returns {string} The encrypted string
  */
 export function encryptString(str: string, salt: string): string {
-    let ciphertext = "";
-    let keyIndex = 0;
-    for (let i = 0; i < str.length; i++) {
-        const plainCharCode = str.charCodeAt(i);
-        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        const cipherCharCode = (plainCharCode + keyCharCode) % 256; // wrap around at 256
-        ciphertext += String.fromCharCode(cipherCharCode);
-        keyIndex++;
-    }
-    return "6f78" + ciphertext;
+    const encrypted = CryptoJS.AES.encrypt(str, salt).toString();
+    return '1337' + encrypted;
 }
 
 /**
- * Decrypts a string using an algorithm.
+ * Decrypts a string using AES encryption with the specified salt as the key.
  *
  * @name decryptString
  * @param {string} str - The string to decrypt
@@ -320,17 +299,30 @@ export function encryptString(str: string, salt: string): string {
  * @returns {string} The decrypted string
  */
 export function decryptString(str: string, salt: string): string {
-    let plaintext = "";
-    let keyIndex = 0;
-    str = str.slice(4);
-    for (let i = 0; i < str.length; i++) {
-        const cipherCharCode = str.charCodeAt(i);
-        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
-        plaintext += String.fromCharCode(plainCharCode);
-        keyIndex++;
+    // Check if the string is using the old encryption (tag '6f78')
+    if (str.startsWith('6f78')) {
+        // Use the old decryption logic
+        let plaintext = "";
+        let keyIndex = 0;
+        str = str.slice(4);
+        for (let i = 0; i < str.length; i++) {
+            const cipherCharCode = str.charCodeAt(i);
+            const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+            const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
+            plaintext += String.fromCharCode(plainCharCode);
+            keyIndex++;
+        }
+        return plaintext;
+    } else {
+        // Use the new decryption logic with AES
+        // Remove the prefix added in the encryptString function
+        str = str.slice(4);
+        // Decrypt using AES
+        const decryptedBytes = CryptoJS.AES.decrypt(str, salt);
+        // Convert the decrypted bytes to a UTF-8 string
+        const plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        return plaintext;
     }
-    return plaintext;
 }
 
 /**
@@ -353,17 +345,6 @@ export function setTimer(player: string, spawn: boolean = false) {
 
     // Store the timer in the map
     timerMap.set(player, timer);
-
-    /**
-     * startTimer will make sure the key is properly removed
-     * when the time for theVoid has expired. This will preserve
-     * the integrity of our Memory.
-     */
-    const timerExpired = startTimer("util", player, Date.now());
-    if (timerExpired.namespace.indexOf("util") !== -1 && timerExpired.expired) {
-        const deletedKey = timerExpired.key; // extract the key without the namespace prefix
-        timerMap.delete(deletedKey);
-    }
 }
 
 /**
@@ -388,38 +369,6 @@ export function isTimerExpired(player: string) {
     }
 
     return false;
-}
-
-/**
- * Starts a timer for a given key-value pair in `theVoid` map with a namespace prefix.
- *
- * @param namespace - The namespace prefix to use for the key in `theVoid` map.
- * @param key - The key of the key-value pair in `theVoid` map.
- * @param value - The value of the key-value pair in `theVoid` map, which should be a `Date` object representing the start time of the timer.
- * @returns An object containing a boolean indicating whether the timer has expired, and the namespace and key that were used to start the timer.
- */
-export function startTimer(namespace: string, key: string, value: number): { expired: boolean; namespace: string; key: string } {
-    const namespacedKey = `${namespace}:${key}`;
-    theVoid.set(namespacedKey, value);
-
-    let expired = false;
-
-    const intervalId = system.runInterval(() => {
-        const now = Date.now();
-        const timeElapsed = now - theVoid.get(namespacedKey);
-
-        if (timeElapsed > maxAge) {
-            const cache = theVoid.get(namespacedKey + ":intervalId");
-            theVoid.delete(namespacedKey);
-            theVoid.delete(namespacedKey + ":intervalId");
-            expired = true;
-            system.clearRun(cache);
-        }
-    }, checkInterval);
-
-    theVoid.set(namespacedKey + ":intervalId", intervalId);
-
-    return { expired, namespace, key };
 }
 
 /**
@@ -457,11 +406,12 @@ export function getGamemode(player: Player): string | undefined {
  * @param message The message to send. This can be a string or an array of strings.
  */
 export const sendMsg = async (target: string, message: string | string[]) => {
-    try {
-        await overworld.runCommandAsync(
-            `tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`
-        );
-    } catch {}
+    const isArray = Array.isArray(message);
+
+    // Check if target is equal to "@a"
+    const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n") : (message as string).replace(/§r/g, "§r§o"));
+
+    overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
 };
 
 /**
@@ -471,9 +421,17 @@ export const sendMsg = async (target: string, message: string | string[]) => {
  * @param message The message to send. This can be a string or an array of strings.
  */
 export const sendMsgToPlayer = async (target: Player, message: string | string[]) => {
-    try {
-        await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`);
-    } catch {}
+    const isArray = Array.isArray(message);
+
+    let modifiedMessage: string | string[];
+
+    if (isArray) {
+        modifiedMessage = (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n");
+    } else {
+        modifiedMessage = (message as string).replace(/§r/g, "§r§o");
+    }
+
+    target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
 };
 
 export const allscores: string[] = [
@@ -493,4 +451,6 @@ export const allscores: string[] = [
     "armorvl",
     "antikbvl",
     "antifallvl",
+    "nukervl",
+    "scaffoldvl",
 ];

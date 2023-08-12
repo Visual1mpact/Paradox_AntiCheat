@@ -13,12 +13,16 @@ function opHelp(player: Player, prefix: string) {
     return sendMsgToPlayer(player, [
         `\n§4[§6Command§4]§r: op`,
         `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: op [optional]`,
+        `§4[§6Usage§4]§r: ${prefix}op [optional]`,
         `§4[§6Optional§4]§r: username, help`,
         `§4[§6Description§4]§r: Grants permission to use Paradox AntiCheat features.`,
         `§4[§6Examples§4]§r:`,
-        `    ${prefix}op ${player.name}`,
+        `    ${prefix}op`,
+        `        §4- §6Give yourself Paradox-Op§r`,
         `    ${prefix}op help`,
+        `        §4- §6Show command help§r`,
+        `    ${prefix}op <player>`,
+        `        §4- §6Grant Paradox-Op to another player§r`,
     ]);
 }
 
@@ -28,97 +32,84 @@ function opHelp(player: Player, prefix: string) {
  * @param {string[]} args - Additional arguments provided (optional).
  */
 export function op(message: ChatSendAfterEvent, args: string[]) {
-    // validate that required params are defined
+    // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/op.js:30)");
     }
 
-    const player = message.sender;
+    const operator = message.sender;
 
-    if (config.modules.encryption.password === "") {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to create a password!`);
-    }
+    const prefix = getPrefix(operator);
 
-    // Check for hash/salt and validate password
-    let hash = player.getDynamicProperty("hash");
-    let salt = player.getDynamicProperty("salt");
-    let encode: string;
+    const operatorHash = operator.getDynamicProperty("hash");
+    const operatorSalt = operator.getDynamicProperty("salt");
 
-    // Validate salt or generate a new one
-    if (!salt || !isValidUUID(salt as string)) {
-        salt = UUID.generate();
-        player.setDynamicProperty("salt", salt);
-    }
-
-    // If no hash then create one
-    if (hash === undefined && args[0] === config.modules.encryption.password) {
-        encode = crypto?.(salt, config?.modules?.encryption?.password);
-        dynamicPropertyRegistry.set(player.id, player.name);
-        player.setDynamicProperty("hash", encode);
-        hash = player.getDynamicProperty("hash");
-    } else {
-        encode = crypto?.(salt, config?.modules?.encryption?.password);
-    }
-
-    // Make sure the user has permissions to run the command
-    if (hash === undefined || (hash !== encode && args[0] !== config.modules.encryption.password)) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
-    } else if (hash === encode && args[0] === config.modules.encryption.password) {
-        // Old stuff that makes up for less than 5% of the project
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r is now Paradox-Opped.`);
-        player.addTag("paradoxOpped");
-        return;
-    }
-
-    // Check for custom prefix
-    const prefix = getPrefix(player);
-
-    // Was help requested
-    const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.op) {
-        return opHelp(player, prefix);
-    }
-
-    // Are there arguements
-    if (!args.length) {
-        return opHelp(player, prefix);
-    }
-
-    // try to find the player requested
-    let member: Player;
-    if (args.length) {
-        const players = world.getPlayers();
-        for (const pl of players) {
-            if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-                member = pl;
-                break;
-            }
+    if (!operatorHash || !operatorSalt || (operatorHash !== crypto?.(operatorSalt, operator.id) && isValidUUID(operatorSalt as string))) {
+        if (!operator.isOp()) {
+            return sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r You need to be Operator to use this command.`);
         }
     }
 
-    if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+    // Check if args is null, empty, or for help
+    if (args[0]?.toLowerCase() === "help") {
+        return opHelp(operator, prefix);
     }
 
-    // Check for hash/salt and validate password
-    let memberHash = member.getDynamicProperty("hash");
-    let memberSalt = member.getDynamicProperty("salt");
+    if (args.length === 0) {
+        // Operator wants to change their own password
+        const targetSalt = UUID.generate();
+        const newHash = crypto?.(targetSalt, operator.id);
 
-    // Validate salt or generate a new one
-    if (!memberSalt || !isValidUUID(memberSalt as string)) {
-        memberSalt = UUID.generate();
-        member.setDynamicProperty("salt", memberSalt);
+        operator.setDynamicProperty("hash", newHash);
+        operator.setDynamicProperty("salt", targetSalt);
+        operator.addTag("paradoxOpped");
+
+        sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r You are now Paradox-Opped!`);
+
+        dynamicPropertyRegistry.set(operator.id, operator.name);
+
+        return;
     }
 
-    // If no hash then create one
-    if (memberHash === undefined) {
-        encode = crypto(memberSalt, config.modules.encryption.password);
-        dynamicPropertyRegistry.set(member.id, member.name);
-        member.setDynamicProperty("hash", encode);
-        memberHash = member.getDynamicProperty("hash");
+    if (args.length === 1 && args[0].length >= 1 && operatorHash === crypto?.(operatorSalt, operator.id)) {
+        // Operator wants to grant "Paradox-Op" to another player
+        const targetPlayerName = args[0];
+        // Try to find the player requested
+        let targetPlayer: Player;
+        if (args.length) {
+            const players = world.getPlayers();
+            for (const pl of players) {
+                if (pl.name.toLowerCase().includes(targetPlayerName.toLowerCase().replace(/"|\\|@/g, ""))) {
+                    targetPlayer = pl;
+                    break;
+                }
+            }
+        }
+
+        if (targetPlayer) {
+            const targetHash = targetPlayer.getDynamicProperty("hash");
+
+            if (targetHash === undefined) {
+                const targetSalt = UUID.generate();
+                targetPlayer.setDynamicProperty("salt", targetSalt);
+
+                const newHash = crypto?.(targetSalt, targetPlayer.id);
+
+                targetPlayer.setDynamicProperty("hash", newHash);
+
+                dynamicPropertyRegistry.set(targetPlayer.id, targetPlayer.name);
+
+                sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r You have granted Paradox-Op to ${targetPlayer.name}.`);
+                sendMsgToPlayer(targetPlayer, `§r§4[§6Paradox§4]§r You are now op!`);
+                sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${targetPlayer.name}§r is now Paradox-Opped.`);
+                targetPlayer.addTag("paradoxOpped");
+            } else {
+                sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r ${targetPlayer.name} is already Paradox-Opped.`);
+            }
+        } else {
+            sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r Could not find player ${targetPlayer.name}.`);
+        }
+    } else {
+        return opHelp(operator, prefix);
     }
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name}§r is now Paradox-Opped.`);
-    member.addTag("paradoxOpped");
 }

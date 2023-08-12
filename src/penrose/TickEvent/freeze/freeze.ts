@@ -1,5 +1,5 @@
 import { world, Player, system, EntityQueryOptions, Vector, Vector3, Dimension } from "@minecraft/server";
-import { sendMsg } from "../../../util";
+import { sendMsg, setTimer } from "../../../util";
 
 const freezeDataMap: Map<string, FreezeData> = new Map();
 
@@ -15,9 +15,10 @@ function freezePlayer(player: Player) {
     const originalLocation = player.location;
     const originalDimension = player.dimension;
 
+    setTimer(player.id);
     // Teleport the player to the freezing location
     player.teleport(new Vector(originalLocation.x, 245, originalLocation.z), {
-        dimension: player.dimension,
+        dimension: world.getDimension("overworld"),
         rotation: player.getRotation(),
         facingLocation: player.getViewDirection(),
         checkForBlocks: false,
@@ -31,8 +32,8 @@ function freezePlayer(player: Player) {
     const freezeData: FreezeData = {
         player,
         freezeId: -1, // Placeholder value, will be updated later
-        originalLocation,
-        originalDimension,
+        originalLocation: originalLocation,
+        originalDimension: originalDimension,
     };
     freezeDataMap.set(player.id, freezeData);
 }
@@ -52,6 +53,7 @@ function unfreezePlayer(player: Player) {
     // Remove the prison blocks
     player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} air [] hollow`);
 
+    setTimer(player.id);
     // Teleport the player back to their original location
     player.teleport(originalLocation, {
         dimension: originalDimension,
@@ -85,12 +87,13 @@ function unfreezePlayerById(id: string) {
 const freezePlayers = () => {
     const filter: EntityQueryOptions = {
         tags: ["paradoxFreeze"],
-        excludeTags: ["freezeNukerA", "freezeAura"],
     };
     const players = world.getPlayers(filter);
     for (const player of players) {
         const freezeData = freezeDataMap.get(player.id);
         const hasFreezeTag = player.hasTag("paradoxFreeze");
+        const hasAuraTag = player.hasTag("freezeAura");
+        const hasNukerTag = player.hasTag("freezeNukerA");
 
         if (!freezeData && hasFreezeTag) {
             freezePlayer(player);
@@ -104,8 +107,7 @@ const freezePlayers = () => {
             const { x: originalX, z: originalZ } = originalLocation;
             const { x: currentX, y: currentY, z: currentZ } = player.location;
             if (Math.floor(currentX) !== Math.floor(originalX) || Math.floor(currentY) !== 245 || Math.floor(currentZ) !== Math.floor(originalZ)) {
-                //
-
+                setTimer(player.id);
                 // Teleport the player to the freezing location
                 player.teleport(new Vector(originalX, 245, originalZ), {
                     dimension: world.getDimension("overworld"),
@@ -118,7 +120,12 @@ const freezePlayers = () => {
                 player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
             }
 
-            player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+            // If both tags exist display custom message
+            if (hasAuraTag && hasNukerTag) {
+                player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6KA§4]§f§4[§6NA§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+            } else {
+                player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+            }
         }
     }
 

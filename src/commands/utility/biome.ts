@@ -14,7 +14,7 @@ function biomeHelp(player: Player, prefix: string) {
         `§4[§6Status§4]§r: ${commandStatus}`,
         `§4[§6Usage§4]§r: biome [optional]`,
         `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Sends the current biome and direction the player is facing. §6Note you need to enable Molang `,
+        `§4[§6Description§4]§r: Sends the current biome and direction the player is facing. §6Note you need to enable Molang. `,
         `§4[§6Examples§4]§r:`,
         `    ${prefix}biome`,
         `    ${prefix}biome help`,

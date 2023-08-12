@@ -33,6 +33,8 @@ export const onJoinPrimaryData = [
     "armorvl",
     "antikbvl",
     "antifallvl",
+    "nukervl",
+    "scaffoldvl",
 ];
 
 export const onJoinSecondaryData = [

@@ -40,15 +40,24 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
     const player = sender;
     const args = message.split(" ");
     if (args.length < 2) return;
-    const targetName = args.slice(1).join(" ").trim();
 
-    const targets = world.getAllPlayers().filter((p: Player) => p.name === targetName);
-    if (targets.length === 0) {
+    // Extract the target name from the message, including the "@" symbol
+    const targetName = args[1].trim();
+
+    // Try to find the player requested, including the "@" symbol
+    let target: Player | undefined;
+    const players = world.getPlayers();
+    for (const pl of players) {
+        if (pl.name.toLowerCase().includes(targetName.toLowerCase().replace(/"|\\|@/g, ""))) {
+            target = pl;
+            break;
+        }
+    }
+
+    if (!target) {
         sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r Target player not found.");
         return;
     }
-
-    const target = targets[0];
 
     const requestIndex = teleportRequests.findIndex((r) => r.target === target);
     if (requestIndex !== -1) {
@@ -110,7 +119,7 @@ function teleportRequestApprovalHandler(object: ChatSendAfterEvent) {
     }
 
     if (isApprovalRequest) {
-        setTimer(request.requester.name);
+        setTimer(request.requester.id);
         request.requester.teleport(request.target.location, { dimension: request.target.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
     } else {

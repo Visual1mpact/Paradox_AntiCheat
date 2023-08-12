@@ -73,9 +73,7 @@ export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
 
     // There are 30 slots ranging from 0 to 29
     for (let slot = 0; slot < 30; slot++) {
-        try {
-            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
     return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wiped ${member.name}'s enderchest!`);
 }

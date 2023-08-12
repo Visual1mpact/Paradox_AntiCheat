@@ -78,7 +78,7 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
     const memberSalt = member.getDynamicProperty("salt");
     let memberEncode: string;
     try {
-        memberEncode = crypto(memberSalt, config.modules.encryption.password);
+        memberEncode = crypto(memberSalt, member.id);
     } catch (error) {}
 
     if (memberHash !== undefined && memberHash === memberEncode) {

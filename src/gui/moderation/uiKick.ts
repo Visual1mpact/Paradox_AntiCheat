@@ -25,12 +25,10 @@ export async function uiKICK(banResult: ModalFormResponse, onlineList: string[],
         return paradoxui(player);
     }
 
-    try {
-        await player.runCommandAsync(`kick ${JSON.stringify(member.name)} ${reason}`);
-    } catch (error) {
+    player.runCommandAsync(`kick ${member.name} §r\n\n${reason}`).catch((error) => {
         console.warn(`${new Date()} | ` + error);
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
-    }
+        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player!`);
+    });
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has kicked ${member.name}§r. Reason: ${reason}`);
     return paradoxui(player);
 }

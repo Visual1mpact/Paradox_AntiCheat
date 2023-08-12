@@ -1,6 +1,6 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { decryptString, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { decryptString, encryptString, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function delhomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -61,10 +61,19 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
     let encryptedString: string = "";
     const tags = player.getTags();
     for (let i = 0; i < tags.length; i++) {
+        // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
+            // Remove old encryption
+            player.removeTag(tags[i])
+            // Change to AES Encryption so we can abandon the old method
+            tags[i] = decryptString(tags[i], salt as string);
+            tags[i] = encryptString(tags[i], salt as string)
+            player.addTag(tags[i])
+        }
+        if (tags[i].startsWith("1337")) {
             encryptedString = tags[i];
             // Decode it so we can verify it
-            tags[i] = decryptString(tags[i], String(salt));
+            tags[i] = decryptString(tags[i], salt as string);
         }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;

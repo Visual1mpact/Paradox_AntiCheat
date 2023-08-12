@@ -38,10 +38,10 @@ function namespoofb(id: number) {
         }
         // Namespoof/B = regex check
         if (config.modules.namespoofB.banregex.test(player.name)) {
-            player.nameTag = player.name.replaceAll(config.modules.namespoofB.banregex, "");
+            player.nameTag = player.name.replace(config.modules.namespoofB.banregex, "");
             rip(player);
         } else if (config.modules.namespoofB.kickregex.test(player.name)) {
-            player.nameTag = player.name.replaceAll(config.modules.namespoofB.kickregex, "");
+            player.nameTag = player.name.replace(config.modules.namespoofB.kickregex, "");
             flag(player, "Namespoof", "B", "Exploit", null, null, null, null, false);
         }
     }

@@ -80,6 +80,7 @@ export default {
         tpr: true,
         autoban: true,
         biome: true,
+        afk: true,
     },
     modules: {
         badpackets1: {
@@ -109,10 +110,10 @@ export default {
         },
         namespoofB: {
             enabled: true,
-            banregex: /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/,
+            banregex: /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/g,
             // Deny any invalid character not within the scope of this regex
             // Only kick because playstation and switch consoles are able to rename themselves
-            kickregex: /^((?![a-zA-Z0-9_]{3,16}$).)*$/,
+            kickregex: /^((?![a-zA-Z0-9_]{3,16}$).)*$/g,
         },
         bedrockValidate: {
             enabled: true,
@@ -126,6 +127,7 @@ export default {
         reachB: {
             enabled: true,
             reach: 5,
+            maxSpeed: 10,
         },
         jesusA: {
             enabled: false,
@@ -183,6 +185,7 @@ export default {
             enabled: false,
             nether: 0,
             overworld: 0,
+            end: 0,
         },
         antiTeleport: {
             enabled: true,
@@ -263,26 +266,9 @@ export default {
         antiKillAura: {
             enabled: true,
         },
-        /**
-         * Add a password in-between the quotes.
-         *
-         * Example:
-         * "password": "test"
-         *
-         * Remember this password as it will be required to gain permission to use Paradox as Staff.
-         *
-         * Example:
-         * !op test
-         *
-         * After you gain permissions you can give others op in a normal fashion.
-         *
-         * Example:
-         * !op gamertag
-         *
-         * Change your password frequently and only share with trusted sources.
-         */
-        encryption: {
-            password: "",
+        afk: {
+            enabled: true,
+            minutes: 10,
         },
     },
 };

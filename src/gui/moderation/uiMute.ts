@@ -40,9 +40,7 @@ export async function uiMUTE(muteResult: ModalFormResponse, onlineList: string[]
         return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is already muted.`);
     }
     // If Education Edition is enabled then legitimately mute them
-    try {
-        await member.runCommandAsync(`ability @s mute true`);
-    } catch (error) {}
+    member.runCommandAsync(`ability @s mute true`);
     sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`);
     sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has muted ${member.name}§r. Reason: ${reason}`);
     return paradoxui(player);
