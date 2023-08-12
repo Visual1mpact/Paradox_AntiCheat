@@ -2,7 +2,7 @@ import { Player, world } from "@minecraft/server";
 import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import config from "../data/config";
 import { dynamicPropertyRegistry } from "../penrose/WorldInitializeAfterEvent/registry";
-import { crypto, decryptString, encryptString, getScore, sendMsgToPlayer } from "../util";
+import { decryptString, encryptString, getScore, sendMsgToPlayer } from "../util";
 import { uiBAN } from "./moderation/uiBan";
 import { uiCHATRANKS } from "./moderation/uiChatranks";
 import { uiCLEARCHAT } from "./moderation/uiClearchat";
@@ -66,7 +66,6 @@ async function paradoxui(player: Player) {
 
     const hash = player.getDynamicProperty("hash");
     const salt = player.getDynamicProperty("salt");
-    const encode = crypto(salt, player.id) ?? null;
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     maingui.title("§4Paradox§4");
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§fVersion: §2" + versionFile.version);
@@ -88,17 +87,22 @@ async function paradoxui(player: Player) {
     maingui.show(player).then((result) => {
         if (result.selection === 0) {
             // New window for op
-            const opgui = new ModalFormData();
+            let opgui: ModalFormData | ActionFormData;
             let onlineList: string[] = [];
-            opgui.title("§4OP§4");
-            if (uniqueId !== player.name) {
-                opgui.textField(`\nPassword:\n`, `Enter password here.`);
-            } else {
+            if (uniqueId === player.name) {
+                opgui = new ModalFormData();
+                opgui.title("§4OP§4");
+
                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                 opgui.dropdown(`\n§fSelect a player to give access to Paradox:§f\n\nPlayer's Online\n`, onlineList);
+            } else {
+                opgui = new ActionFormData();
+                opgui.title("§4OP§4");
+
+                opgui.button("Grant OP Access", "textures/ui/op");
             }
             opgui.show(player).then((opResult) => {
-                uiOP(opResult, salt, hash, encode, onlineList, player);
+                uiOP(opResult, salt, hash, onlineList, player);
             });
         }
         if (result.selection === 1) {

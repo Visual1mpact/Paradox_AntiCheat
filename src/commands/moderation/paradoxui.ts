@@ -42,7 +42,7 @@ export function paradoxUI(message: ChatSendAfterEvent, args: string[]) {
     //check to see if the player has the rules tag incase they have been able to call the UI command before the
     // rules have been displayed.
     if (player.hasTag("ShowRulesOnJoin") && showrulesBoolean === true) {
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§fYou have not agreed to the rules please try once these have been displayed.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You have not agreed to the rules. Please try once these have been displayed.`);
         return ShowRules();
     }
 
@@ -55,6 +55,7 @@ export function paradoxUI(message: ChatSendAfterEvent, args: string[]) {
         return paradoxuiHelp(player, prefix);
     }
 
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Close chat window for ParadoxUI.`);
     sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has requested §6ParadoxUI§f!`);
     paradoxui(player);
 }

@@ -1,75 +1,79 @@
 import { Player, world } from "@minecraft/server";
-import { ModalFormResponse } from "@minecraft/server-ui";
-import config from "../../data/config.js";
+import { ActionFormResponse, ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { crypto, sendMsg, sendMsgToPlayer, UUID } from "../../util";
+import { crypto, isValidUUID, sendMsg, sendMsgToPlayer, UUID } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 //Function provided by Visual1mpact
-export function uiOP(opResult: ModalFormResponse, salt: string | number | boolean, hash: string | number | boolean, encode: string, onlineList: string[], player: Player): void {
-    const [value] = opResult.formValues;
-    if (config.modules.encryption.password === "") {
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to create a password!`);
-        return void 0;
-    }
-    if (hash !== encode) {
-        if (value === config.modules.encryption.password) {
-            // If no salt then create one
-            if (salt === undefined) {
-                player.setDynamicProperty("salt", UUID.generate());
-                salt = player.getDynamicProperty("salt");
-            }
-            // If no hash then create one
-            if (hash === undefined) {
-                encode = crypto?.(salt, config?.modules?.encryption?.password);
-                player.setDynamicProperty("hash", encode);
-                dynamicPropertyRegistry.set(player.id, player.name);
-                hash = player.getDynamicProperty("hash");
-            } else {
-                encode = crypto?.(salt, config?.modules?.encryption?.password);
-            }
-            if (hash === encode) {
-                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f is now Paradox-Opped.`);
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are now op!`);
-                player.addTag("paradoxOpped");
-                paradoxui(player);
-            } else {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong.`);
-                paradoxui(player);
-            }
-        } else {
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wrong password!`);
-            paradoxui(player);
+export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: string | number | boolean, hash: string | number | boolean, onlineList: string[], player: Player) {
+    if (!hash || !salt || (hash !== crypto?.(salt, player.id) && isValidUUID(salt as string))) {
+        if (!player.isOp()) {
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
+            return paradoxui(player);
         }
-    } else {
-        // Need player object
-        let member: Player = undefined;
+    }
+
+    if ("formValues" in opResult) {
+        // It's a ModalFormResponse
+
+        const [value] = opResult.formValues;
+
+        // Try to find the player requested
+        let targetPlayer: Player;
+
         const players = world.getPlayers();
         for (const pl of players) {
             if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
-                member = pl;
+                targetPlayer = pl;
                 break;
             }
         }
-        // Check for hash/salt and validate password
-        const memberHash = member.getDynamicProperty("hash");
-        let memberSalt = member.getDynamicProperty("salt");
-        const encode = crypto(memberSalt, config.modules.encryption.password) ?? null;
-        // If no salt then create one
-        if (memberSalt === undefined) {
-            member.setDynamicProperty("salt", UUID.generate());
-            // Get generated salt
-            memberSalt = member.getDynamicProperty("salt");
+
+        if (targetPlayer) {
+            const targetHash = targetPlayer.getDynamicProperty("hash");
+
+            if (targetHash === undefined) {
+                const targetSalt = UUID.generate();
+                targetPlayer.setDynamicProperty("salt", targetSalt);
+
+                const newHash = crypto?.(targetSalt, targetPlayer.id);
+
+                targetPlayer.setDynamicProperty("hash", newHash);
+
+                dynamicPropertyRegistry.set(targetPlayer.id, targetPlayer.name);
+
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You have granted Paradox-Op to ${targetPlayer.name}.`);
+                sendMsgToPlayer(targetPlayer, `§f§4[§6Paradox§4]§f You are now op!`);
+                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${targetPlayer.name}§f is now Paradox-Opped.`);
+                targetPlayer.addTag("paradoxOpped");
+                return paradoxui(player);
+            } else {
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${targetPlayer.name} is already Paradox-Opped.`);
+                return paradoxui(player);
+            }
+        } else {
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayer.name}.`);
+            return paradoxui(player);
         }
-        // If no hash then create one
-        if (memberHash !== encode) {
-            const encode = crypto(memberSalt, config.modules.encryption.password);
-            member.setDynamicProperty("hash", encode);
-            dynamicPropertyRegistry.set(member.id, member.name);
+    } else if ("selection" in opResult) {
+        // It's an ActionFormResponse
+        if (opResult.selection === 0) {
+            // player wants to change their own password
+            const targetSalt = UUID.generate();
+            const newHash = crypto?.(targetSalt, player.id);
+
+            player.setDynamicProperty("hash", newHash);
+            player.setDynamicProperty("salt", targetSalt);
+            player.addTag("paradoxOpped");
+
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are now Paradox-Opped!`);
+
+            dynamicPropertyRegistry.set(player.id, player.name);
+
+            return paradoxui(player);
         }
-        sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now op!`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name}§f is now Paradox-Opped.`);
-        member.addTag("paradoxOpped");
-        paradoxui(player);
+        return paradoxui(player);
+    } else {
+        return paradoxui(player);
     }
 }
