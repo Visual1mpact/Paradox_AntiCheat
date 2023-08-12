@@ -5,17 +5,17 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function reportHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.report) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: report`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: report [optional]`,
-        `§4[§6Optional§4]§r: username, reason, help`,
-        `§4[§6Description§4]§r: Reports player's to online Staff for malicious activities.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: report`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: report [optional]`,
+        `§4[§6Optional§4]§f: username, reason, help`,
+        `§4[§6Description§4]§f: Reports player's to online Staff for malicious activities.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}report ${player.name}`,
         `    ${prefix}report ${player.name} Caught hacking!`,
         `    ${prefix}report help`,
@@ -61,16 +61,16 @@ export function report(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r !report <player> <reason>§r`);
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f !report <player> <reason>§f`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // Make sure they dont report themselves
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot report yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot report yourself.`);
     }
 
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Reported ${member.name}§r with reason: ${reason}`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Reported ${member.name}§f with reason: ${reason}`);
 
-    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name}§r has reported ${member.name}§r with reason: ${reason}`);
+    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name}§f has reported ${member.name}§f with reason: ${reason}`);
 }

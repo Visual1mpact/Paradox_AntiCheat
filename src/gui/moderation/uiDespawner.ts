@@ -11,7 +11,7 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
     // try to find the entity or despawn them all if requested
     const filter: EntityQueryOptions = {
@@ -35,9 +35,9 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
             }
         }
         if (counter > 0) {
-            sendMsgToPlayer(player, ` §6|§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
+            sendMsgToPlayer(player, ` §6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
         } else {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entity found to despawn!`);
         }
     }
     if (DespawnAllToggle === true) {
@@ -65,16 +65,16 @@ export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Pl
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` §6|§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
+                    entityMessage += ` §6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
                     totalCounter += count;
                 }
             }
         }
         if (totalCounter > 0) {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned:`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Despawned:`);
             sendMsgToPlayer(player, entityMessage);
         } else {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entities found to despawn!`);
         }
     }
     return paradoxui;

@@ -14,7 +14,7 @@ export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Play
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure World Borders`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure World Borders`);
     }
     if (WorldBorderToggle === true) {
         dynamicPropertyRegistry.set("worldborder_b", true);
@@ -26,7 +26,7 @@ export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Play
         world.setDynamicProperty("worldborder_nether_n", Math.abs(Number(NetherValueTextfield)));
         world.setDynamicProperty("worldborder_end_n", Math.abs(Number(EndValueTextfield)));
         WorldBorder();
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${OverworldValueTextfield} Nether: ${NetherValueTextfield} End: ${EndValueTextfield}`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set the §6World Border§f! Overworld: ${OverworldValueTextfield} Nether: ${NetherValueTextfield} End: ${EndValueTextfield}`);
     }
     if (WorldBorderToggle === false) {
         dynamicPropertyRegistry.set("worldborder_b", false);
@@ -37,7 +37,7 @@ export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Play
         world.setDynamicProperty("worldborder_n", 0);
         world.setDynamicProperty("worldborder_nether_n", 0);
         world.setDynamicProperty("worldborder_end_n", 0);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled the §6World Border§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled the §6World Border§f!`);
     }
 
     //show the main ui to the player once complete.

@@ -16,33 +16,33 @@ export function uiNAMESPOOFING(namespoofingResult: ModalFormResponse, player: Pl
     const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Name Spoofing`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Name Spoofing`);
     }
     if (NameSpoofAToggle === true && nameSpoofABoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("namespoofa_b", true);
         world.setDynamicProperty("namespoofa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6NamespoofA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NamespoofA§f!`);
         NamespoofA();
     }
     if (NameSpoofAToggle === false && nameSpoofABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofa_b", false);
         world.setDynamicProperty("namespoofa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4NamespoofA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NamespoofA§f!`);
     }
     if (NameSpoofBToggle === true && nameSpoofBBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("namespoofb_b", true);
         world.setDynamicProperty("namespoofb_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6NamespoofB§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NamespoofB§f!`);
         NamespoofB;
     }
     if (NameSpoofBToggle === false && nameSpoofBBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofb_b", false);
         world.setDynamicProperty("namespoofb_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4NamespoofB§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NamespoofB§f!`);
     }
 
     //show the main ui to the player once complete.

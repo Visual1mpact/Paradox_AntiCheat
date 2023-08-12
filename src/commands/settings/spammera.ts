@@ -7,24 +7,24 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 function spammerAHelp(player: Player, prefix: string, spammerABoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.spammera) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (spammerABoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: spammera`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: spammera [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for messages sent while moving.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: spammera`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: spammera [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles checks for messages sent while moving.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}spammera`,
         `    ${prefix}spammera help`,
     ]);
@@ -48,7 +48,7 @@ export function spammerA(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -67,12 +67,12 @@ export function spammerA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("spammera_b", true);
         world.setDynamicProperty("spammera_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6SpammerA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpammerA§f!`);
         SpammerA();
     } else if (spammerABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("spammera_b", false);
         world.setDynamicProperty("spammera_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4SpammerA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpammerA§f!`);
     }
 }

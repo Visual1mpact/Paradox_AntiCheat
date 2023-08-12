@@ -6,17 +6,17 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function unmuteHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.unmute) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: unmute`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: unmute [optional]`,
-        `§4[§6Optional§4]§r: username, reason, help`,
-        `§4[§6Description§4]§r: Unmutes the specified user and optionally gives a reason.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: unmute`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: unmute [optional]`,
+        `§4[§6Optional§4]§f: username, reason, help`,
+        `§4[§6Description§4]§f: Unmutes the specified user and optionally gives a reason.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}unmute ${player.name}`,
         `    ${prefix}unmute ${player.name} You may chat`,
         `    ${prefix}unmute help`,
@@ -41,7 +41,7 @@ export async function unmute(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -85,17 +85,17 @@ export async function unmute(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // If not already muted then tag
     if (member.hasTag("isMuted")) {
         member.removeTag("isMuted");
     } else {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is not muted.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This player is not muted.`);
     }
     // If Education Edition is enabled then legitimately unmute
     member.runCommandAsync(`ability @s mute false`);
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been unmuted.`);
-    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has unmuted ${member.name}§r. Reason: ${reason}`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been unmuted.`);
+    return sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has unmuted ${member.name}§f. Reason: ${reason}`);
 }

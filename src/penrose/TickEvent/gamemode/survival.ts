@@ -47,7 +47,7 @@ async function survival(id: number) {
             player.runCommandAsync(`gamemode a`);
         }
         setScore(player, "gamemodevl", 1, true);
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has tried to change their gamemode §7(Gamemode_S)§6.§4 VL= ${getScore("gamemodevl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has tried to change their gamemode §7(Gamemode_S)§6.§4 VL= ${getScore("gamemodevl", player)}`);
     }
 }
 

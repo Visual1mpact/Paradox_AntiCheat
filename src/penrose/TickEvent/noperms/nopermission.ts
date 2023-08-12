@@ -34,7 +34,7 @@ function noperms() {
             dynamicPropertyRegistry.delete(entity.id);
         }
 
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${entity.nameTag} had unauthorized permissions. Permissions removed!`);
     }
 }
 

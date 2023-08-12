@@ -19,17 +19,17 @@ export function getTeleportRequests(): TeleportRequest[] {
 function tprHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.tpr) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: tpr`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: tpr [optional]`,
-        `§4[§6Optional§4]§r: name, help`,
-        `§4[§6Description§4]§r: Will send requests to tp to players.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: tpr`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: tpr [optional]`,
+        `§4[§6Optional§4]§f: name, help`,
+        `§4[§6Description§4]§f: Will send requests to tp to players.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}tpr ${player.name}`,
         `    ${prefix}tpr help`,
     ]);
@@ -55,7 +55,7 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
     }
 
     if (!target) {
-        sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r Target player not found.");
+        sendMsgToPlayer(player, "§f§4[§6Paradox§4]§f Target player not found.");
         return;
     }
 
@@ -65,7 +65,7 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
         if (Date.now() >= request.expiresAt) {
             teleportRequests.splice(requestIndex, 1);
         } else {
-            sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r That player already has a teleport request pending.");
+            sendMsgToPlayer(player, "§f§4[§6Paradox§4]§f That player already has a teleport request pending.");
             return;
         }
     }
@@ -85,8 +85,8 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
         expiresAt: Date.now() + durationInMs, // Expires in the time specified in 'durationInMs'
     });
 
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleport request sent to ${target.name}. Waiting for approval...`);
-    sendMsgToPlayer(target, `§r§4[§6Paradox§4]§r You have received a teleport request from ${player.name}. Type 'approved' or 'denied' in chat to respond.`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleport request sent to ${target.name}. Waiting for approval...`);
+    sendMsgToPlayer(target, `§f§4[§6Paradox§4]§f You have received a teleport request from ${player.name}. Type 'approved' or 'denied' in chat to respond.`);
 }
 
 // This handles requests pending approval
@@ -112,8 +112,8 @@ function teleportRequestApprovalHandler(object: ChatSendAfterEvent) {
 
     const request = teleportRequests[requestIndex];
     if (Date.now() >= request.expiresAt) {
-        sendMsgToPlayer(request.requester, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
-        sendMsgToPlayer(request.target, "§r§4[§6Paradox§4]§r Teleport request expired. Please try again.");
+        sendMsgToPlayer(request.requester, "§f§4[§6Paradox§4]§f Teleport request expired. Please try again.");
+        sendMsgToPlayer(request.target, "§f§4[§6Paradox§4]§f Teleport request expired. Please try again.");
         teleportRequests.splice(requestIndex, 1);
         return;
     }
@@ -121,9 +121,9 @@ function teleportRequestApprovalHandler(object: ChatSendAfterEvent) {
     if (isApprovalRequest) {
         setTimer(request.requester.id);
         request.requester.teleport(request.target.location, { dimension: request.target.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is approved.`);
+        sendMsgToPlayer(request.requester, `§f§4[§6Paradox§4]§f Teleport request to ${request.target.name} is approved.`);
     } else {
-        sendMsgToPlayer(request.requester, `§r§4[§6Paradox§4]§r Teleport request to ${request.target.name} is denied.`);
+        sendMsgToPlayer(request.requester, `§f§4[§6Paradox§4]§f Teleport request to ${request.target.name} is denied.`);
     }
 
     teleportRequests.splice(requestIndex, 1);

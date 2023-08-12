@@ -15,20 +15,20 @@ export function uiANTISPAM(antispamResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Anti Spam`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Anti Spam`);
     }
     if (AntiSpamToggle === true) {
         /// Allow
         dynamicPropertyRegistry.set("antispam_b", true);
         world.setDynamicProperty("antispam_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Spam§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Spam§f!`);
         beforeAntiSpam();
     }
     if (AntiSpamToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("antispam_b", false);
         world.setDynamicProperty("antispam_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Spam§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Spam§f!`);
     }
 
     //show the main ui to the player once complete.

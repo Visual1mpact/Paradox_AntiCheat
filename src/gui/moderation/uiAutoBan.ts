@@ -14,20 +14,20 @@ export function uiAUTOBAN(autobanResult: ModalFormResponse, player: Player) {
     const autoBanBoolean = dynamicPropertyRegistry.get("autoban_b");
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
     if (autobanToggle === true && autoBanBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("autoban_b", true);
         world.setDynamicProperty("autoban_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6autoban§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6autoban§f!`);
         AutoBan();
     }
     if (autobanToggle === false && autoBanBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("autoban_b", false);
         world.setDynamicProperty("autoban_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4autoban§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4autoban§f!`);
     }
 
     return paradoxui(player);

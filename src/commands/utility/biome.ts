@@ -5,17 +5,17 @@ import { getPrefix, sendMsgToPlayer } from "../../util.js";
 function biomeHelp(player: Player, prefix: string) {
     let commandStatus;
     if (!config.customcommands.biome) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: biome`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: biome [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Sends the current biome and direction the player is facing. §6Note you need to enable Molang. `,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: biome`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: biome [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Sends the current biome and direction the player is facing. §6Note you need to enable Molang. `,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}biome`,
         `    ${prefix}biome help`,
     ]);
@@ -35,7 +35,7 @@ export function biome(message: { sender: any }, args: string[]) {
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
     // Check for custom prefix
     const prefix = getPrefix(player);
@@ -157,7 +157,7 @@ export function biome(message: { sender: any }, args: string[]) {
         ["stony_peaks", "Biome: Stony Peaks"],
     ]);
 
-    const defaultBiome: string = "Unknown Or §4Molang is not enabled!§r";
+    const defaultBiome: string = "Unknown Or §4Molang is not enabled!§f";
     let currentBiome: string;
     // Iterate over the map entries to find a matching tag
     for (const [tag, mappedBiome] of biomeMap.entries()) {
@@ -171,5 +171,5 @@ export function biome(message: { sender: any }, args: string[]) {
         currentBiome = defaultBiome;
     }
 
-    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${currentBiome} \n§r§4[§6Paradox§4]§r ${direction}`);
+    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${currentBiome} \n§f§4[§6Paradox§4]§f ${direction}`);
 }

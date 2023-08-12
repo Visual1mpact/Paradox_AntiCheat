@@ -196,7 +196,7 @@ export function commandHandler(player: Player, message: ChatSendBeforeEvent): Pr
         message.sendToTargets = true;
         message.setTargets([]);
         message.message = "";
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
     }
 
     // Do not broadcast any message to any targets

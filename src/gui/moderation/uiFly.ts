@@ -4,11 +4,11 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
 function mayflydisable(player: Player, member: Player) {
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled fly mode for ${player === member ? "themselves" : member.name}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled fly mode for ${player === member ? "themselves" : member.name}.`);
 }
 
 function mayflyenable(player: Player, member: Player) {
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled fly mode for ${player === member ? "themselves" : member.name}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled fly mode for ${player === member ? "themselves" : member.name}.`);
 }
 export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = flyResult.formValues;
@@ -24,12 +24,12 @@ export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], 
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
     const membertag = member.getTags();
 
@@ -41,7 +41,7 @@ export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], 
                 mayflyenable(player, member);
             })
             .catch(() => {
-                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
+                return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Education Edition is disabled in this world.`);
             });
 
         return;
@@ -60,7 +60,7 @@ export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], 
                 member.removeTag("noflying");
             })
             .catch(() => {
-                return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Education Edition is disabled in this world.`);
+                return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Education Edition is disabled in this world.`);
             });
         return;
     }

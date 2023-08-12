@@ -7,17 +7,17 @@ import { getPrefix, sendMsgToPlayer, getGamemode, allscores, getScore } from "..
 function statsHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.stats) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: stats`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: stats [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Shows logs from the specified user.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: stats`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: stats [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Shows logs from the specified user.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}stats ${player.name}`,
         `    ${prefix}stats help`,
     ]);
@@ -41,7 +41,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -59,7 +59,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!player.hasTag("notify")) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable cheat notifications.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to enable cheat notifications.`);
     }
 
     // try to find the player requested
@@ -73,24 +73,24 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     const reportBody = [
-        `\n§r§4[§6Paradox§4]§r Getting all Paradox Logs from: §6${member.name}§r`,
-        `§r§4[§6Paradox§4]§r §6${member.name}§r is in Gamemode: ${getGamemode(member)}`,
-        `§r§4[§6Paradox§4]§r §6${member.name}§r is currently at X= ${member.location.x.toFixed(0)} Y= ${member.location.y.toFixed(0)} Z= ${member.location.z.toFixed(0)}`,
+        `\n§f§4[§6Paradox§4]§f Getting all Paradox Logs from: §6${member.name}§f`,
+        `§f§4[§6Paradox§4]§f §6${member.name}§f is in Gamemode: ${getGamemode(member)}`,
+        `§f§4[§6Paradox§4]§f §6${member.name}§f is currently at X= ${member.location.x.toFixed(0)} Y= ${member.location.y.toFixed(0)} Z= ${member.location.z.toFixed(0)}`,
     ];
 
     switch (true) {
         case member.hasTag("paradoxFreeze"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
             break;
         case member.hasTag("flying"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is flying`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is flying`);
             break;
         case member.hasTag("vanish"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is vanished`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is vanished`);
             break;
     }
 
@@ -104,12 +104,12 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
             violationsFound++;
             if (violationsFound === 1) {
                 divider = true;
-                reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);
+                reportBody.push(`§f§4[§6Paradox§4]§4 ----------------------------------§f`);
             }
-            reportBody.push(`§r§4[§6Paradox§4]§r §r§4[§6${objective.replace("vl", "").toUpperCase()}§4]§r Violations: ${score}`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f Violations: ${score}`);
         }
         if (vlCount === allscores.length && divider === true) {
-            reportBody.push(`§r§4[§6Paradox§4]§4 ----------------------------------§r`);
+            reportBody.push(`§f§4[§6Paradox§4]§4 ----------------------------------§f`);
         }
     });
 
@@ -161,7 +161,7 @@ export async function stats(message: ChatSendAfterEvent, args: string[]) {
             materialType = verification.typeId.split(":")[1];
         }
         const materialColor = materialColors[materialType] || materialColors["none"];
-        reportBody.push(`§r§4[§6Paradox§4]§r ${armorType}: ${isEnchanted ? "§aEnchanted§r" : "§4Unenchanted§r"} || ${materialColor}${materialType}`);
+        reportBody.push(`§f§4[§6Paradox§4]§f ${armorType}: ${isEnchanted ? "§aEnchanted§f" : "§4Unenchanted§f"} || ${materialColor}${materialType}`);
     }
 
     sendMsgToPlayer(player, reportBody);

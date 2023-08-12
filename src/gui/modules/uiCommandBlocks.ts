@@ -31,28 +31,28 @@ export async function uiCOMMANDBLOCKS(commandblocksResult: ModalFormResponse, pl
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Command Blocks`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Command Blocks`);
     }
     if (CommandBlockOverrideToggle === true && cmdoBoolean === false) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set CommandBlocksEnabled as §6enabled§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set CommandBlocksEnabled as §6enabled§f!`);
     }
     if (CommandBlockOverrideToggle === false && cmdoBoolean === true) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set CommandBlocksEnabled as §4disabled§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set CommandBlocksEnabled as §4disabled§f!`);
     }
     player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
     if (RemoveCommandBlocksToggle === true && removecmdblocksBoolean === false) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Command Blocks§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Command Blocks§f!`);
     }
     if (RemoveCommandBlocksToggle === false && removecmdblocksBoolean === true) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Command Blocks§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Command Blocks§f!`);
     }
     player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
     //show the main ui to the player once complete.

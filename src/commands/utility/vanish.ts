@@ -6,17 +6,17 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function vanishHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.vanish) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: vanish`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: vanish [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Turns the player invisible to monitor online player's.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: vanish`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: vanish [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Turns the player invisible to monitor online player's.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}vanish`,
         `    ${prefix}vanish help`,
     ]);
@@ -40,7 +40,7 @@ export async function vanish(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -58,12 +58,12 @@ export async function vanish(message: ChatSendAfterEvent, args: string[]) {
         player.removeTag("vanish");
         player.triggerEvent("unvanish");
         player.runCommandAsync(`effect @s clear`);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `§r§4[§6Paradox§4]§r ${player.name}§r is no longer in vanish.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are no longer vanished.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f ${player.name}§f is no longer in vanish.`);
     } else {
         player.addTag("vanish");
         player.triggerEvent("vanish");
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now vanished!`);
-        sendMsg(`@a[tag=paradoxOpped]`, `§r§4[§6Paradox§4]§r ${player.name}§r is now vanished!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are now vanished!`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f ${player.name}§f is now vanished!`);
     }
 }

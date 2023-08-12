@@ -18,7 +18,7 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
 
     const boolean = member.hasTag("paradoxFreeze");
@@ -26,8 +26,8 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
     if (boolean) {
         member.removeTag("paradoxFreeze");
         member.runCommand(`effect @s clear`);
-        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer frozen.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer frozen.`);
+        sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are no longer frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is no longer frozen.`);
         return;
     }
 
@@ -41,8 +41,8 @@ export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: stri
         // Slowness
         member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
         member.addTag("paradoxFreeze");
-        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now frozen.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now frozen.`);
+        sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is now frozen.`);
         return;
     }
 

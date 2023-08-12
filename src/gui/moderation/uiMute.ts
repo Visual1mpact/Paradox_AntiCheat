@@ -20,28 +20,28 @@ export async function uiMUTE(muteResult: ModalFormResponse, onlineList: string[]
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to mute players!.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to mute players!.`);
     }
 
     // Make sure they dont mute themselves
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot mute yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot mute yourself.`);
     }
 
     // Make sure staff dont mute staff
     if (member.hasTag("paradoxOpped")) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot mute staff players.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot mute staff players.`);
     }
 
     // If not already muted then tag
     if (!member.hasTag("isMuted")) {
         member.addTag("isMuted");
     } else {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is already muted.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This player is already muted.`);
     }
     // If Education Edition is enabled then legitimately mute them
     member.runCommandAsync(`ability @s mute true`);
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`);
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has muted ${member.name}§r. Reason: ${reason}`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been muted. Reason: ${reason}`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has muted ${member.name}§f. Reason: ${reason}`);
     return paradoxui(player);
 }

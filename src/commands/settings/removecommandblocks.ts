@@ -6,24 +6,24 @@ import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 function removeCBEHelp(player: Player, prefix: string, commandblocksscore: number) {
     let commandStatus: string;
     if (!config.customcommands.removecommandblocks) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (commandblocksscore <= 0) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: removecb`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: removecb [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles Anti Command Blocks (Clears all when enabled).`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: removecb`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: removecb [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles Anti Command Blocks (Clears all when enabled).`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}removecb`,
         `    ${prefix}removecb help`,
     ]);
@@ -47,7 +47,7 @@ export async function removecommandblocks(message: ChatSendAfterEvent, args: str
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     const commandblocksscore = getScore("commandblocks", player);
@@ -64,11 +64,11 @@ export async function removecommandblocks(message: ChatSendAfterEvent, args: str
     if (commandblocksscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Command Blocks§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Command Blocks§f!`);
     } else if (commandblocksscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Command Blocks§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Command Blocks§f!`);
     }
     return player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
 }

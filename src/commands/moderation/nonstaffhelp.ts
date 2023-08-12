@@ -24,13 +24,13 @@ export function nonstaffhelp(message: ChatSendAfterEvent) {
     // Make sure the user has permissions to run the command
     if (uniqueId === undefined) {
         return sendMsgToPlayer(player, [
-            `§l§6[§4Non-Staff Commands§6]§r`,
-            config.customcommands.report ? `§6${prefix}report <username>§r - Report suspicious players to staff.` : `§6${prefix}report <username>§r - Command §4DISABLED§r.`,
-            config.customcommands.sethome ? `§6${prefix}sethome <name>§r - Saves current coordinates as home.` : `§6${prefix}sethome <name>§r - Command §4DISABLED§r.`,
-            config.customcommands.gohome ? `§6${prefix}gohome <name>§r - Teleport back to saved home coordinates.` : `§6${prefix}gohome <name>§r - Command §4DISABLED§r.`,
-            config.customcommands.listhome ? `§6${prefix}listhome§r - Shows your list of saved locations.` : `§6${prefix}listhome§r - Command §4DISABLED§r.`,
-            config.customcommands.delhome ? `§6${prefix}delhome <name>§r - Deletes a saved location from list.` : `§6${prefix}delhome <name>§r - Command §4DISABLED§r.`,
-            config.customcommands.tpr ? `§6${prefix}tpr <name>§r - Will send requests to tp to players.` : `§6${prefix}tpr <name>§r - Command §4DISABLED§r.`,
+            `§l§o§6[§4Non-Staff Commands§6]§r§o`,
+            config.customcommands.report ? `§6${prefix}report <username>§f - Report suspicious players to staff.` : `§6${prefix}report <username>§f - Command §4DISABLED§f.`,
+            config.customcommands.sethome ? `§6${prefix}sethome <name>§f - Saves current coordinates as home.` : `§6${prefix}sethome <name>§f - Command §4DISABLED§f.`,
+            config.customcommands.gohome ? `§6${prefix}gohome <name>§f - Teleport back to saved home coordinates.` : `§6${prefix}gohome <name>§f - Command §4DISABLED§f.`,
+            config.customcommands.listhome ? `§6${prefix}listhome§f - Shows your list of saved locations.` : `§6${prefix}listhome§f - Command §4DISABLED§f.`,
+            config.customcommands.delhome ? `§6${prefix}delhome <name>§f - Deletes a saved location from list.` : `§6${prefix}delhome <name>§f - Command §4DISABLED§f.`,
+            config.customcommands.tpr ? `§6${prefix}tpr <name>§f - Will send requests to tp to players.` : `§6${prefix}tpr <name>§f - Command §4DISABLED§f.`,
         ]);
     }
 }

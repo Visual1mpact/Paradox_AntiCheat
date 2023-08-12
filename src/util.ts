@@ -1,7 +1,7 @@
 import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
-import CryptoJS from "./node_modules/crypto-es/lib/index.js"
+import CryptoJS from "./node_modules/crypto-es/lib/index.js";
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
@@ -37,15 +37,15 @@ export async function flag(player: Player, check: string, checkType: string, hac
     setScore(player, `${check.toLowerCase()}vl`, 1, true);
 
     if (debug) {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     } else if (item && stack) {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     } else {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     }
 
     if (check === "Namespoof") {
-        player.runCommandAsync(`kick ${player.name} §r\n\n§4[§6Paradox§4]§r You have illegal characters in your name!`).catch(() => {
+        player.runCommandAsync(`kick ${player.name} §f\n\n§4[§6Paradox§4]§f You have illegal characters in your name!`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
@@ -74,13 +74,13 @@ export async function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        player.runCommandAsync(`kick ${player.name} §r\n§l§cYOU ARE BANNED!\n§r§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`).catch(() => {
+        player.runCommandAsync(`kick ${player.name} §f\n§l§cYOU ARE BANNED!\n§f§eBanned By:§f ${by || "N/A"}\n§bReason:§f ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         });
     } else {
-        player.runCommandAsync(`kick ${player.name} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`).catch(() => {
+        player.runCommandAsync(`kick ${player.name} §f\n§l§cYOU ARE BANNED!\n§f\n§eBanned By:§f ${by || "N/A"}\n§bReason:§f ${reason || "N/A"}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
@@ -163,7 +163,7 @@ export function resetTag(member: Player) {
             member.removeTag(tag);
         }
     }
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name} has reset their rank`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name} has reset their rank`);
 }
 
 /**
@@ -276,7 +276,6 @@ export const crypto = (salt: string | number | boolean, text: string) => {
     return hash.substring(0, 50);
 };
 
-
 /**
  * Encrypts a string using AES encryption with the specified salt as the key.
  *
@@ -287,7 +286,7 @@ export const crypto = (salt: string | number | boolean, text: string) => {
  */
 export function encryptString(str: string, salt: string): string {
     const encrypted = CryptoJS.AES.encrypt(str, salt).toString();
-    return '1337' + encrypted;
+    return "1337" + encrypted;
 }
 
 /**
@@ -300,7 +299,7 @@ export function encryptString(str: string, salt: string): string {
  */
 export function decryptString(str: string, salt: string): string {
     // Check if the string is using the old encryption (tag '6f78')
-    if (str.startsWith('6f78')) {
+    if (str.startsWith("6f78")) {
         // Use the old decryption logic
         let plaintext = "";
         let keyIndex = 0;
@@ -409,7 +408,7 @@ export const sendMsg = async (target: string, message: string | string[]) => {
     const isArray = Array.isArray(message);
 
     // Check if target is equal to "@a"
-    const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n") : (message as string).replace(/§r/g, "§r§o"));
+    const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§f/g, "§f§o")).join("\n") : (message as string).replace(/§f/g, "§f§o"));
 
     overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
 };
@@ -426,9 +425,9 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
     let modifiedMessage: string | string[];
 
     if (isArray) {
-        modifiedMessage = (message as string[]).map((msg) => msg.replace(/§r/g, "§r§o")).join("\n");
+        modifiedMessage = (message as string[]).map((msg) => msg.replace(/§f/g, "§f§o")).join("\n");
     } else {
-        modifiedMessage = (message as string).replace(/§r/g, "§r§o");
+        modifiedMessage = (message as string).replace(/§f/g, "§f§o");
     }
 
     target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);

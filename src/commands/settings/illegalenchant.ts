@@ -6,24 +6,24 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 function illegalEnchantHelp(player: Player, prefix: string, illegalEnchantmentBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.illegalenchant) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (illegalEnchantmentBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: illegalenchant`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: illegalenchant [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for items with illegal enchantments.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: illegalenchant`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: illegalenchant [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles checks for items with illegal enchantments.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}illegalenchant`,
         `    ${prefix}illegalenchant help`,
     ]);
@@ -47,7 +47,7 @@ export function illegalEnchant(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -66,11 +66,11 @@ export function illegalEnchant(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("illegalenchantment_b", true);
         world.setDynamicProperty("illegalenchantment_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6IllegalEnchantments§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6IllegalEnchantments§f!`);
     } else if (illegalEnchantmentBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalenchantment_b", false);
         world.setDynamicProperty("illegalenchantment_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4IllegalEnchantments§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4IllegalEnchantments§f!`);
     }
 }

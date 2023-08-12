@@ -5,17 +5,17 @@ import { decryptString, getPrefix, encryptString, sendMsgToPlayer } from "../../
 function setHomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.sethome) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: sethome`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: sethome [optional]`,
-        `§4[§6Optional§4]§r: name, help`,
-        `§4[§6Description§4]§r: Saves home location based on current coordinates. Up to ${config.modules.setHome.max} total.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: sethome`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: sethome [optional]`,
+        `§4[§6Optional§4]§f: name, help`,
+        `§4[§6Description§4]§f: Saves home location based on current coordinates. Up to ${config.modules.setHome.max} total.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}sethome barn`,
         `    ${prefix}sethome help`,
     ]);
@@ -59,7 +59,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
     // Don't allow spaces
     if (args.length > 1 || args[0].trim().length === 0) {
         setHomeHelp(player, prefix);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No spaces in names please!`);
     }
 
     // Hash the coordinates for security
@@ -73,11 +73,11 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption
-            player.removeTag(tags[i])
+            player.removeTag(tags[i]);
             // Change to AES Encryption so we can abandon the old method
             tags[i] = decryptString(tags[i], salt as string);
-            tags[i] = encryptString(tags[i], salt as string)
-            player.addTag(tags[i])
+            tags[i] = encryptString(tags[i], salt as string);
+            player.addTag(tags[i]);
         }
         if (tags[i].startsWith("1337")) {
             // Decode it so we can verify if it already exists
@@ -85,7 +85,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
         }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home with name '${args[0]}' already exists!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home with name '${args[0]}' already exists!`);
             break;
         }
         if (tags[i].startsWith("LocationHome:")) {
@@ -93,7 +93,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
         }
         if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
             verify = true;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You can only have ${config.modules.setHome.max} saved locations at a time!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You can only have ${config.modules.setHome.max} saved locations at a time!`);
             break;
         }
     }
@@ -109,7 +109,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
         currentDimension = "nether";
     }
     if (player.dimension.id === "minecraft:the_end") {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Not allowed to set home in this dimension!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Not allowed to set home in this dimension!`);
     }
 
     const decryptedLocationString = `LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`;
@@ -117,5 +117,5 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
     // Store their new home coordinates
     player.addTag(security);
 
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' has been set at ${homex} ${homey} ${homez}!`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' has been set at ${homex} ${homey} ${homez}!`);
 }

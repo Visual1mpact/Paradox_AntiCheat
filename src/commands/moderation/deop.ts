@@ -6,17 +6,17 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function deopHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.deop) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: deop`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: deop [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Revokes permission to use Paradox AntiCheat features.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: deop`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: deop [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Revokes permission to use Paradox AntiCheat features.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}deop ${player.name}`,
         `    ${prefix}deop help`,
     ]);
@@ -40,7 +40,7 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -70,7 +70,7 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // Check for hash/salt and validate password from member
@@ -86,8 +86,8 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
         member.removeDynamicProperty("salt");
         member.removeTag("paradoxOpped");
         dynamicPropertyRegistry.delete(member.id);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name} is no longer Paradox-Opped.`);
-        return sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your OP status has been revoked!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name} is no longer Paradox-Opped.`);
+        return sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f Your OP status has been revoked!`);
     }
-    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} never had permission to use Paradox.`);
+    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${member.name} never had permission to use Paradox.`);
 }

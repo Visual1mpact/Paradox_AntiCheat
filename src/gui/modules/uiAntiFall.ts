@@ -14,20 +14,20 @@ export async function uiANTIFALL(antifallResult: ModalFormResponse, player: Play
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Anit Fall`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Anit Fall`);
     }
     if (AntiFallToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("antifalla_b", true);
         world.setDynamicProperty("antifalla_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6AntiFallA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiFallA§f!`);
         AntiFallA();
     }
     if (AntiFallToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("antifalla_b", false);
         world.setDynamicProperty("antifalla_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4AntiFallA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiFallA§f!`);
     }
 
     //show the main ui to the player once complete.

@@ -5,17 +5,17 @@ import { decryptString, encryptString, getPrefix, sendMsgToPlayer } from "../../
 function delhomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.delhome) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: delhome`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: delhome [optional]`,
-        `§4[§6Optional§4]§r: name, help`,
-        `§4[§6Description§4]§r: Will delete specified saved home location.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: delhome`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: delhome [optional]`,
+        `§4[§6Optional§4]§f: name, help`,
+        `§4[§6Description§4]§f: Will delete specified saved home location.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}delhome cave`,
         `    ${prefix}delhome help`,
     ]);
@@ -50,7 +50,7 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No spaces in names please!`);
     }
 
     // Hash the coordinates for security
@@ -64,11 +64,11 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption
-            player.removeTag(tags[i])
+            player.removeTag(tags[i]);
             // Change to AES Encryption so we can abandon the old method
             tags[i] = decryptString(tags[i], salt as string);
-            tags[i] = encryptString(tags[i], salt as string)
-            player.addTag(tags[i])
+            tags[i] = encryptString(tags[i], salt as string);
+            player.addTag(tags[i]);
         }
         if (tags[i].startsWith("1337")) {
             encryptedString = tags[i];
@@ -78,13 +78,13 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
             player.removeTag(encryptedString);
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${args[0]}'!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '${args[0]}'!`);
             break;
         }
     }
     if (verify === true) {
         return;
     } else {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
     }
 }

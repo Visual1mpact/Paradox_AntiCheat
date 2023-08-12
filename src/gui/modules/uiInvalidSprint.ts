@@ -14,20 +14,20 @@ export function uiINVALIDSPRINT(invalidsprintResult: ModalFormResponse, player: 
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Invalid Sprint`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Invalid Sprint`);
     }
     if (InvalidSprintToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("invalidsprinta_b", true);
         world.setDynamicProperty("invalidsprinta_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6InvalidSprintA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6InvalidSprintA§f!`);
         InvalidSprintA();
     }
 
     if (InvalidSprintToggle === false) {
         dynamicPropertyRegistry.set("invalidsprinta_b", false);
         world.setDynamicProperty("invalidsprinta_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4InvalidSprintA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4InvalidSprintA§f!`);
     }
 
     //show the main ui to the player once complete.

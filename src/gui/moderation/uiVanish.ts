@@ -18,12 +18,12 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
     if (member.hasTag("vanish")) {
         member.addTag("novanish");
@@ -36,8 +36,8 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
     if (member.hasTag("novanish")) {
         member.triggerEvent("unvanish");
         member.runCommandAsync(`effect @s clear`);
-        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are no longer vanished.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is no longer in vanish.`);
+        sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are no longer vanished.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is no longer in vanish.`);
     }
 
     if (!member.hasTag("novanish")) {
@@ -46,8 +46,8 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
 
     if (member.hasTag("vanish") && !member.hasTag("novanish")) {
         member.triggerEvent("vanish");
-        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now vanished!`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§r is now vanished!`);
+        sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now vanished!`);
+        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is now vanished!`);
     }
 
     if (member.hasTag("novanish")) {

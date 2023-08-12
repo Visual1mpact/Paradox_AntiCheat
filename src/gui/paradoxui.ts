@@ -69,7 +69,7 @@ async function paradoxui(player: Player) {
     const encode = crypto(salt, player.id) ?? null;
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     maingui.title("§4Paradox§4");
-    maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§rVersion: §2" + versionFile.version);
+    maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§fVersion: §2" + versionFile.version);
     if (uniqueId !== player.name) {
         maingui.button("Op", "textures/ui/op");
         maingui.button("Teleport Requests", "textures/blocks/portal_placeholder");
@@ -95,7 +95,7 @@ async function paradoxui(player: Player) {
                 opgui.textField(`\nPassword:\n`, `Enter password here.`);
             } else {
                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                opgui.dropdown(`\n§rSelect a player to give access to Paradox:§r\n\nPlayer's Online\n`, onlineList);
+                opgui.dropdown(`\n§fSelect a player to give access to Paradox:§f\n\nPlayer's Online\n`, onlineList);
             }
             opgui.show(player).then((opResult) => {
                 uiOP(opResult, salt, hash, encode, onlineList, player);
@@ -161,7 +161,7 @@ async function paradoxui(player: Player) {
                 let onlineList: string[] = [];
                 deopgui.title("§4DEOP§4");
                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                deopgui.dropdown(`\n§rSelect a player to remove access to Paradox:§r\n\nPlayer's Online\n`, onlineList);
+                deopgui.dropdown(`\n§fSelect a player to remove access to Paradox:§f\n\nPlayer's Online\n`, onlineList);
                 deopgui.show(player).then((opResult) => {
                     uiDEOP(opResult, onlineList, player);
                 });
@@ -217,7 +217,7 @@ async function paradoxui(player: Player) {
                     Locations.push("You have no saved Locations");
                 }
                 savedlocationsui.title("§4Paradox - Saved Locations§4");
-                savedlocationsui.dropdown(`\n§rSelect a Location:§r\n\nSaved Location's\n`, Locations);
+                savedlocationsui.dropdown(`\n§fSelect a Location:§f\n\nSaved Location's\n`, Locations);
                 savedlocationsui.toggle("Teleport to the selected location:", false);
                 savedlocationsui.toggle("Deletes the selected Location:", false);
                 savedlocationsui.textField("Enter a name to save your current Location:", "");
@@ -226,7 +226,7 @@ async function paradoxui(player: Player) {
                         uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
                     });
                 } else {
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Saved Locations have been disabled by the Admins.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Saved Locations have been disabled by the Admins.`);
                     return;
                 }
             } else {
@@ -258,7 +258,7 @@ async function paradoxui(player: Player) {
 
                         banui.title("§4Paradox - Ban A Player§4");
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        banui.dropdown(`\n§rSelect a player to Ban:§r\n\nPlayer's Online\n`, onlineList);
+                        banui.dropdown(`\n§fSelect a player to Ban:§f\n\nPlayer's Online\n`, onlineList);
                         banui.textField(`Reason:`, `Enter a reason.`);
                         banui.show(player).then((banResult) => {
                             //ban function goes here
@@ -306,7 +306,7 @@ async function paradoxui(player: Player) {
                                 let onlineList: string[] = [];
                                 notifyui.title("§4Enable or Disable Notifications§4");
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                                notifyui.dropdown(`\n§rSelect a player to Enable or Disable Notifications:§r\n\nPlayer's Online\n`, onlineList);
+                                notifyui.dropdown(`\n§fSelect a player to Enable or Disable Notifications:§f\n\nPlayer's Online\n`, onlineList);
                                 //by default set the current value to disabled.
                                 notifyui.toggle("Notifications:", false);
                                 notifyui.show(player).then((notifyResult) => {
@@ -321,8 +321,8 @@ async function paradoxui(player: Player) {
                                 chatranksui.title("§4Change A Player's Chat Rank§4");
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                                 const predefinedrank: string[] = ["Owner", "Admin", "Mod", "Member"];
-                                chatranksui.dropdown(`\n§rSelect a player to change their rank:§r\n\nPlayer's Online\n`, onlineList);
-                                chatranksui.dropdown(`\n§rSelect a pre defined rank or you can set a custom on below:§r`, predefinedrank);
+                                chatranksui.dropdown(`\n§fSelect a player to change their rank:§f\n\nPlayer's Online\n`, onlineList);
+                                chatranksui.dropdown(`\n§fSelect a pre defined rank or you can set a custom on below:§f`, predefinedrank);
                                 chatranksui.textField("Enter a custom Rank:", "VIP");
                                 chatranksui.toggle("Chat Ranks - Enables or Disables chat ranks:", chatRanksBoolean);
                                 chatranksui.show(player).then((chatranksResult) => {
@@ -335,7 +335,7 @@ async function paradoxui(player: Player) {
                                 let onlineList: string[] = [];
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                                 muteui.title("§4Mute A Player In Chat.§4");
-                                muteui.dropdown(`\n§rSelect a player to mute:§r\n\nPlayer's Online\n`, onlineList);
+                                muteui.dropdown(`\n§fSelect a player to mute:§f\n\nPlayer's Online\n`, onlineList);
                                 muteui.textField("Reason:", "Has been posting discord links.");
                                 muteui.show(player).then((muteResult) => {
                                     uiMUTE(muteResult, onlineList, player);
@@ -347,7 +347,7 @@ async function paradoxui(player: Player) {
                                 let onlineList: string[] = [];
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                                 unmuteui.title("§4Mute A Player In Chat§4");
-                                unmuteui.dropdown(`\n§rSelect a player to unmute:§r\n\nPlayer's Online\n`, onlineList);
+                                unmuteui.dropdown(`\n§fSelect a player to unmute:§f\n\nPlayer's Online\n`, onlineList);
                                 unmuteui.textField("Reason:", "Permissions to talk in chat.");
                                 unmuteui.show(player).then((muteResult) => {
                                     uiUNMUTE(muteResult, onlineList, player);
@@ -397,7 +397,7 @@ async function paradoxui(player: Player) {
                                 let onlineList: string[] = [];
                                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                                 punishui.title("§4Paradox - Punish§4");
-                                punishui.dropdown(`\n§rSelect a player to wipe:§r\n\nPlayer's Online\n`, onlineList);
+                                punishui.dropdown(`\n§fSelect a player to wipe:§f\n\nPlayer's Online\n`, onlineList);
                                 punishui.show(player).then((punishResult) => {
                                     uiPUNISH(punishResult, onlineList, player);
                                 });
@@ -411,7 +411,7 @@ async function paradoxui(player: Player) {
                         tpaui.title("§4Paradox - Teleport Assistance§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        tpaui.dropdown(`\n§rSelect a player to teleport:§r\n\nPlayer's Online\n`, onlineList);
+                        tpaui.dropdown(`\n§fSelect a player to teleport:§f\n\nPlayer's Online\n`, onlineList);
                         tpaui.toggle("Teleport to the target player:", true);
                         tpaui.toggle("Teleport the target player to you:", false);
                         tpaui.show(player).then((tpaResult) => {
@@ -423,7 +423,7 @@ async function paradoxui(player: Player) {
                         kickui.title("§4Paradox - Kick A Player§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        kickui.dropdown(`\n§rSelect a player to Kick:§r\n\nPlayer's Online\n`, onlineList);
+                        kickui.dropdown(`\n§fSelect a player to Kick:§f\n\nPlayer's Online\n`, onlineList);
                         kickui.textField("Reason:", "Hacking!");
 
                         kickui.show(player).then((kickResult) => {
@@ -435,7 +435,7 @@ async function paradoxui(player: Player) {
                         ewipeui.title("§4Paradox - Wipe A Player's Enderchest§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        ewipeui.dropdown(`\n§rSelect a player to wipe their Enderchest:§r\n\nPlayer's Online\n`, onlineList);
+                        ewipeui.dropdown(`\n§fSelect a player to wipe their Enderchest:§f\n\nPlayer's Online\n`, onlineList);
                         ewipeui.show(player).then((ewipeResult) => {
                             uiEWIPE(ewipeResult, onlineList, player);
                         });
@@ -445,7 +445,7 @@ async function paradoxui(player: Player) {
                         freezeui.title("§4Paradox - Freeze A Player.§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        freezeui.dropdown(`\n§rSelect a player to freeze:§r\n\nPlayer's Online\n`, onlineList);
+                        freezeui.dropdown(`\n§fSelect a player to freeze:§f\n\nPlayer's Online\n`, onlineList);
                         freezeui.show(player).then((freezeResult) => {
                             uiFREEZE(freezeResult, onlineList, player);
                         });
@@ -455,7 +455,7 @@ async function paradoxui(player: Player) {
                         flyui.title("§4Paradox - Grant A Player Fly Abilities§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        flyui.dropdown(`\n§rSelect a player to allow the ability to fly:§r\n\nPlayer's Online\n`, onlineList);
+                        flyui.dropdown(`\n§fSelect a player to allow the ability to fly:§f\n\nPlayer's Online\n`, onlineList);
                         flyui.show(player).then((flyResult) => {
                             uiFLY(flyResult, onlineList, player);
                         });
@@ -465,7 +465,7 @@ async function paradoxui(player: Player) {
                         vanishui.title("§4Paradox - Vanish From The Server§4");
                         let onlineList: string[] = [];
                         onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                        vanishui.dropdown(`\n§rSelect a player to vanish:§r\n\nPlayer's Online\n`, onlineList);
+                        vanishui.dropdown(`\n§fSelect a player to vanish:§f\n\nPlayer's Online\n`, onlineList);
                         vanishui.show(player).then((vanishResult) => {
                             uiVANISH(vanishResult, onlineList, player);
                         });
@@ -494,7 +494,7 @@ async function paradoxui(player: Player) {
                             inventoryUI.title("§4Paradox - Inventory Managment§4");
                             let onlineList: string[] = [];
                             onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                            inventoryUI.dropdown(`\n§rSelect a player:§r\n\nPlayer's Online\n`, onlineList);
+                            inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlineList);
                             inventoryUI.show(player).then((inventoryUIResult) => {
                                 uiINVENTORY(inventoryUIResult, onlineList, player);
                             });
@@ -510,7 +510,7 @@ async function paradoxui(player: Player) {
                 reportplayerui.title("§4Paradox - Report A Player§4");
                 let onlineList: string[] = [];
                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
-                reportplayerui.dropdown(`\n§rSelect a player from the list, your report will then be sent to staff members:§r\n\nPlayer's Online\n`, onlineList);
+                reportplayerui.dropdown(`\n§fSelect a player from the list, your report will then be sent to staff members:§f\n\nPlayer's Online\n`, onlineList);
                 reportplayerui.textField("Please provide a reason as to why you are reporting this player:", "");
                 reportplayerui.show(player).then((reportResult) => {
                     UIREPORTPLAYER(reportResult, onlineList, player);
@@ -578,7 +578,7 @@ async function paradoxui(player: Player) {
                                     if (config.debug) {
                                         uiANTIKNOCKBACK(antikbResult, player);
                                     } else {
-                                        player.sendMessage("§r§4[§6Paradox§4]§r Anti-Knockback is in development and locked behing Debug Mode");
+                                        player.sendMessage("§f§4[§6Paradox§4]§f Anti-Knockback is in development and locked behing Debug Mode");
                                     }
                                 });
                             }
@@ -1020,7 +1020,7 @@ async function paradoxui(player: Player) {
                 Locations.push("You have no saved Locations");
             }
             savedlocationsui.title("§4Paradox - Saved Locations§4");
-            savedlocationsui.dropdown(`\n§rSelect a Location:§r\n\nSaved Location's\n`, Locations);
+            savedlocationsui.dropdown(`\n§fSelect a Location:§f\n\nSaved Location's\n`, Locations);
             savedlocationsui.toggle("Teleport to the selected location:", false);
             savedlocationsui.toggle("Deletes the selected Location:", false);
             savedlocationsui.textField("Enter a name to save your current Location:", "");
@@ -1034,7 +1034,7 @@ async function paradoxui(player: Player) {
             let onlineList: string[] = [];
             onlineList = Array.from(world.getPlayers(), (player) => player.name);
             statsui.title("§4Paradox - Player Stats§4");
-            statsui.dropdown(`\n§rSelect a Location:§r\n\nSaved Location's\n`, onlineList);
+            statsui.dropdown(`\n§fSelect a Location:§f\n\nSaved Location's\n`, onlineList);
             statsui.show(player).then((statsResult) => {
                 uiSTATS(statsResult, onlineList, player);
             });

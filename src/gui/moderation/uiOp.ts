@@ -9,7 +9,7 @@ import { paradoxui } from "../paradoxui.js";
 export function uiOP(opResult: ModalFormResponse, salt: string | number | boolean, hash: string | number | boolean, encode: string, onlineList: string[], player: Player): void {
     const [value] = opResult.formValues;
     if (config.modules.encryption.password === "") {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to create a password!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to create a password!`);
         return void 0;
     }
     if (hash !== encode) {
@@ -29,16 +29,16 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
                 encode = crypto?.(salt, config?.modules?.encryption?.password);
             }
             if (hash === encode) {
-                sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r is now Paradox-Opped.`);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are now op!`);
+                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f is now Paradox-Opped.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are now op!`);
                 player.addTag("paradoxOpped");
                 paradoxui(player);
             } else {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong.`);
                 paradoxui(player);
             }
         } else {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wrong password!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wrong password!`);
             paradoxui(player);
         }
     } else {
@@ -67,8 +67,8 @@ export function uiOP(opResult: ModalFormResponse, salt: string | number | boolea
             member.setDynamicProperty("hash", encode);
             dynamicPropertyRegistry.set(member.id, member.name);
         }
-        sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You are now op!`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name}§r is now Paradox-Opped.`);
+        sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now op!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name}§f is now Paradox-Opped.`);
         member.addTag("paradoxOpped");
         paradoxui(player);
     }

@@ -6,23 +6,23 @@ import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer, isValidUUID } from "
 function opHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.op) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: op`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: ${prefix}op [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Grants permission to use Paradox AntiCheat features.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: op`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: ${prefix}op [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Grants permission to use Paradox AntiCheat features.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}op`,
-        `        §4- §6Give yourself Paradox-Op§r`,
+        `        §4- §6Give yourself Paradox-Op§f`,
         `    ${prefix}op help`,
-        `        §4- §6Show command help§r`,
+        `        §4- §6Show command help§f`,
         `    ${prefix}op <player>`,
-        `        §4- §6Grant Paradox-Op to another player§r`,
+        `        §4- §6Grant Paradox-Op to another player§f`,
     ]);
 }
 
@@ -46,7 +46,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
 
     if (!operatorHash || !operatorSalt || (operatorHash !== crypto?.(operatorSalt, operator.id) && isValidUUID(operatorSalt as string))) {
         if (!operator.isOp()) {
-            return sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r You need to be Operator to use this command.`);
+            return sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
         }
     }
 
@@ -64,7 +64,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
         operator.setDynamicProperty("salt", targetSalt);
         operator.addTag("paradoxOpped");
 
-        sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r You are now Paradox-Opped!`);
+        sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You are now Paradox-Opped!`);
 
         dynamicPropertyRegistry.set(operator.id, operator.name);
 
@@ -99,15 +99,15 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
 
                 dynamicPropertyRegistry.set(targetPlayer.id, targetPlayer.name);
 
-                sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r You have granted Paradox-Op to ${targetPlayer.name}.`);
-                sendMsgToPlayer(targetPlayer, `§r§4[§6Paradox§4]§r You are now op!`);
-                sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${targetPlayer.name}§r is now Paradox-Opped.`);
+                sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You have granted Paradox-Op to ${targetPlayer.name}.`);
+                sendMsgToPlayer(targetPlayer, `§f§4[§6Paradox§4]§f You are now op!`);
+                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${targetPlayer.name}§f is now Paradox-Opped.`);
                 targetPlayer.addTag("paradoxOpped");
             } else {
-                sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r ${targetPlayer.name} is already Paradox-Opped.`);
+                sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f ${targetPlayer.name} is already Paradox-Opped.`);
             }
         } else {
-            sendMsgToPlayer(operator, `§r§4[§6Paradox§4]§r Could not find player ${targetPlayer.name}.`);
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayer.name}.`);
         }
     } else {
         return opHelp(operator, prefix);

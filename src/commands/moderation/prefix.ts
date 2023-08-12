@@ -11,16 +11,16 @@ function resetPrefix(player: Player) {
             config.customcommands.prefix = "!";
         }
     }
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset!`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been reset!`);
 }
 
 function prefixHelp(player: Player, prefix: string) {
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: prefix`,
-        `§4[§6Usage§4]§r: prefix [optional]`,
-        `§4[§6Optional§4]§r: prefix, help`,
-        `§4[§6Description§4]§r: Changes the prefix for commands. Max is two characters.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: prefix`,
+        `§4[§6Usage§4]§f: prefix [optional]`,
+        `§4[§6Optional§4]§f: prefix, help`,
+        `§4[§6Description§4]§f: Changes the prefix for commands. Max is two characters.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}prefix !!`,
         `    ${prefix}prefix @!`,
         `    ${prefix}prefix $`,
@@ -46,7 +46,7 @@ export function prefix(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -73,16 +73,16 @@ export function prefix(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (args[0][0] == "/") {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Using prefix '/' is not allowed!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Using prefix '/' is not allowed!`);
     }
 
     // Change Prefix command under conditions
     if (args[0].length <= 2 && args[0].length >= 1) {
         resetPrefix(player);
         config.customcommands.prefix = args[0];
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${args[0]}'!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been changed to '${args[0]}'!`);
         return player.addTag("Prefix:" + args[0]);
     } else {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix length cannot be more than 2 characters!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix length cannot be more than 2 characters!`);
     }
 }

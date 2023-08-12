@@ -57,7 +57,7 @@ function beforeantispam(msg: ChatSendBeforeEvent) {
 
         if (chatRecord.count > chatSpamLimit) {
             msg.sendToTargets = true;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You are sending too many messages in a short time!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are sending too many messages in a short time!`);
             chatRecord.offense++;
             chatRecord.lastOffenseTime = now;
         }

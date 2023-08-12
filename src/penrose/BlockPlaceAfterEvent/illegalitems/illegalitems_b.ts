@@ -157,8 +157,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // Anti Shulker Boxes
                 if (antiShulkerBoolean && itemStackId.includes("shulker")) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.typeId.replace("minecraft:", "")} from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${block.typeId.replace("minecraft:", "")} from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Shulker Boxes are not allowed!`);
                     continue;
                 }
 
@@ -167,8 +167,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 const maxStack = blockItemStack.maxAmount;
                 if (stackBanBoolean && currentStack > maxStack) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} x ${currentStack} from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Stacks are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.replace("minecraft:", "")} x ${currentStack} from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Illegal Stacks are not allowed!`);
                     rip(player, blockItemStack, null, block);
                     isFlagged = true;
                     break;
@@ -177,8 +177,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // If the item is in the "illegalitems" object, remove it from the block's inventory and run the "rip" function on it
                 if (itemStackId in illegalitems) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Items are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.replace("minecraft:", "")} from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Illegal Items are not allowed!`);
                     rip(player, blockItemStack, null, block);
                     isFlagged = true;
                     break;
@@ -187,8 +187,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // Illegal Lores
                 if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(blockItemStack.getLore()))) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} with lore from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.replace("minecraft:", "")} with lore from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Item with illegal lores are not allowed!`);
                     rip(player, blockItemStack, null, block);
                     isFlagged = true;
                     break;
@@ -260,8 +260,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                     };
                     const itemStackId = blockContainer.getItem(itemSlot);
                     blockContainer.setItem(itemSlot);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.typeId.replace("minecraft:", "")} with Illegal Enchantments from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal Enchantments are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.typeId.replace("minecraft:", "")} with Illegal Enchantments from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Item with illegal Enchantments are not allowed!`);
                     enchantmentPresenceMap.clear();
                     enchantmentDataMap.clear();
                     inventorySlotMap.clear();

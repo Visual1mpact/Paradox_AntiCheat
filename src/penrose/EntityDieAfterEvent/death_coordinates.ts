@@ -10,7 +10,7 @@ function deathcoordinates(event: EntityDieAfterEvent): void {
 
     const { x, y, z } = deadEntity.location;
 
-    sendMsgToPlayer(deadEntity, `§r§4[§6Paradox§4]§r You died at X: ${x.toFixed(0)}, Y: ${y.toFixed(0)}, Z: ${z.toFixed(0)}.`);
+    sendMsgToPlayer(deadEntity, `§f§4[§6Paradox§4]§f You died at X: ${x.toFixed(0)}, Y: ${y.toFixed(0)}, Z: ${z.toFixed(0)}.`);
 }
 
 const DeathCoordinates = (): void => {

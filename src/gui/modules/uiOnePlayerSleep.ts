@@ -14,19 +14,19 @@ export function uiOPS(opsResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure OPS`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure OPS`);
     }
     if (OnePlayerSleepToggle === true) {
         dynamicPropertyRegistry.set("ops_b", true);
         world.setDynamicProperty("ops_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6OPS§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6OPS§f!`);
         OPS();
     }
     if (OnePlayerSleepToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("ops_b", false);
         world.setDynamicProperty("ops_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4OPS§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4OPS§f!`);
     }
 
     //show the main ui to the player once complete.

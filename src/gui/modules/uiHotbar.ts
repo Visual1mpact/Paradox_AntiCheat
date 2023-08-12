@@ -19,7 +19,7 @@ export function uiHOTBAR(hotbarResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure the hotbar`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure the hotbar`);
     }
     if (configMessageBackup.has(dummy) === false) {
         configMessageBackup.set(dummy, config.modules.hotbar.message);
@@ -39,7 +39,7 @@ export function uiHOTBAR(hotbarResult: ModalFormResponse, player: Player) {
         sendMsg("@a[tag=paradoxOpped]", `${player.name} has disabled §6Hotbar`);
     }
     if (HotbarToggle === false && HotbarRestDefaultMessageToggle === true) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to enable the hotbar toggle to reset the message!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to enable the hotbar toggle to reset the message!`);
         return paradoxui(player);
     }
     if (HotbarToggle === true && HotbarRestDefaultMessageToggle === true) {

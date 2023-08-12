@@ -19,7 +19,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
     const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to enable Notifications.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to enable Notifications.`);
     }
     if (!customrank) {
         try {
@@ -35,10 +35,10 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             }
         } catch (error) {
             //This will throw if the player has no tags
-            //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+            //sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
         }
         member.addTag("Rank:" + predefinedrank[predefinedrankvalue as number]);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has updated ${member.name} Rank.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has updated ${member.name} Rank.`);
         return paradoxui(player);
     }
     if (customrank) {
@@ -55,21 +55,21 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             }
         } catch (error) {
             // This will throw if the player has no tags that match.
-            //sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+            //sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
         }
         member.addTag("Rank:" + customrank);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has updated ${member.name} Rank.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has updated ${member.name} Rank.`);
         if (ChatRanksToggle === true && chatRanksBoolean === false) {
             // Allow
             dynamicPropertyRegistry.set("chatranks_b", true);
             world.setDynamicProperty("chatranks_b", true);
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6ChatRanks§r!`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ChatRanks§f!`);
         }
         if (ChatRanksToggle === false && chatRanksBoolean === true) {
             // Deny
             dynamicPropertyRegistry.set("chatranks_b", false);
             world.setDynamicProperty("chatranks_b", false);
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4ChatRanks§r!`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ChatRanks§f!`);
         }
         return paradoxui(player);
     }

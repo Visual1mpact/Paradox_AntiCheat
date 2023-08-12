@@ -17,21 +17,21 @@ export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // Make sure they don't punish themselves
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot wipe yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot wipe yourself.`);
     }
     //Make sure they don't punish staff!
     if (member.hasTag("paradoxOpped")) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot wipe Staff.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot wipe Staff.`);
     }
     // There are 30 slots ranging from 0 to 29
     // Let's clear out that ender chest
@@ -39,8 +39,8 @@ export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string
         member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
     // Notify staff and player that punishment has taken place
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your Enderchest has been wiped!`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f Your Enderchest has been wiped!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r Wiped ${member.name}'s enderchest!`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f Wiped ${member.name}'s enderchest!`);
     return paradoxui(player);
 }

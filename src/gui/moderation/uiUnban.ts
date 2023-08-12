@@ -13,14 +13,14 @@ export function uiUNBAN(unbanResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to Ban a player.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to Ban a player.`);
     }
     if (deleteUnban === true) {
         queueUnban.delete(textField as string);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${textField} has been removed from the unban queue!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${textField} has been removed from the unban queue!`);
     }
     // Add player to queue
     queueUnban.add(textField as string);
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${textField} is queued to be unbanned!`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${textField} is queued to be unbanned!`);
     return paradoxui(player);
 }

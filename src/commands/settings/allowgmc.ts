@@ -8,24 +8,24 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function allowgmcHelp(player: Player, prefix: string, creativeGMBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.allowgmc) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (creativeGMBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: allowgmc`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: allowgmc [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles Gamemode 1 (Creative) to be used.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: allowgmc`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: allowgmc [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles Gamemode 1 (Creative) to be used.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}allowgmc`,
         `    ${prefix}allowgmc help`,
     ]);
@@ -49,7 +49,7 @@ export function allowgmc(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -75,16 +75,16 @@ export function allowgmc(message: ChatSendAfterEvent, args: string[]) {
         if (adventureGMBoolean === true && survivalGMBoolean === true) {
             dynamicPropertyRegistry.set("adventuregm_b", false);
             world.setDynamicProperty("adventuregm_b", false);
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Since all gamemodes were disallowed, Adventure mode has been enabled.`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Since all gamemodes were disallowed, Adventure mode has been enabled.`);
             Adventure();
             return;
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disallowed §4Gamemode 1 (Creative)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disallowed §4Gamemode 1 (Creative)§f to be used!`);
         Creative();
     } else if (creativeGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("creativegm_b", false);
         world.setDynamicProperty("creativegm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has allowed §6Gamemode 1 (Creative)§r to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has allowed §6Gamemode 1 (Creative)§f to be used!`);
     }
 }

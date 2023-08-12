@@ -28,17 +28,17 @@ function dhms(ms: number) {
 function goHomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.gohome) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: gohome`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: gohome [optional]`,
-        `§4[§6Optional§4]§r: name, help`,
-        `§4[§6Description§4]§r: Return home to a specified saved location.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: gohome`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: gohome [optional]`,
+        `§4[§6Optional§4]§f: name, help`,
+        `§4[§6Description§4]§f: Return home to a specified saved location.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}gohome barn`,
         `    ${prefix}gohome help`,
     ]);
@@ -73,7 +73,7 @@ export async function gohome(message: ChatSendAfterEvent, args: string[]) {
 
     // Don't allow spaces
     if (args.length > 1) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No spaces in names please!`);
     }
 
     // Hash the coordinates for security
@@ -92,11 +92,11 @@ export async function gohome(message: ChatSendAfterEvent, args: string[]) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption
-            player.removeTag(tags[i])
+            player.removeTag(tags[i]);
             // Change to AES Encryption so we can abandon the old method
             tags[i] = decryptString(tags[i], salt as string);
-            tags[i] = encryptString(tags[i], salt as string)
-            player.addTag(tags[i])
+            tags[i] = encryptString(tags[i], salt as string);
+            player.addTag(tags[i]);
         }
         if (tags[i].startsWith("1337")) {
             // Decode it so we can verify it
@@ -126,7 +126,7 @@ export async function gohome(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!homex || !homey || !homez || !dimension) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Home '${args[0]}' does not exist!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
     } else {
         let cooldownCalc: number;
         let activeTimer: string;
@@ -149,7 +149,7 @@ export async function gohome(message: ChatSendAfterEvent, args: string[]) {
         if (cooldownCalc === msSettings || cooldownCalc <= 0 || uniqueId === player.name) {
             // This timer is a grace period
             setTimer(player.id);
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Welcome back!`);
             player.teleport({ x: homex, y: homey, z: homez }, { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
             // Delete old key and value
             cooldownTimer.delete(player);
@@ -157,7 +157,7 @@ export async function gohome(message: ChatSendAfterEvent, args: string[]) {
             cooldownTimer.set(player, new Date().getTime());
         } else {
             // Teleporting to fast
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Too fast! Please wait for ${activeTimer} before going home.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Too fast! Please wait for ${activeTimer} before going home.`);
         }
     }
 }

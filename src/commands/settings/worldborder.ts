@@ -7,24 +7,24 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.worldborder) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (worldBorderBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: worldborder`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: worldborder <value> [optional]`,
-        `§4[§6Optional§4]§r: disable, help`,
-        `§4[§6Description§4]§r: Sets the world border and restricts players to that border.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: worldborder`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: worldborder <value> [optional]`,
+        `§4[§6Optional§4]§f: disable, help`,
+        `§4[§6Description§4]§f: Sets the world border and restricts players to that border.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}worldborder 10000 5000`,
         `    ${prefix}worldborder -o 10000 -n 5000 -e 10000`,
         `    ${prefix}worldborder -overworld 10000 -nether 5000`,
@@ -37,7 +37,7 @@ function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: str
 }
 
 function setWorldBorder(player: Player, overworldSize: number, netherSize: number, endSize: number) {
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has set the §6World Border§r! Overworld: ${overworldSize} Nether: ${netherSize} End: ${endSize}`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set the §6World Border§f! Overworld: ${overworldSize} Nether: ${netherSize} End: ${endSize}`);
     dynamicPropertyRegistry.set("worldborder_b", true);
     dynamicPropertyRegistry.set("worldborder_n", Math.abs(overworldSize));
     dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(netherSize));
@@ -63,7 +63,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     const prefix = getPrefix(player);
@@ -76,7 +76,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     // Shutdown worldborder
     if (args[0] === "disable") {
         // Disable Worldborder
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled the §6World Border§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled the §6World Border§f!`);
         dynamicPropertyRegistry.set("worldborder_b", false);
         dynamicPropertyRegistry.set("worldborder_n", 0);
         dynamicPropertyRegistry.set("worldborder_nether_n", 0);

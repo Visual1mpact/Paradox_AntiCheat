@@ -6,17 +6,17 @@ import { getScore, getPrefix, sendMsgToPlayer } from "../../util.js";
 function modulesHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.modules) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: modules`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: modules [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Shows a list of modules that are enabled and disabled in Paradox.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: modules`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: modules [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Shows a list of modules that are enabled and disabled in Paradox.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}modules`,
         `    ${prefix}modules help`,
     ]);
@@ -40,7 +40,7 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -110,51 +110,51 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
     const status = (b: string | number | boolean) => (b ? "§aENABLED" : "§4DISABLED");
 
     sendMsgToPlayer(player, [
-        `§r§4[§6Paradox§4]§r List Of Modules:`,
-        `§6|§r Anti-GMA: ${status(adventureGMBoolean)}`,
-        `§6|§r Anti-GMS: ${status(survivalGMBoolean)}`,
-        `§6|§r Anti-GMC: ${status(creativeGMBoolean)}`,
-        `§6|§r Badpackets: ${status(badPackets1Boolean)}`,
-        `§6|§r SpammerA: ${status(spammerABoolean)}`,
-        `§6|§r SpammerB: ${status(spammerBBoolean)}`,
-        `§6|§r SpammerC: ${status(spammerCBoolean)}`,
-        `§6|§r Anti-Spam: ${status(antiSpamBoolean)}`,
-        `§6|§r CrasherA: ${status(crasherABoolean)}`,
-        `§6|§r NamespoofA: ${status(nameSpoofABoolean)}`,
-        `§6|§r NamespoofB: ${status(nameSpoofBBoolean)}`,
-        `§6|§r Bedrock: ${status(bedrockValidateBoolean)}`,
-        `§6|§r ReachA: ${status(reachABoolean)}`,
-        `§6|§r ReachB: ${status(reachBBoolean)}`,
-        `§6|§r JesusA: ${status(jesusABoolean)}`,
-        `§6|§r NoSlowA: ${status(noSlowBoolean)}`,
-        `§6|§r InvalidSprintA: ${status(InvalidSprintABoolean)}`,
-        `§6|§r FlyA: ${status(flyABoolean)}`,
-        `§6|§r AntiFallA: ${status(antiFallABoolean)}`,
-        `§6|§r IllegalItemsA: ${illegalItemsABoolean ? `§aENABLED§r [Ban Illegal Stacks: ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
-        `§6|§r IllegalItemsB: ${illegalItemsBBoolean ? `§aENABLED§r [Ban Illegal Stacks: ${status(stackBanBoolean)}§r]` : "§4DISABLED"}`,
-        `§6|§r IllegalItemsC: ${status(illegalItemsCBoolean)}`,
-        `§6|§r IllegalEnchantments: ${status(illegalEnchantmentBoolean)}`,
-        `§6|§r IllegalLores: ${status(illegalLoresBoolean)}`,
-        `§6|§r Anti-ScaffoldA: ${status(antiScaffoldABoolean)}`,
-        `§6|§r Anti-NukerA: ${status(antiNukerABoolean)}`,
-        `§6|§r XrayA: ${status(xrayaBoolean)}`,
-        `§6|§r Chat: ${status(chatRanksBoolean)}`,
-        `§6|§r Anti-Shulkers: ${status(antiShulkerBoolean)}`,
-        `§6|§r Hotbar: ${status(hotbarBoolean)}`,
-        `§6|§r OPS: ${status(opsBoolean)}`,
-        `§6|§r Salvage: ${status(savageBoolean)}`,
-        `§6|§r Lockdown: ${status(lockdownBoolean)}`,
-        `§6|§r Badpackets2: ${status(badPackets2Boolean)}`,
-        `§6|§r OverideCommandBlocksEnabled: ${status(cmds)}`,
-        `§6|§r RemoveCommandBlocks: ${status(commandblocks)}`,
-        `§6|§r Anti-Knockback: ${status(antikb)}`,
-        `§6|§r Anti-KillAura: ${status(antiKillAuraBoolean)}`,
-        `§6|§r Anti-Enchanted: ${status(encharmor)}`,
-        `§6|§r Autoclicker: ${status(autoclickerBoolean)}`,
-        `§6|§r World Border: ${worldBorderBoolean ? `§aENABLED§r (Overworld: §6${worldBorderOverworldNumber}§r Nether: §6${worldBorderNetherNumber}§r End: §6${worldBorderEndNumber}§r)` : "§4DISABLED"}`,
-        `§6|§r ClearLag: ${status(clearLagBoolean)}`,
-        `§6|§r ShowRules: ${status(showrulesBoolean)}`,
-        `§6|§r AutoBan: ${status(autobanBoolean)}`,
-        `§6|§r AFK: ${status(afkBoolean)}`,
+        `§f§4[§6Paradox§4]§f List Of Modules:`,
+        `§6|§f Anti-GMA: ${status(adventureGMBoolean)}`,
+        `§6|§f Anti-GMS: ${status(survivalGMBoolean)}`,
+        `§6|§f Anti-GMC: ${status(creativeGMBoolean)}`,
+        `§6|§f Badpackets: ${status(badPackets1Boolean)}`,
+        `§6|§f SpammerA: ${status(spammerABoolean)}`,
+        `§6|§f SpammerB: ${status(spammerBBoolean)}`,
+        `§6|§f SpammerC: ${status(spammerCBoolean)}`,
+        `§6|§f Anti-Spam: ${status(antiSpamBoolean)}`,
+        `§6|§f CrasherA: ${status(crasherABoolean)}`,
+        `§6|§f NamespoofA: ${status(nameSpoofABoolean)}`,
+        `§6|§f NamespoofB: ${status(nameSpoofBBoolean)}`,
+        `§6|§f Bedrock: ${status(bedrockValidateBoolean)}`,
+        `§6|§f ReachA: ${status(reachABoolean)}`,
+        `§6|§f ReachB: ${status(reachBBoolean)}`,
+        `§6|§f JesusA: ${status(jesusABoolean)}`,
+        `§6|§f NoSlowA: ${status(noSlowBoolean)}`,
+        `§6|§f InvalidSprintA: ${status(InvalidSprintABoolean)}`,
+        `§6|§f FlyA: ${status(flyABoolean)}`,
+        `§6|§f AntiFallA: ${status(antiFallABoolean)}`,
+        `§6|§f IllegalItemsA: ${illegalItemsABoolean ? `§aENABLED§f [Ban Illegal Stacks: ${status(stackBanBoolean)}§f]` : "§4DISABLED"}`,
+        `§6|§f IllegalItemsB: ${illegalItemsBBoolean ? `§aENABLED§f [Ban Illegal Stacks: ${status(stackBanBoolean)}§f]` : "§4DISABLED"}`,
+        `§6|§f IllegalItemsC: ${status(illegalItemsCBoolean)}`,
+        `§6|§f IllegalEnchantments: ${status(illegalEnchantmentBoolean)}`,
+        `§6|§f IllegalLores: ${status(illegalLoresBoolean)}`,
+        `§6|§f Anti-ScaffoldA: ${status(antiScaffoldABoolean)}`,
+        `§6|§f Anti-NukerA: ${status(antiNukerABoolean)}`,
+        `§6|§f XrayA: ${status(xrayaBoolean)}`,
+        `§6|§f Chat: ${status(chatRanksBoolean)}`,
+        `§6|§f Anti-Shulkers: ${status(antiShulkerBoolean)}`,
+        `§6|§f Hotbar: ${status(hotbarBoolean)}`,
+        `§6|§f OPS: ${status(opsBoolean)}`,
+        `§6|§f Salvage: ${status(savageBoolean)}`,
+        `§6|§f Lockdown: ${status(lockdownBoolean)}`,
+        `§6|§f Badpackets2: ${status(badPackets2Boolean)}`,
+        `§6|§f OverideCommandBlocksEnabled: ${status(cmds)}`,
+        `§6|§f RemoveCommandBlocks: ${status(commandblocks)}`,
+        `§6|§f Anti-Knockback: ${status(antikb)}`,
+        `§6|§f Anti-KillAura: ${status(antiKillAuraBoolean)}`,
+        `§6|§f Anti-Enchanted: ${status(encharmor)}`,
+        `§6|§f Autoclicker: ${status(autoclickerBoolean)}`,
+        `§6|§f World Border: ${worldBorderBoolean ? `§aENABLED§f (Overworld: §6${worldBorderOverworldNumber}§f Nether: §6${worldBorderNetherNumber}§f End: §6${worldBorderEndNumber}§f)` : "§4DISABLED"}`,
+        `§6|§f ClearLag: ${status(clearLagBoolean)}`,
+        `§6|§f ShowRules: ${status(showrulesBoolean)}`,
+        `§6|§f AutoBan: ${status(autobanBoolean)}`,
+        `§6|§f AFK: ${status(afkBoolean)}`,
     ]);
 }

@@ -6,17 +6,17 @@ import { getPrefix, sendMsgToPlayer } from "../../util.js";
 function despawnHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.despawn) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: despawn`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: despawn [optional]`,
-        `§4[§6Optional§4]§r: entity, all, help`,
-        `§4[§6Description§4]§r: Despawns all or specified entities if they exist.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: despawn`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: despawn [optional]`,
+        `§4[§6Optional§4]§f: entity, all, help`,
+        `§4[§6Description§4]§f: Despawns all or specified entities if they exist.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}despawn all`,
         `    ${prefix}despawn iron_golem`,
         `    ${prefix}despawn creeper`,
@@ -42,7 +42,7 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -81,9 +81,9 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
             }
         }
         if (counter > 0) {
-            return sendMsgToPlayer(player, ` §6|§r §4[§r${requestedEntity}§4]§r §6Amount: §4x${counter}§r`);
+            return sendMsgToPlayer(player, ` §6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
         } else {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entity found to despawn!`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entity found to despawn!`);
         }
     }
     // All entities
@@ -112,16 +112,16 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` §6|§r §4[§r${entity}§4]§r §6Amount: §4x${count}§r\n`;
+                    entityMessage += ` §6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
                     totalCounter += count;
                 }
             }
         }
         if (totalCounter > 0) {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Despawned:`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Despawned:`);
             return sendMsgToPlayer(player, entityMessage);
         } else {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No entities found to despawn!`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entities found to despawn!`);
         }
     }
 }

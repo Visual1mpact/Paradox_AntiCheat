@@ -122,9 +122,9 @@ const freezePlayers = () => {
 
             // If both tags exist display custom message
             if (hasAuraTag && hasNukerTag) {
-                player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6KA§4]§f§4[§6NA§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+                player.onScreenDisplay.setTitle("§f§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6KA§4]§f§4[§6NA§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
             } else {
-                player.onScreenDisplay.setTitle("§r§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+                player.onScreenDisplay.setTitle("§f§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §o§4[§6Command§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
             }
         }
     }
@@ -153,7 +153,7 @@ export const freezeLeave = (): void => {
     world.afterEvents.playerLeave.subscribe((player) => {
         const boolean = freezeDataMap.has(player.playerId);
         if (boolean) {
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.playerName}§r was frozen and left the server.`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.playerName}§f was frozen and left the server.`);
         }
     });
 };
@@ -163,7 +163,7 @@ export const freezeJoin = (): void => {
     world.afterEvents.playerJoin.subscribe((player) => {
         const boolean = freezeDataMap.has(player.playerId);
         if (boolean) {
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.playerName}§r was frozen and returned to the server.`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.playerName}§f was frozen and returned to the server.`);
         }
     });
 };
