@@ -270,26 +270,5 @@ export default {
             enabled: true,
             minutes: 10,
         },
-        /**
-         * Add a password in-between the quotes.
-         *
-         * Example:
-         * "password": "test"
-         *
-         * Remember this password as it will be required to gain permission to use Paradox as Staff.
-         *
-         * Example:
-         * !op test
-         *
-         * After you gain permissions you can give others op in a normal fashion.
-         *
-         * Example:
-         * !op gamertag
-         *
-         * Change your password frequently and only share with trusted sources.
-         */
-        encryption: {
-            password: "",
-        },
     },
 };

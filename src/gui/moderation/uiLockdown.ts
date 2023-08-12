@@ -1,6 +1,5 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { crypto, sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -21,7 +20,7 @@ export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Play
             // Check for hash/salt and validate password
             const hash = pl.getDynamicProperty("hash");
             const salt = pl.getDynamicProperty("salt");
-            const encode = crypto?.(salt, config?.modules?.encryption?.password);
+            const encode = crypto?.(salt, pl.id);
             if (hash !== undefined && encode === hash) {
                 continue;
             }

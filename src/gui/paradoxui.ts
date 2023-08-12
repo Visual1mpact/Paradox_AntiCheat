@@ -66,7 +66,7 @@ async function paradoxui(player: Player) {
 
     const hash = player.getDynamicProperty("hash");
     const salt = player.getDynamicProperty("salt");
-    const encode = crypto(salt, config.modules.encryption.password) ?? null;
+    const encode = crypto(salt, player.id) ?? null;
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     maingui.title("§4Paradox§4");
     maingui.body("§eA utility to fight against malicious hackers on Bedrock Edition§e\n" + "§rVersion: §2" + versionFile.version);

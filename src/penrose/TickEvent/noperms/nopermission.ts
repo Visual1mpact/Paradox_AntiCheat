@@ -1,5 +1,4 @@
 import { world, Player, EntityQueryOptions, system } from "@minecraft/server";
-import config from "../../../data/config.js";
 import { crypto, sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
@@ -27,7 +26,7 @@ function noperms() {
         // Check for hash/salt and validate password
         const hash = entity.getDynamicProperty("hash");
         const salt = entity.getDynamicProperty("salt");
-        const encode = crypto?.(salt, config?.modules?.encryption?.password);
+        const encode = crypto?.(salt, entity.id);
         entity.removeTag("paradoxOpped");
         if (encode === hash) {
             entity.removeDynamicProperty("hash");
