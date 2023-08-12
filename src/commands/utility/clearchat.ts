@@ -18,7 +18,9 @@ function clearChatHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Will clear the chat.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}clearchat`,
+        `        §4- §6Clear the chat§f`,
         `    ${prefix}clearchat help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

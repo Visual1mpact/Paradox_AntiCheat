@@ -19,7 +19,9 @@ function statsHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Shows logs from the specified user.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}stats ${player.name}`,
+        `        §4- §6Show logs for the specified user§f`,
         `    ${prefix}stats help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

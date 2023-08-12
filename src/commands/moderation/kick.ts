@@ -18,9 +18,13 @@ function kickHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Kick the specified user and optionally gives a reason.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}kick ${player.name}`,
+        `        §4- §6Kick ${player.name} without specifying a reason§f`,
         `    ${prefix}kick ${player.name} Hacker!`,
+        `        §4- §6Kick ${player.name} with the reason "Hacker!"§f`,
         `    ${prefix}kick ${player.name} Stop trolling!`,
+        `        §4- §6Kick ${player.name} with the reason "Stop trolling!"§f`,
         `    ${prefix}kick help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

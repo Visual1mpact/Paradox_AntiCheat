@@ -17,7 +17,9 @@ function delhomeHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Will delete specified saved home location.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}delhome cave`,
+        `        §4- §6Delete the saved home location named "cave"§f`,
         `    ${prefix}delhome help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

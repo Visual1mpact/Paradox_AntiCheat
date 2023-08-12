@@ -18,9 +18,13 @@ function banHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Bans the specified user and optionally gives a reason.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}ban ${player.name}`,
+        `        §4- §6Ban ${player.name} without specifying a reason§f`,
         `    ${prefix}ban ${player.name} Hacker!`,
+        `        §4- §6Ban ${player.name} with the reason "Hacker!"§f`,
         `    ${prefix}ban ${player.name} Caught exploiting!`,
+        `        §4- §6Ban ${player.name} with the reason "Caught exploiting!"§f`,
         `    ${prefix}ban help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

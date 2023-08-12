@@ -18,7 +18,9 @@ function deopHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Revokes permission to use Paradox AntiCheat features.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}deop ${player.name}`,
+        `        §4- §6Revoke Paradox-Op permission from players§f`,
         `    ${prefix}deop help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

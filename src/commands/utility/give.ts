@@ -19,10 +19,15 @@ function giveHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Gives player items.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}give ${player.name} diamond 64`,
+        `        §4- §6Give ${player.name} 64 diamonds§f`,
         `    ${prefix}give ${player.name} iron_ore 64`,
+        `        §4- §6Give ${player.name} 64 iron ore§f`,
         `    ${prefix}give ${player.name} tropical_fish 64`,
+        `        §4- §6Give ${player.name} 64 tropical fish§f`,
         `    ${prefix}give ${player.name} log2 64 1`,
+        `        §4- §6Give ${player.name} 64 spruce logs§f`,
         `    ${prefix}give help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

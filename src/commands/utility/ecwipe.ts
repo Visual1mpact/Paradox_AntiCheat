@@ -18,7 +18,9 @@ function ecWipeHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Will wipe out player's entire ender chest.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}ecwipe ${player.name}`,
+        `        §4- §6Wipe out the entire ender chest of ${player.name}§f`,
         `    ${prefix}ecwipe help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

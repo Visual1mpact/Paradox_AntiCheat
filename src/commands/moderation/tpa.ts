@@ -18,8 +18,11 @@ function tpaHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Teleport to a player or vice versa.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}tpa ${player.name} Steve`,
+        `        §4- §6Request to teleport to ${player.name} from Steve§f`,
         `    ${prefix}tpa Steve ${player.name}`,
+        `        §4- §6Request to teleport Steve to ${player.name}§f`,
         `    ${prefix}tpa help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

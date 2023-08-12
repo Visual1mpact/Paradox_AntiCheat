@@ -30,9 +30,13 @@ function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | numb
         `§4[§6Description§4]§f: Displays a hotbar message for all player's currently online.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}hotbar`,
+        `        §4- §6Display the current hotbar message§f`,
         `    ${prefix}hotbar disable`,
-        `    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843`,
+        `        §4- §6Disable the hotbar message§f`,
+        `    ${prefix}hotbar Anarchy Server | Realm Code: 34fhf843`,
+        `        §4- §6Set the hotbar message to "Anarchy Server | Realm Code: 34fhf843"§f`,
         `    ${prefix}hotbar help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

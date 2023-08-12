@@ -17,7 +17,9 @@ function listHomeHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Shows a list of saved home locations.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}listhome`,
+        `        §4- §6Show a list of saved home locations§f`,
         `    ${prefix}listhome help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

@@ -17,7 +17,9 @@ function setHomeHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Saves home location based on current coordinates. Up to ${config.modules.setHome.max} total.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}sethome barn`,
+        `        §4- §6Save a home location with the name "barn"§f`,
         `    ${prefix}sethome help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

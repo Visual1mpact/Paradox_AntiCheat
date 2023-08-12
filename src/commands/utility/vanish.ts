@@ -18,7 +18,9 @@ function vanishHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Turns the player invisible to monitor online player's.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}vanish`,
+        `        §4- §6Turns the player invisible to other players§f`,
         `    ${prefix}vanish help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

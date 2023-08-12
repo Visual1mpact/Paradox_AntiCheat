@@ -17,7 +17,9 @@ function biomeHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Sends the current biome and direction the player is facing. §6Note you need to enable Molang. `,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}biome`,
+        `        §4- §6Send the current biome and direction to the player§f`,
         `    ${prefix}biome help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 /**

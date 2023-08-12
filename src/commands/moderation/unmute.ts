@@ -18,8 +18,11 @@ function unmuteHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Unmutes the specified user and optionally gives a reason.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}unmute ${player.name}`,
+        `        §4- §6Unmute ${player.name} without specifying a reason§f`,
         `    ${prefix}unmute ${player.name} You may chat`,
+        `        §4- §6Unmute ${player.name} with the reason "You may chat"§f`,
         `    ${prefix}unmute help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

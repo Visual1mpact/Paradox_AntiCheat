@@ -18,8 +18,11 @@ function muteHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Mutes the specified user and optionally gives reason.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}mute ${player.name}`,
+        `        §4- §6Mute ${player.name} without specifying a reason§f`,
         `    ${prefix}mute ${player.name} Stop spamming!`,
+        `        §4- §6Mute ${player.name} with the reason "Stop spamming!"§f`,
         `    ${prefix}mute help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

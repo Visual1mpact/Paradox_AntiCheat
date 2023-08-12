@@ -25,9 +25,15 @@ function tagHelp(player: Player, prefix: string, chatRanksBoolean: string | numb
         `§4[§6Description§4]§f: Gives one or more ranks to a specified player or resets it.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}tag ${player.name} Admin`,
+        `        §4- §6Give the "Admin" rank to the specified player§f`,
         `    ${prefix}tag ${player.name} Contributor--Mod`,
+        `        §4- §6Give the "Contributor" and "Mod" ranks to the specified player§f`,
         `    ${prefix}tag ${player.name} Staff--Mod--Helper`,
+        `        §4- §6Give the "Staff", "Mod", and "Helper" rank to the specified player§f`,
+        `    ${prefix}tag reset ${player.name}`,
+        `        §4- §6Reset all ranks of the specified player§f`,
         `    ${prefix}tag help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

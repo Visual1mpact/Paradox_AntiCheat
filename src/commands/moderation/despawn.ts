@@ -18,9 +18,13 @@ function despawnHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Despawns all or specified entities if they exist.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}despawn all`,
+        `        §4- §6Despawn all entities§f`,
         `    ${prefix}despawn iron_golem`,
+        `        §4- §6Despawn all "iron_golem" entities§f`,
         `    ${prefix}despawn creeper`,
+        `        §4- §6Despawn all "creeper" entities§f`,
         `    ${prefix}despawn help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

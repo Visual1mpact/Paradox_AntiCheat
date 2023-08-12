@@ -19,7 +19,9 @@ function fullReportHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: View logs from all player's currently online.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}fullreport`,
+        `        §4- §6View logs from all currently online players§f`,
         `    ${prefix}fullreport help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

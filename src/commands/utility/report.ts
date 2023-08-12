@@ -17,8 +17,11 @@ function reportHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Reports player's to online Staff for malicious activities.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}report ${player.name}`,
+        `        §4- §6Report ${player.name} to online Staff§f`,
         `    ${prefix}report ${player.name} Caught hacking!`,
+        `        §4- §6Report ${player.name} for hacking with a reason§f`,
         `    ${prefix}report help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

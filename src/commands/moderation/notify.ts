@@ -18,7 +18,9 @@ function notifyHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Toggles cheat notifications like a toggle.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}notify`,
+        `        §4- §6Toggle cheat notifications§f`,
         `    ${prefix}notify help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

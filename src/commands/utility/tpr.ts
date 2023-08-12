@@ -31,7 +31,9 @@ function tprHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Will send requests to tp to players.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}tpr ${player.name}`,
+        `        §4- §6Send a teleport request to the specified player§f`,
         `    ${prefix}tpr help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

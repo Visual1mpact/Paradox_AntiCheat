@@ -40,7 +40,9 @@ function goHomeHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Return home to a specified saved location.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}gohome barn`,
+        `        §4- §6Return to the "barn" home§f`,
         `    ${prefix}gohome help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

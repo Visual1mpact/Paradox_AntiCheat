@@ -18,7 +18,9 @@ function punishHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Removes all items from the player's inventory and ender chest.`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}punish ${player.name}`,
+        `        §4- §6Remove all items from ${player.name}§f`,
         `    ${prefix}punish help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 

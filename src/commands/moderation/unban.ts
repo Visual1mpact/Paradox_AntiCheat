@@ -33,7 +33,9 @@ function unbanHelp(player: Player, prefix: string) {
         `§4[§6Description§4]§f: Allows specified players to join if banned (Doesn't include global ban).`,
         `§4[§6Examples§4]§f:`,
         `    ${prefix}unban ${player.name}`,
+        `        §4- §6Allow ${player.name} to join if banned§f`,
         `    ${prefix}unban help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
