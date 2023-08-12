@@ -77,7 +77,7 @@ import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
 import { antifallA } from "./settings/antifalla.js";
-import { showrules } from "./moderation/showrules.js";
+import { showrules } from "./settings/showrules.js";
 import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
 import { autoban } from "./settings/autoban.js";
