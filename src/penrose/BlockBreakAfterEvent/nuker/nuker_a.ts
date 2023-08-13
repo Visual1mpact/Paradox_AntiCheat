@@ -1,4 +1,4 @@
-import { world, BlockBreakAfterEvent, system, EntityQueryOptions, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { world, BlockBreakAfterEvent, system, EntityQueryOptions, PlayerLeaveAfterEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
@@ -168,11 +168,33 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
         "minecraft:sweet_berries",
     ];
 
+    const efficiencyLevels: Record<number, number> = {
+        0: 0.625, // No enchantment
+        1: 0.5, // Efficiency I
+        2: 0.375, // Efficiency II
+        3: 0.25, // Efficiency III
+        4: 0.125, // Efficiency IV
+        5: 0.0625, // Efficiency V
+    };
+
     const now = Date.now();
     const lastBreak = lastBreakTime.get(player.id);
     const counter = breakCounter.get(player.id) || 0;
 
-    if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && now - lastBreak < 5) {
+    const hand = player.selectedSlot;
+    const inventory = player.getComponent("inventory") as EntityInventoryComponent;
+    const container = inventory.container;
+    const item = container.getItem(hand);
+    const itemEnchantmentComponent = item?.getComponent("enchantments") as ItemEnchantsComponent;
+    const itemEfficiencyLevel = itemEnchantmentComponent?.enchantments?.getEnchantment("efficiency")?.level || 0;
+
+    const requiredTimeDifference = efficiencyLevels[itemEfficiencyLevel];
+    const timeDifferenceInSeconds = (now - lastBreak) / 1000;
+
+    console.log(timeDifferenceInSeconds);
+    console.log(requiredTimeDifference + "\n");
+
+    if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && timeDifferenceInSeconds < requiredTimeDifference) {
         if (counter >= 3) {
             const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
             const blockID = brokenBlockPermutation.clone();
