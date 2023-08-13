@@ -191,9 +191,6 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
     const requiredTimeDifference = efficiencyLevels[itemEfficiencyLevel];
     const timeDifferenceInSeconds = (now - lastBreak) / 1000;
 
-    console.log(timeDifferenceInSeconds);
-    console.log(requiredTimeDifference + "\n");
-
     if (vegetation.indexOf(brokenBlockPermutation.type.id) === -1 && lastBreak && timeDifferenceInSeconds < requiredTimeDifference) {
         if (counter >= 3) {
             const blockLoc = dimension.getBlock({ x: x, y: y, z: z });
