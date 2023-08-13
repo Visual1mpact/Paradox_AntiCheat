@@ -86,6 +86,9 @@ export async function banMessage(player: Player) {
             player.triggerEvent("paradox:kick");
         });
     }
+
+    // Notify staff that a player was banned
+    sendMsg("@a[tag=paradoxOpped]", [`§f§4[§6Paradox§4]§f ${player.name} has been banned!`, `§4[§6Banned By§4]§f: ${by || "§7N/A"}`, `§4[§6Reason§4]§f: ${reason || "§7N/A"}`]);
 }
 
 /**
