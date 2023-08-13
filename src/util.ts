@@ -74,13 +74,13 @@ export async function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        player.runCommandAsync(`kick ${player.name} §f\n§l§cYOU ARE BANNED!\n§f§eBanned By:§f ${by || "N/A"}\n§bReason:§f ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`).catch(() => {
+        player.runCommandAsync(`kick ${player.name} §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}\n§b${config.modules.banAppeal.discordLink}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         });
     } else {
-        player.runCommandAsync(`kick ${player.name} §f\n§l§cYOU ARE BANNED!\n§f\n§eBanned By:§f ${by || "N/A"}\n§bReason:§f ${reason || "N/A"}`).catch(() => {
+        player.runCommandAsync(`kick ${player.name} §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
