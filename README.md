@@ -68,7 +68,6 @@
 <h2>Important Notes</h2>
 <ul>
   <li>Paradox will kick you out if you have any illegal items in your inventory so if you think Paradox may flag you after installing then it is highly suggested to drop your entire inventory prior to activating this Anti Cheat!!!</li>
-  <li>If you reset your world for any reason then it is recommended to change <code>password</code>.</li>
 </ul>
 
 <!-- Development Environment Setup -->
