@@ -256,7 +256,7 @@ export default {
         },
         banAppeal: {
             enabled: false,
-            discordLink: "§9To appeal your ban visit our discord: §fhttps://discord.gg",
+            discordLink: "https://discord.gg",
         },
         autoBan: {
             enabled: false,
