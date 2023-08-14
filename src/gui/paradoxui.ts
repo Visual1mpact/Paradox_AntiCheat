@@ -182,20 +182,18 @@ async function paradoxui(player: Player) {
                 const Locations: string[] = [];
                 const coordsArray: string[] = [];
                 for (let i = 0; i < tags.length; i++) {
-                    /**
-                     * This first if statement is to verify if they have old coordinates
-                     * not encrypted. If so then we encrypt it now. This is only a temporary
-                     * patch to minimize players having to manually record and remove the old
-                     * tags. Eventually this will be removed.
-                     */
-                    if (tags[i].startsWith("LocationHome:")) {
+                    // 6f78 is temporary and will be removed
+                    if (tags[i].startsWith("6f78")) {
+                        // Remove old encryption
                         player.removeTag(tags[i]);
-                        tags[i] = encryptString(tags[i], String(salt));
+                        // Change to AES Encryption so we can abandon the old method
+                        tags[i] = decryptString(tags[i], salt as string);
+                        tags[i] = encryptString(tags[i], salt as string);
                         player.addTag(tags[i]);
                     }
-                    if (tags[i].startsWith("6f78")) {
+                    if (tags[i].startsWith("1337")) {
                         // Decode it so we can verify it
-                        tags[i] = decryptString(tags[i], String(salt));
+                        tags[i] = decryptString(tags[i], salt as string);
                         // If invalid then skip it
                         if (tags[i].startsWith("LocationHome:") === false) {
                             continue;

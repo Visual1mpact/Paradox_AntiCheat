@@ -37,10 +37,19 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         let encryptedString: string = "";
         const tags = player.getTags();
         for (let i = 0; i < tags.length; i++) {
+            // 6f78 is temporary and will be removed
             if (tags[i].startsWith("6f78")) {
+                // Remove old encryption
+                player.removeTag(tags[i]);
+                // Change to AES Encryption so we can abandon the old method
+                tags[i] = decryptString(tags[i], salt as string);
+                tags[i] = encryptString(tags[i], salt as string);
+                player.addTag(tags[i]);
+            }
+            if (tags[i].startsWith("1337")) {
                 encryptedString = tags[i];
                 // Decode it so we can verify it
-                tags[i] = decryptString(tags[i], String(salt));
+                tags[i] = decryptString(tags[i], salt as string);
             }
             if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                 player.removeTag(encryptedString);
@@ -49,9 +58,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
             }
         }
     }
-    if (!newLocationName) {
-        //do nothing as a name value was not set.
-    } else {
+    if (newLocationName) {
         //A value was entered execute the code bellow.
         //First check to make sure the same location name entered doesnt already exist
         let counter = 0;
@@ -102,7 +109,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         }
         if (doSave === true) {
             const decryptedLocationString = `LocationHome:${newLocationName} X:${currentX} Y:${currentY} Z:${currentZ} Dimension:${currentDimension}`;
-            const security = encryptString(decryptedLocationString, String(salt));
+            const security = encryptString(decryptedLocationString, salt as string);
             player.addTag(security);
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f New Location has been saved.`);
         }

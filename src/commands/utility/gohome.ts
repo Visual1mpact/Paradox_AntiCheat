@@ -111,6 +111,10 @@ export async function gohome(message: ChatSendAfterEvent, args: string[]) {
         }
     }
 
+    if (!coordinatesArray) {
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
+    }
+
     for (let i = 0; i < coordinatesArray.length; i++) {
         // Get their location from the array
         if (coordinatesArray[i].includes("X:")) {
