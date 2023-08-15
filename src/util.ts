@@ -119,7 +119,7 @@ export function getScore(objective: string, player: Player) {
 export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
     const scoreObj = world.scoreboard.getObjective(objective);
     if (scoreObj) {
-        const isParticipant = !!scoreObj.getParticipants().some((target) => target.id === target.id);
+        const isParticipant = !!scoreObj.getParticipants().some((participant) => participant.id === target.scoreboardIdentity.id);
         if (!isParticipant) {
             target.runCommand(`scoreboard players add @s ${objective} 0`);
         }
