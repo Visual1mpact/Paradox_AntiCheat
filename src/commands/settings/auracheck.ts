@@ -28,7 +28,13 @@ function auraCheckHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function auracheck(message: ChatSendAfterEvent, args: string[]) {
+export function auracheck(message: ChatSendAfterEvent, args: string[]) {
+    handleAuraCheck(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleAuraCheck(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/auracheck.js:29)");

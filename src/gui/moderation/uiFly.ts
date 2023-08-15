@@ -10,7 +10,22 @@ function mayflydisable(player: Player, member: Player) {
 function mayflyenable(player: Player, member: Player) {
     sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled fly mode for ${player === member ? "themselves" : member.name}.`);
 }
-export async function uiFLY(flyResult: ModalFormResponse, onlineList: string[], player: Player) {
+
+/**
+ * Handles the result of a modal form used for toggling flight mode.
+ *
+ * @name uiFLY
+ * @param {ModalFormResponse} flyResult - The result of the flight mode toggle modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the flight mode toggle modal form.
+ */
+export function uiFLY(flyResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIFly(flyResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIFly(flyResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = flyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

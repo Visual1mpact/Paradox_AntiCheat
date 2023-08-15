@@ -31,7 +31,13 @@ function muteHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function mute(message: ChatSendAfterEvent, args: string[]) {
+export function mute(message: ChatSendAfterEvent, args: string[]) {
+    handleMute(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleMute(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/mute.js:30)");

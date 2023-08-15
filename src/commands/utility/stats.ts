@@ -30,7 +30,13 @@ function statsHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function stats(message: ChatSendAfterEvent, args: string[]) {
+export function stats(message: ChatSendAfterEvent, args: string[]) {
+    handleStats(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleStats(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/stats.js:29)");

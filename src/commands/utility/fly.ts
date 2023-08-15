@@ -37,7 +37,13 @@ function mayflyenable(player: Player, member: Player) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - (Optional) Additional arguments provided (optional).
  */
-export async function fly(message: ChatSendAfterEvent, args: string[]) {
+export function fly(message: ChatSendAfterEvent, args: string[]) {
+    handleFly(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleFly(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fly.js:38)");

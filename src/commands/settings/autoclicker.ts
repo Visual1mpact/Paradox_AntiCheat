@@ -35,7 +35,13 @@ function autoclickerHelp(player: Player, prefix: string, autoClickerBoolean: boo
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function autoclick(message: ChatSendAfterEvent, args: string[]) {
+export function autoclick(message: ChatSendAfterEvent, args: string[]) {
+    handleAutoClick(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleAutoClick(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/autoclicker.js:33)");

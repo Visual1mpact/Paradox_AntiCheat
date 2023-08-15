@@ -61,7 +61,18 @@ import versionFile from "../version.js";
 import { uiAUTOBAN } from "./moderation/uiAutoBan";
 import { uiINVENTORY } from "./moderation/uiInventory";
 import { uiAFK } from "./modules/uiAFK";
-async function paradoxui(player: Player) {
+
+/**
+ * @name paradoxui
+ * @param {Player} player - Player object
+ */
+export function paradoxui(player: Player) {
+    handleParadoxUI(player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleParadoxUI(player: Player) {
     const maingui = new ActionFormData();
 
     const hash = player.getDynamicProperty("hash");
@@ -1053,5 +1064,3 @@ async function paradoxui(player: Player) {
         }
     });
 }
-
-export { paradoxui };

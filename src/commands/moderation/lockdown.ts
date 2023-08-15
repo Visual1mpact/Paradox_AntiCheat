@@ -36,7 +36,13 @@ function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | 
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
+export function lockdown(message: ChatSendAfterEvent, args: string[]) {
+    handleLockdown(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleLockdown(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/lockdown.js:37)");

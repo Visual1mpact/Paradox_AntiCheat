@@ -30,7 +30,13 @@ function fullReportHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function fullreport(message: ChatSendAfterEvent, args: string[]) {
+export function fullreport(message: ChatSendAfterEvent, args: string[]) {
+    handleFullReport(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleFullReport(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/fullreport.js:28)");

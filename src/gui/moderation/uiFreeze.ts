@@ -4,7 +4,22 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
-export async function uiFREEZE(freezeResult: ModalFormResponse, onlineList: string[], player: Player) {
+
+/**
+ * Handles the result of a modal form used for toggling freeze mode.
+ *
+ * @name uiFREEZE
+ * @param {ModalFormResponse} freezeResult - The result of the freeze mode toggle modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the freeze mode toggle modal form.
+ */
+export function uiFREEZE(freezeResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIFreeze(freezeResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIFreeze(freezeResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = freezeResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

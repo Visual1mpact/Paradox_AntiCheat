@@ -51,7 +51,13 @@ function goHomeHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function gohome(message: ChatSendAfterEvent, args: string[]) {
+export function gohome(message: ChatSendAfterEvent, args: string[]) {
+    handleGoHome(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     // Validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/utility/gohome.js:52)");

@@ -34,7 +34,13 @@ function overrideCBEHelp(player: Player, prefix: string, cmdsscore: number) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function overidecommandblocksenabled(message: ChatSendAfterEvent, args: string[]) {
+export function overidecommandblocksenabled(message: ChatSendAfterEvent, args: string[]) {
+    handleOverideCommandBlocksEnabled(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleOverideCommandBlocksEnabled(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/overideCommandBlocksEnabled.js:7)");

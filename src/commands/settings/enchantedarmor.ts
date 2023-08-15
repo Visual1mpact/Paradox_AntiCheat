@@ -34,7 +34,13 @@ function enchantedArmorHelp(player: Player, prefix: string, encharmorscore: numb
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function enchantedarmor(message: ChatSendAfterEvent, args: string[]) {
+export function enchantedarmor(message: ChatSendAfterEvent, args: string[]) {
+    handleEnchantedArmor(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleEnchantedArmor(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/enchantedarmor.js:33)");

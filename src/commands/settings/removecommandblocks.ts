@@ -34,7 +34,13 @@ function removeCBEHelp(player: Player, prefix: string, commandblocksscore: numbe
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function removecommandblocks(message: ChatSendAfterEvent, args: string[]) {
+export function removecommandblocks(message: ChatSendAfterEvent, args: string[]) {
+    handleRemoveCommandBlocks(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleRemoveCommandBlocks(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/removeCommandBlocks.js:33)");

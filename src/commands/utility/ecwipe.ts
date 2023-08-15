@@ -29,7 +29,13 @@ function ecWipeHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided.
  */
-export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
+export function ecwipe(message: ChatSendAfterEvent, args: string[]) {
+    handleECWipe(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleECWipe(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/ecwipe.js:29)");

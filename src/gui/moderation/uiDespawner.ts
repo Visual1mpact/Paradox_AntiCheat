@@ -4,7 +4,20 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a despawner modal form.
+ *
+ * @name uiDESPAWNER
+ * @param {ModalFormResponse} despawnerResult - The result of the despawner modal form.
+ * @param {Player} player - The player who triggered the modal form.
+ */
+export function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Player) {
+    handleUIDespawner(despawnerResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIDespawner(despawnerResult: ModalFormResponse, player: Player) {
     const [entityValue, DespawnAllToggle] = despawnerResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

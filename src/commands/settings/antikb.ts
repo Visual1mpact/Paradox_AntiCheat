@@ -35,7 +35,13 @@ function antikbHelp(player: Player, prefix: string, antikbBoolean: string | numb
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function antiknockback(message: ChatSendAfterEvent, args: string[]) {
+export function antiknockback(message: ChatSendAfterEvent, args: string[]) {
+    handleAntiKnockback(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleAntiKnockback(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/antikb.js:36)");
