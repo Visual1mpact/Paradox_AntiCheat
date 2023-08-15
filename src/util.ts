@@ -27,7 +27,7 @@ world.afterEvents.playerLeave.subscribe(onPlayerLogout);
  * @param {string} debug - Debug info.
  * @param {boolean} shouldTP - Whever to tp the player to itself.
  */
-export async function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean) {
+export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean) {
     if (shouldTP && check !== "Crasher") {
         player.teleport(new Vector(player.location.x, player.location.y, player.location.z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     } else if (shouldTP && check === "Crasher") {
@@ -59,7 +59,7 @@ export async function flag(player: Player, check: string, checkType: string, hac
  * @name banMessage
  * @param {Player} player - The player object
  */
-export async function banMessage(player: Player) {
+export function banMessage(player: Player) {
     const tags = player.getTags();
 
     let reason: string;
