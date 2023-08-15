@@ -30,6 +30,8 @@ async function hotbar(id: number) {
  */
 export function Hotbar() {
     const hotbarId = system.runInterval(() => {
-        hotbar(hotbarId);
+        hotbar(hotbarId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     });
 }

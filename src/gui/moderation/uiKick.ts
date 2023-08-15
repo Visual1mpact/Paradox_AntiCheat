@@ -3,7 +3,21 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiKICK(banResult: ModalFormResponse, onlineList: string[], player: Player) {
+/**
+ * Handles the result of a modal form used for kicking players.
+ *
+ * @name uiKICK
+ * @param {ModalFormResponse} banResult - The result of the kick player modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the kick player modal form.
+ */
+export function uiKICK(banResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIKick(banResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIKick(banResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value, reason] = banResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

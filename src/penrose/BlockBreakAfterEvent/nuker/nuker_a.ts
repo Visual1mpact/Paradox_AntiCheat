@@ -253,7 +253,11 @@ function freeze(id: number) {
 }
 
 const NukerA = () => {
-    world.afterEvents.blockBreak.subscribe(nukera);
+    world.afterEvents.blockBreak.subscribe((object) => {
+        nukera(object).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
+    });
     world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     const id = system.runInterval(() => {
         freeze(id);

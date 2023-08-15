@@ -58,6 +58,8 @@ async function creative(id: number) {
  */
 export function Creative() {
     const creativeId = system.runInterval(() => {
-        creative(creativeId);
+        creative(creativeId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     }, 20);
 }

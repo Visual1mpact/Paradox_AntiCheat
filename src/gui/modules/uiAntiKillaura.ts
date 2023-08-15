@@ -5,7 +5,20 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { KillAura } from "../../penrose/EntityHitEntityAfterEvent/killaura";
 
-export async function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling anti-kill aura mode.
+ *
+ * @name uiANTIKILLAURA
+ * @param {ModalFormResponse} antikillauraResult - The result of the anti-kill aura mode toggle modal form.
+ * @param {Player} player - The player who triggered the anti-kill aura mode toggle modal form.
+ */
+export function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, player: Player) {
+    handleUIAntiKillAura(antikillauraResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIAntiKillAura(antikillauraResult: ModalFormResponse, player: Player) {
     const [AntiKillAuraToggle] = antikillauraResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

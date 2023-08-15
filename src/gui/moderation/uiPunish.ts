@@ -3,7 +3,22 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
-export async function uiPUNISH(punishResult: ModalFormResponse, onlineList: string[], player: Player) {
+
+/**
+ * Handles the result of a modal form used for player punishments.
+ *
+ * @name uiPUNISH
+ * @param {ModalFormResponse} punishResult - The result of the player punishment modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the player punishment modal form.
+ */
+export function uiPUNISH(punishResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIPunish(punishResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIPunish(punishResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = punishResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

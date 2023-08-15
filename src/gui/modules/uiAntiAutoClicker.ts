@@ -5,7 +5,20 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { AutoClicker } from "../../penrose/EntityHitEntityAfterEvent/autoclicker";
 
-export async function uiANTIAUTOCLICKER(antiautoclickerResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling anti-auto clicker mode.
+ *
+ * @name uiANTIAUTOCLICKER
+ * @param {ModalFormResponse} antiautoclickerResult - The result of the anti-auto clicker mode toggle modal form.
+ * @param {Player} player - The player who triggered the anti-auto clicker mode toggle modal form.
+ */
+export function uiANTIAUTOCLICKER(antiautoclickerResult: ModalFormResponse, player: Player) {
+    handleUIAntiAutoClicker(antiautoclickerResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIAntiAutoClicker(antiautoclickerResult: ModalFormResponse, player: Player) {
     const [AntiAutoClickerToggle] = antiautoclickerResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

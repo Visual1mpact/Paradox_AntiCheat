@@ -356,7 +356,11 @@ function resetMaps() {
 
 const IllegalItemsB = () => {
     world.afterEvents.playerLeave.subscribe(onPlayerLogout);
-    world.afterEvents.blockPlace.subscribe(illegalitemsb);
+    world.afterEvents.blockPlace.subscribe((object) => {
+        illegalitemsb(object).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
+    });
 };
 
 export { IllegalItemsB };

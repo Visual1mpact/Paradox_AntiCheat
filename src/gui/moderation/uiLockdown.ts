@@ -4,7 +4,20 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { crypto, sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for initiating a server lockdown.
+ *
+ * @name uiLOCKDOWN
+ * @param {ModalFormResponse} lockdownResult - The result of the lockdown modal form.
+ * @param {Player} player - The player who triggered the lockdown modal form.
+ */
+export function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Player) {
+    handleUILockdown(lockdownResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUILockdown(lockdownResult: ModalFormResponse, player: Player) {
     const [reason, LockdownToggle] = lockdownResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
