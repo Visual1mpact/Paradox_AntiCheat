@@ -6,24 +6,24 @@ import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
 function enchantedArmorHelp(player: Player, prefix: string, encharmorscore: number) {
     let commandStatus: string;
     if (!config.customcommands.enchantedarmor) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (encharmorscore <= 0) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: enchantedarmor`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: enchantedarmor [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles Anti Enchanted Armor for all players.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: enchantedarmor`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: enchantedarmor [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles Anti Enchanted Armor for all players.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}enchantedarmor`,
         `    ${prefix}enchantedarmor help`,
     ]);
@@ -34,7 +34,13 @@ function enchantedArmorHelp(player: Player, prefix: string, encharmorscore: numb
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function enchantedarmor(message: ChatSendAfterEvent, args: string[]) {
+export function enchantedarmor(message: ChatSendAfterEvent, args: string[]) {
+    handleEnchantedArmor(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleEnchantedArmor(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/enchantedarmor.js:33)");
@@ -47,7 +53,7 @@ export async function enchantedarmor(message: ChatSendAfterEvent, args: string[]
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     const encharmorscore = getScore("encharmor", player);
@@ -63,12 +69,12 @@ export async function enchantedarmor(message: ChatSendAfterEvent, args: string[]
 
     if (encharmorscore <= 0) {
         // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config encharmor 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Enchanted Armor§r!`);
+        player.runCommand(`scoreboard players set paradox:config encharmor 1`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Enchanted Armor§f!`);
     } else if (encharmorscore >= 1) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config encharmor 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Enchanted Armor§r!`);
+        player.runCommand(`scoreboard players set paradox:config encharmor 0`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Enchanted Armor§f!`);
     }
-    return await player.runCommandAsync(`scoreboard players operation @a encharmor = paradox:config encharmor`);
+    return player.runCommand(`scoreboard players operation @a encharmor = paradox:config encharmor`);
 }

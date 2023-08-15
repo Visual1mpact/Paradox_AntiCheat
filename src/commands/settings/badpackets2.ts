@@ -7,24 +7,24 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 function badpackets2Help(player: Player, prefix: string, badPackets2Boolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.badpackets2) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (badPackets2Boolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: badpackets2`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: badpackets2 [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for invalid selected slots by player.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: badpackets2`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: badpackets2 [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles checks for invalid selected slots by player.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}badpackets2`,
         `    ${prefix}badpackets2 help`,
     ]);
@@ -48,7 +48,7 @@ export function badpackets2(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -67,12 +67,12 @@ export function badpackets2(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("badpackets2_b", true);
         world.setDynamicProperty("badpackets2_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Badpackets2§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Badpackets2§f!`);
         BadPackets2();
     } else if (badPackets2Boolean === true) {
         // Deny
         dynamicPropertyRegistry.set("badpackets2_b", false);
         world.setDynamicProperty("badpackets2_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Badpackets2§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Badpackets2§f!`);
     }
 }

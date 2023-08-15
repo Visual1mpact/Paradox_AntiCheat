@@ -67,21 +67,21 @@ function clearLag(id: number) {
         clearEntityItems();
         clearEntities();
         cooldownTimer.delete(object);
-        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag has been cleared!`);
+        sendMsg("@a", `§f§4[§6Paradox§4]§f Server lag has been cleared!`);
         warned = false; // reset the warned variable so that the 60 second warning will display again next time
     } else if (timeLeft <= 60000 && timeLeft > 0 && !warned) {
         if (timeLeft === 60000) {
-            sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in 1 minute!`);
+            sendMsg("@a", `§f§4[§6Paradox§4]§f Server lag will be cleared in 1 minute!`);
         } else {
             const secondsLeft = Math.ceil(timeLeft / 1000);
             const countdownMsg = secondsLeft === 1 ? "second" : "seconds";
-            sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in ${secondsLeft} ${countdownMsg}!`);
+            sendMsg("@a", `§f§4[§6Paradox§4]§f Server lag will be cleared in ${secondsLeft} ${countdownMsg}!`);
         }
         warned = true;
     } else if (timeLeft <= 5000 && timeLeft > 0) {
         const secondsLeft = Math.ceil(timeLeft / 1000);
         const countdownMsg = secondsLeft === 1 ? "second" : "seconds";
-        sendMsg("@a", `§r§4[§6Paradox§4]§r Server lag will be cleared in ${secondsLeft} ${countdownMsg}!`);
+        sendMsg("@a", `§f§4[§6Paradox§4]§f Server lag will be cleared in ${secondsLeft} ${countdownMsg}!`);
     }
 }
 

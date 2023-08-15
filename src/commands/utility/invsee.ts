@@ -7,19 +7,21 @@ import { getPrefix, sendMsgToPlayer } from "../../util.js";
 function invseeHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.invsee) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: invsee`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: invsee [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Shows the entire inventory of the specified player.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: invsee`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: invsee [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Shows the entire inventory of the specified player.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}invsee ${player.name}`,
+        `        §4- §6Show the inventory of ${player.name}§f`,
         `    ${prefix}invsee help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -42,7 +44,7 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -70,7 +72,7 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     const inv = member.getComponent("inventory") as EntityInventoryComponent;
@@ -78,10 +80,10 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
 
     sendMsgToPlayer(player, [
         ` `,
-        `§r§4[§6Paradox§4]§r ${member.name}'s inventory:`,
+        `§f§4[§6Paradox§4]§f ${member.name}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
             const item = container.getItem(i);
-            return ` §6|§r §fSlot ${i}§r §6=>§r ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§r §6Amount: §4x${item.amount}§r` : "§7(empty)"}`;
+            return ` §6|§f §fSlot ${i}§f §6=>§f ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§f §6Amount: §4x${item.amount}§f` : "§7(empty)"}`;
         }),
         ` `,
     ]);

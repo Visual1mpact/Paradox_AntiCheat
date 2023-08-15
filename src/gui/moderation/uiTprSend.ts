@@ -17,7 +17,7 @@ export function uiTPRSEND(tprSendRequestResult: ModalFormResponse, onlineList: s
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
     //send the request to be teleported based off the player and the member requested.
     const prefix = getPrefix(player);

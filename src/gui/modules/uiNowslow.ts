@@ -15,20 +15,20 @@ export function uiNOWSLOW(noslowResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure No Slow`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure No Slow`);
     }
     if (NoSlowToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("noslowa_b", true);
         world.setDynamicProperty("noslowa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6NoSlowA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NoSlowA§f!`);
         NoSlowA();
     }
     if (NoSlowToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("noslowa_b", false);
         world.setDynamicProperty("noslowa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4NoSlowA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NoSlowA§f!`);
     }
 
     //show the main ui to the player once complete.

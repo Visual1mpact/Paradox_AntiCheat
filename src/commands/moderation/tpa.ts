@@ -6,20 +6,23 @@ import { getPrefix, sendMsgToPlayer, setTimer } from "../../util.js";
 function tpaHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.tpa) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: tpa`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: tpa [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Teleport to a player or vice versa.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: tpa`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: tpa [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Teleport to a player or vice versa.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}tpa ${player.name} Steve`,
+        `        §4- §6Request to teleport to ${player.name} from Steve§f`,
         `    ${prefix}tpa Steve ${player.name}`,
+        `        §4- §6Request to teleport Steve to ${player.name}§f`,
         `    ${prefix}tpa help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -41,7 +44,7 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -76,7 +79,7 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
     }
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player! Try '${prefix}tpa help' for more info.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player! Try '${prefix}tpa help' for more info.`);
     }
 
     // Check if teleporting to them or vice versa then set it up
@@ -85,10 +88,10 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
         setTimer(artificalPlayer.id);
         artificalPlayer.teleport(member.location, { dimension: member.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         // Let you know that you have been teleported
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Teleported ${artificalPlayer.name} to ${member.name}`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported ${artificalPlayer.name} to ${member.name}`);
     } else {
         // Need to specify who
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You forgot to mention 'from' and 'who' to teleport.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You forgot to mention 'from' and 'who' to teleport.`);
         return tpaHelp(player, prefix);
     }
 }

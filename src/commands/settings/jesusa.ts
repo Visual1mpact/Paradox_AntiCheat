@@ -7,24 +7,24 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 function jesusAHelp(player: Player, prefix: string, jesusaBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.jesusa) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (jesusaBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: jesusa`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: jesusa [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Toggles checks for walking/sprinting on water or lava.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: jesusa`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: jesusa [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Toggles checks for walking/sprinting on water or lava.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}jesusa`,
         `    ${prefix}jesusa help`,
     ]);
@@ -48,7 +48,7 @@ export function jesusA(message: ChatSendAfterEvent, args: string) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -67,12 +67,12 @@ export function jesusA(message: ChatSendAfterEvent, args: string) {
         // Allow
         dynamicPropertyRegistry.set("jesusa_b", true);
         world.setDynamicProperty("jesusa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6JesusA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6JesusA§f!`);
         JesusA();
     } else if (jesusaBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("jesusa_b", false);
         world.setDynamicProperty("jesusa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4JesusA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4JesusA§f!`);
     }
 }

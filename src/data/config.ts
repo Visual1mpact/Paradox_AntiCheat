@@ -110,10 +110,10 @@ export default {
         },
         namespoofB: {
             enabled: true,
-            banregex: /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/,
+            banregex: /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/g,
             // Deny any invalid character not within the scope of this regex
             // Only kick because playstation and switch consoles are able to rename themselves
-            kickregex: /^((?![a-zA-Z0-9_]{3,16}$).)*$/,
+            kickregex: /^((?![a-zA-Z0-9_]{3,16}$).)*$/g,
         },
         bedrockValidate: {
             enabled: true,
@@ -256,7 +256,7 @@ export default {
         },
         banAppeal: {
             enabled: false,
-            discordLink: "§9To appeal your ban visit our discord: §fhttps://discord.gg",
+            discordLink: "https://discord.gg",
         },
         autoBan: {
             enabled: false,
@@ -269,27 +269,6 @@ export default {
         afk: {
             enabled: true,
             minutes: 10,
-        },
-        /**
-         * Add a password in-between the quotes.
-         *
-         * Example:
-         * "password": "test"
-         *
-         * Remember this password as it will be required to gain permission to use Paradox as Staff.
-         *
-         * Example:
-         * !op test
-         *
-         * After you gain permissions you can give others op in a normal fashion.
-         *
-         * Example:
-         * !op gamertag
-         *
-         * Change your password frequently and only share with trusted sources.
-         */
-        encryption: {
-            password: "",
         },
     },
 };

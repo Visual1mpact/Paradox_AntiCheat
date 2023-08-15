@@ -6,20 +6,23 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function muteHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.mute) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: mute`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: mute [optional]`,
-        `§4[§6Optional§4]§r: mute, reason, help`,
-        `§4[§6Description§4]§r: Mutes the specified user and optionally gives reason.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: mute`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: mute [optional]`,
+        `§4[§6Optional§4]§f: mute, reason, help`,
+        `§4[§6Description§4]§f: Mutes the specified user and optionally gives reason.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}mute ${player.name}`,
+        `        §4- §6Mute ${player.name} without specifying a reason§f`,
         `    ${prefix}mute ${player.name} Stop spamming!`,
+        `        §4- §6Mute ${player.name} with the reason "Stop spamming!"§f`,
         `    ${prefix}mute help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -28,7 +31,13 @@ function muteHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function mute(message: ChatSendAfterEvent, args: string[]) {
+export function mute(message: ChatSendAfterEvent, args: string[]) {
+    handleMute(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleMute(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? ./commands/moderation/mute.js:30)");
@@ -41,7 +50,7 @@ export async function mute(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -85,7 +94,7 @@ export async function mute(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // Get unique ID
@@ -93,24 +102,22 @@ export async function mute(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure they dont mute themselves
     if (uniqueId2 === uniqueId) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot mute yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot mute yourself.`);
     }
 
     // Make sure staff dont mute staff
     if (uniqueId2 === member.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot mute staff players.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot mute staff players.`);
     }
 
     // If not already muted then tag
     if (!member.hasTag("isMuted")) {
         member.addTag("isMuted");
     } else {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This player is already muted.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This player is already muted.`);
     }
     // If Education Edition is enabled then legitimately mute them
-    try {
-        await member.runCommandAsync(`ability @s mute true`);
-    } catch (error) {}
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been muted. Reason: ${reason}`);
-    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has muted ${member.name}§r. Reason: ${reason}`);
+    member.runCommandAsync(`ability @s mute true`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been muted. Reason: ${reason}`);
+    return sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has muted ${member.name}§f. Reason: ${reason}`);
 }

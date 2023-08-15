@@ -17,28 +17,26 @@ export async function uiPUNISH(punishResult: ModalFormResponse, onlineList: stri
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use punish.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use punish.`);
     }
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // Make sure they don't punish themselves
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot punish yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot punish yourself.`);
     }
     //Make sure they don't punish staff!
     if (member.hasTag("paradoxOpped")) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot punish Staff.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot punish Staff.`);
     }
     // There are 30 slots ranging from 0 to 29
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
-        try {
-            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
 
     // Get requested player's inventory so we can wipe it out
@@ -55,8 +53,8 @@ export async function uiPUNISH(punishResult: ModalFormResponse, onlineList: stri
         } catch {}
     }
     // Notify staff and player that punishment has taken place
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r You have been punished for your behavior!`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been punished for your behavior!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has punished ${member.name}§r`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has punished ${member.name}§f`);
     return paradoxui(player);
 }

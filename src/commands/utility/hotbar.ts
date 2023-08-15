@@ -11,28 +11,32 @@ const dummy: object = [];
 function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.hotbar) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (hotbarBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: hotbar`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: hotbar [optional]`,
-        `§4[§6Optional§4]§r: message, disable, help`,
-        `§4[§6Description§4]§r: Displays a hotbar message for all player's currently online.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: hotbar`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: hotbar [optional]`,
+        `§4[§6Optional§4]§f: message, disable, help`,
+        `§4[§6Description§4]§f: Displays a hotbar message for all player's currently online.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}hotbar`,
+        `        §4- §6Display the current hotbar message§f`,
         `    ${prefix}hotbar disable`,
-        `    ${prefix}hotbar Anarchy Server | Anti 32k | Realm Code: 34fhf843`,
+        `        §4- §6Disable the hotbar message§f`,
+        `    ${prefix}hotbar Anarchy Server | Realm Code: 34fhf843`,
+        `        §4- §6Set the hotbar message to "Anarchy Server | Realm Code: 34fhf843"§f`,
         `    ${prefix}hotbar help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -54,7 +58,7 @@ export function hotbar(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean

@@ -6,26 +6,28 @@ import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number | boolean) {
     let commandStatus: string;
     if (!config.customcommands.lockdown) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
     if (lockdownBoolean === false) {
-        moduleStatus = "§6[§4DISABLED§6]§r";
+        moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
-        moduleStatus = "§6[§aENABLED§6]§r";
+        moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: lockdown`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Module§4]§r: ${moduleStatus}`,
-        `§4[§6Usage§4]§r: lockdown [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Kicks player's from server excluding Staff for maintenance.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: lockdown`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Module§4]§f: ${moduleStatus}`,
+        `§4[§6Usage§4]§f: lockdown [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Kicks player's from server excluding Staff for maintenance.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}lockdown`,
+        `        §4- §6Initiate server lockdown for maintenance§f`,
         `    ${prefix}lockdown help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -34,7 +36,13 @@ function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | 
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
+export function lockdown(message: ChatSendAfterEvent, args: string[]) {
+    handleLockdown(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleLockdown(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/lockdown.js:37)");
@@ -47,7 +55,7 @@ export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -64,7 +72,7 @@ export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
 
     // If already locked down then unlock the server
     if (lockdownBoolean) {
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is no longer in lockdown!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Server is no longer in lockdown!`);
         dynamicPropertyRegistry.set("lockdown_b", false);
         return world.setDynamicProperty("lockdown_b", false);
     }
@@ -78,20 +86,19 @@ export async function lockdown(message: ChatSendAfterEvent, args: string[]) {
         // Check for hash/salt and validate password
         const hash = pl.getDynamicProperty("hash");
         const salt = pl.getDynamicProperty("salt");
-        const encode = crypto?.(salt, config?.modules?.encryption?.password);
+        const encode = crypto?.(salt, pl.id);
         if (hash !== undefined && encode === hash) {
             continue;
         }
-        try {
-            // Kick players from server
-            await pl.runCommandAsync(`kick ${JSON.stringify(pl.name)} ${reason}`);
-        } catch (error) {
+
+        // Kick players from server
+        pl.runCommandAsync(`kick ${pl.name} §f\n\n${reason}`).catch(() => {
             // Despawn players from server
             pl.triggerEvent("paradox:kick");
-        }
+        });
     }
     // Shutting it down
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r Server is in lockdown!`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Server is in lockdown!`);
     dynamicPropertyRegistry.set("lockdown_b", true);
     return world.setDynamicProperty("lockdown_b", true);
 }

@@ -21,14 +21,14 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
     }
     if (teleportToSelectedLocation && deleteSelectedLocation === true) {
         //If both toggles are enabled the message bellow will be sent to the player and the UI will be dispalyed.
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cant teleport and delete the location!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cant teleport and delete the location!`);
         return paradoxui(player);
     }
     if (teleportToSelectedLocation === true) {
         //Teleport the player to the location set in the dropdown.
         setTimer(player.id);
         player.teleport({ x: x, y: y, z: z }, { dimension: world.getDimension(dimension), rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Welcome back!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Welcome back!`);
         return player;
     }
     if (deleteSelectedLocation === true) {
@@ -37,21 +37,28 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         let encryptedString: string = "";
         const tags = player.getTags();
         for (let i = 0; i < tags.length; i++) {
+            // 6f78 is temporary and will be removed
             if (tags[i].startsWith("6f78")) {
+                // Remove old encryption
+                player.removeTag(tags[i]);
+                // Change to AES Encryption so we can abandon the old method
+                tags[i] = decryptString(tags[i], salt as string);
+                tags[i] = encryptString(tags[i], salt as string);
+                player.addTag(tags[i]);
+            }
+            if (tags[i].startsWith("1337")) {
                 encryptedString = tags[i];
                 // Decode it so we can verify it
-                tags[i] = decryptString(tags[i], String(salt));
+                tags[i] = decryptString(tags[i], salt as string);
             }
             if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                 player.removeTag(encryptedString);
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Successfully deleted home '${Locations[selectedLocationvalue as number]}'!`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '${Locations[selectedLocationvalue as number]}'!`);
                 break;
             }
         }
     }
-    if (!newLocationName) {
-        //do nothing as a name value was not set.
-    } else {
+    if (newLocationName) {
         //A value was entered execute the code bellow.
         //First check to make sure the same location name entered doesnt already exist
         let counter = 0;
@@ -61,12 +68,12 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
                 counter = ++counter;
             }
             if (coordArray[i].includes("LocationHome:" + newLocationName)) {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This name already exists please try again.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This name already exists please try again.`);
                 return paradoxui(player);
             }
             //Check to make sure they havent exceeded the max locations in config.js
             if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
-                sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You can only have ${config.modules.setHome.max} saved locations at a time!`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You can only have ${config.modules.setHome.max} saved locations at a time!`);
                 return paradoxui(player);
             }
             continue;
@@ -84,7 +91,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         //Check to make sure there are no spaces in the name that has been entered.
         if (typeof newLocationName === "string" && newLocationName.includes(" ")) {
             doSave = false;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r No spaces in names please!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No spaces in names please!`);
             return paradoxui(player);
         }
         // Save which dimension they were in
@@ -98,13 +105,13 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         }
         if (player.dimension.id === "minecraft:the_end") {
             doSave = false;
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Not allowed to save a location in this dimension!`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Not allowed to save a location in this dimension!`);
         }
         if (doSave === true) {
             const decryptedLocationString = `LocationHome:${newLocationName} X:${currentX} Y:${currentY} Z:${currentZ} Dimension:${currentDimension}`;
-            const security = encryptString(decryptedLocationString, String(salt));
+            const security = encryptString(decryptedLocationString, salt as string);
             player.addTag(security);
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r New Location has been saved.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f New Location has been saved.`);
         }
     }
 

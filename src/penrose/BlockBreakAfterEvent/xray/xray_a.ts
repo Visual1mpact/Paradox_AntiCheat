@@ -19,8 +19,8 @@ let xrayData: Map<string, XrayData> = new Map();
 // Use a global variable to store the number of blocks broken within the last minute
 let blocksBrokenCount: Map<string, number> = new Map();
 
-function isXraySuspicious(playerName: string, blockId: string): boolean {
-    const data = xrayData.get(playerName);
+function isXraySuspicious(playerId: string, blockId: string): boolean {
+    const data = xrayData.get(playerId);
     if (!data) return false;
     const currentTime = Date.now();
     const timeSinceLastNotify = currentTime - data.lastNotifyTime;
@@ -46,14 +46,14 @@ function isXraySuspicious(playerName: string, blockId: string): boolean {
         }
     }
 
-    return blocksBrokenCount.get(playerName) >= threshold && timeSinceLastNotify <= 60000;
+    return blocksBrokenCount.get(playerId) >= threshold && timeSinceLastNotify <= 60000;
 }
 
 function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     // Remove the player's data from the map when they log off
-    const playerName = event.playerName;
-    xrayData.delete(playerName);
-    blocksBrokenCount.delete(playerName);
+    const playerId = event.playerId;
+    xrayData.delete(playerId);
+    blocksBrokenCount.delete(playerId);
 }
 
 function xraya(object: BlockBreakAfterEvent) {
@@ -84,28 +84,28 @@ function xraya(object: BlockBreakAfterEvent) {
     const { x, y, z } = player.location;
 
     if (brokenBlockPermutation.type.id in xrayblocks) {
-        const playerName = player.name;
-        if (!xrayData.has(playerName)) {
-            xrayData.set(playerName, { lastNotifyTime: 0 });
+        const playerId = player.id;
+        if (!xrayData.has(playerId)) {
+            xrayData.set(playerId, { lastNotifyTime: 0 });
         }
-        if (!blocksBrokenCount.has(playerName)) {
-            blocksBrokenCount.set(playerName, 0);
+        if (!blocksBrokenCount.has(playerId)) {
+            blocksBrokenCount.set(playerId, 0);
         }
-        const playerData = xrayData.get(playerName)!;
+        const playerData = xrayData.get(playerId)!;
 
         // Increment the count for the player
-        blocksBrokenCount.set(playerName, (blocksBrokenCount.get(playerName) || 0) + 1);
+        blocksBrokenCount.set(playerId, (blocksBrokenCount.get(playerId) || 0) + 1);
 
         // Reset the timer whenever we add new ore data
         playerData.lastNotifyTime = Date.now();
 
-        if (isXraySuspicious(playerName, brokenBlockPermutation.type.id)) {
+        if (isXraySuspicious(playerId, brokenBlockPermutation.type.id)) {
             sendMsg(
                 `@a[tag=notify]`,
-                `§r§4[§6Paradox§4]§r §4[Xray]§r ${playerName}§r§6 has found §r${blocksBrokenCount.get(playerName)}x ${brokenBlockPermutation.type.id.replace("minecraft:", "")}§6 at X=§r${x.toFixed(0)}§6 Y=§r${y.toFixed(0)}§6 Z=§r${z.toFixed(0)}.`
+                `§f§4[§6Paradox§4]§f §4[Xray]§f ${player.name}§f§6 has found §f${blocksBrokenCount.get(playerId)}x ${brokenBlockPermutation.type.id.replace("minecraft:", "")}§6 at X=§f${x.toFixed(0)}§6 Y=§f${y.toFixed(0)}§6 Z=§f${z.toFixed(0)}.`
             );
             // Reset the count after notifying
-            blocksBrokenCount.set(playerName, 0);
+            blocksBrokenCount.set(playerId, 0);
         }
     }
 }

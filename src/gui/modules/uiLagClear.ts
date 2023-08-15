@@ -14,20 +14,20 @@ export function uiLAGCLEAR(lagclearResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Clear Lag`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Clear Lag`);
     }
     if (LagClearToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("clearlag_b", true);
         world.setDynamicProperty("clearlag_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6ClearLag§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ClearLag§f!`);
         ClearLag();
     }
     if (LagClearToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("clearlag_b", false);
         world.setDynamicProperty("clearlag_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4ClearLag§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ClearLag§f!`);
     }
 
     //show the main ui to the player once complete.

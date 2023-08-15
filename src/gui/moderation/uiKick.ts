@@ -15,22 +15,20 @@ export async function uiKICK(banResult: ModalFormResponse, onlineList: string[],
     }
 
     if (!member) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
         return paradoxui(player);
     }
 
     // make sure they dont kick themselves
     if (member === player) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot kick yourself.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot kick yourself.`);
         return paradoxui(player);
     }
 
-    try {
-        await player.runCommandAsync(`kick ${JSON.stringify(member.name)} ${reason}`);
-    } catch (error) {
+    player.runCommandAsync(`kick ${member.name} §f\n\n${reason}`).catch((error) => {
         console.warn(`${new Date()} | ` + error);
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
-    }
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has kicked ${member.name}§r. Reason: ${reason}`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f I was unable to kick that player!`);
+    });
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has kicked ${member.name}§f. Reason: ${reason}`);
     return paradoxui(player);
 }

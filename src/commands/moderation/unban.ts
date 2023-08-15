@@ -6,34 +6,36 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 export const queueUnban = new Set<string>();
 
 function listQueue(queued: Set<string>, player: Player) {
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Queued to be unbanned:`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Queued to be unbanned:`);
     const setSize = queued.size;
     if (setSize > 0) {
         queued.forEach((queue: string) =>
             // List the players that are queued to be unbanned
-            sendMsgToPlayer(player, ` §6|§r §4[§r${queue}§4]§r`)
+            sendMsgToPlayer(player, ` §6|§f §4[§f${queue}§4]§f`)
         );
     } else {
-        sendMsgToPlayer(player, ` §6|§r §4[§rList Is Empty§4]§r`);
+        sendMsgToPlayer(player, ` §6|§f §4[§fList Is Empty§4]§f`);
     }
 }
 
 function unbanHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.unban) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: unban`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: unban [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Allows specified players to join if banned (Doesn't include global ban).`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: unban`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: unban [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Allows specified players to join if banned (Doesn't include global ban).`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}unban ${player.name}`,
+        `        §4- §6Allow ${player.name} to join if banned§f`,
         `    ${prefix}unban help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -50,7 +52,7 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -76,9 +78,9 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
     if (argCheck && args[0].toLowerCase() === "delete") {
         const nameToDelete = args.slice(1).join(" ");
         if (queueUnban.delete(nameToDelete)) {
-            sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${nameToDelete} has been removed from the unban queue!`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${nameToDelete} has been removed from the unban queue!`);
         } else {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${nameToDelete} is not in the unban queue!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${nameToDelete} is not in the unban queue!`);
         }
         return;
     }
@@ -90,5 +92,5 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
     }
 
     queueUnban.add(username);
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Player queued to be unbanned: ${username}`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player queued to be unbanned: ${username}`);
 }

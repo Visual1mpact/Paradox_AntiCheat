@@ -49,19 +49,17 @@ async function showrules(id: number) {
         if (r.selection === 0) {
             playersAwaitingResponse.delete(player.id); // Player has responded, remove from set.
             player.removeTag("ShowRulesOnJoin");
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Thank you for accepting the rules ${player.name}.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Thank you for accepting the rules ${player.name}.`);
             return;
         }
         if (r.selection === 1) {
             playersAwaitingResponse.delete(player.id); // Player has responded, remove from set.
             if (KickOnDeclineBoolean === true) {
                 const reason = "You must agree to the rules to join.";
-                try {
-                    player.runCommandAsync(`kick ${JSON.stringify(player.name)} ${reason}`);
-                } catch (error) {
+                player.runCommandAsync(`kick ${player.name} §f\n\n${reason}`).catch(() => {
                     kickablePlayers.add(player);
                     player.triggerEvent("paradox:kick");
-                }
+                });
             }
             return;
         }

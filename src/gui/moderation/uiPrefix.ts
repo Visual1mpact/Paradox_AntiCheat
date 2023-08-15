@@ -12,7 +12,7 @@ function resetPrefix(player: Player) {
             config.customcommands.prefix = "!";
         }
     }
-    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset!`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been reset!`);
 }
 
 export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], player: Player) {
@@ -30,14 +30,14 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
     if ((textField as string).length && !toggle) {
         /**
          * Make sure we are not attempting to set a prefix that can break commands
          */
         if (textField === "/") {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Using prefix '/' is not allowed!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Using prefix '/' is not allowed!`);
             return paradoxui;
         }
 
@@ -45,17 +45,17 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
         if ((textField as string).length <= 1 && (textField as string).length >= 1) {
             resetPrefix(member);
             config.customcommands.prefix = textField as string;
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been changed to '${textField}'! for ${member.name}`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been changed to '${textField}'! for ${member.name}`);
             member.addTag("Prefix:" + textField);
         } else {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix length cannot be more than 2 characters!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix length cannot be more than 2 characters!`);
         }
     }
 
     // Reset has been toggled
     if (toggle) {
         resetPrefix(player);
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Prefix has been reset for ${member.name}!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been reset for ${member.name}!`);
     }
     return paradoxui(player);
 }

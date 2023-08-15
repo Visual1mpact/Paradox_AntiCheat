@@ -77,7 +77,7 @@ import { give } from "./utility/give.js";
 import { clearlag } from "./settings/lagclear.js";
 import { listitems } from "./debug_commands/listitems.js";
 import { antifallA } from "./settings/antifalla.js";
-import { showrules } from "./moderation/showrules.js";
+import { showrules } from "./settings/showrules.js";
 import { paradoxUI } from "./moderation/paradoxui.js";
 import { TeleportRequestHandler } from "./utility/tpr.js";
 import { autoban } from "./settings/autoban.js";
@@ -196,7 +196,7 @@ export function commandHandler(player: Player, message: ChatSendBeforeEvent): Pr
         message.sendToTargets = true;
         message.setTargets([]);
         message.message = "";
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f The command ${config.customcommands.prefix}${commandName} does not exist. Try again!`);
     }
 
     // Do not broadcast any message to any targets

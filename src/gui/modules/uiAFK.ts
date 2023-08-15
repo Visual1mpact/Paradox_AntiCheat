@@ -13,20 +13,20 @@ export function uiAFK(afkResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure AFK`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure AFK`);
     }
     if (afkToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("afk_b", true);
         world.setDynamicProperty("afk_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6AFK§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AFK§f!`);
         AFK();
     }
     if (afkToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("afk_b", false);
         world.setDynamicProperty("afk_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4AFK§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AFK§f!`);
     }
 
     //show the main ui to the player once complete.

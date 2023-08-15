@@ -13,19 +13,19 @@ export function uiEXPSALVAGESYSTEM(expsalvagesystemResult: ModalFormResponse, pl
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Exp Salvage System`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Exp Salvage System`);
     }
     if (ExpSalvageSystemToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("salvage_b", true);
         world.setDynamicProperty("salvage_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Salvage§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Salvage§f!`);
     }
     if (ExpSalvageSystemToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("salvage_b", false);
         world.setDynamicProperty("salvage_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Salvage§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Salvage§f!`);
     }
 
     //show the main ui to the player once complete.

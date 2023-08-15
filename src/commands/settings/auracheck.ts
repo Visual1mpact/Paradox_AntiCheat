@@ -7,17 +7,17 @@ import { KillAura } from "../../penrose/EntityHitEntityAfterEvent/killaura.js";
 function auraCheckHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.antikillaura) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: antikillaura`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: antikillaura [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Toggles checks for attacks outside a 90 degree angle.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: antikillaura`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: antikillaura [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Toggles checks for attacks outside a 90 degree angle.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}antikillaura ${player.name}`,
         `    ${prefix}antikillaura help`,
     ]);
@@ -28,7 +28,13 @@ function auraCheckHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function auracheck(message: ChatSendAfterEvent, args: string[]) {
+export function auracheck(message: ChatSendAfterEvent, args: string[]) {
+    handleAuraCheck(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleAuraCheck(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/auracheck.js:29)");
@@ -41,7 +47,7 @@ export async function auracheck(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Get Dynamic Property Boolean
@@ -65,12 +71,12 @@ export async function auracheck(message: ChatSendAfterEvent, args: string[]) {
         // Deny
         dynamicPropertyRegistry.set("antikillaura_b", false);
         world.setDynamicProperty("antikillaura_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4AntiKillAura§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiKillAura§f!`);
     } else if (antiKillAuraBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antikillaura_b", true);
         world.setDynamicProperty("antikillaura_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6AntiKillAura§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiKillAura§f!`);
         KillAura();
     }
 }

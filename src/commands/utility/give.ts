@@ -7,22 +7,27 @@ import { getPrefix, sendMsgToPlayer, toPascalCase } from "../../util.js";
 function giveHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.fullreport) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: give`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: give [optional]`,
-        `§4[§6Optional§4]§r: username item amount data, help`,
-        `§4[§6Description§4]§r: Gives player items.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: give`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: give [optional]`,
+        `§4[§6Optional§4]§f: username item amount data, help`,
+        `§4[§6Description§4]§f: Gives player items.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}give ${player.name} diamond 64`,
+        `        §4- §6Give ${player.name} 64 diamonds§f`,
         `    ${prefix}give ${player.name} iron_ore 64`,
+        `        §4- §6Give ${player.name} 64 iron ore§f`,
         `    ${prefix}give ${player.name} tropical_fish 64`,
+        `        §4- §6Give ${player.name} 64 tropical fish§f`,
         `    ${prefix}give ${player.name} log2 64 1`,
+        `        §4- §6Give ${player.name} 64 spruce logs§f`,
         `    ${prefix}give help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -44,7 +49,7 @@ export function give(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -75,7 +80,7 @@ export function give(message: ChatSendAfterEvent, args: string[]) {
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     /**
@@ -119,11 +124,11 @@ export function give(message: ChatSendAfterEvent, args: string[]) {
             const item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
             inv.addItem(item);
             */
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r ${member.name} was given ${args[1]} x${args[2]}.`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${member.name} was given ${args[1]} x${args[2]}.`);
         } else {
-            return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This stack is too high! ${maxStack} is the max. Try again.`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This stack is too high! ${maxStack} is the max. Try again.`);
         }
     } else {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r This item could not be found! Try again.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This item could not be found! Try again.`);
     }
 }

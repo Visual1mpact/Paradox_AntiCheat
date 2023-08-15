@@ -1,6 +1,7 @@
 import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
+import CryptoJS from "./node_modules/crypto-es/lib/index.js";
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
@@ -36,21 +37,19 @@ export async function flag(player: Player, check: string, checkType: string, hac
     setScore(player, `${check.toLowerCase()}vl`, 1, true);
 
     if (debug) {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     } else if (item && stack) {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     } else {
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
     }
 
-    try {
-        if (check === "Namespoof") {
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r§4[§6Paradox§4]§r You have illegal characters in your name!`);
-        }
-    } catch (error) {
-        // if we cant kick them with /kick then we instant despawn them
-        kickablePlayers.add(player);
-        player.triggerEvent("paradox:kick");
+    if (check === "Namespoof") {
+        player.runCommandAsync(`kick ${player.name} §f\n\n§4[§6Paradox§4]§f You have illegal characters in your name!`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
+            kickablePlayers.add(player);
+            player.triggerEvent("paradox:kick");
+        });
     }
 }
 
@@ -75,22 +74,21 @@ export async function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        try {
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}\n${config.modules.banAppeal.discordLink}`);
-        } catch (error) {
-            // if we cant kick them with /kick then we instant despawn them
+        player.runCommandAsync(`kick ${player.name} §f\n§l§4YOU ARE BANNED!§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}\n§b${config.modules.banAppeal.discordLink}`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
     } else {
-        try {
-            await player.runCommandAsync(`kick ${JSON.stringify(player.name)} §r\n§l§cYOU ARE BANNED!\n§r\n§eBanned By:§r ${by || "N/A"}\n§bReason:§r ${reason || "N/A"}`);
-        } catch (error) {
-            // if we cant kick them with /kick then we instant despawn them
+        player.runCommandAsync(`kick ${player.name} §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}`).catch(() => {
+            // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
-        }
+        });
     }
+
+    // Notify staff that a player was banned
+    sendMsg("@a[tag=paradoxOpped]", [`§f§4[§6Paradox§4]§f ${player.name} has been banned!`, `§4[§6Banned By§4]§f: ${by || "§7N/A"}`, `§4[§6Reason§4]§f: ${reason || "§7N/A"}`]);
 }
 
 /**
@@ -168,7 +166,7 @@ export function resetTag(member: Player) {
             member.removeTag(tag);
         }
     }
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${member.name} has reset their rank`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name} has reset their rank`);
 }
 
 /**
@@ -264,58 +262,38 @@ export function toPascalCase(str: string) {
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
 
 /**
- * Hashes a given string with the specified salt value using an algorithm.
+ * Hashes a given string with the specified salt value using SHA-3 (SHA3-256) encryption.
  *
  * @name crypto
- * @param {string} salt - Hashes information
+ * @param {string | number | boolean} salt - Hashes information
  * @param {string} text - String to be hashed
  */
 export const crypto = (salt: string | number | boolean, text: string) => {
-    const textToChars = (text: string) => new Uint8Array([...text].map((c) => c.charCodeAt(0)));
-    const byteHex = (n: number) => ("0" + n.toString(16)).substring(-2);
-    const applySaltToChar = (code: Uint8Array) => {
-        const saltChars = textToChars(String(salt));
-        let result = 0;
-        for (let i = 0; i < code.length; i++) {
-            result ^= saltChars[i % saltChars.length] ^ code[i];
-        }
-        return result;
-    };
-
-    const textChars = textToChars(text);
-    const resultChars = new Uint8Array(textChars.length);
-    for (let i = 0; i < textChars.length; i++) {
-        resultChars[i] = applySaltToChar(textChars.slice(i, i + 1));
-    }
-
-    const joinedResult = [...resultChars].map(byteHex).join("");
+    // Convert the salt to a string representation
+    const saltString = String(salt);
+    // Combine salt and text
+    const combinedString = saltString + text;
+    // Hash the combined string using SHA-3 (SHA3-256)
+    const hash = CryptoJS.SHA3(combinedString, { outputLength: 256 }).toString();
     // Ensure it is no more than 50 characters as set for dynamic property strings
-    return joinedResult.substring(0, 50);
+    return hash.substring(0, 50);
 };
 
 /**
- * Encrypts a string using an algorithm.
+ * Encrypts a string using AES encryption with the specified salt as the key.
  *
  * @name encryptString
  * @param {string} str - The string to encrypt
- * @param {string} salt - The salt to use for encryption
+ * @param {string} salt - The salt to use as the key for encryption
  * @returns {string} The encrypted string
  */
 export function encryptString(str: string, salt: string): string {
-    let ciphertext = "";
-    let keyIndex = 0;
-    for (let i = 0; i < str.length; i++) {
-        const plainCharCode = str.charCodeAt(i);
-        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        const cipherCharCode = (plainCharCode + keyCharCode) % 256; // wrap around at 256
-        ciphertext += String.fromCharCode(cipherCharCode);
-        keyIndex++;
-    }
-    return "6f78" + ciphertext;
+    const encrypted = CryptoJS.AES.encrypt(str, salt).toString();
+    return "1337" + encrypted;
 }
 
 /**
- * Decrypts a string using an algorithm.
+ * Decrypts a string using AES encryption with the specified salt as the key.
  *
  * @name decryptString
  * @param {string} str - The string to decrypt
@@ -323,17 +301,30 @@ export function encryptString(str: string, salt: string): string {
  * @returns {string} The decrypted string
  */
 export function decryptString(str: string, salt: string): string {
-    let plaintext = "";
-    let keyIndex = 0;
-    str = str.slice(4);
-    for (let i = 0; i < str.length; i++) {
-        const cipherCharCode = str.charCodeAt(i);
-        const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-        const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
-        plaintext += String.fromCharCode(plainCharCode);
-        keyIndex++;
+    // Check if the string is using the old encryption (tag '6f78')
+    if (str.startsWith("6f78")) {
+        // Use the old decryption logic
+        let plaintext = "";
+        let keyIndex = 0;
+        str = str.slice(4);
+        for (let i = 0; i < str.length; i++) {
+            const cipherCharCode = str.charCodeAt(i);
+            const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
+            const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
+            plaintext += String.fromCharCode(plainCharCode);
+            keyIndex++;
+        }
+        return plaintext;
+    } else {
+        // Use the new decryption logic with AES
+        // Remove the prefix added in the encryptString function
+        str = str.slice(4);
+        // Decrypt using AES
+        const decryptedBytes = CryptoJS.AES.decrypt(str, salt);
+        // Convert the decrypted bytes to a UTF-8 string
+        const plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        return plaintext;
     }
-    return plaintext;
 }
 
 /**
@@ -417,11 +408,12 @@ export function getGamemode(player: Player): string | undefined {
  * @param message The message to send. This can be a string or an array of strings.
  */
 export const sendMsg = async (target: string, message: string | string[]) => {
-    try {
-        await overworld.runCommandAsync(
-            `tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(Array.isArray(message) ? message.join("\n\u00a7r") : message)}}]}`
-        );
-    } catch {}
+    const isArray = Array.isArray(message);
+
+    // Check if target is equal to "@a"
+    const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§f/g, "§f§o")).join("\n") : (message as string).replace(/§f/g, "§f§o"));
+
+    overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
 };
 
 /**
@@ -431,22 +423,17 @@ export const sendMsg = async (target: string, message: string | string[]) => {
  * @param message The message to send. This can be a string or an array of strings.
  */
 export const sendMsgToPlayer = async (target: Player, message: string | string[]) => {
-    try {
-        let modifiedMessage: string | string[];
+    const isArray = Array.isArray(message);
 
-        const isArray = Array.isArray(message);
-        if (isArray) {
-            // If "message" is an array, add §o to the beginning of each element
-            modifiedMessage = message.map((text) => `\u00a7o${text}`);
-        } else {
-            // If "message" is a single string, add §o to the beginning
-            modifiedMessage = `\u00a7o${message}`;
-        }
+    let modifiedMessage: string | string[];
 
-        // Now, use the modified message in the command
-        const commandMessage = isArray ? (modifiedMessage as string[]).join("\n\u00a7r") : modifiedMessage;
-        await target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify(commandMessage)}}]}`);
-    } catch {}
+    if (isArray) {
+        modifiedMessage = (message as string[]).map((msg) => msg.replace(/§f/g, "§f§o")).join("\n");
+    } else {
+        modifiedMessage = (message as string).replace(/§f/g, "§f§o");
+    }
+
+    target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
 };
 
 export const allscores: string[] = [

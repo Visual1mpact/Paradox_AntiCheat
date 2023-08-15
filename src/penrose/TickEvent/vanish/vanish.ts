@@ -25,11 +25,11 @@ async function vanish() {
             // They have been busted!
             player.removeTag("vanish");
             if (player.getEffect(MinecraftEffectTypes.Invisibility) || player.getEffect(MinecraftEffectTypes.NightVision)) {
-                await player.runCommandAsync(`effect @s clear`);
+                player.runCommandAsync(`effect @s clear`);
             }
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {
-                sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} had unauthorized permissions for Vanish. Permissions removed!`);
+                sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} had unauthorized permissions for Vanish. Permissions removed!`);
             } catch (error) {}
         }
     }

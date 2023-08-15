@@ -3,7 +3,22 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
-export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string[], player: Player) {
+
+/**
+ * Handles the result of a modal form used for wiping ender chests.
+ *
+ * @name uiEWIPE
+ * @param {ModalFormResponse} ewipeResult - The result of the entity wipe modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the entity wipe modal form.
+ */
+export function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIEWipe(ewipeResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIEWipe(ewipeResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = ewipeResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
@@ -17,32 +32,30 @@ export async function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // Make sure they don't punish themselves
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot wipe yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot wipe yourself.`);
     }
     //Make sure they don't punish staff!
     if (member.hasTag("paradoxOpped")) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot wipe Staff.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot wipe Staff.`);
     }
     // There are 30 slots ranging from 0 to 29
     // Let's clear out that ender chest
     for (let slot = 0; slot < 30; slot++) {
-        try {
-            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
     // Notify staff and player that punishment has taken place
-    sendMsgToPlayer(member, `§r§4[§6Paradox§4]§r Your Enderchest has been wiped!`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f Your Enderchest has been wiped!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r Wiped ${member.name}'s enderchest!`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f Wiped ${member.name}'s enderchest!`);
     return paradoxui(player);
 }

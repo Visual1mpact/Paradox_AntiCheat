@@ -16,33 +16,33 @@ export function uiBADPACKETS(badpacketsResult: ModalFormResponse, player: Player
     const badPackets2Boolean = dynamicPropertyRegistry.get("badpackets2_b");
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Badpackets`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Badpackets`);
     }
     if (BadPackets1Toggle === true && badPackets1Boolean === false) {
         // Allow
         dynamicPropertyRegistry.set("badpackets1_b", true);
         world.setDynamicProperty("badpackets1_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Badpackets1§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Badpackets1§f!`);
         BadPackets1();
     }
     if (BadPackets1Toggle === false && badPackets1Boolean === true) {
         // Deny
         dynamicPropertyRegistry.set("badpackets1_b", false);
         world.setDynamicProperty("badpackets1_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Badpackets1§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Badpackets1§f!`);
     }
     if (BadPackets2Toggle === true && badPackets2Boolean === false) {
         // Allow
         dynamicPropertyRegistry.set("badpackets2_b", true);
         world.setDynamicProperty("badpackets2_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Badpackets2§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Badpackets2§f!`);
         BadPackets2();
     }
     if (BadPackets2Toggle === false && badPackets2Boolean === true) {
         // Deny
         dynamicPropertyRegistry.set("badpackets2_b", false);
         world.setDynamicProperty("badpackets2_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Badpackets2§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Badpackets2§f!`);
     }
 
     //show the main ui to the player once complete.

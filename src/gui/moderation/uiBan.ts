@@ -20,16 +20,16 @@ export function uiBAN(banResult: ModalFormResponse, onlineList: string[], player
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to Ban a player.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to Ban a player.`);
     }
 
     //make sure the player doesnt ban themselfs
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot ban yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot ban yourself.`);
     }
     // Make sure the reason is not blank.
     if (!textField) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You must include a reaason for the ban!.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You must include a reaason for the ban!.`);
         return paradoxui(player);
     }
 
@@ -38,9 +38,9 @@ export function uiBAN(banResult: ModalFormResponse, onlineList: string[], player
         member.addTag("By:" + player.name);
         member.addTag("isBanned");
     } catch (error) {
-        sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to ban that player! Error: ${error}`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f I was unable to ban that player! Error: ${error}`);
         return paradoxui(player);
     }
-    sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has banned ${member.name}§r. Reason: ${textField}`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has banned ${member.name}§f. Reason: ${textField}`);
     return paradoxui(player);
 }

@@ -6,21 +6,25 @@ import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 function kickHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.kick) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: kick`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: kick [optional]`,
-        `§4[§6Optional§4]§r: username, reason, help`,
-        `§4[§6Description§4]§r: Kick the specified user and optionally gives a reason.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: kick`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: kick [optional]`,
+        `§4[§6Optional§4]§f: username, reason, help`,
+        `§4[§6Description§4]§f: Kick the specified user and optionally gives a reason.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}kick ${player.name}`,
+        `        §4- §6Kick ${player.name} without specifying a reason§f`,
         `    ${prefix}kick ${player.name} Hacker!`,
+        `        §4- §6Kick ${player.name} with the reason "Hacker!"§f`,
         `    ${prefix}kick ${player.name} Stop trolling!`,
+        `        §4- §6Kick ${player.name} with the reason "Stop trolling!"§f`,
         `    ${prefix}kick help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -29,7 +33,13 @@ function kickHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export async function kick(message: ChatSendAfterEvent, args: string[]) {
+export function kick(message: ChatSendAfterEvent, args: string[]) {
+    handleKick(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleKick(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/moderation/kick.js:33)");
@@ -42,7 +52,7 @@ export async function kick(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -86,19 +96,16 @@ export async function kick(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // make sure they dont kick themselves
     if (member === player) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You cannot kick yourself.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You cannot kick yourself.`);
     }
-
-    try {
-        await player.runCommandAsync(`kick ${JSON.stringify(member.name)} ${reason}`);
-    } catch (error) {
+    player.runCommandAsync(`kick ${member.name} §f\n\n${reason}`).catch((error) => {
         console.warn(`${new Date()} | ` + error);
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r I was unable to kick that player! Error: ${error}`);
-    }
-    return sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has kicked ${member.name}§r. Reason: ${reason}`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f I was unable to kick that player!`);
+    });
+    return sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has kicked ${member.name}§f. Reason: ${reason}`);
 }

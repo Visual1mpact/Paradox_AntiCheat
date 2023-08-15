@@ -54,20 +54,20 @@
 <p>Once you have done this the anticheat should be fully up and running. Education Edition is required for the command <code>!fly &lt;username&gt;</code> to work.</p>
 
 <h2>Gaining Permission to Use Paradox</h2>
-<p>To give yourself permission to use Paradox in your world you will need to:</p>
+<p>To give yourself permission to use Paradox in your world, follow these steps:</p>
 <ol>
-  <li>Edit a file inside this project called <code>config.js</code>. It can be located at <code>/scripts/data/config.js</code>.</li>
-  <li>In this file, towards the bottom, you will find a property called <code>encryption</code> and this property will contain an additional property called <code>password</code>.</li>
-  <li>You MUST fill in your password or you will NOT gain permission to use Paradox during the initial process. There will be an example provided inside the file to show you how to do it.</li>
-  <li>Once you have filled in your password then you will need to take note of your password. Do not share it with anyone, unless at your own risk.</li>
-  <li>Install the Anti Cheat, load your world, then enter the command <code>!op &lt;password&gt;</code>. This will grant you permission to use Paradox and from here you can give others permission to use paradox with the command <code>!op &lt;username&gt;</code>.</li>
+  <li>Install the Anti Cheat and load your Minecraft world.</li>
+  <li>In the game, open the chat window and enter the command <code>&lt;prefix&gt;op</code>, where <code>&lt;prefix&gt;</code> is the command prefix for your server (e.g., <code>!</code>).</li>
+  <li>If you're an operator (op) or have the necessary permissions, this will grant you permission to use Paradox AntiCheat features.</li>
+  <li>Once granted, you'll have access to Paradox AntiCheat features.</li>
+  <li>You can also use the command <code>&lt;prefix&gt;op &lt;player&gt;</code> to grant Paradox-Op permissions to another player.</li>
+  <li>Use <code>&lt;prefix&gt;op help</code> to display information about the command usage and options.</li>
 </ol>
-<p>For more information about this Anti Cheat and its options then see the command <code>!help</code>.</p>
+<p>For more information about this Anti Cheat and its options then see the command <code>&lt;prefix&gt;help</code>.</p>
 
 <h2>Important Notes</h2>
 <ul>
   <li>Paradox will kick you out if you have any illegal items in your inventory so if you think Paradox may flag you after installing then it is highly suggested to drop your entire inventory prior to activating this Anti Cheat!!!</li>
-  <li>If you reset your world for any reason then it is recommended to change <code>password</code>.</li>
 </ul>
 
 <!-- Development Environment Setup -->

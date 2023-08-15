@@ -6,19 +6,21 @@ import { getPrefix, sendMsgToPlayer } from "../../util.js";
 function ecWipeHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.ecwipe) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: ecwipe`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: ecwipe [optional]`,
-        `§4[§6Optional§4]§r: username, help`,
-        `§4[§6Description§4]§r: Will wipe out player's entire ender chest.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: ecwipe`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: ecwipe [optional]`,
+        `§4[§6Optional§4]§f: username, help`,
+        `§4[§6Description§4]§f: Will wipe out player's entire ender chest.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}ecwipe ${player.name}`,
+        `        §4- §6Wipe out the entire ender chest of ${player.name}§f`,
         `    ${prefix}ecwipe help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -27,7 +29,13 @@ function ecWipeHelp(player: Player, prefix: string) {
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided.
  */
-export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
+export function ecwipe(message: ChatSendAfterEvent, args: string[]) {
+    handleECWipe(message, args).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleECWipe(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
         return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/utility/ecwipe.js:29)");
@@ -40,7 +48,7 @@ export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -68,14 +76,12 @@ export async function ecwipe(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
     }
 
     // There are 30 slots ranging from 0 to 29
     for (let slot = 0; slot < 30; slot++) {
-        try {
-            await member.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
-        } catch (error) {}
+        member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
-    return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Wiped ${member.name}'s enderchest!`);
+    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wiped ${member.name}'s enderchest!`);
 }

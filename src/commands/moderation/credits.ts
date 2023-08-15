@@ -6,19 +6,21 @@ import { getPrefix, sendMsgToPlayer } from "../../util.js";
 function creditsHelp(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.customcommands.credits) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: credits`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: credits [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Shows credits for Paradox Anti Cheat.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: credits`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: credits [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Shows credits for Paradox Anti Cheat.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}credits`,
+        `        §4- §6Show credits for Paradox Anti Cheat§f`,
         `    ${prefix}credits help`,
+        `        §4- §6Show command help§f`,
     ]);
 }
 
@@ -40,7 +42,7 @@ export function credits(message: ChatSendAfterEvent, args: string[]) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -56,7 +58,7 @@ export function credits(message: ChatSendAfterEvent, args: string[]) {
         ` `,
         `§l§6                    Based on Scythe AntiCheat`,
         `§l§4-----------------------------------------------------`,
-        `§lGithub:§r https://https://github.com/MrDiamond64/Scythe-AntiCheat`,
+        `§lGithub:§f https://https://github.com/MrDiamond64/Scythe-AntiCheat`,
         `§lDeveloped and maintained by MrDiamond64`,
         ` `,
         `§l§6                 Major Contributers For Scythe`,
@@ -65,18 +67,18 @@ export function credits(message: ChatSendAfterEvent, args: string[]) {
         ` `,
         `§l§6                    Paradox AntiCheat (archived)`,
         `§l§4-----------------------------------------------------`,
-        `§lGithub:§r https://github.com/Visual1mpact/Paradox_AntiCheat`,
-        `§lParadox AntiCheat§r - a utility to fight against malicious hackers on Bedrock Edition.`,
+        `§lGithub:§f https://github.com/Visual1mpact/Paradox_AntiCheat`,
+        `§lParadox AntiCheat§f - a utility to fight against malicious hackers on Bedrock Edition.`,
         `§lDeveloped and maintained by Visual1mpact#1435`,
         ` `,
         `§l§6                    Paradox AntiCheat (archived)`,
         `§l§4-----------------------------------------------------`,
-        `§lGithub:§r https://github.com/frostice482/Paradox_AntiCheat`,
+        `§lGithub:§f https://github.com/frostice482/Paradox_AntiCheat`,
         `§lDeveloped and maintained by FrostIce482#8139`,
         ` `,
         `§l§6                    Paradox AntiCheat (Continued)`,
         `§l§4-----------------------------------------------------`,
-        `§lGithub:§r https://github.com/Pete9xi/Paradox_AntiCheat`,
+        `§lGithub:§f https://github.com/Pete9xi/Paradox_AntiCheat`,
         `§lDeveloped and maintained by Pete9xi#7928`,
         ` `,
         `§l§6                 Major Contributers For Paradox`,

@@ -19,43 +19,43 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r The player is not online.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f The player is not online.`);
     }
 
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
     }
 
     const allObjectives = allscores;
 
     const reportBody = [
-        `§6All Stats for ${member.name}§r\n\n`,
-        `§rCurrent Gamemode:§6 ${getGamemode(member)}\n`,
-        `§rCurrently at: §4X= ${member.location.x.toFixed(0)} §2Y= ${member.location.y.toFixed(0)} §3Z= ${member.location.z.toFixed(0)}\n`,
-        `§r§4--------------------------------§r\n`,
-        `§6${member.name}'s Current violations §r\n`,
+        `§6All Stats for ${member.name}§f\n\n`,
+        `§fCurrent Gamemode:§6 ${getGamemode(member)}\n`,
+        `§fCurrently at: §4X= ${member.location.x.toFixed(0)} §2Y= ${member.location.y.toFixed(0)} §3Z= ${member.location.z.toFixed(0)}\n`,
+        `§f§4--------------------------------§f\n`,
+        `§6${member.name}'s Current violations §f\n`,
     ];
 
     switch (true) {
         case member.hasTag("paradoxFreeze"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
             break;
         case member.hasTag("flying"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is flying`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is flying`);
             break;
         case member.hasTag("vanish"):
-            reportBody.push(`§r§4[§6Paradox§4]§r §6${member.name}§r is vanished`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is vanished`);
             break;
     }
 
     allObjectives.forEach((objective) => {
         const score = getScore(objective, member);
         if (score > 0) {
-            reportBody.push(`§r§4[§6${objective.replace("vl", "").toUpperCase()}§4]§r number of Violations: ${score}\n`);
+            reportBody.push(`§f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f number of Violations: ${score}\n`);
         }
     });
-    reportBody.push(`§r§4--------------------------------§r\n`);
+    reportBody.push(`§f§4--------------------------------§f\n`);
 
     const equipment = member.getComponent("equipment_inventory") as EntityEquipmentInventoryComponent;
     const helmet = equipment.getEquipment("head" as EquipmentSlot);
@@ -105,7 +105,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
             materialType = verification.typeId.split(":")[1];
         }
         const materialColor = materialColors[materialType] || materialColors["none"];
-        reportBody.push(`§r${armorType}: ${isEnchanted ? "§aEnchanted§r" : "§4Unenchanted§r"} || ${materialColor}${materialType}\n`);
+        reportBody.push(`§f${armorType}: ${isEnchanted ? "§aEnchanted§f" : "§4Unenchanted§f"} || ${materialColor}${materialType}\n`);
     }
 
     const ResultsUI = new ActionFormData();

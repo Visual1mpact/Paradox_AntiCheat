@@ -1,10 +1,21 @@
-import { world, ItemStack, Enchantment, Player, Block, BlockPlaceAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList } from "@minecraft/server";
+import { world, ItemStack, Enchantment, Player, Block, BlockPlaceAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
+
+// Create a map of player objects and their enchantment presence
+const enchantmentPresenceMap = new Map<string, Map<Enchantment, boolean>>();
+// Create a map of player objects and their enchantment data
+const enchantmentDataMap = new Map<string, Map<Enchantment, EnchantmentList>>();
+// Create a map of player objects and their inventory slot value
+const inventorySlotMap = new Map<string, Map<Enchantment, number>>();
+// Create a map of player objects and their ItemStack data
+const itemStackDataMap = new Map<string, Map<Enchantment, ItemStack>>();
+// Create a map of player objects and their unverified ItemStack
+const unverifiedItemMap = new Map<string, Map<number, ItemStack>>();
 
 function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string; level: number }, block?: Block, nested: boolean = false) {
     let reason: string;
@@ -27,6 +38,15 @@ function rip(player: Player, inventory_item: ItemStack, enchData?: { id: string;
     }
 }
 
+function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
+    // Remove the player's data from the map when they log off
+    enchantmentPresenceMap.delete(event.playerId);
+    enchantmentDataMap.delete(event.playerId);
+    inventorySlotMap.delete(event.playerId);
+    itemStackDataMap.delete(event.playerId);
+    unverifiedItemMap.delete(event.playerId);
+}
+
 async function illegalitemsb(object: BlockPlaceAfterEvent) {
     // Get Dynamic Property
     const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
@@ -38,6 +58,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
 
     // Unsubscribe if disabled in-game
     if (illegalItemsBBoolean === false) {
+        resetMaps(); // Clear the maps
+        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         world.afterEvents.blockPlace.unsubscribe(illegalitemsb);
         return;
     }
@@ -55,20 +77,9 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
         return;
     }
 
-    // Create a map of enchantment types and their presence in the player's inventory
-    const enchantmentPresenceMap = new Map<Enchantment, boolean>();
-    // Create a map of enchantment types and their data in the player's inventory
-    const enchantmentDataMap = new Map<Enchantment, EnchantmentList>();
-    // Create a map of enchantment types and a number type to signify slot value
-    const inventorySlotMap = new Map<Enchantment, number>();
-    // Create a map of enchantment types and a ItemStack type to test new instance of ItemStack type
-    const itemStackDataMap = new Map<Enchantment, ItemStack>();
-    // Create a map of itemstack types not verified by Paradox
-    const unverifiedItemMap = new Map<number, ItemStack>();
-
     // Check if placed item is illegal
     if (illegalitems.has(block.typeId) && !illegalItemsBWhitelist.has(block.typeId)) {
-        await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
+        player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
         flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null);
         return rip(player, null, null, block);
     }
@@ -117,7 +128,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                     break;
                 }
                 // Nested item has been found so flag it and remove the block from the world
-                await player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
+                player.runCommandAsync(`fill ${x} ${y} ${z} ${x} ${y} ${z} air [] replace air`);
                 flag(player, "IllegalItems", "B", "Exploit", null, null, null, null, null);
                 rip(player, null, null, block, true);
                 isFlagged = true;
@@ -146,8 +157,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // Anti Shulker Boxes
                 if (antiShulkerBoolean && itemStackId.includes("shulker")) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${block.typeId.replace("minecraft:", "")} from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Shulker Boxes are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${block.typeId.replace("minecraft:", "")} from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Shulker Boxes are not allowed!`);
                     continue;
                 }
 
@@ -156,8 +167,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 const maxStack = blockItemStack.maxAmount;
                 if (stackBanBoolean && currentStack > maxStack) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} x ${currentStack} from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Stacks are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.replace("minecraft:", "")} x ${currentStack} from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Illegal Stacks are not allowed!`);
                     rip(player, blockItemStack, null, block);
                     isFlagged = true;
                     break;
@@ -166,8 +177,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // If the item is in the "illegalitems" object, remove it from the block's inventory and run the "rip" function on it
                 if (itemStackId in illegalitems) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Illegal Items are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.replace("minecraft:", "")} from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Illegal Items are not allowed!`);
                     rip(player, blockItemStack, null, block);
                     isFlagged = true;
                     break;
@@ -176,8 +187,8 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 // Illegal Lores
                 if (illegalLoresBoolean && !config.modules.illegalLores.exclude.includes(String(blockItemStack.getLore()))) {
                     blockContainer.setItem(i);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.replace("minecraft:", "")} with lore from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal lores are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.replace("minecraft:", "")} with lore from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Item with illegal lores are not allowed!`);
                     rip(player, blockItemStack, null, block);
                     isFlagged = true;
                     break;
@@ -193,10 +204,10 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                     let iteratorResult = iterator.next();
                     while (!iteratorResult.done) {
                         const enchantment: Enchantment = iteratorResult.value;
-                        enchantmentPresenceMap.set(enchantment, true);
-                        enchantmentDataMap.set(enchantment, enchantmentData);
-                        inventorySlotMap.set(enchantment, i);
-                        itemStackDataMap.set(enchantment, blockItemStack);
+                        enchantmentPresenceMap.get(player.id).set(enchantment, true);
+                        enchantmentDataMap.get(player.id).set(enchantment, enchantmentData);
+                        inventorySlotMap.get(player.id).set(enchantment, i);
+                        itemStackDataMap.get(player.id).set(enchantment, blockItemStack);
                         iteratorResult = iterator.next();
                     }
                 }
@@ -208,8 +219,10 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                     if (!uniqueItems.includes(itemStackId)) {
                         const verifiedItemName = blockItemStack.nameTag;
                         if (!verifiedItemName) {
-                            unverifiedItemMap.set(i, blockItemStack);
+                            unverifiedItemMap.set(player.id, new Map<number, ItemStack>());
                         }
+                        const playerMap = unverifiedItemMap.get(player.id);
+                        playerMap.set(i, blockItemStack);
                     }
                 }
             }
@@ -222,11 +235,11 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
     // Iterate through the enchantment presence map to perform any necessary operations
     if (illegalEnchantmentBoolean) {
         let isPresent = false;
-        for (const [enchantment, present] of enchantmentPresenceMap) {
+        for (const [enchantment, present] of enchantmentPresenceMap.get(player.id)) {
             if (present) {
                 // Do something with the present enchantment and its data
-                const itemStackData = itemStackDataMap.get(enchantment);
-                const enchantmentData = enchantmentDataMap.get(enchantment);
+                const itemStackData = itemStackDataMap.get(player.id).get(enchantment);
+                const enchantmentData = enchantmentDataMap.get(player.id).get(enchantment);
                 const getEnchantment = enchantmentData.getEnchantment(enchantment.type);
                 const currentLevel = getEnchantment.level;
                 const maxLevel = getEnchantment.type.maxLevel;
@@ -240,15 +253,15 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
                 const canAddEnchantBoolean = newEnchantmentData.canAddEnchantment(getEnchantment);
                 // Flag for illegal enchantments
                 if (currentLevel > maxLevel || currentLevel < 0 || !canAddEnchantBoolean) {
-                    const itemSlot = inventorySlotMap.get(enchantment);
+                    const itemSlot = inventorySlotMap.get(player.id).get(enchantment);
                     const enchData = {
                         id: getEnchantment.type.id,
                         level: currentLevel,
                     };
                     const itemStackId = blockContainer.getItem(itemSlot);
                     blockContainer.setItem(itemSlot);
-                    sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r Removed ${itemStackId.typeId.replace("minecraft:", "")} with Illegal Enchantments from ${player.name}.`);
-                    sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Item with illegal Enchantments are not allowed!`);
+                    sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f Removed ${itemStackId.typeId.replace("minecraft:", "")} with Illegal Enchantments from ${player.name}.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Item with illegal Enchantments are not allowed!`);
                     enchantmentPresenceMap.clear();
                     enchantmentDataMap.clear();
                     inventorySlotMap.clear();
@@ -273,7 +286,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
     if (salvageBoolean) {
         let salvagedList = false;
         // Iterate over the unverifiedItemMap
-        for (const [slot, itemStackData] of unverifiedItemMap) {
+        for (const [slot, itemStackData] of unverifiedItemMap.get(player.id)) {
             // Create a new name tag for the item
             const newNameTag = titleCase(itemStackData.typeId.replace("minecraft:", ""));
             // Create a new ItemStack with the same type as the original item
@@ -333,7 +346,16 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
     }
 }
 
+function resetMaps() {
+    enchantmentPresenceMap.clear();
+    enchantmentDataMap.clear();
+    inventorySlotMap.clear();
+    itemStackDataMap.clear();
+    unverifiedItemMap.clear();
+}
+
 const IllegalItemsB = () => {
+    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     world.afterEvents.blockPlace.subscribe(illegalitemsb);
 };
 

@@ -14,20 +14,20 @@ export async function uiANTIAUTOCLICKER(antiautoclickerResult: ModalFormResponse
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Auto Clicker`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Auto Clicker`);
     }
     if (AntiAutoClickerToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("autoclicker_b", true);
         world.setDynamicProperty("autoclicker_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6AutoClicker§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AutoClicker§f!`);
         AutoClicker();
     }
     if (AntiAutoClickerToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("autoclicker_b", false);
         world.setDynamicProperty("autoclicker_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4AutoClicker§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AutoClicker§f!`);
     }
 
     //show the main ui to the player once complete.

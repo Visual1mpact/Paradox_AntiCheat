@@ -14,20 +14,20 @@ export function uiANTIFLY(antiflyResult: ModalFormResponse, player: Player) {
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Anti Fly`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Anti Fly`);
     }
     if (AntiFlyToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("flya_b", true);
         world.setDynamicProperty("flya_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6FlyA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6FlyA§f!`);
         FlyA();
     }
     if (AntiFlyToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("flya_b", false);
         world.setDynamicProperty("flya_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4FlyA§r!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4FlyA§f!`);
     }
     //show the main ui to the player once complete.
     return paradoxui(player);

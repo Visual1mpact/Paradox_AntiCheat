@@ -23,7 +23,7 @@ function verifypermission() {
             }
             continue; // Skip to the next player
         }
-        const encode = crypto?.(salt, config?.modules?.encryption?.password);
+        const encode = crypto?.(salt, player.id);
         if (encode === hash) {
             // Make sure their unique ID exists in case of a reload
             if (dynamicPropertyRegistry.has(player.id) === false) {
@@ -37,7 +37,7 @@ function verifypermission() {
             player.removeTag("paradoxOpped");
         }
 
-        sendMsg("@a[tag=notify]", `§r§4[§6Paradox§4]§r ${player.name} had unauthorized permissions. Permissions removed!`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} had unauthorized permissions. Permissions removed!`);
     }
 }
 

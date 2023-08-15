@@ -19,7 +19,7 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to enable Notifications.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to enable Notifications.`);
     }
     if (Enabled === true) {
         try {
@@ -28,10 +28,10 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
             }
             member.addTag("notify");
         } catch (error) {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
             paradoxui(player);
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled notifications.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled notifications.`);
         paradoxui(player);
     }
     if (Enabled === false) {
@@ -41,10 +41,10 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
             }
             member.addTag("nonotify");
         } catch (error) {
-            sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r Something went wrong! Error: ${error}`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
             paradoxui(player);
         }
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled notifications.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled notifications.`);
         paradoxui(player);
     }
     return paradoxui(player);

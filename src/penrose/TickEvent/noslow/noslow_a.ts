@@ -1,10 +1,40 @@
-import { world, system, EntityQueryOptions, GameMode, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { world, system, EntityQueryOptions, GameMode, PlayerLeaveAfterEvent, EntityHurtAfterEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, isTimerExpired } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Create a Map to store each player's last known position, timestamp, and highest speed
-const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: number; highestBps: number }>();
+const playerData = new Map<string, { lastPosition: number[]; lastTimestamp: number; highestBps: number; lastHitTimestamp: number }>();
+
+function onPlayerSpawn(event: PlayerSpawnAfterEvent): void {
+    if (event.initialSpawn === true) {
+        return;
+    }
+
+    const playerName = event.player.id;
+
+    // Initialize player data when they spawn
+    playerData.set(playerName, {
+        lastPosition: [event.player.location.x, event.player.location.y, event.player.location.z],
+        lastTimestamp: Date.now(),
+        highestBps: 0,
+        lastHitTimestamp: 0,
+    });
+}
+
+function onEntityHurt(event: EntityHurtAfterEvent): void {
+    if (!event.hurtEntity.isValid()) {
+        return;
+    }
+
+    const playerName = event.hurtEntity.id;
+
+    // Update the last hit timestamp for the player
+    if (playerData.has(playerName)) {
+        const playerInfo = playerData.get(playerName);
+        playerInfo.lastHitTimestamp = Date.now();
+    }
+}
 
 function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     // Remove the player's data from the map when they log off
@@ -43,6 +73,8 @@ function noslowa(id: number) {
     // Unsubscribe if disabled in-game
     if (noSlowBoolean === false) {
         playerData.clear();
+        world.afterEvents.playerSpawn.unsubscribe(onPlayerSpawn);
+        world.afterEvents.entityHurt.unsubscribe(onEntityHurt);
         world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         system.clearRun(id);
         return;
@@ -78,11 +110,26 @@ function noslowa(id: number) {
 
         // If playerData Map doesn't have a key for the player's name, add it with initial values
         if (!playerData.has(playerName)) {
-            playerData.set(playerName, { lastPosition: playerPosition, lastTimestamp: playerTimestamp, highestBps: 0 });
+            playerData.set(playerName, {
+                lastPosition: playerPosition,
+                lastTimestamp: playerTimestamp,
+                highestBps: 0,
+                lastHitTimestamp: 0,
+            });
         }
 
         const playerInfo = playerData.get(playerName);
-        const { lastPosition, lastTimestamp, highestBps } = playerInfo;
+        const { lastPosition, lastTimestamp, highestBps, lastHitTimestamp } = playerInfo;
+
+        // Check if player was hit recently (within the last X milliseconds)
+        const timeSinceLastHit = Date.now() - lastHitTimestamp;
+        const recentlyHit = timeSinceLastHit <= 1000; // Adjust the time threshold as needed
+
+        // Skip processing for players who were recently hit
+        if (recentlyHit) {
+            continue;
+        }
+
         const bps = calculateMovementBPS(playerPosition, lastPosition, playerTimestamp, lastTimestamp);
         playerInfo.lastPosition = playerPosition;
         playerInfo.lastTimestamp = playerTimestamp;
@@ -104,6 +151,8 @@ function noslowa(id: number) {
  * if needed to do so.
  */
 export function NoSlowA() {
+    world.afterEvents.playerSpawn.subscribe(onPlayerSpawn);
+    world.afterEvents.entityHurt.subscribe(onEntityHurt);
     world.afterEvents.playerLeave.subscribe(onPlayerLogout); // Subscribe to player logout events
     const noSlowAId = system.runInterval(() => {
         noslowa(noSlowAId);

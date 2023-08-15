@@ -6,17 +6,17 @@ import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
 function listItems(player: Player, prefix: string) {
     let commandStatus: string;
     if (!config.debug) {
-        commandStatus = "§6[§4DISABLED§6]§r";
+        commandStatus = "§6[§4DISABLED§6]§f";
     } else {
-        commandStatus = "§6[§aENABLED§6]§r";
+        commandStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§4[§6Command§4]§r: listitems`,
-        `§4[§6Status§4]§r: ${commandStatus}`,
-        `§4[§6Usage§4]§r: listitems [optional]`,
-        `§4[§6Optional§4]§r: help`,
-        `§4[§6Description§4]§r: Prints every item in the game and their max stack.`,
-        `§4[§6Examples§4]§r:`,
+        `\n§o§4[§6Command§4]§f: listitems`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
+        `§4[§6Usage§4]§f: listitems [optional]`,
+        `§4[§6Optional§4]§f: help`,
+        `§4[§6Description§4]§f: Prints every item in the game and their max stack.`,
+        `§4[§6Examples§4]§f:`,
         `    ${prefix}listitems`,
         `    ${prefix}listitems help`,
     ]);
@@ -38,10 +38,10 @@ export function listitems(message: ChatSendAfterEvent, args: string[]) {
     // Check for hash/salt and validate password
     const hash = player.getDynamicProperty("hash");
     const salt = player.getDynamicProperty("salt");
-    const encode = crypto?.(salt, config?.modules?.encryption?.password);
+    const encode = crypto?.(salt, player.id);
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to use this command.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
     // Check for custom prefix
@@ -57,5 +57,5 @@ export function listitems(message: ChatSendAfterEvent, args: string[]) {
         const itemInfo = new ItemStack(MinecraftItemTypes[item as keyof typeof MinecraftItemTypes]);
         console.log("'" + itemInfo.typeId + "': " + itemInfo.maxAmount + ",");
     }
-    sendMsgToPlayer(player, "§r§4[§6Paradox§4]§r List completed. Check console logs.");
+    sendMsgToPlayer(player, "§f§4[§6Paradox§4]§f List completed. Check console logs.");
 }

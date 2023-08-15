@@ -13,19 +13,19 @@ export async function uiENCHANTEDARMOR(enchantedarmorResult: ModalFormResponse, 
 
     // Make sure the user has permissions to run the command
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§r§4[§6Paradox§4]§r You need to be Paradox-Opped to configure Enchanted Armor`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to configure Enchanted Armor`);
     }
     if (EnchantedArmorToggle === true) {
         // Allow
-        await player.runCommandAsync(`scoreboard players set paradox:config encharmor 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has enabled §6Anti Enchanted Armor§r!`);
+        player.runCommand(`scoreboard players set paradox:config encharmor 1`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Enchanted Armor§f!`);
     }
     if (EnchantedArmorToggle === false) {
         // Deny
-        await player.runCommandAsync(`scoreboard players set paradox:config encharmor 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§r§4[§6Paradox§4]§r ${player.name}§r has disabled §4Anti Enchanted Armor§r!`);
+        player.runCommand(`scoreboard players set paradox:config encharmor 0`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Enchanted Armor§f!`);
     }
-    await player.runCommandAsync(`scoreboard players operation @a encharmor = paradox:config encharmor`);
+    player.runCommand(`scoreboard players operation @a encharmor = paradox:config encharmor`);
     //show the main ui to the player once complete.
     return paradoxui(player);
 }
