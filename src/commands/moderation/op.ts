@@ -10,6 +10,10 @@ function opHelp(player: Player, prefix: string) {
     } else {
         commandStatus = "§6[§aENABLED§6]§f";
     }
+
+    const passwordDescription = config.encryption.password ? `§4- §6Use your password to gain Paradox-Op§f` : `§4- §6Give yourself Paradox-Op§f`;
+    const commandUsage = config.encryption.password ? `${prefix}op <password>` : `${prefix}op`;
+
     return sendMsgToPlayer(player, [
         `\n§o§4[§6Command§4]§f: op`,
         `§4[§6Status§4]§f: ${commandStatus}`,
@@ -17,8 +21,8 @@ function opHelp(player: Player, prefix: string) {
         `§4[§6Optional§4]§f: username, help`,
         `§4[§6Description§4]§f: Grants permission to use Paradox AntiCheat features.`,
         `§4[§6Examples§4]§f:`,
-        `    ${prefix}op`,
-        `        §4- §6Give yourself Paradox-Op§f`,
+        `    ${commandUsage}`,
+        `        ${passwordDescription}`,
         `    ${prefix}op help`,
         `        §4- §6Show command help§f`,
         `    ${prefix}op <player>`,
@@ -45,8 +49,10 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     const operatorSalt = operator.getDynamicProperty("salt");
 
     if (!operatorHash || !operatorSalt || (operatorHash !== crypto?.(operatorSalt, config.encryption.password || operator.id) && isValidUUID(operatorSalt as string))) {
-        if (!config.encryption.password || !operator.isOp()) {
-            return sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
+        if (!config.encryption.password) {
+            if (!operator.isOp()) {
+                return sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
+            }
         }
     }
 
@@ -55,7 +61,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
         return opHelp(operator, prefix);
     }
 
-    if (args.length === 0) {
+    if (args.length === 0 && !config.encryption.password) {
         // Operator wants to change their own password
         const targetSalt = UUID.generate();
 
@@ -74,9 +80,25 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
         dynamicPropertyRegistry.set(operator.id, operator.name);
 
         return;
-    }
+    } else if (args.length === 1 && config.encryption.password) {
+        // Allow the user to gain Paradox-Op using the password
+        if (config.encryption.password === args[0]) {
+            const targetSalt = UUID.generate();
 
-    if (args.length === 1 && args[0].length >= 1 && operatorHash === crypto?.(operatorSalt, operator.id)) {
+            // Generate the hash using the provided password
+            const newHash = crypto?.(targetSalt, args[0]);
+
+            operator.setDynamicProperty("hash", newHash);
+            operator.setDynamicProperty("salt", targetSalt);
+            operator.addTag("paradoxOpped");
+
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You are now Paradox-Opped using the password.`);
+            dynamicPropertyRegistry.set(operator.id, operator.name);
+        } else {
+            // Incorrect password
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Incorrect password. You need to be Operator to use this command.`);
+        }
+    } else if (args.length === 1 && operatorHash === crypto?.(operatorSalt, config.encryption.password || operator.id)) {
         // Operator wants to grant "Paradox-Op" to another player
         const targetPlayerName = args[0];
         // Try to find the player requested
@@ -116,7 +138,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
                 sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f ${targetPlayer.name} is already Paradox-Opped.`);
             }
         } else {
-            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayer.name}.`);
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayerName}.`);
         }
     } else {
         return opHelp(operator, prefix);

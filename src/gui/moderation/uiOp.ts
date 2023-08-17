@@ -6,11 +6,13 @@ import { paradoxui } from "../paradoxui.js";
 import config from "../../data/config.js";
 
 //Function provided by Visual1mpact
-export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: string | number | boolean, hash: string | number | boolean, onlineList: string[], player: Player) {
+export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: string | number | boolean, hash: string | number | boolean, player: Player, onlineList?: string[]) {
     if (!hash || !salt || (hash !== crypto?.(salt, config.encryption.password || player.id) && isValidUUID(salt as string))) {
-        if (!config.encryption.password || !player.isOp()) {
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
-            return paradoxui(player);
+        if (!config.encryption.password) {
+            if (!player.isOp()) {
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
+                return paradoxui(player);
+            }
         }
     }
 
@@ -22,11 +24,19 @@ export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: str
         // Try to find the player requested
         let targetPlayer: Player;
 
-        const players = world.getPlayers();
-        for (const pl of players) {
-            if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
-                targetPlayer = pl;
-                break;
+        if (onlineList.length > 0) {
+            const players = world.getPlayers();
+            for (const pl of players) {
+                if (pl.name.toLowerCase().includes(onlineList[value as number].toLowerCase().replace(/"|\\|@/g, ""))) {
+                    targetPlayer = pl;
+                    break;
+                }
+            }
+        } else {
+            targetPlayer = player;
+            if (config.encryption.password !== value) {
+                // Incorrect password
+                return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Incorrect password. You need to be Operator to use this command.`);
             }
         }
 
