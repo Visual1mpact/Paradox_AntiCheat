@@ -3,6 +3,7 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { crypto, sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import config from "../../data/config.js";
 
 /**
  * Handles the result of a modal form used for initiating a server lockdown.
@@ -33,7 +34,12 @@ async function handleUILockdown(lockdownResult: ModalFormResponse, player: Playe
             // Check for hash/salt and validate password
             const hash = pl.getDynamicProperty("hash");
             const salt = pl.getDynamicProperty("salt");
-            const encode = crypto?.(salt, pl.id);
+
+            // Use either the operator's ID or the encryption password as the key
+            const key = config.encryption.password ? config.encryption.password : pl.id;
+
+            // Generate the hash
+            const encode = crypto?.(salt, key);
             if (hash !== undefined && encode === hash) {
                 continue;
             }

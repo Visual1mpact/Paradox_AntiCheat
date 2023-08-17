@@ -44,8 +44,8 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     const operatorHash = operator.getDynamicProperty("hash");
     const operatorSalt = operator.getDynamicProperty("salt");
 
-    if (!operatorHash || !operatorSalt || (operatorHash !== crypto?.(operatorSalt, operator.id) && isValidUUID(operatorSalt as string))) {
-        if (!operator.isOp()) {
+    if (!operatorHash || !operatorSalt || (operatorHash !== crypto?.(operatorSalt, config.encryption.password || operator.id) && isValidUUID(operatorSalt as string))) {
+        if (!config.encryption.password || !operator.isOp()) {
             return sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
         }
     }
@@ -58,7 +58,12 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     if (args.length === 0) {
         // Operator wants to change their own password
         const targetSalt = UUID.generate();
-        const newHash = crypto?.(targetSalt, operator.id);
+
+        // Use either the operator's ID or the encryption password as the key
+        const key = config.encryption.password ? config.encryption.password : operator.id;
+
+        // Generate the hash
+        const newHash = crypto?.(targetSalt, key);
 
         operator.setDynamicProperty("hash", newHash);
         operator.setDynamicProperty("salt", targetSalt);
@@ -93,7 +98,11 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
                 const targetSalt = UUID.generate();
                 targetPlayer.setDynamicProperty("salt", targetSalt);
 
-                const newHash = crypto?.(targetSalt, targetPlayer.id);
+                // Use either the operator's ID or the encryption password as the key
+                const targetKey = config.encryption.password ? config.encryption.password : targetPlayer.id;
+
+                // Generate the hash
+                const newHash = crypto?.(targetSalt, targetKey);
 
                 targetPlayer.setDynamicProperty("hash", newHash);
 

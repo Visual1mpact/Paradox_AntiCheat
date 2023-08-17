@@ -271,4 +271,15 @@ export default {
             minutes: 10,
         },
     },
+    /**
+     * Set your password here.
+     *
+     * This is required for Realm users to gain Paradox-Op.
+     *
+     * Anyone else is welcome to use this if they like but
+     * are not obligated.
+     */
+    encryption: {
+        password: "",
+    },
 };

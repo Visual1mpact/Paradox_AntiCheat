@@ -3,11 +3,12 @@ import { ActionFormResponse, ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { crypto, isValidUUID, sendMsg, sendMsgToPlayer, UUID } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import config from "../../data/config.js";
 
 //Function provided by Visual1mpact
 export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: string | number | boolean, hash: string | number | boolean, onlineList: string[], player: Player) {
-    if (!hash || !salt || (hash !== crypto?.(salt, player.id) && isValidUUID(salt as string))) {
-        if (!player.isOp()) {
+    if (!hash || !salt || (hash !== crypto?.(salt, config.encryption.password || player.id) && isValidUUID(salt as string))) {
+        if (!config.encryption.password || !player.isOp()) {
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
             return paradoxui(player);
         }
@@ -36,7 +37,11 @@ export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: str
                 const targetSalt = UUID.generate();
                 targetPlayer.setDynamicProperty("salt", targetSalt);
 
-                const newHash = crypto?.(targetSalt, targetPlayer.id);
+                // Use either the operator's ID or the encryption password as the key
+                const targetKey = config.encryption.password ? config.encryption.password : targetPlayer.id;
+
+                // Generate the hash
+                const newHash = crypto?.(targetSalt, targetKey);
 
                 targetPlayer.setDynamicProperty("hash", newHash);
 

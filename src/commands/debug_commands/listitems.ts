@@ -38,7 +38,12 @@ export function listitems(message: ChatSendAfterEvent, args: string[]) {
     // Check for hash/salt and validate password
     const hash = player.getDynamicProperty("hash");
     const salt = player.getDynamicProperty("salt");
-    const encode = crypto?.(salt, player.id);
+
+    // Use either the operator's ID or the encryption password as the key
+    const key = config.encryption.password ? config.encryption.password : player.id;
+
+    // Generate the hash
+    const encode = crypto?.(salt, key);
     // Make sure the user has permissions to run the command
     if (hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
