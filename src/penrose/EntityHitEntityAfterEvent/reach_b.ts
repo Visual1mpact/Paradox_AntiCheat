@@ -83,7 +83,7 @@ function reachb(object: EntityHitEntityAfterEvent) {
         // Flagging is done, now we can remove the player entity from previousData
         onPlayerLogout(damagingEntity.id);
         onPlayerLogout(hitEntity.id);
-        flag(damagingEntity, "Reach", "B", "Attack", null, null, "reach", reachDistance.toString(), false);
+        flag(damagingEntity, "Reach", "B", "Attack", null, null, "reach", reachDistance.toFixed(2), false);
     }
     // Flagging is done, now we can remove the player entity from previousData
     onPlayerLogout(damagingEntity.id);
