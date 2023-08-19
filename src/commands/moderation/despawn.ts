@@ -85,7 +85,7 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
             }
         }
         if (counter > 0) {
-            return sendMsgToPlayer(player, ` §6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
+            return sendMsgToPlayer(player, ` §o§6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
         } else {
             return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entity found to despawn!`);
         }
@@ -116,7 +116,7 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` §6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
+                    entityMessage += ` §o§o§6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
                     totalCounter += count;
                 }
             }

@@ -11,10 +11,10 @@ function listQueue(queued: Set<string>, player: Player) {
     if (setSize > 0) {
         queued.forEach((queue: string) =>
             // List the players that are queued to be unbanned
-            sendMsgToPlayer(player, ` §6|§f §4[§f${queue}§4]§f`)
+            sendMsgToPlayer(player, ` §o§6|§f §4[§f${queue}§4]§f`)
         );
     } else {
-        sendMsgToPlayer(player, ` §6|§f §4[§fList Is Empty§4]§f`);
+        sendMsgToPlayer(player, ` §o§6|§f §4[§fList Is Empty§4]§f`);
     }
 }
 

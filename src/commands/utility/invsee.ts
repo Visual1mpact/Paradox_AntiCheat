@@ -83,7 +83,7 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
         `§f§4[§6Paradox§4]§f ${member.name}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
             const item = container.getItem(i);
-            return ` §6|§f §fSlot ${i}§f §6=>§f ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§f §6Amount: §4x${item.amount}§f` : "§7(empty)"}`;
+            return ` §o§6|§f §fSlot ${i}§f §6=>§f ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§f §6Amount: §4x${item.amount}§f` : "§7(empty)"}`;
         }),
         ` `,
     ]);

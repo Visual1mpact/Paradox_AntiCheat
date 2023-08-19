@@ -102,7 +102,7 @@ export function listhome(message: ChatSendAfterEvent, args: string[]) {
                     if (counter === 1) {
                         homeMessages.push(`§f§4[§6Paradox§4]§f List Of Homes:`);
                     }
-                    homeMessages.push(` §6|§f §4[§f${home}§4]§f §6=>§f ${homex} ${homey} ${homez} §6<=§f §4[§f${dimension}§4]§f`);
+                    homeMessages.push(` §o§6|§f §4[§f${home}§4]§f §6=>§f ${homex} ${homey} ${homez} §6<=§f §4[§f${dimension}§4]§f`);
                 }
             }
         }
