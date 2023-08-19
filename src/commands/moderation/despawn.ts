@@ -116,7 +116,7 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` §o§o§6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
+                    entityMessage += ` §o§6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
                     totalCounter += count;
                 }
             }
