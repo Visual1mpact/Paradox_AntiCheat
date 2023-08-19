@@ -84,6 +84,8 @@ import { autoban } from "./settings/autoban.js";
 import { paradoxVersion } from "./utility/paradoxVersion.js";
 import { biome } from "./utility/biome.js";
 import { afk } from "./settings/afk.js";
+import { antiphaseA } from "./settings/antiphasea.js";
+
 const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
@@ -167,6 +169,7 @@ const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, arg
         version: paradoxVersion,
         biome: biome,
         afk: afk,
+        antiphasea: antiphaseA,
     },
     null
 );

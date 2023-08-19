@@ -81,6 +81,7 @@ export default {
         autoban: true,
         biome: true,
         afk: true,
+        antiphasea: true,
     },
     modules: {
         badpackets1: {
@@ -269,6 +270,9 @@ export default {
         afk: {
             enabled: true,
             minutes: 10,
+        },
+        antiphaseA: {
+            enabled: true,
         },
     },
     /**

@@ -102,6 +102,7 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}antifalla§f - ${config.customcommands.antifalla ? `Toggles checks for taking no fall damage in survival.` : textDisabled}`,
         `§6${prefix}showrules§f - ${config.customcommands.showrules ? `Toggles showing the rules when the player loads in for the first time.` : textDisabled}`,
         `§6${prefix}afk§f - ${config.customcommands.afk ? `Kicks players that are AFK for ${config.modules.afk.minutes} minutes.` : textDisabled}`,
+        `§6${prefix}antiphasea§f - ${config.customcommands.antiphasea ? `Toggles checks for players phasing through blocks.` : textDisabled}`,
         ` `,
         `§l§o§6[§4Tools and Utilites§6]§r§o`,
         `§6${prefix}give§f - ${config.customcommands.give ? `Gives player items.` : textDisabled}`,

@@ -455,4 +455,5 @@ export const allscores: string[] = [
     "antifallvl",
     "nukervl",
     "scaffoldvl",
+    "antiphasevl",
 ];
