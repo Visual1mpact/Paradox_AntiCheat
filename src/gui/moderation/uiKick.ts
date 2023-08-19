@@ -29,7 +29,7 @@ async function handleUIKick(banResult: ModalFormResponse, onlineList: string[], 
     }
 
     if (!member) {
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
         return paradoxui(player);
     }
 

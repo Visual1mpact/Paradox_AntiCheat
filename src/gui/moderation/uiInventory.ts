@@ -37,7 +37,7 @@ async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineLis
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
     const inv = member.getComponent("inventory") as EntityInventoryComponent;
     const container = inv.container;

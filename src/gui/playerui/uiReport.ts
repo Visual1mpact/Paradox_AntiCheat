@@ -15,7 +15,7 @@ export function UIREPORTPLAYER(reportplayerResult: ModalFormResponse, onlineList
 
     if (!member) {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f !report <player> <reason>§f`);
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
 
     // Make sure they dont report themselves

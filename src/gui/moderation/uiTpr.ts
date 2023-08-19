@@ -14,7 +14,7 @@ export function uiTPR(requester: string, player: Player, respons: string) {
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
 
     // Let's complete this tpr request

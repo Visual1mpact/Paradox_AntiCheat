@@ -91,7 +91,7 @@ export function ban(message: ChatSendAfterEvent, args: string[]) {
 
     // Check if player exists
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
 
     // make sure they dont ban themselves
