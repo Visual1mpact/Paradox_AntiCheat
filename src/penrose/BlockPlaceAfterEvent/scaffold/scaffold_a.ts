@@ -1,15 +1,6 @@
-import { world, MinecraftBlockTypes, BlockPlaceAfterEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
-import config from "../../../data/config.js";
+import { world, MinecraftBlockTypes, BlockPlaceAfterEvent } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-
-const blockTimer = new Map<string, Date[]>();
-
-function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
-    // Remove the player's data from the map when they log off
-    const playerName = event.playerId;
-    blockTimer.delete(playerName);
-}
 
 function scaffolda(object: BlockPlaceAfterEvent) {
     // Get Dynamic Property
@@ -17,8 +8,6 @@ function scaffolda(object: BlockPlaceAfterEvent) {
 
     // Unsubscribe if disabled in-game
     if (antiScaffoldABoolean === false) {
-        blockTimer.clear();
-        world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         world.afterEvents.blockPlace.unsubscribe(scaffolda);
         return;
     }
@@ -37,35 +26,22 @@ function scaffolda(object: BlockPlaceAfterEvent) {
     // Block coordinates
     const { x, y, z } = block.location;
 
-    let timer: Date[];
-    if (blockTimer.has(player.id)) {
-        timer = blockTimer.get(player.id);
-    } else {
-        timer = [];
-    }
+    // Block below placement
+    const belowBlockLocation = { x, y: y - 1, z };
 
-    timer.push(new Date());
+    // Is it air
+    const blockType = dimension.getBlock(belowBlockLocation).isAir();
 
-    const tiktok = timer.filter((time) => time.getTime() > new Date().getTime() - 100);
-    blockTimer.set(player.id, tiktok);
+    // Are they sprinting
+    const isSprinting = player.isSprinting;
 
-    if (tiktok.length >= config.modules.antiscaffoldA.max) {
+    if (blockType && isSprinting) {
         dimension.getBlock({ x: x, y: y, z: z }).setType(MinecraftBlockTypes.air);
         flag(player, "Scaffold", "A", "Placement", null, null, null, null, false);
-        /*
-        try {
-            player.runCommand(`tag "${disabler(player.name)}" add "
-            :Illegal Scaffolding"`);
-            player.runCommand(`tag "${disabler(player.name)}" add "By:Paradox"`);
-            player.addTag('isBanned');
-        } catch (error) {
-            kickablePlayers.add(player); player.triggerEvent('paradox:kick');
-        }*/
     }
 }
 
 const ScaffoldA = () => {
-    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
     world.afterEvents.blockPlace.subscribe(scaffolda);
 };
 
