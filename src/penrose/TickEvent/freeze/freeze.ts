@@ -1,6 +1,6 @@
 import { world, Player, system, EntityQueryOptions, Vector, Vector3, Dimension } from "@minecraft/server";
 import { sendMsg, setTimer } from "../../../util";
-import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
+import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index";
 
 const freezeDataMap: Map<string, FreezeData> = new Map();
 
