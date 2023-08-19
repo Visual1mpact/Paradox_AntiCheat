@@ -41,5 +41,7 @@ async function vanish() {
  * if needed to do so.
  */
 export const Vanish = system.runInterval(() => {
-    vanish();
+    vanish().catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
 });

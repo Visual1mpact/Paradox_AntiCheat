@@ -4,7 +4,20 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { getScore, sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiCOMMANDBLOCKS(commandblocksResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling command blocks mode.
+ *
+ * @name uiCOMMANDBLOCKS
+ * @param {ModalFormResponse} commandblocksResult - The result of the command blocks mode toggle modal form.
+ * @param {Player} player - The player who triggered the command blocks mode toggle modal form.
+ */
+export function uiCOMMANDBLOCKS(commandblocksResult: ModalFormResponse, player: Player) {
+    handleUICommandBlocks(commandblocksResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUICommandBlocks(commandblocksResult: ModalFormResponse, player: Player) {
     const [CommandBlockOverrideToggle, RemoveCommandBlocksToggle] = commandblocksResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

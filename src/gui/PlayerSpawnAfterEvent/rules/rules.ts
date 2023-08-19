@@ -2,7 +2,19 @@ import { PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { ShowRules } from "../../showrules/showrules.js";
 import { dynamicPropertyRegistry } from "../../../penrose/WorldInitializeAfterEvent/registry.js";
 
-async function onJoinRules(object: PlayerSpawnAfterEvent) {
+/**
+ * Handles the player spawn event and displays join rules.
+ *
+ * @name onJoinRules
+ * @param {PlayerSpawnAfterEvent} object - The player spawn event object.
+ */
+export function onJoinRules(object: PlayerSpawnAfterEvent) {
+    handledleOnJoinRules(object).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handledleOnJoinRules(object: PlayerSpawnAfterEvent) {
     //Get Dynamic Property
     const showrulesBoolean = dynamicPropertyRegistry.get("showrules_b");
 

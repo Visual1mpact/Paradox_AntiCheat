@@ -106,14 +106,19 @@ async function handleParadoxUI(player: Player) {
 
                 onlineList = Array.from(world.getPlayers(), (player) => player.name);
                 opgui.dropdown(`\n§fSelect a player to give access to Paradox:§f\n\nPlayer's Online\n`, onlineList);
-            } else {
+            } else if (!config.encryption.password) {
                 opgui = new ActionFormData();
                 opgui.title("§4OP§4");
 
                 opgui.button("Grant OP Access", "textures/ui/op");
+            } else if (config.encryption.password) {
+                opgui = new ModalFormData();
+                opgui.title("§4OP§4");
+
+                opgui.textField("Enter Password:", "");
             }
             opgui.show(player).then((opResult) => {
-                uiOP(opResult, salt, hash, onlineList, player);
+                uiOP(opResult, salt, hash, player, onlineList);
             });
         }
         if (result.selection === 1) {
@@ -994,20 +999,18 @@ async function handleParadoxUI(player: Player) {
             const Locations: string[] = [];
             const coordsArray: string[] = [];
             for (let i = 0; i < tags.length; i++) {
-                /**
-                 * This first if statement is to verify if they have old coordinates
-                 * not encrypted. If so then we encrypt it now. This is only a temporary
-                 * patch to minimize players having to manually record and remove the old
-                 * tags. Eventually this will be removed.
-                 */
-                if (tags[i].startsWith("LocationHome:")) {
+                // 6f78 is temporary and will be removed
+                if (tags[i].startsWith("6f78")) {
+                    // Remove old encryption
                     player.removeTag(tags[i]);
-                    tags[i] = encryptString(tags[i], String(salt));
+                    // Change to AES Encryption so we can abandon the old method
+                    tags[i] = decryptString(tags[i], salt as string);
+                    tags[i] = encryptString(tags[i], salt as string);
                     player.addTag(tags[i]);
                 }
-                if (tags[i].startsWith("6f78")) {
+                if (tags[i].startsWith("1337")) {
                     // Decode it so we can verify it
-                    tags[i] = decryptString(tags[i], String(salt));
+                    tags[i] = decryptString(tags[i], salt as string);
                     // If invalid then skip it
                     if (tags[i].startsWith("LocationHome:") === false) {
                         continue;

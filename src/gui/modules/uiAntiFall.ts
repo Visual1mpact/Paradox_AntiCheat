@@ -5,7 +5,20 @@ import { paradoxui } from "../paradoxui.js";
 import { sendMsgToPlayer, sendMsg } from "../../util.js";
 import { AntiFallA } from "../../penrose/TickEvent/antifalla/antifall_a.js";
 
-export async function uiANTIFALL(antifallResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling anti-fall mode.
+ *
+ * @name uiANTIFALL
+ * @param {ModalFormResponse} antifallResult - The result of the anti-fall mode toggle modal form.
+ * @param {Player} player - The player who triggered the anti-fall mode toggle modal form.
+ */
+export function uiANTIFALL(antifallResult: ModalFormResponse, player: Player) {
+    handleUIAntiFall(antifallResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIAntiFall(antifallResult: ModalFormResponse, player: Player) {
     const [AntiFallToggle] = antifallResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

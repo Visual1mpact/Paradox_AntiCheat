@@ -67,7 +67,11 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
 }
 
 const onJoin = () => {
-    world.afterEvents.playerSpawn.subscribe(onJoinTime);
+    world.afterEvents.playerSpawn.subscribe((object) => {
+        onJoinTime(object).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
+    });
 };
 
 export { onJoin };

@@ -24,7 +24,7 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
     }
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
     // Check to make sure they player hasnt enabled both options
     if (toggleTargetTo === true && toggleToTarget === true) {

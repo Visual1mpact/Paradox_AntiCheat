@@ -76,6 +76,8 @@ export function ShowRules() {
     world.afterEvents.playerLeave.subscribe(onPlayerLeave);
 
     const showrulesId = system.runInterval(() => {
-        showrules(showrulesId);
+        showrules(showrulesId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     }, 230);
 }

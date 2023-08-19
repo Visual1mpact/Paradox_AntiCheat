@@ -4,7 +4,21 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
 
-export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: string[], player: Player) {
+/**
+ * Handles the result of a modal form used for toggling player vanish mode.
+ *
+ * @name uiVANISH
+ * @param {ModalFormResponse} vanishResult - The result of the player vanish mode toggle modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the player vanish mode toggle modal form.
+ */
+export function uiVANISH(vanishResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIVanish(vanishResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIVanish(vanishResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = vanishResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
@@ -23,7 +37,7 @@ export async function uiVANISH(vanishResult: ModalFormResponse, onlineList: stri
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
     if (member.hasTag("vanish")) {
         member.addTag("novanish");

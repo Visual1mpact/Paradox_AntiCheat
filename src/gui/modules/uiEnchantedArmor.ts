@@ -4,7 +4,20 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiENCHANTEDARMOR(enchantedarmorResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling enchanted armor mode.
+ *
+ * @name uiENCHANTEDARMOR
+ * @param {ModalFormResponse} enchantedarmorResult - The result of the enchanted armor mode toggle modal form.
+ * @param {Player} player - The player who triggered the enchanted armor mode toggle modal form.
+ */
+export function uiENCHANTEDARMOR(enchantedarmorResult: ModalFormResponse, player: Player) {
+    handleUIEnchantedArmor(enchantedarmorResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIEnchantedArmor(enchantedarmorResult: ModalFormResponse, player: Player) {
     const [EnchantedArmorToggle] = enchantedarmorResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

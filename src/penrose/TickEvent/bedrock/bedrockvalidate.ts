@@ -63,6 +63,8 @@ async function bedrockvalidate(id: number) {
  */
 export function BedrockValidate() {
     const bedrockValidateId = system.runInterval(() => {
-        bedrockvalidate(bedrockValidateId);
+        bedrockvalidate(bedrockValidateId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     }, 20);
 }

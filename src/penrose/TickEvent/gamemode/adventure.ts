@@ -57,6 +57,8 @@ async function adventure(id: number) {
  */
 export function Adventure() {
     const adventureId = system.runInterval(() => {
-        adventure(adventureId);
+        adventure(adventureId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     }, 20);
 }

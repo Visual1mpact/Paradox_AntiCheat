@@ -5,7 +5,20 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiANTISCAFFOLD(antiscaffoldResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling anti-scaffold mode.
+ *
+ * @name uiANTISCAFFOLD
+ * @param {ModalFormResponse} antiscaffoldResult - The result of the anti-scaffold mode toggle modal form.
+ * @param {Player} player - The player who triggered the anti-scaffold mode toggle modal form.
+ */
+export function uiANTISCAFFOLD(antiscaffoldResult: ModalFormResponse, player: Player) {
+    handleUIAntiScaffold(antiscaffoldResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIAntiScaffold(antiscaffoldResult: ModalFormResponse, player: Player) {
     const [AntiScaffoldToggle] = antiscaffoldResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

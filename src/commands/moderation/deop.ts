@@ -72,7 +72,7 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
 
     // Check for hash/salt and validate password from member
@@ -80,7 +80,11 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
     const memberSalt = member.getDynamicProperty("salt");
     let memberEncode: string;
     try {
-        memberEncode = crypto(memberSalt, member.id);
+        // Use either the operator's ID or the encryption password as the key
+        const memberKey = config.encryption.password ? config.encryption.password : member.id;
+
+        // Generate the hash
+        memberEncode = crypto(memberSalt, memberKey);
     } catch (error) {}
 
     if (memberHash !== undefined && memberHash === memberEncode) {

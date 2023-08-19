@@ -4,7 +4,21 @@ import { sendMsgToPlayer } from "../../util";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiINVENTORY(inventoryUIResult: ModalFormResponse, onlineList: string[], player: Player) {
+/**
+ * Handles the result of a modal form used for managing player inventories.
+ *
+ * @name uiINVENTORY
+ * @param {ModalFormResponse} inventoryUIResult - The result of the inventory management modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the inventory management modal form.
+ */
+export function uiINVENTORY(inventoryUIResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIInventory(inventoryUIResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value] = inventoryUIResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();
@@ -23,7 +37,7 @@ export async function uiINVENTORY(inventoryUIResult: ModalFormResponse, onlineLi
 
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
     const inv = member.getComponent("inventory") as EntityInventoryComponent;
     const container = inv.container;

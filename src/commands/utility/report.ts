@@ -65,7 +65,7 @@ export function report(message: ChatSendAfterEvent, args: string[]) {
 
     if (!member) {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f !report <player> <reason>§f`);
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player!`);
     }
 
     // Make sure they dont report themselves

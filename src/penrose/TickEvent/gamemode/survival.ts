@@ -58,6 +58,8 @@ async function survival(id: number) {
  */
 export function Survival() {
     const survivalId = system.runInterval(() => {
-        survival(survivalId);
+        survival(survivalId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     }, 20);
 }

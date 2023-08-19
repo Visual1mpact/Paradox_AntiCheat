@@ -81,6 +81,7 @@ export default {
         autoban: true,
         biome: true,
         afk: true,
+        antiphasea: true,
     },
     modules: {
         badpackets1: {
@@ -270,5 +271,19 @@ export default {
             enabled: true,
             minutes: 10,
         },
+        antiphaseA: {
+            enabled: true,
+        },
+    },
+    /**
+     * Set your password here.
+     *
+     * This is required for Realm users to gain Paradox-Op.
+     *
+     * Anyone else is welcome to use this if they like but
+     * are not obligated.
+     */
+    encryption: {
+        password: "",
     },
 };

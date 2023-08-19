@@ -42,7 +42,9 @@ async function ops(opsId: number) {
             await setTimeoutAsync(40);
 
             // Call queueSleep after 2 seconds
-            await queueSleep(player);
+            await queueSleep(player).catch((error) => {
+                console.error("Paradox Unhandled Rejection: ", error);
+            });
         }
     }
 }
@@ -54,6 +56,8 @@ async function ops(opsId: number) {
  */
 export function OPS() {
     const opsId = system.runInterval(() => {
-        ops(opsId);
+        ops(opsId).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+        });
     });
 }

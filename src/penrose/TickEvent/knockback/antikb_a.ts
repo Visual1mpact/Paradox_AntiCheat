@@ -65,7 +65,9 @@ async function antiknockbacka(id: number) {
 export function AntiKnockbackA() {
     if (config.debug) {
         const antiKnockbackAId = system.runInterval(() => {
-            antiknockbacka(antiKnockbackAId);
+            antiknockbacka(antiKnockbackAId).catch((error) => {
+                console.error("Paradox Unhandled Rejection: ", error);
+            });
         }, 40);
     }
 }

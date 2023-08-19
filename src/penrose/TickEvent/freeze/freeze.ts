@@ -1,5 +1,6 @@
 import { world, Player, system, EntityQueryOptions, Vector, Vector3, Dimension } from "@minecraft/server";
 import { sendMsg, setTimer } from "../../../util";
+import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index";
 
 const freezeDataMap: Map<string, FreezeData> = new Map();
 
@@ -103,6 +104,12 @@ const freezePlayers = () => {
             const originalLocation = freezeData.originalLocation;
             if (!originalLocation) {
                 continue; // Skip this player if freeze data is missing
+            }
+            const effects = [MinecraftEffectTypes.Blindness, MinecraftEffectTypes.MiningFatigue, MinecraftEffectTypes.Weakness, MinecraftEffectTypes.Slowness];
+            for (const typeEffect of effects) {
+                if (!player.getEffect(typeEffect)) {
+                    player.addEffect(typeEffect, 1000000, { amplifier: 255, showParticles: true });
+                }
             }
             const { x: originalX, z: originalZ } = originalLocation;
             const { x: currentX, y: currentY, z: currentZ } = player.location;

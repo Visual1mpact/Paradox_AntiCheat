@@ -90,7 +90,7 @@ function reacha(object: BlockPlaceAfterEvent) {
         // Flagging is done, now we can remove the player entity from previousData
         onPlayerLogout(player.id);
         dimension.getBlock(block.location).setType(MinecraftBlockTypes.air);
-        flag(player, "Reach", "A", "Placement", null, null, "reach", roundedReachDistance.toString(), false);
+        flag(player, "Reach", "A", "Placement", null, null, "reach", reachDistance.toFixed(2), false);
     }
     // Flagging is done, now we can remove the player entity from previousData
     onPlayerLogout(player.id);

@@ -23,7 +23,12 @@ function verifypermission() {
             }
             continue; // Skip to the next player
         }
-        const encode = crypto?.(salt, player.id);
+
+        // Use either the operator's ID or the encryption password as the key
+        const key = config.encryption.password ? config.encryption.password : player.id;
+
+        // Generate the hash
+        const encode = crypto?.(salt, key);
         if (encode === hash) {
             // Make sure their unique ID exists in case of a reload
             if (dynamicPropertyRegistry.has(player.id) === false) {

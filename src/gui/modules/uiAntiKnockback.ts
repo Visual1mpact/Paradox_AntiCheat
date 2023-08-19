@@ -5,7 +5,20 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { AntiKnockbackA } from "../../penrose/TickEvent/knockback/antikb_a.js";
 
-export async function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, player: Player) {
+/**
+ * Handles the result of a modal form used for toggling anti-knockback mode.
+ *
+ * @name uiANTIKNOCKBACK
+ * @param {ModalFormResponse} antiknockbackResult - The result of the anti-knockback mode toggle modal form.
+ * @param {Player} player - The player who triggered the anti-knockback mode toggle modal form.
+ */
+export function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, player: Player) {
+    handleUIAntiKnockback(antiknockbackResult, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIAntiKnockback(antiknockbackResult: ModalFormResponse, player: Player) {
     const [AntiKnockBackToggle] = antiknockbackResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

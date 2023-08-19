@@ -54,16 +54,35 @@
 <p>Once you have done this the anticheat should be fully up and running. Education Edition is required for the command <code>!fly &lt;username&gt;</code> to work.</p>
 
 <h2>Gaining Permission to Use Paradox</h2>
-<p>To give yourself permission to use Paradox in your world, follow these steps:</p>
+<p>Follow these steps to grant yourself permission to use Paradox in your world:</p>
 <ol>
-  <li>Install the Anti Cheat and load your Minecraft world.</li>
-  <li>In the game, open the chat window and enter the command <code>&lt;prefix&gt;op</code>, where <code>&lt;prefix&gt;</code> is the command prefix for your server (e.g., <code>!</code>).</li>
-  <li>If you're an operator (op) or have the necessary permissions, this will grant you permission to use Paradox AntiCheat features.</li>
-  <li>Once granted, you'll have access to Paradox AntiCheat features.</li>
-  <li>You can also use the command <code>&lt;prefix&gt;op &lt;player&gt;</code> to grant Paradox-Op permissions to another player.</li>
-  <li>Use <code>&lt;prefix&gt;op help</code> to display information about the command usage and options.</li>
+  <li>If you're a Realm owner or prefer using a password:
+    <ol type="a">
+      <li>Edit the <code>config.js</code> file located at <code>/scripts/data/config.js</code>.</li>
+      <li>Scroll down to the <code>encryption</code> section.</li>
+      <li>Inside <code>encryption</code>, find <code>password</code>.</li>
+      <li>Enter your chosen password:</li>
+    </ol>
+    <pre><code class="language-javascript">encryption: {
+    password: "mypassword",
+}</code></pre>
+    <ol type="a" start="5">
+      <li>Keep your password safe and confidential.</li>
+    </ol>
+  </li>
+  <li>For all users not using a password:
+    <ol type="a">
+      <li>Install the Anti Cheat and load your Minecraft world.</li>
+      <li>In the game's chat, enter <code>&lt;prefix&gt;op</code>. Replace <code>&lt;prefix&gt;</code> with your server's command prefix, e.g., <code>!</code>.</li>
+      <li>If you have necessary permissions, this grants you Paradox AntiCheat access.</li>
+      <li>Once granted, you'll have Paradox AntiCheat features.</li>
+      <li>To give Paradox-Op permissions to others, use <code>&lt;prefix&gt;op &lt;player&gt;</code>.</li>
+      <li>Learn more by entering <code>&lt;prefix&gt;op help</code>.</li>
+    </ol>
+  </li>
 </ol>
-<p>For more information about this Anti Cheat and its options then see the command <code>&lt;prefix&gt;help</code>.</p>
+<p>Note: If you're using a password (Realm owners), use <code>&lt;prefix&gt;op &lt;password&gt;</code> for permission.</p>
+<p>Remember, keep your password secure and share it cautiously.</p>
 
 <h2>Important Notes</h2>
 <ul>

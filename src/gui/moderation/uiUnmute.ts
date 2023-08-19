@@ -5,7 +5,21 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
-export async function uiUNMUTE(muteResult: ModalFormResponse, onlineList: string[], player: Player) {
+/**
+ * Handles the result of a modal form used for unmuting players.
+ *
+ * @name uiUNMUTE
+ * @param {ModalFormResponse} muteResult - The result of the player unmute modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the player unmute modal form.
+ */
+export function uiUNMUTE(muteResult: ModalFormResponse, onlineList: string[], player: Player) {
+    handleUIUnmute(muteResult, onlineList, player).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+    });
+}
+
+async function handleUIUnmute(muteResult: ModalFormResponse, onlineList: string[], player: Player) {
     const [value, reason] = muteResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

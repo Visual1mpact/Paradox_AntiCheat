@@ -79,7 +79,7 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
     }
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldnt find that player! Try '${prefix}tpa help' for more info.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player! Try '${prefix}tpa help' for more info.`);
     }
 
     // Check if teleporting to them or vice versa then set it up

@@ -48,7 +48,7 @@ async function handleUIDespawner(despawnerResult: ModalFormResponse, player: Pla
             }
         }
         if (counter > 0) {
-            sendMsgToPlayer(player, ` §6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
+            sendMsgToPlayer(player, ` §o§6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
         } else {
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entity found to despawn!`);
         }
@@ -78,7 +78,7 @@ async function handleUIDespawner(despawnerResult: ModalFormResponse, player: Pla
             if (entityCount.hasOwnProperty(entity)) {
                 const count = entityCount[entity];
                 if (count > 0) {
-                    entityMessage += ` §6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
+                    entityMessage += ` §o§6|§f §4[§f${entity}§4]§f §6Amount: §4x${count}§f\n`;
                     totalCounter += count;
                 }
             }

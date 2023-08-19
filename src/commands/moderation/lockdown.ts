@@ -86,7 +86,12 @@ async function handleLockdown(message: ChatSendAfterEvent, args: string[]) {
         // Check for hash/salt and validate password
         const hash = pl.getDynamicProperty("hash");
         const salt = pl.getDynamicProperty("salt");
-        const encode = crypto?.(salt, pl.id);
+
+        // Use either the operator's ID or the encryption password as the key
+        const key = config.encryption.password ? config.encryption.password : pl.id;
+
+        // Generate the hash
+        const encode = crypto?.(salt, key);
         if (hash !== undefined && encode === hash) {
             continue;
         }
