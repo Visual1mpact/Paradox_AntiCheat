@@ -1254,6 +1254,38 @@ async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineLis
     playerInventory.button(itemArray[5] + " Amount: " + itemArray[6], "textures/" + itemArray[7]);
     playerInventory.button(itemArray[9] + " Amount: " + itemArray[10], "textures/" + itemArray[11]);
     playerInventory.button(itemArray[13] + " Amount: " + itemArray[14], "textures/" + itemArray[15]);
+    playerInventory.button(itemArray[17] + " Amount: " + itemArray[18], "textures/" + itemArray[19]);
+    playerInventory.button(itemArray[21] + " Amount: " + itemArray[22], "textures/" + itemArray[23]);
+    playerInventory.button(itemArray[25] + " Amount: " + itemArray[26], "textures/" + itemArray[27]);
+    playerInventory.button(itemArray[29] + " Amount: " + itemArray[30], "textures/" + itemArray[31]);
+    playerInventory.button(itemArray[33] + " Amount: " + itemArray[34], "textures/" + itemArray[35]);
+    playerInventory.button(itemArray[37] + " Amount: " + itemArray[38], "textures/" + itemArray[39]);
+    playerInventory.button(itemArray[41] + " Amount: " + itemArray[42], "textures/" + itemArray[43]);
+    playerInventory.button(itemArray[45] + " Amount: " + itemArray[46], "textures/" + itemArray[47]);
+    playerInventory.button(itemArray[49] + " Amount: " + itemArray[50], "textures/" + itemArray[51]);
+    playerInventory.button(itemArray[53] + " Amount: " + itemArray[54], "textures/" + itemArray[55]);
+    playerInventory.button(itemArray[57] + " Amount: " + itemArray[58], "textures/" + itemArray[59]);
+    playerInventory.button(itemArray[61] + " Amount: " + itemArray[62], "textures/" + itemArray[63]);
+    playerInventory.button(itemArray[65] + " Amount: " + itemArray[66], "textures/" + itemArray[67]);
+    playerInventory.button(itemArray[69] + " Amount: " + itemArray[70], "textures/" + itemArray[71]);
+    playerInventory.button(itemArray[73] + " Amount: " + itemArray[74], "textures/" + itemArray[75]);
+    playerInventory.button(itemArray[77] + " Amount: " + itemArray[78], "textures/" + itemArray[79]);
+    playerInventory.button(itemArray[81] + " Amount: " + itemArray[82], "textures/" + itemArray[83]);
+    playerInventory.button(itemArray[85] + " Amount: " + itemArray[86], "textures/" + itemArray[87]);
+    playerInventory.button(itemArray[89] + " Amount: " + itemArray[90], "textures/" + itemArray[91]);
+    playerInventory.button(itemArray[93] + " Amount: " + itemArray[94], "textures/" + itemArray[95]);
+    playerInventory.button(itemArray[97] + " Amount: " + itemArray[98], "textures/" + itemArray[99]);
+    playerInventory.button(itemArray[101] + " Amount: " + itemArray[102], "textures/" + itemArray[103]);
+    playerInventory.button(itemArray[105] + " Amount: " + itemArray[106], "textures/" + itemArray[107]);
+    playerInventory.button(itemArray[109] + " Amount: " + itemArray[110], "textures/" + itemArray[111]);
+    playerInventory.button(itemArray[113] + " Amount: " + itemArray[114], "textures/" + itemArray[115]);
+    playerInventory.button(itemArray[117] + " Amount: " + itemArray[118], "textures/" + itemArray[119]);
+    playerInventory.button(itemArray[121] + " Amount: " + itemArray[122], "textures/" + itemArray[123]);
+    playerInventory.button(itemArray[125] + " Amount: " + itemArray[126], "textures/" + itemArray[127]);
+    playerInventory.button(itemArray[129] + " Amount: " + itemArray[130], "textures/" + itemArray[131]);
+    playerInventory.button(itemArray[133] + " Amount: " + itemArray[134], "textures/" + itemArray[135]);
+    playerInventory.button(itemArray[137] + " Amount: " + itemArray[138], "textures/" + itemArray[139]);
+    playerInventory.button(itemArray[141] + " Amount: " + itemArray[142], "textures/" + itemArray[143]);
     playerInventory.show(player).then((playerInventoryResult) => {
         if (playerInventoryResult.selection === 4) {
             return paradoxui(player);
