@@ -68,7 +68,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
 
     const commandArgs = args;
 
-    if (commandArgs[0] !== "members" && (commandArgs[0] === "help" || commandArgs.length < 2)) {
+    if (commandArgs[0] !== "members" && commandArgs[0] !== "leave" && (commandArgs[0] === "help" || commandArgs.length < 2)) {
         chatChannelHelp(player, prefix);
         return;
     }
@@ -207,6 +207,50 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
             } else {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unable to transfer ownership of chat channel.`);
             }
+            break;
+
+        case "leave":
+            const channelNameToLeave = getPlayerChannel(player.id);
+
+            if (!channelNameToLeave) {
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are not in any chat channel.`);
+                return;
+            }
+
+            const channelToLeave = chatChannels[channelNameToLeave];
+            const isOwner = channelToLeave.owner === player.id;
+
+            // Remove the player from the channel
+            channelToLeave.members.delete(player.id);
+
+            // Inform all remaining members in the channel that the player left
+            const leavingPlayer = getPlayerById(player.id);
+            const leavingPlayerName = leavingPlayer ? leavingPlayer.name : "Unknown Player";
+            const leaveMessage = `§f§4[§6Paradox§4]§f §6${leavingPlayerName}§f left the chat channel.`;
+
+            channelToLeave.members.forEach((memberId) => {
+                const member = getPlayerById(memberId);
+                if (member) {
+                    sendMsgToPlayer(member, leaveMessage);
+                }
+            });
+
+            if (isOwner) {
+                // If the leaving player is the owner, transfer ownership to another member
+                const newOwnerId = Array.from(channelToLeave.members)[0]; // Get the first member as new owner
+
+                if (newOwnerId) {
+                    handOverChannelOwnership(channelNameToLeave, getPlayerById(player.id), getPlayerById(newOwnerId).name);
+                    const newOwnerObject = getPlayerById(newOwnerId);
+                    sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '${channelNameToLeave}' transferred to '${newOwnerObject.name}'.`);
+                } else {
+                    // If no other members, delete the channel
+                    deleteChatChannel(channelNameToLeave);
+                    return;
+                }
+            }
+
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Left the chat channel '${channelNameToLeave}'.`);
             break;
 
         default:
