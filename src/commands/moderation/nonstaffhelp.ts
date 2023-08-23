@@ -36,7 +36,8 @@ export function nonstaffhelp(message: ChatSendAfterEvent) {
             config.customcommands.channel ? `§6${prefix}channel join <channel> [password?]§f - Join an existing chat channel (with optional password).` : `§6${prefix}channel join <channel> [password?]§f - Command §4DISABLED§f.`,
             config.customcommands.channel ? `§6${prefix}channel invite <channel> <player>§f - Invite a player to join your chat channel.` : `§6${prefix}channel invite <channel> <player>§f - Command §4DISABLED§f.`,
             config.customcommands.channel ? `§6${prefix}channel handover <channel> <player>§f - Transfer ownership of a chat channel..` : `§6${prefix}channel invite <channel> <player>§f - Command §4DISABLED§f.`,
-            config.customcommands.channel ? `§6${prefix}channel members§f - List members of the current chat channel.` : `§6${prefix}channel members <name> [password?]§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel members§f - List members of the current chat channel.` : `§6${prefix}channel members§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel leave§f - Leave the current chat channel.` : `§6${prefix}channel leave§f - Command §4DISABLED§f.`,
         ]);
     }
 }

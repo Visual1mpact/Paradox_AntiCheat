@@ -54,6 +54,12 @@ function chatChannelHelp(player: Player, prefix: string) {
         `§4[§6Examples§4]§f:`,
         `    ${prefix}channel members`,
         `        §4- §6List all members in the same chat channel§f`,
+        ``,
+        `§4[§6Command§4]§f: ${prefix}channel leave`,
+        `§4[§6Description§4]§f: Leave the current chat channel.`,
+        `§4[§6Examples§4]§f:`,
+        `    ${prefix}channel leave`,
+        `        §4- §6Leave the current chat channel§f`,
     ]);
 }
 

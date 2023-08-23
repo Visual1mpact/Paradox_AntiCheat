@@ -130,6 +130,7 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}channel join <channel> [password?]§f - ${config.customcommands.channel ? `Join an existing chat channel (with optional password).` : textDisabled}`,
         `§6${prefix}channel invite <channel> <player>§f - ${config.customcommands.channel ? `Invite a player to join your chat channel.` : textDisabled}`,
         `§6${prefix}channel handover <channel> <player>§f - ${config.customcommands.channel ? `Transfer ownership of a chat channel.` : textDisabled}`,
+        `§6${prefix}channel leave§f - ${config.customcommands.channel ? `Leave the current chat channel.` : textDisabled}`,
         `§6${prefix}channel members§f - ${config.customcommands.channel ? `List members of the current chat channel.` : textDisabled}`,
         ` `,
         `§l§o§6[§4Debugging Utilites§6]§r§o`,
