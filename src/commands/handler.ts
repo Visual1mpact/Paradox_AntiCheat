@@ -85,6 +85,7 @@ import { paradoxVersion } from "./utility/paradoxVersion.js";
 import { biome } from "./utility/biome.js";
 import { afk } from "./settings/afk.js";
 import { antiphaseA } from "./settings/antiphasea.js";
+import { chatChannel } from "./utility/channel.js";
 
 const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
@@ -170,6 +171,7 @@ const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, arg
         biome: biome,
         afk: afk,
         antiphasea: antiphaseA,
+        channel: chatChannel,
     },
     null
 );

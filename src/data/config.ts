@@ -82,6 +82,7 @@ export default {
         biome: true,
         afk: true,
         antiphasea: true,
+        channel: true,
     },
     modules: {
         badpackets1: {

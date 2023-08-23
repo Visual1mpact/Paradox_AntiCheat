@@ -60,6 +60,8 @@ import { TpRequestListener } from "./commands/utility/tpr.js";
 import { afterAntiSpam } from "./penrose/ChatSendAfterEvent/chat/antispam.js";
 // Import EntityDieAfter Events
 import { DeathCoordinates } from "./penrose/EntityDieAfterEvent/death_coordinates.js";
+// Import PlayerLeaveAfter Events
+import { onChannelLeave } from "./commands/utility/channel.js";
 // Custom
 import config from "./data/config.js";
 
@@ -138,3 +140,8 @@ DeathCoordinates();
 
 // SystemBefore Events
 WatchDog();
+
+// playerLeaveAfter Events
+if (config.customcommands.channel === true) {
+    onChannelLeave();
+}
