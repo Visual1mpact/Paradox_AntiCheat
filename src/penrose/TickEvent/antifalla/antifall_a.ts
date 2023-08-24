@@ -38,13 +38,21 @@ function antifalla(id: number) {
             { x: x, y: y - 0.5, z: z },
             { x: x, y: y - 1, z: z },
             { x: x + 1, y: y - 1, z: z },
+            { x: x + 1, y: y - 0.5, z: z },
+            { x: x + 1, y: y - 1, z: z },
             { x: x - 1, y: y - 1, z: z },
+            { x: x - 1, y: y - 0.5, z: z },
             { x: x, y: y - 1, z: z + 1 },
+            { x: x, y: y - 0.5, z: z + 1 },
             { x: x, y: y - 1, z: z - 1 },
             { x: x - 1, y: y - 1, z: z + 1 },
+            { x: x - 1, y: y - 0.5, z: z + 1 },
             { x: x - 1, y: y - 1, z: z - 1 },
+            { x: x - 1, y: y - 0.5, z: z - 1 },
             { x: x + 1, y: y - 1, z: z + 1 },
+            { x: x + 1, y: y - 0.5, z: z + 1 },
             { x: x + 1, y: y - 1, z: z - 1 },
+            { x: x + 1, y: y - 0.5, z: z - 1 },
         ];
 
         const blocks = blocksToCheck.map((block) => player.dimension.getBlock(block));

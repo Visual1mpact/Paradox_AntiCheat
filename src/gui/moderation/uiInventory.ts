@@ -1287,8 +1287,7 @@ async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineLis
     playerInventory.button(itemArray[137] + " Amount: " + itemArray[138], "textures/" + itemArray[139]);
     playerInventory.button(itemArray[141] + " Amount: " + itemArray[142], "textures/" + itemArray[143]);
     playerInventory.show(player).then((playerInventoryResult) => {
-        if (playerInventoryResult.selection === 4) {
-            return paradoxui(player);
+        if (playerInventoryResult.selection === 0) {
         }
         return paradoxui(player);
     });
