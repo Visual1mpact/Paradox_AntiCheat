@@ -402,18 +402,20 @@ export function getGamemode(player: Player): string | undefined {
 }
 
 /**
- * Sends a message to a target in Minecraft.
+ * Sends a message to one or multiple targets in Minecraft.
  *
- * @param target The target to send the message to. This can be a player's username, a selector, or a JSON string.
+ * @param targets The target or array of targets to send the messages to.
  * @param message The message to send. This can be a string or an array of strings.
  */
-export const sendMsg = async (target: string, message: string | string[]) => {
+export const sendMsg = async (targets: string | string[], message: string | string[]) => {
+    const targetsArray = Array.isArray(targets) ? targets : [targets];
     const isArray = Array.isArray(message);
+    const modifiedMessage = isArray ? (message as string[]).map((msg) => msg.replace(/§f/g, "§f§o")) : (message as string).replace(/§f/g, "§f§o");
 
-    // Check if target is equal to "@a"
-    const modifiedMessage = target === "@a" ? message : "\n" + (isArray ? (message as string[]).map((msg) => msg.replace(/§f/g, "§f§o")).join("\n") : (message as string).replace(/§f/g, "§f§o"));
-
-    overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
+    // Loop through each target and send the message
+    for (const target of targetsArray) {
+        overworld.runCommandAsync(`tellraw ${/^ *@[spear]( *\[.*\] *)?$|^ *("[^"]+"|\S+) *$/.test(target) ? target : JSON.stringify(target)} {"rawtext":[{"text":${JSON.stringify(modifiedMessage)}}]}`);
+    }
 };
 
 /**
@@ -435,6 +437,193 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
 
     target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
 };
+
+// Chat Channels
+type ChatChannel = {
+    owner: string;
+    password: string;
+    members: Set<string>;
+};
+
+type PlayerChannelMap = {
+    [playerName: string]: string | null;
+};
+
+export const chatChannels: { [channelName: string]: ChatChannel } = {};
+const playerChannelMap: PlayerChannelMap = {};
+
+/**
+ * Create a new chat channel.
+ *
+ * @param {string} channelName - Name of the chat channel to create.
+ * @param {string} [password] - Password for the chat channel (optional).
+ * @param {Player} owner - Player who owns the chat channel.
+ * @return {boolean} - Returns true if the chat channel was successfully created, false if it already exists.
+ */
+export function createChatChannel(channelName: string, password: string, owner: string): boolean {
+    if (!chatChannels[channelName]) {
+        const newChannel: ChatChannel = {
+            owner,
+            password,
+            members: new Set([owner]),
+        };
+        chatChannels[channelName] = newChannel;
+        playerChannelMap[owner] = channelName; // Update player-to-channel mapping
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Invite a player to join a chat channel.
+ *
+ * @param {string} playerName - Name of the player to invite.
+ * @param {string} channelName - Name of the chat channel to invite to.
+ * @return {boolean} - Returns true if the invitation was successful, false if the chat channel doesn't exist or the player is already a member.
+ */
+export function inviteToChatChannel(playerName: string, channelName: string): boolean {
+    const chatChannel = chatChannels[channelName];
+    const playerObject = getPlayerByName(playerName);
+    if (chatChannel && !chatChannel.members.has(playerObject.id)) {
+        chatChannel.members.add(playerObject.id);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Switch the chat channel for a player.
+ *
+ * @param {Player} playerName - The player switching chat channel.
+ * @param {string} channelName - The name of the channel to switch to.
+ * @param {string} [password] - The password for the channel (optional).
+ * @return {string|boolean} - Returns the new chat channel name if successful, "already_in_channel" if the player is already in a channel, "wrong_password" if the password is incorrect, or false if not successful.
+ */
+export function switchChatChannel(playerName: string, channelName: string, password?: string): string | boolean {
+    const channel = chatChannels[channelName];
+    if (channel) {
+        if (channel.password && password !== channel.password) {
+            return "wrong_password";
+        }
+
+        if (channel.members.has(playerName)) {
+            return "already_in_channel";
+        }
+
+        channel.members.add(playerName);
+        playerChannelMap[playerName] = channelName; // Update player-to-channel mapping
+
+        if (channel.owner === null) {
+            channel.owner = playerName;
+        }
+
+        return channelName;
+    }
+    return false;
+}
+
+/**
+ * Get the chat channel name associated with a player.
+ *
+ * @param {string} playerName - The name of the player.
+ * @returns {string|null} The name of the player's chat channel, or null if not found.
+ */
+export function getPlayerChannel(playerName: string): string | null {
+    return playerChannelMap[playerName] || null;
+}
+
+/**
+ * Get a player by their name.
+ *
+ * @param {string} playerName - Name of the player to get.
+ * @return {Player|null} - The Player object if found, null if not found.
+ */
+function getPlayerByName(playerName: string): Player | null {
+    const players = world.getPlayers();
+    for (const player of players) {
+        if (player.name.toLowerCase().replace(/"|\\|@/g, "") === playerName.toLowerCase().replace(/"|\\|@/g, "")) {
+            return player;
+        }
+    }
+    return null;
+}
+
+/**
+ * Get a player by their unique identifier.
+ *
+ * @param {string} playerId - Unique identifier of the player to get.
+ * @return {Player|null} - The Player object if found, null if not found.
+ */
+export function getPlayerById(playerId: string): Player | null {
+    const players = world.getPlayers();
+    for (const player of players) {
+        if (player.id === playerId) {
+            return player;
+        }
+    }
+    return null;
+}
+
+/**
+ * Transfer ownership of a chat channel to another player.
+ *
+ * @param {string} channelName - The name of the channel to transfer ownership of.
+ * @param {Player} currentOwner - The current owner of the channel.
+ * @param {string} newOwnerName - The name of the new owner.
+ * @returns {boolean|string} - Returns true if ownership is successfully transferred, "not_owner" if the current player is not the owner, or "target_not_found" if the new owner is not found.
+ */
+export function handOverChannelOwnership(channelName: string, currentOwner: Player, newOwnerName: string): boolean | string {
+    const channel = chatChannels[channelName];
+    if (channel) {
+        if (channel.owner !== currentOwner.id) {
+            return "not_owner";
+        }
+
+        const newOwner = getPlayerByName(newOwnerName);
+        if (!newOwner) {
+            return "target_not_found";
+        }
+
+        channel.owner = newOwner.id;
+
+        // Update playerChannelMap to reflect the new owner
+        playerChannelMap[currentOwner.id] = null;
+        playerChannelMap[newOwner.id] = channelName;
+
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Delete an existing chat channel.
+ *
+ * @param {string} channelName - Name of the chat channel to delete.
+ * @param {string} [password] - Password for the chat channel (optional, required if channel has a password).
+ * @return {boolean | "wrong_password"} - Returns true if the chat channel was successfully deleted, false if it doesn't exist, or "wrong_password" if the provided password is incorrect.
+ */
+export function deleteChatChannel(channelName: string, password?: string): boolean | "wrong_password" {
+    const channel = chatChannels[channelName];
+
+    if (channel) {
+        if (channel.password) {
+            // Check if the provided password matches the channel's password
+            if (password !== channel.password) {
+                return "wrong_password"; // Return "wrong_password" if the password is incorrect
+            }
+        }
+
+        // Remove the owner from playerChannelMap if they are the owner of the channel being deleted
+        if (playerChannelMap[channel.owner] === channelName) {
+            playerChannelMap[channel.owner] = null;
+        }
+
+        delete chatChannels[channelName];
+        return true;
+    }
+
+    return false;
+}
 
 export const allscores: string[] = [
     "autoclickervl",

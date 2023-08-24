@@ -31,6 +31,13 @@ export function nonstaffhelp(message: ChatSendAfterEvent) {
             config.customcommands.listhome ? `§6${prefix}listhome§f - Shows your list of saved locations.` : `§6${prefix}listhome§f - Command §4DISABLED§f.`,
             config.customcommands.delhome ? `§6${prefix}delhome <name>§f - Deletes a saved location from list.` : `§6${prefix}delhome <name>§f - Command §4DISABLED§f.`,
             config.customcommands.tpr ? `§6${prefix}tpr <name>§f - Will send requests to tp to players.` : `§6${prefix}tpr <name>§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel create <channel> [password?]§f - Create a new chat channel (with optional password).` : `§6${prefix}channel create <channel> [password?]§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel delete <channel> [password?]§f - Delete an existing chat channel (with optional password).` : `§6${prefix}channel delete <channel> [password?]§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel join <channel> [password?]§f - Join an existing chat channel (with optional password).` : `§6${prefix}channel join <channel> [password?]§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel invite <channel> <player>§f - Invite a player to join your chat channel.` : `§6${prefix}channel invite <channel> <player>§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel handover <channel> <player>§f - Transfer ownership of a chat channel..` : `§6${prefix}channel invite <channel> <player>§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel members§f - List members of the current chat channel.` : `§6${prefix}channel members§f - Command §4DISABLED§f.`,
+            config.customcommands.channel ? `§6${prefix}channel leave§f - Leave the current chat channel.` : `§6${prefix}channel leave§f - Command §4DISABLED§f.`,
         ]);
     }
 }
