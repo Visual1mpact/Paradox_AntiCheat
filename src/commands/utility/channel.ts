@@ -252,7 +252,6 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 } else {
                     // If no other members, delete the channel
                     deleteChatChannel(channelNameToLeave);
-                    return;
                 }
             }
 
