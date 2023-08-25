@@ -2,7 +2,7 @@ import { EntityInventoryComponent, Player, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { uiINVEDITOR } from "./uiInventoryEditor/uiInvEditor.js";
+import { uiINVEDITOR } from "./uiInventory/uiInvEditorMenu.js";
 
 /**
  * Handles the result of a modal form used for managing player inventories.
@@ -1288,7 +1288,7 @@ async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineLis
     playerInventory.button(itemArray[141] + " Amount: " + itemArray[142], "textures/" + itemArray[143]);
     playerInventory.show(player).then((playerInventoryResult) => {
         if (playerInventoryResult.selection === 0) {
-            uiINVEDITOR(member, 0);
+            uiINVEDITOR(player, member, 0);
         }
     });
 }
