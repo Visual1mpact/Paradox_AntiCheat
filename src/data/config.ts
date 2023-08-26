@@ -188,10 +188,6 @@ export default {
             overworld: 0,
             end: 0,
         },
-        antiTeleport: {
-            enabled: true,
-            constraint: 50,
-        },
         survivalGM: {
             enabled: false,
         },
