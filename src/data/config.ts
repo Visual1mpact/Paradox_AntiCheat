@@ -129,7 +129,6 @@ export default {
         reachB: {
             enabled: true,
             reach: 5,
-            maxSpeed: 10,
         },
         jesusA: {
             enabled: false,
