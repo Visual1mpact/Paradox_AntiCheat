@@ -57,9 +57,9 @@ function worldborder(id: number) {
         }
 
         // What is it currently set to
-        let overworldSize = Number(worldBorderOverworldNumber);
-        let netherSize = Number(worldBorderNetherNumber);
-        let endSize = Number(worldBorderEndNumber);
+        let overworldSize = worldBorderOverworldNumber as number;
+        let netherSize = worldBorderNetherNumber as number;
+        let endSize = worldBorderEndNumber as number;
 
         // Make sure it's not a negative
         if (overworldSize < 0) {
