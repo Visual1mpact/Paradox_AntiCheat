@@ -1290,5 +1290,107 @@ async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineLis
         if (playerInventoryResult.selection === 0) {
             uiInvEditorMenu(player, member, 0);
         }
+        if (playerInventoryResult.selection === 1) {
+            uiInvEditorMenu(player, member, 1);
+        }
+        if (playerInventoryResult.selection === 2) {
+            uiInvEditorMenu(player, member, 2);
+        }
+        if (playerInventoryResult.selection === 3) {
+            uiInvEditorMenu(player, member, 3);
+        }
+        if (playerInventoryResult.selection === 4) {
+            uiInvEditorMenu(player, member, 4);
+        }
+        if (playerInventoryResult.selection === 5) {
+            uiInvEditorMenu(player, member, 5);
+        }
+        if (playerInventoryResult.selection === 6) {
+            uiInvEditorMenu(player, member, 6);
+        }
+        if (playerInventoryResult.selection === 7) {
+            uiInvEditorMenu(player, member, 7);
+        }
+        if (playerInventoryResult.selection === 8) {
+            uiInvEditorMenu(player, member, 8);
+        }
+        if (playerInventoryResult.selection === 9) {
+            uiInvEditorMenu(player, member, 9);
+        }
+        if (playerInventoryResult.selection === 10) {
+            uiInvEditorMenu(player, member, 10);
+        }
+        if (playerInventoryResult.selection === 11) {
+            uiInvEditorMenu(player, member, 11);
+        }
+        if (playerInventoryResult.selection === 12) {
+            uiInvEditorMenu(player, member, 12);
+        }
+        if (playerInventoryResult.selection === 13) {
+            uiInvEditorMenu(player, member, 13);
+        }
+        if (playerInventoryResult.selection === 14) {
+            uiInvEditorMenu(player, member, 14);
+        }
+        if (playerInventoryResult.selection === 15) {
+            uiInvEditorMenu(player, member, 15);
+        }
+        if (playerInventoryResult.selection === 16) {
+            uiInvEditorMenu(player, member, 16);
+        }
+        if (playerInventoryResult.selection === 17) {
+            uiInvEditorMenu(player, member, 17);
+        }
+        if (playerInventoryResult.selection === 18) {
+            uiInvEditorMenu(player, member, 18);
+        }
+        if (playerInventoryResult.selection === 19) {
+            uiInvEditorMenu(player, member, 19);
+        }
+        if (playerInventoryResult.selection === 20) {
+            uiInvEditorMenu(player, member, 20);
+        }
+        if (playerInventoryResult.selection === 21) {
+            uiInvEditorMenu(player, member, 21);
+        }
+        if (playerInventoryResult.selection === 22) {
+            uiInvEditorMenu(player, member, 22);
+        }
+        if (playerInventoryResult.selection === 23) {
+            uiInvEditorMenu(player, member, 23);
+        }
+        if (playerInventoryResult.selection === 24) {
+            uiInvEditorMenu(player, member, 24);
+        }
+        if (playerInventoryResult.selection === 25) {
+            uiInvEditorMenu(player, member, 25);
+        }
+        if (playerInventoryResult.selection === 26) {
+            uiInvEditorMenu(player, member, 26);
+        }
+        if (playerInventoryResult.selection === 27) {
+            uiInvEditorMenu(player, member, 27);
+        }
+        if (playerInventoryResult.selection === 28) {
+            uiInvEditorMenu(player, member, 28);
+        }
+        if (playerInventoryResult.selection === 29) {
+            uiInvEditorMenu(player, member, 29);
+        }
+        if (playerInventoryResult.selection === 30) {
+            uiInvEditorMenu(player, member, 31);
+        }
+        if (playerInventoryResult.selection === 32) {
+            uiInvEditorMenu(player, member, 32);
+        }
+        if (playerInventoryResult.selection === 33) {
+            uiInvEditorMenu(player, member, 33);
+        }
+        if (playerInventoryResult.selection === 34) {
+            uiInvEditorMenu(player, member, 34);
+        }
+        if (playerInventoryResult.selection === 35) {
+            uiInvEditorMenu(player, member, 35);
+        }
     });
 }
