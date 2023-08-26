@@ -2,7 +2,7 @@ import { EntityInventoryComponent, Player, world, ItemStack, Enchantment, ItemEn
 import { ModalFormResponse, ModalFormData } from "@minecraft/server-ui";
 import { uiINVENTORY } from "../uiInventory";
 /**
- * Handles the result of a modal form used for managing player inventories.
+ * Handles the result of a modal form used for transferring an item from the targeted player's inventory to the selected player's inventory.
  *
  * @name uiItemEditorTransfer
  * @param {ModalFormResponse} InvEditorUIResult - The result of the inventory editor modal form.
@@ -136,7 +136,8 @@ export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: P
             container.setItem(itemSlot, item);
         }
         if (loreToggle == true) {
-            item.setLore([txtLore.toString()]);
+            const loreArray = txtLore.toString().split(",");
+            item.setLore(loreArray);
             container.setItem(itemSlot, item);
         }
 
