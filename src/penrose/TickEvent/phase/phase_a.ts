@@ -42,11 +42,10 @@ function antiphasea(id: number) {
         const { x, y, z } = player.location;
 
         // Calculate block locations for head, waist, and feet
-        const headLocation = { x, y: y + 2, z };
-        const waistLocation = { x, y: y + 1, z };
-        const feetLocation = { x, y, z };
+        const upperBody = { x, y: y + 1, z };
+        const lowerBody = { x, y, z };
 
-        const blocksToCheck = [headLocation, waistLocation, feetLocation];
+        const blocksToCheck = [lowerBody, upperBody];
 
         const allSafe = blocksToCheck.every((block) => {
             const blockType = player.dimension.getBlock(block);
