@@ -83,7 +83,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
     const subCommandArgs = commandArgs.slice(1); // Extract the subcommand arguments
 
     switch (subCommand) {
-        case "members":
+        case "members": {
             const channelNameForMembers = getPlayerChannel(player.id);
 
             if (!channelNameForMembers) {
@@ -109,8 +109,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
 
             sendMsgToPlayer(player, [memberListTitle, membersList]);
             break;
+        }
 
-        case "create":
+        case "create": {
             const existingChannelName = getPlayerChannel(player.id);
 
             if (existingChannelName) {
@@ -123,8 +124,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Chat channel '${channelName}' ${createResult ? "created." : "already exists."}`);
             }
             break;
+        }
 
-        case "delete":
+        case "delete": {
             const channelNameToDelete = subCommandArgs[0];
             const passwordToDelete = subCommandArgs[1]; // Optional password argument
 
@@ -136,8 +138,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Chat channel '${channelNameToDelete}' ${deleteResult ? "deleted." : "not found."}`);
             }
             break;
+        }
 
-        case "invite":
+        case "invite": {
             const channelNameToInvite = subCommandArgs[0];
             const playerToInvite = subCommandArgs[1];
 
@@ -169,8 +172,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player '${playerToInvite}' not found.`);
             }
             break;
+        }
 
-        case "join":
+        case "join": {
             const channelNameToJoin = subCommandArgs[0];
             const passwordToJoin = subCommandArgs[1]; // Optional password argument
 
@@ -197,8 +201,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unable to join chat channel.`);
             }
             break;
+        }
 
-        case "handover":
+        case "handover": {
             const channelNameToHandOver = subCommandArgs[0];
             const newOwnerName = subCommandArgs[1];
 
@@ -214,8 +219,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unable to transfer ownership of chat channel.`);
             }
             break;
+        }
 
-        case "leave":
+        case "leave": {
             const channelNameToLeave = getPlayerChannel(player.id);
 
             if (!channelNameToLeave) {
@@ -257,6 +263,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
 
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Left the chat channel '${channelNameToLeave}'.`);
             break;
+        }
 
         default:
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unknown chat channel command. Use '${prefix}channel help' for command help.`);
