@@ -38,6 +38,14 @@ function antikbHelp(player: Player, prefix: string, antikbBoolean: string | numb
 export function antiknockback(message: ChatSendAfterEvent, args: string[]) {
     handleAntiKnockback(message, args).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 }
 

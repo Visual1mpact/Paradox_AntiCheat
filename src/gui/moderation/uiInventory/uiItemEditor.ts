@@ -15,6 +15,14 @@ import { sendMsgToPlayer } from "../../../util";
 export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlineList: string[], player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorTransfer(InvEditorUIResult, onlineList, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 
     async function handleUIitemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlineList: string[], player: Player, targetPlayer: Player, itemSlot: number) {
@@ -69,6 +77,14 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
 export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorEnchantments(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 
     async function handleUIitemEditorEnchantments(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
@@ -123,6 +139,14 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
 export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorName(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 
     async function handleUIitemEditorName(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
@@ -165,6 +189,14 @@ export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: P
 export function uiItemEditorReplace(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorReplace(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 
     async function handleUIitemEditorReplace(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {

@@ -16,6 +16,14 @@ import { paradoxui } from "../paradoxui.js";
 export function uiMUTE(muteResult: ModalFormResponse, onlineList: string[], player: Player) {
     handleUIMute(muteResult, onlineList, player).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 }
 

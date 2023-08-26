@@ -16,6 +16,14 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 export function uiFREEZE(freezeResult: ModalFormResponse, onlineList: string[], player: Player) {
     handleUIFreeze(freezeResult, onlineList, player).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 }
 

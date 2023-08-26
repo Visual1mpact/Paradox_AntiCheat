@@ -44,6 +44,14 @@ async function ops(opsId: number) {
             // Call queueSleep after 2 seconds
             await queueSleep(player).catch((error) => {
                 console.error("Paradox Unhandled Rejection: ", error);
+                // Extract stack trace information
+                if (error instanceof Error) {
+                    const stackLines = error.stack.split("\n");
+                    if (stackLines.length > 1) {
+                        const sourceInfo = stackLines;
+                        console.error("Error originated from:", sourceInfo[0]);
+                    }
+                }
             });
         }
     }
@@ -58,6 +66,14 @@ export function OPS() {
     const opsId = system.runInterval(() => {
         ops(opsId).catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
         });
     });
 }

@@ -15,6 +15,14 @@ import { AutoClicker } from "../../penrose/EntityHitEntityAfterEvent/autoclicker
 export function uiANTIAUTOCLICKER(antiautoclickerResult: ModalFormResponse, player: Player) {
     handleUIAntiAutoClicker(antiautoclickerResult, player).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 }
 

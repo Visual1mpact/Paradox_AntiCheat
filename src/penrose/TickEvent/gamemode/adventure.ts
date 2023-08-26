@@ -59,6 +59,14 @@ export function Adventure() {
     const adventureId = system.runInterval(() => {
         adventure(adventureId).catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines[1].trim();
+                    console.error("Error originated from:", sourceInfo);
+                }
+            }
         });
     }, 20);
 }

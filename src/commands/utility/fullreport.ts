@@ -33,6 +33,14 @@ function fullReportHelp(player: Player, prefix: string) {
 export function fullreport(message: ChatSendAfterEvent, args: string[]) {
     handleFullReport(message, args).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
     });
 }
 
