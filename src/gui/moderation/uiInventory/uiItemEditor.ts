@@ -1,7 +1,16 @@
 import { EntityInventoryComponent, Player, world, ItemStack, Enchantment, ItemEnchantsComponent } from "@minecraft/server";
 import { ModalFormResponse, ModalFormData } from "@minecraft/server-ui";
 import { uiINVENTORY } from "../uiInventory";
-
+/**
+ * Handles the result of a modal form used for managing player inventories.
+ *
+ * @name uiItemEditorTransfer
+ * @param {ModalFormResponse} InvEditorUIResult - The result of the inventory editor modal form.
+ * @param {string[]} onlineList - The list of online player names.
+ * @param {Player} player - The player who triggered the inventory management modal form.
+ * @param targetPlayer - The player who has been targeted.
+ * @param itemSlot  - the item slot number of the targeted player.
+ */
 export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlineList: string[], player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorTransfer(InvEditorUIResult, onlineList, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
@@ -48,6 +57,14 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
         });
     }
 }
+/**
+ * Handles the result of a modal form used for adding or removing enchantments to the selected item from the targeted player's inventory
+ * @name uiItemEditorEnchantments
+ * @param {ModalFormResponse} InvEditorUIResult - The result of the inventory editor modal form.
+ * @param {Player} player - The player who triggered the inventory management modal form.
+ * @param targetPlayer - The player who has been targeted.
+ * @param itemSlot  - the item slot number of the targeted player.
+ */
 export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorEnchantments(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
@@ -94,6 +111,14 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
         });
     }
 }
+/**
+ * Handles the result of a modal form used for renaming or editing the lore the selected item from the targeted player's inventory
+ * @name uiItemEditorName
+ * @param {ModalFormResponse} InvEditorUIResult - The result of the inventory editor modal form.
+ * @param {Player} player - The player who triggered the inventory management modal form.
+ * @param targetPlayer - The player who has been targeted.
+ * @param itemSlot  - the item slot number of the targeted player.
+ */
 export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorName(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
@@ -127,6 +152,14 @@ export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: P
         });
     }
 }
+/**
+ * Handles the result of a modal form used for replacing or deleting the selected item from the targeted player's inventory
+ * @name uiItemEditorReplace
+ * @param {ModalFormResponse} InvEditorUIResult - The result of the inventory editor modal form.
+ * @param {Player} player - The player who triggered the inventory management modal form.
+ * @param targetPlayer - The player who has been targeted.
+ * @param itemSlot  - the item slot number of the targeted player.
+ */
 export function uiItemEditorReplace(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
     handleUIitemEditorReplace(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
