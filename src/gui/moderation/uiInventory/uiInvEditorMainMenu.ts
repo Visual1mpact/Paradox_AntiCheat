@@ -4,7 +4,7 @@ import { uiItemEditorEnchantmentsMenu } from "./uiItemEditorEnchantmentsMenu";
 import { uiItemEditorNameMenu } from "./uiInvEditorNameMenu";
 import { uiItemEditorReplaceMenu } from "./uiInvEditorReplaceMenu";
 import { uiItemEditorTransferMenu } from "./uiInvEditorTransferMenu";
-import { uiInvEditorHelpMenu } from "./uiInveEditorHelpMenu";
+import { uiInvEditorHelpMenu } from "./uiInvEditorHelpMenu";
 export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: number) {
     const menu = new ActionFormData();
     menu.title("§4Paradox - Inventory Item Editor Menu§4");
