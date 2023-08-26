@@ -39,7 +39,7 @@ async function handleUIKick(banResult: ModalFormResponse, onlineList: string[], 
         return paradoxui(player);
     }
 
-    player.runCommandAsync(`kick ${member.name} §f\n\n${reason}`).catch((error) => {
+    player.runCommandAsync(`kick "${member.name}" §f\n\n${reason}`).catch((error) => {
         console.warn(`${new Date()} | ` + error);
         return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f I was unable to kick that player!`);
     });

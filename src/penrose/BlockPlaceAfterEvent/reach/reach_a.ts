@@ -4,7 +4,7 @@ import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Define a union type for Player and Block
-type PlayerOrBlock = string | Block;
+type PlayerOrBlock = Player | Block | string;
 
 // Store the previous locations and velocities of player and block
 const previousData: Map<
@@ -19,12 +19,27 @@ function recordPlayerData(entity: PlayerOrBlock) {
     // Check if the entity is a Player
     if (entity instanceof Player) {
         // Store the current location and velocity of the player
+        const location = { ...entity.location };
+
+        // Check if the y component of the view direction is positive
+        if (entity.getViewDirection().y > 0) {
+            const headLocation = entity.getHeadLocation();
+            location.x = headLocation.x;
+            location.y = headLocation.y;
+            location.z = headLocation.z;
+        }
+
         previousData.set(entity.id, {
-            location: { ...entity.location },
+            location: location,
             velocity: { ...entity.getVelocity() },
         });
+    } else if (entity instanceof Block) {
+        // Store the current location and velocity of the player
+        previousData.set(entity.typeId, {
+            location: { ...entity.location },
+            velocity: { x: 0, y: 0, z: 0 },
+        });
     }
-    // If it's not a Player (i.e., it's a Block), we can ignore it for now
 }
 
 function onPlayerLogout(event: PlayerLeaveAfterEvent | string): void {
@@ -153,7 +168,7 @@ function calculateReachDistanceWithVelocity(
 
 function resetReachDistance(player: Player) {
     // Reset the previous location and velocity of the player to the current location and velocity
-    recordPlayerData(player.id);
+    recordPlayerData(player);
 }
 
 // Interval ID to stop the recording
@@ -162,7 +177,7 @@ let locationRecordingInterval: number;
 function startLocationRecordingInterval() {
     locationRecordingInterval = system.runInterval(() => {
         for (const player of world.getAllPlayers()) {
-            recordPlayerData(player.id);
+            recordPlayerData(player);
         }
     }, 20);
 }

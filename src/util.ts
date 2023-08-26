@@ -45,7 +45,7 @@ export function flag(player: Player, check: string, checkType: string, hackType:
     }
 
     if (check === "Namespoof") {
-        player.runCommandAsync(`kick ${player.name} §f\n\n§4[§6Paradox§4]§f You have illegal characters in your name!`).catch(() => {
+        player.runCommandAsync(`kick "${player.name}" §f\n\n§4[§6Paradox§4]§f You have illegal characters in your name!`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
@@ -74,13 +74,13 @@ export function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        player.runCommandAsync(`kick ${player.name} §f\n§l§4YOU ARE BANNED!§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}\n§b${config.modules.banAppeal.discordLink}`).catch(() => {
+        player.runCommandAsync(`kick "${player.name}" §f\n§l§4YOU ARE BANNED!§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}\n§b${config.modules.banAppeal.discordLink}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         });
     } else {
-        player.runCommandAsync(`kick ${player.name} §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}`).catch(() => {
+        player.runCommandAsync(`kick "${player.name}" §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
