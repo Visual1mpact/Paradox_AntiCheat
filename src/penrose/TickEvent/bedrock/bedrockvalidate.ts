@@ -48,7 +48,7 @@ async function bedrockvalidate(id: number) {
             continue;
         }
 
-        for (const [_dimension, { dimension, command1, command2, command3, config }] of Object.entries(dimensions)) {
+        for (const { dimension, command1, command2, command3, config } of Object.values(dimensions)) {
             if (player?.dimension === dimension && config) {
                 await Promise.all([player?.runCommandAsync(command1), player?.runCommandAsync(command2), command3 && player?.runCommandAsync(command3)]);
             }
