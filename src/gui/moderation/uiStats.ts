@@ -110,7 +110,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
 
     const ResultsUI = new ActionFormData();
     ResultsUI.title("§4Paradox - Report for §4" + member.name);
-    let tempstring = reportBody.toString().replaceAll(",", "");
+    const tempstring = reportBody.toString().replaceAll(",", "");
     ResultsUI.body(tempstring);
     ResultsUI.button("Close");
     ResultsUI.show(player).then(() => {

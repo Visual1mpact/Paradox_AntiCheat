@@ -10,7 +10,7 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
     menu.title("§4Paradox - Inventory Item Editor Menu§4");
     const inv = targetPlayer.getComponent("inventory") as EntityInventoryComponent;
     const container = inv.container;
-    let item = container.getItem(itemSlot);
+    const item = container.getItem(itemSlot);
     menu.body("§rCurrent Players Inventory: §6" + targetPlayer.name + "\n" + "§rSelected Item: §6" + item.typeId.replace("minecraft:", ""));
     menu.button("Enchantments");
     menu.button("Naming and Lore");

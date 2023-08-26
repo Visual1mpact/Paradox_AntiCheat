@@ -123,7 +123,7 @@ export function setScore(target: Player, objective: string, amount: number, stac
         if (!isParticipant) {
             target.runCommand(`scoreboard players add @s ${objective} 0`);
         }
-        let score = isParticipant ? scoreObj.getScore(target.scoreboardIdentity) : 0;
+        const score = isParticipant ? scoreObj.getScore(target.scoreboardIdentity) : 0;
         const result = stack ? score + amount : amount;
         scoreObj.setScore(target.scoreboardIdentity, result);
         return result;

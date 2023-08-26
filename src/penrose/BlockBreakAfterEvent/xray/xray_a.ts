@@ -14,10 +14,10 @@ interface XrayData {
 }
 
 // Use a global variable to store xrayData map
-let xrayData: Map<string, XrayData> = new Map();
+const xrayData: Map<string, XrayData> = new Map();
 
 // Use a global variable to store the number of blocks broken within the last minute
-let blocksBrokenCount: Map<string, number> = new Map();
+const blocksBrokenCount: Map<string, number> = new Map();
 
 function isXraySuspicious(playerId: string, blockId: string): boolean {
     const data = xrayData.get(playerId);

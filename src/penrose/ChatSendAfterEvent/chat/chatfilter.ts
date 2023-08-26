@@ -6,7 +6,7 @@ const afterChatFilter = () => {
     // Subscribe to the 'afterChat' event
     world.afterEvents.chatSend.subscribe((msg) => {
         // Destructure 'message' and 'sender' properties from the 'msg' object
-        let { message, sender: player } = msg;
+        const { message, sender: player } = msg;
 
         // Retrieve the 'chatranks_b' dynamic property
         const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");

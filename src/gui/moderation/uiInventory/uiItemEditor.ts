@@ -92,7 +92,7 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
 
         const inv = targetPlayer.getComponent("inventory") as EntityInventoryComponent;
         const container = inv.container;
-        let item = container.getItem(itemSlot);
+        const item = container.getItem(itemSlot);
 
         //Are we adding enchantments?
         if (enchantToggle == true) {
@@ -100,7 +100,7 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
                 const enchantmentsComponent = item.getComponent("minecraft:enchantments") as ItemEnchantsComponent;
                 const enchantmentList = enchantmentsComponent.enchantments;
 
-                let addedCustomEnchantment = enchantmentList.addEnchantment(new Enchantment(txtEnchant.toString(), parseInt(txtEnchantValue.toString())));
+                const addedCustomEnchantment = enchantmentList.addEnchantment(new Enchantment(txtEnchant.toString(), parseInt(txtEnchantValue.toString())));
                 enchantmentsComponent.enchantments = enchantmentList;
                 container.setItem(itemSlot, item);
                 if (!addedCustomEnchantment) {
@@ -154,7 +154,7 @@ export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: P
 
         const inv = targetPlayer.getComponent("inventory") as EntityInventoryComponent;
         const container = inv.container;
-        let item = container.getItem(itemSlot);
+        const item = container.getItem(itemSlot);
         //Are we renaming the item?
         if (renameToggle == true) {
             item.nameTag = txtRename.toString();
