@@ -1,6 +1,7 @@
 import { EntityInventoryComponent, Player, world, ItemStack, Enchantment, ItemEnchantsComponent } from "@minecraft/server";
 import { ModalFormResponse, ModalFormData } from "@minecraft/server-ui";
 import { uiINVENTORY } from "../uiInventory";
+import { sendMsgToPlayer } from "../../../util";
 /**
  * Handles the result of a modal form used for transferring an item from the targeted player's inventory to the selected player's inventory.
  *
@@ -87,7 +88,7 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
                 enchantmentsComponent.enchantments = enchantmentList;
                 container.setItem(itemSlot, item);
                 if (!addedCustomEnchantment) {
-                    world.sendMessage("Unable to enchant: " + item.typeId + " Enchantment to be applied: " + txtEnchant + ", " + txtEnchantValue);
+                    sendMsgToPlayer(player, "Unable to enchant: " + item.typeId + " Enchantment to be applied: " + txtEnchant + ", " + txtEnchantValue);
                 }
             }
         }
