@@ -2,7 +2,7 @@ import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { AntiKnockbackA } from "../../penrose/TickEvent/knockback/antikb_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
 function antikbHelp(player: Player, prefix: string, antikbBoolean: string | number | boolean) {
     let commandStatus: string;
@@ -57,10 +57,6 @@ async function handleAntiKnockback(message: ChatSendAfterEvent, args: string[]) 
 
     const player = message.sender;
 
-    if (config.debug) {
-        player.sendMessage("§f§4[§6Paradox§4]§f Anti-Knockback is in development and locked behing Debug Mode");
-    }
-
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
 
@@ -81,21 +77,16 @@ async function handleAntiKnockback(message: ChatSendAfterEvent, args: string[]) 
         return antikbHelp(player, prefix, antikbBoolean);
     }
 
-    const antikbscore = getScore("antikb", player);
-
-    if (antikbscore <= 0) {
+    if (antikbBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antikb_b", true);
         world.setDynamicProperty("antikb_b", true);
-        player.runCommand(`scoreboard players set paradox:config antikb 1`);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Knockback§f!`);
         AntiKnockbackA();
-    } else if (antikbscore >= 1) {
+    } else if (antikbBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antikb_b", false);
         world.setDynamicProperty("antikb_b", false);
-        player.runCommand(`scoreboard players set paradox:config antikb 0`);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Knockback§f!`);
     }
-    return player.runCommand(`scoreboard players operation @a antikb = paradox:config antikb`);
 }

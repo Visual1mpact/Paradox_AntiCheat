@@ -601,11 +601,7 @@ async function handleParadoxUI(player: Player) {
                                 modulesantiknockbackui.title("§4Paradox Modules - Anti KnockBack§4");
                                 modulesantiknockbackui.toggle("Anti Knockback - Anti Knockback for all players:", antikbBoolean);
                                 modulesantiknockbackui.show(player).then((antikbResult) => {
-                                    if (config.debug) {
-                                        uiANTIKNOCKBACK(antikbResult, player);
-                                    } else {
-                                        player.sendMessage("§f§4[§6Paradox§4]§f Anti-Knockback is in development and locked behing Debug Mode");
-                                    }
+                                    uiANTIKNOCKBACK(antikbResult, player);
                                 });
                             }
                             if (movementResult.selection === 1) {
