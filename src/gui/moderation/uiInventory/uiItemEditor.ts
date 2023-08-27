@@ -37,7 +37,7 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
             }
         }
         if (transferToggle == true) {
-            //Member is the player the item is being transfered to
+            //Member is the player the item is being transferred to
             const targetPlayerinv = targetPlayer.getComponent("inventory") as EntityInventoryComponent;
             const memberPlayerinv = member.getComponent("inventory") as EntityInventoryComponent;
             let freeSlot: number;
@@ -56,7 +56,7 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
         }
         // Present the InventoryUI selection screen again.
         const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Managment§4");
+        inventoryUI.title("§4Paradox - Inventory Management§4");
         let onlinePlayerList: string[] = [];
         onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
         inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlineList);
@@ -118,7 +118,7 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
         }
         // Present the InventoryUI selection screen again.
         const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Managment§4");
+        inventoryUI.title("§4Paradox - Inventory Management§4");
         let onlinePlayerList: string[] = [];
         onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
         inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlinePlayerList);
@@ -168,7 +168,7 @@ export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: P
 
         // Present the InventoryUI selection screen again.
         const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Managment§4");
+        inventoryUI.title("§4Paradox - Inventory Management§4");
         let onlinePlayerList: string[] = [];
         onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
         inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlinePlayerList);
@@ -215,7 +215,7 @@ export function uiItemEditorReplace(InvEditorUIResult: ModalFormResponse, player
 
         // Present the InventoryUI selection screen again.
         const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Managment§4");
+        inventoryUI.title("§4Paradox - Inventory Management§4");
         let onlinePlayerList: string[] = [];
         onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
         inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlinePlayerList);
