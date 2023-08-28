@@ -5,6 +5,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiEXPSALVAGESYSTEM(expsalvagesystemResult: ModalFormResponse, player: Player) {
+    if (!expsalvagesystemResult || expsalvagesystemResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [ExpSalvageSystemToggle] = expsalvagesystemResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

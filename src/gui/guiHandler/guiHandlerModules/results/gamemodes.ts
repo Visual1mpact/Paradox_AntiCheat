@@ -13,7 +13,20 @@ export function gamemodesHandler(player: Player) {
     gamemodesui.toggle("Disable Adventure:", adventureGMBoolean);
     gamemodesui.toggle("Disable Creative:", creativeGMBoolean);
     gamemodesui.toggle("Disable Survival:", survivalGMBoolean);
-    gamemodesui.show(player).then((gamemodeResult) => {
-        uiGAMEMODES(gamemodeResult, player);
-    });
+    gamemodesui
+        .show(player)
+        .then((gamemodeResult) => {
+            uiGAMEMODES(gamemodeResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

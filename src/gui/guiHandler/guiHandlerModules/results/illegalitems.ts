@@ -19,7 +19,20 @@ export function illegalItemsHandler(player: Player) {
     modulesillegalitemsui.toggle("Illegal Enchants - Checks for items with illegal enchantments:", illegalEnchantmentBoolean);
     modulesillegalitemsui.toggle("Illegal Lores - Checks for illegal Lores on items:", illegalLoresBoolean);
     modulesillegalitemsui.toggle("Stack Ban - Checks for player's with illegal stacks:", stackBanBoolean);
-    modulesillegalitemsui.show(player).then((illegalitemsResult) => {
-        uiILLEGALITEMS(illegalitemsResult, player);
-    });
+    modulesillegalitemsui
+        .show(player)
+        .then((illegalitemsResult) => {
+            uiILLEGALITEMS(illegalitemsResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

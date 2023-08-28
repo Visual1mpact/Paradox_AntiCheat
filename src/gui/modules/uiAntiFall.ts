@@ -27,6 +27,10 @@ export function uiANTIFALL(antifallResult: ModalFormResponse, player: Player) {
 }
 
 async function handleUIAntiFall(antifallResult: ModalFormResponse, player: Player) {
+    if (!antifallResult || antifallResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiFallToggle] = antifallResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

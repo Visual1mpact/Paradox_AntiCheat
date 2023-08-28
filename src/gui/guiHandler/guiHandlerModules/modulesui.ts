@@ -51,79 +51,92 @@ export function modulesui(player: Player) {
     modulesui.button("Configure Xray", "textures/blocks/diamond_ore");
     modulesui.button("Configure Hotbar", "textures/items/paper");
     modulesui.button("Configure AFK", "textures/ui/keyboard_and_mouse_glyph_color");
-    modulesui.show(player).then((ModulesUIResult) => {
-        switch (ModulesUIResult.selection) {
-            case 0:
-                gamemodesHandler(player);
-                break;
-            case 1:
-                movementui(player);
-                break;
-            case 2:
-                antiKillAuraHandler(player);
-                break;
-            case 3:
-                antiNukerAHandler(player);
-                break;
-            case 4:
-                antiShulkerHandler(player);
-                break;
-            case 5:
-                antiSpamHandler(player);
-                break;
-            case 6:
-                antiAutoClickerHandler(player);
-                break;
-            case 7:
-                badPacketsHandler(player);
-                break;
-            case 8:
-                bedrockValidationHandler(player);
-                break;
-            case 9:
-                antiCrasherHandler(player);
-                break;
-            case 10:
-                antiEnchantedArmorHandler(player);
-                break;
-            case 11:
-                illegalItemsHandler(player);
-                break;
-            case 12:
-                lagClearHandler(player);
-                break;
-            case 13:
-                nameSpoofHandler(player);
-                break;
-            case 14:
-                opsHandler(player);
-                break;
-            case 15:
-                commandBlocksHandler(player);
-                break;
-            case 16:
-                reachHandler(player);
-                break;
-            case 17:
-                salvageHandler(player);
-                break;
-            case 18:
-                spammersHandler(player);
-                break;
-            case 19:
-                worldBorderHandler(player);
-                break;
-            case 20:
-                xrayHandler(player);
-                break;
-            case 21:
-                hotbarHandler(player);
-                break;
-            case 22:
-                afkHandler(player);
-                break;
-            default:
-                break;
-        }
-    });
+    modulesui
+        .show(player)
+        .then((ModulesUIResult) => {
+            switch (ModulesUIResult.selection) {
+                case 0:
+                    gamemodesHandler(player);
+                    break;
+                case 1:
+                    movementui(player);
+                    break;
+                case 2:
+                    antiKillAuraHandler(player);
+                    break;
+                case 3:
+                    antiNukerAHandler(player);
+                    break;
+                case 4:
+                    antiShulkerHandler(player);
+                    break;
+                case 5:
+                    antiSpamHandler(player);
+                    break;
+                case 6:
+                    antiAutoClickerHandler(player);
+                    break;
+                case 7:
+                    badPacketsHandler(player);
+                    break;
+                case 8:
+                    bedrockValidationHandler(player);
+                    break;
+                case 9:
+                    antiCrasherHandler(player);
+                    break;
+                case 10:
+                    antiEnchantedArmorHandler(player);
+                    break;
+                case 11:
+                    illegalItemsHandler(player);
+                    break;
+                case 12:
+                    lagClearHandler(player);
+                    break;
+                case 13:
+                    nameSpoofHandler(player);
+                    break;
+                case 14:
+                    opsHandler(player);
+                    break;
+                case 15:
+                    commandBlocksHandler(player);
+                    break;
+                case 16:
+                    reachHandler(player);
+                    break;
+                case 17:
+                    salvageHandler(player);
+                    break;
+                case 18:
+                    spammersHandler(player);
+                    break;
+                case 19:
+                    worldBorderHandler(player);
+                    break;
+                case 20:
+                    xrayHandler(player);
+                    break;
+                case 21:
+                    hotbarHandler(player);
+                    break;
+                case 22:
+                    afkHandler(player);
+                    break;
+                default:
+                    break;
+            }
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

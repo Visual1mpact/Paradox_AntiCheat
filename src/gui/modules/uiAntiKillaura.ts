@@ -27,6 +27,10 @@ export function uiANTIKILLAURA(antikillauraResult: ModalFormResponse, player: Pl
 }
 
 async function handleUIAntiKillAura(antikillauraResult: ModalFormResponse, player: Player) {
+    if (!antikillauraResult || antikillauraResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiKillAuraToggle] = antikillauraResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

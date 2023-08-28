@@ -27,6 +27,10 @@ export function uiLOCKDOWN(lockdownResult: ModalFormResponse, player: Player) {
 }
 
 async function handleUILockdown(lockdownResult: ModalFormResponse, player: Player) {
+    if (!lockdownResult || lockdownResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [reason, LockdownToggle] = lockdownResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

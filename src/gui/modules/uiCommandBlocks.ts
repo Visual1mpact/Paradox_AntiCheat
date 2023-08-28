@@ -26,6 +26,10 @@ export function uiCOMMANDBLOCKS(commandblocksResult: ModalFormResponse, player: 
 }
 
 async function handleUICommandBlocks(commandblocksResult: ModalFormResponse, player: Player) {
+    if (!commandblocksResult || commandblocksResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [CommandBlockOverrideToggle, RemoveCommandBlocksToggle] = commandblocksResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

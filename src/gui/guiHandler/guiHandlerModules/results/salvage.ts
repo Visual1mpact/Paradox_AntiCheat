@@ -9,7 +9,20 @@ export function salvageHandler(player: Player) {
     const salvageBoolean = dynamicPropertyRegistry.get("salvage_b") as boolean;
     modulesexpsavlagesystem.title("§4Paradox Modules - Salvage System§4");
     modulesexpsavlagesystem.toggle("Salvage System - Salvage all item's:", salvageBoolean);
-    modulesexpsavlagesystem.show(player).then((salvagesystemResult) => {
-        uiEXPSALVAGESYSTEM(salvagesystemResult, player);
-    });
+    modulesexpsavlagesystem
+        .show(player)
+        .then((salvagesystemResult) => {
+            uiEXPSALVAGESYSTEM(salvagesystemResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

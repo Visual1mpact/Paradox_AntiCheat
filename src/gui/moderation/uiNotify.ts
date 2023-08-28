@@ -5,6 +5,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!notifyResult || notifyResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value, Enabled] = notifyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

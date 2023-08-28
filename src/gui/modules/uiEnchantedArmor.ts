@@ -26,6 +26,10 @@ export function uiENCHANTEDARMOR(enchantedarmorResult: ModalFormResponse, player
 }
 
 async function handleUIEnchantedArmor(enchantedarmorResult: ModalFormResponse, player: Player) {
+    if (!enchantedarmorResult || enchantedarmorResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [EnchantedArmorToggle] = enchantedarmorResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

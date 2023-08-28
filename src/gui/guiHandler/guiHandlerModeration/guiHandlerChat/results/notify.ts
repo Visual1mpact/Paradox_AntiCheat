@@ -11,7 +11,20 @@ export function notifyHandler(player: Player) {
     notifyui.dropdown(`\n§fSelect a player to Enable or Disable Notifications:§f\n\nPlayer's Online\n`, onlineList);
     //by default set the current value to disabled.
     notifyui.toggle("Notifications:", false);
-    notifyui.show(player).then((notifyResult) => {
-        uiNOTIFY(notifyResult, onlineList, player);
-    });
+    notifyui
+        .show(player)
+        .then((notifyResult) => {
+            uiNOTIFY(notifyResult, onlineList, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

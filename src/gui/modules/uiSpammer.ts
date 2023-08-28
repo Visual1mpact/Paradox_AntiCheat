@@ -8,6 +8,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiSPAMMER(spamResult: ModalFormResponse, player: Player) {
+    if (!spamResult || spamResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [SpammerAToggle, SpammerBToggle, SpammerCToggle] = spamResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

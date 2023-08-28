@@ -7,6 +7,10 @@ import config from "../../data/config.js";
 
 //Function provided by Visual1mpact
 export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!opResult || opResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = opResult.formValues;
     // Need player object
     let member: Player = undefined;

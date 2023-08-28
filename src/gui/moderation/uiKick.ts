@@ -26,6 +26,10 @@ export function uiKICK(banResult: ModalFormResponse, onlineList: string[], playe
 }
 
 async function handleUIKick(banResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!banResult || banResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value, reason] = banResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

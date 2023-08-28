@@ -27,6 +27,10 @@ export function uiANTIAUTOCLICKER(antiautoclickerResult: ModalFormResponse, play
 }
 
 async function handleUIAntiAutoClicker(antiautoclickerResult: ModalFormResponse, player: Player) {
+    if (!antiautoclickerResult || antiautoclickerResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiAutoClickerToggle] = antiautoclickerResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

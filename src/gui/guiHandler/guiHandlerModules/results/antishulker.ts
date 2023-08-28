@@ -8,7 +8,20 @@ export function antiShulkerHandler(player: Player) {
     const antiShulkerBoolean = dynamicPropertyRegistry.get("antishulker_b") as boolean;
     modulesantishulkerui.title("§4Paradox Modules - Anti Shulker§4");
     modulesantishulkerui.toggle("Anti Shulker - Allows or denies shulker boxes in the world:", antiShulkerBoolean);
-    modulesantishulkerui.show(player).then((antishulkerResult) => {
-        uiANTISHULKER(antishulkerResult, player);
-    });
+    modulesantishulkerui
+        .show(player)
+        .then((antishulkerResult) => {
+            uiANTISHULKER(antishulkerResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

@@ -26,6 +26,10 @@ export function uiDESPAWNER(despawnerResult: ModalFormResponse, player: Player) 
 }
 
 async function handleUIDespawner(despawnerResult: ModalFormResponse, player: Player) {
+    if (!despawnerResult || despawnerResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [entityValue, DespawnAllToggle] = despawnerResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

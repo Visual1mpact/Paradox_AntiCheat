@@ -12,7 +12,20 @@ export function hotbarHandler(player: Player) {
     moduleshotbarui.textField("Hotbar Message: ", "", CurrentHotbarConfig);
     moduleshotbarui.toggle("Enable Hotbar - Displays a hotbar message for all player's currently online:", hotbarBoolean);
     moduleshotbarui.toggle("Restore to message stored in config.js:", false);
-    moduleshotbarui.show(player).then((hotbarResult) => {
-        uiHOTBAR(hotbarResult, player);
-    });
+    moduleshotbarui
+        .show(player)
+        .then((hotbarResult) => {
+            uiHOTBAR(hotbarResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

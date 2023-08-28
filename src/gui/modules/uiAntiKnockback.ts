@@ -27,6 +27,10 @@ export function uiANTIKNOCKBACK(antiknockbackResult: ModalFormResponse, player: 
 }
 
 async function handleUIAntiKnockback(antiknockbackResult: ModalFormResponse, player: Player) {
+    if (!antiknockbackResult || antiknockbackResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiKnockBackToggle] = antiknockbackResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

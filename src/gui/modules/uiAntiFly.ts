@@ -6,6 +6,10 @@ import { sendMsgToPlayer, sendMsg } from "../../util.js";
 import { FlyA } from "../../penrose/TickEvent/fly/fly_a.js";
 
 export function uiANTIFLY(antiflyResult: ModalFormResponse, player: Player) {
+    if (!antiflyResult || antiflyResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiFlyToggle] = antiflyResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

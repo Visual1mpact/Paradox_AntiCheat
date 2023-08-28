@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiINVALIDSPRINT(invalidsprintResult: ModalFormResponse, player: Player) {
+    if (!invalidsprintResult || invalidsprintResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [InvalidSprintToggle] = invalidsprintResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

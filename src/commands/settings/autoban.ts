@@ -6,7 +6,7 @@ import { AutoBan } from "../../penrose/TickEvent/ban/autoban.js";
 
 function autobanHelp(player: Player, prefix: string, autoBanBoolean: string | number | boolean) {
     let commandStatus: string;
-    if (!config.customcommands.showrules) {
+    if (!config.customcommands.autoban) {
         commandStatus = "§6[§4DISABLED§6]§f";
     } else {
         commandStatus = "§6[§aENABLED§6]§f";

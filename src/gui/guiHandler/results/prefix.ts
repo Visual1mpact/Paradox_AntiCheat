@@ -11,8 +11,21 @@ export function prefixHandler(player: Player) {
     prefixui.dropdown(`\nChanges prefix used for commands:\n\nPlayer's Online\n`, onlineList);
     prefixui.textField(`\nPrefix:\n`, `Put new prefix here`, null);
     prefixui.toggle(`\nReset Prefix:`, false);
-    prefixui.show(player).then((prefixResult) => {
-        //Prefix logic
-        uiPREFIX(prefixResult, onlineList, player);
-    });
+    prefixui
+        .show(player)
+        .then((prefixResult) => {
+            //Prefix logic
+            uiPREFIX(prefixResult, onlineList, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

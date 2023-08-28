@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiANTIJESUS(antijesusResult: ModalFormResponse, player: Player) {
+    if (!antijesusResult || antijesusResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiJesusToggle] = antijesusResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

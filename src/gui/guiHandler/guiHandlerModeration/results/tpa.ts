@@ -10,7 +10,20 @@ export function tpaHandler(player: Player) {
     tpaui.dropdown(`\n§fSelect a player to teleport:§f\n\nPlayer's Online\n`, onlineList);
     tpaui.toggle("Teleport to the target player:", true);
     tpaui.toggle("Teleport the target player to you:", false);
-    tpaui.show(player).then((tpaResult) => {
-        uiTPA(tpaResult, onlineList, player);
-    });
+    tpaui
+        .show(player)
+        .then((tpaResult) => {
+            uiTPA(tpaResult, onlineList, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

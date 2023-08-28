@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiBEDROCKVALIDATION(bedrockvalidationResult: ModalFormResponse, player: Player) {
+    if (!bedrockvalidationResult || bedrockvalidationResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [BedrockValidationToggle] = bedrockvalidationResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

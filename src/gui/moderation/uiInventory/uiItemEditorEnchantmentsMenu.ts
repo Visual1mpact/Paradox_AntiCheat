@@ -9,7 +9,20 @@ export function uiItemEditorEnchantmentsMenu(player: Player, targetPlayer: Playe
     itemEditor.textField("Enchantment Value", "3");
     itemEditor.toggle("Remove Enchantment", false);
     itemEditor.textField("Enchantment", "knockback");
-    itemEditor.show(player).then((InvEditorUIResult) => {
-        uiItemEditorEnchantments(InvEditorUIResult, player, targetPlayer, itemSlot);
-    });
+    itemEditor
+        .show(player)
+        .then((InvEditorUIResult) => {
+            uiItemEditorEnchantments(InvEditorUIResult, player, targetPlayer, itemSlot);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

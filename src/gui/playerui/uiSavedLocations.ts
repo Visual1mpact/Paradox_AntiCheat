@@ -5,6 +5,10 @@ import { decryptString, encryptString, sendMsgToPlayer, setTimer } from "../../u
 import { paradoxui } from "../paradoxui.js";
 
 export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locations: string[], player: Player, coordArray: string[]) {
+    if (!savedlocationsResult || savedlocationsResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [selectedLocationvalue, teleportToSelectedLocation, deleteSelectedLocation, newLocationName] = savedlocationsResult.formValues;
     let x: number;
     let y: number;

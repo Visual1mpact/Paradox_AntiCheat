@@ -28,6 +28,10 @@ export function uiMUTE(muteResult: ModalFormResponse, onlineList: string[], play
 }
 
 async function handleUIMute(muteResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!muteResult || muteResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value, reason] = muteResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

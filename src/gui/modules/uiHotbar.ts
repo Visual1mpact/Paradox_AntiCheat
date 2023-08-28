@@ -11,6 +11,10 @@ const configMessageBackup = new WeakMap();
 const dummy: object = [];
 
 export function uiHOTBAR(hotbarResult: ModalFormResponse, player: Player) {
+    if (!hotbarResult || hotbarResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [HotbarMessage, HotbarToggle, HotbarRestDefaultMessageToggle] = hotbarResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

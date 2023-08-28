@@ -7,6 +7,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiNAMESPOOFING(namespoofingResult: ModalFormResponse, player: Player) {
+    if (!namespoofingResult || namespoofingResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [NameSpoofAToggle, NameSpoofBToggle] = namespoofingResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

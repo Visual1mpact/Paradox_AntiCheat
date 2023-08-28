@@ -7,6 +7,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiNOWSLOW(noslowResult: ModalFormResponse, player: Player) {
+    if (!noslowResult || noslowResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [NoSlowToggle] = noslowResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

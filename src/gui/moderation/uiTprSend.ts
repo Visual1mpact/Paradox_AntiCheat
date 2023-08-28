@@ -5,6 +5,10 @@ import { paradoxui } from "../paradoxui.js";
 import { TeleportRequestHandler } from "../../commands/utility/tpr.js";
 
 export function uiTPRSEND(tprSendRequestResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!tprSendRequestResult || tprSendRequestResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = tprSendRequestResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

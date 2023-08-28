@@ -7,6 +7,10 @@ import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!statsResult || statsResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = statsResult.formValues;
 
     let member: Player = undefined;
@@ -19,12 +23,14 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     }
 
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f The player is not online.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f The player is not online.`);
+        return;
     }
 
     const uniqueId = dynamicPropertyRegistry.get(player?.id);
     if (uniqueId !== player.name) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped.`);
+        return;
     }
 
     const allObjectives = allscores;
@@ -113,9 +119,22 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     const tempstring = reportBody.toString().replaceAll(",", "");
     ResultsUI.body(tempstring);
     ResultsUI.button("Close");
-    ResultsUI.show(player).then(() => {
-        //Simply re show the main UI
-        return paradoxui(player);
-    });
-    return player;
+    ResultsUI.show(player)
+        .then(() => {
+            //Simply re show the main UI
+            paradoxui(player);
+            return;
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
+    //return player;
 }

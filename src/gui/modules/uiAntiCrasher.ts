@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiANTICRASHER(anticrasherResult: ModalFormResponse, player: Player) {
+    if (!anticrasherResult || anticrasherResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiCrasherToggle] = anticrasherResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

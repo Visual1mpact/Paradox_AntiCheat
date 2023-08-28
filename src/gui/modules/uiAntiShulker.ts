@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiANTISHULKER(antishulkerResult: ModalFormResponse, player: Player) {
+    if (!antishulkerResult || antishulkerResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiShulkerToggle] = antishulkerResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

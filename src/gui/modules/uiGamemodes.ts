@@ -8,6 +8,10 @@ import { Creative } from "../../penrose/TickEvent/gamemode/creative.js";
 import { Survival } from "../../penrose/TickEvent/gamemode/survival.js";
 
 export function uiGAMEMODES(gamemodeResult: ModalFormResponse, player: Player) {
+    if (!gamemodeResult || gamemodeResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AdventureGM, CreativeGM, SurvivalGM] = gamemodeResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

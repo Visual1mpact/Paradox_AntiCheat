@@ -7,6 +7,10 @@ import config from "../../data/config.js";
 
 //Function provided by Visual1mpact
 export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: string | number | boolean, hash: string | number | boolean, player: Player, onlineList?: string[]) {
+    if (!opResult || opResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     if (!hash || !salt || (hash !== crypto?.(salt, config.encryption.password || player.id) && isValidUUID(salt as string))) {
         if (!config.encryption.password) {
             if (!player.isOp()) {

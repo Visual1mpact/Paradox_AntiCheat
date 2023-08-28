@@ -27,6 +27,10 @@ export function uiEWIPE(ewipeResult: ModalFormResponse, onlineList: string[], pl
 }
 
 async function handleUIEWipe(ewipeResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!ewipeResult || ewipeResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = ewipeResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

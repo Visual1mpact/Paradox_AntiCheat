@@ -19,7 +19,20 @@ export function antiEnchantedArmorHandler(player: Player) {
     }
     modulesenchantedarmorui.title("§4Paradox Modules - Enchanted Armor§4");
     modulesenchantedarmorui.toggle("Enchanted Armor - Anti Enchanted Armor for all players:", enchantedarmorBoolean);
-    modulesenchantedarmorui.show(player).then((enchantedarmorResult) => {
-        uiENCHANTEDARMOR(enchantedarmorResult, player);
-    });
+    modulesenchantedarmorui
+        .show(player)
+        .then((enchantedarmorResult) => {
+            uiENCHANTEDARMOR(enchantedarmorResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

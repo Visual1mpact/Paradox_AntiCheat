@@ -7,6 +7,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiBADPACKETS(badpacketsResult: ModalFormResponse, player: Player) {
+    if (!badpacketsResult || badpacketsResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [BadPackets1Toggle, BadPackets2Toggle] = badpacketsResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

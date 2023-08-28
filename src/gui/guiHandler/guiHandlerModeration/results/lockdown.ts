@@ -11,7 +11,20 @@ export function lockdownHandler(player: Player) {
     lockdownui.title("§4Paradox - Lockdown§4");
     lockdownui.textField("Reason:", "Possible hacker in the world.");
     lockdownui.toggle("Enable or Disable Lockdown:", lockdownBoolean);
-    lockdownui.show(player).then((lockdownResult) => {
-        uiLOCKDOWN(lockdownResult, player);
-    });
+    lockdownui
+        .show(player)
+        .then((lockdownResult) => {
+            uiLOCKDOWN(lockdownResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

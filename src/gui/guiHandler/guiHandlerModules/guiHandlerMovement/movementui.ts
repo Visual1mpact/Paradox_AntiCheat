@@ -18,31 +18,44 @@ export function movementui(player: Player) {
     modulesmovementui.button("No-slow", "textures/items/diamond_boots");
     modulesmovementui.button("Anti Scaffold", "textures/blocks/scaffolding_top");
     modulesmovementui.button("Anti Jesusa", "textures/blocks/lava_placeholder");
-    modulesmovementui.show(player).then((movementResult) => {
-        switch (movementResult.selection) {
-            case 0:
-                antiKnockBackHandler(player);
-                break;
-            case 1:
-                antiFallHandler(player);
-                break;
-            case 2:
-                antiFlyHandler(player);
-                break;
-            case 3:
-                invalidSprintHandler(player);
-                break;
-            case 4:
-                noSlowAHandler(player);
-                break;
-            case 5:
-                antiScaffoldAHandler(player);
-                break;
-            case 6:
-                antiJesusAHandler(player);
-                break;
-            default:
-                break;
-        }
-    });
+    modulesmovementui
+        .show(player)
+        .then((movementResult) => {
+            switch (movementResult.selection) {
+                case 0:
+                    antiKnockBackHandler(player);
+                    break;
+                case 1:
+                    antiFallHandler(player);
+                    break;
+                case 2:
+                    antiFlyHandler(player);
+                    break;
+                case 3:
+                    invalidSprintHandler(player);
+                    break;
+                case 4:
+                    noSlowAHandler(player);
+                    break;
+                case 5:
+                    antiScaffoldAHandler(player);
+                    break;
+                case 6:
+                    antiJesusAHandler(player);
+                    break;
+                default:
+                    break;
+            }
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiLAGCLEAR(lagclearResult: ModalFormResponse, player: Player) {
+    if (!lagclearResult || lagclearResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [LagClearToggle] = lagclearResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

@@ -27,6 +27,10 @@ export function uiVANISH(vanishResult: ModalFormResponse, onlineList: string[], 
 }
 
 async function handleUIVanish(vanishResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!vanishResult || vanishResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = vanishResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

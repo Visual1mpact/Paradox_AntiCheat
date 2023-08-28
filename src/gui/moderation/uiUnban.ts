@@ -7,6 +7,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiUNBAN(unbanResult: ModalFormResponse, player: Player) {
+    if (!unbanResult || unbanResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [textField, deleteUnban] = unbanResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

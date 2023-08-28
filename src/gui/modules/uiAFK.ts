@@ -5,6 +5,10 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 export function uiAFK(afkResult: ModalFormResponse, player: Player) {
+    if (!afkResult || afkResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [afkToggle] = afkResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

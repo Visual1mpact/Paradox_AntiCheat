@@ -10,7 +10,20 @@ export function afkHandler(player: Player) {
     const afkBoolean = dynamicPropertyRegistry.get("afk_b") as boolean;
     modulesafkui.title("§4Paradox Modules - AFK§4");
     modulesafkui.toggle("Enable AFK - Kicks players that are AFK for " + currentAFKConifg + " minutes:", afkBoolean);
-    modulesafkui.show(player).then((afkResult) => {
-        uiAFK(afkResult, player);
-    });
+    modulesafkui
+        .show(player)
+        .then((afkResult) => {
+            uiAFK(afkResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

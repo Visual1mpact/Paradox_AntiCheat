@@ -16,6 +16,10 @@ function resetPrefix(player: Player) {
 }
 
 export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!prefixResult || prefixResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value, textField, toggle] = prefixResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

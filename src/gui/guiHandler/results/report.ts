@@ -10,7 +10,20 @@ export function reportHandler(player: Player) {
     onlineList = Array.from(world.getPlayers(), (player) => player.name);
     reportplayerui.dropdown(`\n§fSelect a player from the list, your report will then be sent to staff members:§f\n\nPlayer's Online\n`, onlineList);
     reportplayerui.textField("Please provide a reason as to why you are reporting this player:", "");
-    reportplayerui.show(player).then((reportResult) => {
-        UIREPORTPLAYER(reportResult, onlineList, player);
-    });
+    reportplayerui
+        .show(player)
+        .then((reportResult) => {
+            UIREPORTPLAYER(reportResult, onlineList, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

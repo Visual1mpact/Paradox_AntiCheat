@@ -15,7 +15,20 @@ export function chatRanksHandler(player: Player) {
     chatranksui.dropdown(`\n§fSelect a pre defined rank or you can set a custom on below:§f`, predefinedrank);
     chatranksui.textField("Enter a custom Rank:", "VIP");
     chatranksui.toggle("Chat Ranks - Enables or Disables chat ranks:", chatRanksBoolean);
-    chatranksui.show(player).then((chatranksResult) => {
-        uiCHATRANKS(chatranksResult, onlineList, predefinedrank, player);
-    });
+    chatranksui
+        .show(player)
+        .then((chatranksResult) => {
+            uiCHATRANKS(chatranksResult, onlineList, predefinedrank, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

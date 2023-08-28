@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiXRAY(xrayResult: ModalFormResponse, player: Player) {
+    if (!xrayResult || xrayResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [XrayToggle] = xrayResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

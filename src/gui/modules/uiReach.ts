@@ -7,6 +7,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiREACH(reachResult: ModalFormResponse, player: Player) {
+    if (!reachResult || reachResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [ReachAToggle, ReachBToggle] = reachResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

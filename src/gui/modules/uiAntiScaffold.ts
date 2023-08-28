@@ -27,6 +27,10 @@ export function uiANTISCAFFOLD(antiscaffoldResult: ModalFormResponse, player: Pl
 }
 
 async function handleUIAntiScaffold(antiscaffoldResult: ModalFormResponse, player: Player) {
+    if (!antiscaffoldResult || antiscaffoldResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiScaffoldToggle] = antiscaffoldResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

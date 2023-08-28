@@ -27,6 +27,10 @@ export function uiPUNISH(punishResult: ModalFormResponse, onlineList: string[], 
 }
 
 async function handleUIPunish(punishResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!punishResult || punishResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = punishResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

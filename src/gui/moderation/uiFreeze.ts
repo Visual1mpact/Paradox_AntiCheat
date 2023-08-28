@@ -28,6 +28,10 @@ export function uiFREEZE(freezeResult: ModalFormResponse, onlineList: string[], 
 }
 
 async function handleUIFreeze(freezeResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!freezeResult || freezeResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = freezeResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

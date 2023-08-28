@@ -8,6 +8,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiILLEGALITEMS(illegalitemsResult: ModalFormResponse, player: Player) {
+    if (!illegalitemsResult || illegalitemsResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [IllegalItemsAToggle, IllegalItemsBToggle, IllegalItemsCToggle, IllegalEnchanmentsToggle, IllegalLoreToggle, IllegalStackBanToggle] = illegalitemsResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

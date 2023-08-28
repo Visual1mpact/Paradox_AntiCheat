@@ -11,8 +11,21 @@ export function banHandler(player: Player) {
     onlineList = Array.from(world.getPlayers(), (player) => player.name);
     banui.dropdown(`\n§fSelect a player to Ban:§f\n\nPlayer's Online\n`, onlineList);
     banui.textField(`Reason:`, `Enter a reason.`);
-    banui.show(player).then((banResult) => {
-        //ban function goes here
-        uiBAN(banResult, onlineList, player);
-    });
+    banui
+        .show(player)
+        .then((banResult) => {
+            //ban function goes here
+            uiBAN(banResult, onlineList, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

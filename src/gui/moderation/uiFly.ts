@@ -34,6 +34,10 @@ export function uiFLY(flyResult: ModalFormResponse, onlineList: string[], player
 }
 
 async function handleUIFly(flyResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!flyResult || flyResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value] = flyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

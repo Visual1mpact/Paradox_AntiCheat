@@ -8,7 +8,20 @@ export function uiItemEditorTransferMenu(player: Player, targetPlayer: Player, i
     let onlineList: string[] = [];
     onlineList = Array.from(world.getPlayers(), (player) => player.name);
     itemEditor.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlineList);
-    itemEditor.show(player).then((InvEditorUIResult) => {
-        uiItemEditorTransfer(InvEditorUIResult, onlineList, player, targetPlayer, itemSlot);
-    });
+    itemEditor
+        .show(player)
+        .then((InvEditorUIResult) => {
+            uiItemEditorTransfer(InvEditorUIResult, onlineList, player, targetPlayer, itemSlot);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

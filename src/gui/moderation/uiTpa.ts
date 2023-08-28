@@ -6,6 +6,10 @@ import { sendMsgToPlayer, setTimer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player: Player) {
+    if (!tpaResult || tpaResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value, toggleToTarget, toggleTargetTo] = tpaResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

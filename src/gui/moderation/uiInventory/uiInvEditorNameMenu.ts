@@ -8,7 +8,20 @@ export function uiItemEditorNameMenu(player: Player, targetPlayer: Player, itemS
     itemEditor.textField("Name", "MyCoolItem");
     itemEditor.toggle("Edit Lore", false);
     itemEditor.textField("Lore", "Lore1,Lore2,Lore3");
-    itemEditor.show(player).then((InvEditorUIResult) => {
-        uiItemEditorName(InvEditorUIResult, player, targetPlayer, itemSlot);
-    });
+    itemEditor
+        .show(player)
+        .then((InvEditorUIResult) => {
+            uiItemEditorName(InvEditorUIResult, player, targetPlayer, itemSlot);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

@@ -6,6 +6,10 @@ import { paradoxui } from "../paradoxui.js";
 import { onJoinrules } from "../PlayerSpawnAfterEvent/rules/rules.js";
 
 export function uiRULES(banResult: ModalFormResponse, player: Player) {
+    if (!banResult || banResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [EnabledRules, EnableKick] = banResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

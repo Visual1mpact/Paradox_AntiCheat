@@ -14,7 +14,20 @@ export function worldBorderHandler(player: Player) {
     modulesworldborderui.textField("Nether World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(netherworldBorderNumber));
     modulesworldborderui.textField("End World Border - Values in blocks. Set to 0 if it needs to be disabled:", "0", String(endworldBorderNumber));
     modulesworldborderui.toggle("Enable World Border:", overWorldBorderBoolean);
-    modulesworldborderui.show(player).then((spamResult) => {
-        uiWORLDBORDER(spamResult, player);
-    });
+    modulesworldborderui
+        .show(player)
+        .then((spamResult) => {
+            uiWORLDBORDER(spamResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

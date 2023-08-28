@@ -26,6 +26,10 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
     });
 
     async function handleUIitemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlineList: string[], player: Player, targetPlayer: Player, itemSlot: number) {
+        if (!InvEditorUIResult || InvEditorUIResult.canceled) {
+            // Handle canceled form or undefined result
+            return;
+        }
         const [transferToggle, value] = InvEditorUIResult.formValues;
         //Member is used when transferring an Item.
         let member: Player = undefined;

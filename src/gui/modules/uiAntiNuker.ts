@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiANTINUKER(antinukerResult: ModalFormResponse, player: Player) {
+    if (!antinukerResult || antinukerResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [AntiNukerToggle] = antinukerResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

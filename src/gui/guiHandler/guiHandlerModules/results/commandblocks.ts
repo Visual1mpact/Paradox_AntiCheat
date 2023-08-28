@@ -25,7 +25,20 @@ export function commandBlocksHandler(player: Player) {
     modulescommandblocksui.title("§4Paradox Modules - Command Blocks§4");
     modulescommandblocksui.toggle("Override Command Blocks - Forces the commandblocksenabled gamerule to be enabled or disabled at all times:", cmdoBoolean);
     modulescommandblocksui.toggle("Anti Command Blocks - Clears all Command Blocks when enabled:", removecmdblocksBoolean);
-    modulescommandblocksui.show(player).then((commandblockResult) => {
-        uiCOMMANDBLOCKS(commandblockResult, player);
-    });
+    modulescommandblocksui
+        .show(player)
+        .then((commandblockResult) => {
+            uiCOMMANDBLOCKS(commandblockResult, player);
+        })
+        .catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
 }

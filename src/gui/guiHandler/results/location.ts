@@ -58,9 +58,22 @@ export function locationHandler(player: Player) {
     savedlocationsui.toggle("Deletes the selected Location:", false);
     savedlocationsui.textField("Enter a name to save your current Location:", "");
     if (config.customcommands.sethome === true && config.customcommands.delhome === true && config.customcommands.listhome === true && config.customcommands.gohome === true) {
-        savedlocationsui.show(player).then((savedlocationsResult) => {
-            uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
-        });
+        savedlocationsui
+            .show(player)
+            .then((savedlocationsResult) => {
+                uiSAVEDLOCATIONS(savedlocationsResult, Locations, player, coordsArray);
+            })
+            .catch((error) => {
+                console.error("Paradox Unhandled Rejection: ", error);
+                // Extract stack trace information
+                if (error instanceof Error) {
+                    const stackLines = error.stack.split("\n");
+                    if (stackLines.length > 1) {
+                        const sourceInfo = stackLines;
+                        console.error("Error originated from:", sourceInfo[0]);
+                    }
+                }
+            });
     } else {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Saved Locations have been disabled by the Admins.`);
         return;

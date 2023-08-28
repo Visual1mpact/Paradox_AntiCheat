@@ -5,6 +5,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[], predefinedrank: string[], player: Player) {
+    if (!notifyResult || notifyResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [value, predefinedrankvalue, customrank, ChatRanksToggle] = notifyResult.formValues;
     let member: Player = undefined;
     const players = world.getPlayers();

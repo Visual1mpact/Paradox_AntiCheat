@@ -6,6 +6,10 @@ import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 
 export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Player) {
+    if (!worldborderResult || worldborderResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [OverworldValueTextfield, NetherValueTextfield, EndValueTextfield, WorldBorderToggle] = worldborderResult.formValues;
     // Get unique ID
     const uniqueId = dynamicPropertyRegistry.get(player?.id);

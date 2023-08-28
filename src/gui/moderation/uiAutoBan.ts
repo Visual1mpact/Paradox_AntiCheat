@@ -7,6 +7,10 @@ import { paradoxui } from "../paradoxui.js";
 import { AutoBan } from "../../penrose/TickEvent/ban/autoban.js";
 
 export function uiAUTOBAN(autobanResult: ModalFormResponse, player: Player) {
+    if (!autobanResult || autobanResult.canceled) {
+        // Handle canceled form or undefined result
+        return;
+    }
     const [autobanToggle] = autobanResult.formValues;
 
     // Get unique ID
