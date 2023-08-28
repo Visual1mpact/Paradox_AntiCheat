@@ -35,6 +35,7 @@ export const onJoinPrimaryData = [
     "antifallvl",
     "nukervl",
     "scaffoldvl",
+    "antiphasevl",
 ];
 
 export const onJoinSecondaryData = [
