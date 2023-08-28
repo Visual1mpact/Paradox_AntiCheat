@@ -72,17 +72,20 @@ function registry(data: WorldInitializeAfterEvent) {
     const defineNumberProperties = ["worldborder_n", "worldborder_nether_n", "worldborder_end_n"];
 
     // Define booleans (property)
-    for (let b = 0; b < defineBooleanProperties.length; b++) {
+    const defineBooleanLength = defineBooleanProperties.length;
+    for (let b = 0; b < defineBooleanLength; b++) {
         property.defineBoolean(defineBooleanProperties[b]);
     }
 
     // Define strings (personal)
-    for (let s = 0; s < defineStringProperties.length; s++) {
+    const defineStringLength = defineStringProperties.length;
+    for (let s = 0; s < defineStringLength; s++) {
         personal.defineString(defineStringProperties[s], 50);
     }
 
     // Define numbers (property)
-    for (let n = 0; n < defineNumberProperties.length; n++) {
+    const defineNumberLength = defineNumberProperties.length;
+    for (let n = 0; n < defineNumberLength; n++) {
         property.defineNumber(defineNumberProperties[n]);
     }
 
@@ -101,10 +104,12 @@ function registry(data: WorldInitializeAfterEvent) {
     // Loop through the identifiers in the array
     defineBooleanProperties.forEach((booleanProp) => {
         // Verify if identifier matches any module property in config
-        for (const [configProperty, configPropertyValue] of Object.entries(config.modules)) {
+        const objectEntriesModules = Object.entries(config.modules);
+        for (const [configProperty, configPropertyValue] of objectEntriesModules) {
             if (booleanProp.replaceAll(/(_b)/g, "") === configProperty.toLowerCase()) {
                 // Loop through the settings of each property in module
-                for (const [setting, settingValue] of Object.entries(configPropertyValue)) {
+                const objectEntriesValues = Object.entries(configPropertyValue);
+                for (const [setting, settingValue] of objectEntriesValues) {
                     if (setting === "enabled") {
                         // We conditionally test if the dynamic property already exists
                         const test = world.getDynamicProperty(booleanProp);

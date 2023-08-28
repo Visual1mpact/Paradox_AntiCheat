@@ -76,8 +76,11 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     // Check for custom prefix
     const prefix = getPrefix(player);
 
+    // Cache
+    const length = args.length;
+
     // Are there arguements
-    if (!args.length) {
+    if (!length) {
         return goHomeHelp(player, prefix);
     }
 
@@ -88,7 +91,7 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     }
 
     // Don't allow spaces
-    if (args.length > 1) {
+    if (length > 1) {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No spaces in names please!`);
     }
 
@@ -104,7 +107,8 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     let dimension: string;
     let coordinatesArray: string[];
     const tags = player.getTags();
-    for (let i = 0; i < tags.length; i++) {
+    const tagsLength = tags.length;
+    for (let i = 0; i < tagsLength; i++) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption
@@ -129,7 +133,8 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
         return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
     }
 
-    for (let i = 0; i < coordinatesArray.length; i++) {
+    const coordArrayLength = coordinatesArray.length;
+    for (let i = 0; i < coordArrayLength; i++) {
         // Get their location from the array
         if (coordinatesArray[i].includes("X:")) {
             homex = parseInt(coordinatesArray[i].replace("X:", ""));

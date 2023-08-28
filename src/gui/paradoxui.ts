@@ -202,10 +202,11 @@ async function handleParadoxUI(player: Player) {
                 // Hash the coordinates for security
                 const salt = world.getDynamicProperty("crypt");
                 const tags = player.getTags();
+                const tagsLength = tags.length;
                 let counter = 0;
                 const Locations: string[] = [];
                 const coordsArray: string[] = [];
-                for (let i = 0; i < tags.length; i++) {
+                for (let i = 0; i < tagsLength; i++) {
                     // 6f78 is temporary and will be removed
                     if (tags[i].startsWith("6f78")) {
                         // Remove old encryption
@@ -224,8 +225,9 @@ async function handleParadoxUI(player: Player) {
                         }
                         // Split string into array
                         const coordinatesArray = tags[i].split(" ");
+                        const coordArrayLength = coordinatesArray.length;
                         counter = ++counter;
-                        for (let i = 0; i < coordinatesArray.length; i++) {
+                        for (let i = 0; i < coordArrayLength; i++) {
                             // Get their location from the array
                             coordsArray.push(coordinatesArray[i]);
                             if (coordinatesArray[i].includes("LocationHome:")) {
@@ -999,10 +1001,11 @@ async function handleParadoxUI(player: Player) {
             // Hash the coordinates for security
             const salt = world.getDynamicProperty("crypt");
             const tags = player.getTags();
+            const tagsLength = tags.length;
             let counter = 0;
             const Locations: string[] = [];
             const coordsArray: string[] = [];
-            for (let i = 0; i < tags.length; i++) {
+            for (let i = 0; i < tagsLength; i++) {
                 // 6f78 is temporary and will be removed
                 if (tags[i].startsWith("6f78")) {
                     // Remove old encryption
@@ -1021,8 +1024,9 @@ async function handleParadoxUI(player: Player) {
                     }
                     // Split string into array
                     const coordinatesArray = tags[i].split(" ");
+                    const coordArrayLength = coordinatesArray.length;
                     counter = ++counter;
-                    for (let i = 0; i < coordinatesArray.length; i++) {
+                    for (let i = 0; i < coordArrayLength; i++) {
                         // Get their location from the array
                         coordsArray.push(coordinatesArray[i]);
                         if (coordinatesArray[i].includes("LocationHome:")) {

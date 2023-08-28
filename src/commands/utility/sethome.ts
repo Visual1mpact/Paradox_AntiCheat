@@ -71,7 +71,8 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
     let verify = false;
     let counter = 0;
     const tags = player.getTags();
-    for (let i = 0; i < tags.length; i++) {
+    const tagsLength = tags.length;
+    for (let i = 0; i < tagsLength; i++) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption

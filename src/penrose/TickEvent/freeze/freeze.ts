@@ -129,7 +129,11 @@ const freezePlayers = () => {
     }
 
     // Unfreeze players who no longer have the "paradoxFreeze" tag
-    for (const player of world.getPlayers()) {
+    const clearFilter: EntityQueryOptions = {
+        excludeTags: ["paradoxFreeze"],
+    };
+    const clearPlayers = world.getPlayers(clearFilter);
+    for (const player of clearPlayers) {
         if (!player.hasTag("paradoxFreeze")) {
             unfreezePlayer(player);
         }

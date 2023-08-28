@@ -155,7 +155,8 @@ let locationRecordingInterval: number;
 
 function startLocationRecordingInterval() {
     locationRecordingInterval = system.runInterval(() => {
-        for (const player of world.getAllPlayers()) {
+        const players = world.getAllPlayers();
+        for (const player of players) {
             recordPlayerData(player);
         }
     }, 20);

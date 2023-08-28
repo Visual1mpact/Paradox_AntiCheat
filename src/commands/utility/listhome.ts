@@ -52,8 +52,9 @@ export function listhome(message: ChatSendAfterEvent, args: string[]) {
     const homeMessages: string[] = [];
 
     const tags = player.getTags();
+    const tagsLength = tags.length;
     let counter = 0;
-    for (let i = 0; i < tags.length; i++) {
+    for (let i = 0; i < tagsLength; i++) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption
@@ -72,13 +73,14 @@ export function listhome(message: ChatSendAfterEvent, args: string[]) {
             }
             // Split string into array
             const coordinatesArray = tags[i].split(" ");
+            const coordArrayLength = coordinatesArray.length;
             let home: string;
             let homex: number;
             let homey: number;
             let homez: number;
             let dimension: string;
             counter = ++counter;
-            for (let j = 0; j < coordinatesArray.length; j++) {
+            for (let j = 0; j < coordArrayLength; j++) {
                 // Get their location from the array
                 if (coordinatesArray[j].includes("LocationHome:")) {
                     home = coordinatesArray[j].replace("LocationHome:", "");

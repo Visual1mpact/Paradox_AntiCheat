@@ -69,7 +69,10 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     const prefix = getPrefix(player);
     const worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
 
-    if (!args.length || args[0].toLowerCase() === "help" || !config.customcommands.worldborder) {
+    // Cache
+    const length = args.length;
+
+    if (!length || args[0].toLowerCase() === "help" || !config.customcommands.worldborder) {
         return worldBorderHelp(player, prefix, worldBorderBoolean);
     }
 
@@ -97,7 +100,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
         "-e": -1,
     };
 
-    for (let i = 0; i < args.length; i++) {
+    for (let i = 0; i < length; i++) {
         if (paramIndexes[args[i]] !== undefined) {
             paramIndexes[args[i]] = i;
         }
@@ -107,7 +110,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     let netherSize = dynamicPropertyRegistry.get("worldborder_nether_n") || 0;
     let endSize = dynamicPropertyRegistry.get("worldborder_end_n") || 0;
 
-    for (let i = 0; i < args.length; i++) {
+    for (let i = 0; i < length; i++) {
         const arg = args[i].toLowerCase();
         switch (arg) {
             case "-overworld":

@@ -39,8 +39,11 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
     // Check for custom prefix
     const prefix = getPrefix(player);
 
+    // Cache
+    const length = args.length;
+
     // Are there arguements
-    if (!args.length) {
+    if (!length) {
         return delhomeHelp(player, prefix);
     }
 
@@ -51,7 +54,7 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
     }
 
     // Don't allow spaces
-    if (args.length > 1) {
+    if (length > 1) {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No spaces in names please!`);
     }
 
@@ -62,7 +65,8 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
     let verify = false;
     let encryptedString: string = "";
     const tags = player.getTags();
-    for (let i = 0; i < tags.length; i++) {
+    const tagsLength = tags.length;
+    for (let i = 0; i < tagsLength; i++) {
         // 6f78 is temporary and will be removed
         if (tags[i].startsWith("6f78")) {
             // Remove old encryption

@@ -307,7 +307,8 @@ export function decryptString(str: string, salt: string): string {
         let plaintext = "";
         let keyIndex = 0;
         str = str.slice(4);
-        for (let i = 0; i < str.length; i++) {
+        const length = str.length;
+        for (let i = 0; i < length; i++) {
             const cipherCharCode = str.charCodeAt(i);
             const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
             const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
@@ -380,7 +381,8 @@ export function isTimerExpired(player: string) {
  */
 export function getGamemode(player: Player): string | undefined {
     // Loop through each gamemode in the GameMode enum
-    for (const gameMode of Object.values(GameMode)) {
+    const gamemodeValues = Object.values(GameMode);
+    for (const gameMode of gamemodeValues) {
         // Use world.getPlayers() to get an iterator of all players in the world with the same name and game mode as the given player
         const gameModePlayer = world.getPlayers({ name: player.name, gameMode });
         // If a player is found with the given name and game mode, return the corresponding string representation of the gamemode

@@ -10,7 +10,8 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
     let y: number;
     let z: number;
     let dimension: string;
-    for (let i = 0; i < coordArray.length; i++) {
+    const coordArrayLength = coordArray.length;
+    for (let i = 0; i < coordArrayLength; i++) {
         if (coordArray[i].includes("LocationHome:" && Locations[selectedLocationvalue as number])) {
             x = parseInt(coordArray[i + 1].replace("X:", ""));
             y = parseInt(coordArray[i + 2].replace("Y:", ""));
@@ -36,7 +37,8 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         // Find and delete this saved home location
         let encryptedString: string = "";
         const tags = player.getTags();
-        for (let i = 0; i < tags.length; i++) {
+        const tagsLength = tags.length;
+        for (let i = 0; i < tagsLength; i++) {
             // 6f78 is temporary and will be removed
             if (tags[i].startsWith("6f78")) {
                 // Remove old encryption
@@ -62,7 +64,8 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         //A value was entered execute the code bellow.
         //First check to make sure the same location name entered doesnt already exist
         let counter = 0;
-        for (let i = 0; i < coordArray.length; i++) {
+        const coordArrayLength = coordArray.length;
+        for (let i = 0; i < coordArrayLength; i++) {
             //Count how many tags already exist based on the array.
             if (coordArray[i].includes("LocationHome:")) {
                 counter = ++counter;

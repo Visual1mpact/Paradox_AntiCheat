@@ -1245,7 +1245,8 @@ async function handleUIInventory(inventoryUIResult: ModalFormResponse, onlineLis
     ]);
 
     // Update the fourth value (texture) in the itemArray
-    for (let i = 0; i < itemArray.length; i += 4) {
+    const itemArrayLength = itemArray.length;
+    for (let i = 0; i < itemArrayLength; i += 4) {
         const type: string | number = itemArray[i + 3];
         const texture: string = textures.get(type.toString()) || "ui/slots_bg";
         itemArray[i + 3] = texture;
