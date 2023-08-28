@@ -6,6 +6,7 @@ import { uiItemEditorReplaceMenu } from "./uiInvEditorReplaceMenu";
 import { uiItemEditorTransferMenu } from "./uiInvEditorTransferMenu";
 import { uiInvEditorHelpMenu } from "./uiInvEditorHelpMenu";
 import { inventoryHandler } from "../../guiHandler/guiHandlerModeration/results/inventoryui";
+import { uiItemEditorStats } from "./uiItemEditorStats";
 export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: number) {
     const menu = new ActionFormData();
     menu.title("§4Paradox - Inventory Item Editor Menu§4");
@@ -13,6 +14,7 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
     const container = inv.container;
     const item = container.getItem(itemSlot);
     menu.body("§rCurrent Players Inventory: §6" + targetPlayer.name + "\n" + "§rSelected Item: §6" + item.typeId.replace("minecraft:", ""));
+    menu.button("Item Stats");
     menu.button("Enchantments");
     menu.button("Naming And Lore");
     menu.button("Replace Or Delete Item");
@@ -22,26 +24,30 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
     menu.show(player)
         .then((InvEditorMenuUIResult) => {
             if (InvEditorMenuUIResult.selection == 0) {
+                //items stats
+                uiItemEditorStats(player, targetPlayer, itemSlot);
+            }
+            if (InvEditorMenuUIResult.selection == 1) {
                 //enchantments
                 uiItemEditorEnchantmentsMenu(player, targetPlayer, itemSlot);
             }
-            if (InvEditorMenuUIResult.selection == 1) {
+            if (InvEditorMenuUIResult.selection == 2) {
                 //Naming and Lore
                 uiItemEditorNameMenu(player, targetPlayer, itemSlot);
             }
-            if (InvEditorMenuUIResult.selection == 2) {
+            if (InvEditorMenuUIResult.selection == 3) {
                 //Replace Or Delete Item
                 uiItemEditorReplaceMenu(player, targetPlayer, itemSlot);
             }
-            if (InvEditorMenuUIResult.selection == 3) {
+            if (InvEditorMenuUIResult.selection == 4) {
                 //Delete or Transfer Item
                 uiItemEditorTransferMenu(player, targetPlayer, itemSlot);
             }
-            if (InvEditorMenuUIResult.selection == 4) {
+            if (InvEditorMenuUIResult.selection == 5) {
                 //Show the player the players list screen
                 inventoryHandler(player);
             }
-            if (InvEditorMenuUIResult.selection == 5) {
+            if (InvEditorMenuUIResult.selection == 6) {
                 //Show the player the help screen.
                 uiInvEditorHelpMenu(player, targetPlayer, itemSlot);
             }
