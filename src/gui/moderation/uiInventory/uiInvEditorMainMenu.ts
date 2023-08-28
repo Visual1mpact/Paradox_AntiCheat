@@ -5,6 +5,7 @@ import { uiItemEditorNameMenu } from "./uiInvEditorNameMenu";
 import { uiItemEditorReplaceMenu } from "./uiInvEditorReplaceMenu";
 import { uiItemEditorTransferMenu } from "./uiInvEditorTransferMenu";
 import { uiInvEditorHelpMenu } from "./uiInvEditorHelpMenu";
+import { inventoryHandler } from "../../guiHandler/guiHandlerModeration/results/inventoryui";
 export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: number) {
     const menu = new ActionFormData();
     menu.title("§4Paradox - Inventory Item Editor Menu§4");
@@ -13,9 +14,10 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
     const item = container.getItem(itemSlot);
     menu.body("§rCurrent Players Inventory: §6" + targetPlayer.name + "\n" + "§rSelected Item: §6" + item.typeId.replace("minecraft:", ""));
     menu.button("Enchantments");
-    menu.button("Naming and Lore");
+    menu.button("Naming And Lore");
     menu.button("Replace Or Delete Item");
     menu.button("Transfer Item");
+    menu.button("Return To Player List");
     menu.button("Help Menu");
     menu.show(player).then((InvEditorMenuUIResult) => {
         if (InvEditorMenuUIResult.selection == 0) {
@@ -35,6 +37,10 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
             uiItemEditorTransferMenu(player, targetPlayer, itemSlot);
         }
         if (InvEditorMenuUIResult.selection == 4) {
+            //Show the player the players list screen
+            inventoryHandler(player);
+        }
+        if (InvEditorMenuUIResult.selection == 5) {
             //Show the player the help screen.
             uiInvEditorHelpMenu(player, targetPlayer, itemSlot);
         }

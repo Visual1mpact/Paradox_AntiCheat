@@ -1,7 +1,7 @@
 import { EntityInventoryComponent, Player, world, ItemStack, Enchantment, ItemEnchantsComponent } from "@minecraft/server";
-import { ModalFormResponse, ModalFormData } from "@minecraft/server-ui";
-import { uiINVENTORY } from "../uiInventory";
+import { ModalFormResponse } from "@minecraft/server-ui";
 import { sendMsgToPlayer } from "../../../util";
+import { uiInvEditorMenu } from "./uiInvEditorMainMenu";
 /**
  * Handles the result of a modal form used for transferring an item from the targeted player's inventory to the selected player's inventory.
  *
@@ -54,16 +54,8 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
             }
             targetPlayerinv.container.moveItem(itemSlot, freeSlot, memberPlayerinv.container);
         }
-        // Present the InventoryUI selection screen again.
-        const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Management§4");
-        let onlinePlayerList: string[] = [];
-        onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
-        inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlineList);
-        inventoryUI.show(player).then((inventoryUIResult) => {
-            uiINVENTORY(inventoryUIResult, onlinePlayerList, player);
-            return;
-        });
+        // Present the Main Menu screen again.
+        uiInvEditorMenu(player, targetPlayer, itemSlot);
     }
 }
 /**
@@ -116,16 +108,8 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
             enchantmentsComponent.enchantments = enchantmentList;
             container.setItem(itemSlot, item);
         }
-        // Present the InventoryUI selection screen again.
-        const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Management§4");
-        let onlinePlayerList: string[] = [];
-        onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
-        inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlinePlayerList);
-        inventoryUI.show(player).then((inventoryUIResult) => {
-            uiINVENTORY(inventoryUIResult, onlinePlayerList, player);
-            return;
-        });
+        // Present the Main Menu screen again.
+        uiInvEditorMenu(player, targetPlayer, itemSlot);
     }
 }
 /**
@@ -166,16 +150,8 @@ export function uiItemEditorName(InvEditorUIResult: ModalFormResponse, player: P
             container.setItem(itemSlot, item);
         }
 
-        // Present the InventoryUI selection screen again.
-        const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Management§4");
-        let onlinePlayerList: string[] = [];
-        onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
-        inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlinePlayerList);
-        inventoryUI.show(player).then((inventoryUIResult) => {
-            uiINVENTORY(inventoryUIResult, onlinePlayerList, player);
-            return;
-        });
+        // Present the Main Menu screen again.
+        uiInvEditorMenu(player, targetPlayer, itemSlot);
     }
 }
 /**
@@ -213,15 +189,7 @@ export function uiItemEditorReplace(InvEditorUIResult: ModalFormResponse, player
             container.setItem(itemSlot);
         }
 
-        // Present the InventoryUI selection screen again.
-        const inventoryUI = new ModalFormData();
-        inventoryUI.title("§4Paradox - Inventory Management§4");
-        let onlinePlayerList: string[] = [];
-        onlinePlayerList = Array.from(world.getPlayers(), (player) => player.name);
-        inventoryUI.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlinePlayerList);
-        inventoryUI.show(player).then((inventoryUIResult) => {
-            uiINVENTORY(inventoryUIResult, onlinePlayerList, player);
-            return;
-        });
+        // Present the Main Menu screen again.
+        uiInvEditorMenu(player, targetPlayer, itemSlot);
     }
 }
