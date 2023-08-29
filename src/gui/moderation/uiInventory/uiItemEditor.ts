@@ -1,4 +1,4 @@
-import { EntityInventoryComponent, Player, world, ItemStack, Enchantment, ItemEnchantsComponent } from "@minecraft/server";
+import { EntityInventoryComponent, Player, world, ItemStack, Enchantment, ItemEnchantsComponent, ItemDurabilityComponent } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import { sendMsgToPlayer } from "../../../util";
 import { uiInvEditorMenu } from "./uiInvEditorMainMenu";
@@ -191,6 +191,44 @@ export function uiItemEditorReplace(InvEditorUIResult: ModalFormResponse, player
         }
         if (deleteToggle == true) {
             container.setItem(itemSlot);
+        }
+
+        // Present the Main Menu screen again.
+        uiInvEditorMenu(player, targetPlayer, itemSlot);
+    }
+}
+/**
+ * Handles the result of a modal form used for repairing the selected item from the targeted player's inventory
+ * @name uiItemEditorRepair
+ * @param {ModalFormResponse} InvEditorUIResult - The result of the inventory editor modal form.
+ * @param {Player} player - The player who triggered the inventory management modal form.
+ * @param targetPlayer - The player who has been targeted.
+ * @param itemSlot  - the item slot number of the targeted player.
+ */
+export function uiItemEditorRepair(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
+    handleUIitemEditorRepair(InvEditorUIResult, player, targetPlayer, itemSlot).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
+    });
+
+    async function handleUIitemEditorRepair(InvEditorUIResult: ModalFormResponse, player: Player, targetPlayer: Player, itemSlot: number) {
+        const [repairToggle] = InvEditorUIResult.formValues;
+
+        const inv = targetPlayer.getComponent("inventory") as EntityInventoryComponent;
+        const container = inv.container;
+        const item = container.getItem(itemSlot);
+        //Current Damage values
+        const durability = item.getComponent("minecraft:durability") as ItemDurabilityComponent;
+        if (repairToggle == true) {
+            durability.damage = 0;
+            container.setItem(itemSlot, item);
         }
 
         // Present the Main Menu screen again.

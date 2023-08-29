@@ -7,6 +7,7 @@ import { uiItemEditorTransferMenu } from "./uiInvEditorTransferMenu";
 import { uiInvEditorHelpMenu } from "./uiInvEditorHelpMenu";
 import { inventoryHandler } from "../../guiHandler/guiHandlerModeration/results/inventoryui";
 import { uiItemEditorStats } from "./uiItemEditorStats";
+import { uiItemEditorRepairMenu } from "./uiInvEditorRepairItemMenu";
 export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: number) {
     const menu = new ActionFormData();
     menu.title("§4Paradox - Inventory Item Editor Menu§4");
@@ -19,6 +20,7 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
     menu.button("Naming And Lore");
     menu.button("Replace Or Delete Item");
     menu.button("Transfer Item");
+    menu.button("Item Durability");
     menu.button("Return To Player List");
     menu.button("Help Menu");
     menu.show(player)
@@ -44,10 +46,14 @@ export function uiInvEditorMenu(player: Player, targetPlayer: Player, itemSlot: 
                 uiItemEditorTransferMenu(player, targetPlayer, itemSlot);
             }
             if (InvEditorMenuUIResult.selection == 5) {
+                //Repair set item durability
+                uiItemEditorRepairMenu(player, targetPlayer, itemSlot);
+            }
+            if (InvEditorMenuUIResult.selection == 6) {
                 //Show the player the players list screen
                 inventoryHandler(player);
             }
-            if (InvEditorMenuUIResult.selection == 6) {
+            if (InvEditorMenuUIResult.selection == 7) {
                 //Show the player the help screen.
                 uiInvEditorHelpMenu(player, targetPlayer, itemSlot);
             }

@@ -1,4 +1,4 @@
-import { EntityInventoryComponent, Player, ItemEnchantsComponent, Enchantment } from "@minecraft/server";
+import { EntityInventoryComponent, Player, ItemEnchantsComponent, Enchantment, ItemDurabilityComponent } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { uiInvEditorMenu } from "./uiInvEditorMainMenu";
 export function uiItemEditorStats(player: Player, targetPlayer: Player, itemSlot: number) {
@@ -35,9 +35,27 @@ export function uiItemEditorStats(player: Player, targetPlayer: Player, itemSlot
         const currentItemLore = item.getLore();
         const formattedLore = currentItemLore.join("\n");
         const statsMenu = new ActionFormData();
+        //Current Damage values
+        const durability = item.getComponent("minecraft:durability") as ItemDurabilityComponent;
+        const maxDurability = durability.maxDurability;
+        let currentDamage = durability.damage;
         //Show the stats for the item.
         statsMenu.title("§4Paradox - Item Editor Stats§4");
-        statsMenu.body("Current Players Inventory: §6" + targetPlayer.name + "\n" + "§rSelected Item: §6" + item.typeId.replace("minecraft:", "") + "§r\n\nCurrent Enchantments: \n" + formattedEnchantments + "\n\n§rLore: \n" + formattedLore);
+        statsMenu.body(
+            "Current Players Inventory: §6" +
+                targetPlayer.name +
+                "\n" +
+                "§rSelected Item: §6" +
+                item.typeId.replace("minecraft:", "") +
+                "§r\n\nCurrent Enchantments: \n" +
+                formattedEnchantments +
+                "\n\n§rLore: \n" +
+                formattedLore +
+                "\n\nDurability: §6" +
+                (currentDamage = maxDurability - currentDamage) +
+                "/" +
+                maxDurability
+        );
         statsMenu.button("Back");
         statsMenu.show(player).then((InvEditorMenuUIResult) => {
             if (InvEditorMenuUIResult.selection == 0) {
