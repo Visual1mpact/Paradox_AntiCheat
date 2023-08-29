@@ -44,16 +44,16 @@ function jesusa(id: number) {
         const dimension = player.dimension;
         try {
             // Below Below player
-            blockAtPlayer0 = player.dimension.getBlock({ x: x, y: y - 1, z: z });
+            blockAtPlayer0 = player?.dimension?.getBlock({ x: x, y: y - 1, z: z }) || undefined;
             // Below player
-            blockAtPlayer1 = player.dimension.getBlock({ x: x, y: y, z: z });
+            blockAtPlayer1 = player?.dimension?.getBlock({ x: x, y: y, z: z }) || undefined;
         } catch (error) {}
 
         const playerFeetY = Math.floor(y); // Round down to get the player's feet Y-coordinate
 
         const swimming = player.isSwimming;
         const inWater = player.isInWater;
-        if (!swimming && !inWater) {
+        if (!swimming && !inWater && blockAtPlayer0 && blockAtPlayer1) {
             const isWaterOrLava = (blockAtPlayer1.typeId === "minecraft:water" && blockAtPlayer0.typeId === "minecraft:water") || (blockAtPlayer1.typeId === "minecraft:lava" && blockAtPlayer0.typeId === "minecraft:lava");
             if (isWaterOrLava && playerFeetY === blockAtPlayer1.y && playerTags.every((tag) => !player.hasTag(tag))) {
                 const count = (playerCount.get(player.id) || 0) + 1;
