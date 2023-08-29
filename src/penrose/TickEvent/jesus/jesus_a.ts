@@ -68,7 +68,7 @@ function jesusa(id: number) {
 
         // Reset count
         if (player.isOnGround) {
-            playerCount.delete(player.name);
+            playerCount.delete(player.id);
         }
     }
 }
