@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, GameMode, system, Vector3, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { world, EntityQueryOptions, GameMode, system, Vector3, PlayerLeaveAfterEvent, Block } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
@@ -48,7 +48,13 @@ function antiphasea(id: number) {
         const blocksToCheck = [lowerBody, upperBody];
 
         const allSafe = blocksToCheck.every((block) => {
-            const blockType = player.dimension.getBlock(block);
+            let blockType: Block;
+            try {
+                blockType = player.dimension.getBlock(block);
+            } catch {}
+            if (!blockType) {
+                return true;
+            }
             return !blockType.isSolid();
         });
 
