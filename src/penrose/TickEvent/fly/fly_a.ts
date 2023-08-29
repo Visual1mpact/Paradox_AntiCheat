@@ -66,7 +66,7 @@ function flya(id: number) {
             playersAirTimeStart.set(player.id, Date.now());
             continue;
         }
-        if (!jumpCheck && playersAirTimeStart.has(player.name)) {
+        if (!jumpCheck && playersAirTimeStart.has(player.id)) {
             const airTime = Date.now() - playersAirTimeStart.get(player.id);
             if (airTime >= 4000) {
                 const velocity = player.getVelocity();
@@ -78,7 +78,7 @@ function flya(id: number) {
                     const playerX = Math.trunc(player.location.x);
                     const playerY = Math.trunc(player.location.y);
                     const playerZ = Math.trunc(player.location.z);
-                    playersOldCoordinates.set(player.name, { x: playerX, y: playerY, z: playerZ });
+                    playersOldCoordinates.set(player.id, { x: playerX, y: playerY, z: playerZ });
                     if (oldPlayerCoords) {
                         let isSurroundedByAir = true;
                         for (let x = -1; x <= 1; x++) {
@@ -114,7 +114,7 @@ function flya(id: number) {
                 }
                 const playerAnimation = player.isOnGround || player.isInWater || player.isSwimming;
                 if (playerAnimation) {
-                    playersAirTimeStart.delete(player.name);
+                    playersAirTimeStart.delete(player.id);
                 }
             }
         }
