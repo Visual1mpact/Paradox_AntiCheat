@@ -223,6 +223,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
 
         case "leave": {
             const channelNameToLeave = getPlayerChannel(player.id);
+            const channelPassword = subCommandArgs[0];
 
             if (!channelNameToLeave) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are not in any chat channel.`);
@@ -257,7 +258,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                     sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '${channelNameToLeave}' transferred to '${newOwnerObject.name}'.`);
                 } else {
                     // If no other members, delete the channel
-                    deleteChatChannel(channelNameToLeave);
+                    deleteChatChannel(channelNameToLeave, channelPassword);
                 }
             }
 
