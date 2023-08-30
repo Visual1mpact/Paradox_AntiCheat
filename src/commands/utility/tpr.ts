@@ -1,6 +1,6 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config";
-import { getPrefix, sendMsgToPlayer, setTimer } from "../../util";
+import { decryptString, getPrefix, sendMsgToPlayer, setTimer } from "../../util";
 
 interface TeleportRequest {
     requester: Player;
@@ -95,9 +95,12 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
 function teleportRequestApprovalHandler(object: ChatSendAfterEvent) {
     const { sender, message } = object;
 
-    const lowercaseMessage = message.toLowerCase();
-    const isApprovalRequest = lowercaseMessage === "approved" || lowercaseMessage === "approve";
-    const isDenialRequest = lowercaseMessage === "denied" || lowercaseMessage === "deny";
+    const lowercaseMessage = decryptString(message, sender.id).toLowerCase();
+    // Extract the response from the decrypted string
+    const refChar = lowercaseMessage.split("§r");
+    const extractedPhrase = refChar[1];
+    const isApprovalRequest = extractedPhrase === "approved" || extractedPhrase === "approve";
+    const isDenialRequest = extractedPhrase === "denied" || extractedPhrase === "deny";
 
     if (!isApprovalRequest && !isDenialRequest) {
         return;
