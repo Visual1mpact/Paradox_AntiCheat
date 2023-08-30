@@ -93,9 +93,9 @@ function beforeantispam(msg: ChatSendBeforeEvent) {
 
         if (chatRecord.offense >= offenseCount) {
             msg.sendToTargets = true;
+            chatRecords.delete(player.id);
             // Add tag information to the message
             msg.message = `;tag:${player.name},Reason:Spamming,By:Paradox,isBanned`;
-            chatRecords.delete(player.id);
         } else if (chatRecord.offense > 0 && now - chatRecord.lastOffenseTime >= strikeReset) {
             chatRecord.offense--;
             chatRecord.lastOffenseTime = now;
