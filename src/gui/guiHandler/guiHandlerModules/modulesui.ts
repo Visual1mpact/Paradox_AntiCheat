@@ -23,6 +23,7 @@ import { worldBorderHandler } from "./results/worldborder";
 import { xrayHandler } from "./results/xray";
 import { hotbarHandler } from "./results/hotbar";
 import { afkHandler } from "./results/afk";
+import { antiPhaseAHandler } from "./results/antiphase";
 
 export function modulesui(player: Player) {
     //Modules ui
@@ -51,6 +52,7 @@ export function modulesui(player: Player) {
     modulesui.button("Configure Xray", "textures/blocks/diamond_ore");
     modulesui.button("Configure Hotbar", "textures/items/paper");
     modulesui.button("Configure AFK", "textures/ui/keyboard_and_mouse_glyph_color");
+    modulesui.button("Configure Anti Phase", "textures/blocks/end_portal");
     modulesui
         .show(player)
         .then((ModulesUIResult) => {
@@ -123,6 +125,9 @@ export function modulesui(player: Player) {
                     break;
                 case 22:
                     afkHandler(player);
+                    break;
+                case 23:
+                    antiPhaseAHandler(player);
                     break;
                 default:
                     break;
