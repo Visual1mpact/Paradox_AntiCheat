@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased](https://github.com/Pete9xi/Paradox_AntiCheat/tree/HEAD)
+
+[Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.3.3...HEAD)
+
+**Merged pull requests:**
+
+- Apply fixes from CodeFactor [\#29](https://github.com/Pete9xi/Paradox_AntiCheat/pull/29) ([Visual1mpact](https://github.com/Visual1mpact))
+
+## [v3.3.3](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.3.3) (2023-08-30)
+
+[Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.3.2...v3.3.3)
+
 ## [v3.3.2](https://github.com/Pete9xi/Paradox_AntiCheat/tree/v3.3.2) (2023-08-18)
 
 [Full Changelog](https://github.com/Pete9xi/Paradox_AntiCheat/compare/v3.3.1...v3.3.2)
