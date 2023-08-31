@@ -52,7 +52,7 @@ function antiphasea(id: number) {
             try {
                 blockType = player.dimension.getBlock(block);
             } catch {}
-            if (!blockType) {
+            if (!blockType || player.hasTag("riding")) {
                 return true;
             }
             return !blockType.isSolid();
