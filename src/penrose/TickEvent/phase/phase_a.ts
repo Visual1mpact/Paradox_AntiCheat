@@ -5,6 +5,9 @@ import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registr
 // Store last safe location
 const lastSafeLocation = new Map<string, Vector3>();
 
+// Solids that are passable with conditions
+const passableSolids = new Set(["sand", "gravel", "concrete_powder"]);
+
 function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     // Remove the player's data from the map when they log off
     const playerName = event.playerId;
@@ -52,7 +55,7 @@ function antiphasea(id: number) {
             try {
                 blockType = player.dimension.getBlock(block);
             } catch {}
-            if (!blockType || player.hasTag("riding")) {
+            if (!blockType || player.hasTag("riding") || passableSolids.has(blockType.typeId.replace("minecraft:", ""))) {
                 return true;
             }
             return !blockType.isSolid();
