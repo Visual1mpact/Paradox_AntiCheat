@@ -111,7 +111,7 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     for (let i = 0; i < tagsLength; i++) {
         if (tags[i].startsWith("1337")) {
             // Decode it so we can verify it
-            tags[i] = decryptString(tags[i], String(salt));
+            tags[i] = decryptString(tags[i], salt as string);
         }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             // Split string into array
