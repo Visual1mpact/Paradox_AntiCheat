@@ -1,6 +1,6 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
-import { decryptString, encryptString, sendMsgToPlayer } from "../../../util";
+import { decryptString, sendMsgToPlayer } from "../../../util";
 import config from "../../../data/config";
 import { uiSAVEDLOCATIONS } from "../../playerui/uiSavedLocations";
 

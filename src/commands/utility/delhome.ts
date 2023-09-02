@@ -1,6 +1,6 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { decryptString, encryptString, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { decryptString, getPrefix, sendMsgToPlayer } from "../../util.js";
 
 function delhomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
