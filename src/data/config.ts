@@ -179,9 +179,6 @@ export default {
         antishulker: {
             enabled: false,
         },
-        lockDown: {
-            enabled: false,
-        },
         worldBorder: {
             enabled: false,
             nether: 0,
