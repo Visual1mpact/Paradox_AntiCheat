@@ -1,7 +1,7 @@
 import { world, Player, ChatSendAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { decryptString, getPrefix, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
+import { decryptString, getPrefix, sendMsgToPlayer, setTimer } from "../../util.js";
 
 const cooldownTimer = new WeakMap();
 
@@ -109,18 +109,9 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     const tags = player.getTags();
     const tagsLength = tags.length;
     for (let i = 0; i < tagsLength; i++) {
-        // 6f78 is temporary and will be removed
-        if (tags[i].startsWith("6f78")) {
-            // Remove old encryption
-            player.removeTag(tags[i]);
-            // Change to AES Encryption so we can abandon the old method
-            tags[i] = decryptString(tags[i], salt as string);
-            tags[i] = encryptString(tags[i], salt as string);
-            player.addTag(tags[i]);
-        }
         if (tags[i].startsWith("1337")) {
             // Decode it so we can verify it
-            tags[i] = decryptString(tags[i], String(salt));
+            tags[i] = decryptString(tags[i], salt as string);
         }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             // Split string into array

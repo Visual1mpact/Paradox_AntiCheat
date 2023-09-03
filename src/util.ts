@@ -301,31 +301,13 @@ export function encryptString(str: string, salt: string): string {
  * @returns {string} The decrypted string
  */
 export function decryptString(str: string, salt: string): string {
-    // Check if the string is using the old encryption (tag '6f78')
-    if (str.startsWith("6f78")) {
-        // Use the old decryption logic
-        let plaintext = "";
-        let keyIndex = 0;
-        str = str.slice(4);
-        const length = str.length;
-        for (let i = 0; i < length; i++) {
-            const cipherCharCode = str.charCodeAt(i);
-            const keyCharCode = salt.charCodeAt(keyIndex % salt.length);
-            const plainCharCode = (cipherCharCode - keyCharCode + 256) % 256; // wrap around at 256
-            plaintext += String.fromCharCode(plainCharCode);
-            keyIndex++;
-        }
-        return plaintext;
-    } else {
-        // Use the new decryption logic with AES
-        // Remove the prefix added in the encryptString function
-        str = str.slice(4);
-        // Decrypt using AES
-        const decryptedBytes = CryptoJS.AES.decrypt(str, salt);
-        // Convert the decrypted bytes to a UTF-8 string
-        const plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-        return plaintext;
-    }
+    // Remove the prefix added in the encryptString function
+    str = str.slice(4);
+    // Decrypt using AES
+    const decryptedBytes = CryptoJS.AES.decrypt(str, salt);
+    // Convert the decrypted bytes to a UTF-8 string
+    const plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
+    return plaintext;
 }
 
 /**
