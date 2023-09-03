@@ -11,6 +11,7 @@ import { reportHandler } from "./guiHandler/results/report";
 import { modulesui } from "./guiHandler/guiHandlerModules/modulesui";
 import { prefixHandler } from "./guiHandler/results/prefix";
 import { statsHandler } from "./guiHandler/results/stats";
+import { uiChatChannelMainMenu } from "./playerui/chatChannels/uiChatChannelsMenu";
 
 /**
  * @name paradoxui
@@ -43,6 +44,7 @@ async function handleParadoxUI(player: Player) {
         maingui.button("Teleport Requests", "textures/blocks/portal_placeholder");
         maingui.button("Saved Locations", "textures/items/compass_item");
         maingui.button("Report", "textures/items/paper");
+        maingui.button("Chat Channels", "textures/ui/mute_off");
     } else {
         maingui.button("Op", "textures/ui/op");
         maingui.button("Deop", "textures/items/ender_pearl");
@@ -72,6 +74,8 @@ async function handleParadoxUI(player: Player) {
                     case 3:
                         reportHandler(player);
                         break;
+                    case 4:
+                        uiChatChannelMainMenu(player);
                     default:
                         // Handle other selections for isUnique case
                         break;
