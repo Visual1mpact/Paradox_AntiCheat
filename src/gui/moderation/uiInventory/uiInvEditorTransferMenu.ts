@@ -8,6 +8,7 @@ export function uiItemEditorTransferMenu(player: Player, targetPlayer: Player, i
     let onlineList: string[] = [];
     onlineList = Array.from(world.getPlayers(), (player) => player.name);
     itemEditor.dropdown(`\n§fSelect a player:§f\n\nPlayer's Online\n`, onlineList);
+    itemEditor.toggle("Duplicate Item", false);
     itemEditor
         .show(player)
         .then((InvEditorUIResult) => {

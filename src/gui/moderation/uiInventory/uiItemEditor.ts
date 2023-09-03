@@ -30,7 +30,7 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
             // Handle canceled form or undefined result
             return;
         }
-        const [transferToggle, value] = InvEditorUIResult.formValues;
+        const [transferToggle, value, duplicateToggle] = InvEditorUIResult.formValues;
         //Member is used when transferring an Item.
         let member: Player = undefined;
         const players = world.getPlayers();
@@ -57,6 +57,25 @@ export function uiItemEditorTransfer(InvEditorUIResult: ModalFormResponse, onlin
                 }
             }
             targetPlayerinv.container.moveItem(itemSlot, freeSlot, memberPlayerinv.container);
+        }
+        if (duplicateToggle == true) {
+            //Member is the player the item is being transferred to
+            const targetPlayerinv = targetPlayer.getComponent("inventory") as EntityInventoryComponent;
+            const memberPlayerinv = member.getComponent("inventory") as EntityInventoryComponent;
+            let freeSlot: number;
+            const maxSlots = 36; // Maximum number of slots in the player's inventory
+
+            // Loop through the inventory and add items to the itemArray
+            for (let i = 0; i < maxSlots; i++) {
+                const item = memberPlayerinv.container.getItem(i);
+                if (item?.typeId) {
+                } else {
+                    freeSlot = i;
+                    break;
+                }
+            }
+            const item = targetPlayerinv.container.getItem(itemSlot);
+            memberPlayerinv.container.setItem(freeSlot, item);
         }
         // Present the Main Menu screen again.
         uiInvEditorMenu(player, targetPlayer, itemSlot);
