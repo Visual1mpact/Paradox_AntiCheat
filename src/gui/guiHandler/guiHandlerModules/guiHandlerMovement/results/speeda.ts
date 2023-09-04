@@ -1,18 +1,18 @@
 import { Player } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../../../../penrose/WorldInitializeAfterEvent/registry";
-import { uiNOWSLOW } from "../../../../modules/uiNowslow";
+import { uiSPEED } from "../../../../modules/uiSpeed";
 
-export function noSlowAHandler(player: Player) {
-    //NoSlowA
+export function speedAHandler(player: Player) {
+    //SpeedA
     const modulesnoslowui = new ModalFormData();
-    const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b") as boolean;
-    modulesnoslowui.title("§4Paradox Modules - Noslow§4");
-    modulesnoslowui.toggle("Noslow - Checks for player's speed hacking:", noSlowBoolean);
+    const speedABoolean = dynamicPropertyRegistry.get("speeda_b") as boolean;
+    modulesnoslowui.title("§4Paradox Modules - Speed§4");
+    modulesnoslowui.toggle("Speed - Checks for player's speed hacking:", speedABoolean);
     modulesnoslowui
         .show(player)
         .then((invalidsprintResult) => {
-            uiNOWSLOW(invalidsprintResult, player);
+            uiSPEED(invalidsprintResult, player);
         })
         .catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);

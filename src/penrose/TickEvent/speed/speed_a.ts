@@ -66,12 +66,12 @@ function calculateMovementBPS(currentPosition: number[], lastPosition: number[],
     return bps;
 }
 
-function noslowa(id: number) {
+function speeda(id: number) {
     // Get Dynamic Property
-    const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+    const speedABoolean = dynamicPropertyRegistry.get("speeda_b");
 
     // Unsubscribe if disabled in-game
-    if (noSlowBoolean === false) {
+    if (speedABoolean === false) {
         playerData.clear();
         world.afterEvents.playerSpawn.unsubscribe(onPlayerSpawn);
         world.afterEvents.entityHurt.unsubscribe(onEntityHurt);
@@ -137,8 +137,8 @@ function noslowa(id: number) {
 
         const verifyTpGrace = isTimerExpired(player.id);
         // We compare with a 20% buffer to minimize false flags
-        if (!isNaN(playerInfo.highestBps) && playerInfo.highestBps > config.modules.noslowA.speed && verifyTpGrace === true) {
-            flag(player, "NoSlow", "A", "Movement", null, null, "IllegalSpeed", playerInfo.highestBps.toFixed(2), true);
+        if (!isNaN(playerInfo.highestBps) && playerInfo.highestBps > config.modules.speedA.speed && verifyTpGrace === true) {
+            flag(player, "Speed", "A", "Movement", null, null, "IllegalSpeed", playerInfo.highestBps.toFixed(2), true);
             playerInfo.highestBps = 0;
         }
     }
@@ -150,11 +150,11 @@ function noslowa(id: number) {
  * to cancel the execution of this scheduled run
  * if needed to do so.
  */
-export function NoSlowA() {
+export function SpeedA() {
     world.afterEvents.playerSpawn.subscribe(onPlayerSpawn);
     world.afterEvents.entityHurt.subscribe(onEntityHurt);
     world.afterEvents.playerLeave.subscribe(onPlayerLogout); // Subscribe to player logout events
-    const noSlowAId = system.runInterval(() => {
-        noslowa(noSlowAId);
+    const speedAId = system.runInterval(() => {
+        speeda(speedAId);
     }, 10);
 }

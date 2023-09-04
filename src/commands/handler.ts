@@ -45,7 +45,7 @@ import { crasherA } from "./settings/crashera.js";
 import { namespoofA } from "./settings/namespoofa.js";
 import { namespoofB } from "./settings/namespoofb.js";
 import { reachA } from "./settings/reacha.js";
-import { noslowA } from "./settings/noslowa.js";
+import { speedA } from "./settings/speeda.js";
 import { invalidsprintA } from "./settings/invalidsprinta.js";
 import { flyA } from "./settings/flya.js";
 import { illegalitemsA } from "./settings/illegalitemsa.js";
@@ -130,7 +130,7 @@ const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, arg
         namespoofa: namespoofA,
         namespoofb: namespoofB,
         reacha: reachA,
-        noslowa: noslowA,
+        speeda: speedA,
         invalidsprinta: invalidsprintA,
         flya: flyA,
         antifalla: antifallA,

@@ -644,7 +644,7 @@ export const allscores: string[] = [
     "gamemodevl",
     "spammervl",
     "namespoofvl",
-    "noslowvl",
+    "speedvl",
     "crashervl",
     "reachvl",
     "invalidsprintvl",

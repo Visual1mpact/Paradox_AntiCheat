@@ -1,44 +1,44 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
-import { NoSlowA } from "../../penrose/TickEvent/noslow/noslow_a.js";
+import { SpeedA } from "../../penrose/TickEvent/speed/speed_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function noslowAHelp(player: Player, prefix: string, noSlowBoolean: string | number | boolean) {
+function speedAHelp(player: Player, prefix: string, speedBoolean: string | number | boolean) {
     let commandStatus: string;
-    if (!config.customcommands.noslowa) {
+    if (!config.customcommands.speeda) {
         commandStatus = "§6[§4DISABLED§6]§f";
     } else {
         commandStatus = "§6[§aENABLED§6]§f";
     }
     let moduleStatus: string;
-    if (noSlowBoolean === false) {
+    if (speedBoolean === false) {
         moduleStatus = "§6[§4DISABLED§6]§f";
     } else {
         moduleStatus = "§6[§aENABLED§6]§f";
     }
     return sendMsgToPlayer(player, [
-        `\n§o§4[§6Command§4]§f: noslowa`,
+        `\n§o§4[§6Command§4]§f: speeda`,
         `§4[§6Status§4]§f: ${commandStatus}`,
         `§4[§6Module§4]§f: ${moduleStatus}`,
-        `§4[§6Usage§4]§f: noslowa [optional]`,
+        `§4[§6Usage§4]§f: speeda [optional]`,
         `§4[§6Optional§4]§f: help`,
         `§4[§6Description§4]§f: Toggles checks for player's speed hacking.`,
         `§4[§6Examples§4]§f:`,
-        `    ${prefix}noslowa`,
-        `    ${prefix}noslowa help`,
+        `    ${prefix}speeda`,
+        `    ${prefix}speeda help`,
     ]);
 }
 
 /**
- * @name noslowA
+ * @name speedA
  * @param {ChatSendAfterEvent} message - Message object
  * @param {string[]} args - Additional arguments provided (optional).
  */
-export function noslowA(message: ChatSendAfterEvent, args: string[]) {
+export function speedA(message: ChatSendAfterEvent, args: string[]) {
     // validate that required params are defined
     if (!message) {
-        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/noslowa.js:36)");
+        return console.warn(`${new Date()} | ` + "Error: ${message} isnt defined. Did you forget to pass it? (./commands/settings/speeda.js:36)");
     }
 
     const player = message.sender;
@@ -52,27 +52,27 @@ export function noslowA(message: ChatSendAfterEvent, args: string[]) {
     }
 
     // Get Dynamic Property Boolean
-    const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+    const speedBoolean = dynamicPropertyRegistry.get("speeda_b");
 
     // Check for custom prefix
     const prefix = getPrefix(player);
 
     // Was help requested
     const argCheck = args[0];
-    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.noslowa) {
-        return noslowAHelp(player, prefix, noSlowBoolean);
+    if ((argCheck && args[0].toLowerCase() === "help") || !config.customcommands.speeda) {
+        return speedAHelp(player, prefix, speedBoolean);
     }
 
-    if (noSlowBoolean === false) {
+    if (speedBoolean === false) {
         // Allow
-        dynamicPropertyRegistry.set("noslowa_b", true);
-        world.setDynamicProperty("noslowa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NoSlowA§f!`);
-        NoSlowA();
-    } else if (noSlowBoolean === true) {
+        dynamicPropertyRegistry.set("speeda_b", true);
+        world.setDynamicProperty("speeda_b", true);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpeedA§f!`);
+        SpeedA();
+    } else if (speedBoolean === true) {
         // Deny
-        dynamicPropertyRegistry.set("noslowa_b", false);
-        world.setDynamicProperty("noslowa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NoSlowA§f!`);
+        dynamicPropertyRegistry.set("speeda_b", false);
+        world.setDynamicProperty("speeda_b", false);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpeedA§f!`);
     }
 }

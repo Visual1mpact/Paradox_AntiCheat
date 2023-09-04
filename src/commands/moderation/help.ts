@@ -81,7 +81,7 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}namespoofb§f - ${config.customcommands.namespoofb ? `Checks if player's name has Non ASCII characters.` : textDisabled}`,
         `§6${prefix}reacha§f - ${config.customcommands.reacha ? `Checks if player's place blocks beyond reach.` : textDisabled}`,
         `§6${prefix}reachb§f - ${config.customcommands.reachb ? `Checks if player's attack beyond reach.` : textDisabled}`,
-        `§6${prefix}noslowa§f - ${config.customcommands.noslowa ? `Checks if player's are speed hacking.` : textDisabled}`,
+        `§6${prefix}speeda§f - ${config.customcommands.speeda ? `Checks if player's are speed hacking.` : textDisabled}`,
         `§6${prefix}flya§f - ${config.customcommands.flya ? `Checks if player's are flying in survival.` : textDisabled}`,
         `§6${prefix}illegalitemsa§f - ${config.customcommands.illegalitemsa ? `Checks if player's have illegal items in inventory.` : textDisabled}`,
         `§6${prefix}illegalitemsb§f - ${config.customcommands.illegalitemsb ? `Checks if player's place illegal items.` : textDisabled}`,

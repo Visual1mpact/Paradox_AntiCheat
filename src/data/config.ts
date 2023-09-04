@@ -45,7 +45,7 @@ export default {
         namespoofb: true,
         reacha: true,
         reachb: true,
-        noslowa: true,
+        speeda: true,
         invalidsprinta: true,
         flya: true,
         antifalla: true,
@@ -133,7 +133,7 @@ export default {
         jesusA: {
             enabled: false,
         },
-        noslowA: {
+        speedA: {
             enabled: true,
             speed: 12.84,
         },

@@ -64,7 +64,7 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
     const worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");
     const xrayaBoolean = dynamicPropertyRegistry.get("xraya_b");
     const opsBoolean = dynamicPropertyRegistry.get("ops_b");
-    const noSlowBoolean = dynamicPropertyRegistry.get("noslowa_b");
+    const speedABoolean = dynamicPropertyRegistry.get("speeda_b");
     const nameSpoofABoolean = dynamicPropertyRegistry.get("namespoofa_b");
     const nameSpoofBBoolean = dynamicPropertyRegistry.get("namespoofb_b");
     const jesusABoolean = dynamicPropertyRegistry.get("jesusa_b");
@@ -129,7 +129,7 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
         `§o§6|§f ReachA: ${status(reachABoolean)}`,
         `§o§6|§f ReachB: ${status(reachBBoolean)}`,
         `§o§6|§f JesusA: ${status(jesusABoolean)}`,
-        `§o§6|§f NoSlowA: ${status(noSlowBoolean)}`,
+        `§o§6|§f SpeedA: ${status(speedABoolean)}`,
         `§o§6|§f InvalidSprintA: ${status(InvalidSprintABoolean)}`,
         `§o§6|§f FlyA: ${status(flyABoolean)}`,
         `§o§6|§f AntiFallA: ${status(antiFallABoolean)}`,
