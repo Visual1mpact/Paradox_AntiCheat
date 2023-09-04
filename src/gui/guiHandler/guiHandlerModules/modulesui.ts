@@ -35,7 +35,7 @@ export function modulesui(player: Player) {
     modulesui.button("Configure Anti Nuker", "textures/blocks/tnt_side");
     modulesui.button("Configure Anti Shulker", "textures/blocks/shulker_top_purple");
     modulesui.button("Configure Anti Spam", "textures/ui/mute_off");
-    modulesui.button("Configure Anti AutoCliker", "textures/ui/cursor_gamecore");
+    modulesui.button("Configure Anti AutoClicker", "textures/ui/cursor_gamecore");
     modulesui.button("Configure Badpackets", "textures/ui/upload_glyph");
     modulesui.button("Configure Bedrock Validation", "textures/blocks/bedrock");
     modulesui.button("Configure Anti Crasher", "textures/ui/Ping_Red");

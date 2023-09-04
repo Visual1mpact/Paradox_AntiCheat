@@ -617,6 +617,22 @@ export function deleteChatChannel(channelName: string, password?: string): boole
 
     return false;
 }
+//returns channel list along with if a password is required.
+export function listChatChannels(): { channelName: string; hasPassword: string }[] {
+    const channelList: { channelName: string; hasPassword: string }[] = [];
+
+    for (const channelName in chatChannels) {
+        const channel = chatChannels[channelName];
+        const hasPassword = channel.password ? "Yes" : "No";
+
+        channelList.push({
+            channelName,
+            hasPassword,
+        });
+    }
+
+    return channelList;
+}
 
 export const allscores: string[] = [
     "autoclickervl",
