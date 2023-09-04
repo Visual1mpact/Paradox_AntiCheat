@@ -5,11 +5,11 @@ import { uiSPEED } from "../../../../modules/uiSpeed";
 
 export function speedAHandler(player: Player) {
     //SpeedA
-    const modulesnoslowui = new ModalFormData();
+    const modulesspeedui = new ModalFormData();
     const speedABoolean = dynamicPropertyRegistry.get("speeda_b") as boolean;
-    modulesnoslowui.title("§4Paradox Modules - Speed§4");
-    modulesnoslowui.toggle("Speed - Checks for player's speed hacking:", speedABoolean);
-    modulesnoslowui
+    modulesspeedui.title("§4Paradox Modules - Speed§4");
+    modulesspeedui.toggle("Speed - Checks for player's speed hacking:", speedABoolean);
+    modulesspeedui
         .show(player)
         .then((invalidsprintResult) => {
             uiSPEED(invalidsprintResult, player);
