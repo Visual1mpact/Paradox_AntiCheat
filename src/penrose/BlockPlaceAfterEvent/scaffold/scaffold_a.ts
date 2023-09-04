@@ -46,13 +46,10 @@ function scaffolda(object: BlockPlaceAfterEvent) {
 
     // Check if the block is in front and below the player
     if (isBlockInFrontAndBelowPlayer(blockLocation, playerLocation)) {
-        // Check if the block below is air
-        const blockType = dimension.getBlock({ x: blockLocation.x, y: blockLocation.y - 1, z: blockLocation.z }).isAir();
+        // Check rotation and validate if its an integer and not a float
+        const rot = player.getRotation();
 
-        // Are they sprinting
-        const isSprinting = player.isSprinting;
-
-        if (blockType && isSprinting) {
+        if (rot.x % 1 === 0) {
             dimension.getBlock(blockLocation).setType(MinecraftBlockTypes.air);
             flag(player, "Scaffold", "A", "Placement", null, null, null, null, false);
         }
