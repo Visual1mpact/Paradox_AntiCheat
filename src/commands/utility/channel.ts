@@ -1,5 +1,5 @@
 import { ChatSendAfterEvent, Player, PlayerLeaveAfterEvent, world } from "@minecraft/server";
-import { createChatChannel, inviteToChatChannel, getPrefix, sendMsgToPlayer, switchChatChannel, deleteChatChannel, handOverChannelOwnership, getPlayerChannel, chatChannels, getPlayerById } from "../../util.js";
+import { createChatChannel, inviteToChatChannel, getPrefix, sendMsgToPlayer, switchChatChannel, deleteChatChannel, handOverChannelOwnership, getPlayerChannel, chatChannels, getPlayerById, playerChannelMap, getPlayerByName } from "../../util.js";
 import config from "../../data/config.js";
 
 function chatChannelHelp(player: Player, prefix: string) {
@@ -149,11 +149,12 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 return;
             }
 
+            const joinedPlayer = getPlayerByName(playerToInvite);
+
             if (playerToInvite) {
                 const inviteResult = inviteToChatChannel(playerToInvite, channelNameToInvite);
                 if (inviteResult) {
                     sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Invited ${playerToInvite} to join chat channel '${channelNameToInvite}'.`);
-                    const joinedPlayer = getPlayerById(player.id);
                     const joinedPlayerName = joinedPlayer ? joinedPlayer.name : "Unknown Player";
 
                     const joinMessage = `§f§4[§6Paradox§4]§f §6${joinedPlayerName}§f joined the chat channel.`;
@@ -165,6 +166,8 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                             sendMsgToPlayer(member, joinMessage);
                         }
                     });
+
+                    sendMsgToPlayer(joinedPlayer, `§f§4[§6Paradox§4]§f ${player.name} invited you to channel '${channelNameToInvite}'.`);
                 } else {
                     sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${playerToInvite} is already in a chat channel.`);
                 }
@@ -197,6 +200,8 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                         sendMsgToPlayer(member, joinMessage);
                     }
                 });
+
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You joined chat channel '${channelNameToJoin}'.`);
             } else {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unable to join chat channel.`);
             }
@@ -234,6 +239,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
 
             // Remove the player from the channel
             channelToLeave.members.delete(player.id);
+            playerChannelMap[player.id] = null;
 
             // Inform all remaining members in the channel that the player left
             const leavingPlayer = getPlayerById(player.id);

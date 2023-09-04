@@ -434,7 +434,7 @@ type PlayerChannelMap = {
 };
 
 export const chatChannels: { [channelName: string]: ChatChannel } = {};
-const playerChannelMap: PlayerChannelMap = {};
+export const playerChannelMap: PlayerChannelMap = {};
 
 /**
  * Create a new chat channel.
@@ -470,6 +470,7 @@ export function inviteToChatChannel(playerName: string, channelName: string): bo
     const playerObject = getPlayerByName(playerName);
     if (chatChannel && !chatChannel.members.has(playerObject.id)) {
         chatChannel.members.add(playerObject.id);
+        playerChannelMap[playerObject.id] = channelName;
         return true;
     }
     return false;
@@ -522,7 +523,7 @@ export function getPlayerChannel(playerName: string): string | null {
  * @param {string} playerName - Name of the player to get.
  * @return {Player|null} - The Player object if found, null if not found.
  */
-function getPlayerByName(playerName: string): Player | null {
+export function getPlayerByName(playerName: string): Player | null {
     const players = world.getPlayers();
     for (const player of players) {
         if (player.name.toLowerCase().replace(/"|\\|@/g, "") === playerName.toLowerCase().replace(/"|\\|@/g, "")) {
@@ -597,7 +598,15 @@ export function deleteChatChannel(channelName: string, password?: string): boole
             }
         }
 
-        // Remove the owner from playerChannelMap if they are the owner of the channel being deleted
+        // Convert the Set to an array and clear the channel efficiently
+        const membersArray = Array.from(channel.members);
+        membersArray.forEach((thisMember) => {
+            const thisPlayer = getPlayerById(thisMember);
+            // Let members know that this channel no longer exists
+            sendMsgToPlayer(thisPlayer, `§f§4[§6Paradox§4]§f '${channelName}' has been disbanded.`);
+            playerChannelMap[thisMember] = null;
+        });
+
         if (playerChannelMap[channel.owner] === channelName) {
             playerChannelMap[channel.owner] = null;
         }
