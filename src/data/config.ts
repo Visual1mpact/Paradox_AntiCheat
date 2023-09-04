@@ -29,7 +29,7 @@ export default {
         fly: true,
         invsee: true,
         notify: true,
-        tag: true,
+        rank: true,
         vanish: true,
         enchantedarmor: true,
         antikillaura: true,

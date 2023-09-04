@@ -24,7 +24,7 @@ const beforeChatFilter = () => {
             // Get the player's tags and find their rank
             const tags = player.getTags();
             const rankTag = tags.find((tag) => tag.startsWith("Rank:")) || "Rank:Member";
-            const rank = rankTag.replace("Rank:", "").replaceAll("--", "§f§4][§6");
+            const rank = rankTag.replace("Rank:", "").replaceAll("--", "§4][§6");
 
             // Format the chat message with the rank
             const formattedMessage = `§4[§6${rank}§4] §7${player.name}: §r${message}`;

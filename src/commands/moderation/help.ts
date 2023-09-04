@@ -123,7 +123,7 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}paradoxui§f - ${config.customcommands.paradoxiu ? `Shows GUI for main menu.` : textDisabled}`,
         `§6${prefix}tpr§f - ${config.customcommands.tpr ? `Will send requests to tp to players.` : textDisabled}`,
         `§6${prefix}biome§f - ${config.customcommands.biome ? `Sends the current biome and direction the player is facing.` : textDisabled}`,
-        `§6${prefix}tag§f - ${config.customcommands.tag ? `Gives one or more ranks to a specified player or resets it.` : textDisabled}`,
+        `§6${prefix}rank§f - ${config.customcommands.rank ? `Gives one or more ranks to a specified player or resets it.` : textDisabled}`,
         `§6${prefix}version§f - Will print to chat the currently installed version of paradox.`,
         `§6${prefix}channel create <channel> [password?]§f - ${config.customcommands.channel ? `Create a new chat channel (with optional password).` : textDisabled}`,
         `§6${prefix}channel delete <channel> [password?]§f - ${config.customcommands.channel ? `Delete an existing chat channel (with optional password).` : textDisabled}`,

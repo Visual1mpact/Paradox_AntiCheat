@@ -25,7 +25,7 @@ import { jesusA } from "./settings/jesusa.js";
 import { enchantedarmor } from "./settings/enchantedarmor.js";
 import { antiknockback } from "./settings/antikb.js";
 import { antishulker } from "./settings/antishulker.js";
-import { tag } from "./utility/tag.js";
+import { rank } from "./utility/rank.js";
 import { ecwipe } from "./utility/ecwipe.js";
 import { freeze } from "./utility/freeze.js";
 import { stats } from "./utility/stats.js";
@@ -90,7 +90,7 @@ import { chatChannel } from "./utility/channel.js";
 const commandDefinitions: Record<string, (data: Player | ChatSendAfterEvent, args: string[], fullArgs: string) => void> = Object.setPrototypeOf(
     {
         kick: kick,
-        tag: tag,
+        rank: rank,
         ban: ban,
         notify: notify,
         vanish: vanish,
