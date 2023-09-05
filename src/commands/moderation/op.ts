@@ -98,9 +98,9 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
             // Incorrect password
             sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Incorrect password. You need to be Operator to use this command.`);
         }
-    } else if (args.length === 1 && operatorHash === crypto?.(operatorSalt, config.encryption.password || operator.id)) {
+    } else if (args.length >= 1 && operatorHash === crypto?.(operatorSalt, config.encryption.password || operator.id)) {
         // Operator wants to grant "Paradox-Op" to another player
-        const targetPlayerName = args[0];
+        const targetPlayerName = args.join(" "); // Combine all arguments into a single string
         // Try to find the player requested
         let targetPlayer: Player;
         if (args.length) {
