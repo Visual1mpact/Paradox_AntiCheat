@@ -3,8 +3,8 @@ import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 function freeze(id: number) {
-    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
-    if (antiNukerABoolean === false) {
+    const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
+    if (antiScaffoldABoolean === false) {
         system.clearRun(id);
         return;
     }
