@@ -1,6 +1,31 @@
-import { world, MinecraftBlockTypes, Vector3, BlockPlaceAfterEvent } from "@minecraft/server";
+import { world, MinecraftBlockTypes, Vector3, BlockPlaceAfterEvent, system, EntityQueryOptions } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+
+function freeze(id: number) {
+    const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
+    if (antiNukerABoolean === false) {
+        system.clearRun(id);
+        return;
+    }
+
+    const filter: EntityQueryOptions = {
+        tags: ["freezeScaffoldA"],
+        excludeTags: ["freezeAura", "freezeNukerA"],
+    };
+    const players = world.getPlayers(filter);
+    for (const player of players) {
+        if (!player) {
+            return;
+        }
+        const tagBoolean = player.hasTag("paradoxFreeze");
+        if (!tagBoolean) {
+            player.removeTag("freezeScaffoldA");
+            return;
+        }
+        player.onScreenDisplay.setTitle("§f§4[§6Paradox§4]§f Frozen!", { subtitle: "§fContact Staff §4[§6AntiScaffoldA§4]§f", fadeInDuration: 0, fadeOutDuration: 0, stayDuration: 60 });
+    }
+}
 
 function isBlockInFrontAndBelowPlayer(blockLocation: Vector3, playerLocation: Vector3) {
     // Calculate the difference in coordinates between the block and player
@@ -17,7 +42,7 @@ function isBlockInFrontAndBelowPlayer(blockLocation: Vector3, playerLocation: Ve
     return dx <= xThreshold && dy >= yThreshold && dy <= yThreshold && dz >= zThreshold;
 }
 
-function scaffolda(object: BlockPlaceAfterEvent) {
+async function scaffolda(object: BlockPlaceAfterEvent) {
     // Get Dynamic Property
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
     // Unsubscribe if disabled in-game
@@ -56,7 +81,22 @@ function scaffolda(object: BlockPlaceAfterEvent) {
 }
 
 const ScaffoldA = () => {
-    world.afterEvents.blockPlace.subscribe(scaffolda);
+    world.afterEvents.blockPlace.subscribe((object) => {
+        scaffolda(object).catch((error) => {
+            console.error("Paradox Unhandled Rejection: ", error);
+            // Extract stack trace information
+            if (error instanceof Error) {
+                const stackLines = error.stack.split("\n");
+                if (stackLines.length > 1) {
+                    const sourceInfo = stackLines;
+                    console.error("Error originated from:", sourceInfo[0]);
+                }
+            }
+        });
+    });
+    const id = system.runInterval(() => {
+        freeze(id);
+    }, 20);
 };
 
 export { ScaffoldA };
