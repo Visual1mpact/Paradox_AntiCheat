@@ -3,6 +3,7 @@ import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 var savedValue: number;
 var flagPlayer: boolean = false;
+var isFlying: boolean = false;
 function antiVoid(id: number) {
     //exclude players who are in creative.
     const gm: EntityQueryOptions = {
@@ -24,12 +25,16 @@ function antiVoid(id: number) {
             lastFallingCord = player.location.y;
             saveOrGetValue("save", lastFallingCord);
             flagPlayer = false;
+            isFlying = false;
             console.log(lastFallingCord);
+        }
+        if (player.isFlying) {
+            isFlying = true;
         }
         if (player.isOnGround == true) {
             // @ts-ignore
             lastSavedCord = saveOrGetValue("get");
-            if (player.location.y - lastSavedCord >= 3) {
+            if (player.location.y - lastSavedCord >= 3 && isFlying == false) {
                 if (flagPlayer == false) {
                     console.log("Player has been flagged for AntiVoid Expliot");
                     flagPlayer = true;
