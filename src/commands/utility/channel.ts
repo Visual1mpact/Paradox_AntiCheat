@@ -305,6 +305,7 @@ function onPlayerLeave(event: PlayerLeaveAfterEvent) {
 
     // Remove the player from the channel
     channel.members.delete(playerId);
+    playerChannelMap[playerId] = null;
 
     // Inform all remaining members in the channel that the player left
     const leavingPlayer = getPlayerById(playerId);
