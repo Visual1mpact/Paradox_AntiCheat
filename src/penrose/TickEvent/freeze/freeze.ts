@@ -77,6 +77,7 @@ const freezePlayers = () => {
         const hasFreezeTag = player.hasTag("paradoxFreeze");
         const hasAuraTag = player.hasTag("freezeAura");
         const hasNukerTag = player.hasTag("freezeNukerA");
+        const hasScaffoldTag = player.hasTag("freezeScaffoldA");
 
         if (!hasFreezeTag) {
             // Player doesn't have the freeze tag, unfreeze them
@@ -116,8 +117,16 @@ const freezePlayers = () => {
                 freezePlayer(player);
             }
 
-            // Display custom message if both aura and nuker tags exist
-            const title = hasAuraTag && hasNukerTag ? { subtitle: "§fContact Staff §4[§6KA§4]§f§4[§6NA§4]§f" } : { subtitle: "§fContact Staff §o§4[§6Command§4]§f" };
+            const combinations: Record<string, string> = {
+                "111": "§fContact Staff §4[§6NA§4]§f§4[§6KA§4]§f§4[§6AS§4]§f", // Aura + Nuker + Scaffold
+                "110": "§fContact Staff §4[§6NA§4]§f§4[§6KA§4]§f", // Aura + Nuker
+                "101": "§fContact Staff §4[§6NA§4]§f§4[§6AS§4]§f", // Aura + Scaffold
+                "011": "§fContact Staff §4[§6KA§4]§f§4[§6AS§4]§f", // Nuker + Scaffold
+                "000": "§fContact Staff §4[§6Command§4]§f", // Other cases
+            };
+
+            const combinationKey = (hasAuraTag ? "1" : "0") + (hasNukerTag ? "1" : "0") + (hasScaffoldTag ? "1" : "0");
+            const title = { subtitle: combinations[combinationKey] || combinations["000"] };
 
             player.onScreenDisplay.setTitle("§f§4[§6Paradox§4]§f Frozen!", {
                 ...title,

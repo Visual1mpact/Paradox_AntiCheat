@@ -236,7 +236,7 @@ function freeze(id: number) {
 
     const filter: EntityQueryOptions = {
         tags: ["freezeNukerA"],
-        excludeTags: ["freezeAura"],
+        excludeTags: ["freezeAura", "freezeScaffoldA"],
     };
     const players = world.getPlayers(filter);
     for (const player of players) {

@@ -45,7 +45,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
 
     switch (true) {
         case member.hasTag("paradoxFreeze"):
-            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : "Staff"}`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is frozen by ${member.hasTag("freezeAura") ? "AntiKillAura" : member.hasTag("freezeNukerA") ? "AntiNukerA" : member.hasTag("freezeScaffoldA") ? "AntiScaffoldA" : "Staff"}`);
             break;
         case member.hasTag("flying"):
             reportBody.push(`§f§4[§6Paradox§4]§f §6${member.name}§f is flying`);

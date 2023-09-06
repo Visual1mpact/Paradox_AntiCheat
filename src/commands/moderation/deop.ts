@@ -62,9 +62,10 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
     // try to find the player requested
     let member: Player;
     if (args.length) {
+        const targetPlayerName = args.join(" "); // Combine all arguments into a single string
         const players = world.getPlayers();
         for (const pl of players) {
-            if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            if (pl.name.toLowerCase().includes(targetPlayerName.toLowerCase().replace(/"|\\|@/g, ""))) {
                 member = pl;
                 break;
             }
