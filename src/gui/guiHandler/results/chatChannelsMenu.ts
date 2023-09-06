@@ -1,9 +1,9 @@
 import { Player } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
-import { chatChannelsCreateMenuUI } from "./uiChatChannelsCreateMenu";
-import { ChatChannelsJoinMenuUI } from "./uiChatChannelsJoinMenu";
-import { ChatChannelsInviteMenuUI } from "./uiChatChannelsInviteMenu";
-export function uiChatChannelMainMenu(player: Player) {
+import { chatChannelsCreateMenuUI } from "../../playerui/chatChannels/uiChatChannelsCreateMenu";
+import { ChatChannelsJoinMenuUI } from "../../playerui/chatChannels/uiChatChannelsJoinMenu";
+import { ChatChannelsInviteMenuUI } from "../../playerui/chatChannels/uiChatChannelsInviteMenu";
+export function chatChannelMainMenu(player: Player) {
     const menu = new ActionFormData();
     menu.title("§4Paradox - Chat Channels Menu§4");
     menu.button("Create A Channel");
