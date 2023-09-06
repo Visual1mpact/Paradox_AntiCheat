@@ -185,7 +185,7 @@ export function uiChatChannelInvite(ChatChannelJoinUIResult: ModalFormResponse, 
     }
 }
 export function uiChatChannelLeave(ChatChannelLeaveUIResult: ModalFormResponse, player: Player, channelDropdownData: { text: string; value: string }[]) {
-    handleUIChatChannelCreate(ChatChannelLeaveUIResult, player, channelDropdownData).catch((error) => {
+    handleUIChatChannelLeave(ChatChannelLeaveUIResult, player, channelDropdownData).catch((error) => {
         console.error("Paradox Unhandled Rejection: ", error);
         // Extract stack trace information
         if (error instanceof Error) {
@@ -197,7 +197,7 @@ export function uiChatChannelLeave(ChatChannelLeaveUIResult: ModalFormResponse, 
         }
     });
 
-    async function handleUIChatChannelCreate(ChatChannelLeaveUIResult: ModalFormResponse, player: Player, channelDropdownData: { text: string; value: string }[]) {
+    async function handleUIChatChannelLeave(ChatChannelLeaveUIResult: ModalFormResponse, player: Player, channelDropdownData: { text: string; value: string }[]) {
         //const [ddChannelName] = ChatChannelLeaveUIResult.formValues;
         const channelNameToLeave = getPlayerChannel(player.id);
 
