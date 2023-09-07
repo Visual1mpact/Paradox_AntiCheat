@@ -11,7 +11,7 @@ import { reportHandler } from "./guiHandler/results/report";
 import { modulesui } from "./guiHandler/guiHandlerModules/modulesui";
 import { prefixHandler } from "./guiHandler/results/prefix";
 import { statsHandler } from "./guiHandler/results/stats";
-import { uiChatChannelMainMenu } from "./playerui/chatChannels/uiChatChannelsMenu";
+import { chatChannelMainMenu } from "./guiHandler/results/chatChannelsMenu";
 import { managePlayerSavedLocationsHandler } from "./guiHandler/guiHandlerModeration/results/managePlayersSavedLocations";
 
 /**
@@ -78,7 +78,7 @@ async function handleParadoxUI(player: Player) {
                         reportHandler(player);
                         break;
                     case 4:
-                        uiChatChannelMainMenu(player);
+                        chatChannelMainMenu(player);
                     default:
                         // Handle other selections for isUnique case
                         break;
@@ -110,7 +110,7 @@ async function handleParadoxUI(player: Player) {
                         statsHandler(player);
                         break;
                     case 8:
-                        uiChatChannelMainMenu(player);
+                        chatChannelMainMenu(player);
                         break;
                     case 9:
                         managePlayerSavedLocationsHandler(player);
