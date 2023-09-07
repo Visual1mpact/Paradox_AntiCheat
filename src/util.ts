@@ -633,6 +633,11 @@ export function listChatChannels(): { channelName: string; hasPassword: string }
 
     return channelList;
 }
+// Function to check if a password is required for a given channel name
+export function isPasswordRequired(channelName: string): boolean {
+    const channel = chatChannels[channelName];
+    return !!channel && !!channel.password;
+}
 
 export const allscores: string[] = [
     "autoclickervl",

@@ -1,6 +1,20 @@
 import { Player, world } from "@minecraft/server";
-import { MessageFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { chatChannels, createChatChannel, deleteChatChannel, getPlayerById, getPlayerByName, getPlayerChannel, handOverChannelOwnership, inviteToChatChannel, playerChannelMap, sendMsgToPlayer, switchChatChannel } from "../../../util";
+import { ActionFormData, ActionFormResponse, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
+import {
+    chatChannels,
+    createChatChannel,
+    deleteChatChannel,
+    getPlayerById,
+    getPlayerByName,
+    getPlayerChannel,
+    handOverChannelOwnership,
+    inviteToChatChannel,
+    isPasswordRequired,
+    playerChannelMap,
+    sendMsgToPlayer,
+    switchChatChannel,
+} from "../../../util";
+import { chatChannelMainMenu } from "../../guiHandler/results/chatChannelsMenu";
 
 export function uiChatChannelCreate(ChatChannelCreateUIResult: ModalFormResponse, player: Player) {
     handleUIChatChannelCreate(ChatChannelCreateUIResult, player).catch((error) => {
@@ -20,20 +34,20 @@ export function uiChatChannelCreate(ChatChannelCreateUIResult: ModalFormResponse
         const existingChannelName = getPlayerChannel(player.id);
 
         if (existingChannelName) {
-            const msgUI = new MessageFormData();
+            const msgUI = new ActionFormData();
             msgUI.title("§4Create Channel Error§4");
             msgUI.body(`§f You are already in a chat channel §6(${existingChannelName}). §fLeave the current channel before creating a new one.`);
-            msgUI.button1("OK");
+            msgUI.button("OK");
             msgUI.show(player);
         } else {
             const channelName = txtChannelName;
             const password = txtChannelPassword; // Optional password argument
 
             const createResult = createChatChannel(channelName.toString(), password.toString(), player.id);
-            const msgUI = new MessageFormData();
+            const msgUI = new ActionFormData();
             msgUI.title("§4Chat Channel Created§4");
             msgUI.body(`§f§4[§6Paradox§4]§f Chat channel '${channelName}' ${createResult ? "§2created." : "§6already exists."}`);
-            msgUI.button1("OK");
+            msgUI.button("OK");
         }
     }
 }
@@ -55,10 +69,10 @@ export function uiChatChannelJoin(ChatChannelJoinUIResult: ModalFormResponse, pl
         const existingChannelName = getPlayerChannel(player.id);
 
         if (existingChannelName) {
-            const msgUI = new MessageFormData();
+            const msgUI = new ActionFormData();
             msgUI.title("§4Join Channel Error§4");
             msgUI.body("§f You are already in a chat channel §6(${existingChannelName}). §fLeave the current channel before creating a new one.");
-            msgUI.button1("OK");
+            msgUI.button("OK");
             msgUI.show(player);
         } else {
             const selectedNumber = ddChannelName; //Presented as a Number not the dropdown value the player sees
@@ -101,10 +115,10 @@ export function uiChatChannelJoin(ChatChannelJoinUIResult: ModalFormResponse, pl
                 uiMessage = `§6Unable to join chat channel §r${selectedChannelName}, please try again.`;
             }
 
-            const msgUI = new MessageFormData();
+            const msgUI = new ActionFormData();
             msgUI.title("§4Chat Channel Created§4");
             msgUI.body(uiMessage);
-            msgUI.button1("OK");
+            msgUI.button("OK");
             msgUI.show(player);
         }
     }
@@ -177,10 +191,10 @@ export function uiChatChannelInvite(ChatChannelJoinUIResult: ModalFormResponse, 
         } else {
             uiMessage = `§6Player '${playerToInvite}' not found.`;
         }
-        const msgUI = new MessageFormData();
+        const msgUI = new ActionFormData();
         msgUI.title("§4Chat Channel Invite§4");
         msgUI.body(uiMessage);
-        msgUI.button1("OK");
+        msgUI.button("OK");
         msgUI.show(player);
     }
 }
@@ -198,11 +212,16 @@ export function uiChatChannelLeave(ChatChannelLeaveUIResult: ModalFormResponse, 
     });
 
     async function handleUIChatChannelLeave(ChatChannelLeaveUIResult: ModalFormResponse, player: Player, channelDropdownData: { text: string; value: string }[]) {
-        //const [ddChannelName] = ChatChannelLeaveUIResult.formValues;
+        let uiMessage: string = "";
         const channelNameToLeave = getPlayerChannel(player.id);
 
         if (!channelNameToLeave) {
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are not in any chat channel.`);
+            uiMessage = `§6You are not in any chat channel.`;
+            const msgUI = new ActionFormData();
+            msgUI.title("§4Chat Channel Leave Error§4");
+            msgUI.body(uiMessage);
+            msgUI.button("OK");
+            msgUI.show(player);
             return;
         }
 
@@ -239,6 +258,70 @@ export function uiChatChannelLeave(ChatChannelLeaveUIResult: ModalFormResponse, 
             }
         }
 
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Left the chat channel '${channelNameToLeave}'.`);
+        uiMessage = `§fYou have left the chat channel §2'${channelNameToLeave}'.`;
+        const msgUI = new ActionFormData();
+        msgUI.title("§4Chat Channel Leave§4");
+        msgUI.body(uiMessage);
+        msgUI.button("OK");
+        msgUI.show(player);
+    }
+}
+export function uiChatChannelDelete(ChatChannelDeleteUIResult: ActionFormResponse, player: Player, ChannelName: string) {
+    handleUIChatChannelDelete(ChatChannelDeleteUIResult, player, ChannelName).catch((error) => {
+        console.error("Paradox Unhandled Rejection: ", error);
+        // Extract stack trace information
+        if (error instanceof Error) {
+            const stackLines = error.stack.split("\n");
+            if (stackLines.length > 1) {
+                const sourceInfo = stackLines;
+                console.error("Error originated from:", sourceInfo[0]);
+            }
+        }
+    });
+
+    async function handleUIChatChannelDelete(ChatChannelDeleteUIResult: ActionFormResponse, player: Player, ChannelName: string) {
+        let uiMessage: string;
+        if (ChatChannelDeleteUIResult.selection == 0) {
+            const channelNameToCheck = ChannelName;
+            const isPasswordRequiredForChannel = isPasswordRequired(channelNameToCheck);
+            if (isPasswordRequiredForChannel == true) {
+                const passwordUI = new ModalFormData();
+                passwordUI.title(`Enter password for ${ChannelName}`);
+                passwordUI.textField("Channel Password: ", "");
+                passwordUI.show(player).then((passwordUIResult) => {
+                    const [txtPassword] = passwordUIResult.formValues;
+                    const channelNameToDelete = ChannelName;
+                    const passwordToDelete = txtPassword.toString(); // Optional password argument
+                    const deleteResult = deleteChatChannel(channelNameToDelete, passwordToDelete);
+                    if (deleteResult === "wrong_password") {
+                        uiMessage = `§fWrong password for chat channel '§6${channelNameToDelete}'.`;
+                    } else {
+                        uiMessage = `§f Chat channel '${channelNameToDelete}' ${deleteResult ? "§2deleted." : "§6not found."}`;
+                    }
+                    const msgUI = new ActionFormData();
+                    msgUI.title("§4Chat Channel Delete§4");
+                    msgUI.body(uiMessage);
+                    msgUI.button("OK");
+                    msgUI.show(player);
+                });
+            } else {
+                //If password is not require just delete the channel.
+                const channelNameToDelete = ChannelName;
+                const deleteResult = deleteChatChannel(channelNameToDelete);
+                if (deleteResult === "wrong_password") {
+                    uiMessage = `§fWrong password for chat channel '§6${channelNameToDelete}'.`;
+                } else {
+                    uiMessage = `§f Chat channel '${channelNameToDelete}' ${deleteResult ? "§2deleted." : "§6not found."}`;
+                }
+                const msgUI = new ActionFormData();
+                msgUI.title("§4Chat Channel Delete§4");
+                msgUI.body(uiMessage);
+                msgUI.button("OK");
+                msgUI.show(player);
+            }
+        }
+        if (ChatChannelDeleteUIResult.selection == 1) {
+            chatChannelMainMenu(player);
+        }
     }
 }
