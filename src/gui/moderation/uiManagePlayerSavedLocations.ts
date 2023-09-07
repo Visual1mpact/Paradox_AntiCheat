@@ -2,7 +2,6 @@ import { Player, world } from "@minecraft/server";
 import { ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry";
 import { decryptString, sendMsgToPlayer } from "../../util";
-import { moderationui } from "../guiHandler/guiHandlerModeration/moderationui";
 import { paradoxui } from "../paradoxui";
 
 export function uiManagePlayerSavedLocations(managePlayerSavedLocationsUIResult: ModalFormResponse, onlineList: string[], player: Player) {
@@ -107,6 +106,7 @@ async function handleUImanagePlayerSavedLocations(managePlayerSavedLocationsUIRe
                 }
                 return paradoxui(player);
             }
+            return paradoxui(player);
         })
         .catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
