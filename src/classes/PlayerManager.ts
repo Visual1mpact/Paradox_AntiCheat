@@ -7,18 +7,18 @@ export class PlayerManager {
     /**
      * Stores players by their name (normalized).
      */
-    private playersByName: { [name: string]: Player } = {};
+    private static playersByName: { [name: string]: Player } = {};
 
     /**
      * Stores players by their ID.
      */
-    private playersById: { [id: string]: Player } = {};
+    private static playersById: { [id: string]: Player } = {};
 
     /**
      * Adds a player to the manager.
      * @param player The player to add.
      */
-    addPlayer(player: Player) {
+    public static addPlayer(player: Player) {
         const playerName = player.name.toLowerCase().replace(/"|\\|@/g, "");
         this.playersByName[playerName] = player;
         this.playersById[player.id] = player;
@@ -28,7 +28,7 @@ export class PlayerManager {
      * Removes a player from the manager.
      * @param player The player to remove.
      */
-    removePlayer(player: Player) {
+    public static removePlayer(player: Player) {
         const playerName = player.name.toLowerCase().replace(/"|\\|@/g, "");
         delete this.playersByName[playerName];
         delete this.playersById[player.id];
@@ -39,7 +39,7 @@ export class PlayerManager {
      * @param playerName The name of the player.
      * @returns The player with the specified name, or null if not found.
      */
-    getPlayerByName(playerName: string): Player | null {
+    public static getPlayerByName(playerName: string): Player | null {
         const normalizedPlayerName = playerName.toLowerCase().replace(/"|\\|@/g, "");
         return this.playersByName[normalizedPlayerName] || null;
     }
@@ -49,7 +49,7 @@ export class PlayerManager {
      * @param playerId The ID of the player.
      * @returns The player with the specified ID, or null if not found.
      */
-    getPlayerById(playerId: string): Player | null {
+    public static getPlayerById(playerId: string): Player | null {
         return this.playersById[playerId] || null;
     }
 
@@ -57,7 +57,7 @@ export class PlayerManager {
      * Gets an array of all players, sorted by name.
      * @returns An array of all players.
      */
-    getAllPlayersByName(): Player[] {
+    public static getAllPlayersByName(): Player[] {
         return Object.values(this.playersByName);
     }
 
@@ -65,7 +65,7 @@ export class PlayerManager {
      * Gets an array of all players, sorted by ID.
      * @returns An array of all players.
      */
-    getAllPlayersById(): Player[] {
+    public static getAllPlayersById(): Player[] {
         return Object.values(this.playersById);
     }
 }
