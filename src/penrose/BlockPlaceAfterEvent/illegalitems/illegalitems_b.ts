@@ -1,7 +1,7 @@
 import { world, ItemStack, Enchantment, Player, Block, BlockPlaceAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
-import { flag, titleCase, sendMsgToPlayer, sendMsg } from "../../../util.js";
+import { flag, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
@@ -288,7 +288,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
         // Iterate over the unverifiedItemMap
         for (const [slot, itemStackData] of unverifiedItemMap.get(player.id)) {
             // Create a new name tag for the item
-            const newNameTag = titleCase(itemStackData.typeId.replace("minecraft:", ""));
+            const newNameTag = StringTransformation.titleCase(itemStackData.typeId.replace("minecraft:", ""));
             // Create a new ItemStack with the same type as the original item
             const applyCustomProperties = new ItemStack(itemStackData.typeId);
             // Get the original enchantment component from the item

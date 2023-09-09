@@ -169,39 +169,6 @@ export function resetTag(member: Player) {
 }
 
 /**
- * Takes a string and converts it to camelCase.
- *
- * @name toCamelCase
- * @param {string} str - Takes strings and converts to camelCase
- */
-export function toCamelCase(str: string) {
-    const regExp = /[^a-zA-Z0-9]+(.)/gi;
-    return str.replace(regExp, (match) => {
-        return match[1].toUpperCase();
-    });
-}
-
-/**
- * Takes a string and converts it to PascalCase.
- *
- * @name toCamelCase
- * @param {string} str - Takes strings and converts to PascalCase
- */
-export function toPascalCase(str: string) {
-    const camelCase = toCamelCase(str);
-    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
-}
-
-/**
- * Converts a string in snake_case format to Title Case format.
- *
- * @name titleCase
- * @param {*} s - Takes snakeCase and converts it to Title Case
- * @returns
- */
-export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
-
-/**
  * Sets a timer for a given player.
  *
  * @param player - A string representing the player for whom the timer is being set.

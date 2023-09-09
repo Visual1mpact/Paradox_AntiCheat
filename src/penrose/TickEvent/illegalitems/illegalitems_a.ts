@@ -2,7 +2,7 @@ import { world, ItemStack, Player, EntityInventoryComponent, system, ItemEnchant
 import config from "../../../data/config.js";
 import { illegalitems } from "../../../data/itemban.js";
 import { kickablePlayers } from "../../../kickcheck.js";
-import { sendMsg, sendMsgToPlayer, titleCase } from "../../../util.js";
+import { sendMsg, sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 
 // Create a map of player objects and their enchantment presence
@@ -233,7 +233,7 @@ function illegalitemsa(id: number) {
                 // Iterate over the unverifiedItemMap
                 for (const [slot, itemStackData] of unverifiedItemMap.get(player.id)) {
                     // Create a new name tag for the item
-                    const newNameTag = titleCase(itemStackData.typeId.replace("minecraft:", ""));
+                    const newNameTag = StringTransformation.titleCase(itemStackData.typeId.replace("minecraft:", ""));
                     // Create a new ItemStack with the same type as the original item
                     const applyCustomProperties = new ItemStack(itemStackData.typeId);
                     // Get the original enchantment component from the item
