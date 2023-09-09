@@ -5,6 +5,7 @@ import { flag, sendMsgToPlayer, sendMsg } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { illegalItemsBWhitelist } from "../../../data/illegalItemsB_whitelist.js";
+import { StringTransformation } from "../../../classes/StringTransformation.js";
 
 // Create a map of player objects and their enchantment presence
 const enchantmentPresenceMap = new Map<string, Map<Enchantment, boolean>>();

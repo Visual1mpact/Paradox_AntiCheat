@@ -1,7 +1,7 @@
 /**
  * A utility class for string transformations.
  */
-class StringTransformation {
+export class StringTransformation {
     /**
      * Converts a string to camelCase.
      * @param {string} str - The input string.

@@ -3,6 +3,7 @@ import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/l
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { StringTransformation } from "../../classes/StringTransformation";
 
 function giveHelp(player: Player, prefix: string) {
     let commandStatus: string;
