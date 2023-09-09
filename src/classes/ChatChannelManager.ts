@@ -1,5 +1,6 @@
 import { Player } from "@minecraft/server";
 import { PlayerManager } from "./PlayerManager";
+import { sendMsgToPlayer } from "../util";
 
 /**
  * Define the ChatChannel type.
@@ -114,6 +115,73 @@ export class ChatChannelManager {
     }
 
     /**
+     * Delete an existing chat channel.
+     * @param channelName - Name of the chat channel to delete.
+     * @param password - Password for the chat channel (optional, required if channel has a password).
+     * @return Returns true if the chat channel was successfully deleted, false if it doesn't exist, or "wrong_password" if the provided password is incorrect.
+     */
+    public static deleteChatChannel(channelName: string, password?: string): boolean | "wrong_password" {
+        const channel = this.chatChannels[channelName];
+
+        if (channel) {
+            if (channel.password) {
+                // Check if the provided password matches the channel's password
+                if (password !== channel.password) {
+                    return "wrong_password"; // Return "wrong_password" if the password is incorrect
+                }
+            }
+
+            // Convert the Set to an array and clear the channel efficiently
+            const membersArray = Array.from(channel.members);
+            membersArray.forEach((thisMember) => {
+                const thisPlayer = this.getPlayerById(thisMember);
+                // Let members know that this channel no longer exists
+                sendMsgToPlayer(thisPlayer, `§f§4[§6Paradox§4]§f '${channelName}' has been disbanded.`);
+                this.playerChannelMap[thisMember] = null;
+            });
+
+            if (this.playerChannelMap[channel.owner] === channelName) {
+                this.playerChannelMap[channel.owner] = null;
+            }
+
+            delete this.chatChannels[channelName];
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Transfer ownership of a chat channel to another player.
+     * @param channelName - The name of the channel to transfer ownership of.
+     * @param currentOwner - The current owner of the channel.
+     * @param newOwnerName - The name of the new owner.
+     * @returns Returns true if ownership is successfully transferred, "not_owner" if the current player is not the owner, or "target_not_found" if the new owner is not found.
+     */
+    static handOverChannelOwnership(channelName: string, currentOwner: Player, newOwnerName: string): boolean | string {
+        const channel = this.chatChannels[channelName];
+        if (channel) {
+            if (channel.owner !== currentOwner.id) {
+                return "not_owner";
+            }
+
+            const newOwner = this.getPlayerByName(newOwnerName);
+            if (!newOwner) {
+                return "target_not_found";
+            }
+
+            channel.owner = newOwner.id;
+
+            // Update playerChannelMap to reflect the new owner
+            this.playerChannelMap[currentOwner.id] = null;
+            this.playerChannelMap[newOwner.id] = channelName;
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get the chat channel of a player.
      * @param playerName The name of the player.
      * @returns The name of the player's chat channel, or null if not in a channel.
@@ -177,5 +245,13 @@ export class ChatChannelManager {
      */
     public static getChatChannelByName(channelName: string): ChatChannel | null {
         return this.chatChannels[channelName] || null;
+    }
+
+    /**
+     * Clear a player from the playerChannelMap.
+     * @param playerName - The name of the player to clear from the playerChannelMap.
+     */
+    static clearPlayerFromChannelMap(playerName: string): void {
+        this.playerChannelMap[playerName] = null;
     }
 }

@@ -1,12 +1,12 @@
 import { Player } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
-import { getPlayerChannel } from "../../../util";
 import { uiChatChannelDelete } from "./uiChatChannels";
+import { ChatChannelManager } from "../../../classes/ChatChannelManager";
 
 export function ChatChannelsDeleteMenuUI(player: Player) {
     const menu = new ActionFormData();
     menu.title("§4Paradox - Delete Current Channel§4");
-    const currentChatChannel = getPlayerChannel(player.id);
+    const currentChatChannel = ChatChannelManager.getPlayerChannel(player.id);
     menu.body(`§fYour current chat channel is §6${currentChatChannel}§f, using the button bellow you can delete this channel if it is password protected you will need to provide the password.`);
     menu.button("Delete Channel");
     menu.button("Back");

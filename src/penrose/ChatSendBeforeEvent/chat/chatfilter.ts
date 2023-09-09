@@ -1,6 +1,7 @@
 import { world } from "@minecraft/server";
-import { encryptString, getPlayerChannel, sendMsgToPlayer } from "../../../util.js";
+import { encryptString, sendMsgToPlayer } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { ChatChannelManager } from "../../../classes/ChatChannelManager.js";
 
 const beforeChatFilter = () => {
     // Subscribe to the 'beforeChat' event
@@ -10,7 +11,7 @@ const beforeChatFilter = () => {
         // Retrieve the 'chatranks_b' dynamic property
         const chatRanksBoolean = dynamicPropertyRegistry.get("chatranks_b");
         // Get the channel name associated with the player
-        const channelName = getPlayerChannel(player.id);
+        const channelName = ChatChannelManager.getPlayerChannel(player.id);
 
         // Check if chat ranks are enabled
         if (!msg.sendToTargets && chatRanksBoolean === true) {

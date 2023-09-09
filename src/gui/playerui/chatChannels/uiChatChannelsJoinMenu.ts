@@ -1,14 +1,14 @@
 import { Player } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
-import { listChatChannels } from "../../../util";
 import { uiChatChannelJoin } from "./uiChatChannels";
+import { ChatChannelManager } from "../../../classes/ChatChannelManager";
 
 export function ChatChannelsJoinMenuUI(player: Player) {
     const menu = new ModalFormData();
     menu.title("§4Paradox - Join A Channel§4");
-    const channelsList = listChatChannels();
+    const channelsList = ChatChannelManager.listChatChannels();
     const channelDropdownData = channelsList.map((channel) => ({
-        text: `${channel.channelName}, §fPassword: ${channel.hasPassword === "Yes" ? "§aYes" : "§cNo"}`,
+        text: `${channel.channelName}, §fPassword: ${channel.hasPassword === true ? "§aYes" : "§cNo"}`,
         value: channel.channelName,
     }));
     if (channelDropdownData.length === 0) {

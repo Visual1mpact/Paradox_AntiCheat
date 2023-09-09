@@ -1,15 +1,15 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
-import { listChatChannels } from "../../../util";
 import { uiChatChannelInvite } from "./uiChatChannels";
+import { ChatChannelManager } from "../../../classes/ChatChannelManager";
 
 export function ChatChannelsInviteMenuUI(player: Player) {
     const menu = new ModalFormData();
     menu.title("§4Paradox - Invite A Player§4");
-    const channelsList = listChatChannels();
+    const channelsList = ChatChannelManager.listChatChannels();
     //Get the current channels
     const channelDropdownData = channelsList.map((channel) => ({
-        text: `${channel.channelName}, §fPassword: ${channel.hasPassword === "Yes" ? "§aYes" : "§cNo"}`,
+        text: `${channel.channelName}, §fPassword: ${channel.hasPassword === true ? "§aYes" : "§cNo"}`,
         value: channel.channelName,
     }));
     if (channelDropdownData.length === 0) {
