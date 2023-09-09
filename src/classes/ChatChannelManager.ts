@@ -40,7 +40,7 @@ export class ChatChannelManager {
      * @returns True if the channel is created successfully, false otherwise.
      */
     public static createChatChannel(channelName: string, password: string, owner: string): boolean {
-        const player = this.getPlayerByName(owner);
+        const player = this.getPlayerById(owner);
         if (!this.chatChannels[channelName] && player) {
             const existingChannel = Object.values(this.chatChannels).find((channel) => channel.members.has(player.id));
             if (existingChannel) {
@@ -134,7 +134,7 @@ export class ChatChannelManager {
             // Convert the Set to an array and clear the channel efficiently
             const membersArray = Array.from(channel.members);
             membersArray.forEach((thisMember) => {
-                const thisPlayer = this.getPlayerById(thisMember);
+                const thisPlayer: Player | null = this.getPlayerById(thisMember);
                 // Let members know that this channel no longer exists
                 sendMsgToPlayer(thisPlayer, `§f§4[§6Paradox§4]§f '${channelName}' has been disbanded.`);
                 this.playerChannelMap[thisMember] = null;
