@@ -1,8 +1,9 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import config from "../../data/config.js";
-import { decryptString, encryptString, sendMsgToPlayer, setTimer } from "../../util.js";
+import { sendMsgToPlayer, setTimer } from "../../util.js";
 import { paradoxui } from "../paradoxui.js";
+import { EncryptionManager } from "../../classes/EncryptionManager.js";
 
 export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locations: string[], player: Player, coordArray: string[]) {
     if (!savedlocationsResult || savedlocationsResult.canceled) {
@@ -46,7 +47,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
             if (tags[i].startsWith("1337")) {
                 encryptedString = tags[i];
                 // Decode it so we can verify it
-                tags[i] = decryptString(tags[i], salt as string);
+                tags[i] = EncryptionManager.decryptString(tags[i], salt as string);
             }
             if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                 player.removeTag(encryptedString);
@@ -107,7 +108,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
         }
         if (doSave === true) {
             const decryptedLocationString = `LocationHome:${newLocationName} X:${currentX} Y:${currentY} Z:${currentZ} Dimension:${currentDimension}`;
-            const security = encryptString(decryptedLocationString, salt as string);
+            const security = EncryptionManager.encryptString(decryptedLocationString, salt as string);
             player.addTag(security);
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f New Location has been saved.`);
         }

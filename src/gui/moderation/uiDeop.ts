@@ -1,9 +1,10 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { crypto, sendMsg, sendMsgToPlayer } from "../../util";
+import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import config from "../../data/config.js";
+import { EncryptionManager } from "../../classes/EncryptionManager.js";
 
 //Function provided by Visual1mpact
 export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player: Player) {
@@ -29,9 +30,9 @@ export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player
     const key = config.encryption.password ? config.encryption.password : member.id;
 
     // Generate the hash
-    const memberEncode: string = crypto(memberSalt, key) ?? null;
+    const memberEncode: string = EncryptionManager.hashWithSalt(memberSalt as string, key);
 
-    if (memberHash !== undefined && memberHash === memberEncode) {
+    if (memberEncode && memberHash !== undefined && memberHash === memberEncode) {
         member.removeDynamicProperty("hash");
         member.removeDynamicProperty("salt");
         dynamicPropertyRegistry.delete(member.id);

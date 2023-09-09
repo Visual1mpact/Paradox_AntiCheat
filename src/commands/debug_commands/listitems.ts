@@ -1,7 +1,8 @@
 import { ChatSendAfterEvent, ItemStack, Player } from "@minecraft/server";
 import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
-import { crypto, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { EncryptionManager } from "../../classes/EncryptionManager";
 
 function listItems(player: Player, prefix: string) {
     let commandStatus: string;
@@ -43,9 +44,9 @@ export function listitems(message: ChatSendAfterEvent, args: string[]) {
     const key = config.encryption.password ? config.encryption.password : player.id;
 
     // Generate the hash
-    const encode = crypto?.(salt, key);
+    const encode = EncryptionManager.hashWithSalt(salt as string, key);
     // Make sure the user has permissions to run the command
-    if (hash === undefined || encode !== hash) {
+    if (!encode || hash === undefined || encode !== hash) {
         return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 

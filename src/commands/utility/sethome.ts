@@ -1,6 +1,7 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { decryptString, getPrefix, encryptString, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { EncryptionManager } from "../../classes/EncryptionManager.js";
 
 function setHomeHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -75,7 +76,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
     for (let i = 0; i < tagsLength; i++) {
         if (tags[i].startsWith("1337")) {
             // Decode it so we can verify if it already exists
-            tags[i] = decryptString(tags[i], String(salt));
+            tags[i] = EncryptionManager.decryptString(tags[i], String(salt));
         }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
@@ -107,7 +108,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
     }
 
     const decryptedLocationString = `LocationHome:${args[0]} X:${homex} Y:${homey} Z:${homez} Dimension:${currentDimension}`;
-    const security = encryptString(decryptedLocationString, String(salt));
+    const security = EncryptionManager.encryptString(decryptedLocationString, salt as string);
     // Store their new home coordinates
     player.addTag(security);
 

@@ -1,7 +1,6 @@
 import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
-import CryptoJS from "./node_modules/crypto-es/lib/index.js";
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
@@ -260,55 +259,6 @@ export function toPascalCase(str: string) {
  * @returns
  */
 export const titleCase = (s: string) => s.replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()).replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
-
-/**
- * Hashes a given string with the specified salt value using SHA-3 (SHA3-256) encryption.
- *
- * @name crypto
- * @param {string | number | boolean} salt - Hashes information
- * @param {string} text - String to be hashed
- */
-export const crypto = (salt: string | number | boolean, text: string) => {
-    // Convert the salt to a string representation
-    const saltString = String(salt);
-    // Combine salt and text
-    const combinedString = saltString + text;
-    // Hash the combined string using SHA-3 (SHA3-256)
-    const hash = CryptoJS.SHA3(combinedString, { outputLength: 256 }).toString();
-    // Ensure it is no more than 50 characters as set for dynamic property strings
-    return hash.substring(0, 50);
-};
-
-/**
- * Encrypts a string using AES encryption with the specified salt as the key.
- *
- * @name encryptString
- * @param {string} str - The string to encrypt
- * @param {string} salt - The salt to use as the key for encryption
- * @returns {string} The encrypted string
- */
-export function encryptString(str: string, salt: string): string {
-    const encrypted = CryptoJS.AES.encrypt(str, salt).toString();
-    return "1337" + encrypted;
-}
-
-/**
- * Decrypts a string using AES encryption with the specified salt as the key.
- *
- * @name decryptString
- * @param {string} str - The string to decrypt
- * @param {string} salt - The salt to use for decryption
- * @returns {string} The decrypted string
- */
-export function decryptString(str: string, salt: string): string {
-    // Remove the prefix added in the encryptString function
-    str = str.slice(4);
-    // Decrypt using AES
-    const decryptedBytes = CryptoJS.AES.decrypt(str, salt);
-    // Convert the decrypted bytes to a UTF-8 string
-    const plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-    return plaintext;
-}
 
 /**
  * Sets a timer for a given player.

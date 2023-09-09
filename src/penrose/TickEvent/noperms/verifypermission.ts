@@ -1,7 +1,8 @@
 import { world, EntityQueryOptions, system } from "@minecraft/server";
 import config from "../../../data/config.js";
-import { crypto, sendMsg } from "../../../util.js";
+import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { EncryptionManager } from "../../../classes/EncryptionManager.js";
 
 function verifypermission() {
     const filter: EntityQueryOptions = {
@@ -19,7 +20,7 @@ function verifypermission() {
             if (config.debug) {
                 console.error(`Error retrieving dynamic properties for player: ${player.name}`);
                 console.error(error);
-                console.log("Player:", player.name);
+                console.log("Player: ", player.name);
             }
             continue; // Skip to the next player
         }
@@ -28,8 +29,8 @@ function verifypermission() {
         const key = config.encryption.password ? config.encryption.password : player.id;
 
         // Generate the hash
-        const encode = crypto?.(salt, key);
-        if (encode === hash) {
+        const encode = EncryptionManager.hashWithSalt(salt as string, key);
+        if (encode && encode === hash) {
             // Make sure their unique ID exists in case of a reload
             if (dynamicPropertyRegistry.has(player.id) === false) {
                 dynamicPropertyRegistry.set(player.id, player.name);

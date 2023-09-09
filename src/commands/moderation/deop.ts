@@ -1,7 +1,8 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { crypto, getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { EncryptionManager } from "../../classes/EncryptionManager.js";
 
 function deopHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -85,10 +86,10 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
         const memberKey = config.encryption.password ? config.encryption.password : member.id;
 
         // Generate the hash
-        memberEncode = crypto(memberSalt, memberKey);
+        memberEncode = EncryptionManager.hashWithSalt(memberSalt as string, memberKey);
     } catch (error) {}
 
-    if (memberHash !== undefined && memberHash === memberEncode) {
+    if (memberEncode && memberHash !== undefined && memberHash === memberEncode) {
         member.removeDynamicProperty("hash");
         member.removeDynamicProperty("salt");
         member.removeTag("paradoxOpped");

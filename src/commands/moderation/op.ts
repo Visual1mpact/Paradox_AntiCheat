@@ -1,7 +1,8 @@
 import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { crypto, UUID, getPrefix, sendMsg, sendMsgToPlayer, isValidUUID } from "../../util.js";
+import { UUID, getPrefix, sendMsg, sendMsgToPlayer, isValidUUID } from "../../util.js";
+import { EncryptionManager } from "../../classes/EncryptionManager.js";
 
 function opHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -48,7 +49,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
     const operatorHash = operator.getDynamicProperty("hash");
     const operatorSalt = operator.getDynamicProperty("salt");
 
-    if (!operatorHash || !operatorSalt || (operatorHash !== crypto?.(operatorSalt, config.encryption.password || operator.id) && isValidUUID(operatorSalt as string))) {
+    if (!operatorHash || !operatorSalt || (operatorHash !== EncryptionManager.hashWithSalt(operatorSalt as string, config.encryption.password || operator.id) && isValidUUID(operatorSalt as string))) {
         if (!config.encryption.password) {
             if (!operator.isOp()) {
                 return sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
@@ -69,7 +70,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
         const key = config.encryption.password ? config.encryption.password : operator.id;
 
         // Generate the hash
-        const newHash = crypto?.(targetSalt, key);
+        const newHash = EncryptionManager.hashWithSalt(targetSalt, key);
 
         operator.setDynamicProperty("hash", newHash);
         operator.setDynamicProperty("salt", targetSalt);
@@ -86,7 +87,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
             const targetSalt = UUID.generate();
 
             // Generate the hash using the provided password
-            const newHash = crypto?.(targetSalt, args[0]);
+            const newHash = EncryptionManager.hashWithSalt(targetSalt, args[0]);
 
             operator.setDynamicProperty("hash", newHash);
             operator.setDynamicProperty("salt", targetSalt);
@@ -98,7 +99,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
             // Incorrect password
             sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Incorrect password. You need to be Operator to use this command.`);
         }
-    } else if (args.length >= 1 && operatorHash === crypto?.(operatorSalt, config.encryption.password || operator.id)) {
+    } else if (args.length >= 1 && operatorHash === EncryptionManager.hashWithSalt(operatorSalt as string, config.encryption.password || operator.id)) {
         // Operator wants to grant "Paradox-Op" to another player
         const targetPlayerName = args.join(" "); // Combine all arguments into a single string
         // Try to find the player requested
@@ -124,7 +125,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
                 const targetKey = config.encryption.password ? config.encryption.password : targetPlayer.id;
 
                 // Generate the hash
-                const newHash = crypto?.(targetSalt, targetKey);
+                const newHash = EncryptionManager.hashWithSalt(targetSalt, targetKey);
 
                 targetPlayer.setDynamicProperty("hash", newHash);
 

@@ -1,8 +1,9 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry";
-import { decryptString, sendMsgToPlayer } from "../../util";
+import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui";
+import { EncryptionManager } from "../../classes/EncryptionManager";
 
 export function uiManagePlayerSavedLocations(managePlayerSavedLocationsUIResult: ModalFormResponse, onlineList: string[], player: Player) {
     handleUImanagePlayerSavedLocations(managePlayerSavedLocationsUIResult, onlineList, player).catch((error) => {
@@ -49,7 +50,7 @@ async function handleUImanagePlayerSavedLocations(managePlayerSavedLocationsUIRe
     for (let i = 0; i < tagsLength; i++) {
         if (tags[i].startsWith("1337")) {
             // Decode it so we can verify it
-            tags[i] = decryptString(tags[i], salt as string);
+            tags[i] = EncryptionManager.decryptString(tags[i], salt as string);
             // If invalid then skip it
             if (tags[i].startsWith("LocationHome:") === false) {
                 continue;
@@ -96,7 +97,7 @@ async function handleUImanagePlayerSavedLocations(managePlayerSavedLocationsUIRe
                     if (tags[i].startsWith("1337")) {
                         encryptedString = tags[i];
                         // Decode it so we can verify it
-                        tags[i] = decryptString(tags[i], salt as string);
+                        tags[i] = EncryptionManager.decryptString(tags[i], salt as string);
                     }
                     if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                         member.removeTag(encryptedString);

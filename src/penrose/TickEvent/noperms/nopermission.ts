@@ -1,7 +1,8 @@
 import { world, Player, EntityQueryOptions, system } from "@minecraft/server";
-import { crypto, sendMsg } from "../../../util.js";
+import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import config from "../../../data/config.js";
+import { EncryptionManager } from "../../../classes/EncryptionManager.js";
 
 function noperms() {
     const filter: EntityQueryOptions = {
@@ -32,9 +33,9 @@ function noperms() {
         const key = config.encryption.password ? config.encryption.password : entity.id;
 
         // Generate the hash
-        const encode = crypto?.(salt, key);
+        const encode = EncryptionManager.hashWithSalt(salt as string, key);
         entity.removeTag("paradoxOpped");
-        if (encode === hash) {
+        if (encode && encode === hash) {
             entity.removeDynamicProperty("hash");
             entity.removeDynamicProperty("salt");
             dynamicPropertyRegistry.delete(entity.id);

@@ -1,6 +1,7 @@
 import { world, Player, system, EntityQueryOptions, Vector } from "@minecraft/server";
-import { decryptString, encryptString, sendMsg, setTimer } from "../../../util";
+import { sendMsg, setTimer } from "../../../util";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index";
+import { EncryptionManager } from "../../../classes/EncryptionManager";
 
 function freezePlayer(player: Player) {
     // Record the player's original location
@@ -21,7 +22,7 @@ function freezePlayer(player: Player) {
     player.runCommand(`fill ${originalLocation.x + 2} ${245 + 2} ${originalLocation.z + 2} ${originalLocation.x - 2} ${245 - 1} ${originalLocation.z - 2} barrier [] hollow`);
 
     // Encrypt the data
-    const encryptData = encryptString(`${originalLocation.x},${originalLocation.y},${originalLocation.z},${originalDimension.replace("minecraft:", "")}`, player.id);
+    const encryptData = EncryptionManager.encryptString(`${originalLocation.x},${originalLocation.y},${originalLocation.z},${originalDimension.replace("minecraft:", "")}`, player.id);
     // Store original location and dimension in a tag
     player.addTag(`paradoxFreezeData:${encryptData}`);
 }
@@ -36,7 +37,7 @@ function unfreezePlayer(player: Player) {
 
     if (freezeTag) {
         // Decrypt data
-        const decryptData = decryptString(freezeTag.replace("paradoxFreezeData:", ""), player.id);
+        const decryptData = EncryptionManager.decryptString(freezeTag.replace("paradoxFreezeData:", ""), player.id);
         const freezeTagDecrypt = `paradoxFreezeData:${decryptData}`;
         // Parse the tag to extract location and dimension information
         const tagParts = freezeTagDecrypt.split(":");
@@ -87,7 +88,7 @@ const freezePlayers = () => {
             let freezeDataTag = player.getTags().find((tag) => tag.startsWith("paradoxFreezeData:"));
             if (freezeDataTag) {
                 // Decrypt data
-                const decryptData = decryptString(freezeDataTag.replace("paradoxFreezeData:", ""), player.id);
+                const decryptData = EncryptionManager.decryptString(freezeDataTag.replace("paradoxFreezeData:", ""), player.id);
                 freezeDataTag = `paradoxFreezeData:${decryptData}`;
                 // Process data
                 const freezeData = freezeDataTag.split(":")[1];
