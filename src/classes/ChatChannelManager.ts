@@ -158,7 +158,7 @@ export class ChatChannelManager {
      * @param newOwnerName - The name of the new owner.
      * @returns Returns true if ownership is successfully transferred, "not_owner" if the current player is not the owner, or "target_not_found" if the new owner is not found.
      */
-    static handOverChannelOwnership(channelName: string, currentOwner: Player, newOwnerName: string): boolean | string {
+    public static handOverChannelOwnership(channelName: string, currentOwner: Player, newOwnerName: string): boolean | string {
         const channel = this.chatChannels[channelName];
         if (channel) {
             if (channel.owner !== currentOwner.id) {
@@ -251,7 +251,7 @@ export class ChatChannelManager {
      * Clear a player from the playerChannelMap.
      * @param playerName - The name of the player to clear from the playerChannelMap.
      */
-    static clearPlayerFromChannelMap(playerName: string): void {
+    public static clearPlayerFromChannelMap(playerName: string): void {
         this.playerChannelMap[playerName] = null;
     }
 }
