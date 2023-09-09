@@ -1,8 +1,9 @@
 import { Player, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { onJoinPrimaryData, onJoinSecondaryData } from "../../../data/onjoindata.js";
-import { getPrefix, setScore, setTimer } from "../../../util.js";
+import { getPrefix, setTimer } from "../../../util.js";
 import { kickablePlayers } from "../../../kickcheck.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { ScoreManager } from "../../../classes/ScoreManager.js";
 
 async function onJoinTime(object: PlayerSpawnAfterEvent) {
     /**
@@ -50,7 +51,7 @@ async function onJoinTime(object: PlayerSpawnAfterEvent) {
         const verifyObjective = world.scoreboard.getObjective(onJoinPrimaryData[i]);
         if (!verifyObjective) {
             world.scoreboard.addObjective(onJoinPrimaryData[i], onJoinPrimaryData[i]);
-            setScore(player, onJoinPrimaryData[i], 0, true);
+            ScoreManager.setScore(player, onJoinPrimaryData[i], 0, true);
         }
     }
 

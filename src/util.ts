@@ -1,6 +1,7 @@
 import { GameMode, Player, PlayerLeaveAfterEvent, Vector, world } from "@minecraft/server";
 import config from "./data/config.js";
 import { kickablePlayers } from "./kickcheck.js";
+import { ScoreManager } from "./classes/ScoreManager.js";
 
 const overworld = world.getDimension("overworld");
 const timerMap = new Map<string, number>();
@@ -33,14 +34,14 @@ export function flag(player: Player, check: string, checkType: string, hackType:
         player.teleport({ x: 30000000, y: 30000000, z: 30000000 }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     }
 
-    setScore(player, `${check.toLowerCase()}vl`, 1, true);
+    ScoreManager.setScore(player, `${check.toLowerCase()}vl`, 1, true);
 
     if (debug) {
-        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${debugName}=${debug})§4. VL= ${ScoreManager.getScore(check.toLowerCase() + "vl", player)}`);
     } else if (item && stack) {
-        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType} §7(${item.replace("minecraft:", "")}=${stack})§4. VL= ${ScoreManager.getScore(check.toLowerCase() + "vl", player)}`);
     } else {
-        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${getScore(check.toLowerCase() + "vl", player)}`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has failed §7(${hackType}) §4${check}/${checkType}. VL= ${ScoreManager.getScore(check.toLowerCase() + "vl", player)}`);
     }
 
     if (check === "Namespoof") {
@@ -88,47 +89,6 @@ export function banMessage(player: Player) {
 
     // Notify staff that a player was banned
     sendMsg("@a[tag=paradoxOpped]", [`§f§4[§6Paradox§4]§f ${player.name} has been banned!`, `§4[§6Banned By§4]§f: ${by || "§7N/A"}`, `§4[§6Reason§4]§f: ${reason || "§7N/A"}`]);
-}
-
-/**
- * Returns the score of a player in the specified scoreboard objective.
- *
- * @name getScore
- * @param {string} objective - Scoreboard objective
- * @param {Player} player - The player object
- */
-export function getScore(objective: string, player: Player) {
-    try {
-        return world.scoreboard.getObjective(objective).getScore(player.scoreboardIdentity);
-    } catch (error) {
-        return 0;
-    }
-}
-
-/**
- * Sets a players score.
- *
- * @name setScore
- * @param {Player} target The player object.
- * @param {string} objective Scoreboard objective.
- * @param {number} amount The number to set it to.
- * @param {boolean} stack If true, it will be added instead of set. Default false.
- * @returns {number} The score it was set to.
- */
-export function setScore(target: Player, objective: string, amount: number, stack: boolean = false): number {
-    const scoreObj = world.scoreboard.getObjective(objective);
-    if (scoreObj) {
-        const isParticipant = !!scoreObj.getParticipants().some((participant) => participant.id === target.scoreboardIdentity.id);
-        if (!isParticipant) {
-            target.runCommand(`scoreboard players add @s ${objective} 0`);
-        }
-        const score = isParticipant ? scoreObj.getScore(target.scoreboardIdentity) : 0;
-        const result = stack ? score + amount : amount;
-        scoreObj.setScore(target.scoreboardIdentity, result);
-        return result;
-    } else {
-        return 0;
-    }
 }
 
 /**

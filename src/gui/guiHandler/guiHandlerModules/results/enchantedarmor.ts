@@ -1,11 +1,11 @@
 import { Player } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
-import { getScore } from "../../../../util";
 import { uiENCHANTEDARMOR } from "../../../modules/uiEnchantedArmor";
+import { ScoreManager } from "../../../../classes/ScoreManager";
 
 export function antiEnchantedArmorHandler(player: Player) {
     const modulesenchantedarmorui = new ModalFormData();
-    const encharmorscore = getScore("encharmor", player);
+    const encharmorscore = ScoreManager.getScore("encharmor", player);
     let enchantedarmorBoolean: boolean;
     /**get the score value and then check to see if its already enable or already disabled
      * so we can then update the control boolean to disaply its current setting to the player

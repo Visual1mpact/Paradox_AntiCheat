@@ -1,10 +1,11 @@
 import { EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { allscores, getGamemode, getScore } from "../../util";
+import { allscores, getGamemode } from "../../util";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { ScoreManager } from "../../classes/ScoreManager";
 
 export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], player: Player) {
     if (!statsResult || statsResult.canceled) {
@@ -56,7 +57,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     }
 
     allObjectives.forEach((objective) => {
-        const score = getScore(objective, member);
+        const score = ScoreManager.getScore(objective, member);
         if (score > 0) {
             reportBody.push(`§f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f number of Violations: ${score}\n`);
         }

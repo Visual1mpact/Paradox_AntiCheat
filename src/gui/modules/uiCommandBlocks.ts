@@ -1,8 +1,9 @@
 import { Player } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { getScore, sendMsg, sendMsgToPlayer } from "../../util";
+import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { ScoreManager } from "../../classes/ScoreManager.js";
 
 /**
  * Handles the result of a modal form used for toggling command blocks mode.
@@ -36,8 +37,8 @@ async function handleUICommandBlocks(commandblocksResult: ModalFormResponse, pla
 
     // Get Dynamic Property Boolean
     //get the current scores
-    const cmdsscore = getScore("cmds", player);
-    const commandblocksscore = getScore("commandblocks", player);
+    const cmdsscore = ScoreManager.getScore("cmds", player);
+    const commandblocksscore = ScoreManager.getScore("commandblocks", player);
     let removecmdblocksBoolean;
     Boolean;
     let cmdoBoolean: boolean;

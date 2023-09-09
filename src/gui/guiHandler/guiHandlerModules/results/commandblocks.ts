@@ -1,12 +1,12 @@
 import { Player } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
-import { getScore } from "../../../../util";
 import { uiCOMMANDBLOCKS } from "../../../modules/uiCommandBlocks";
+import { ScoreManager } from "../../../../classes/ScoreManager";
 
 export function commandBlocksHandler(player: Player) {
     const modulescommandblocksui = new ModalFormData();
-    const cmdsscore = getScore("cmds", player);
-    const commandblocksscore = getScore("commandblocks", player);
+    const cmdsscore = ScoreManager.getScore("cmds", player);
+    const commandblocksscore = ScoreManager.getScore("commandblocks", player);
     let removecmdblocksBoolean;
     Boolean;
     let cmdoBoolean: boolean;

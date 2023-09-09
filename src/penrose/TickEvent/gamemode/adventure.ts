@@ -1,6 +1,7 @@
 import { world, EntityQueryOptions, GameMode, system } from "@minecraft/server";
-import { getScore, sendMsg, setScore } from "../../../util.js";
+import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { ScoreManager } from "../../../classes/ScoreManager.js";
 
 async function adventure(id: number) {
     // Get Dynamic Property
@@ -45,8 +46,8 @@ async function adventure(id: number) {
             // Survival is allowed so set them to survival
             player.runCommandAsync(`gamemode survival`);
         }
-        setScore(player, "gamemodevl", 1, true);
-        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has tried to change their gamemode §7(Gamemode_A)§6.§4 VL= ${getScore("gamemodevl", player)}`);
+        ScoreManager.setScore(player, "gamemodevl", 1, true);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} §6has tried to change their gamemode §7(Gamemode_A)§6.§4 VL= ${ScoreManager.getScore("gamemodevl", player)}`);
     }
 }
 

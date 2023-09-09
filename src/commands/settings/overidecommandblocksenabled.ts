@@ -1,7 +1,8 @@
 import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { getPrefix, getScore, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { ScoreManager } from "../../classes/ScoreManager.js";
 
 function overrideCBEHelp(player: Player, prefix: string, cmdsscore: number) {
     let commandStatus: string;
@@ -64,7 +65,7 @@ async function handleOverideCommandBlocksEnabled(message: ChatSendAfterEvent, ar
         return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Paradox-Opped to use this command.`);
     }
 
-    const cmdsscore = getScore("cmds", player);
+    const cmdsscore = ScoreManager.getScore("cmds", player);
 
     // Check for custom prefix
     const prefix = getPrefix(player);

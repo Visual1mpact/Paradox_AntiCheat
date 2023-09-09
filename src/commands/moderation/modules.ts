@@ -1,7 +1,8 @@
 import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { getScore, getPrefix, sendMsgToPlayer } from "../../util.js";
+import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import { ScoreManager } from "../../classes/ScoreManager.js";
 
 function modulesHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -55,10 +56,10 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
     }
 
     // scores
-    const commandblocks = getScore("commandblocks", player);
-    const cmds = getScore("cmds", player);
-    const encharmor = getScore("encharmor", player);
-    const antikb = getScore("antikb", player);
+    const commandblocks = ScoreManager.getScore("commandblocks", player);
+    const cmds = ScoreManager.getScore("cmds", player);
+    const encharmor = ScoreManager.getScore("encharmor", player);
+    const antikb = ScoreManager.getScore("antikb", player);
 
     // Booleans
     const worldBorderBoolean = dynamicPropertyRegistry.get("worldborder_b");

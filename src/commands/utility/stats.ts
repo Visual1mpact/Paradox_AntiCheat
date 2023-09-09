@@ -2,7 +2,8 @@ import { ChatSendAfterEvent, EntityEquipmentInventoryComponent, EquipmentSlot, I
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { getPrefix, sendMsgToPlayer, getGamemode, allscores, getScore } from "../../util.js";
+import { getPrefix, sendMsgToPlayer, getGamemode, allscores } from "../../util.js";
+import { ScoreManager } from "../../classes/ScoreManager";
 
 function statsHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -115,7 +116,7 @@ async function handleStats(message: ChatSendAfterEvent, args: string[]) {
     let divider = false;
     allscores.forEach((objective) => {
         vlCount++;
-        const score = getScore(objective, member);
+        const score = ScoreManager.getScore(objective, member);
         if (score > 0) {
             violationsFound++;
             if (violationsFound === 1) {
