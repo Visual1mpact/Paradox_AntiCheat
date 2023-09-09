@@ -1,10 +1,11 @@
 import { Player, world } from "@minecraft/server";
 import { ActionFormResponse, ModalFormResponse } from "@minecraft/server-ui";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { isValidUUID, sendMsg, sendMsgToPlayer, UUID } from "../../util";
+import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import config from "../../data/config.js";
 import { EncryptionManager } from "../../classes/EncryptionManager.js";
+import { UUIDManager } from "../../classes/UUIDManager.js";
 
 //Function provided by Visual1mpact
 export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: string | number | boolean, hash: string | number | boolean, player: Player, onlineList?: string[]) {
@@ -12,7 +13,7 @@ export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: str
         // Handle canceled form or undefined result
         return;
     }
-    if (!hash || !salt || (hash !== EncryptionManager.hashWithSalt(salt as string, config.encryption.password || player.id) && isValidUUID(salt as string))) {
+    if (!hash || !salt || (hash !== EncryptionManager.hashWithSalt(salt as string, config.encryption.password || player.id) && UUIDManager.isValidUUID(salt as string))) {
         if (!config.encryption.password) {
             if (!player.isOp()) {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to be Operator to use this command.`);
@@ -49,7 +50,7 @@ export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: str
             const targetHash = targetPlayer.getDynamicProperty("hash");
 
             if (targetHash === undefined) {
-                const targetSalt = UUID.generate();
+                const targetSalt = UUIDManager.generateRandomUUID();
                 targetPlayer.setDynamicProperty("salt", targetSalt);
 
                 // Use either the operator's ID or the encryption password as the key
@@ -79,7 +80,7 @@ export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: str
         // It's an ActionFormResponse
         if (opResult.selection === 0) {
             // player wants to change their own password
-            const targetSalt = UUID.generate();
+            const targetSalt = UUIDManager.generateRandomUUID();
             const newHash = EncryptionManager.hashWithSalt(targetSalt, player.id);
 
             player.setDynamicProperty("hash", newHash);

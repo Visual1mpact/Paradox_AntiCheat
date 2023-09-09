@@ -1,6 +1,6 @@
 import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeAfterEvent } from "@minecraft/server";
 import config from "../../data/config.js";
-import { UUID } from "../../util.js";
+import { UUIDManager } from "../../classes/UUIDManager.js";
 
 export const dynamicPropertyRegistry = new Map<string, string | number | boolean>();
 
@@ -174,7 +174,7 @@ function registry(data: WorldInitializeAfterEvent) {
      */
     const salt = world.getDynamicProperty("crypt");
     if (salt === undefined) {
-        world.setDynamicProperty("crypt", UUID.generate());
+        world.setDynamicProperty("crypt", UUIDManager.generateRandomUUID());
     }
 }
 
