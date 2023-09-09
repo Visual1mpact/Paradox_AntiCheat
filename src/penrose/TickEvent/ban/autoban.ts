@@ -1,6 +1,5 @@
 import { Player, system, world } from "@minecraft/server";
 import { kickablePlayers } from "../../../kickcheck";
-import { allscores } from "../../../util";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry";
 import config from "../../../data/config";
 import { ScoreManager } from "../../../classes/ScoreManager";
@@ -27,7 +26,7 @@ function autoban(id: number) {
         system.clearRun(id);
         return;
     }
-    const scores = allscores;
+    const scores = ScoreManager.allscores;
 
     const players = world.getPlayers();
     players.forEach((player) => {

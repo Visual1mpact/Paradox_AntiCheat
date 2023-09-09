@@ -2,7 +2,7 @@ import { ChatSendAfterEvent, EntityEquipmentInventoryComponent, EquipmentSlot, I
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
-import { getPrefix, sendMsgToPlayer, getGamemode, allscores } from "../../util.js";
+import { getPrefix, sendMsgToPlayer, getGamemode } from "../../util.js";
 import { ScoreManager } from "../../classes/ScoreManager";
 
 function statsHelp(player: Player, prefix: string) {
@@ -114,7 +114,7 @@ async function handleStats(message: ChatSendAfterEvent, args: string[]) {
     let violationsFound = 0;
     let vlCount = 0;
     let divider = false;
-    allscores.forEach((objective) => {
+    ScoreManager.allscores.forEach((objective) => {
         vlCount++;
         const score = ScoreManager.getScore(objective, member);
         if (score > 0) {
@@ -125,7 +125,7 @@ async function handleStats(message: ChatSendAfterEvent, args: string[]) {
             }
             reportBody.push(`§f§4[§6Paradox§4]§f §f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f Violations: ${score}`);
         }
-        if (vlCount === allscores.length && divider === true) {
+        if (vlCount === ScoreManager.allscores.length && divider === true) {
             reportBody.push(`§f§4[§6Paradox§4]§4 ----------------------------------§f`);
         }
     });

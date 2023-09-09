@@ -1,7 +1,7 @@
 import { EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
-import { allscores, getGamemode } from "../../util";
+import { getGamemode } from "../../util";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
@@ -34,7 +34,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
         return;
     }
 
-    const allObjectives = allscores;
+    const allObjectives = ScoreManager.allscores;
 
     const reportBody = [
         `§6All Stats for ${member.name}§f\n\n`,

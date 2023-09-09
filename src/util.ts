@@ -239,25 +239,3 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
 
     target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
 };
-
-export const allscores: string[] = [
-    "autoclickervl",
-    "badpacketsvl",
-    "killauravl",
-    "flyvl",
-    "illegalitemsvl",
-    "cbevl",
-    "gamemodevl",
-    "spammervl",
-    "namespoofvl",
-    "speedvl",
-    "crashervl",
-    "reachvl",
-    "invalidsprintvl",
-    "armorvl",
-    "antikbvl",
-    "antifallvl",
-    "nukervl",
-    "scaffoldvl",
-    "antiphasevl",
-];

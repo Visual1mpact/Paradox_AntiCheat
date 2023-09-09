@@ -41,4 +41,31 @@ export class ScoreManager {
             return 0;
         }
     }
+
+    /**
+     * An array of all score objectives.
+     * @name allscores
+     * @type {string[]}
+     */
+    public static allscores: string[] = [
+        "autoclickervl",
+        "badpacketsvl",
+        "killauravl",
+        "flyvl",
+        "illegalitemsvl",
+        "cbevl",
+        "gamemodevl",
+        "spammervl",
+        "namespoofvl",
+        "speedvl",
+        "crashervl",
+        "reachvl",
+        "invalidsprintvl",
+        "armorvl",
+        "antikbvl",
+        "antifallvl",
+        "nukervl",
+        "scaffoldvl",
+        "antiphasevl",
+    ];
 }
