@@ -196,7 +196,7 @@ export class ChatChannelManager {
      * @returns The player with the specified name, or null if not found.
      */
     public static getPlayerByName(playerName: string): Player | null {
-        return PlayerManager.getPlayerByName(playerName.toLowerCase().replace(/"|\\|@/g, "")) || null;
+        return PlayerManager.getPlayerByName(playerName) || null;
     }
 
     /**
