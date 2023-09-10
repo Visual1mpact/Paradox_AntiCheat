@@ -55,6 +55,11 @@ function antiphasea(id: number) {
             try {
                 blockType = player.dimension.getBlock(block);
             } catch {}
+            // Check if the block is soul sand and the player's y-coordinate difference is within -0.125
+            if (blockType && blockType.typeId === "minecraft:soul_sand" && y - block.y <= 0.125) {
+                return true;
+            }
+            // Check if the block is passable or if the player is riding
             if (!blockType || player.hasTag("riding") || passableSolids.has(blockType.typeId.replace("minecraft:", ""))) {
                 return true;
             }
