@@ -39,7 +39,7 @@ function isBlockInFrontAndBelowPlayer(blockLocation: Vector3, playerLocation: Ve
     const yThreshold = -0.5; // Consider the block below and front if it's a certain distance between the player
     const zThreshold = -0.5;
 
-    return dx <= xThreshold && dy >= yThreshold && dy <= yThreshold && dz >= zThreshold;
+    return dx <= xThreshold && dy <= yThreshold && dz >= zThreshold;
 }
 
 async function scaffolda(object: BlockPlaceAfterEvent) {
