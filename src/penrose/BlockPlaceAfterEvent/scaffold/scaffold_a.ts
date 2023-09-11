@@ -76,6 +76,14 @@ async function scaffolda(object: BlockPlaceAfterEvent) {
         if (rot.x % 1 === 0) {
             dimension.getBlock(blockLocation).setType(MinecraftBlockTypes.air);
             flag(player, "Scaffold", "A", "Placement", null, null, null, null, false);
+            const hasFreezeTag = player.hasTag("paradoxFreeze");
+            const hasScaffoldFreeze = player.hasTag("freezeScaffoldA");
+            if (!hasFreezeTag) {
+                player.addTag("paradoxFreeze");
+            }
+            if (!hasScaffoldFreeze) {
+                player.addTag("freezeScaffoldA");
+            }
         }
     }
 }
