@@ -77,7 +77,6 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
     const creativeGMBoolean = dynamicPropertyRegistry.get("creativegm_b");
     const survivalGMBoolean = dynamicPropertyRegistry.get("survivalgm_b");
     const flyABoolean = dynamicPropertyRegistry.get("flya_b");
-    const crasherABoolean = dynamicPropertyRegistry.get("crashera_b");
     const bedrockValidateBoolean = dynamicPropertyRegistry.get("bedrockvalidate_b");
     const reachBBoolean = dynamicPropertyRegistry.get("reachb_b");
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
@@ -123,7 +122,6 @@ export function modules(message: ChatSendAfterEvent, args: string[]) {
         `§o§6|§f SpammerB: ${status(spammerBBoolean)}`,
         `§o§6|§f SpammerC: ${status(spammerCBoolean)}`,
         `§o§6|§f Anti-Spam: ${status(antiSpamBoolean)}`,
-        `§o§6|§f CrasherA: ${status(crasherABoolean)}`,
         `§o§6|§f NamespoofA: ${status(nameSpoofABoolean)}`,
         `§o§6|§f NamespoofB: ${status(nameSpoofBBoolean)}`,
         `§o§6|§f Bedrock: ${status(bedrockValidateBoolean)}`,

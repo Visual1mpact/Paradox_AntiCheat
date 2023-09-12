@@ -30,7 +30,6 @@ function registry(data: WorldInitializeAfterEvent) {
         "salvage_b",
         "antispam_b",
         "clearlag_b",
-        "crashera_b",
         "lockdown_b",
         "spammera_b",
         "spammerb_b",

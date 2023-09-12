@@ -76,7 +76,6 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}spammerb§f - ${config.customcommands.spammerb ? `Checks if message is sent while swinging.` : textDisabled}`,
         `§6${prefix}spammerc§f - ${config.customcommands.spammerc ? `Checks if message is sent while using items.` : textDisabled}`,
         `§6${prefix}antispam§f - ${config.customcommands.antispam ? `Checks for spamming in chat with 2 second cooldown.` : textDisabled}`,
-        `§6${prefix}crashera§f - ${config.customcommands.crashera ? `Prevents Horion crasher.` : textDisabled}`,
         `§6${prefix}namespoofa§f - ${config.customcommands.namespoofa ? `Checks if player's name exceeds character limitations.` : textDisabled}`,
         `§6${prefix}namespoofb§f - ${config.customcommands.namespoofb ? `Checks if player's name has Non ASCII characters.` : textDisabled}`,
         `§6${prefix}reacha§f - ${config.customcommands.reacha ? `Checks if player's place blocks beyond reach.` : textDisabled}`,

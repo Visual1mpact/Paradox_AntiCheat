@@ -28,10 +28,8 @@ world.afterEvents.playerLeave.subscribe(onPlayerLogout);
  * @param {boolean} shouldTP - Whever to tp the player to itself.
  */
 export function flag(player: Player, check: string, checkType: string, hackType: string, item: string, stack: number, debugName: string, debug: string, shouldTP: boolean) {
-    if (shouldTP && check !== "Crasher") {
+    if (shouldTP) {
         player.teleport(new Vector(player.location.x, player.location.y, player.location.z), { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-    } else if (shouldTP && check === "Crasher") {
-        player.teleport({ x: 30000000, y: 30000000, z: 30000000 }, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
     }
 
     ScoreManager.setScore(player, `${check.toLowerCase()}vl`, 1, true);

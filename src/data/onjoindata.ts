@@ -27,7 +27,6 @@ export const onJoinPrimaryData = [
     "spammervl",
     "namespoofvl",
     "speedvl",
-    "crashervl",
     "reachvl",
     "invalidsprintvl",
     "armorvl",

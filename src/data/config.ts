@@ -40,7 +40,6 @@ export default {
         spammerb: true,
         spammerc: true,
         antispam: true,
-        crashera: true,
         namespoofa: true,
         namespoofb: true,
         reacha: true,
@@ -100,9 +99,6 @@ export default {
             enabled: true,
         },
         antispam: {
-            enabled: true,
-        },
-        crasherA: {
             enabled: true,
         },
         namespoofA: {

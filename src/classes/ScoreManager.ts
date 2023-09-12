@@ -58,7 +58,6 @@ export class ScoreManager {
         "spammervl",
         "namespoofvl",
         "speedvl",
-        "crashervl",
         "reachvl",
         "invalidsprintvl",
         "armorvl",

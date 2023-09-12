@@ -8,7 +8,6 @@ import { beforeChatFilter } from "./penrose/ChatSendBeforeEvent/chat/chatfilter.
 import { beforeAntiSpam } from "./penrose/ChatSendBeforeEvent/chat/antispam.js";
 // Import Tick Events
 import { ServerBan } from "./penrose/TickEvent/ban/serverban.js";
-import { CrasherA } from "./penrose/TickEvent/crasher/crasher_a.js";
 import { NamespoofA } from "./penrose/TickEvent/namespoof/namespoof_a.js";
 import { NamespoofB } from "./penrose/TickEvent/namespoof/namespoof_b.js";
 import { BedrockValidate } from "./penrose/TickEvent/bedrock/bedrockvalidate.js";
@@ -98,7 +97,6 @@ Adventure();
 Creative();
 WorldBorder();
 ServerBan;
-CrasherA();
 NamespoofA();
 NamespoofB();
 BedrockValidate();
