@@ -25,10 +25,6 @@ for file in "$entity_dir"/*.json; do
   # Remove comments from the file
   sed -i 's/\/\/.*//' "$file"
 
-  # Update is_spawnable and is_summonable properties
-  sed -i 's/"is_spawnable": [^,]*,/"is_spawnable": false,/' "$file"
-  sed -i 's/"is_summonable": [^,]*,/"is_summonable": false,/' "$file"
-
   # Check if the file contains a "component_groups" object
   if ! grep -q '"component_groups":' "$file"; then
     # If the file does not contain a "component_groups" object, add it

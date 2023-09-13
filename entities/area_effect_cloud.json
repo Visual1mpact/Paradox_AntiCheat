@@ -1,31 +1,33 @@
 {
-    "format_version": "1.8.0",
-    "minecraft:entity": {
-        "events": {
-            "paradox:kick": {
-                "add": {
-                    "component_groups": ["paradox:kick"]
-                }
-            }
-        },
-        "component_groups": {
-            "paradox:kick": {
-                "minecraft:instant_despawn": {
-                    "remove_child_entities": true
-                }
-            }
-        },
-        "description": {
-            "identifier": "minecraft:area_effect_cloud",
-            "is_spawnable": false,
-            "is_summonable": false,
-            "is_experimental": false
-        },
-        "components": {
-            "minecraft:physics": {
-                "has_collision": false
-            },
-            "minecraft:conditional_bandwidth_optimization": {}
+  "format_version": "1.8.0",
+  "minecraft:entity": {
+    "events": {
+      "paradox:kick": {
+        "add": {
+          "component_groups": [
+            "paradox:kick"
+          ]
         }
+      }
+    },
+    "component_groups": {
+      "paradox:kick": {
+        "minecraft:instant_despawn": {
+          "remove_child_entities": true
+        }
+      }
+    },
+    "description": {
+      "identifier": "minecraft:area_effect_cloud",
+      "is_spawnable": false,
+      "is_summonable": false,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:physics": {
+        "has_collision": false
+      },
+      "minecraft:conditional_bandwidth_optimization": {}
     }
+  }
 }
