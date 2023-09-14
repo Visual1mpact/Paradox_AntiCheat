@@ -81,6 +81,11 @@ export function rank(message: ChatSendAfterEvent, args: string[]) {
     const playerName = args.slice(0, -1).join(" "); // Combine all arguments except the last one as the player name
     const rank = args[args.length - 1]; // Last argument is the rank
 
+    // Check if the rank argument starts or ends with a hyphen
+    if (rank.startsWith("-") || rank.endsWith("-")) {
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f The rank cannot start or end with a hyphen.`);
+    }
+
     // try to find the player requested
     let member: Player;
     const players = world.getPlayers();
