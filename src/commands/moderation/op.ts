@@ -63,44 +63,7 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
         return opHelp(operator, prefix);
     }
 
-    if (args.length === 0 && !config.encryption.password) {
-        // Operator wants to change their own password
-        const targetSalt = UUIDManager.generateRandomUUID();
-
-        // Use either the operator's ID or the encryption password as the key
-        const key = config.encryption.password ? config.encryption.password : operator.id;
-
-        // Generate the hash
-        const newHash = EncryptionManager.hashWithSalt(targetSalt, key);
-
-        operator.setDynamicProperty("hash", newHash);
-        operator.setDynamicProperty("salt", targetSalt);
-        operator.addTag("paradoxOpped");
-
-        sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You are now Paradox-Opped!`);
-
-        dynamicPropertyRegistry.set(operator.id, operator.name);
-
-        return;
-    } else if (args.length === 1 && config.encryption.password) {
-        // Allow the user to gain Paradox-Op using the password
-        if (config.encryption.password === args[0]) {
-            const targetSalt = UUIDManager.generateRandomUUID();
-
-            // Generate the hash using the provided password
-            const newHash = EncryptionManager.hashWithSalt(targetSalt, args[0]);
-
-            operator.setDynamicProperty("hash", newHash);
-            operator.setDynamicProperty("salt", targetSalt);
-            operator.addTag("paradoxOpped");
-
-            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You are now Paradox-Opped using the password.`);
-            dynamicPropertyRegistry.set(operator.id, operator.name);
-        } else {
-            // Incorrect password
-            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Incorrect password. You need to be Operator to use this command.`);
-        }
-    } else if (args.length >= 1 && operatorHash === EncryptionManager.hashWithSalt(operatorSalt as string, config.encryption.password || operator.id)) {
+    if (args.length >= 1 && operatorHash === EncryptionManager.hashWithSalt(operatorSalt as string, config.encryption.password || operator.id)) {
         // Operator wants to grant "Paradox-Op" to another player
         const targetPlayerName = args.join(" "); // Combine all arguments into a single string
         // Try to find the player requested
@@ -141,6 +104,43 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
             }
         } else {
             sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayerName}.`);
+        }
+    } else if (args.length === 0 && !config.encryption.password) {
+        // Operator wants to change their own password
+        const targetSalt = UUIDManager.generateRandomUUID();
+
+        // Use either the operator's ID or the encryption password as the key
+        const key = config.encryption.password ? config.encryption.password : operator.id;
+
+        // Generate the hash
+        const newHash = EncryptionManager.hashWithSalt(targetSalt, key);
+
+        operator.setDynamicProperty("hash", newHash);
+        operator.setDynamicProperty("salt", targetSalt);
+        operator.addTag("paradoxOpped");
+
+        sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You are now Paradox-Opped!`);
+
+        dynamicPropertyRegistry.set(operator.id, operator.name);
+
+        return;
+    } else if (args.length === 1 && config.encryption.password) {
+        // Allow the user to gain Paradox-Op using the password
+        if (config.encryption.password === args[0]) {
+            const targetSalt = UUIDManager.generateRandomUUID();
+
+            // Generate the hash using the provided password
+            const newHash = EncryptionManager.hashWithSalt(targetSalt, args[0]);
+
+            operator.setDynamicProperty("hash", newHash);
+            operator.setDynamicProperty("salt", targetSalt);
+            operator.addTag("paradoxOpped");
+
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You are now Paradox-Opped using the password.`);
+            dynamicPropertyRegistry.set(operator.id, operator.name);
+        } else {
+            // Incorrect password
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Incorrect password. You need to be Operator to use this command.`);
         }
     } else {
         return opHelp(operator, prefix);
