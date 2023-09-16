@@ -88,7 +88,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
     // Get the block's inventory
     const blockInventory = block.getComponent("minecraft:inventory") as BlockInventoryComponent;
     const blockContainer = blockInventory?.container;
-    const blockIdentifiers = ["ender_chest", "shulker"];
+    const blockIdentifiers = ["ender_chest", "shulker", "hopper"];
     let isFlagged = false;
     let isAdjacent = false;
     // Check if container illegally contains nested items if not an ender chest or shulker box
