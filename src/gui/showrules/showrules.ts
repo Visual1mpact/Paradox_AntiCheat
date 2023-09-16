@@ -34,7 +34,9 @@ async function showrules(id: number) {
 
     const players = world.getPlayers(filter);
     const promises = players.map(async (player) => {
-        if (playersAwaitingResponse.has(player.id)) {
+        if (!playersAwaitingResponse.has(player.id)) {
+            playersAwaitingResponse.add(player.id);
+        } else {
             // Player is already being shown the rules, skip this player.
             return;
         }
