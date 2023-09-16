@@ -2,7 +2,7 @@ import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
-import { MinecraftEffectTypes } from "../../../src/node_modules/@minecraft/vanilla-data";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 function vanishHelp(player: Player, prefix: string) {
     let commandStatus: string;

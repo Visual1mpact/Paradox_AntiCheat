@@ -3,7 +3,7 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { MinecraftEffectTypes } from "../../../src/node_modules/@minecraft/vanilla-data";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 /**
  * Handles the result of a modal form used for toggling player vanish mode.
