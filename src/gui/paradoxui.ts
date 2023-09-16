@@ -79,6 +79,7 @@ async function handleParadoxUI(player: Player) {
                         break;
                     case 4:
                         chatChannelMainMenu(player);
+                        break;
                     default:
                         // Handle other selections for isUnique case
                         break;

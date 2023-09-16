@@ -14,7 +14,10 @@
         "useDefineForClassFields": true,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "alwaysStrict": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitThis": true
     },
     "include": ["src"],
     "exclude": ["node_modules"]
