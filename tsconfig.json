@@ -17,7 +17,8 @@
         "noImplicitAny": true,
         "alwaysStrict": true,
         "noFallthroughCasesInSwitch": true,
-        "noImplicitThis": true
+        "noImplicitThis": true,
+        "noUnusedParameters": true
     },
     "include": ["src"],
     "exclude": ["node_modules"]

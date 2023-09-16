@@ -4,7 +4,7 @@ import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registr
 var savedValue: number;
 var flagPlayer: boolean = false;
 var isFlying: boolean = false;
-function antiVoid(id: number) {
+function antiVoid(_id: number) {
     //exclude players who are in creative.
     const gm: EntityQueryOptions = {
         excludeGameModes: [GameMode.creative, GameMode.spectator],

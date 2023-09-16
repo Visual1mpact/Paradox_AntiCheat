@@ -15,8 +15,8 @@ export function chatChannelsLeaveMenuUI(player: Player) {
     menu.title("§4Paradox - Chat Channels Leave§4");
     menu.dropdown(`\n§fSelect a channel:\n\n`, channelDropdownData);
     menu.show(player)
-        .then((chatChannelsLeaveResult) => {
-            uiChatChannelLeave(chatChannelsLeaveResult, player, channelDropdownData);
+        .then(() => {
+            uiChatChannelLeave(player);
         })
         .catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
