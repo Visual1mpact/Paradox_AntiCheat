@@ -204,10 +204,11 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
             player.runCommandAsync(`kill @e[x=${x},y=${y},z=${z},r=10,c=1,type=item]`);
 
             // Apply effects or actions for three or more consecutive block breaks
-            player.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
-            player.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
-            player.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
-            player.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+            const effectsToAdd = [MinecraftEffectTypes.Blindness, MinecraftEffectTypes.MiningFatigue, MinecraftEffectTypes.Weakness, MinecraftEffectTypes.Slowness];
+
+            for (const effectType of effectsToAdd) {
+                player.addEffect(effectType, 1000000, { amplifier: 255, showParticles: true });
+            }
 
             const hasFreezeTag = player.hasTag("paradoxFreeze");
             const hasNukerFreeze = player.hasTag("freezeNukerA");

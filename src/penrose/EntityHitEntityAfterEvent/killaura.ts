@@ -73,14 +73,14 @@ function killaura(obj: EntityHitEntityAfterEvent) {
     if (angleBoolean) {
         // Entity is facing hitEntity at an angle greater than 90 degrees
         flag(damagingEntity, "KillAura", "A", "Combat", null, null, null, null, false);
-        // Blindness
-        damagingEntity.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
-        // Mining Fatigue
-        damagingEntity.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
-        // Weakness
-        damagingEntity.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
-        // Slowness
-        damagingEntity.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+
+        // Add Effects
+        const effectsToAdd = [MinecraftEffectTypes.Blindness, MinecraftEffectTypes.MiningFatigue, MinecraftEffectTypes.Weakness, MinecraftEffectTypes.Slowness];
+
+        for (const effectType of effectsToAdd) {
+            damagingEntity.addEffect(effectType, 1000000, { amplifier: 255, showParticles: true });
+        }
+
         const boolean = damagingEntity.hasTag("paradoxFreeze");
         const hasAuraFreeze = damagingEntity.hasTag("freezeAura");
         if (!boolean) {

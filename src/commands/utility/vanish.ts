@@ -2,6 +2,7 @@ import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
+import { MinecraftEffectTypes } from "../../../src/node_modules/@minecraft/vanilla-data";
 
 function vanishHelp(player: Player, prefix: string) {
     let commandStatus: string;
@@ -73,7 +74,12 @@ async function handleVanish(message: ChatSendAfterEvent, args: string[]) {
     if (vanishBoolean) {
         player.removeTag("vanish");
         player.triggerEvent("unvanish");
-        player.runCommandAsync(`effect @s clear`);
+        // Remove effects
+        const effectsToRemove = [MinecraftEffectTypes.Invisibility, MinecraftEffectTypes.NightVision];
+
+        for (const effectType of effectsToRemove) {
+            player.removeEffect(effectType);
+        }
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are no longer vanished.`);
         sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f ${player.name}§f is no longer in vanish.`);
     } else {

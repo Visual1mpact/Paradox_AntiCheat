@@ -3,6 +3,7 @@ import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
 import { ModalFormResponse } from "@minecraft/server-ui";
+import { MinecraftEffectTypes } from "../../../src/node_modules/@minecraft/vanilla-data";
 
 /**
  * Handles the result of a modal form used for toggling player vanish mode.
@@ -61,7 +62,12 @@ async function handleUIVanish(vanishResult: ModalFormResponse, onlineList: strin
 
     if (member.hasTag("novanish")) {
         member.triggerEvent("unvanish");
-        member.runCommandAsync(`effect @s clear`);
+        // Remove effects
+        const effectsToRemove = [MinecraftEffectTypes.Invisibility, MinecraftEffectTypes.NightVision];
+
+        for (const effectType of effectsToRemove) {
+            player.removeEffect(effectType);
+        }
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are no longer vanished.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is no longer in vanish.`);
     }

@@ -16,17 +16,25 @@ async function vanish() {
 
         // Make sure they have permission
         if (uniqueId === player.name) {
-            player.addEffect(MinecraftEffectTypes.Invisibility, 1728000, { amplifier: 255, showParticles: false });
-            player.addEffect(MinecraftEffectTypes.NightVision, 1728000, { amplifier: 255, showParticles: false });
+            const effectsToAdd = [MinecraftEffectTypes.Invisibility, MinecraftEffectTypes.NightVision];
+
+            for (const effectType of effectsToAdd) {
+                player.addEffect(effectType, 1728000, { amplifier: 255, showParticles: false });
+            }
             player.onScreenDisplay.setActionBar("§6YOU ARE VANISHED!");
         }
         // Make sure they have permission to use Vanish
         if (uniqueId !== player.name) {
             // They have been busted!
             player.removeTag("vanish");
-            if (player.getEffect(MinecraftEffectTypes.Invisibility) || player.getEffect(MinecraftEffectTypes.NightVision)) {
-                player.runCommandAsync(`effect @s clear`);
+
+            // Remove effects
+            const effectsToRemove = [MinecraftEffectTypes.Invisibility, MinecraftEffectTypes.NightVision];
+
+            for (const effectType of effectsToRemove) {
+                player.removeEffect(effectType);
             }
+
             player.triggerEvent("unvanish");
             // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
             try {

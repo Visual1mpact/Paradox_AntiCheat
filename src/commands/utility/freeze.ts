@@ -100,21 +100,24 @@ async function handleFreeze(message: ChatSendAfterEvent, args: string[]) {
 
     if (boolean) {
         member.removeTag("paradoxFreeze");
-        member.runCommand(`effect @s clear`);
+        const effectsToRemove = [MinecraftEffectTypes.Blindness, MinecraftEffectTypes.MiningFatigue, MinecraftEffectTypes.Weakness, MinecraftEffectTypes.Slowness];
+
+        for (const effectType of effectsToRemove) {
+            member.removeEffect(effectType);
+        }
+
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are no longer frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is no longer frozen.`);
         return;
     }
 
     if (!boolean) {
-        // Blindness
-        member.addEffect(MinecraftEffectTypes.Blindness, 1000000, { amplifier: 255, showParticles: true });
-        // Mining Fatigue
-        member.addEffect(MinecraftEffectTypes.MiningFatigue, 1000000, { amplifier: 255, showParticles: true });
-        // Weakness
-        member.addEffect(MinecraftEffectTypes.Weakness, 1000000, { amplifier: 255, showParticles: true });
-        // Slowness
-        member.addEffect(MinecraftEffectTypes.Slowness, 1000000, { amplifier: 255, showParticles: true });
+        const effectsToAdd = [MinecraftEffectTypes.Blindness, MinecraftEffectTypes.MiningFatigue, MinecraftEffectTypes.Weakness, MinecraftEffectTypes.Slowness];
+
+        for (const effectType of effectsToAdd) {
+            member.addEffect(effectType, 1000000, { amplifier: 255, showParticles: true });
+        }
+
         member.addTag("paradoxFreeze");
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now frozen.`);
         sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is now frozen.`);
