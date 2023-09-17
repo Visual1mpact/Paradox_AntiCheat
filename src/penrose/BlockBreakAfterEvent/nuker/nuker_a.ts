@@ -166,6 +166,7 @@ async function nukera(object: BlockBreakAfterEvent): Promise<void> {
         "minecraft:azalea",
         "minecraft:sweet_berry_bush",
         "minecraft:sweet_berries",
+        "minecraft:snow_layer",
     ];
 
     const efficiencyLevels: Record<number, number> = {
