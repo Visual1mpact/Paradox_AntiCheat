@@ -63,7 +63,7 @@ function antiphasea(id: number) {
             if (!blockType || player.hasTag("riding") || passableSolids.has(blockType.typeId.replace("minecraft:", ""))) {
                 return true;
             }
-            return !blockType.isSolid();
+            return !blockType.isSolid;
         });
 
         if (allSafe) {
