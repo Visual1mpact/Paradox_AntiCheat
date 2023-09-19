@@ -1,7 +1,8 @@
-import { world, Player, system, BlockPlaceAfterEvent, MinecraftBlockTypes, Block, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { world, Player, system, PlayerPlaceBlockAfterEvent, Block, PlayerLeaveAfterEvent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 // Define a union type for Player and Block
 type PlayerOrBlock = Player | Block | string;
@@ -53,7 +54,7 @@ function onPlayerLogout(event: PlayerLeaveAfterEvent | string): void {
     }
 }
 
-function reacha(object: BlockPlaceAfterEvent) {
+function reacha(object: PlayerPlaceBlockAfterEvent) {
     // Get Dynamic Property
     const reachABoolean = dynamicPropertyRegistry.get("reacha_b");
 
@@ -62,7 +63,7 @@ function reacha(object: BlockPlaceAfterEvent) {
         previousData.clear();
         stopLocationRecordingInterval();
         world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
-        world.afterEvents.blockPlace.unsubscribe(reacha);
+        world.afterEvents.playerPlaceBlock.unsubscribe(reacha);
         return;
     }
 
@@ -104,7 +105,7 @@ function reacha(object: BlockPlaceAfterEvent) {
     if (roundedReachDistance > config.modules.reachA.reach && !player.isFalling) {
         // Flagging is done, now we can remove the player entity from previousData
         onPlayerLogout(player.id);
-        dimension.getBlock(block.location).setType(MinecraftBlockTypes.air);
+        dimension.getBlock(block.location).setType(MinecraftBlockTypes.Air);
         flag(player, "Reach", "A", "Placement", null, null, "reach", reachDistance.toFixed(2), false);
     }
     // Flagging is done, now we can remove the player entity from previousData
@@ -192,7 +193,7 @@ const ReachA = () => {
     startLocationRecordingInterval();
 
     world.afterEvents.playerLeave.subscribe(onPlayerLogout);
-    world.afterEvents.blockPlace.subscribe(reacha);
+    world.afterEvents.playerPlaceBlock.subscribe(reacha);
 };
 
 export { ReachA };
