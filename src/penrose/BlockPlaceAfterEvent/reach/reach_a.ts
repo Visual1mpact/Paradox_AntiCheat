@@ -101,7 +101,7 @@ function reacha(object: BlockPlaceAfterEvent) {
 
     // Round down the reachDistance to the nearest integer
     const roundedReachDistance = Math.floor(reachDistance);
-    if (roundedReachDistance > config.modules.reachA.reach) {
+    if (roundedReachDistance > config.modules.reachA.reach && !player.isFalling) {
         // Flagging is done, now we can remove the player entity from previousData
         onPlayerLogout(player.id);
         dimension.getBlock(block.location).setType(MinecraftBlockTypes.air);
