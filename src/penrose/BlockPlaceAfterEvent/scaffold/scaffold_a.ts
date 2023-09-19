@@ -1,7 +1,7 @@
-import { world, MinecraftBlockTypes, Vector3, BlockPlaceAfterEvent, system, EntityQueryOptions } from "@minecraft/server";
+import { world, Vector3, PlayerPlaceBlockAfterEvent, system, EntityQueryOptions } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 function freeze(id: number) {
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
     if (antiScaffoldABoolean === false) {
@@ -42,12 +42,12 @@ function isBlockInFrontAndBelowPlayer(blockLocation: Vector3, playerLocation: Ve
     return dx <= xThreshold && dy <= yThreshold && dz >= zThreshold;
 }
 
-async function scaffolda(object: BlockPlaceAfterEvent) {
+async function scaffolda(object: PlayerPlaceBlockAfterEvent) {
     // Get Dynamic Property
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
     // Unsubscribe if disabled in-game
     if (antiScaffoldABoolean === false) {
-        world.afterEvents.blockPlace.unsubscribe(scaffolda);
+        world.afterEvents.playerPlaceBlock.unsubscribe(scaffolda);
         return;
     }
 
@@ -74,7 +74,7 @@ async function scaffolda(object: BlockPlaceAfterEvent) {
         const rot = player.getRotation();
 
         if (rot.x % 1 === 0) {
-            dimension.getBlock(blockLocation).setType(MinecraftBlockTypes.air);
+            dimension.getBlock(blockLocation).setType(MinecraftBlockTypes.Air);
             flag(player, "Scaffold", "A", "Placement", null, null, null, null, false);
             const hasFreezeTag = player.hasTag("paradoxFreeze");
             const hasScaffoldFreeze = player.hasTag("freezeScaffoldA");
@@ -89,7 +89,7 @@ async function scaffolda(object: BlockPlaceAfterEvent) {
 }
 
 const ScaffoldA = () => {
-    world.afterEvents.blockPlace.subscribe((object) => {
+    world.afterEvents.playerPlaceBlock.subscribe((object) => {
         scaffolda(object).catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
             // Extract stack trace information
