@@ -1,4 +1,4 @@
-import { EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
+import { EntityEquippableComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import { ActionFormData, ModalFormResponse } from "@minecraft/server-ui";
 import { getGamemode } from "../../util";
@@ -64,7 +64,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     });
     reportBody.push(`§f§4--------------------------------§f\n`);
 
-    const equipment = member.getComponent("equipment_inventory") as EntityEquipmentInventoryComponent;
+    const equipment = member.getComponent("equipment_inventory") as EntityEquippableComponent;
     const helmet = equipment.getEquipment("head" as EquipmentSlot);
     const chest = equipment.getEquipment("chest" as EquipmentSlot);
     const legs = equipment.getEquipment("legs" as EquipmentSlot);
