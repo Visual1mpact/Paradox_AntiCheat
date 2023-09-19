@@ -1,4 +1,4 @@
-import { world, ItemStack, Enchantment, Player, Block, BlockPlaceAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { world, ItemStack, Enchantment, Player, Block, PlayerPlaceBlockAfterEvent, BlockInventoryComponent, ItemEnchantsComponent, EnchantmentList, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { illegalitems } from "../../../data/itemban.js";
 import config from "../../../data/config.js";
 import { flag, sendMsgToPlayer, sendMsg } from "../../../util.js";
@@ -48,7 +48,7 @@ function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     unverifiedItemMap.delete(event.playerId);
 }
 
-async function illegalitemsb(object: BlockPlaceAfterEvent) {
+async function illegalitemsb(object: PlayerPlaceBlockAfterEvent) {
     // Get Dynamic Property
     const illegalItemsBBoolean = dynamicPropertyRegistry.get("illegalitemsb_b");
     const salvageBoolean = dynamicPropertyRegistry.get("salvage_b");
@@ -61,7 +61,7 @@ async function illegalitemsb(object: BlockPlaceAfterEvent) {
     if (illegalItemsBBoolean === false) {
         resetMaps(); // Clear the maps
         world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
-        world.afterEvents.blockPlace.unsubscribe(illegalitemsb);
+        world.afterEvents.playerPlaceBlock.unsubscribe(illegalitemsb);
         return;
     }
 
@@ -357,7 +357,7 @@ function resetMaps() {
 
 const IllegalItemsB = () => {
     world.afterEvents.playerLeave.subscribe(onPlayerLogout);
-    world.afterEvents.blockPlace.subscribe((object) => {
+    world.afterEvents.playerPlaceBlock.subscribe((object) => {
         illegalitemsb(object).catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
             // Extract stack trace information
