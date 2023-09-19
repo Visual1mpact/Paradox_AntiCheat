@@ -1,4 +1,4 @@
-import { BlockBreakAfterEvent, PlayerLeaveAfterEvent, world } from "@minecraft/server";
+import { PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, world } from "@minecraft/server";
 import { xrayblocks } from "../../../data/xray.js";
 import { sendMsg } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
@@ -56,7 +56,7 @@ function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     blocksBrokenCount.delete(playerId);
 }
 
-function xraya(object: BlockBreakAfterEvent) {
+function xraya(object: PlayerBreakBlockAfterEvent) {
     // Get Dynamic Property
     const xrayBoolean = dynamicPropertyRegistry.get("xraya_b");
 
@@ -64,7 +64,7 @@ function xraya(object: BlockBreakAfterEvent) {
     if (xrayBoolean === false) {
         xrayData.clear();
         blocksBrokenCount.clear();
-        world.afterEvents.blockBreak.unsubscribe(xraya);
+        world.afterEvents.playerBreakBlock.unsubscribe(xraya);
         world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
         return;
     }
@@ -111,7 +111,7 @@ function xraya(object: BlockBreakAfterEvent) {
 }
 
 const XrayA = () => {
-    world.afterEvents.blockBreak.subscribe(xraya);
+    world.afterEvents.playerBreakBlock.subscribe(xraya);
     world.afterEvents.playerLeave.subscribe(onPlayerLogout); // Subscribe to player logout events
 };
 
