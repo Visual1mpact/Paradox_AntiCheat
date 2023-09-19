@@ -1,10 +1,10 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import { EncryptionManager } from "../../classes/EncryptionManager.js";
 
-function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number | boolean) {
+function lockdownHelp(player: Player, prefix: string, lockdownBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.lockdown) {
         commandStatus = "§6[§4DISABLED§6]§f";
