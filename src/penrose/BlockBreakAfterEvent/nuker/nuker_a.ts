@@ -1,4 +1,4 @@
-import { world, BlockBreakAfterEvent, system, EntityQueryOptions, PlayerLeaveAfterEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
+import { world, PlayerBreakBlockAfterEvent, system, EntityQueryOptions, PlayerLeaveAfterEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
@@ -13,13 +13,13 @@ function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     breakCounter.delete(playerName);
 }
 
-async function nukera(object: BlockBreakAfterEvent): Promise<void> {
+async function nukera(object: PlayerBreakBlockAfterEvent): Promise<void> {
     const antiNukerABoolean = dynamicPropertyRegistry.get("antinukera_b");
     if (antiNukerABoolean === false) {
         lastBreakTime.clear();
         breakCounter.clear();
         world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
-        world.afterEvents.blockBreak.unsubscribe(nukera);
+        world.afterEvents.playerBreakBlock.unsubscribe(nukera);
         return;
     }
 
@@ -255,7 +255,7 @@ function freeze(id: number) {
 }
 
 const NukerA = () => {
-    world.afterEvents.blockBreak.subscribe((object) => {
+    world.afterEvents.playerBreakBlock.subscribe((object) => {
         nukera(object).catch((error) => {
             console.error("Paradox Unhandled Rejection: ", error);
             // Extract stack trace information
