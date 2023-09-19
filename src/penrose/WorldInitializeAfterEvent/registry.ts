@@ -1,7 +1,7 @@
 import { world, DynamicPropertiesDefinition, WorldInitializeAfterEvent, Vector3 } from "@minecraft/server";
 import config from "../../data/config.js";
 import { UUIDManager } from "../../classes/UUIDManager.js";
-import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
+import { MinecraftEntityTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 export const dynamicPropertyRegistry = new Map<string, string | number | boolean | Vector3>();
 
 function registry(data: WorldInitializeAfterEvent) {
