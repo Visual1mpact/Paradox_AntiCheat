@@ -1,4 +1,4 @@
-import { ChatSendAfterEvent, EntityEquipmentInventoryComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, EntityEquippableComponent, EquipmentSlot, ItemEnchantsComponent, ItemStack, Player, world } from "@minecraft/server";
 import { MinecraftEnchantmentTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -113,7 +113,7 @@ async function handleFullReport(message: ChatSendAfterEvent, args: string[]) {
             }
         });
 
-        const equipment = member.getComponent("equipment_inventory") as EntityEquipmentInventoryComponent;
+        const equipment = member.getComponent("equipment_inventory") as EntityEquippableComponent;
         const helmet = equipment.getEquipment("head" as EquipmentSlot);
         const chest = equipment.getEquipment("chest" as EquipmentSlot);
         const legs = equipment.getEquipment("legs" as EquipmentSlot);
