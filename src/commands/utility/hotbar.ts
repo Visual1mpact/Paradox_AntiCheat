@@ -1,4 +1,4 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Hotbar } from "../../penrose/TickEvent/hotbar/hotbar.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
@@ -8,7 +8,7 @@ const configMessageBackup = new WeakMap();
 // Dummy object
 const dummy: object = [];
 
-function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | number | boolean) {
+function hotbarHelp(player: Player, prefix: string, hotbarBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.hotbar) {
         commandStatus = "§6[§4DISABLED§6]§f";

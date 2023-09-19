@@ -1,9 +1,9 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { resetTag, getPrefix, sendMsgToPlayer, sendMsg } from "../../util.js";
 
-function rankHelp(player: Player, prefix: string, chatRanksBoolean: string | number | boolean) {
+function rankHelp(player: Player, prefix: string, chatRanksBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.rank || !config.customcommands.chatranks) {
         commandStatus = "§6[§4DISABLED§6]§f";

@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { SpammerA } from "../../penrose/ChatSendBeforeEvent/spammer/spammer_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function spammerAHelp(player: Player, prefix: string, spammerABoolean: string | number | boolean) {
+function spammerAHelp(player: Player, prefix: string, spammerABoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.spammera) {
         commandStatus = "§6[§4DISABLED§6]§f";

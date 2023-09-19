@@ -1,11 +1,11 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { beforeAntiSpam } from "../../penrose/ChatSendBeforeEvent/chat/antispam.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { afterAntiSpam } from "../../penrose/ChatSendAfterEvent/chat/antispam.js";
 
-function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean) {
+function antispamHelp(player: Player, prefix: string, antiSpamBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.antispam) {
         commandStatus = "§6[§4DISABLED§6]§f";

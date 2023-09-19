@@ -1,10 +1,10 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { WorldBorder } from "../../penrose/TickEvent/worldborder/worldborder.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: string | number | boolean) {
+function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.worldborder) {
         commandStatus = "§6[§4DISABLED§6]§f";

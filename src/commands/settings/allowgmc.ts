@@ -1,11 +1,11 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
 import { Creative } from "../../penrose/TickEvent/gamemode/creative.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function allowgmcHelp(player: Player, prefix: string, creativeGMBoolean: string | number | boolean) {
+function allowgmcHelp(player: Player, prefix: string, creativeGMBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.allowgmc) {
         commandStatus = "§6[§4DISABLED§6]§f";

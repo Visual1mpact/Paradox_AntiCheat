@@ -1,11 +1,11 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
 import { Survival } from "../../penrose/TickEvent/gamemode/survival.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string | number | boolean) {
+function allowgmsHelp(player: Player, prefix: string, survivalGMBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.allowgms) {
         commandStatus = "§6[§4DISABLED§6]§f";

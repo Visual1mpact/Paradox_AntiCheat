@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { ReachB } from "../../penrose/EntityHitEntityAfterEvent/reach_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function reachBHelp(player: Player, prefix: string, reachBBoolean: string | number | boolean) {
+function reachBHelp(player: Player, prefix: string, reachBBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.reachb) {
         commandStatus = "§6[§4DISABLED§6]§f";

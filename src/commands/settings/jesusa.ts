@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { JesusA } from "../../penrose/TickEvent/jesus/jesus_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function jesusAHelp(player: Player, prefix: string, jesusaBoolean: string | number | boolean) {
+function jesusAHelp(player: Player, prefix: string, jesusaBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.jesusa) {
         commandStatus = "§6[§4DISABLED§6]§f";

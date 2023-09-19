@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { BadPackets1 } from "../../penrose/ChatSendBeforeEvent/spammer/badpackets_1.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function badpackets1Help(player: Player, prefix: string, badPackets1Boolean: string | number | boolean) {
+function badpackets1Help(player: Player, prefix: string, badPackets1Boolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.badpackets1) {
         commandStatus = "§6[§4DISABLED§6]§f";

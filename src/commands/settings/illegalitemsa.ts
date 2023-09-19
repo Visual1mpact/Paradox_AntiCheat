@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { IllegalItemsA } from "../../penrose/TickEvent/illegalitems/illegalitems_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function illegalItemsAHelp(player: Player, prefix: string, illegalItemsABoolean: string | number | boolean) {
+function illegalItemsAHelp(player: Player, prefix: string, illegalItemsABoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.illegalitemsa) {
         commandStatus = "§6[§4DISABLED§6]§f";

@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { NamespoofA } from "../../penrose/TickEvent/namespoof/namespoof_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function namespoofAHelp(player: Player, prefix: string, nameSpoofBoolean: string | number | boolean) {
+function namespoofAHelp(player: Player, prefix: string, nameSpoofBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.namespoofa) {
         commandStatus = "§6[§4DISABLED§6]§f";

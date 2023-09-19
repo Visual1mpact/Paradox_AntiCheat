@@ -1,10 +1,10 @@
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { Adventure } from "../../penrose/TickEvent/gamemode/adventure.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 
-function allowgmaHelp(player: Player, prefix: string, adventureGMBoolean: string | number | boolean) {
+function allowgmaHelp(player: Player, prefix: string, adventureGMBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.allowgma) {
         commandStatus = "§6[§4DISABLED§6]§f";

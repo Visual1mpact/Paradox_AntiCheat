@@ -1,10 +1,10 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { AntiFallA } from "../../penrose/TickEvent/antifalla/antifall_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function antifallaHelp(player: Player, prefix: string, antifallABoolean: string | number | boolean) {
+function antifallaHelp(player: Player, prefix: string, antifallABoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.antifalla) {
         commandStatus = "§6[§4DISABLED§6]§f";

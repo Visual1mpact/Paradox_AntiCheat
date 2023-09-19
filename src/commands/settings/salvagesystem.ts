@@ -1,9 +1,9 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
-import { ChatSendAfterEvent, Player, world } from "@minecraft/server";
+import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
-function salvageHelp(player: Player, prefix: string, salvageBoolean: string | number | boolean) {
+function salvageHelp(player: Player, prefix: string, salvageBoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
     if (!config.customcommands.salvage) {
         commandStatus = "§6[§4DISABLED§6]§f";
