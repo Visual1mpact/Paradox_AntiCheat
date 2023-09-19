@@ -57,7 +57,7 @@ function antifalla(id: number) {
             try {
                 block = player?.dimension?.getBlock(offsetVector) || undefined;
             } catch {}
-            if (!block || !block.isAir()) {
+            if (!block || !block.isAir) {
                 allBlocksAreAir = false;
                 break;
             }
