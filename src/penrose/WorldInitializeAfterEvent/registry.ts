@@ -1,8 +1,8 @@
-import { world, DynamicPropertiesDefinition, MinecraftEntityTypes, WorldInitializeAfterEvent } from "@minecraft/server";
+import { world, DynamicPropertiesDefinition, WorldInitializeAfterEvent, Vector3 } from "@minecraft/server";
 import config from "../../data/config.js";
 import { UUIDManager } from "../../classes/UUIDManager.js";
-
-export const dynamicPropertyRegistry = new Map<string, string | number | boolean>();
+import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
+export const dynamicPropertyRegistry = new Map<string, string | number | boolean | Vector3>();
 
 function registry(data: WorldInitializeAfterEvent) {
     // World instance
@@ -97,7 +97,7 @@ function registry(data: WorldInitializeAfterEvent) {
     data.propertyRegistry.registerWorldDynamicProperties(property);
 
     // Register Defined properties in entity globally
-    data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.player);
+    data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.Player);
 
     let flag = false;
     // Loop through the identifiers in the array
