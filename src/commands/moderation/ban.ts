@@ -66,14 +66,10 @@ export function ban(message: ChatSendAfterEvent, args: string[]) {
     // Modify the argument handling
     let playerName = args.shift();
     let reason = "No reason specified";
-
-    // Check if the command has a reason provided
-    if (args.length > 1) {
-        // Remove double quotes from the reason if present
-        reason = args
-            .slice(1)
-            .join(" ")
-            .replace(/(^"|"$)/g, "");
+    if (args.length > 0) {
+        reason = args.join(" ");
+        // Remove double quotes from the beginning and end of the reason if present
+        reason = reason.replace(/(^"|"$)/g, "");
     }
 
     // Remove double quotes from the player name if present
