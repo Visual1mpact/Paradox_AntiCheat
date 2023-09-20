@@ -1,7 +1,7 @@
 import { world, PlayerBreakBlockAfterEvent, system, EntityQueryOptions, PlayerLeaveAfterEvent, EntityInventoryComponent, ItemEnchantsComponent } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
+import { MinecraftEffectTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const lastBreakTime = new Map<string, number>();
 const breakCounter = new Map<string, number>();
