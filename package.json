@@ -11,7 +11,6 @@
     "dependencies": {
         "@minecraft/server": "1.6.0-beta.1.20.30-stable",
         "@minecraft/server-ui": "1.2.0-beta.1.20.30-stable",
-        "@minecraft/vanilla-data": "^1.20.30",
         "typescript": "5.2.2"
     },
     "prettier": {
