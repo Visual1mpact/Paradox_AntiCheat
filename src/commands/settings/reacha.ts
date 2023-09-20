@@ -1,7 +1,7 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
-import { ReachA } from "../../penrose/BlockPlaceAfterEvent/reach/reach_a.js";
+import { ReachA } from "../../penrose/PlayerPlaceBlockAfterEvent/reach/reach_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 
 function reachAHelp(player: Player, prefix: string, reachABoolean: string | number | boolean | Vector3) {

@@ -2,7 +2,7 @@ import { world, Player, system, PlayerPlaceBlockAfterEvent, Block, PlayerLeaveAf
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-import { MinecraftBlockTypes} from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 // Define a union type for Player and Block
 type PlayerOrBlock = Player | Block | string;

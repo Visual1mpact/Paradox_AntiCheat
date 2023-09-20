@@ -1,7 +1,7 @@
 import { world, Vector3, PlayerPlaceBlockAfterEvent, system, EntityQueryOptions } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
-import { MinecraftBlockTypes } from "../../../node_modules/@minecraft/vanilla-data/lib/index.js";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 function freeze(id: number) {
     const antiScaffoldABoolean = dynamicPropertyRegistry.get("antiscaffolda_b");
     if (antiScaffoldABoolean === false) {

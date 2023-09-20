@@ -34,18 +34,18 @@ import { AutoBan } from "./penrose/TickEvent/ban/autoban.js";
 import { freeze, freezeJoin, freezeLeave } from "./penrose/TickEvent/freeze/freeze.js";
 import { AFK } from "./penrose/TickEvent/afk/afk.js";
 import { AntiPhaseA } from "./penrose/TickEvent/phase/phase_a.js";
-// Import BlockBreakAfter Events
-import { XrayA } from "./penrose/BlockBreakAfterEvent/xray/xray_a.js";
-import { NukerA } from "./penrose/BlockBreakAfterEvent/nuker/nuker_a.js";
+// Import PlayerBlockBreakAfter Events
+import { XrayA } from "./penrose/PlayerBreakBlockAfterEvent/xray/xray_a.js";
+import { NukerA } from "./penrose/PlayerBreakBlockAfterEvent/nuker/nuker_a.js";
 // Import PlayerSpawnAfter Events
 import { onJoin } from "./penrose/PlayerSpawnAfterEvent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/PlayerSpawnAfterEvent/ban/globalbanlist.js";
 import { hashCode } from "./penrose/PlayerSpawnAfterEvent/hash/hash.js";
 import { onJoinrules } from "./gui/PlayerSpawnAfterEvent/rules/rules.js";
-// Import BlockPlaceAfter Events
-import { ScaffoldA } from "./penrose/BlockPlaceAfterEvent/scaffold/scaffold_a.js";
-import { IllegalItemsB } from "./penrose/BlockPlaceAfterEvent/illegalitems/illegalitems_b.js";
-import { ReachA } from "./penrose/BlockPlaceAfterEvent/reach/reach_a.js";
+// Import PlayerBlockPlaceAfter Events
+import { ScaffoldA } from "./penrose/PlayerPlaceBlockAfterEvent/scaffold/scaffold_a.js";
+import { IllegalItemsB } from "./penrose/PlayerPlaceBlockAfterEvent/illegalitems/illegalitems_b.js";
+import { ReachA } from "./penrose/PlayerPlaceBlockAfterEvent/reach/reach_a.js";
 // Import EntityHitEntityAfter Events
 import { ReachB } from "./penrose/EntityHitEntityAfterEvent/reach_b.js";
 import { KillAura } from "./penrose/EntityHitEntityAfterEvent/killaura.js";
@@ -116,7 +116,7 @@ if (config.customcommands.freeze || config.modules.antiKillAura || config.module
     freezeJoin();
 }
 
-// BlockBreakAfter Events
+// PlayerBlockBreakAfter Events
 XrayA();
 NukerA();
 
@@ -126,7 +126,7 @@ GlobalBanList();
 hashCode();
 onJoinrules(); // GUI
 
-// BlockPlaceAfter Events
+// PlayerBlockPlaceAfter Events
 ScaffoldA();
 IllegalItemsB();
 ReachA();
