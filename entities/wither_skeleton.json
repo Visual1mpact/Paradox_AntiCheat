@@ -29,7 +29,13 @@
                 "value": 20,
                 "max": 20
             },
-            "minecraft:equip_item": {},
+            "minecraft:equip_item": {
+                "excluded_items": [
+                    {
+                        "item": "minecraft:banner:15"
+                    }
+                ]
+            },
             "minecraft:collision_box": {
                 "width": 0.72,
                 "height": 2.01
@@ -57,6 +63,7 @@
             "minecraft:jump.static": {},
             "minecraft:can_climb": {},
             "minecraft:shareables": {
+                "singular_pickup": true,
                 "items": [
                     {
                         "item": "minecraft:netherite_sword",

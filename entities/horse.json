@@ -222,7 +222,7 @@
                                             "value": "player"
                                         },
                                         {
-                                            "test": "is_sneaking",
+                                            "test": "is_sneak_held",
                                             "subject": "other",
                                             "value": false
                                         }
@@ -257,7 +257,7 @@
                                             "value": "player"
                                         },
                                         {
-                                            "test": "is_sneaking",
+                                            "test": "is_sneak_held",
                                             "subject": "other",
                                             "value": false
                                         }
@@ -304,11 +304,6 @@
                     "mutation_strategy": "random",
                     "random_variant_mutation_interval": [0, 7],
                     "random_extra_variant_mutation_interval": [0, 5]
-                },
-                "minecraft:behavior.tempt": {
-                    "priority": 5,
-                    "speed_multiplier": 1.2,
-                    "items": ["golden_apple", "appleEnchanted", "golden_carrot"]
                 }
             },
             "minecraft:horse_saddled": {
@@ -503,6 +498,11 @@
             "minecraft:behavior.panic": {
                 "priority": 3,
                 "speed_multiplier": 1.2
+            },
+            "minecraft:behavior.tempt": {
+                "priority": 5,
+                "speed_multiplier": 1.2,
+                "items": ["golden_apple", "appleEnchanted", "golden_carrot"]
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 6,

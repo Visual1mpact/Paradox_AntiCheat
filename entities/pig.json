@@ -29,6 +29,7 @@
             "minecraft:pig_transform": {
                 "minecraft:transformation": {
                     "into": "minecraft:pig_zombie",
+                    "transformation_sound": "mob.pig.death",
                     "delay": 0.5
                 }
             },

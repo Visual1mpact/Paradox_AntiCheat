@@ -125,7 +125,13 @@
             "minecraft:type_family": {
                 "family": ["zombie", "undead", "monster", "mob"]
             },
-            "minecraft:equip_item": {},
+            "minecraft:equip_item": {
+                "excluded_items": [
+                    {
+                        "item": "minecraft:banner:15"
+                    }
+                ]
+            },
             "minecraft:collision_box": {
                 "width": 0.6,
                 "height": 1.9
@@ -396,6 +402,7 @@
                 "priority": 2
             },
             "minecraft:behavior.melee_attack": {
+                "can_spread_on_fire": true,
                 "priority": 3
             },
             "minecraft:behavior.stomp_turtle_egg": {

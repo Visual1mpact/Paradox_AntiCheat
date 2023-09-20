@@ -331,7 +331,9 @@
                 "hard_distance": 6,
                 "max_distance": 10
             },
-            "minecraft:balloonable": {},
+            "minecraft:balloonable": {
+                "mass": 0.4
+            },
             "minecraft:conditional_bandwidth_optimization": {}
         },
         "events": {

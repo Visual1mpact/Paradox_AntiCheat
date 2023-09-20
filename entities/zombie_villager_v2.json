@@ -101,20 +101,12 @@
                     "value": 0
                 }
             },
-            "nitwit": {
-                "minecraft:type_family": {
-                    "family": ["nitwit", "zombie", "zombie_villager", "undead", "monster", "mob"]
-                },
-                "minecraft:variant": {
-                    "value": 0
-                }
-            },
             "farmer": {
                 "minecraft:type_family": {
                     "family": ["farmer", "zombie", "zombie_villager", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 1
                 }
             },
             "fisherman": {
@@ -122,7 +114,7 @@
                     "family": ["fisherman", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 2
                 }
             },
             "shepherd": {
@@ -130,7 +122,7 @@
                     "family": ["shepherd", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 3
                 }
             },
             "fletcher": {
@@ -138,7 +130,7 @@
                     "family": ["fletcher", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 4
                 }
             },
             "librarian": {
@@ -146,7 +138,7 @@
                     "family": ["librarian", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 5
                 }
             },
             "cartographer": {
@@ -154,7 +146,7 @@
                     "family": ["cartographer", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 6
                 }
             },
             "cleric": {
@@ -162,7 +154,7 @@
                     "family": ["cleric", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 7
                 }
             },
             "armorer": {
@@ -170,7 +162,7 @@
                     "family": ["armorer", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 8
                 }
             },
             "weaponsmith": {
@@ -178,7 +170,7 @@
                     "family": ["weaponsmith", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 9
                 }
             },
             "toolsmith": {
@@ -186,7 +178,7 @@
                     "family": ["toolsmith", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 10
                 }
             },
             "butcher": {
@@ -194,7 +186,7 @@
                     "family": ["butcher", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 11
                 }
             },
             "leatherworker": {
@@ -202,7 +194,7 @@
                     "family": ["leatherworker", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 12
                 }
             },
             "mason": {
@@ -210,7 +202,15 @@
                     "family": ["stone_mason", "zombie_villager", "zombie", "undead", "monster", "mob"]
                 },
                 "minecraft:variant": {
-                    "value": 0
+                    "value": 13
+                }
+            },
+            "nitwit": {
+                "minecraft:type_family": {
+                    "family": ["nitwit", "zombie", "zombie_villager", "undead", "monster", "mob"]
+                },
+                "minecraft:variant": {
+                    "value": 14
                 }
             },
             "desert_villager": {
@@ -298,7 +298,13 @@
             "minecraft:loot": {
                 "table": "loot_tables/entities/zombie.json"
             },
-            "minecraft:equip_item": {},
+            "minecraft:equip_item": {
+                "excluded_items": [
+                    {
+                        "item": "minecraft:banner:15"
+                    }
+                ]
+            },
             "minecraft:conditional_bandwidth_optimization": {},
             "minecraft:collision_box": {
                 "width": 0.6,
@@ -565,6 +571,7 @@
                 "despawn_from_distance": {}
             },
             "minecraft:behavior.melee_attack": {
+                "can_spread_on_fire": true,
                 "priority": 6
             },
             "minecraft:behavior.equip_item": {

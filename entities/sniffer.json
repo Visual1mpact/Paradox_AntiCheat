@@ -195,6 +195,7 @@
                 "hard_distance": 6,
                 "max_distance": 10
             },
+            "minecraft:balloonable": {},
             "minecraft:type_family": {
                 "family": ["sniffer", "mob"]
             },

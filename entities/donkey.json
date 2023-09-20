@@ -185,7 +185,7 @@
                                             "value": "player"
                                         },
                                         {
-                                            "test": "is_sneaking",
+                                            "test": "is_sneak_held",
                                             "subject": "other",
                                             "value": false
                                         }
@@ -235,11 +235,6 @@
                         }
                     ],
                     "breed_items": ["golden_carrot", "golden_apple", "appleEnchanted"]
-                },
-                "minecraft:behavior.tempt": {
-                    "priority": 5,
-                    "speed_multiplier": 1.2,
-                    "items": ["apple", "carrot", "golden_apple", "appleEnchanted", "golden_carrot", "carrotOnAStick", "hay_block", "sugar", "bread", "wheat"]
                 }
             },
             "minecraft:donkey_unchested": {
@@ -269,7 +264,7 @@
                                             "value": "player"
                                         },
                                         {
-                                            "test": "is_sneaking",
+                                            "test": "is_sneak_held",
                                             "subject": "other",
                                             "value": false
                                         }
@@ -459,6 +454,11 @@
             "minecraft:behavior.panic": {
                 "priority": 1,
                 "speed_multiplier": 1.2
+            },
+            "minecraft:behavior.tempt": {
+                "priority": 5,
+                "speed_multiplier": 1.2,
+                "items": ["golden_apple", "appleEnchanted", "golden_carrot"]
             },
             "minecraft:behavior.random_stroll": {
                 "priority": 6,
