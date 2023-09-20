@@ -97,7 +97,7 @@ function registry(data: WorldInitializeAfterEvent) {
     data.propertyRegistry.registerWorldDynamicProperties(property);
 
     // Register Defined properties in entity globally
-    data.propertyRegistry.registerEntityTypeDynamicProperties(personal, MinecraftEntityTypes.Player);
+    data.propertyRegistry.registerEntityTypeDynamicProperties(personal, "minecraft:" + MinecraftEntityTypes.Player);
 
     let flag = false;
     // Loop through the identifiers in the array
