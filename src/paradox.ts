@@ -50,6 +50,7 @@ import { ReachA } from "./penrose/PlayerPlaceBlockAfterEvent/reach/reach_a.js";
 // Import EntityHitEntityAfter Events
 import { ReachB } from "./penrose/EntityHitEntityAfterEvent/reach_b.js";
 import { KillAura } from "./penrose/EntityHitEntityAfterEvent/killaura.js";
+import { PVP } from "./penrose/EntityHitEntityAfterEvent/pvpManager.js";
 // Import WorldInitializeAfter Events
 import { Registry } from "./penrose/WorldInitializeAfterEvent/registry.js";
 // Import SystemBefore Events
@@ -137,7 +138,7 @@ ReachA();
 // EntityHitEntityAfter Events
 ReachB();
 KillAura();
-
+PVP();
 // EntityDieAfter Events
 DeathCoordinates();
 
