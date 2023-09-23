@@ -41,6 +41,18 @@ function pvp(obj: EntityHitEntityAfterEvent) {
         }
 
         pvpData.set(hitEntityId, pvpDataForHitEntity);
+        return;
+    }
+
+    if (damagingEntity.hasTag("pvpDisabled")) {
+        // Prevent attacking player with PvP disabled
+        sendMsgToPlayer(damagingEntity, `§f§4[§6Paradox§4]§f You cannot attack while you have PvP Disabled!`);
+
+        // Heal the player being attacked
+        const effectsToAdd = [MinecraftEffectTypes.InstantHealth];
+        for (const effectType of effectsToAdd) {
+            hitEntity.addEffect(effectType, 5, { amplifier: 255, showParticles: false });
+        }
     }
 }
 
