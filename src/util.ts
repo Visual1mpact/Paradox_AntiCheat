@@ -235,5 +235,5 @@ export const sendMsgToPlayer = async (target: Player, message: string | string[]
         modifiedMessage = (message as string).replace(/§f/g, "§f§o");
     }
 
-    target.runCommandAsync(`tellraw @s {"rawtext":[{"text":${JSON.stringify("\n" + modifiedMessage)}}]}`);
+    target.sendMessage({ rawtext: [{ text: "\n" + modifiedMessage }] });
 };
