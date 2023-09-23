@@ -1,5 +1,4 @@
 import { ActionFormData } from "@minecraft/server-ui";
-import config from "../../../data/config";
 import { Player } from "@minecraft/server";
 import { banHandler } from "./results/ban";
 import { unbanHandler } from "./results/unban";
