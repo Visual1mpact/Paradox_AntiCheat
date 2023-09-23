@@ -139,6 +139,7 @@ ReachA();
 ReachB();
 KillAura();
 PVP();
+
 // EntityDieAfter Events
 DeathCoordinates();
 

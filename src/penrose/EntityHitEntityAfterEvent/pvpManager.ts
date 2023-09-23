@@ -16,7 +16,7 @@ function pvp(obj: EntityHitEntityAfterEvent) {
         for (const effectType of effectsToAdd) {
             hitEntity.addEffect(effectType, 5, { amplifier: 255, showParticles: false });
         }
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${damagingEntity.name}§f has attaked ${hitEntity.name}§f While ${hitEntity.name} has PVP disabled.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${damagingEntity.name}§f has attacked §7${hitEntity.name}§f while §7${hitEntity.name}§f has PVP disabled.`);
     }
 }
 export const PVP = () => {
