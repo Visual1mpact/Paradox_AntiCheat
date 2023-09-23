@@ -1,9 +1,17 @@
 import { ChatSendAfterEvent, Player } from "@minecraft/server";
 import { getPrefix, sendMsgToPlayer } from "../../util.js";
+import config from "../../data/config.js";
 
 function pvpHelp(player: Player, prefix: string) {
+    let commandStatus: string;
+    if (!config.customcommands.pvp) {
+        commandStatus = "§6[§4DISABLED§6]§f";
+    } else {
+        commandStatus = "§6[§aENABLED§6]§f";
+    }
     return sendMsgToPlayer(player, [
         `\n§o§4[§6Command§4]§f: pvp`,
+        `§4[§6Status§4]§f: ${commandStatus}`,
         `§4[§6Usage§4]§f: pvp [optional]`,
         `§4[§6Optional§4]§f: enable, disable, help`,
         `§4[§6Description§4]§f: Enables or Disables PVP. While disabled you wont take damage when another player attacks you.`,
@@ -40,7 +48,7 @@ export function pvp(message: ChatSendAfterEvent, args: string[]) {
 
     // Was help requested
     const argCheck = args[0];
-    if (argCheck && args[0].toLowerCase() === "help") {
+    if (argCheck && (args[0].toLowerCase() === "help" || !config.customcommands.pvp)) {
         return pvpHelp(player, prefix);
     }
     if (argCheck && args[0].toLowerCase() === "enable") {

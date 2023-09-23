@@ -138,7 +138,9 @@ ReachA();
 // EntityHitEntityAfter Events
 ReachB();
 KillAura();
-PVP();
+if (config.customcommands.pvp === true) {
+    PVP();
+}
 
 // EntityDieAfter Events
 DeathCoordinates();
