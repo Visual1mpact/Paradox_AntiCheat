@@ -1,8 +1,20 @@
-import { world, Player, EntityHitEntityAfterEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { world, Player, EntityHitEntityAfterEvent, PlayerLeaveAfterEvent, EntityDieAfterEvent } from "@minecraft/server";
 import { sendMsg, sendMsgToPlayer } from "../../util.js";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 const pvpData = new Map<string, { counter: number; lastAttackedName: string }>();
+
+function punishment(event: EntityDieAfterEvent) {
+    const { damageSource, deadEntity } = event;
+
+    const criminal = damageSource.damagingEntity;
+
+    if (deadEntity instanceof Player && criminal instanceof Player && (criminal.hasTag("pvpDisabled") || deadEntity.hasTag("pvpDisabled"))) {
+        sendMsgToPlayer(criminal, `§f§4[§6Paradox§4]§f You killed §7${deadEntity.name}§f while pvp was disabled. You were punished!`);
+        criminal.kill();
+        return;
+    }
+}
 
 function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
     // Remove the player's data from the map when they log off
@@ -57,6 +69,7 @@ function pvp(obj: EntityHitEntityAfterEvent) {
 }
 
 export const PVP = () => {
+    world.afterEvents.entityDie.subscribe(punishment);
     world.afterEvents.entityHitEntity.subscribe(pvp);
     world.afterEvents.playerLeave.subscribe(onPlayerLogout);
 };
