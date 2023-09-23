@@ -131,6 +131,8 @@ export function help(message: ChatSendAfterEvent) {
         `§6${prefix}channel handover <channel> <player>§f - ${config.customcommands.channel ? `Transfer ownership of a chat channel.` : textDisabled}`,
         `§6${prefix}channel leave§f - ${config.customcommands.channel ? `Leave the current chat channel.` : textDisabled}`,
         `§6${prefix}channel members§f - ${config.customcommands.channel ? `List members of the current chat channel.` : textDisabled}`,
+        `§6${prefix}pvp§f - ${config.customcommands.pvp ? `Enable or disable PvP mode.` : textDisabled}`,
+
         ` `,
         `§l§o§6[§4Debugging Utilites§6]§r§o`,
         `§6${prefix}listitems§f - ${config.debug ? `Prints every item in the game and their max stack.` : textDisabled}`,

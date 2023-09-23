@@ -38,6 +38,7 @@ export function nonstaffhelp(message: ChatSendAfterEvent) {
             config.customcommands.channel ? `§6${prefix}channel handover <channel> <player>§f - Transfer ownership of a chat channel..` : `§6${prefix}channel invite <channel> <player>§f - Command §4DISABLED§f.`,
             config.customcommands.channel ? `§6${prefix}channel members§f - List members of the current chat channel.` : `§6${prefix}channel members§f - Command §4DISABLED§f.`,
             config.customcommands.channel ? `§6${prefix}channel leave§f - Leave the current chat channel.` : `§6${prefix}channel leave§f - Command §4DISABLED§f.`,
+            config.customcommands.pvp ? `§6${prefix}pvp§f - Enable or disable PvP mode.` : `§6${prefix}pvp§f - Command §4DISABLED§f.`,
         ]);
     }
 }
