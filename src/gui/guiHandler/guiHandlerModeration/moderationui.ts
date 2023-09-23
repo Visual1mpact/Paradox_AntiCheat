@@ -35,9 +35,8 @@ export function moderationui(player: Player) {
     moderationui.button("Vanish", "textures/items/potion_bottle_invisibility");
     moderationui.button("Despawn entities", "textures/ui/trash");
     moderationui.button("Auto Ban", "textures/ui/hammer_l");
-    if (config.debug) {
-        moderationui.button("Inventory", "textures/blocks/chest_front");
-    }
+    moderationui.button("Inventory", "textures/blocks/chest_front");
+
     moderationui
         .show(player)
         .then((ModUIresult) => {
