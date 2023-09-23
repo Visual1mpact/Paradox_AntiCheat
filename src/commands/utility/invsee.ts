@@ -82,17 +82,21 @@ export function invsee(message: ChatSendAfterEvent, args: string[]) {
         ` `,
         `§f§4[§6Paradox§4]§f ${member.name}'s inventory:`,
         ...Array.from(Array(container.size), (_a, i) => {
-            const item = container.getItem(i);
-            const enchantmentComponent = item.getComponent("enchantments") as ItemEnchantsComponent;
-            const enchantmentList = enchantmentComponent ? Array.from(enchantmentComponent.enchantments) : [];
             let enchantmentInfo = "";
+            const item = container.getItem(i);
+            if (item) {
+                const enchantmentComponent = item.getComponent("enchantments") as ItemEnchantsComponent;
+                if (enchantmentComponent) {
+                    const enchantmentList = enchantmentComponent ? Array.from(enchantmentComponent.enchantments) : [];
 
-            if (enchantmentList.length > 0) {
-                const enchantmentNames = enchantmentList.map((enchantment) => `        §6- §4[§f${enchantment.type.id}§4]§f §6Level: §4${enchantment.level}`);
-                enchantmentInfo = `\n    §4[§6Enchantments§4]§6:\n${enchantmentNames.join("\n")}`;
-            }
-            if (enchantmentInfo) {
-                enchantmentInfo = enchantmentInfo + "\n";
+                    if (enchantmentList.length > 0) {
+                        const enchantmentNames = enchantmentList.map((enchantment) => `        §6- §4[§f${enchantment.type.id}§4]§f §6Level: §4${enchantment.level}`);
+                        enchantmentInfo = `\n    §4[§6Enchantments§4]§6:\n${enchantmentNames.join("\n")}`;
+                    }
+                    if (enchantmentInfo) {
+                        enchantmentInfo = enchantmentInfo + "\n";
+                    }
+                }
             }
 
             return ` §o§6|§f §fSlot ${i}§f §6=>§f ${item ? `§4[§f${item.typeId.replace("minecraft:", "")}§4]§f §6Amount: §4x${item.amount}` : "§7(empty)"}${enchantmentInfo}`;
