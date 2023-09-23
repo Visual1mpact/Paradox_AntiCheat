@@ -65,12 +65,12 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     reportBody.push(`§f§4--------------------------------§f\n`);
 
     const equipment = member.getComponent("equippable") as EntityEquippableComponent;
-    const helmet = equipment.getEquipment("head" as EquipmentSlot);
-    const chest = equipment.getEquipment("chest" as EquipmentSlot);
-    const legs = equipment.getEquipment("legs" as EquipmentSlot);
-    const feet = equipment.getEquipment("feet" as EquipmentSlot);
-    const mainhand = equipment.getEquipment("mainhand" as EquipmentSlot);
-    const offhand = equipment.getEquipment("offhand" as EquipmentSlot);
+    const helmet = equipment.getEquipment(EquipmentSlot.Head);
+    const chest = equipment.getEquipment(EquipmentSlot.Chest);
+    const legs = equipment.getEquipment(EquipmentSlot.Legs);
+    const feet = equipment.getEquipment(EquipmentSlot.Feet);
+    const mainhand = equipment.getEquipment(EquipmentSlot.Mainhand);
+    const offhand = equipment.getEquipment(EquipmentSlot.Offhand);
 
     const materialColors: { [key: string]: string } = {
         golden: "§6", // gold
