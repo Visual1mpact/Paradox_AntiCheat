@@ -64,7 +64,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     });
     reportBody.push(`§f§4--------------------------------§f\n`);
 
-    const equipment = member.getComponent("equipment_inventory") as EntityEquippableComponent;
+    const equipment = member.getComponent("equippable") as EntityEquippableComponent;
     const helmet = equipment.getEquipment("head" as EquipmentSlot);
     const chest = equipment.getEquipment("chest" as EquipmentSlot);
     const legs = equipment.getEquipment("legs" as EquipmentSlot);

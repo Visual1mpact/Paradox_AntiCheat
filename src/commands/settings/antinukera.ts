@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
-import { NukerA } from "../../penrose/PlayerBreakBlockAfterEvent/nuker/nuker_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
+import { BeforeNukerA } from "../../penrose/PlayerBreakBlockBeforeEvent/nuker/nuker_a.js";
 
 function antinukeraHelp(player: Player, prefix: string, antiNukerABoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
@@ -68,7 +68,7 @@ export function antinukerA(message: ChatSendAfterEvent, args: string[]) {
         dynamicPropertyRegistry.set("antinukera_b", true);
         world.setDynamicProperty("antinukera_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiNukerA§f!`);
-        NukerA();
+        BeforeNukerA();
     } else if (antiNukerABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antinukera_b", false);

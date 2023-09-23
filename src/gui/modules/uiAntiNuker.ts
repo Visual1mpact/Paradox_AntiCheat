@@ -1,9 +1,9 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { NukerA } from "../../penrose/PlayerBreakBlockAfterEvent/nuker/nuker_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { BeforeNukerA } from "../../penrose/PlayerBreakBlockBeforeEvent/nuker/nuker_a.js";
 
 export function uiANTINUKER(antinukerResult: ModalFormResponse, player: Player) {
     if (!antinukerResult || antinukerResult.canceled) {
@@ -25,7 +25,7 @@ export function uiANTINUKER(antinukerResult: ModalFormResponse, player: Player) 
         dynamicPropertyRegistry.set("antinukera_b", true);
         world.setDynamicProperty("antinukera_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiNukerA§f!`);
-        NukerA();
+        BeforeNukerA();
     }
     if (AntiNukerToggle === false) {
         dynamicPropertyRegistry.set("antinukera_b", false);

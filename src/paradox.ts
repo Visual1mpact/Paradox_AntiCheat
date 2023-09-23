@@ -36,7 +36,8 @@ import { AFK } from "./penrose/TickEvent/afk/afk.js";
 import { AntiPhaseA } from "./penrose/TickEvent/phase/phase_a.js";
 // Import PlayerBlockBreakAfter Events
 import { XrayA } from "./penrose/PlayerBreakBlockAfterEvent/xray/xray_a.js";
-import { NukerA } from "./penrose/PlayerBreakBlockAfterEvent/nuker/nuker_a.js";
+// Import PlayerBlockBreakBefore Events
+import { BeforeNukerA } from "./penrose/PlayerBreakBlockBeforeEvent/nuker/nuker_a.js";
 // Import PlayerSpawnAfter Events
 import { onJoin } from "./penrose/PlayerSpawnAfterEvent/onjoin/onjoin.js";
 import { GlobalBanList } from "./penrose/PlayerSpawnAfterEvent/ban/globalbanlist.js";
@@ -118,7 +119,9 @@ if (config.customcommands.freeze || config.modules.antiKillAura || config.module
 
 // PlayerBlockBreakAfter Events
 XrayA();
-NukerA();
+
+// PlayerBlockBreakBefore Events
+BeforeNukerA();
 
 // playerSpawnAfter Events
 onJoin();
