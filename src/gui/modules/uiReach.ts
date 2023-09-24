@@ -1,10 +1,10 @@
 import { Player, world } from "@minecraft/server";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import { ReachA } from "../../penrose/PlayerPlaceBlockAfterEvent/reach/reach_a.js";
 import { ReachB } from "../../penrose/EntityHitEntityAfterEvent/reach_b.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
 import { sendMsg, sendMsgToPlayer } from "../../util";
 import { paradoxui } from "../paradoxui.js";
+import { BeforeReachA } from "../../penrose/PlayerPlaceBlockBeforeEvent/reach/reach_a.js";
 
 export function uiREACH(reachResult: ModalFormResponse, player: Player) {
     if (!reachResult || reachResult.canceled) {
@@ -28,7 +28,7 @@ export function uiREACH(reachResult: ModalFormResponse, player: Player) {
         dynamicPropertyRegistry.set("reacha_b", true);
         world.setDynamicProperty("reacha_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ReachA§f!`);
-        ReachA();
+        BeforeReachA();
     }
     if (ReachAToggle === false && reachABoolean === true) {
         // Deny

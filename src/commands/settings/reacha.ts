@@ -1,8 +1,8 @@
 import { getPrefix, sendMsg, sendMsgToPlayer } from "../../util.js";
 import config from "../../data/config.js";
 import { ChatSendAfterEvent, Player, Vector3, world } from "@minecraft/server";
-import { ReachA } from "../../penrose/PlayerPlaceBlockAfterEvent/reach/reach_a.js";
 import { dynamicPropertyRegistry } from "../../penrose/WorldInitializeAfterEvent/registry.js";
+import { BeforeReachA } from "../../penrose/PlayerPlaceBlockBeforeEvent/reach/reach_a.js";
 
 function reachAHelp(player: Player, prefix: string, reachABoolean: string | number | boolean | Vector3) {
     let commandStatus: string;
@@ -68,7 +68,7 @@ export function reachA(message: ChatSendAfterEvent, args: string[]) {
         dynamicPropertyRegistry.set("reacha_b", true);
         world.setDynamicProperty("reacha_b", true);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ReachA§f!`);
-        ReachA();
+        BeforeReachA();
     } else if (reachABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("reacha_b", false);

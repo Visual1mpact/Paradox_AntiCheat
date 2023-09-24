@@ -46,7 +46,8 @@ import { onJoinrules } from "./gui/PlayerSpawnAfterEvent/rules/rules.js";
 // Import PlayerBlockPlaceAfter Events
 import { ScaffoldA } from "./penrose/PlayerPlaceBlockAfterEvent/scaffold/scaffold_a.js";
 import { IllegalItemsB } from "./penrose/PlayerPlaceBlockAfterEvent/illegalitems/illegalitems_b.js";
-import { ReachA } from "./penrose/PlayerPlaceBlockAfterEvent/reach/reach_a.js";
+// Import PlayerBlockPlaceAfter Events
+import { BeforeReachA } from "./penrose/PlayerPlaceBlockBeforeEvent/reach/reach_a.js";
 // Import EntityHitEntityAfter Events
 import { ReachB } from "./penrose/EntityHitEntityAfterEvent/reach_b.js";
 import { KillAura } from "./penrose/EntityHitEntityAfterEvent/killaura.js";
@@ -133,7 +134,9 @@ onJoinrules(); // GUI
 // PlayerBlockPlaceAfter Events
 ScaffoldA();
 IllegalItemsB();
-ReachA();
+
+// PlayerBlockPlaceBefore Events
+BeforeReachA();
 
 // EntityHitEntityAfter Events
 ReachB();
