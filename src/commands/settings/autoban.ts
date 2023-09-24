@@ -67,12 +67,12 @@ export function autoban(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("autoban_b", true);
         world.setDynamicProperty("autoban_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6autoban§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6autoban§f!`);
         AutoBan();
     } else if (autoBanBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("autoban_b", false);
         world.setDynamicProperty("autoban_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4autoban§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4autoban§f!`);
     }
 }

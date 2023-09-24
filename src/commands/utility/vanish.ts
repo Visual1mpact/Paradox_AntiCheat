@@ -81,11 +81,11 @@ async function handleVanish(message: ChatSendAfterEvent, args: string[]) {
             player.removeEffect(effectType);
         }
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are no longer vanished.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f ${player.name}§f is no longer in vanish.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f §7${player.name}§f is no longer in vanish.`);
     } else {
         player.addTag("vanish");
         player.triggerEvent("vanish");
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are now vanished!`);
-        sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f ${player.name}§f is now vanished!`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§f§4[§6Paradox§4]§f §7${player.name}§f is now vanished!`);
     }
 }

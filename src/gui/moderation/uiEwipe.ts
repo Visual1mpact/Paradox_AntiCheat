@@ -68,6 +68,6 @@ async function handleUIEWipe(ewipeResult: ModalFormResponse, onlineList: string[
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f Your Enderchest has been wiped!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f Wiped ${member.name}'s enderchest!`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f wiped §7${member.name}'s§f enderchest!`);
     return paradoxui(player);
 }

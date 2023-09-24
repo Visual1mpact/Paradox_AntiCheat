@@ -126,6 +126,6 @@ async function handleMute(message: ChatSendAfterEvent, args: string[]) {
     }
     // If Education Edition is enabled then legitimately mute them
     member.runCommandAsync(`ability @s mute true`);
-    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been muted. Reason: ${reason}`);
-    return sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has muted ${member.name}§f. Reason: ${reason}`);
+    sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been muted. Reason: §7${reason}§f`);
+    return sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has muted §7${member.name}§f. Reason: §7${reason}§f`);
 }

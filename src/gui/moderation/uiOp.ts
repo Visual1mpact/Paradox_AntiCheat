@@ -63,17 +63,17 @@ export function uiOP(opResult: ModalFormResponse | ActionFormResponse, salt: str
 
                 dynamicPropertyRegistry.set(targetPlayer.id, targetPlayer.name);
 
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You have granted Paradox-Op to ${targetPlayer.name}.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You have granted Paradox-Op to §7${targetPlayer.name}§f.`);
                 sendMsgToPlayer(targetPlayer, `§f§4[§6Paradox§4]§f You are now op!`);
-                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${targetPlayer.name}§f is now Paradox-Opped.`);
+                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${targetPlayer.name}§f is now Paradox-Opped.`);
                 targetPlayer.addTag("paradoxOpped");
                 return paradoxui(player);
             } else {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${targetPlayer.name} is already Paradox-Opped.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f §7${targetPlayer.name}§f is already Paradox-Opped.`);
                 return paradoxui(player);
             }
         } else {
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayer.name}.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Could not find player §7${targetPlayer.name}§f.`);
             return paradoxui(player);
         }
     } else if ("selection" in opResult) {

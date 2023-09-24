@@ -66,11 +66,11 @@ export function chatranks(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("chatranks_b", true);
         world.setDynamicProperty("chatranks_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ChatRanks§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6ChatRanks§f!`);
     } else if (chatRanksBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("chatranks_b", false);
         world.setDynamicProperty("chatranks_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ChatRanks§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4ChatRanks§f!`);
     }
 }

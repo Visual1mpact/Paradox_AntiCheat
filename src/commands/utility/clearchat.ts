@@ -56,5 +56,5 @@ export function clearchat(message: ChatSendAfterEvent, args: string[]) {
 
     for (let clear = 0; clear < 10; clear++) sendMsg("@a", "\n".repeat(60));
 
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Chat has been cleared by ${player.name}`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Chat has been cleared by §7${player.name}§f`);
 }

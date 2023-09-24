@@ -1,4 +1,4 @@
-import { world, EntityQueryOptions, GameMode, system, Vector3, PlayerLeaveAfterEvent, Block } from "@minecraft/server";
+import { world, EntityQueryOptions, GameMode, system, Vector3, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { flag } from "../../../util.js";
 import { dynamicPropertyRegistry } from "../../WorldInitializeAfterEvent/registry.js";
 

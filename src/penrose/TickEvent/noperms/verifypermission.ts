@@ -43,7 +43,7 @@ function verifypermission() {
             player.removeTag("paradoxOpped");
         }
 
-        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f ${player.name} had unauthorized permissions. Permissions removed!`);
+        sendMsg("@a[tag=notify]", `§f§4[§6Paradox§4]§f §7${player.name}§f had unauthorized permissions. Permissions removed!`);
     }
 }
 

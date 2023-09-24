@@ -159,7 +159,7 @@ export function uiChatChannelInvite(ChatChannelJoinUIResult: ModalFormResponse, 
         if (playerToInvite) {
             const inviteResult = ChatChannelManager.inviteToChatChannel(playerToInvite, channelNameToInvite);
             if (inviteResult) {
-                uiMessage = `§fInvited ${playerToInvite} to join chat channel '${channelNameToInvite}'.`;
+                uiMessage = `§fInvited §7${playerToInvite}§f to join chat channel '§7${channelNameToInvite}§f'.`;
                 const joinedPlayerName = joinedPlayer ? joinedPlayer.name : "Unknown Player";
 
                 const joinMessage = `§f§4[§6Paradox§4]§f §6${joinedPlayerName}§f joined the chat channel.`;
@@ -172,7 +172,7 @@ export function uiChatChannelInvite(ChatChannelJoinUIResult: ModalFormResponse, 
                     }
                 });
 
-                sendMsgToPlayer(joinedPlayer, `§f§4[§6Paradox§4]§f ${player.name} invited you to channel '${channelNameToInvite}'.`);
+                sendMsgToPlayer(joinedPlayer, `§f§4[§6Paradox§4]§f §7${player.name}§f invited you to channel '§7${channelNameToInvite}§f'.`);
             } else {
                 uiMessage = `§6f ${playerToInvite} is already in a chat channel.`;
             }
@@ -239,7 +239,7 @@ export function uiChatChannelLeave(player: Player) {
             if (newOwnerId) {
                 ChatChannelManager.handOverChannelOwnership(channelNameToLeave, ChatChannelManager.getPlayerById(player.id), ChatChannelManager.getPlayerById(newOwnerId).name);
                 const newOwnerObject = ChatChannelManager.getPlayerById(newOwnerId);
-                sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '${channelNameToLeave}' transferred to '${newOwnerObject.name}'.`);
+                sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '§7${channelNameToLeave}§f' transferred to '§7${newOwnerObject.name}§f'.`);
             } else {
                 // If no other members, delete the channel
                 ChatChannelManager.deleteChatChannel(channelNameToLeave, channelToLeave.password);
@@ -284,7 +284,7 @@ export function uiChatChannelDelete(ChatChannelDeleteUIResult: ActionFormRespons
                     if (deleteResult === "wrong_password") {
                         uiMessage = `§fWrong password for chat channel '§6${channelNameToDelete}'.`;
                     } else {
-                        uiMessage = `§f Chat channel '${channelNameToDelete}' ${deleteResult ? "§2deleted." : "§6not found."}`;
+                        uiMessage = `§f Chat channel '§7${channelNameToDelete}§f' ${deleteResult ? "§2deleted." : "§6not found."}`;
                     }
                     const msgUI = new ActionFormData();
                     msgUI.title("§4Chat Channel Delete§4");
@@ -299,7 +299,7 @@ export function uiChatChannelDelete(ChatChannelDeleteUIResult: ActionFormRespons
                 if (deleteResult === "wrong_password") {
                     uiMessage = `§fWrong password for chat channel '§6${channelNameToDelete}'.`;
                 } else {
-                    uiMessage = `§f Chat channel '${channelNameToDelete}' ${deleteResult ? "§2deleted." : "§6not found."}`;
+                    uiMessage = `§f Chat channel '§7${channelNameToDelete}§f' ${deleteResult ? "§2deleted." : "§6not found."}`;
                 }
                 const msgUI = new ActionFormData();
                 msgUI.title("§4Chat Channel Delete§4");

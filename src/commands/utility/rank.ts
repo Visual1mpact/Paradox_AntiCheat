@@ -119,8 +119,8 @@ export function rank(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (player === member) {
-        return sendMsg("@a[tag=paradoxOpped]", `${player.name} has changed their rank`);
+        return sendMsg("@a[tag=paradoxOpped]", `§7${player.name}§f has changed their rank`);
     }
 
-    sendMsg("@a[tag=paradoxOpped]", `${player.name} has changed ${member.name}'s rank!`);
+    sendMsg("@a[tag=paradoxOpped]", `§7${player.name}§f has changed §7${member.name}'s§f rank!`);
 }

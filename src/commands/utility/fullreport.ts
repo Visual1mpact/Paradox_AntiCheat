@@ -78,8 +78,8 @@ async function handleFullReport(message: ChatSendAfterEvent, args: string[]) {
     for (const member of players) {
         const reportBody = [
             `\n§f§4[§6Paradox§4]§f Getting all Paradox Logs from: §6${member.name}§f`,
-            `§f§4[§6Paradox§4]§f §6${member.name}§f is in Gamemode: ${getGamemode(member)}`,
-            `§f§4[§6Paradox§4]§f §6${member.name}§f is currently at X= ${member.location.x.toFixed(0)} Y= ${member.location.y.toFixed(0)} Z= ${member.location.z.toFixed(0)}`,
+            `§f§4[§6Paradox§4]§f §6${member.name}§f is in Gamemode: §7${getGamemode(member)}§f`,
+            `§f§4[§6Paradox§4]§f §6${member.name}§f is currently at X= §7${member.location.x.toFixed(0)}§f Y= §7${member.location.y.toFixed(0)}§f Z= §7${member.location.z.toFixed(0)}§f`,
         ];
 
         switch (true) {
@@ -106,7 +106,7 @@ async function handleFullReport(message: ChatSendAfterEvent, args: string[]) {
                     divider = true;
                     reportBody.push(`§f§4[§6Paradox§4]§4 ----------------------------------§f`);
                 }
-                reportBody.push(`§f§4[§6Paradox§4]§f §f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f Violations: ${score}`);
+                reportBody.push(`§f§4[§6Paradox§4]§f §f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f Violations: §7${score}§f`);
             }
             if (vlCount === ScoreManager.allscores.length && divider === true) {
                 reportBody.push(`§f§4[§6Paradox§4]§4 ----------------------------------§f`);
@@ -161,7 +161,7 @@ async function handleFullReport(message: ChatSendAfterEvent, args: string[]) {
                 materialType = verification.typeId.split(":")[1];
             }
             const materialColor = materialColors[materialType] || materialColors["none"];
-            reportBody.push(`§f§4[§6Paradox§4]§f ${armorType}: ${isEnchanted ? "§aEnchanted§f" : "§4Unenchanted§f"} || ${materialColor}${materialType}`);
+            reportBody.push(`§f§4[§6Paradox§4]§f §7${armorType}§f: ${isEnchanted ? "§aEnchanted§f" : "§4Unenchanted§f"} || ${materialColor}${materialType}`);
         }
 
         sendMsgToPlayer(player, reportBody);

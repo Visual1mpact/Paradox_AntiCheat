@@ -42,7 +42,7 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             //sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
         }
         member.addTag("Rank:" + predefinedrank[predefinedrankvalue as number]);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has updated ${member.name} Rank.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has updated §7${member.name}'s§f Rank.`);
         return paradoxui(player);
     }
     if (customrank) {
@@ -62,18 +62,18 @@ export function uiCHATRANKS(notifyResult: ModalFormResponse, onlineList: string[
             //sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
         }
         member.addTag("Rank:" + customrank);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has updated ${member.name} Rank.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has updated §7${member.name}'s§f Rank.`);
         if (ChatRanksToggle === true && chatRanksBoolean === false) {
             // Allow
             dynamicPropertyRegistry.set("chatranks_b", true);
             world.setDynamicProperty("chatranks_b", true);
-            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ChatRanks§f!`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6ChatRanks§f!`);
         }
         if (ChatRanksToggle === false && chatRanksBoolean === true) {
             // Deny
             dynamicPropertyRegistry.set("chatranks_b", false);
             world.setDynamicProperty("chatranks_b", false);
-            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ChatRanks§f!`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4ChatRanks§f!`);
         }
         return paradoxui(player);
     }

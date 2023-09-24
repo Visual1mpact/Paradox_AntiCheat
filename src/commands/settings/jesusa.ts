@@ -67,12 +67,12 @@ export function jesusA(message: ChatSendAfterEvent, args: string) {
         // Allow
         dynamicPropertyRegistry.set("jesusa_b", true);
         world.setDynamicProperty("jesusa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6JesusA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6JesusA§f!`);
         JesusA();
     } else if (jesusaBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("jesusa_b", false);
         world.setDynamicProperty("jesusa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4JesusA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4JesusA§f!`);
     }
 }

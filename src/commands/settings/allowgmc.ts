@@ -79,12 +79,12 @@ export function allowgmc(message: ChatSendAfterEvent, args: string[]) {
             Adventure();
             return;
         }
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disallowed §4Gamemode 1 (Creative)§f to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disallowed §4Gamemode 1 (Creative)§f to be used!`);
         Creative();
     } else if (creativeGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("creativegm_b", false);
         world.setDynamicProperty("creativegm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has allowed §6Gamemode 1 (Creative)§f to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has allowed §6Gamemode 1 (Creative)§f to be used!`);
     }
 }

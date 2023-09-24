@@ -67,12 +67,12 @@ export function spammerC(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("spammerc_b", true);
         world.setDynamicProperty("spammerc_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpammerC§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6SpammerC§f!`);
         SpammerC();
     } else if (spammerCBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("spammerc_b", false);
         world.setDynamicProperty("spammerc_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpammerC§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4SpammerC§f!`);
     }
 }

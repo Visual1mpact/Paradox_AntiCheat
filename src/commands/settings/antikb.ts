@@ -81,12 +81,12 @@ async function handleAntiKnockback(message: ChatSendAfterEvent, args: string[]) 
         // Allow
         dynamicPropertyRegistry.set("antikb_b", true);
         world.setDynamicProperty("antikb_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Knockback§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Anti Knockback§f!`);
         AntiKnockbackA();
     } else if (antikbBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antikb_b", false);
         world.setDynamicProperty("antikb_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Knockback§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Anti Knockback§f!`);
     }
 }

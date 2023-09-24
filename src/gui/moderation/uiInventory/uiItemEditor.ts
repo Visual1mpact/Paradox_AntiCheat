@@ -119,7 +119,7 @@ export function uiItemEditorEnchantments(InvEditorUIResult: ModalFormResponse, p
                 enchantmentsComponent.enchantments = enchantmentList;
                 container.setItem(itemSlot, item);
                 if (!addedCustomEnchantment) {
-                    sendMsgToPlayer(player, "Unable to enchant: " + item.typeId + " Enchantment to be applied: " + txtEnchant + ", " + txtEnchantValue);
+                    sendMsgToPlayer(player, "§fUnable to enchant: §7" + item.typeId + "§f Enchantment to be applied: §7" + txtEnchant + "§f, §7" + txtEnchantValue);
                 }
             }
         }

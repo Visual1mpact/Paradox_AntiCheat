@@ -79,12 +79,12 @@ async function handleAuraCheck(message: ChatSendAfterEvent, args: string[]) {
         // Deny
         dynamicPropertyRegistry.set("antikillaura_b", false);
         world.setDynamicProperty("antikillaura_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiKillAura§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4AntiKillAura§f!`);
     } else if (antiKillAuraBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("antikillaura_b", true);
         world.setDynamicProperty("antikillaura_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiKillAura§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6AntiKillAura§f!`);
         KillAura();
     }
 }

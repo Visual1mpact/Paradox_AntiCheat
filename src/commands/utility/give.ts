@@ -125,9 +125,9 @@ export function give(message: ChatSendAfterEvent, args: string[]) {
             const item = new ItemStack(MinecraftItemTypes[itemStringConvert], Number(args[2]), Number(args[3]));
             inv.addItem(item);
             */
-            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${member.name} was given ${args[1]} x${args[2]}.`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f §7${member.name}§f was given §7${args[1]}§f x§7${args[2]}§f.`);
         } else {
-            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This stack is too high! ${maxStack} is the max. Try again.`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This stack is too high! §7${maxStack}§f is the max. Try again.`);
         }
     } else {
         return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f This item could not be found! Try again.`);

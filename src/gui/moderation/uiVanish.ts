@@ -69,7 +69,7 @@ async function handleUIVanish(vanishResult: ModalFormResponse, onlineList: strin
             player.removeEffect(effectType);
         }
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are no longer vanished.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is no longer in vanish.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§7${member.name}§f is no longer in vanish.`);
     }
 
     if (!member.hasTag("novanish")) {
@@ -79,7 +79,7 @@ async function handleUIVanish(vanishResult: ModalFormResponse, onlineList: strin
     if (member.hasTag("vanish") && !member.hasTag("novanish")) {
         member.triggerEvent("vanish");
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now vanished!`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is now vanished!`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§7${member.name}§f is now vanished!`);
     }
 
     if (member.hasTag("novanish")) {

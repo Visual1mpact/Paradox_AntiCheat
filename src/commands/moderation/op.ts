@@ -95,15 +95,15 @@ export function op(message: ChatSendAfterEvent, args: string[]) {
 
                 dynamicPropertyRegistry.set(targetPlayer.id, targetPlayer.name);
 
-                sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You have granted Paradox-Op to ${targetPlayer.name}.`);
+                sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f You have granted Paradox-Op to §7${targetPlayer.name}§f.`);
                 sendMsgToPlayer(targetPlayer, `§f§4[§6Paradox§4]§f You are now op!`);
-                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${targetPlayer.name}§f is now Paradox-Opped.`);
+                sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${targetPlayer.name}§f is now Paradox-Opped.`);
                 targetPlayer.addTag("paradoxOpped");
             } else {
-                sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f ${targetPlayer.name} is already Paradox-Opped.`);
+                sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f §7${targetPlayer.name}§f is already Paradox-Opped.`);
             }
         } else {
-            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Could not find player ${targetPlayerName}.`);
+            sendMsgToPlayer(operator, `§f§4[§6Paradox§4]§f Could not find player §7${targetPlayerName}§f.`);
         }
     } else if (args.length === 0 && !config.encryption.password) {
         // Operator wants to change their own password

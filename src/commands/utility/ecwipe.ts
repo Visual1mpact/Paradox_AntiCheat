@@ -91,5 +91,5 @@ async function handleECWipe(message: ChatSendAfterEvent, args: string[]) {
     for (let slot = 0; slot < 30; slot++) {
         member.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
-    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wiped ${member.name}'s enderchest!`);
+    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wiped §7${member.name}'s§f enderchest!`);
 }

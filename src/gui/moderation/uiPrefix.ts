@@ -41,7 +41,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
          * Make sure we are not attempting to set a prefix that can break commands
          */
         if (textField === "/") {
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Using prefix '/' is not allowed!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Using prefix '§7/§f' is not allowed!`);
             return paradoxui;
         }
 
@@ -49,7 +49,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
         if ((textField as string).length <= 1 && (textField as string).length >= 1) {
             resetPrefix(member);
             config.customcommands.prefix = textField as string;
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been changed to '${textField}'! for ${member.name}`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been changed to '§7${textField}§f'! for §7${member.name}§f`);
             member.addTag("Prefix:" + textField);
         } else {
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix length cannot be more than 2 characters!`);
@@ -59,7 +59,7 @@ export function uiPREFIX(prefixResult: ModalFormResponse, onlineList: string[], 
     // Reset has been toggled
     if (toggle) {
         resetPrefix(player);
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been reset for ${member.name}!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been reset for §7${member.name}§f!`);
     }
     return paradoxui(player);
 }

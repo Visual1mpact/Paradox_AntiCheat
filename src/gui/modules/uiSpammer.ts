@@ -28,40 +28,40 @@ export function uiSPAMMER(spamResult: ModalFormResponse, player: Player) {
         // Allow
         dynamicPropertyRegistry.set("spammera_b", true);
         world.setDynamicProperty("spammera_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpammerA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6SpammerA§f!`);
         SpammerA();
     }
     if (SpammerAToggle === false && spammerABoolean === true) {
         //Deny
         dynamicPropertyRegistry.set("spammera_b", false);
         world.setDynamicProperty("spammera_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpammerA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4SpammerA§f!`);
     }
     if (SpammerBToggle === true && spammerBBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("spammerb_b", true);
         world.setDynamicProperty("spammerb_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpammerB§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6SpammerB§f!`);
         SpammerB();
     }
     if (SpammerBToggle === false && spammerBBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("spammerb_b", false);
         world.setDynamicProperty("spammerb_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpammerB§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4SpammerB§f!`);
     }
     if (SpammerCToggle === true && spammerCBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("spammerc_b", true);
         world.setDynamicProperty("spammerc_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpammerC§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6SpammerC§f!`);
         SpammerC();
     }
     if (SpammerCToggle === false && spammerCBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("spammerc_b", false);
         world.setDynamicProperty("spammerc_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpammerC§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4SpammerC§f!`);
     }
 
     //show the main ui to the player once complete.

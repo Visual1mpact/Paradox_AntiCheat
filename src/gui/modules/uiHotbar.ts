@@ -33,14 +33,14 @@ export function uiHOTBAR(hotbarResult: ModalFormResponse, player: Player) {
         dynamicPropertyRegistry.set("hotbar_b", true);
         world.setDynamicProperty("hotbar_b", true);
         config.modules.hotbar.message = HotbarMessage as string;
-        sendMsg("@a[tag=paradoxOpped]", `${player.name} has enabled §6Hotbar`);
+        sendMsg("@a[tag=paradoxOpped]", `§7${player.name}§f has enabled §6Hotbar`);
         Hotbar();
     }
     if (HotbarToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("hotbar_b", false);
         world.setDynamicProperty("hotbar_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `${player.name} has disabled §6Hotbar`);
+        sendMsg("@a[tag=paradoxOpped]", `§7${player.name}§f has disabled §6Hotbar`);
     }
     if (HotbarToggle === false && HotbarRestDefaultMessageToggle === true) {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You need to enable the hotbar toggle to reset the message!`);

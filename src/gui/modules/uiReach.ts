@@ -27,27 +27,27 @@ export function uiREACH(reachResult: ModalFormResponse, player: Player) {
         // Allow
         dynamicPropertyRegistry.set("reacha_b", true);
         world.setDynamicProperty("reacha_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ReachA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6ReachA§f!`);
         BeforeReachA();
     }
     if (ReachAToggle === false && reachABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("reacha_b", false);
         world.setDynamicProperty("reacha_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ReachA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4ReachA§f!`);
     }
     if (ReachBToggle === true && reachBBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("reachb_b", true);
         world.setDynamicProperty("reachb_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ReachB§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6ReachB§f!`);
         ReachB();
     }
     if (ReachBToggle === false && reachBBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("reachb_b", false);
         world.setDynamicProperty("reachb_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ReachB§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4ReachB§f!`);
     }
 
     //show the main ui to the player once complete.

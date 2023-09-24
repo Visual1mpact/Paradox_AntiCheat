@@ -24,14 +24,14 @@ export function uiLAGCLEAR(lagclearResult: ModalFormResponse, player: Player) {
         // Allow
         dynamicPropertyRegistry.set("clearlag_b", true);
         world.setDynamicProperty("clearlag_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ClearLag§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6ClearLag§f!`);
         ClearLag();
     }
     if (LagClearToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("clearlag_b", false);
         world.setDynamicProperty("clearlag_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ClearLag§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4ClearLag§f!`);
     }
 
     //show the main ui to the player once complete.

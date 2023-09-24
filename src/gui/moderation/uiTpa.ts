@@ -46,14 +46,14 @@ export function uiTPA(tpaResult: ModalFormResponse, onlineList: string[], player
         setTimer(player.id);
         player.teleport(member.location, { dimension: member.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         // Let you know that you have been teleported
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported ${player.name} to ${member.name}`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported §7${player.name}§f to §7${member.name}§f`);
     }
 
     if (toggleTargetTo === true) {
         //tp the target to the op
         setTimer(member.id);
         member.teleport(player.location, { dimension: player.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported ${member.name} to ${player.name}`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported §7${member.name}§f to §7${player.name}§f`);
     }
 
     return paradoxui(player);

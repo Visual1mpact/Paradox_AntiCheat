@@ -79,12 +79,12 @@ export function allowgms(message: ChatSendAfterEvent, args: string[]) {
             Adventure();
             return;
         }
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disallowed §4Gamemode 0 (Survival)§f to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disallowed §4Gamemode 0 (Survival)§f to be used!`);
         Survival();
     } else if (survivalGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("survivalgm_b", false);
         world.setDynamicProperty("survivalgm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has allowed §6Gamemode 0 (Survival)§f to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has allowed §6Gamemode 0 (Survival)§f to be used!`);
     }
 }

@@ -66,13 +66,13 @@ async function handleUILockdown(lockdownResult: ModalFormResponse, player: Playe
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Server is in lockdown!`);
         dynamicPropertyRegistry.set("lockdown_b", true);
         world.setDynamicProperty("lockdown_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Lockdown§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Lockdown§f!`);
     }
     //Disable
     if (LockdownToggle === false) {
         dynamicPropertyRegistry.set("lockdown_b", false);
         world.setDynamicProperty("lockdown_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Lockdown§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Lockdown§f!`);
         sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f Server is no longer in lockdown!`);
     }
     return paradoxui;

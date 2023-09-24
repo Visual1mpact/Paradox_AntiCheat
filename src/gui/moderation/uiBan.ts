@@ -45,6 +45,6 @@ export function uiBAN(banResult: ModalFormResponse, onlineList: string[], player
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f I was unable to ban that player! Error: ${error}`);
         return paradoxui(player);
     }
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has banned ${member.name}§f. Reason: ${textField}`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has banned §7${member.name}§f. Reason: §7${textField}§f`);
     return paradoxui(player);
 }

@@ -21,10 +21,10 @@ export function uiUNBAN(unbanResult: ModalFormResponse, player: Player) {
     }
     if (deleteUnban === true) {
         queueUnban.delete(textField as string);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${textField} has been removed from the unban queue!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${textField}§f has been removed from the unban queue!`);
     }
     // Add player to queue
     queueUnban.add(textField as string);
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${textField} is queued to be unbanned!`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${textField}§f is queued to be unbanned!`);
     return paradoxui(player);
 }

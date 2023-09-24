@@ -37,7 +37,7 @@ function worldBorderHelp(player: Player, prefix: string, worldBorderBoolean: str
 }
 
 function setWorldBorder(player: Player, overworldSize: number, netherSize: number, endSize: number) {
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set the §6World Border§f! Overworld: ${overworldSize} Nether: ${netherSize} End: ${endSize}`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has set the §6World Border§f! Overworld: §7${overworldSize}§f Nether: §7${netherSize}§f End: §7${endSize}§f`);
     dynamicPropertyRegistry.set("worldborder_b", true);
     dynamicPropertyRegistry.set("worldborder_n", Math.abs(overworldSize));
     dynamicPropertyRegistry.set("worldborder_nether_n", Math.abs(netherSize));
@@ -79,7 +79,7 @@ export function worldborders(message: ChatSendAfterEvent, args: string[]) {
     // Shutdown worldborder
     if (args[0] === "disable") {
         // Disable Worldborder
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled the §6World Border§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled the §6World Border§f!`);
         dynamicPropertyRegistry.set("worldborder_b", false);
         dynamicPropertyRegistry.set("worldborder_n", 0);
         dynamicPropertyRegistry.set("worldborder_nether_n", 0);

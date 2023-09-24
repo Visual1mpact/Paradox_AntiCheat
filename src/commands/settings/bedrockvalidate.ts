@@ -67,12 +67,12 @@ export function bedrockvalidate(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("bedrockvalidate_b", true);
         world.setDynamicProperty("bedrockvalidate_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6BedrockValidate§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6BedrockValidate§f!`);
         BedrockValidate();
     } else if (bedrockValidateBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("bedrockvalidate_b", false);
         world.setDynamicProperty("bedrockvalidate_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4BedrockValidate§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4BedrockValidate§f!`);
     }
 }

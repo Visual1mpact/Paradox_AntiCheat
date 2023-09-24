@@ -67,12 +67,12 @@ export function namespoofA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("namespoofa_b", true);
         world.setDynamicProperty("namespoofa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NamespoofA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6NamespoofA§f!`);
         NamespoofA();
     } else if (nameSpoofBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofa_b", false);
         world.setDynamicProperty("namespoofa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NamespoofA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4NamespoofA§f!`);
     }
 }

@@ -82,9 +82,9 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
     if (argCheck && args[0].toLowerCase() === "delete") {
         const nameToDelete = args.slice(1).join(" ");
         if (queueUnban.delete(nameToDelete)) {
-            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${nameToDelete} has been removed from the unban queue!`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${nameToDelete}§f has been removed from the unban queue!`);
         } else {
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${nameToDelete} is not in the unban queue!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f §7${nameToDelete}§f is not in the unban queue!`);
         }
         return;
     }
@@ -96,5 +96,5 @@ export function unban(message: ChatSendAfterEvent, args: string[]) {
     }
 
     queueUnban.add(username);
-    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player queued to be unbanned: ${username}`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player queued to be unbanned: §7${username}§f`);
 }

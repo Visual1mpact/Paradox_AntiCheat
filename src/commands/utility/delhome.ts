@@ -76,13 +76,13 @@ export function delhome(message: ChatSendAfterEvent, args: string[]) {
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
             player.removeTag(encryptedString);
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '${args[0]}'!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '§7${args[0]}§f'!`);
             break;
         }
     }
     if (verify === true) {
         return;
     } else {
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '§7${args[0]}§f' does not exist!`);
     }
 }

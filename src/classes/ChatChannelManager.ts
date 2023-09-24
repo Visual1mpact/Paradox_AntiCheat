@@ -136,7 +136,7 @@ export class ChatChannelManager {
             membersArray.forEach((thisMember) => {
                 const thisPlayer: Player | null = this.getPlayerById(thisMember);
                 // Let members know that this channel no longer exists
-                sendMsgToPlayer(thisPlayer, `§f§4[§6Paradox§4]§f '${channelName}' has been disbanded.`);
+                sendMsgToPlayer(thisPlayer, `§f§4[§6Paradox§4]§f '§7${channelName}§f' has been disbanded.`);
                 this.playerChannelMap[thisMember] = null;
             });
 

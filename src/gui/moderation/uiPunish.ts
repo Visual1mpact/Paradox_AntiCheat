@@ -82,6 +82,6 @@ async function handleUIPunish(punishResult: ModalFormResponse, onlineList: strin
     // Notify staff and player that punishment has taken place
     sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You have been punished for your behavior!`);
     // Use try/catch in case nobody has tag 'notify' as this will report 'no target selector'
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has punished ${member.name}§f`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has punished §7${member.name}§f`);
     return paradoxui(player);
 }

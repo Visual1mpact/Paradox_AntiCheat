@@ -66,11 +66,11 @@ export function antishulker(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("antishulker_b", true);
         world.setDynamicProperty("antishulker_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti-Shulkers§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Anti-Shulkers§f!`);
     } else if (antiShulkerBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antishulker_b", false);
         world.setDynamicProperty("antishulker_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti-Shulkers§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Anti-Shulkers§f!`);
     }
 }

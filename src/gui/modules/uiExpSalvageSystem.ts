@@ -23,13 +23,13 @@ export function uiEXPSALVAGESYSTEM(expsalvagesystemResult: ModalFormResponse, pl
         // Allow
         dynamicPropertyRegistry.set("salvage_b", true);
         world.setDynamicProperty("salvage_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Salvage§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Salvage§f!`);
     }
     if (ExpSalvageSystemToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("salvage_b", false);
         world.setDynamicProperty("salvage_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Salvage§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Salvage§f!`);
     }
 
     //show the main ui to the player once complete.

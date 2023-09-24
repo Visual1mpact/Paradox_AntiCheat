@@ -67,12 +67,12 @@ export function clearlag(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("clearlag_b", true);
         world.setDynamicProperty("clearlag_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6ClearLag§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6ClearLag§f!`);
         ClearLag();
     } else if (clearLagBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("clearlag_b", false);
         world.setDynamicProperty("clearlag_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4ClearLag§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4ClearLag§f!`);
     }
 }

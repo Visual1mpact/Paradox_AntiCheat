@@ -122,7 +122,7 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!coordinatesArray) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '§7${args[0]}§f' does not exist!`);
     }
 
     const coordArrayLength = coordinatesArray.length;
@@ -143,7 +143,7 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
     }
 
     if (!homex || !homey || !homez || !dimension) {
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' does not exist!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '§7${args[0]}§f' does not exist!`);
     } else {
         let cooldownCalc: number;
         let activeTimer: string;
@@ -174,7 +174,7 @@ async function handleGoHome(message: ChatSendAfterEvent, args: string[]) {
             cooldownTimer.set(player, new Date().getTime());
         } else {
             // Teleporting to fast
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Too fast! Please wait for ${activeTimer} before going home.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Too fast! Please wait for §7${activeTimer}§f before going home.`);
         }
     }
 }

@@ -67,12 +67,12 @@ export function speedA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("speeda_b", true);
         world.setDynamicProperty("speeda_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6SpeedA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6SpeedA§f!`);
         SpeedA();
     } else if (speedBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("speeda_b", false);
         world.setDynamicProperty("speeda_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4SpeedA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4SpeedA§f!`);
     }
 }

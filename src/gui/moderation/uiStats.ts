@@ -59,7 +59,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
     allObjectives.forEach((objective) => {
         const score = ScoreManager.getScore(objective, member);
         if (score > 0) {
-            reportBody.push(`§f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f number of Violations: ${score}\n`);
+            reportBody.push(`§f§4[§6${objective.replace("vl", "").toUpperCase()}§4]§f number of Violations: §7${score}§f\n`);
         }
     });
     reportBody.push(`§f§4--------------------------------§f\n`);
@@ -112,7 +112,7 @@ export function uiSTATS(statsResult: ModalFormResponse, onlineList: string[], pl
             materialType = verification.typeId.split(":")[1];
         }
         const materialColor = materialColors[materialType] || materialColors["none"];
-        reportBody.push(`§f${armorType}: ${isEnchanted ? "§aEnchanted§f" : "§4Unenchanted§f"} || ${materialColor}${materialType}\n`);
+        reportBody.push(`§7${armorType}§f: ${isEnchanted ? "§aEnchanted§f" : "§4Unenchanted§f"} || ${materialColor}${materialType}\n`);
     }
 
     const ResultsUI = new ActionFormData();

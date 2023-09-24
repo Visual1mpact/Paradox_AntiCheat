@@ -67,12 +67,12 @@ export function xrayA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("xraya_b", true);
         world.setDynamicProperty("xraya_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6XrayA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6XrayA§f!`);
         XrayA();
     } else if (xrayBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("xraya_b", false);
         world.setDynamicProperty("xraya_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4XrayA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4XrayA§f!`);
     }
 }

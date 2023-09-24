@@ -81,12 +81,12 @@ async function handleAutoClick(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("autoclicker_b", true);
         world.setDynamicProperty("autoclicker_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AutoClicker§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6AutoClicker§f!`);
         AutoClicker();
     } else if (autoClickerBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("autoclicker_b", false);
         world.setDynamicProperty("autoclicker_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AutoClicker§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4AutoClicker§f!`);
     }
 }

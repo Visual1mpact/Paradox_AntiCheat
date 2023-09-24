@@ -116,13 +116,13 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
             const existingChannelName = ChatChannelManager.getPlayerChannel(player.id);
 
             if (existingChannelName) {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are already in a chat channel (${existingChannelName}). Leave the current channel before creating a new one.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are already in a chat channel (§7${existingChannelName}§f). Leave the current channel before creating a new one.`);
             } else {
                 const channelName = subCommandArgs[0];
                 const password = subCommandArgs[1]; // Optional password argument
 
                 const createResult = ChatChannelManager.createChatChannel(channelName, password, player.id);
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Chat channel '${channelName}' ${createResult ? "created." : "already exists."}`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Chat channel '§7${channelName}§f' ${createResult ? "created." : "already exists."}`);
             }
             break;
         }
@@ -134,9 +134,9 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
             const deleteResult = ChatChannelManager.deleteChatChannel(channelNameToDelete, passwordToDelete);
 
             if (deleteResult === "wrong_password") {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wrong password for chat channel '${channelNameToDelete}'.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wrong password for chat channel '§7${channelNameToDelete}§f'.`);
             } else {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Chat channel '${channelNameToDelete}' ${deleteResult ? "deleted." : "not found."}`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Chat channel '§7${channelNameToDelete}§f' ${deleteResult ? "deleted." : "not found."}`);
             }
             break;
         }
@@ -155,7 +155,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
             if (playerToInvite) {
                 const inviteResult = ChatChannelManager.inviteToChatChannel(playerToInvite, channelNameToInvite);
                 if (inviteResult) {
-                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Invited ${playerToInvite} to join chat channel '${channelNameToInvite}'.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Invited §7${playerToInvite}§f to join chat channel '§7${channelNameToInvite}§f'.`);
                     const joinedPlayerName = joinedPlayer ? joinedPlayer.name : "Unknown Player";
 
                     const joinMessage = `§f§4[§6Paradox§4]§f §6${joinedPlayerName}§f joined the chat channel.`;
@@ -168,12 +168,12 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                         }
                     });
 
-                    sendMsgToPlayer(joinedPlayer, `§f§4[§6Paradox§4]§f ${player.name} invited you to channel '${channelNameToInvite}'.`);
+                    sendMsgToPlayer(joinedPlayer, `§f§4[§6Paradox§4]§f §7${player.name}§f invited you to channel '§7${channelNameToInvite}§f'.`);
                 } else {
-                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${playerToInvite} is already in a chat channel.`);
+                    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f §7${playerToInvite}§f is already in a chat channel.`);
                 }
             } else {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player '${playerToInvite}' not found.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player '§7${playerToInvite}§f' not found.`);
             }
             break;
         }
@@ -185,7 +185,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
             const newChannel = ChatChannelManager.switchChatChannel(player.id, channelNameToJoin, passwordToJoin);
 
             if (newChannel === "wrong_password") {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wrong password for chat channel '${channelNameToJoin}'.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Wrong password for chat channel '§7${channelNameToJoin}§f'.`);
             } else if (newChannel === "already_in_channel") {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are already in a chat channel. Please leave your current channel first.`);
             } else if (newChannel !== false) {
@@ -202,7 +202,7 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                     }
                 });
 
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You joined chat channel '${channelNameToJoin}'.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You joined chat channel '§7${channelNameToJoin}§f'.`);
             } else {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unable to join chat channel.`);
             }
@@ -216,11 +216,11 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
             const handOverResult = ChatChannelManager.handOverChannelOwnership(channelNameToHandOver, player, newOwnerName);
 
             if (handOverResult === "not_owner") {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are not the owner of chat channel '${channelNameToHandOver}'.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You are not the owner of chat channel '§7${channelNameToHandOver}§f'.`);
             } else if (handOverResult === "target_not_found") {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player '${newOwnerName}' not found.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Player '§7${newOwnerName}§f' not found.`);
             } else if (handOverResult) {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Ownership of chat channel '${channelNameToHandOver}' transferred to '${newOwnerName}'.`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Ownership of chat channel '§7${channelNameToHandOver}§f' transferred to '§7${newOwnerName}§f'.`);
             } else {
                 sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unable to transfer ownership of chat channel.`);
             }
@@ -261,19 +261,19 @@ export function chatChannel(message: ChatSendAfterEvent, args: string[]) {
                 if (newOwnerId) {
                     ChatChannelManager.handOverChannelOwnership(channelNameToLeave, ChatChannelManager.getPlayerById(player.id), ChatChannelManager.getPlayerById(newOwnerId).name);
                     const newOwnerObject = ChatChannelManager.getPlayerById(newOwnerId);
-                    sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '${channelNameToLeave}' transferred to '${newOwnerObject.name}'.`);
+                    sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '§7${channelNameToLeave}§f' transferred to '§7${newOwnerObject.name}§f'.`);
                 } else {
                     // If no other members, delete the channel
                     ChatChannelManager.deleteChatChannel(channelNameToLeave, channelToLeave.password);
                 }
             }
 
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Left the chat channel '${channelNameToLeave}'.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Left the chat channel '§7${channelNameToLeave}§f'.`);
             break;
         }
 
         default:
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unknown chat channel command. Use '${prefix}channel help' for command help.`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Unknown chat channel command. Use '§7${prefix}channel help§f' for command help.`);
             break;
     }
 }
@@ -296,7 +296,7 @@ function onPlayerLeave(event: PlayerLeaveAfterEvent) {
         if (newOwnerId) {
             ChatChannelManager.handOverChannelOwnership(channelName, ChatChannelManager.getPlayerById(playerId), newOwnerId);
             const newOwnerObject = ChatChannelManager.getPlayerById(newOwnerId);
-            sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '${channelName}' transferred to '${newOwnerObject.name}'.`);
+            sendMsgToPlayer(newOwnerObject, `§f§4[§6Paradox§4]§f Ownership of chat channel '§7${channelName}§f' transferred to '§7${newOwnerObject.name}§f'.`);
         } else {
             // If no other members, delete the channel
             ChatChannelManager.deleteChatChannel(channelName, channel.password);

@@ -79,15 +79,15 @@ async function handleOverideCommandBlocksEnabled(message: ChatSendAfterEvent, ar
     if (cmdsscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set CommandBlocksEnabled as §6enabled§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has set CommandBlocksEnabled as §6enabled§f!`);
     } else if (cmdsscore === 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set CommandBlocksEnabled as §4disabled§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has set CommandBlocksEnabled as §4disabled§f!`);
     } else if (cmdsscore >= 2) {
         // Force
         player.runCommand(`scoreboard players set paradox:config cmds 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has §etoggled§f Force-CommandBlocksEnabled!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has §etoggled§f Force-CommandBlocksEnabled!`);
     }
     return player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
 }

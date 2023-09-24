@@ -78,12 +78,12 @@ export function allowgma(message: ChatSendAfterEvent, args: string) {
             Adventure();
             return;
         }
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disallowed §4Gamemode 2 (Adventure)§f to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disallowed §4Gamemode 2 (Adventure)§f to be used!`);
         Adventure();
     } else if (adventureGMBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("adventuregm_b", false);
         world.setDynamicProperty("adventuregm_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has allowed §6Gamemode 2 (Adventure)§f to be used!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has allowed §6Gamemode 2 (Adventure)§f to be used!`);
     }
 }

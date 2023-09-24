@@ -72,13 +72,13 @@ export function banMessage(player: Player) {
     }
 
     if (config.modules.banAppeal.enabled === true) {
-        player.runCommandAsync(`kick "${player.name}" §f\n§l§4YOU ARE BANNED!§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}\n§b${config.modules.banAppeal.discordLink}`).catch(() => {
+        player.runCommandAsync(`kick "${player.name}" §f\n§l§4YOU ARE BANNED!§r\n§4[§6Banned By§4]§f: §7${by || "§7N/A"}§f\n§4[§6Reason§4]§f: §7${reason || "§7N/A"}§f\n§b${config.modules.banAppeal.discordLink}`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
         });
     } else {
-        player.runCommandAsync(`kick "${player.name}" §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: ${by || "§7N/A"}\n§4[§6Reason§4]§f: ${reason || "§7N/A"}`).catch(() => {
+        player.runCommandAsync(`kick "${player.name}" §f\n§l§4YOU ARE BANNED!\n§r\n§4[§6Banned By§4]§f: §7${by || "§7N/A"}§f\n§4[§6Reason§4]§f: §7${reason || "§7N/A"}§f`).catch(() => {
             // If we can't kick them with /kick, then we instantly despawn them
             kickablePlayers.add(player);
             player.triggerEvent("paradox:kick");
@@ -86,7 +86,7 @@ export function banMessage(player: Player) {
     }
 
     // Notify staff that a player was banned
-    sendMsg("@a[tag=paradoxOpped]", [`§f§4[§6Paradox§4]§f ${player.name} has been banned!`, `§4[§6Banned By§4]§f: ${by || "§7N/A"}`, `§4[§6Reason§4]§f: ${reason || "§7N/A"}`]);
+    sendMsg("@a[tag=paradoxOpped]", [`§f§4[§6Paradox§4]§f §7${player.name}§f has been banned!`, `§4[§6Banned By§4]§f: §7${by || "§7N/A"}§f`, `§4[§6Reason§4]§f: §7${reason || "§7N/A"}§f`]);
 }
 
 /**
@@ -123,7 +123,7 @@ export function resetTag(member: Player) {
             member.removeTag(tag);
         }
     }
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name} has reset their rank`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${member.name}§f has reset their rank`);
 }
 
 /**

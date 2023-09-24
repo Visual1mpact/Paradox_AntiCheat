@@ -30,7 +30,7 @@ export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Play
         world.setDynamicProperty("worldborder_nether_n", Math.abs(Number(NetherValueTextfield)));
         world.setDynamicProperty("worldborder_end_n", Math.abs(Number(EndValueTextfield)));
         WorldBorder();
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set the §6World Border§f! Overworld: ${OverworldValueTextfield} Nether: ${NetherValueTextfield} End: ${EndValueTextfield}`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has set the §6World Border§f! Overworld: §7${OverworldValueTextfield}§f Nether: §7${NetherValueTextfield}§f End: §7${EndValueTextfield}§f`);
     }
     if (WorldBorderToggle === false) {
         dynamicPropertyRegistry.set("worldborder_b", false);
@@ -41,7 +41,7 @@ export function uiWORLDBORDER(worldborderResult: ModalFormResponse, player: Play
         world.setDynamicProperty("worldborder_n", 0);
         world.setDynamicProperty("worldborder_nether_n", 0);
         world.setDynamicProperty("worldborder_end_n", 0);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled the §6World Border§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled the §6World Border§f!`);
     }
 
     //show the main ui to the player once complete.

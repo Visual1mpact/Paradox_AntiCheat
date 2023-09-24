@@ -84,7 +84,7 @@ export function prefix(message: ChatSendAfterEvent, args: string[]) {
     if (args[0].length <= 2 && args[0].length >= 1) {
         resetPrefix(player);
         config.customcommands.prefix = args[0];
-        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been changed to '${args[0]}'!`);
+        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix has been changed to '§7${args[0]}§f'!`);
         return player.addTag("Prefix:" + args[0]);
     } else {
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Prefix length cannot be more than 2 characters!`);

@@ -160,7 +160,7 @@ export const freezeLeave = (): void => {
             ?.hasTag("paradoxFreeze");
 
         if (hasFreezeTag) {
-            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${event.playerName}§f was frozen and left the server.`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${event.playerName}§f was frozen and left the server.`);
         }
     });
 };
@@ -175,7 +175,7 @@ export const freezeJoin = (): void => {
             ?.hasTag("paradoxFreeze");
 
         if (hasFreezeTag) {
-            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${event.playerName}§f was frozen and returned to the server.`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${event.playerName}§f was frozen and returned to the server.`);
         }
     });
 };

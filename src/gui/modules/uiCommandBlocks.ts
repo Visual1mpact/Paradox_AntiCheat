@@ -62,23 +62,23 @@ async function handleUICommandBlocks(commandblocksResult: ModalFormResponse, pla
     if (CommandBlockOverrideToggle === true && cmdoBoolean === false) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config cmds 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set CommandBlocksEnabled as §6enabled§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has set CommandBlocksEnabled as §6enabled§f!`);
     }
     if (CommandBlockOverrideToggle === false && cmdoBoolean === true) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config cmds 2`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has set CommandBlocksEnabled as §4disabled§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has set CommandBlocksEnabled as §4disabled§f!`);
     }
     player.runCommand(`scoreboard players operation @a cmds = paradox:config cmds`);
     if (RemoveCommandBlocksToggle === true && removecmdblocksBoolean === false) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config commandblocks 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Command Blocks§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Anti Command Blocks§f!`);
     }
     if (RemoveCommandBlocksToggle === false && removecmdblocksBoolean === true) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config commandblocks 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Command Blocks§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Anti Command Blocks§f!`);
     }
     player.runCommand(`scoreboard players operation @a commandblocks = paradox:config commandblocks`);
     //show the main ui to the player once complete.

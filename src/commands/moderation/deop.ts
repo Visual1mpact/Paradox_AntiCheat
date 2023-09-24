@@ -94,8 +94,8 @@ export function deop(message: ChatSendAfterEvent, args: string[]) {
         member.removeDynamicProperty("salt");
         member.removeTag("paradoxOpped");
         dynamicPropertyRegistry.delete(member.id);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name} is no longer Paradox-Opped.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${member.name}§f is no longer Paradox-Opped.`);
         return sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f Your OP status has been revoked!`);
     }
-    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${member.name} never had permission to use Paradox.`);
+    return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f §7${member.name}§f never had permission to use Paradox.`);
 }

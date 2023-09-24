@@ -79,11 +79,11 @@ async function handleEnchantedArmor(message: ChatSendAfterEvent, args: string[])
     if (encharmorscore <= 0) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config encharmor 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Enchanted Armor§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Anti Enchanted Armor§f!`);
     } else if (encharmorscore >= 1) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config encharmor 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Enchanted Armor§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Anti Enchanted Armor§f!`);
     }
     return player.runCommand(`scoreboard players operation @a encharmor = paradox:config encharmor`);
 }

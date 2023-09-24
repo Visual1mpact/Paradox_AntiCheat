@@ -79,11 +79,11 @@ export function stackban(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("stackban_b", true);
         world.setDynamicProperty("stackban_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6StackBans§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6StackBans§f!`);
     } else if (stackBanBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("stackban_b", false);
         world.setDynamicProperty("stackban_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4StackBans§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4StackBans§f!`);
     }
 }

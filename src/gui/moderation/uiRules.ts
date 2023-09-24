@@ -25,22 +25,22 @@ export function uiRULES(banResult: ModalFormResponse, player: Player) {
         world.setDynamicProperty("showrules_b", true);
         //remember to call the function!
         onJoinrules();
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6showrules§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6showrules§f!`);
     }
     if (EnabledRules === false && showrulesBoolean === true) {
         dynamicPropertyRegistry.set("showrules_b", false);
         world.setDynamicProperty("showrules_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4showrules§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4showrules§f!`);
     }
     if (EnableKick === true && KickOnDeclineBoolean === false) {
         dynamicPropertyRegistry.set("kickondecline_b", true);
         world.setDynamicProperty("kickondecline_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §4KickOnDecline§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §4KickOnDecline§f!`);
     }
     if (EnableKick === false && KickOnDeclineBoolean === true) {
         dynamicPropertyRegistry.set("kickondecline_b", false);
         world.setDynamicProperty("kickondecline_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4KickOnDecline§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4KickOnDecline§f!`);
     }
 
     //show the main ui to the player one complete.

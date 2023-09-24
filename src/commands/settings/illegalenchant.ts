@@ -66,11 +66,11 @@ export function illegalEnchant(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("illegalenchantment_b", true);
         world.setDynamicProperty("illegalenchantment_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6IllegalEnchantments§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6IllegalEnchantments§f!`);
     } else if (illegalEnchantmentBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalenchantment_b", false);
         world.setDynamicProperty("illegalenchantment_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4IllegalEnchantments§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4IllegalEnchantments§f!`);
     }
 }

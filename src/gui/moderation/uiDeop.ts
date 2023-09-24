@@ -38,11 +38,11 @@ export function uiDEOP(opResult: ModalFormResponse, onlineList: string[], player
         dynamicPropertyRegistry.delete(member.id);
         member.removeTag("paradoxOpped");
         if (player.name !== member.name) {
-            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${member.name}§f is no longer Paradox-Opped.`);
+            sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${member.name}§f is no longer Paradox-Opped.`);
         }
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f Your OP status has been revoked!`);
         return paradoxui(player);
     }
-    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f ${member.name} Did not have Op permissions.`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f §7${member.name}§f did not have Op permissions.`);
     return paradoxui(player);
 }

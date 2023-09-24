@@ -51,7 +51,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
             }
             if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                 player.removeTag(encryptedString);
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '${Locations[selectedLocationvalue as number]}'!`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '§7${Locations[selectedLocationvalue as number]}§f'!`);
                 break;
             }
         }
@@ -72,7 +72,7 @@ export function uiSAVEDLOCATIONS(savedlocationsResult: ModalFormResponse, Locati
             }
             //Check to make sure they havent exceeded the max locations in config.js
             if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
-                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You can only have ${config.modules.setHome.max} saved locations at a time!`);
+                sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You can only have §7${config.modules.setHome.max}§f saved locations at a time!`);
                 return paradoxui(player);
             }
             continue;

@@ -24,14 +24,14 @@ export function uiBEDROCKVALIDATION(bedrockvalidationResult: ModalFormResponse, 
         // Allow
         dynamicPropertyRegistry.set("bedrockvalidate_b", true);
         world.setDynamicProperty("bedrockvalidate_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6BedrockValidate§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6BedrockValidate§f!`);
         BedrockValidate();
     }
     if (BedrockValidationToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("bedrockvalidate_b", false);
         world.setDynamicProperty("bedrockvalidate_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4BedrockValidate§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4BedrockValidate§f!`);
     }
 
     //show the main ui to the player once complete.

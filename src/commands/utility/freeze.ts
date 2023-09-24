@@ -107,7 +107,7 @@ async function handleFreeze(message: ChatSendAfterEvent, args: string[]) {
         }
 
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are no longer frozen.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is no longer frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§7${member.name}§f is no longer frozen.`);
         return;
     }
 
@@ -120,7 +120,7 @@ async function handleFreeze(message: ChatSendAfterEvent, args: string[]) {
 
         member.addTag("paradoxFreeze");
         sendMsgToPlayer(member, `§f§4[§6Paradox§4]§f You are now frozen.`);
-        sendMsg(`@a[tag=paradoxOpped]`, `${member.name}§f is now frozen.`);
+        sendMsg(`@a[tag=paradoxOpped]`, `§7${member.name}§f is now frozen.`);
         return;
     }
 }

@@ -24,13 +24,13 @@ export function uiANTINUKER(antinukerResult: ModalFormResponse, player: Player) 
         // Allow
         dynamicPropertyRegistry.set("antinukera_b", true);
         world.setDynamicProperty("antinukera_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiNukerA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6AntiNukerA§f!`);
         BeforeNukerA();
     }
     if (AntiNukerToggle === false) {
         dynamicPropertyRegistry.set("antinukera_b", false);
         world.setDynamicProperty("antinukera_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiNukerA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4AntiNukerA§f!`);
     }
 
     //show the main ui to the player once complete.

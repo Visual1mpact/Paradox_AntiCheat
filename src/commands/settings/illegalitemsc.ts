@@ -67,12 +67,12 @@ export function illegalitemsC(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("illegalitemsc_b", true);
         world.setDynamicProperty("illegalitemsc_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6IllegalItemsC§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6IllegalItemsC§f!`);
         IllegalItemsC();
     } else if (illegalItemsCBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("illegalitemsc_b", false);
         world.setDynamicProperty("illegalitemsc_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4IllegalItemsC§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4IllegalItemsC§f!`);
     }
 }

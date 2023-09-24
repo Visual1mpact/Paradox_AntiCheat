@@ -43,12 +43,12 @@ async function handleUIEnchantedArmor(enchantedarmorResult: ModalFormResponse, p
     if (EnchantedArmorToggle === true) {
         // Allow
         player.runCommand(`scoreboard players set paradox:config encharmor 1`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti Enchanted Armor§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Anti Enchanted Armor§f!`);
     }
     if (EnchantedArmorToggle === false) {
         // Deny
         player.runCommand(`scoreboard players set paradox:config encharmor 0`);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti Enchanted Armor§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Anti Enchanted Armor§f!`);
     }
     player.runCommand(`scoreboard players operation @a encharmor = paradox:config encharmor`);
     //show the main ui to the player once complete.

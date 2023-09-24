@@ -80,7 +80,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
         }
         if (tags[i].startsWith(args[0].toString() + " X", 13)) {
             verify = true;
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home with name '${args[0]}' already exists!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home with name '§7${args[0]}§f' already exists!`);
             break;
         }
         if (tags[i].startsWith("LocationHome:")) {
@@ -88,7 +88,7 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
         }
         if (counter >= config.modules.setHome.max && config.modules.setHome.enabled) {
             verify = true;
-            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You can only have ${config.modules.setHome.max} saved locations at a time!`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You can only have §7${config.modules.setHome.max}§f saved locations at a time!`);
             break;
         }
     }
@@ -112,5 +112,5 @@ export function sethome(message: ChatSendAfterEvent, args: string[]) {
     // Store their new home coordinates
     player.addTag(security);
 
-    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '${args[0]}' has been set at ${homex} ${homey} ${homez}!`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Home '§7${args[0]}§f' has been set at §7${homex} ${homey} ${homez}§f!`);
 }

@@ -101,7 +101,7 @@ async function handleUImanagePlayerSavedLocations(managePlayerSavedLocationsUIRe
                     }
                     if (tags[i].startsWith("LocationHome:" && Locations[selectedLocationvalue as number] + " X", 13)) {
                         member.removeTag(encryptedString);
-                        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '${Locations[selectedLocationvalue as number]}'!`);
+                        sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Successfully deleted home '§7${Locations[selectedLocationvalue as number]}§f'!`);
                         break;
                     }
                 }

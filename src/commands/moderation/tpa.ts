@@ -79,7 +79,7 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
     }
     // Are they online?
     if (!member) {
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player! Try '${prefix}tpa help' for more info.`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Couldn't find that player! Try '§7${prefix}tpa help§f' for more info.`);
     }
 
     // Check if teleporting to them or vice versa then set it up
@@ -88,7 +88,7 @@ export function tpa(message: ChatSendAfterEvent, args: string[]) {
         setTimer(artificalPlayer.id);
         artificalPlayer.teleport(member.location, { dimension: member.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
         // Let you know that you have been teleported
-        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported ${artificalPlayer.name} to ${member.name}`);
+        return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleported §7${artificalPlayer.name}§f to §7${member.name}§f`);
     } else {
         // Need to specify who
         sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f You forgot to mention 'from' and 'who' to teleport.`);

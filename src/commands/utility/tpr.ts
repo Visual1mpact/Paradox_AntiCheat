@@ -88,8 +88,8 @@ function teleportRequestHandler({ sender, message }: ChatSendAfterEvent) {
         expiresAt: Date.now() + durationInMs, // Expires in the time specified in 'durationInMs'
     });
 
-    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleport request sent to ${target.name}. Waiting for approval...`);
-    sendMsgToPlayer(target, `§f§4[§6Paradox§4]§f You have received a teleport request from ${player.name}. Type 'approved' or 'denied' in chat to respond.`);
+    sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Teleport request sent to §7${target.name}§f. Waiting for approval...`);
+    sendMsgToPlayer(target, `§f§4[§6Paradox§4]§f You have received a teleport request from §7${player.name}§f. Type '§7approved§f' or '§7denied§f' in chat to respond.`);
 }
 
 // This handles requests pending approval
@@ -127,9 +127,9 @@ function teleportRequestApprovalHandler(object: ChatSendAfterEvent) {
     if (isApprovalRequest) {
         setTimer(request.requester.id);
         request.requester.teleport(request.target.location, { dimension: request.target.dimension, rotation: { x: 0, y: 0 }, facingLocation: { x: 0, y: 0, z: 0 }, checkForBlocks: false, keepVelocity: false });
-        sendMsgToPlayer(request.requester, `§f§4[§6Paradox§4]§f Teleport request to ${request.target.name} is approved.`);
+        sendMsgToPlayer(request.requester, `§f§4[§6Paradox§4]§f Teleport request to §7${request.target.name}§f is approved.`);
     } else {
-        sendMsgToPlayer(request.requester, `§f§4[§6Paradox§4]§f Teleport request to ${request.target.name} is denied.`);
+        sendMsgToPlayer(request.requester, `§f§4[§6Paradox§4]§f Teleport request to §7${request.target.name}§f is denied.`);
     }
 
     teleportRequests.splice(requestIndex, 1);

@@ -45,12 +45,12 @@ async function handleUIAntiKillAura(antikillauraResult: ModalFormResponse, playe
         // Deny
         dynamicPropertyRegistry.set("antikillaura_b", false);
         world.setDynamicProperty("antikillaura_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiKillAura§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4AntiKillAura§f!`);
     } else if (AntiKillAuraToggle === true) {
         // Allow
         dynamicPropertyRegistry.set("antikillaura_b", true);
         world.setDynamicProperty("antikillaura_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiKillAura§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6AntiKillAura§f!`);
         KillAura();
     }
     //show the main ui to the player once complete.

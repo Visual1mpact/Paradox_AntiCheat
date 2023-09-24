@@ -35,7 +35,7 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
             paradoxui(player);
         }
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled notifications.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled notifications.`);
         paradoxui(player);
     }
     if (Enabled === false) {
@@ -48,7 +48,7 @@ export function uiNOTIFY(notifyResult: ModalFormResponse, onlineList: string[], 
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Something went wrong! Error: ${error}`);
             paradoxui(player);
         }
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled notifications.`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled notifications.`);
         paradoxui(player);
     }
     return paradoxui(player);

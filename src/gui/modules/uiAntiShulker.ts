@@ -24,13 +24,13 @@ export function uiANTISHULKER(antishulkerResult: ModalFormResponse, player: Play
         // Allow
         dynamicPropertyRegistry.set("antishulker_b", true);
         world.setDynamicProperty("antishulker_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6Anti-Shulkers§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6Anti-Shulkers§f!`);
     }
     if (AntiShulkerToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("antishulker_b", false);
         world.setDynamicProperty("antishulker_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4Anti-Shulkers§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4Anti-Shulkers§f!`);
     }
 
     //show the main ui to the player once complete.

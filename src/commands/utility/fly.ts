@@ -25,11 +25,11 @@ function flyHelp(player: Player, prefix: string | number | boolean) {
 }
 
 function mayflydisable(player: Player, member: Player) {
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled fly mode for ${player === member ? "themselves" : member.name}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled fly mode for ${player === member ? "themselves" : "§7" + member.name}.`);
 }
 
 function mayflyenable(player: Player, member: Player) {
-    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled fly mode for ${player === member ? "themselves" : member.name}.`);
+    sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled fly mode for ${player === member ? "themselves" : "§7" + member.name}.`);
 }
 
 /**

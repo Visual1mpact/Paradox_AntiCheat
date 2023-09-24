@@ -67,12 +67,12 @@ export function antiphaseA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("antiphasea_b", true);
         world.setDynamicProperty("antiphasea_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiPhaseA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6AntiPhaseA§f!`);
         AntiPhaseA();
     } else if (antiphaseABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antiphasea_b", false);
         world.setDynamicProperty("antiphasea_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiPhaseA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4AntiPhaseA§f!`);
     }
 }

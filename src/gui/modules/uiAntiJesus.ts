@@ -24,14 +24,14 @@ export function uiANTIJESUS(antijesusResult: ModalFormResponse, player: Player) 
         // Allow
         dynamicPropertyRegistry.set("jesusa_b", true);
         world.setDynamicProperty("jesusa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6JesusA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6JesusA§f!`);
         JesusA();
     }
     if (AntiJesusToggle === false) {
         // Deny
         dynamicPropertyRegistry.set("jesusa_b", false);
         world.setDynamicProperty("jesusa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4JesusA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4JesusA§f!`);
     }
 
     //show the main ui to the player once complete.

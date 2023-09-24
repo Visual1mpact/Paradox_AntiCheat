@@ -26,27 +26,27 @@ export function uiNAMESPOOFING(namespoofingResult: ModalFormResponse, player: Pl
         // Allow
         dynamicPropertyRegistry.set("namespoofa_b", true);
         world.setDynamicProperty("namespoofa_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NamespoofA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6NamespoofA§f!`);
         NamespoofA();
     }
     if (NameSpoofAToggle === false && nameSpoofABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofa_b", false);
         world.setDynamicProperty("namespoofa_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NamespoofA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4NamespoofA§f!`);
     }
     if (NameSpoofBToggle === true && nameSpoofBBoolean === false) {
         // Allow
         dynamicPropertyRegistry.set("namespoofb_b", true);
         world.setDynamicProperty("namespoofb_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6NamespoofB§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6NamespoofB§f!`);
         NamespoofB;
     }
     if (NameSpoofBToggle === false && nameSpoofBBoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("namespoofb_b", false);
         world.setDynamicProperty("namespoofb_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4NamespoofB§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4NamespoofB§f!`);
     }
 
     //show the main ui to the player once complete.

@@ -67,12 +67,12 @@ export function antinukerA(message: ChatSendAfterEvent, args: string[]) {
         // Allow
         dynamicPropertyRegistry.set("antinukera_b", true);
         world.setDynamicProperty("antinukera_b", true);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has enabled §6AntiNukerA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has enabled §6AntiNukerA§f!`);
         BeforeNukerA();
     } else if (antiNukerABoolean === true) {
         // Deny
         dynamicPropertyRegistry.set("antinukera_b", false);
         world.setDynamicProperty("antinukera_b", false);
-        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f ${player.name}§f has disabled §4AntiNukerA§f!`);
+        sendMsg("@a[tag=paradoxOpped]", `§f§4[§6Paradox§4]§f §7${player.name}§f has disabled §4AntiNukerA§f!`);
     }
 }
