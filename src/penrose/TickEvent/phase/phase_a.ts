@@ -44,27 +44,17 @@ function antiphasea(id: number) {
 
         const { x, y, z } = player.location;
 
-        // Calculate block locations for head, waist, and feet
-        const upperBody = { x, y: y + 1, z };
+        // Calculate block locations
         const lowerBody = { x, y, z };
 
-        const blocksToCheck = [lowerBody, upperBody];
+        let allSafe = false;
 
-        const allSafe = blocksToCheck.every((block) => {
-            let blockType: Block;
-            try {
-                blockType = player.dimension.getBlock(block);
-            } catch {}
-            // Check if the block is soul sand and the player's y-coordinate difference is within -0.125
-            if (block === lowerBody && blockType && blockType.typeId === "minecraft:soul_sand" && y - block.y <= 0.125) {
-                return true;
-            }
-            // Check if the block is passable or if the player is riding
-            if (!blockType || player.hasTag("riding") || passableSolids.has(blockType.typeId.replace("minecraft:", ""))) {
-                return true;
-            }
-            return !blockType.isSolid;
-        });
+        try {
+            const blockType = player.dimension.getBlock(lowerBody);
+            allSafe = blockType && ((blockType.typeId === "minecraft:soul_sand" && y - lowerBody.y <= 0.125) || player.hasTag("riding") || passableSolids.has(blockType.typeId.replace("minecraft:", "")));
+        } catch {
+            allSafe = true; // Handle any errors in getting the block type
+        }
 
         if (allSafe) {
             // Update last safe location
