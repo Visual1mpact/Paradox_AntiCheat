@@ -54,13 +54,13 @@ async function handleUIDespawner(despawnerResult: ModalFormResponse, player: Pla
             if (filteredEntity === requestedEntity || filteredEntity === entityValue) {
                 counter = ++counter;
                 // Despawn this entity
-                entity.triggerEvent("paradox:kick");
+                entity.remove();
                 continue;
                 // If all entities were specified then handle this here
             }
         }
         if (counter > 0) {
-            sendMsgToPlayer(player, ` §o§6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
+            sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Despawned:\n\n §o§6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
         } else {
             sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entity found to despawn!`);
         }
@@ -82,7 +82,7 @@ async function handleUIDespawner(despawnerResult: ModalFormResponse, player: Pla
                 entityCount[filteredEntity]++;
             }
             // Despawn this entity
-            entity.triggerEvent("paradox:kick");
+            entity.remove();
         }
         let totalCounter = 0;
         let entityMessage = "";

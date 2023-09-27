@@ -25,7 +25,7 @@ function clearEntityItems() {
     for (const entity of entitiesCache) {
         const itemName = entity.getComponent("item");
         if (itemName.typeId in clearItems) {
-            entity.kill();
+            entity.remove();
         }
     }
 }
@@ -40,7 +40,7 @@ function clearEntities() {
             continue;
         }
         kickablePlayers.add(entity);
-        entity.triggerEvent("paradox:kick");
+        entity.remove();
     }
 }
 

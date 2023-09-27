@@ -79,13 +79,13 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
             if (filteredEntity === requestedEntity || filteredEntity === args[0]) {
                 counter = ++counter;
                 // Despawn this entity
-                entity.triggerEvent("paradox:kick");
+                entity.remove();
                 continue;
                 // If all entities were specified then handle this here
             }
         }
         if (counter > 0) {
-            return sendMsgToPlayer(player, ` §o§6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
+            return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f Despawned:\n\n §o§6|§f §4[§f${requestedEntity}§4]§f §6Amount: §4x${counter}§f`);
         } else {
             return sendMsgToPlayer(player, `§f§4[§6Paradox§4]§f No entity found to despawn!`);
         }
@@ -108,7 +108,7 @@ export function despawn(message: ChatSendAfterEvent, args: string[]) {
                 entityCount[filteredEntity]++;
             }
             // Despawn this entity
-            entity.triggerEvent("paradox:kick");
+            entity.remove();
         }
         let totalCounter = 0;
         let entityMessage = "";
