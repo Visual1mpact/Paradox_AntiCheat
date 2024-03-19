@@ -1,17 +1,28 @@
 {
     "name": "paradox-anticheat",
-    "version": "3.3.6",
+    "version": "4.0.0",
     "productName": "Paradox-AntiCheat",
     "description": "A utility to fight against malicious hackers on Bedrock Edition",
     "private": true,
     "devDependencies": {
+        "@types/node": "20.11.27",
+        "@types/glob": "8.1.0",
+        "@types/fs-extra": "11.0.4",
         "7zip-bin": "5.2.0",
-        "prettier": "3.0.3"
+        "finalhandler": "1.2.0",
+        "prettier": "3.2.5",
+        "serve-static": "1.15.0",
+        "typescript": "5.4.2",
+        "fs-extra": "11.2.0",
+        "chmodr": "1.2.0",
+        "glob": "10.3.10",
+        "adm-zip": "0.5.12"
     },
     "dependencies": {
-        "@minecraft/server": "1.6.0-beta.1.20.30-stable",
-        "@minecraft/server-ui": "1.2.0-beta.1.20.30-stable",
-        "typescript": "5.2.2"
+        "@minecraft/server-ui": "1.2.0-beta.1.20.70-stable"
+    },
+    "overrides": {
+        "@minecraft/server": "1.10.0-beta.1.20.70-stable"
     },
     "prettier": {
         "trailingComma": "es5",
@@ -21,22 +32,24 @@
         "printWidth": 250
     },
     "scripts": {
-        "postinstall": "npm install --prefix src @minecraft/vanilla-data@1.20.30 && npm install --prefix src crypto-es@2.0.4",
+        "postinstall": "npm install --prefix src @minecraft/vanilla-data@1.20.70 && npm install --prefix src crypto-es@2.1.0",
         "enableMcLoopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
         "enableMcPreviewLoopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476",
         "format": "npx prettier --write --ignore-path .prettierignore ./",
+        "server": "node server.js",
+        "test-build": "node test-build.js",
         "linux//": " --- BUILD (Linux) --- ",
         "clean": "rm -rf build/",
         "mkDirs": "mkdir -p build",
         "copy:vanilla-data": "cp -R src/node_modules build/scripts",
-        "copy:assets": "cp -R animation_controllers/ animations entities/ functions/ CHANGELOG.md LICENSE manifest.json pack_icon.png README.md build",
+        "copy:assets": "cp -R CHANGELOG.md LICENSE manifest.json pack_icon.png README.md build",
         "build": "./node_modules/typescript/bin/tsc -p tsconfig.json; npm run copy:assets; npm run copy:vanilla-data",
         "dist": "npm run clean; npm run format; npm run build; cd build; zip -0 -r Paradox-AntiCheat-v${npm_package_version}.mcpack .",
         "windows//": " --- BUILD (Windows) --- ",
         "clean_win": "rd /s /q build>nul 2>&1|echo.>nul",
         "mkdir_win": "@if exist build (rd /s /q build && mkdir build) else (mkdir build)",
         "copy:win-vanilla-data": "@powershell Copy-Item -Path ^(\\\"src\\node_modules\\\"^) -Destination \"build\\scripts\" -Recurse",
-        "copy_assets_win": "@powershell Copy-Item -Path ^(\\\"animation_controllers\\\",\\\"animations\\\",\\\"entities\\\",\\\"functions\\\",\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
+        "copy_assets_win": "@powershell Copy-Item -Path ^(\\\"CHANGELOG.md\\\",\\\"LICENSE\\\",\\\"manifest.json\\\",\\\"pack_icon.png\\\",\\\"README.md\\\"^) -Destination \"build\" -Recurse",
         "build_win": "npm run mkdir_win 1>nul && node node_modules\\typescript\\bin\\tsc -p tsconfig.json && npm run copy_assets_win 1>nul && npm run copy:win-vanilla-data 1>nul",
         "build_win_noscript": "npm run mkdir_win 1>nul && npm run copy_assets_win 1>nul",
         "zip_win": "npm run clean_win && npm run build_win && cd build && node -e \"const path = require('path'); const arch = process.arch.startsWith('arm') ? 'arm64' : (process.arch === 'x32' ? 'ia32' : 'x64'); const executable = path.join(__dirname, '..', 'node_modules', '7zip-bin', 'win', arch, '7za'); require('child_process').execSync(`${executable} a -tzip Paradox-AntiCheat-v%npm_package_version%.zip .`);\"",

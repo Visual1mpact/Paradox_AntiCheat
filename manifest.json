@@ -2,15 +2,15 @@
     "format_version": 2,
     "header": {
         "name": "Paradox AntiCheat",
-        "description": "A utility to fight against malicious hackers on Bedrock Edition ~ v3.3.6",
+        "description": "A utility to fight against malicious hackers on Bedrock Edition ~ v4.0.0",
         "uuid": "54edfea5-ab51-47ca-b992-724e255b5560",
-        "version": [3, 3, 6],
-        "min_engine_version": [1, 20, 30]
+        "version": [4, 0, 0],
+        "min_engine_version": [1, 20, 70]
     },
     "metadata": {
-        "authors": ["MrDiamond64, Visual1mpact"],
+        "authors": ["Visual1mpact"],
         "license": "GPLv3",
-        "url": "https://github.com/Visual1mpact/Paradox_AntiCheat"
+        "url": "https://github.com/Pete9xi/Paradox_AntiCheat"
     },
     "modules": [
         {
@@ -30,7 +30,7 @@
     "dependencies": [
         {
             "module_name": "@minecraft/server",
-            "version": "1.6.0-beta"
+            "version": "1.10.0-beta"
         },
         {
             "module_name": "@minecraft/server-ui",

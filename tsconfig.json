@@ -1,7 +1,8 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "typeRoots": ["node_modules/@minecraft"],
+        "typeRoots": ["node_modules/@minecraft", "node_modules/@types"],
+        "types": ["node", "server", "server-ui"],
         "lib": ["esnext"],
         "target": "esnext",
         "module": "esnext",
