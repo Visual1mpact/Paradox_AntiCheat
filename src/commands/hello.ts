@@ -6,7 +6,7 @@ export const helloCommand: Command = {
     usage: "!hello",
     execute: (message, args?) => {
         const playerName = message.sender.name;
-        const check = args.length > 0 ? `You executed ${args}.` : null;
+        const check = args && args.length > 0 ? `You executed ${args}.` : null;
         message.sender.sendMessage(`Hello, ${playerName}! ${check ? check : ""}`);
     },
 };
