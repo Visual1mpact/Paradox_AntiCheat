@@ -1,12 +1,13 @@
 import { commandHandler } from "../../commands/index";
-import { world, ChatSendAfterEvent } from "@minecraft/server";
+import { world, ChatSendBeforeEvent } from "@minecraft/server";
 
 class ChatSendSubscription {
     private subscription: any;
 
     constructor() {
-        this.subscription = world.afterEvents.chatSend.subscribe((object: ChatSendAfterEvent) => {
+        this.subscription = world.beforeEvents.chatSend.subscribe((object: ChatSendBeforeEvent) => {
             const player = object.sender;
+            object.cancel = true;
             commandHandler.handleCommand(object, player);
         });
     }
@@ -14,8 +15,9 @@ class ChatSendSubscription {
     subscribe() {
         // You can check if the subscription is already active before subscribing again
         if (!this.subscription) {
-            this.subscription = world.afterEvents.chatSend.subscribe((object: ChatSendAfterEvent) => {
+            this.subscription = world.beforeEvents.chatSend.subscribe((object: ChatSendBeforeEvent) => {
                 const player = object.sender;
+                object.cancel = true;
                 commandHandler.handleCommand(object, player);
             });
         }

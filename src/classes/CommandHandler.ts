@@ -1,4 +1,4 @@
-import { Player, ChatSendAfterEvent } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, world } from "@minecraft/server";
 import CryptoES from "../node_modules/crypto-es/lib/index";
 
 // Define the structure for encrypted command data
@@ -12,7 +12,7 @@ export interface Command {
     name: string; // Name of the command
     description: string; // Description of the command
     usage: string; // Usage instructions for the command
-    execute: (message: ChatSendAfterEvent, args?: string[]) => void; // Function to execute the command
+    execute: (message: ChatSendBeforeEvent, args?: string[]) => void; // Function to execute the command
 }
 
 export class CommandHandler {
@@ -38,8 +38,11 @@ export class CommandHandler {
     }
 
     // Method to handle incoming commands
-    handleCommand(message: ChatSendAfterEvent, player: Player) {
-        if (!message.message.startsWith("!")) return; // Ignore messages that don't start with "!"
+    handleCommand(message: ChatSendBeforeEvent, player: Player) {
+        if (!message.message.startsWith("!")) {
+            message.cancel = false;
+            return;
+        } // Ignore messages that don't start with "!"
 
         const args = message.message.slice(1).trim().split(/ +/); // Split the message into command and arguments
         const commandName = args.shift()?.toLowerCase(); // Extract the command name from the arguments
@@ -57,7 +60,7 @@ export class CommandHandler {
             // Get command info if specified
             const specifiedCommandName = commandName === "help" ? args[0] : commandName;
             const commandInfo = this.getCommandInfo(specifiedCommandName);
-            player.sendMessage(commandInfo || "\nCommand not found.");
+            player.sendMessage(commandInfo || "\n§o§7Command not found.");
             return;
         }
 
@@ -77,35 +80,35 @@ export class CommandHandler {
                 // Execute the command
                 command.execute(message, args);
             } catch (error) {
-                console.error("CommandHandler.ts: " + error);
-                player.sendMessage("\nThere was an error executing that command!");
+                // console.error("CommandHandler.ts: " + error);
+                player.sendMessage("\n§o§7There was an error executing that command!");
             }
         } else {
-            player.sendMessage(`\nCommand "${commandName}" not found. Use !help to see available commands.`);
+            player.sendMessage(`\n§o§7Command "${commandName}" not found. Use !help to see available commands.`);
         }
     }
 
     // Method to display all available commands
     private displayAllCommands(player: Player) {
-        let helpMessage = "\nAvailable commands:\n\n";
+        let helpMessage = "\n§4[§6Available Commands§4]§r\n\n";
         this.commands.forEach((command) => {
             const decryptedCommand = this.decrypt(command);
             const { name, description } = JSON.parse(decryptedCommand);
-            helpMessage += `§l${name}§r: ${description}\n`;
+            helpMessage += `§6${name}§7: §o§f${description}§r`;
         });
         player.sendMessage(helpMessage);
     }
 
     // Method to get information about a specific command
-    private getCommandInfo(commandName: string): string {
+    private getCommandInfo(commandName: string): string[] {
         const iv = this.generateIV();
         const encryptedCommand = this.commands.get(iv.toString(CryptoES.enc.Base64));
         if (encryptedCommand) {
             const decryptedCommand = this.decrypt(encryptedCommand);
             const { name, description, usage } = JSON.parse(decryptedCommand);
-            return `\n§l${name}§r: ${description}\n  - ${usage}`;
+            return [`\n§4[§6Command§4]§o§f ${name}§r\n`, `§4[§6Description§4]§o§f ${description}§r\n`, `§4[§6Usage§4]§o§f ${usage}§r\n`];
         } else {
-            return `\nCommand "${commandName}" not found.`;
+            return [`\n§o§7Command "${commandName}" not found.`];
         }
     }
 
