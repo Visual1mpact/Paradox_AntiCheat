@@ -1,8 +1,6 @@
 import { Player, ChatSendBeforeEvent } from "@minecraft/server";
 import CryptoES from "../node_modules/crypto-es/lib/index";
 
-test;
-
 // Define the structure for encrypted command data
 interface EncryptedCommandData {
     iv: string; // Initialization vector used for encryption
