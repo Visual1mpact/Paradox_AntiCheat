@@ -133,6 +133,7 @@ export class CommandHandler {
         // Use a cryptographic hash function to derive IV from the unique identifier
         const iv = CryptoES.SHA256(uniqueIdentifier);
         // Take the first 16 bytes of the hash as the IV (AES IV is typically 16 bytes)
-        return iv.clone(); // Ensure the return type is WordArray
+        const truncatedIV = iv.words.slice(0, 4); // Each word is 32 bits, so 4 words = 16 bytes
+        return CryptoES.lib.WordArray.create(truncatedIV); // Return truncated IV as WordArray
     }
 }
