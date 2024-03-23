@@ -29,11 +29,10 @@ export class CommandHandler {
             const serializedExecute = command.execute.toString();
 
             // Encrypt command data before storing
-            const encryptedData = this.encrypt(JSON.stringify({ ...command, execute: serializedExecute }));
+            const encryptedData = this.encrypt(JSON.stringify({ ...command, execute: serializedExecute }), command.name);
 
             // Generate iv for this command and use it as the key
-            const iv = this.generateIV();
-            this.commands.set(iv.toString(CryptoES.enc.Base64), encryptedData);
+            this.commands.set(encryptedData.iv, encryptedData);
         });
     }
 
@@ -65,7 +64,7 @@ export class CommandHandler {
         }
 
         // Get the encrypted command data from the commands map using iv
-        const iv = this.generateIV();
+        const iv = this.generateIV(commandName);
         const encryptedCommand = this.commands.get(iv.toString(CryptoES.enc.Base64));
         if (encryptedCommand) {
             try {
@@ -101,7 +100,7 @@ export class CommandHandler {
 
     // Method to get information about a specific command
     private getCommandInfo(commandName: string): string[] {
-        const iv = this.generateIV();
+        const iv = this.generateIV(commandName);
         const encryptedCommand = this.commands.get(iv.toString(CryptoES.enc.Base64));
         if (encryptedCommand) {
             const decryptedCommand = this.decrypt(encryptedCommand);
@@ -113,8 +112,8 @@ export class CommandHandler {
     }
 
     // Method to encrypt data using AES encryption
-    private encrypt(data: string): EncryptedCommandData {
-        const iv = this.generateIV(); // Generate a consistent IV
+    private encrypt(data: string, commandName: string): EncryptedCommandData {
+        const iv = this.generateIV(commandName); // Generate a consistent IV based on the command name
         const encryptedData = CryptoES.AES.encrypt(data, this.securityKey, { iv }).toString();
         return { iv: iv.toString(CryptoES.enc.Base64), encryptedData };
     }
@@ -126,11 +125,13 @@ export class CommandHandler {
         return decryptedData.toString(CryptoES.enc.Utf8);
     }
 
-    // Method to generate a consistent IV based on the security key
-    private generateIV(): CryptoES.lib.WordArray {
-        // Use a cryptographic hash function to derive IV from the security key
-        const keyHash = CryptoES.SHA256(this.securityKey);
+    // Method to generate a consistent IV based on the security key and command name
+    private generateIV(commandName: string): CryptoES.lib.WordArray {
+        // Combine the security key and command name to generate a unique identifier
+        const uniqueIdentifier = this.securityKey + commandName;
+        // Use a cryptographic hash function to derive IV from the unique identifier
+        const iv = CryptoES.SHA256(uniqueIdentifier);
         // Take the first 16 bytes of the hash as the IV (AES IV is typically 16 bytes)
-        return keyHash.clone(); // Ensure the return type is WordArray
+        return iv.clone(); // Ensure the return type is WordArray
     }
 }
