@@ -1,4 +1,4 @@
-import { Player, ChatSendBeforeEvent, world } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent } from "@minecraft/server";
 import CryptoES from "../node_modules/crypto-es/lib/index";
 
 // Define the structure for encrypted command data
