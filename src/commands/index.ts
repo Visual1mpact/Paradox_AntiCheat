@@ -14,6 +14,6 @@ checkKey = null;
 const commandHandler = new CommandHandler(world.getDynamicProperty("securityKey") as string);
 
 // Register commands with the CommandHandler
-commandHandler.registerCommand(helloCommand);
+commandHandler.registerCommand([helloCommand]);
 
 export { commandHandler };

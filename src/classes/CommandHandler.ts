@@ -23,16 +23,18 @@ export class CommandHandler {
     }
 
     // Method to register a new command
-    registerCommand(command: Command) {
-        // Serialize the execute function to a string
-        const serializedExecute = command.execute.toString();
+    registerCommand(commands: Command[]) {
+        commands.forEach((command) => {
+            // Serialize the execute function to a string
+            const serializedExecute = command.execute.toString();
 
-        // Encrypt command data before storing
-        const encryptedData = this.encrypt(JSON.stringify({ ...command, execute: serializedExecute }));
+            // Encrypt command data before storing
+            const encryptedData = this.encrypt(JSON.stringify({ ...command, execute: serializedExecute }));
 
-        // Generate iv for this command and use it as the key
-        const iv = this.generateIV();
-        this.commands.set(iv.toString(CryptoES.enc.Base64), encryptedData);
+            // Generate iv for this command and use it as the key
+            const iv = this.generateIV();
+            this.commands.set(iv.toString(CryptoES.enc.Base64), encryptedData);
+        });
     }
 
     // Method to handle incoming commands
