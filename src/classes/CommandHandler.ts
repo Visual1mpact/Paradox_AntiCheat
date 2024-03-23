@@ -86,7 +86,7 @@ export class CommandHandler {
     // Method to display all available commands
     private displayAllCommands(player: Player) {
         let helpMessage = "\nAvailable commands:\n\n";
-        this.commands.forEach((command, iv) => {
+        this.commands.forEach((command) => {
             const decryptedCommand = this.decrypt(command);
             const { name, description } = JSON.parse(decryptedCommand);
             helpMessage += `§l${name}§r: ${description}\n`;
