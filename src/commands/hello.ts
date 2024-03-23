@@ -4,6 +4,7 @@ export const helloCommand: Command = {
     name: "hello",
     description: "Say hello!",
     usage: "!hello",
+    examples: [`!hello`, `!hello help`],
     execute: (message, args?) => {
         const playerName = message.sender.name;
         const check = args && args.length > 0 ? `You executed ${args}.` : null;

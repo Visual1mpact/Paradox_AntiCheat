@@ -12,6 +12,7 @@ export interface Command {
     name: string; // Name of the command
     description: string; // Description of the command
     usage: string; // Usage instructions for the command
+    examples: string[]; // Examples of how to use the command
     execute: (message: ChatSendBeforeEvent, args?: string[]) => void; // Function to execute the command
 }
 
@@ -104,8 +105,8 @@ export class CommandHandler {
         const encryptedCommand = this.commands.get(iv.toString(CryptoES.enc.Base64));
         if (encryptedCommand) {
             const decryptedCommand = this.decrypt(encryptedCommand);
-            const { name, description, usage } = JSON.parse(decryptedCommand);
-            return [`\n§4[§6Command§4]§o§f ${name}§r\n`, `§4[§6Description§4]§o§f ${description}§r\n`, `§4[§6Usage§4]§o§f ${usage}§r\n`];
+            const { name, description, usage, examples } = JSON.parse(decryptedCommand);
+            return [`\n§4[§6Command§4]§f: §o${name}§r\n`, `§4[§6Usage§4]§f: §o${usage}§r\n`, `§4[§6Description§4]§f: §o${description}§r\n`, `§4[§6Examples§4]§f:\n${examples.map((example: string) => `    §o${example}`).join("\n")}`];
         } else {
             return [`\n§o§7Command "${commandName}" not found.`];
         }
