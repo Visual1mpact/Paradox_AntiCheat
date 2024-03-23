@@ -30,8 +30,9 @@ export class CommandHandler {
         // Encrypt command data before storing
         const encryptedData = this.encrypt(JSON.stringify({ ...command, execute: serializedExecute }));
 
-        // Store the encrypted command data
-        this.commands.set(command.name, encryptedData);
+        // Generate iv for this command and use it as the key
+        const iv = this.generateIV();
+        this.commands.set(iv.toString(CryptoES.enc.Base64), encryptedData);
     }
 
     // Method to handle incoming commands
@@ -58,8 +59,9 @@ export class CommandHandler {
             return;
         }
 
-        // Get the encrypted command data from the commands map
-        const encryptedCommand = this.commands.get(commandName);
+        // Get the encrypted command data from the commands map using iv
+        const iv = this.generateIV();
+        const encryptedCommand = this.commands.get(iv.toString(CryptoES.enc.Base64));
         if (encryptedCommand) {
             try {
                 // Decrypt the command data
@@ -84,7 +86,7 @@ export class CommandHandler {
     // Method to display all available commands
     private displayAllCommands(player: Player) {
         let helpMessage = "\nAvailable commands:\n\n";
-        this.commands.forEach((command) => {
+        this.commands.forEach((command, iv) => {
             const decryptedCommand = this.decrypt(command);
             const { name, description } = JSON.parse(decryptedCommand);
             helpMessage += `§l${name}§r: ${description}\n`;
@@ -94,7 +96,8 @@ export class CommandHandler {
 
     // Method to get information about a specific command
     private getCommandInfo(commandName: string): string {
-        const encryptedCommand = this.commands.get(commandName);
+        const iv = this.generateIV();
+        const encryptedCommand = this.commands.get(iv.toString(CryptoES.enc.Base64));
         if (encryptedCommand) {
             const decryptedCommand = this.decrypt(encryptedCommand);
             const { name, description, usage } = JSON.parse(decryptedCommand);
