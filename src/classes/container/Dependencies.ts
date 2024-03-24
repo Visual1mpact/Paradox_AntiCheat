@@ -36,11 +36,4 @@ export class MinecraftEnvironment {
         // Return a new instance of ModalFormData
         return new ModalFormData();
     }
-
-    // Method to release resources when they are no longer needed
-    public releaseResources(): void {
-        // Release resources by setting world and system to undefined
-        this.world = undefined;
-        this.system = undefined;
-    }
 }

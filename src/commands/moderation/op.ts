@@ -78,10 +78,6 @@ export const opCommand: Command = {
                             console.error("Error originated from:", sourceInfo[0]);
                         }
                     }
-                })
-                .finally(() => {
-                    // Release resources after the operation is completed
-                    minecraftEnvironment.releaseResources();
                 });
         };
 
