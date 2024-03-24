@@ -34,7 +34,7 @@ export const opCommand: Command = {
             // Set title and text fields if the GUI is being initialized
             opGui.title("Paradox Op");
             opGui.textField("\nNew Password:", "Enter Password");
-            opGui.textField("Confirm New Password:", "Enter Password");
+            opGui.textField("\nConfirm New Password:", "Enter Password");
 
             // Show the GUI
             opGui
