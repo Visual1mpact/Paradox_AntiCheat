@@ -1,5 +1,6 @@
 import { Player, ChatSendBeforeEvent } from "@minecraft/server";
 import CryptoES from "../node_modules/crypto-es/lib/index";
+import { MinecraftEnvironment } from "./container/Dependencies";
 
 // Define the structure for encrypted command data
 interface EncryptedCommandData {
@@ -13,14 +14,19 @@ export interface Command {
     description: string; // Description of the command
     usage: string; // Usage instructions for the command
     examples: string[]; // Examples of how to use the command
-    execute: (message: ChatSendBeforeEvent, args?: string[]) => void; // Function to execute the command
+    execute: (message: ChatSendBeforeEvent, args?: string[], minecraftEnvironment?: MinecraftEnvironment) => void; // Function to execute the command
 }
 
 export class CommandHandler {
     private commands: Map<string, EncryptedCommandData>; // Store encrypted command data
+    private minecraftEnvironment: MinecraftEnvironment; // Add minecraftEnvironment property
 
-    constructor(private securityKey: string) {
+    constructor(
+        private securityKey: string,
+        minecraftEnvironment: MinecraftEnvironment
+    ) {
         this.commands = new Map(); // Initialize the commands map
+        this.minecraftEnvironment = minecraftEnvironment; // Initialize minecraftEnvironment
     }
 
     // Method to register a new command
@@ -78,9 +84,9 @@ export class CommandHandler {
                 const command: Command = { ...decryptedCommand, execute: executeFunction };
 
                 // Execute the command
-                command.execute(message, args);
+                command.execute(message, args, this.minecraftEnvironment);
             } catch (error) {
-                // console.error("CommandHandler.ts: " + error);
+                console.error("CommandHandler.ts: " + error);
                 player.sendMessage("\n§o§7There was an error executing that command!");
             }
         } else {
@@ -94,7 +100,7 @@ export class CommandHandler {
         this.commands.forEach((command) => {
             const decryptedCommand = this.decrypt(command);
             const { name, description } = JSON.parse(decryptedCommand);
-            helpMessage += `§6${name}§7: §o§f${description}§r`;
+            helpMessage += `§6${name}§7: §o§f${description}§r\n`;
         });
         player.sendMessage(helpMessage);
     }
