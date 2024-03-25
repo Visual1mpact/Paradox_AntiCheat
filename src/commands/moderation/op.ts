@@ -80,6 +80,7 @@ export const opCommand: Command = {
                         // Set player and world properties with the new password
                         player.setDynamicProperty(newPrefix, newPassword as string);
                         world.setDynamicProperty(newPrefix, newPassword as string);
+                        player.sendMessage("§o§7Your password is set!");
                     }
                 })
                 .catch((error) => {
