@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, World } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, World } from "@minecraft/server";
 import { Command } from "../../classes/CommandHandler";
 
 export const opCommand: Command = {
@@ -11,12 +11,25 @@ export const opCommand: Command = {
         const world = minecraftEnvironment.getWorld();
         const system = minecraftEnvironment.getSystem();
 
+        // Function to get player permissions based on the unique prefix
+        function getPlayerPermissions(prefix: string, player: Player): string | undefined {
+            const permIds = player.getDynamicPropertyIds();
+            return permIds.find((id) => id.startsWith(prefix));
+        }
+
+        // Function to get world permissions based on the unique prefix
+        function getWorldPermissions(prefix: string, world: World): string | undefined {
+            const permIds = world.getDynamicPropertyIds();
+            return permIds.find((id) => id.startsWith(prefix));
+        }
+
         // Retrieve permissions for the player and the world
-        const playerPerms = message.sender.getDynamicProperty(message.sender.id);
-        const worldPerms = world.getDynamicProperty(message.sender.id);
+        const prefix = `__`; // Unique prefix for permissions
+        const playerPerms = getPlayerPermissions(prefix, message.sender);
+        const worldPerms = getWorldPermissions(prefix, world);
 
         // Check if the player has permissions to execute the command
-        if ((!playerPerms && !worldPerms) || playerPerms !== worldPerms) {
+        if (!worldPerms || (worldPerms && playerPerms === worldPerms)) {
             message.sender.sendMessage("§o§7You have executed the OP command. Please close this window.");
         } else {
             // Not authorized
@@ -58,13 +71,15 @@ export const opCommand: Command = {
                     // Destructure formValues
                     const [newPassword, confirmPassword] = formValues;
 
+                    // Unique prefix for permissions
+                    const newPrefix = `__${player.id}`;
                     // Check if passwords match
                     if (newPassword !== confirmPassword) {
                         player.sendMessage("§o§7Please enter a new password again. Your confirmed password did not match!");
                     } else {
                         // Set player and world properties with the new password
-                        player.setDynamicProperty(player.id, newPassword as string);
-                        world.setDynamicProperty(player.id, newPassword as string);
+                        player.setDynamicProperty(newPrefix, newPassword as string);
+                        world.setDynamicProperty(newPrefix, newPassword as string);
                     }
                 })
                 .catch((error) => {
