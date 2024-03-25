@@ -1,6 +1,5 @@
 // index.ts (in commands directory)
 import { CommandHandler } from "../classes/CommandHandler";
-import { helloCommand } from "./hello";
 import { system, world } from "@minecraft/server";
 import { secretKey } from "../security/generateRandomKey";
 import { opCommand } from "./moderation/op";
@@ -17,6 +16,6 @@ const minecraftEnvironment = MinecraftEnvironment.getInstance(world, system);
 const commandHandler = new CommandHandler(world.getDynamicProperty("securityKey") as string, minecraftEnvironment);
 
 // Register commands with the CommandHandler
-commandHandler.registerCommand([helloCommand, opCommand]);
+commandHandler.registerCommand([opCommand]);
 
 export { commandHandler };
