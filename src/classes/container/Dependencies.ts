@@ -37,7 +37,7 @@ export class MinecraftEnvironment {
         return new ModalFormData();
     }
 
-    // Method to initialize modalFormData
+    // Method to initialize messageFormData
     public initializeMessageFormData(): MessageFormData {
         // Return a new instance of ModalFormData
         return new MessageFormData();
