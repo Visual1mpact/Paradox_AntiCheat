@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, World } from "@minecraft/server";
+import { Player, World } from "@minecraft/server";
 import { Command } from "../../classes/CommandHandler";
 
 export const opCommand: Command = {
@@ -6,7 +6,7 @@ export const opCommand: Command = {
     description: "Give yourself Paradox-Op!",
     usage: "!op",
     examples: [`!op`, `!op help`],
-    execute: (message, _, minecraftEnvironment) => {
+    execute: (message, args, minecraftEnvironment) => {
         // Retrieve the world and system from the Minecraft environment
         const world = minecraftEnvironment.getWorld();
         const system = minecraftEnvironment.getSystem();
@@ -37,10 +37,28 @@ export const opCommand: Command = {
             return;
         }
 
-        // Define a function to open the GUI
-        const openOpGui = (message: ChatSendBeforeEvent, world: World) => {
-            const player = message.sender;
+        // Check if player argument is provided
+        let player: Player | undefined = undefined;
+        const playerName = args.join(" ").trim();
 
+        if (playerName.length > 0) {
+            // Find the player object in the world
+            player = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+        }
+
+        // If no player name is provided or player not found, default to message sender
+        if (!player) {
+            player = message.sender;
+        }
+
+        // Inform if the player is not found
+        if (!player) {
+            message.sender.sendMessage(`§o§7Player "${playerName}" not found.`);
+            return;
+        }
+
+        // Define a function to open the GUI
+        const openOpGui = (player: Player, world: World) => {
             // Initialize the modal form data
             const opGui = minecraftEnvironment.initializeModalFormData();
 
@@ -56,7 +74,7 @@ export const opCommand: Command = {
                     // Check if the GUI was canceled due to user being busy
                     if (result && result.canceled && result.cancelationReason === "UserBusy") {
                         // Open GUI again
-                        return openOpGui(message, world);
+                        return openOpGui(player, world);
                     }
 
                     // Retrieve form values from the result or use an empty array as a fallback
@@ -99,7 +117,7 @@ export const opCommand: Command = {
 
         // Run the function to open the GUI within the Minecraft system
         system.run(() => {
-            openOpGui(message, world);
+            openOpGui(player, world);
         });
     },
 };

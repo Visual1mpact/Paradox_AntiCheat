@@ -21,13 +21,7 @@ export const deopCommand: Command = {
 
         // Function to remove player permissions based on the unique prefix
         function removePlayerPermissions(playerName: string): boolean {
-            const player = world.getAllPlayers().find((playerObject) => {
-                if (playerObject.name === playerName) {
-                    return playerObject;
-                } else {
-                    return undefined;
-                }
-            });
+            const player = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
             if (player && player.isValid()) {
                 // Unique prefix
                 const prefix = `__${player.id}`;
