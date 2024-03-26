@@ -3,9 +3,9 @@ import { Command } from "../../classes/CommandHandler";
 
 export const opCommand: Command = {
     name: "op",
-    description: "Give yourself Paradox-Op!",
+    description: "Grant a player Paradox-Op!",
     usage: "!op",
-    examples: [`!op`, `!op help`],
+    examples: [`!op`, `!op Player Name`, `!op "Player Name"`, `!op help`],
     execute: (message, args, minecraftEnvironment) => {
         // Retrieve the world and system from the Minecraft environment
         const world = minecraftEnvironment.getWorld();
@@ -47,7 +47,7 @@ export const opCommand: Command = {
         }
 
         // If no player name is provided or player not found, default to message sender
-        if (!player) {
+        if (!player && playerName.length === 0) {
             player = message.sender;
         }
 
