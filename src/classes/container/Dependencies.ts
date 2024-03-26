@@ -1,5 +1,5 @@
 import { World, System } from "@minecraft/server";
-import { ModalFormData } from "@minecraft/server-ui";
+import { MessageFormData, ModalFormData } from "@minecraft/server-ui";
 
 export class MinecraftEnvironment {
     private static instance: MinecraftEnvironment;
@@ -35,5 +35,11 @@ export class MinecraftEnvironment {
     public initializeModalFormData(): ModalFormData {
         // Return a new instance of ModalFormData
         return new ModalFormData();
+    }
+
+    // Method to initialize modalFormData
+    public initializeMessageFormData(): MessageFormData {
+        // Return a new instance of ModalFormData
+        return new MessageFormData();
     }
 }

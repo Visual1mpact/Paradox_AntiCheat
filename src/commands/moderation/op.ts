@@ -57,6 +57,43 @@ export const opCommand: Command = {
             return;
         }
 
+        // Define function to open GUI for failed message
+        const opFailGui = (player: Player, world: World) => {
+            const failGui = minecraftEnvironment.initializeMessageFormData();
+
+            /// Set title and text fields if the GUI is being initialized
+            failGui.title("                 Paradox Op"); // title doesn't auto center the text
+            failGui.body("§o§7Please enter a new password again. Your confirmed password did not match!");
+            failGui.button1("Ok");
+            failGui.button2("Cancel");
+
+            // Show the GUI
+            failGui
+                .show(player)
+                .then((result) => {
+                    // Check if the GUI was canceled
+                    if (result && (result.canceled || result.selection === 1)) {
+                        // Abandon
+                        return void 0;
+                    } else {
+                        // Try again
+                        openOpGui(player, world);
+                    }
+                })
+                .catch((error) => {
+                    // Handle errors
+                    console.error("Paradox Unhandled Rejection: ", error);
+                    // Extract stack trace information
+                    if (error instanceof Error) {
+                        const stackLines = error.stack.split("\n");
+                        if (stackLines.length > 1) {
+                            const sourceInfo = stackLines;
+                            console.error("Error originated from:", sourceInfo[0]);
+                        }
+                    }
+                });
+        };
+
         // Define a function to open the GUI
         const openOpGui = (player: Player, world: World) => {
             // Initialize the modal form data
@@ -93,7 +130,7 @@ export const opCommand: Command = {
                     const newPrefix = `__${player.id}`;
                     // Check if passwords match
                     if (newPassword !== confirmPassword) {
-                        player.sendMessage("§o§7Please enter a new password again. Your confirmed password did not match!");
+                        opFailGui(player, world);
                     } else {
                         // Set player and world properties with the new password
                         player.setDynamicProperty(newPrefix, newPassword as string);
