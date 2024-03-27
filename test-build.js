@@ -64,14 +64,12 @@ async function checkAndBuild() {
         fs.mkdirSync(worldsDir, { recursive: true });
     }
 
-    // Check if the 'Bedrock level' subfolder exists in 'worlds', and if not, create it
+    // Check if the 'Bedrock level' subfolder exists in 'worlds', and if not, create it and copy 'new-world-beta-api'
     const testWorldDir = path.join(worldsDir, "Bedrock level");
     if (!fs.existsSync(testWorldDir)) {
-        fs.mkdirSync(testWorldDir);
+        fs.mkdirSync(testWorldDir); // Create the 'Bedrock level' subfolder
+        fse.copySync("new-world-beta-api", testWorldDir); // Copy 'new-world-beta-api' to the 'Bedrock level' subfolder
     }
-
-    // Copy 'new-world-beta-api'
-    fse.copySync("new-world-beta-api", testWorldDir);
 
     // Determine the OS type and execute the appropriate build command
     if (os.type() === "Linux") {
