@@ -1,11 +1,12 @@
 // index.ts (in commands directory)
 import { CommandHandler } from "../classes/CommandHandler";
-import { system, world } from "@minecraft/server";
+import { GameMode, system, world } from "@minecraft/server";
 import { secretKey } from "../security/generateRandomKey";
 import { opCommand } from "./moderation/op";
 import { MinecraftEnvironment } from "../classes/container/Dependencies";
 import { deopCommand } from "./moderation/deop";
 import { punishCommand } from "./moderation/punish";
+import { vanishCommand } from "./moderation/vanish";
 
 let checkKey = world.getDynamicProperty("securityKey");
 if (!checkKey || typeof checkKey !== "string") {
@@ -14,10 +15,10 @@ if (!checkKey || typeof checkKey !== "string") {
 
 checkKey = null;
 
-const minecraftEnvironment = MinecraftEnvironment.getInstance(world, system);
+const minecraftEnvironment = MinecraftEnvironment.getInstance(world, system, GameMode);
 const commandHandler = new CommandHandler(world.getDynamicProperty("securityKey") as string, minecraftEnvironment);
 
 // Register commands with the CommandHandler
-commandHandler.registerCommand([opCommand, deopCommand, punishCommand]);
+commandHandler.registerCommand([opCommand, deopCommand, punishCommand, vanishCommand]);
 
 export { commandHandler };
