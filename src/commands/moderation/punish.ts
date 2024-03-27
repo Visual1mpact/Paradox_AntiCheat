@@ -53,7 +53,7 @@ export const punishCommand: Command = {
 
                 message.sender.sendMessage(`§o§7Punished "${target.name}"!`);
             } else {
-                message.sender.sendMessage(`§o§7Failed to punish "${target.name}"! Please try again.`);
+                message.sender.sendMessage(`§o§7Failed to punish "${target ? target.name : playerName}"! Please try again.`);
             }
         });
     },
