@@ -5,6 +5,7 @@ import { secretKey } from "../security/generateRandomKey";
 import { opCommand } from "./moderation/op";
 import { MinecraftEnvironment } from "../classes/container/Dependencies";
 import { deopCommand } from "./moderation/deop";
+import { punishCommand } from "./moderation/punish";
 
 let checkKey = world.getDynamicProperty("securityKey");
 if (!checkKey || typeof checkKey !== "string") {
@@ -17,6 +18,6 @@ const minecraftEnvironment = MinecraftEnvironment.getInstance(world, system);
 const commandHandler = new CommandHandler(world.getDynamicProperty("securityKey") as string, minecraftEnvironment);
 
 // Register commands with the CommandHandler
-commandHandler.registerCommand([opCommand, deopCommand]);
+commandHandler.registerCommand([opCommand, deopCommand, punishCommand]);
 
 export { commandHandler };
