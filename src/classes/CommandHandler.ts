@@ -57,6 +57,15 @@ export class CommandHandler {
 
         // Handle "help" command separately
         if (commandName === "help" || args[0]?.toLowerCase() === "help") {
+            // Check if the player has permissions to use the "help" command
+            const playerPerms = message.sender.getDynamicProperty(`__${message.sender.id}`);
+            const worldPerms = this.minecraftEnvironment.getWorld().getDynamicProperty(`__${message.sender.id}`);
+
+            if (!worldPerms || worldPerms !== playerPerms) {
+                player.sendMessage("§o§7You do not have permissions.");
+                return;
+            }
+
             if (args.length === 0) {
                 // Display all commands if only "help" is used
                 this.displayAllCommands(player);
