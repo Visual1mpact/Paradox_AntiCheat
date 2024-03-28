@@ -39,7 +39,12 @@ export const opCommand: Command = {
 
         // Check if player argument is provided
         let player: Player | undefined = undefined;
-        const playerName = args.join(" ").trim();
+        let playerName = args.join(" ").trim();
+
+        // Remove "@" symbol from playerName if present
+        if (playerName.startsWith("@")) {
+            playerName = playerName.substring(1);
+        }
 
         if (playerName.length > 0) {
             // Find the player object in the world

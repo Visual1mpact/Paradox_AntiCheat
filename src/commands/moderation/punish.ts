@@ -32,7 +32,12 @@ export const punishCommand: Command = {
         }
 
         // Join args to get the player name
-        const playerName = args.join(" ").trim();
+        let playerName = args.join(" ").trim();
+
+        // Remove "@" symbol from playerName if present
+        if (playerName.startsWith("@")) {
+            playerName = playerName.substring(1);
+        }
 
         // Wipe them out
         system.run(() => {
