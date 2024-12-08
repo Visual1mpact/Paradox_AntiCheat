@@ -20,8 +20,8 @@ export class OptimizedDatabase {
         if (!name || name.length === 0) {
             throw new Error("Database name cannot be empty.");
         }
-        if (name.includes('"')) {
-            throw new Error('Database name cannot include the character `"`.');
+        if (name.includes('"') || name.includes("/")) {
+            throw new Error('Database name cannot include the characters `"` or `/`.');
         }
 
         this.name = name;
