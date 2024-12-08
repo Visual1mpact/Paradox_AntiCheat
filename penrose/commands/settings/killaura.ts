@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startKillAuraCheck, stopKillAuraCheck } from "../../modules/killaura";
-import { getParadoxModules, updateParadoxModules } from "../../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../../paradox";
 
 /**
  * Represents the killaura detection command.
@@ -23,25 +23,21 @@ export const killauraCommand: Command = {
      */
     execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
         const system = minecraftEnvironment.getSystem();
 
-        // Get Dynamic Property Boolean
-        const paradoxModules = getParadoxModules(world);
-        const killauraEnabled = (paradoxModules["killAuraCheck_b"] as boolean) || false;
+        // Retrieve the current state of the module from paradoxModulesDB
+        const killauraEnabled = paradoxModulesDB.get("killAuraCheck_b") ?? false;
 
         if (!killauraEnabled) {
             // Enable the module
-            paradoxModules["killAuraCheck_b"] = true;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set("killAuraCheck_b", true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §aenabled§7.`);
             system.run(() => {
                 startKillAuraCheck();
             });
         } else {
             // Disable the module
-            paradoxModules["killAuraCheck_b"] = false;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set("killAuraCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §4disabled§7.`);
             system.run(() => {
                 stopKillAuraCheck();

@@ -36,7 +36,7 @@ export const despawnCommand: Command = {
                 const isAllRequested = parameter === "all";
 
                 if (isAllRequested || typeId === parameter || typeId === parameter.replace("minecraft:", "")) {
-                    const count = despawnedEntities.get(typeId) || 0;
+                    const count = despawnedEntities.get(typeId) ?? 0;
                     despawnedEntities.set(typeId, count + 1);
                     entity.remove();
                 }

@@ -26,9 +26,9 @@ function* worldBorderGenerator(jobId: number): Generator<void, void, unknown> {
             end: number;
         };
 
-        const overworldBorder = worldBorderSettings?.overworld || 0;
-        const netherBorder = worldBorderSettings?.nether || 0;
-        const endBorder = worldBorderSettings?.end || 0;
+        const overworldBorder = worldBorderSettings?.overworld ?? 0;
+        const netherBorder = worldBorderSettings?.nether ?? 0;
+        const endBorder = worldBorderSettings?.end ?? 0;
 
         // Unsubscribe if world border feature is disabled
         if (!worldBorderEnabled) {

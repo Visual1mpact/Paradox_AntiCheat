@@ -98,7 +98,7 @@ function handleBlockBreak(event: PlayerBreakBlockAfterEvent): void {
             xrayData.set(playerId, playerData);
         }
 
-        let blockCount = blocksBrokenCount.get(playerId) || 0;
+        let blockCount = blocksBrokenCount.get(playerId) ?? 0;
         blocksBrokenCount.set(playerId, blockCount + 1);
 
         // Check if the player is suspicious

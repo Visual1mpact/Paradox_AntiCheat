@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startHitReachCheck, stopHitReachCheck } from "../../modules/reach";
-import { getParadoxModules, updateParadoxModules } from "../../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../../paradox";
 
 /**
  * Represents the hit reach detection command.
@@ -23,25 +23,23 @@ export const hitReachCheckCommand: Command = {
      */
     execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
         const system = minecraftEnvironment.getSystem();
 
-        // Get Dynamic Property Boolean
-        const paradoxModules = getParadoxModules(world);
-        const hitReachCheckEnabled = (paradoxModules["hitReachCheck_b"] as boolean) || false;
+        const hitReachCheckKey = "hitReachCheck_b";
 
-        if (hitReachCheckEnabled === false) {
+        // Retrieve the current state from paradoxModulesDB
+        const hitReachCheckEnabled = paradoxModulesDB.get(hitReachCheckKey) ?? false;
+
+        if (!hitReachCheckEnabled) {
             // Enable the module
-            paradoxModules["hitReachCheck_b"] = true;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set(hitReachCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §aenabled§7.`);
             system.run(() => {
                 startHitReachCheck();
             });
         } else {
             // Disable the module
-            paradoxModules["hitReachCheck_b"] = false;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set(hitReachCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §4disabled§7.`);
             system.run(() => {
                 stopHitReachCheck();

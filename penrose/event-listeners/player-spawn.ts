@@ -108,7 +108,7 @@ function isPlatformBlocked(event: PlayerSpawnAfterEvent) {
 
     // Parse platform block settings if the property exists and is defined
     const settings = getParadoxModules(world);
-    platformSettings = settings[platformBlockSettingKey] || {};
+    platformSettings = settings[platformBlockSettingKey] ?? {};
 
     // Determine the player's platform type and check if it's blocked
     const playerPlatform = player.clientSystemInfo.platformType.toLowerCase();
@@ -163,7 +163,7 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
 
     // Handle the local ban
     if (bannedPlayers.includes(playerName)) {
-        const playerClearance = (player.getDynamicProperty("securityClearance") as number) || 0;
+        const playerClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
 
         if (playerClearance >= 4) {
             // High clearance: remove from ban list and notify

@@ -81,7 +81,7 @@ function formatTime(seconds: number): string {
  */
 function canSendMessage(playerId: string): boolean {
     const currentTick = system.currentTick;
-    const lastMessageTick = playerMessageTimestamps.get(playerId) || 0;
+    const lastMessageTick = playerMessageTimestamps.get(playerId) ?? 0;
 
     // Check if the cooldown period has passed since the last message was sent
     if (currentTick - lastMessageTick >= messageCooldownTicks) {

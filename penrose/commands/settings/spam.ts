@@ -1,7 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
-import { getParadoxModules, updateParadoxModules } from "../../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../../paradox";
 
 /**
  * Represents the antispam command.
@@ -31,27 +30,22 @@ export const antispamCommand: Command = {
     /**
      * Executes the antispam command.
      * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
 
-        // Get dynamic properties
-        const paradoxModules = getParadoxModules(world);
-        const antispamBoolean = (paradoxModules["spamCheck_b"] as boolean) || false;
+        const spamCheckKey = "spamCheck_b";
 
-        // Toggle anti-spam
-        if (antispamBoolean === false) {
+        // Retrieve the current state from paradoxModulesDB
+        const antispamEnabled = paradoxModulesDB.get(spamCheckKey) ?? false;
+
+        if (!antispamEnabled) {
             // Enable anti-spam
-            paradoxModules["spamCheck_b"] = true;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set(spamCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 AntiSpam has been §aenabled§7.`);
         } else {
             // Disable anti-spam
-            paradoxModules["spamCheck_b"] = false;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set(spamCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 AntiSpam has been §4disabled§7.`);
         }
     },

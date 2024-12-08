@@ -36,8 +36,8 @@ function compareVersions(version1: string, version2: string): number {
     const v2Parts = parseVersion(version2);
 
     for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
-        const v1Part = v1Parts[i] || 0; // Default to 0 if the version part doesn't exist
-        const v2Part = v2Parts[i] || 0; // Default to 0 if the version part doesn't exist
+        const v1Part = v1Parts[i] ?? 0; // Default to 0 if the version part doesn't exist
+        const v2Part = v2Parts[i] ?? 0; // Default to 0 if the version part doesn't exist
 
         if (v1Part < v2Part) return -1;
         if (v1Part > v2Part) return 1;
@@ -142,7 +142,7 @@ function initializeParadoxModules() {
             switch (key) {
                 case "lagClearCheck_b":
                     if (value === true) {
-                        const settings = (paradoxModules["lagClear_settings"] as { hours: number; minutes: number; seconds: number }) || { hours: 0, minutes: 5, seconds: 0 };
+                        const settings = (paradoxModules["lagClear_settings"] as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 5, seconds: 0 };
                         startLagClear(settings.hours, settings.minutes, settings.seconds);
                     }
                     break;
@@ -163,7 +163,7 @@ function initializeParadoxModules() {
                     break;
                 case "afkCheck_b":
                     if (value === true) {
-                        const settings = (paradoxModules["afk_settings"] as { hours: number; minutes: number; seconds: number }) || { hours: 0, minutes: 10, seconds: 0 };
+                        const settings = (paradoxModules["afk_settings"] as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 10, seconds: 0 };
                         startAFKChecker(settings.hours, settings.minutes, settings.seconds);
                     }
                     break;

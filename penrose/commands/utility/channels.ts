@@ -1,13 +1,22 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
+import { channelsDB } from "../../paradox";
+
+type PlayerID = string;
 
 interface Channel {
-    Owner: string;
-    Members: { [key: string]: string }; // Player ID as the key
+    Owner: PlayerID;
+    Members: Record<PlayerID, string>;
 }
 
-const pendingInvitations = new Map<string, { sender: Player; channel: string; timeoutId: number }>();
+interface Invitation {
+    sender: Player;
+    channel: string;
+    timeoutId: number;
+}
+
+const pendingInvitations = new Map<string, Invitation>();
 const TIMEOUT_SECONDS = 30;
 const TPS = TicksPerSecond;
 
@@ -50,8 +59,6 @@ export const channelCommand: Command = {
         const world = minecraftEnvironment.getWorld();
         const playerName = message.sender.name;
         const playerId = message.sender.id; // Get the player's ID
-        const channelData = world.getDynamicProperty("channels") || "{}";
-        const channels: { [key: string]: Channel } = JSON.parse(channelData as string);
 
         /**
          * Retrieves a channel by its name.
@@ -59,21 +66,21 @@ export const channelCommand: Command = {
          * @returns {Channel | undefined} The channel object if found, otherwise undefined.
          */
         function getChannel(channelName: string): Channel | undefined {
-            return channels[channelName];
+            return channelsDB.get<Channel>(channelName);
         }
 
         /**
-         * Saves the channels data to the dynamic property.
+         * Saves the channels data to the database.
          */
-        function saveChannels() {
-            world.setDynamicProperty("channels", JSON.stringify(channels));
+        function saveChannels(channelName: string, channel: Channel): void {
+            channelsDB.set(channelName, channel);
         }
 
         /**
          * Cancels an invitation if it exists.
          * @param {string} receiverName - The name of the player who received the invitation.
          */
-        function cancelInvitation(receiverName: string) {
+        function cancelInvitation(receiverName: string): void {
             const invitation = pendingInvitations.get(receiverName);
             if (invitation) {
                 minecraftEnvironment.getSystem().clearRun(invitation.timeoutId);
@@ -85,8 +92,9 @@ export const channelCommand: Command = {
          * Joins a channel if the player is not already in a channel.
          * @param {string} channelName - The name of the channel to join.
          */
-        function joinChannel(channelName: string) {
-            if (Object.values(channels).some((channel) => channel.Members[playerId])) {
+        function joinChannel(channelName: string): void {
+            const channels = getChannel(channelName);
+            if (channels && channels.Members[playerId]) {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel.`);
                 return;
             }
@@ -98,7 +106,7 @@ export const channelCommand: Command = {
             }
 
             channel.Members[playerId] = playerName;
-            saveChannels();
+            saveChannels(channelName, channel);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have joined channel '${channelName}§7'.`);
 
             // Notify other members of the new player
@@ -115,7 +123,7 @@ export const channelCommand: Command = {
          * @param {string} channelName - The name of the channel.
          * @param {string} receiverName - The name of the player to invite.
          */
-        function inviteToChannel(channelName: string, receiverName: string) {
+        function inviteToChannel(channelName: string, receiverName: string): void {
             const receiver = world.getAllPlayers().find((player) => player.name === receiverName);
             if (!receiver) {
                 message.sender.sendMessage(`§cPlayer '${receiverName}' not found.`);
@@ -141,7 +149,7 @@ export const channelCommand: Command = {
 
             pendingInvitations.set(receiverName, { sender: message.sender, channel: channelName, timeoutId });
             receiver.sendMessage(
-                `§2[§7Paradox§2]§o§7 ${message.sender.name} invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") || "!"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") || "!"}channel leave --room ${channelName}§7 to decline.`
+                `§2[§7Paradox§2]§o§7 ${message.sender.name} invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") ?? "!"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") ?? "!"}channel leave --room ${channelName}§7 to decline.`
             );
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Invitation sent to ${receiverName} to join channel '${channelName}§7'.`);
         }
@@ -151,7 +159,7 @@ export const channelCommand: Command = {
          * @param {string} channelName - The name of the channel.
          * @param {string} newOwnerName - The name of the new owner.
          */
-        function transferChannelOwnership(channelName: string, newOwnerName: string) {
+        function transferChannelOwnership(channelName: string, newOwnerName: string): void {
             const channel = getChannel(channelName);
             if (!channel) {
                 message.sender.sendMessage(`§cChannel '${channelName}§c' does not exist.`);
@@ -170,7 +178,7 @@ export const channelCommand: Command = {
             }
 
             channel.Owner = newOwnerName;
-            saveChannels();
+            saveChannels(channelName, channel);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ownership of channel '${channelName}§7' transferred to ${newOwnerName}.`);
             newOwner.sendMessage(`§2[§7Paradox§2]§o§7 You are now the owner of channel '${channelName}§7'.`);
         }
@@ -179,7 +187,7 @@ export const channelCommand: Command = {
          * Allows a player to leave a channel.
          * @param {string} channelName - The name of the channel to leave.
          */
-        function leaveChannel(channelName: string) {
+        function leaveChannel(channelName: string): void {
             const channel = getChannel(channelName);
             if (!channel) {
                 message.sender.sendMessage(`§cChannel '${channelName}§c' does not exist.`);
@@ -203,20 +211,18 @@ export const channelCommand: Command = {
                         }
 
                         message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have left channel '${channelName}§7'. Ownership has been transferred to ${newOwnerName}.`);
-                        saveChannels();
+                        saveChannels(channelName, channel);
                         return;
                     } else {
                         // No other members to transfer ownership to
-                        delete channels[channelName];
                         message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' was empty and has been deleted.`);
-                        saveChannels();
+                        channelsDB.delete(channelName);
                         return;
                     }
                 } else {
                     // Only owner left in the channel, delete the channel
-                    delete channels[channelName];
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' has been deleted since you were the only member.`);
-                    saveChannels();
+                    channelsDB.delete(channelName);
                     return;
                 }
             }
@@ -224,12 +230,12 @@ export const channelCommand: Command = {
             if (channel.Members[playerId]) {
                 delete channel.Members[playerId];
                 if (Object.keys(channel.Members).length === 0) {
-                    delete channels[channelName];
+                    channelsDB.delete(channelName);
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' was empty and has been deleted.`);
                 } else {
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have left channel '${channelName}§7'.`);
                 }
-                saveChannels();
+                saveChannels(channelName, channel);
             } else {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are not a member of channel '${channelName}§7'.`);
             }
@@ -239,24 +245,25 @@ export const channelCommand: Command = {
          * Creates a channel if the player is not already in a channel.
          * @param {string} channelName - The name of the channel to create.
          */
-        function createChannel(channelName: string) {
-            if (Object.values(channels).some((channel) => channel.Members[playerId])) {
+        function createChannel(channelName: string): void {
+            const channels = channelsDB.entries() as [string, Channel][]; // Explicitly type the entries as [string, Channel][]
+            if (channels.some(([, channel]: [string, Channel]) => channel.Members?.[playerId])) {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel. Please leave your current channel before creating a new one.`);
                 return;
             }
 
-            if (channels[channelName]) {
+            const channel = channelsDB.get<Channel>(channelName); // Ensure the type of the channel
+            if (channel) {
                 message.sender.sendMessage(`§cChannel '${channelName}§c' already exists.`);
             } else {
-                channels[channelName] = { Owner: playerName, Members: { [playerId]: playerName } };
-                saveChannels();
+                saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName } });
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
             }
         }
 
         // Function to get the value associated with a flag
         function getFlagValue(args: string[], flag: string | string[]): string | undefined {
-            const flagIndex = args.findIndex((arg) => (Array.isArray(flag) ? flag.includes(arg) : arg === flag) && args[args.indexOf(arg) + 1]);
+            const flagIndex = args.findIndex((arg) => (Array.isArray(flag) ? flag.includes(arg) : arg === flag));
             return flagIndex !== -1 ? args[flagIndex + 1] : undefined;
         }
 

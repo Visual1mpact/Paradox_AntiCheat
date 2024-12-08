@@ -62,7 +62,7 @@ export const kickCommand: Command = {
                     break;
                 case "-r":
                 case "--reason":
-                    reason = captureMultiWordArgument(args) || "Farewell";
+                    reason = captureMultiWordArgument(args) ?? "Farewell";
                     break;
             }
         }
@@ -79,7 +79,7 @@ export const kickCommand: Command = {
         system.run(() => {
             if (player.isValid()) {
                 // Kick the player with the specified reason
-                world.getDimension(player.dimension.id).runCommand(`kick ${playerName} §f\n§l§o§7YOU ARE KICKED!\n\n[§fKicked By§7]§f: §7${message.sender.name || "§7N/A"}\n§7[§fReason§7]§f: §7${reason || "§7Farewell"}§f`);
+                world.getDimension(player.dimension.id).runCommand(`kick ${playerName} §f\n§l§o§7YOU ARE KICKED!\n\n[§fKicked By§7]§f: §7${message.sender.name ?? "§7N/A"}\n§7[§fReason§7]§f: §7${reason ?? "§7Farewell"}§f`);
 
                 // Check if the player is still in the world
                 const playerStillExists = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);

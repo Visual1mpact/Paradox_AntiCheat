@@ -40,8 +40,13 @@ import { initializeSecurityClearanceTracking } from "./utility/level-4-security-
 import { initializeParadoxModules } from "./utility/paradox-modules-manager";
 import { healthChangeListener } from "./event-listeners/health-sync";
 import { whitelistCommand } from "./commands/moderation/whitelist";
+import { OptimizedDatabase } from "./classes/database/data-hive";
 // @ts-ignore
 import { guiCommand } from "./commands/gui/main";
+
+// Data Hive
+const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
+const channelsDB = new OptimizedDatabase("channels");
 
 // Subscribe to chat send events
 chatSendSubscription.subscribe();
@@ -108,4 +113,4 @@ commandHandler.registerCommand([
     //guiCommand,
 ]);
 
-export { commandHandler };
+export { commandHandler, paradoxModulesDB, channelsDB };

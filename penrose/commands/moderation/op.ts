@@ -91,7 +91,7 @@ export const opCommand: Command = {
             const securityClearanceListKey = "securityClearanceList";
             const securityListObject = world.getDynamicProperty(moduleKey) as string;
             const securityClearanceListData: SecurityClearanceData = securityListObject ? JSON.parse(securityListObject) : { securityClearanceList: [] };
-            const securityClearanceList = securityClearanceListData[securityClearanceListKey] || [];
+            const securityClearanceList = securityClearanceListData[securityClearanceListKey] ?? [];
 
             const playerInfo: PlayerInfo = {
                 name: player.name,
@@ -117,7 +117,7 @@ export const opCommand: Command = {
         const displaySecurityList = (player: Player) => {
             const moduleKey = "paradoxOPSEC";
             const securityClearanceListData: SecurityClearanceData = JSON.parse(world.getDynamicProperty(moduleKey) as string);
-            const securityClearanceList = securityClearanceListData.securityClearanceList || [];
+            const securityClearanceList = securityClearanceListData.securityClearanceList ?? [];
 
             const hostInfo = securityClearanceListData.host ? `§2Host§7: ${securityClearanceListData.host.name} (§2ID§7: ${securityClearanceListData.host.id})` : "Host: §2None";
 
@@ -208,7 +208,7 @@ export const opCommand: Command = {
                             return openOpGui(player, world);
                         }
 
-                        const formValues = result?.formValues || [];
+                        const formValues = result?.formValues ?? [];
                         if (formValues.length === 0) {
                             return;
                         }

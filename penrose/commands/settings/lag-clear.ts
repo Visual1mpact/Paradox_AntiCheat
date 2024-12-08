@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startLagClear, stopLagClear } from "../../modules/lag-clear";
-import { getParadoxModules, updateParadoxModules } from "../../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../../paradox";
 
 /**
  * Represents the lagclear command.
@@ -23,11 +23,11 @@ export const lagClearCommand: Command = {
      */
     execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
         const system = minecraftEnvironment.getSystem();
 
-        // Retrieve and update module state
-        let paradoxModules = getParadoxModules(world);
+        // Keys for lag clear settings in the database
+        const lagClearKey = "lagClearCheck_b";
+        const lagClearSettingsKey = "lagClear_settings";
 
         // Default values
         let hours = 0;
@@ -35,47 +35,43 @@ export const lagClearCommand: Command = {
         let seconds = 0;
 
         if (args.length === 3) {
-            hours = parseInt(args[0], 10) || 0;
-            minutes = parseInt(args[1], 10) || 0;
-            seconds = parseInt(args[2], 10) || 0;
+            // Parse provided arguments
+            hours = parseInt(args[0], 10) ?? 0;
+            minutes = parseInt(args[1], 10) ?? 0;
+            seconds = parseInt(args[2], 10) ?? 0;
 
-            // Update settings without toggling if lag clear is already enabled
-            const lagClearKey = "lagClearCheck_b";
-            const lagClearSettingsKey = "lagClear_settings";
-            paradoxModules[lagClearSettingsKey] = { hours, minutes, seconds };
-            paradoxModules[lagClearKey] = true;
-            updateParadoxModules(world, paradoxModules);
+            // Update the settings and enable lag clear
+            paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
+            paradoxModulesDB.set(lagClearKey, true);
+
             player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer updated to §2[ §7${hours}§7 : §7${minutes}§7 : §7${seconds}§7 §2]§7.`);
-            // Restart LagClear with the new settings
             system.run(() => {
                 startLagClear(hours, minutes, seconds);
             });
         } else {
-            // Use existing settings if available
-            const lagClearSettingsKey = "lagClear_settings";
-            if (paradoxModules[lagClearSettingsKey] && typeof paradoxModules[lagClearSettingsKey] === "object") {
-                const settings = paradoxModules[lagClearSettingsKey] as { hours: number; minutes: number; seconds: number };
-                hours = settings.hours;
-                minutes = settings.minutes;
-                seconds = settings.seconds;
+            // Retrieve current settings
+            const currentSettings = paradoxModulesDB.get(lagClearSettingsKey) as { hours: number; minutes: number; seconds: number } | null;
+            const lagClearEnabled = paradoxModulesDB.get(lagClearKey) ?? false;
+
+            if (currentSettings) {
+                hours = currentSettings.hours;
+                minutes = currentSettings.minutes;
+                seconds = currentSettings.seconds;
             }
 
-            const lagClearKey = "lagClearCheck_b";
-            const lagClearBoolean = (paradoxModules[lagClearKey] as boolean) || false;
-
-            if (lagClearBoolean === false) {
+            if (!lagClearEnabled) {
                 // Enable LagClear
-                paradoxModules[lagClearKey] = true;
-                paradoxModules[lagClearSettingsKey] = { hours, minutes, seconds };
-                updateParadoxModules(world, paradoxModules);
+                paradoxModulesDB.set(lagClearKey, true);
+                paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
+
                 player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §aenabled§7.");
                 system.run(() => {
                     startLagClear(hours, minutes, seconds);
                 });
             } else {
                 // Disable LagClear
-                paradoxModules[lagClearKey] = false;
-                updateParadoxModules(world, paradoxModules);
+                paradoxModulesDB.set(lagClearKey, false);
+
                 player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §4disabled§7.");
                 system.run(() => {
                     stopLagClear();

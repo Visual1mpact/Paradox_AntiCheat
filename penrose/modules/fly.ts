@@ -75,7 +75,7 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
         const velocity = player.getVelocity();
         const verticalVelocityThreshold = 0.35;
         const hoverTimeThreshold = 4;
-        let hoverTime = (player.getDynamicProperty("hoverTime") as number) || 0;
+        let hoverTime = (player.getDynamicProperty("hoverTime") as number) ?? 0;
 
         if ((!player.isFalling && player.isFlying) || (majorityAreAir && Math.abs(velocity.y) > verticalVelocityThreshold && !player.isFalling && !player.isJumping && !player.isOnGround)) {
             hoverTime += 1;

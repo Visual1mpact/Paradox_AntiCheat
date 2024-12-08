@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode";
-import { getParadoxModules, updateParadoxModules } from "../../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../../paradox";
 
 /**
  * Represents the gamemode command.
@@ -31,18 +31,14 @@ export const gameModeCommand: Command = {
             settings: "gamemode_settings",
         };
 
-        let paradoxModules = getParadoxModules(world);
-
-        // Initial mode states
-        const modeStates = {
-            adventure: paradoxModules[modeKeys.settings]?.adventure ?? true,
-            creative: paradoxModules[modeKeys.settings]?.creative ?? true,
-            survival: paradoxModules[modeKeys.settings]?.survival ?? true,
-            spectator: paradoxModules[modeKeys.settings]?.spectator ?? true,
-            gamemodeCheck: paradoxModules[modeKeys.gamemodeCheck] ?? true,
+        let modeStates = {
+            adventure: paradoxModulesDB.get(modeKeys.settings)?.adventure ?? true,
+            creative: paradoxModulesDB.get(modeKeys.settings)?.creative ?? true,
+            survival: paradoxModulesDB.get(modeKeys.settings)?.survival ?? true,
+            spectator: paradoxModulesDB.get(modeKeys.settings)?.spectator ?? true,
+            gamemodeCheck: paradoxModulesDB.get(modeKeys.gamemodeCheck) ?? true,
         };
 
-        // Function to format the game mode settings message
         const formatSettingsMessage = (modeStates: { [key: string]: boolean }) => {
             const lines = [
                 `§2[§7Paradox§2]§o§7 Current Game Mode Settings:`,
@@ -55,15 +51,13 @@ export const gameModeCommand: Command = {
             return lines.join("\n");
         };
 
-        // Handle listing of settings
         if (args.includes("-l") || args.includes("--list")) {
             player.sendMessage(formatSettingsMessage(modeStates));
-            return; // Exit after listing settings
+            return;
         }
 
         let needsInspectionUpdate = false;
 
-        // Determine the modes to toggle
         args.forEach((arg) => {
             switch (arg.toLowerCase()) {
                 case "-a":
@@ -93,37 +87,30 @@ export const gameModeCommand: Command = {
                     needsInspectionUpdate = false;
                     break;
                 default:
-                    const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+                    const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                     player.sendMessage(`§cInvalid arguments. For help, use ${prefix}gamemode help.`);
                     return;
             }
         });
 
-        // Ensure at least one game mode remains enabled if checks are enabled
         if (modeStates.gamemodeCheck) {
             const enabledModes = Object.entries(modeStates).filter(([key, state]) => key !== "gamemodeCheck" && state).length;
-
             if (enabledModes === 0) {
                 player.sendMessage("§cYou cannot disable all game modes. At least one must remain enabled.");
                 return;
             }
         }
 
-        // Update dynamic properties
-        paradoxModules[modeKeys.gamemodeCheck] = modeStates.gamemodeCheck;
-        paradoxModules[modeKeys.settings] = {
+        paradoxModulesDB.set(modeKeys.gamemodeCheck, modeStates.gamemodeCheck);
+        paradoxModulesDB.set(modeKeys.settings, {
             adventure: modeStates.adventure,
             creative: modeStates.creative,
             survival: modeStates.survival,
             spectator: modeStates.spectator,
-        };
+        });
 
-        updateParadoxModules(world, paradoxModules);
-
-        // Notify player of the changes
         player.sendMessage(formatSettingsMessage(modeStates));
 
-        // Start/stop gamemode inspections
         if (!modeStates.gamemodeCheck) {
             system.run(() => {
                 stopGameModeCheck();

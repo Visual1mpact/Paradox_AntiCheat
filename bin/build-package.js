@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Execute version-sync.js to ensure versions are synchronized
-console.log("Syncing version with version-sync.js...");
+console.log("\nSyncing version with version-sync.js...");
 const versionSyncResult = spawnSync("node", ["./bin/version-sync.js"], { stdio: "inherit" });
 
 if (versionSyncResult.status !== 0) {

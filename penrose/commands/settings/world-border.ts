@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border";
-import { getParadoxModules, updateParadoxModules } from "../../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../../paradox";
 
 /**
  * Represents the worldborder command.
@@ -116,27 +116,25 @@ export const worldBorderCommand: Command = {
             worldBorderSettings: "worldBorder_settings",
         };
 
-        let paradoxModules = getParadoxModules(world);
-
+        // Retrieve current worldborder settings from paradoxModulesDB
         const modeStates = {
-            worldBorderCheck: paradoxModules[modeKeys.worldBorderCheck] ?? false,
-            worldBorderSettings: (paradoxModules[modeKeys.worldBorderSettings] ?? {
+            worldBorderCheck: paradoxModulesDB.get(modeKeys.worldBorderCheck) ?? false,
+            worldBorderSettings: paradoxModulesDB.get(modeKeys.worldBorderSettings) ?? {
                 overworld: 0,
                 nether: 0,
                 end: 0,
-            }) as { overworld: number; nether: number; end: number },
+            },
         };
 
         if (!args.length) {
-            const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+            const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
             player.sendMessage(`§2[§7Paradox§2]§o§7 Usage: {prefix}worldborder <value> [optional]. For help, use ${prefix}worldborder help.`);
             return;
         }
 
         if (args[0] === "--disable" || args[0] === "-d") {
             player.sendMessage(`§2[§7Paradox§2]§o§7 World Border has been §4disabled§7.`);
-            paradoxModules[modeKeys.worldBorderCheck] = false;
-            updateParadoxModules(world, paradoxModules);
+            paradoxModulesDB.set(modeKeys.worldBorderCheck, false);
             stopWorldBorderCheck();
             return;
         }
@@ -169,9 +167,9 @@ export const worldBorderCommand: Command = {
             }
         }
 
-        let overworldSize = modeStates.worldBorderSettings.overworld as number;
-        let netherSize = modeStates.worldBorderSettings.nether as number;
-        let endSize = modeStates.worldBorderSettings.end as number;
+        let overworldSize = modeStates.worldBorderSettings.overworld;
+        let netherSize = modeStates.worldBorderSettings.nether;
+        let endSize = modeStates.worldBorderSettings.end;
 
         for (let i = 0; i < args.length; i++) {
             const arg = args[i].toLowerCase();
@@ -201,20 +199,20 @@ export const worldBorderCommand: Command = {
                 ].join("\n")
             );
 
-            paradoxModules[modeKeys.worldBorderCheck] = true;
-            paradoxModules[modeKeys.worldBorderSettings] = {
+            paradoxModulesDB.set(modeKeys.worldBorderCheck, true);
+            paradoxModulesDB.set(modeKeys.worldBorderSettings, {
                 overworld: Math.abs(overworldSize),
                 nether: Math.abs(netherSize),
                 end: Math.abs(endSize),
-            };
-            updateParadoxModules(world, paradoxModules);
+            });
+
             system.run(() => {
                 startWorldBorderCheck();
             });
             return;
         }
 
-        const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+        const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
         player.sendMessage(`§cInvalid arguments. For help, use ${prefix}worldborder help.`);
     },
 };

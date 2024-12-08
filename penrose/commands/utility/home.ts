@@ -228,7 +228,7 @@ export const homeCommand: Command = {
                 break;
             }
             default:
-                const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+                const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                 player.sendMessage(`§cInvalid arguments. For help, use ${prefix}home help.`);
                 break;
         }

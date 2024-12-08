@@ -1,6 +1,5 @@
-import { world, system, ChatSendBeforeEvent, World, Player } from "@minecraft/server";
-import { commandHandler } from "../../paradox";
-import { getSettingFromParadoxModules } from "../../utility/paradox-modules-manager";
+import { world, system, ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { commandHandler, paradoxModulesDB, channelsDB } from "../../paradox";
 
 // Configuration for spam detection
 const SPAM_THRESHOLD = 5; // Number of allowed messages
@@ -10,11 +9,6 @@ const MUTE_DURATION = 2400; // Mute duration in ticks (2 minutes)
 interface PlayerSpamData {
     messageTimes: number[];
     mutedUntil: number | null;
-}
-
-interface Channel {
-    Owner: string;
-    Members: { [key: string]: string };
 }
 
 /**
@@ -34,11 +28,10 @@ class ChatSendSubscription {
 
     /**
      * Checks if spam detection is enabled based on the world dynamic properties.
-     * @param world - The world object to retrieve dynamic properties from.
      * @returns True if spam detection is enabled, false otherwise.
      */
-    private isSpamCheckEnabled(world: World): boolean {
-        const paradoxModules = getSettingFromParadoxModules(world, "spamCheck_b");
+    private isSpamCheckEnabled(): boolean {
+        const paradoxModules = paradoxModulesDB.get("spamCheck_b");
         return paradoxModules === true;
     }
 
@@ -55,40 +48,32 @@ class ChatSendSubscription {
     }
 
     /**
-     * Retrieves the current channel of the player.
+     * Retrieves the current channel of the player using channelsDB.
      * @param player - The player object.
      * @returns The name of the channel the player is in, or null if not in a channel.
      */
     private getPlayerChannel(player: Player): string | null {
-        const channelData = world.getDynamicProperty("channels") || "{}";
-        const channels: { [key: string]: Channel } = JSON.parse(channelData as string);
-
-        // Find the channel that includes the player as a member
-        for (const [channelName, channel] of Object.entries(channels)) {
-            if (channel.Members[player.id]) {
+        // Assuming channelsDB stores a map of channels where each member is keyed by player ID
+        const channels = channelsDB.entries();
+        for (const [channelName, channelData] of channels) {
+            if (channelData.Members[player.id]) {
                 return channelName;
             }
         }
-
         return null;
     }
 
     /**
-     * Retrieves the list of players in a specific channel.
+     * Retrieves the list of players in a specific channel using channelsDB.
      * @param channelName - The name of the channel.
      * @returns A list of players in the channel.
      */
     private getPlayersInChannel(channelName: string): Player[] {
-        const channelData = world.getDynamicProperty("channels") || "{}";
-        const channels: { [key: string]: Channel } = JSON.parse(channelData as string);
+        const channelData = channelsDB.get(channelName) as { Members: { [key: string]: string } } | undefined;
+        if (!channelData) return [];
 
-        const channel = channels[channelName];
-        if (!channel) {
-            return [];
-        }
-
-        return Object.values(channel.Members)
-            .map((playerName) => world.getAllPlayers().find((p) => p.name === playerName))
+        return Object.keys(channelData.Members)
+            .map((playerId) => world.getAllPlayers().find((p) => p.id === playerId))
             .filter((p) => p !== undefined) as Player[];
     }
 
@@ -102,11 +87,11 @@ class ChatSendSubscription {
                 const playerId = player.id;
                 const playerChannel = this.getPlayerChannel(player);
 
-                if (this.isSpamCheckEnabled(world) && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
+                if (this.isSpamCheckEnabled() && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
                     const currentTick = system.currentTick;
 
                     const storedMutedUntil = player.getDynamicProperty("mutedUntil") as number | null;
-                    const spamData = this.spamData.get(playerId) || { messageTimes: [], mutedUntil: storedMutedUntil };
+                    const spamData = this.spamData.get(playerId) ?? { messageTimes: [], mutedUntil: storedMutedUntil };
 
                     if (spamData.mutedUntil && currentTick < spamData.mutedUntil) {
                         event.cancel = true;
@@ -138,8 +123,8 @@ class ChatSendSubscription {
 
                 event.cancel = true;
 
-                const playerRank = (player.getDynamicProperty("chatRank") as string) || "§2[§7Member§2]";
-                const rank = playerChannel || playerRank;
+                const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+                const rank = playerChannel ?? playerRank;
                 const formattedMessage = `${rank} §7${player.name}: §r${event.message}`;
 
                 // Handle commands first; if not a command, broadcast the message

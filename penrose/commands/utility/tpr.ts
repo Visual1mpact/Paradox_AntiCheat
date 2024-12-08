@@ -141,7 +141,7 @@ export const tprCommand: Command = {
                 });
                 return;
             case "":
-                const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+                const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                 message.sender.sendMessage(`§cInvalid arguments. For help, use ${prefix}tpr help.`);
                 return;
         }
@@ -185,7 +185,7 @@ export const tprCommand: Command = {
         pendingRequests.set(receiver.name, { sender, receiver, timeoutId });
 
         // Retrieve the current prefix from dynamic properties
-        const currentPrefix: string = (world.getDynamicProperty("__prefix") as string) || "!";
+        const currentPrefix: string = (world.getDynamicProperty("__prefix") as string) ?? "!";
 
         sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request sent to ${receiver.name}.`);
         receiver.sendMessage(`§2[§7Paradox§2]§o§7 ${sender.name} wants to teleport to you. Type ${currentPrefix}tpr accept to accept or ${currentPrefix}tpr deny to deny.`);

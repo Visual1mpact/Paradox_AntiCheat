@@ -72,7 +72,7 @@ function kickPlayer(player: Player, reason: string) {
  */
 function banPlayer(player: Player, reason: string) {
     try {
-        const bannedPlayersString = (world.getDynamicProperty("bannedPlayers") as string) || "[]";
+        const bannedPlayersString = (world.getDynamicProperty("bannedPlayers") as string) ?? "[]";
         const bannedPlayers = JSON.parse(bannedPlayersString);
 
         if (!bannedPlayers.includes(player.name)) {

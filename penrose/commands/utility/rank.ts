@@ -107,7 +107,7 @@ export const setRankCommand: Command = {
 
         // Check if player name is provided
         if (!playerName) {
-            const prefix = world.getDynamicProperty("__prefix") || "!";
+            const prefix = world.getDynamicProperty("__prefix") ?? "!";
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}setrank -t <player> [-r <rank> | --reset]`);
             return;
         }
@@ -131,7 +131,7 @@ export const setRankCommand: Command = {
         } else {
             // Check if rank is provided
             if (!rank) {
-                const prefix = world.getDynamicProperty("__prefix") || "!";
+                const prefix = world.getDynamicProperty("__prefix") ?? "!";
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}setrank -t <player> -r <rank> | --reset`);
                 return;
             }
