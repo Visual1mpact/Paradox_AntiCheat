@@ -2,6 +2,13 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { paradoxModulesDB } from "../../paradox";
 
+// Define a type for platform block settings to ensure type safety
+interface PlatformBlockSettings {
+    console: boolean;
+    desktop: boolean;
+    mobile: boolean;
+}
+
 /**
  * Represents the platformBlock command.
  */
@@ -24,7 +31,7 @@ export const platformBlockCommand: Command = {
         const platformBlockSettingsKey = "platformBlock_settings";
 
         // Get current settings from paradoxModulesDB
-        let platformSettings = paradoxModulesDB.get(platformBlockSettingsKey) ?? {
+        let platformSettings: PlatformBlockSettings = paradoxModulesDB.get(platformBlockSettingsKey) ?? {
             console: false,
             desktop: false,
             mobile: false,
@@ -77,7 +84,7 @@ export const platformBlockCommand: Command = {
         platformSettings[platform] = blockPlatform;
 
         // Check if blocking this platform will block all platforms
-        const blockedPlatforms = ["console", "desktop", "mobile"].filter((platformType) => platformSettings[platformType] === true);
+        const blockedPlatforms = ["console", "desktop", "mobile"].filter((platformType) => platformSettings[platformType as keyof PlatformBlockSettings] === true);
 
         if (blockedPlatforms.length > 2) {
             // Revert the change to ensure at least one platform is unblocked

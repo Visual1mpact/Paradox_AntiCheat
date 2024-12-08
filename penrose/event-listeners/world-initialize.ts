@@ -15,6 +15,8 @@ import { startNamespoofDetection } from "../modules/namespoof";
 import { startXrayDetection } from "../modules/xray";
 import { globalBanPlayers } from "../data/global-ban";
 import { paradoxVersion } from "../data/versioning";
+import { paradoxModulesDB } from "../paradox";
+import { OptimizedDatabase } from "../classes/database/data-hive";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -77,28 +79,30 @@ function initializeGlobalBanList() {
 /**
  * Migrates outdated keys in paradoxModules to their updated versions based on a given mapping.
  */
-function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }) {
-    const moduleKey = "paradoxModules";
-    const getParadoxModules = world.getDynamicProperty(moduleKey) as string;
-    let paradoxModules: { [key: string]: any } = getParadoxModules ? JSON.parse(getParadoxModules) : {};
+function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }, paradoxModulesDB: OptimizedDatabase) {
+    // Retrieve the paradoxModules object from the database
+    let paradoxModules = paradoxModulesDB.get<{ [key: string]: any }>("paradoxModules");
 
-    if (typeof paradoxModules === "object" && paradoxModules !== null) {
-        let updated = false;
+    // If paradoxModules doesn't exist in the DB, no migration is necessary
+    if (!paradoxModules) {
+        return;
+    }
 
-        for (const [oldKey, newKey] of Object.entries(migrations)) {
-            // Check if the old key exists
-            if (paradoxModules[oldKey] !== undefined) {
-                // Rename the key to the new key
-                paradoxModules[newKey] = paradoxModules[oldKey];
-                delete paradoxModules[oldKey]; // Remove the old key
-                updated = true;
-            }
+    let updated = false;
+
+    // Iterate through the migrations to rename old keys
+    for (const [oldKey, newKey] of Object.entries(migrations)) {
+        // If the old key exists, rename it
+        if (paradoxModules[oldKey] !== undefined) {
+            paradoxModules[newKey] = paradoxModules[oldKey];
+            delete paradoxModules[oldKey]; // Remove the old key
+            updated = true;
         }
+    }
 
-        // Save the updated paradoxModules back to dynamic property if changes were made
-        if (updated) {
-            world.setDynamicProperty(moduleKey, JSON.stringify(paradoxModules));
-        }
+    // If there were any changes, save the updated paradoxModules back to the database
+    if (updated) {
+        paradoxModulesDB.set("paradoxModules", paradoxModules);
     }
 }
 
@@ -123,26 +127,18 @@ function initializeParadoxModules() {
     };
 
     // Migrate outdated keys first
-    migrateParadoxModulesKeys(keyMigrations);
+    migrateParadoxModulesKeys(keyMigrations, paradoxModulesDB);
 
-    // Retrieve and update module state
-    const moduleKey = "paradoxModules";
-    const getParadoxModules = world.getDynamicProperty(moduleKey) as string;
-    let paradoxModules: { [key: string]: boolean | { hours: number; minutes: number; seconds: number } } = getParadoxModules ? JSON.parse(getParadoxModules) : null;
+    // Retrieve paradoxModules from the OptimizedDatabase (paradoxModulesDB)
+    const paradoxModules = paradoxModulesDB.entries(); // Getting all entries
 
-    // Ensure paradoxModules is initialized with an empty object if it doesn't exist
-    if (typeof paradoxModules !== "object" || paradoxModules === null) {
-        paradoxModules = {};
-        world.setDynamicProperty("paradoxModules", JSON.stringify(paradoxModules));
-    }
-
-    // Iterate over the properties and start corresponding modules if their value is true
+    // Iterate over the entries and start corresponding modules if their value is true
     system.run(() => {
-        for (const [key, value] of Object.entries(paradoxModules)) {
+        paradoxModules.forEach(([key, value]) => {
             switch (key) {
                 case "lagClearCheck_b":
                     if (value === true) {
-                        const settings = (paradoxModules["lagClear_settings"] as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 5, seconds: 0 };
+                        const settings = (paradoxModulesDB.get("lagClear_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 5, seconds: 0 };
                         startLagClear(settings.hours, settings.minutes, settings.seconds);
                     }
                     break;
@@ -163,7 +159,7 @@ function initializeParadoxModules() {
                     break;
                 case "afkCheck_b":
                     if (value === true) {
-                        const settings = (paradoxModules["afk_settings"] as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 10, seconds: 0 };
+                        const settings = (paradoxModulesDB.get("afk_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 10, seconds: 0 };
                         startAFKChecker(settings.hours, settings.minutes, settings.seconds);
                     }
                     break;
@@ -200,10 +196,9 @@ function initializeParadoxModules() {
                 // Add more cases for other modules here
                 default:
                     // Handle unknown properties or log them if needed
-                    // console.warn(`§2[§7Paradox§2]§o§7 Unknown module property: ${key}`);
                     break;
             }
-        }
+        });
     });
 }
 

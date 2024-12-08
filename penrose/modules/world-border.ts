@@ -1,7 +1,14 @@
 import { Player, world, system, Dimension } from "@minecraft/server";
-import { getParadoxModules } from "../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../paradox";
 
 let currentJobId: number | null = null;
+
+// Represents world border settings for each dimension
+interface WorldBorderSettings {
+    overworld: number;
+    nether: number;
+    end: number;
+}
 
 /**
  * Generator function for world border enforcement tasks.
@@ -16,21 +23,14 @@ function* worldBorderGenerator(jobId: number): Generator<void, void, unknown> {
     };
 
     while (true) {
-        // Retrieve the current dynamic properties for world border settings
-        let paradoxModules = getParadoxModules(world);
-
-        const worldBorderEnabled = paradoxModules[modeKeys.worldBorderCheck] as boolean;
-        const worldBorderSettings = paradoxModules[modeKeys.worldBorderSettings] as {
-            overworld: number;
-            nether: number;
-            end: number;
+        // Retrieve world border settings and check status from the database
+        const worldBorderEnabled = paradoxModulesDB.get<boolean>(modeKeys.worldBorderCheck) ?? false;
+        const worldBorderSettings = paradoxModulesDB.get<WorldBorderSettings>(modeKeys.worldBorderSettings) ?? {
+            overworld: 0,
+            nether: 0,
+            end: 0,
         };
 
-        const overworldBorder = worldBorderSettings?.overworld ?? 0;
-        const netherBorder = worldBorderSettings?.nether ?? 0;
-        const endBorder = worldBorderSettings?.end ?? 0;
-
-        // Unsubscribe if world border feature is disabled
         if (!worldBorderEnabled) {
             system.clearJob(jobId);
             return;
@@ -42,15 +42,16 @@ function* worldBorderGenerator(jobId: number): Generator<void, void, unknown> {
             if (player.isValid() && (player.getDynamicProperty("securityClearance") as number) === 4) {
                 continue;
             }
+
             const { x, y, z } = player.location;
 
             // Handle world border enforcement for each dimension
-            if (player.dimension.id === "minecraft:overworld" && overworldBorder > 0) {
-                checkAndTeleportPlayer(player, x, y, z, overworldBorder, "overworld");
-            } else if (player.dimension.id === "minecraft:nether" && netherBorder > 0) {
-                checkAndTeleportPlayer(player, x, y, z, netherBorder, "nether");
-            } else if (player.dimension.id === "minecraft:the_end" && endBorder > 0) {
-                checkAndTeleportPlayer(player, x, y, z, endBorder, "end");
+            if (player.dimension.id === "minecraft:overworld" && worldBorderSettings.overworld > 0) {
+                checkAndTeleportPlayer(player, x, y, z, worldBorderSettings.overworld, "Overworld");
+            } else if (player.dimension.id === "minecraft:nether" && worldBorderSettings.nether > 0) {
+                checkAndTeleportPlayer(player, x, y, z, worldBorderSettings.nether, "Nether");
+            } else if (player.dimension.id === "minecraft:the_end" && worldBorderSettings.end > 0) {
+                checkAndTeleportPlayer(player, x, y, z, worldBorderSettings.end, "End");
             }
             yield; // Yield after processing each player to avoid blocking
         }
@@ -137,12 +138,15 @@ export function startWorldBorderCheck() {
         system.clearJob(currentJobId);
     }
 
-    currentJobId = system.runJob(worldBorderGenerator(currentJobId));
+    currentJobId = system.runJob(worldBorderGenerator(currentJobId!));
 }
 
 /**
  * Stops world border check
  */
 export function stopWorldBorderCheck() {
-    system.clearJob(currentJobId);
+    if (currentJobId !== null) {
+        system.clearJob(currentJobId);
+        currentJobId = null;
+    }
 }

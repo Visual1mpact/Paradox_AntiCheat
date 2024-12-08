@@ -37,20 +37,22 @@ import { platformBlockCommand } from "penrose/commands/settings/platform-block";
 import { nameSpoofCommand } from "penrose/commands/settings/namespoof";
 import { xrayCommand } from "penrose/commands/settings/xray";
 import { initializeSecurityClearanceTracking } from "penrose/utility/level-4-security-tracker";
-import { initializeParadoxModules } from "penrose/utility/paradox-modules-manager";
 import { healthChangeListener } from "penrose/event-listeners/health-sync";
+import { whitelistCommand } from "penrose/commands/moderation/whitelist";
+import { OptimizedDatabase } from "penrose/classes/database/data-hive";
 import { tinyCommand } from "./commands/utility/tiny";
 // @ts-ignore
 import { guiCommand } from "penrose/commands/gui/main";
+
+// Data Hive
+const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
+const channelsDB = new OptimizedDatabase("channels");
 
 // Subscribe to chat send events
 chatSendSubscription.subscribe();
 
 // Get the Minecraft environment instance
 const minecraftEnvironment = MinecraftEnvironment.getInstance();
-
-// Initializes manager for paradoxModules
-initializeParadoxModules(minecraftEnvironment.getWorld());
 
 // Initializes the tracking of players with security clearance level 4.
 initializeSecurityClearanceTracking(minecraftEnvironment.getWorld());
@@ -104,8 +106,9 @@ commandHandler.registerCommand([
     pvpCooldownCommand,
     pvpToggleCooldownCommand,
     xrayCommand,
+    whitelistCommand,
     tinyCommand,
     //guiCommand,
 ]);
 
-export { commandHandler };
+export { commandHandler, paradoxModulesDB, channelsDB };

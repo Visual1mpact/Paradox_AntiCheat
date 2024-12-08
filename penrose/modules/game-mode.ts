@@ -1,5 +1,13 @@
 import { GameMode, PlayerGameModeChangeAfterEvent, world } from "@minecraft/server";
-import { getParadoxModules } from "../utility/paradox-modules-manager";
+import { paradoxModulesDB } from "../paradox";
+
+// Represents the game mode settings stored in the database
+interface ModeSettings {
+    adventure: boolean;
+    creative: boolean;
+    survival: boolean;
+    spectator: boolean;
+}
 
 /**
  * Handles game mode change events and enforces allowed game modes.
@@ -9,6 +17,7 @@ import { getParadoxModules } from "../utility/paradox-modules-manager";
 function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
     const player = event.player;
 
+    // Skip enforcement for players with security clearance 4
     if ((player.getDynamicProperty("securityClearance") as number) === 4) {
         return;
     }
@@ -17,73 +26,36 @@ function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
         settings: "gamemode_settings",
     };
 
-    // Retrieve the current dynamic properties for game mode settings
-    let paradoxModules = getParadoxModules(world);
-
-    // Initialize mode states with default values
-    const modeStates = {
-        adventure: paradoxModules[modeKeys.settings]?.adventure ?? true,
-        creative: paradoxModules[modeKeys.settings]?.creative ?? true,
-        survival: paradoxModules[modeKeys.settings]?.survival ?? true,
-        spectator: paradoxModules[modeKeys.settings]?.spectator ?? true,
+    const modeSettings = paradoxModulesDB.get<ModeSettings>(modeKeys.settings) ?? {
+        adventure: true,
+        creative: true,
+        survival: true,
+        spectator: true,
     };
 
-    // Get the new and previous game modes of the player
+    const modeStates: ModeSettings = {
+        adventure: modeSettings.adventure,
+        creative: modeSettings.creative,
+        survival: modeSettings.survival,
+        spectator: modeSettings.spectator,
+    };
+
     const newGameMode = event.toGameMode;
     const previousGameMode = event.fromGameMode;
 
-    // Determine if the new game mode is allowed
-    let isAllowedNew = false;
-    let isAllowedPrevious = false;
-
     // Check if the new game mode is allowed
-    switch (newGameMode) {
-        case "adventure":
-            isAllowedNew = modeStates.adventure;
-            break;
-        case "creative":
-            isAllowedNew = modeStates.creative;
-            break;
-        case "survival":
-            isAllowedNew = modeStates.survival;
-            break;
-        case "spectator":
-            isAllowedNew = modeStates.spectator;
-            break;
-    }
+    const isAllowedNew = modeStates[newGameMode as keyof ModeSettings] ?? false;
 
-    // If the new game mode is allowed, no need to proceed
+    // If the new game mode is allowed, exit
     if (isAllowedNew) {
         return;
     }
 
     // Check if the previous game mode is allowed
-    switch (previousGameMode) {
-        case "adventure":
-            isAllowedPrevious = modeStates.adventure;
-            break;
-        case "creative":
-            isAllowedPrevious = modeStates.creative;
-            break;
-        case "survival":
-            isAllowedPrevious = modeStates.survival;
-            break;
-        case "spectator":
-            isAllowedPrevious = modeStates.spectator;
-            break;
-    }
+    const isAllowedPrevious = modeStates[previousGameMode as keyof ModeSettings] ?? false;
 
-    // If neither the new nor the previous game mode is allowed, revert to any allowed game mode
-    let fallbackGameMode: GameMode | null = null;
-    if (modeStates.survival) {
-        fallbackGameMode = GameMode.survival;
-    } else if (modeStates.adventure) {
-        fallbackGameMode = GameMode.adventure;
-    } else if (modeStates.creative) {
-        fallbackGameMode = GameMode.creative;
-    } else if (modeStates.spectator) {
-        fallbackGameMode = GameMode.spectator;
-    }
+    // Determine a fallback game mode
+    const fallbackGameMode = (Object.keys(modeStates) as (keyof ModeSettings)[]).find((key) => modeStates[key]) as GameMode | null;
 
     // Revert to the previous game mode if allowed, otherwise switch to the fallback game mode
     if (isAllowedPrevious) {
@@ -98,7 +70,6 @@ function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
  * Subscribes to the game mode change event and handles it using the `handleGameModeChange` function.
  */
 export function startGameModeCheck() {
-    // Subscribe to the game mode change event
     world.afterEvents.playerGameModeChange.subscribe(handleGameModeChange);
 }
 
@@ -106,6 +77,5 @@ export function startGameModeCheck() {
  * Stops monitoring game mode changes.
  */
 export function stopGameModeCheck() {
-    // Unsubscribe to the game mode change event
     world.afterEvents.playerGameModeChange.unsubscribe(handleGameModeChange);
 }

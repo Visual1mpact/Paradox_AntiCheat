@@ -4,6 +4,19 @@ import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode";
 import { paradoxModulesDB } from "../../paradox";
 
+// Represents the game mode settings stored in the database
+interface ModeSettings {
+    adventure: boolean;
+    creative: boolean;
+    survival: boolean;
+    spectator: boolean;
+}
+
+// Represents the full mode states including the gamemode check
+interface ModeStates extends ModeSettings {
+    gamemodeCheck: boolean;
+}
+
 /**
  * Represents the gamemode command.
  */
@@ -31,15 +44,17 @@ export const gameModeCommand: Command = {
             settings: "gamemode_settings",
         };
 
-        let modeStates = {
-            adventure: paradoxModulesDB.get(modeKeys.settings)?.adventure ?? true,
-            creative: paradoxModulesDB.get(modeKeys.settings)?.creative ?? true,
-            survival: paradoxModulesDB.get(modeKeys.settings)?.survival ?? true,
-            spectator: paradoxModulesDB.get(modeKeys.settings)?.spectator ?? true,
-            gamemodeCheck: paradoxModulesDB.get(modeKeys.gamemodeCheck) ?? true,
+        const modeSettings = paradoxModulesDB.get<ModeSettings>(modeKeys.settings);
+
+        const modeStates: ModeStates = {
+            adventure: modeSettings?.adventure ?? true,
+            creative: modeSettings?.creative ?? true,
+            survival: modeSettings?.survival ?? true,
+            spectator: modeSettings?.spectator ?? true,
+            gamemodeCheck: paradoxModulesDB.get<boolean>(modeKeys.gamemodeCheck) ?? true,
         };
 
-        const formatSettingsMessage = (modeStates: { [key: string]: boolean }) => {
+        const formatSettingsMessage = (modeStates: ModeStates) => {
             const lines = [
                 `§2[§7Paradox§2]§o§7 Current Game Mode Settings:`,
                 `  | Adventure: ${modeStates.adventure ? "§aAllowed§7" : "§2Disallowed§7"}`,
@@ -94,7 +109,12 @@ export const gameModeCommand: Command = {
         });
 
         if (modeStates.gamemodeCheck) {
-            const enabledModes = Object.entries(modeStates).filter(([key, state]) => key !== "gamemodeCheck" && state).length;
+            // Use keys from ModeStates interface, excluding `gamemodeCheck`
+            const gameModeKeys: (keyof Omit<ModeStates, "gamemodeCheck">)[] = ["adventure", "creative", "survival", "spectator"];
+
+            // Count enabled game modes
+            const enabledModes = gameModeKeys.filter((key) => modeStates[key]).length;
+
             if (enabledModes === 0) {
                 player.sendMessage("§cYou cannot disable all game modes. At least one must remain enabled.");
                 return;
