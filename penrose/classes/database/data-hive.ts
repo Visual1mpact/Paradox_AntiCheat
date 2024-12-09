@@ -7,6 +7,7 @@ import { world } from "@minecraft/server";
 export class OptimizedDatabase {
     private name: string;
     private pointerKey: string;
+    private cachedPointers: string[] | null = null;
 
     /**
      * Constructs an instance of OptimizedDatabase.
@@ -34,16 +35,17 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Retrieves the list of pointers stored in the database.
+     * Retrieves the list of pointers stored in the database (cached).
      * @returns An array of strings representing the dynamic keys in the database.
-     *
-     * @example
-     * const pointers = db._getPointers();
-     * console.log(pointers); // ["myDatabase/key1", "myDatabase/key2"]
      */
     private _getPointers(): string[] {
+        if (this.cachedPointers !== null) {
+            return this.cachedPointers;
+        }
+
         const pointers = world.getDynamicProperty(this.pointerKey) as string | null;
-        return pointers ? JSON.parse(pointers) : [];
+        this.cachedPointers = pointers ? JSON.parse(pointers) : [];
+        return this.cachedPointers;
     }
 
     /**
@@ -51,6 +53,7 @@ export class OptimizedDatabase {
      * @param pointers - An array of strings representing the dynamic keys to store.
      */
     private _setPointers(pointers: string[]): void {
+        this.cachedPointers = pointers; // Cache the pointers
         world.setDynamicProperty(this.pointerKey, JSON.stringify(pointers));
     }
 
@@ -68,7 +71,7 @@ export class OptimizedDatabase {
 
         if (!pointers.includes(dynamicKey)) {
             pointers.push(dynamicKey);
-            this._setPointers(pointers);
+            this._setPointers(pointers); // Update the cached pointers as well
         }
 
         world.setDynamicProperty(dynamicKey, JSON.stringify(value));
@@ -102,7 +105,7 @@ export class OptimizedDatabase {
 
         if (pointers.includes(dynamicKey)) {
             world.setDynamicProperty(dynamicKey, null);
-            this._setPointers(pointers.filter((ptr) => ptr !== dynamicKey));
+            this._setPointers(pointers.filter((ptr) => ptr !== dynamicKey)); // Update the cached pointers
         }
     }
 
