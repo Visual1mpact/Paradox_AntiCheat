@@ -2,13 +2,14 @@ import path from "path";
 import fs from "fs-extra";
 import { spawnSync } from "child_process";
 import { fileURLToPath } from "url";
+import { path7za } from "7zip-bin";
 
 // Constants
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Function to run a command and handle errors
-function runCommand(command, args) {
-    const result = spawnSync(command, args, { stdio: "inherit" });
+function runCommand(command, args, options = {}) {
+    const result = spawnSync(command, args, { stdio: "inherit", ...options });
 
     if (result.status !== 0) {
         console.error(`${command} failed with code ${result.status}:`);
@@ -58,10 +59,12 @@ runCommand("node", ["./node_modules/typescript/bin/tsc", "-p", tsConfigPath]);
 const isServerMode = process.argv.includes("--server");
 
 if (!isServerMode) {
-    console.log("Creating distribution archive file");
-
+    // Run the 7z command to create the archive
+    const sevenZipPath = path7za;
     const outputFileName = `Paradox-AntiCheat-v${packageVersion}.${process.argv.includes("--mcpack") ? "mcpack" : "zip"}`;
     const outputFilePath = path.resolve("build/build", outputFileName);
+
+    console.log("Creating distribution archive file");
 
     // Delete existing archive if it exists
     if (fs.existsSync(outputFilePath)) {
@@ -69,9 +72,34 @@ if (!isServerMode) {
         fs.unlinkSync(outputFilePath);
     }
 
-    // Explicitly specify the archive format
-    console.log("Creating zip archive...");
-    runCommand("7z", ["a", `-tzip`, outputFilePath, "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"], { cwd: "build" });
+    // List of files to include
+    const filesToInclude = [
+        "CHANGELOG.md",
+        "LICENSE",
+        "README.md",
+        "manifest.json",
+        "pack_icon.png",
+        "scripts\\*", // Include all contents of 'scripts' directory
+    ];
+
+    // Print resolved paths for debugging
+    console.log("Verifying paths to files and directories:");
+    filesToInclude.forEach((file) => {
+        const resolvedPath = path.resolve("build", file.replace("\\*", "")); // Strip wildcard for fs check
+        const exists = fs.existsSync(resolvedPath);
+        console.log(`- ${file}: ${resolvedPath} (${exists ? "FOUND" : "NOT FOUND"})`);
+    });
+
+    // Change working directory to "build" so files are added without the "build/" prefix
+    const result = runCommand(sevenZipPath, ["a", "-tzip", outputFilePath, ...filesToInclude], {
+        cwd: "build", // Set working directory to 'build'
+    });
+
+    // Check for system-level error
+    if (result.error) {
+        console.error(`Error while creating distribution archive: ${result.error.message}`);
+        process.exit(1); // Exit the process for system-level errors
+    }
 
     console.log(`Archive created successfully: ${outputFilePath}`);
 }

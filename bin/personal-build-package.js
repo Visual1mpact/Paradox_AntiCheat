@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs-extra";
 import { spawnSync } from "child_process";
 import { fileURLToPath } from "url";
+import { path7za } from "7zip-bin";
 
 // Get the current directory using import.meta.url
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -109,6 +110,7 @@ function updateArchive(archiveType, buildDir) {
     const archivePath = path.join(buildDir, archiveName);
     const excludePatterns = ["build", "tsconfig.json"];
     const filesToAdd = fs.readdirSync(buildDir).filter((file) => !excludePatterns.includes(file));
+    const sevenZipPath = path7za;
 
     const args = [
         "u",
@@ -119,7 +121,7 @@ function updateArchive(archiveType, buildDir) {
     ];
 
     console.log(`Running 7z with arguments: ${args.join(" ")}`);
-    runCommand("7z", args, buildDir);
+    runCommand(sevenZipPath, args, buildDir);
 }
 
 /**
