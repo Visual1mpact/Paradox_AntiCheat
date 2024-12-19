@@ -1,5 +1,6 @@
 import { PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { paradoxModulesDB } from "../paradox";
+import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 
 // Define a type for player information
 interface PlayerInfo {
@@ -43,11 +44,22 @@ function initializeEventHandlers() {
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
  */
 function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
+    const player = event.player;
+
     if (event.initialSpawn) {
         checkMemoryAndRenderDistance(event);
         isPlatformBlocked(event);
         handleBanCheck(event);
         handleSecurityClearance(event);
+    }
+
+    // Check if the player is imprisoned after respawn
+    const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
+    if (isImprisoned) {
+        // Rebuild the prison and freeze the player if they were previously imprisoned
+        buildPrison(player);
+        freezePlayer(player);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 You have been imprisoned again after respawn.`);
     }
 }
 
