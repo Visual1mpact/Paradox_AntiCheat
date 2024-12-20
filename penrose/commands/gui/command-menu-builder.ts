@@ -5,7 +5,7 @@ import { Player, world } from "@minecraft/server";
 import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
- * Represents a dynamic input field in a ModalFormData form.
+ * Represents a dynamic input field in a form.
  */
 interface DynamicField {
     type: "text" | "dropdown" | "toggle";
@@ -16,10 +16,21 @@ interface DynamicField {
 }
 
 /**
- * Builds a command-specific menu based on `GuiInstructions`.
- * @param {Command} command - The command object containing parameters and execution logic.
- * @param {Player} player - The player who will interact with the menu.
- * @param {MinecraftEnvironment} minecraftEnvironment - The environment object to initialize the form.
+ * Represents an action in an ActionFormData form.
+ */
+interface Action {
+    name: string;
+    command: string[];
+    description?: string;
+    requiredFields?: string[];
+    crypto?: boolean;
+}
+
+/**
+ * Builds a form menu based on instructions.
+ * @param {Command} command - The command object.
+ * @param {Player} player - The player interacting with the form.
+ * @param {MinecraftEnvironment} minecraftEnvironment - The environment object.
  */
 export function buildCommandMenu(command: Command, player: Player, minecraftEnvironment: MinecraftEnvironment) {
     const { guiInstructions } = command;
@@ -32,62 +43,77 @@ export function buildCommandMenu(command: Command, player: Player, minecraftEnvi
     const { formType, title, description, actions, dynamicFields, commandOrder } = guiInstructions;
 
     if (formType === "ActionFormData") {
-        const actionForm = minecraftEnvironment
-            .initializeActionFormData()
-            .title(title)
-            .body(description || "");
-
-        actions?.forEach((action) => {
-            actionForm.button(action.name);
-        });
-
-        actionForm
-            .show(player)
-            .then((response) => {
-                if (!response.canceled && response.selection !== undefined) {
-                    const selectedAction = actions[response.selection];
-                    const selectedRequiredFields = selectedAction.requiredFields || [];
-                    const selectedCommand = selectedAction.command || []; // Command array
-
-                    if (selectedRequiredFields.length === 0) {
-                        const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
-                        command.execute(chatSendBeforeEvent, selectedCommand, minecraftEnvironment, selectedAction.crypto ? CryptoES : undefined);
-                    } else {
-                        const conditionalFields = dynamicFields.filter((field) => selectedRequiredFields.includes(field.name));
-                        showModalForm(conditionalFields, title, player, command, minecraftEnvironment, selectedCommand, selectedAction.crypto, commandOrder, selectedRequiredFields);
-                    }
-                }
-            })
-            .catch((error) => console.error("Error showing action form:", error));
+        showActionForm(actions || [], title, description || "", player, command, minecraftEnvironment, dynamicFields || [], commandOrder);
     } else if (formType === "ModalFormData") {
         showModalForm(dynamicFields || [], title, player, command, minecraftEnvironment, [], false, commandOrder, []);
     }
 }
 
 /**
- * Displays a ModalFormData form based on `dynamicFields`.
- * @param {DynamicField[]} dynamicFields - Array of dynamic fields for the modal form.
+ * Displays an ActionFormData form.
+ * @param {Action[]} actions - Array of actions.
  * @param {string} title - The title of the form.
- * @param {Player} player - The player who will interact with the form.
- * @param {Command} command - The command object to execute upon form submission.
- * @param {MinecraftEnvironment} minecraftEnvironment - The environment object to initialize the form.
- * @param {string[]} commandArray - Array of commands for the selected action.
- * @param {boolean} cryptoES - Whether to use crypto for this command.
- * @param {string} commandOrder - The order to use ("command-arg", "arg-command", or undefined).
- * @param {string[]} requiredFields - Array of field names required for the command.
+ * @param {string} description - The description of the form.
+ * @param {Player} player - The player interacting with the form.
+ * @param {Command} command - The command object.
+ * @param {MinecraftEnvironment} minecraftEnvironment - The environment object.
+ * @param {DynamicField[]} dynamicFields - Array of dynamic fields.
+ * @param {string | undefined} commandOrder - The command execution order.
+ */
+function showActionForm(actions: Action[], title: string, description: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, dynamicFields: DynamicField[], commandOrder?: string) {
+    const actionForm = minecraftEnvironment.initializeActionFormData().title(title).body(description);
+
+    actions.forEach((action) => {
+        actionForm.button(action.name);
+    });
+
+    actionForm
+        .show(player)
+        .then((response) => {
+            if (!response.canceled && response.selection !== undefined) {
+                const selectedAction = actions[response.selection];
+                handleActionSelection(selectedAction, dynamicFields, title, player, command, minecraftEnvironment, commandOrder);
+            }
+        })
+        .catch((error) => console.error("Error showing action form:", error));
+}
+
+/**
+ * Handles the selection of an action.
+ */
+function handleActionSelection(action: Action, dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandOrder?: string) {
+    const { requiredFields, command: commandArray, crypto } = action;
+
+    if (!requiredFields || requiredFields.length === 0) {
+        const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
+        command.execute(chatSendBeforeEvent, commandArray, minecraftEnvironment, crypto ? CryptoES : undefined);
+    } else {
+        const conditionalFields = dynamicFields.filter((field) => requiredFields.includes(field.name));
+        showModalForm(conditionalFields, title, player, command, minecraftEnvironment, commandArray, crypto, commandOrder, requiredFields);
+    }
+}
+
+/**
+ * Displays a ModalFormData form.
  */
 function showModalForm(dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]) {
-    const modalForm = minecraftEnvironment.initializeModalFormData().title(`${title}`);
+    const modalForm = minecraftEnvironment.initializeModalFormData().title(title);
 
     for (const field of dynamicFields) {
-        if (field.type === "text") {
-            modalForm.textField(field.placeholder || "", field.name);
-        } else if (field.type === "dropdown") {
-            const allPlayers = world.getAllPlayers().map((player) => player.name);
-            field.options = allPlayers;
-            modalForm.dropdown(field.placeholder, field.options, -1);
-        } else if (field.type === "toggle") {
-            modalForm.toggle(field.name, false);
+        switch (field.type) {
+            case "text":
+                modalForm.textField(field.placeholder || "", field.name);
+                break;
+
+            case "dropdown":
+                const allPlayers = world.getAllPlayers().map((player) => player.name);
+                field.options = allPlayers;
+                modalForm.dropdown(field.placeholder, field.options, -1);
+                break;
+
+            case "toggle":
+                modalForm.toggle(field.name, false);
+                break;
         }
     }
 
@@ -106,39 +132,19 @@ function showModalForm(dynamicFields: DynamicField[], title: string, player: Pla
 
 /**
  * Builds the command string based on the specified command order.
- * @param {string | undefined} commandOrder - The order to use ("command-arg", "arg-command", or undefined).
- * @param {string[]} selectedAction - Array of command parts.
- * @param {string[]} args - Array of command arguments.
- * @returns {string[]} - The formatted command array.
  */
 function buildCommandString(commandOrder: string | undefined, selectedAction: string[] = [], args: string[] = []): string[] {
-    function splitArgs(args: string[]): string[] {
-        const splitArgs: string[] = [];
-        args.forEach((arg) => {
-            const parts = arg.split(" ");
-            splitArgs.push(...parts);
-        });
-        return splitArgs;
-    }
+    // Split all arguments by spaces and flatten the array
+    const splitArgs = (args: string[]): string[] => args.flatMap((arg) => arg.split(" "));
 
     const splitArgsList = splitArgs(args);
 
-    if (commandOrder === "command-arg") {
-        return [...selectedAction, ...splitArgsList];
-    } else if (commandOrder === "arg-command") {
-        return [...splitArgsList, ...selectedAction];
-    } else {
-        return [...selectedAction, ...splitArgsList];
-    }
+    // Use ternary operator to handle command order logic
+    return commandOrder === "arg-command" ? [...splitArgsList, ...selectedAction] : [...selectedAction, ...splitArgsList];
 }
 
 /**
  * Parses user response into command arguments based on `DynamicField` definitions.
- * @param {ModalFormResponse} response - The form response with user input.
- * @param {DynamicField[]} fields - The fields that define how to interpret the response.
- * @param {string[]} commandArray - Array of command strings to sync with requiredFields.
- * @param {string[]} requiredFields - Array of required field names for the command.
- * @returns {string[]} - An array of arguments parsed from the form response, formatted as ["--arg value"].
  */
 function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], commandArray: string[], requiredFields: string[] = []): string[] {
     const args: string[] = [];
@@ -155,7 +161,6 @@ function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], 
                     break;
 
                 case "dropdown":
-                    // Get selected player name or option based on the index
                     const selectedIndex = response.formValues[formIndex++] as number;
                     value = dynamicField.options[selectedIndex];
                     break;
@@ -165,8 +170,8 @@ function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], 
                     break;
             }
         }
-        // Append argument in the format "--arg value" using the command array
-        const arg = dynamicField.arg ?? commandArray[index] ?? "";
+
+        const arg = dynamicField?.arg ?? commandArray?.[index] ?? "";
         args.push(`${arg} ${value}`);
     });
 
