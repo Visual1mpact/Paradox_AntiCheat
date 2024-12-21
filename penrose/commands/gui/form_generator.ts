@@ -3,7 +3,7 @@ import { Command, DynamicField } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { commandHandler } from "../../paradox";
 import { ModalFormResponse } from "@minecraft/server-ui";
-import CryptoES from "crypto-es";
+import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
  * Represents an action in an ActionFormData form.
@@ -71,7 +71,7 @@ export const guiCommand: Command = {
             const mainMenu = actionFormData.title("Main Menu").body("Select a category:");
 
             accessibleCategories.forEach(({ category }) => {
-                mainMenu.button(category);
+                mainMenu.button(category.charAt(0).toUpperCase() + category.slice(1).toLowerCase());
             });
 
             mainMenu.show(player).then((response) => {
@@ -96,11 +96,24 @@ export const guiCommand: Command = {
             const form = actionFormData.title(`${categoryName} Commands`).body("Select a command:");
 
             commands.forEach((command) => {
-                form.button(command.name);
+                form.button(command.name.charAt(0).toUpperCase() + command.name.slice(1).toLowerCase());
             });
+
+            // Add a "Back" button
+            form.button("Back");
 
             form.show(player).then((response) => {
                 if (!response.canceled) {
+                    // Check if the last button ("Back") was selected
+                    const backButtonIndex = commands.length; // The "Back" button is always the last one
+
+                    // Handle "Back" button selection
+                    if (response.selection === backButtonIndex) {
+                        openMainGui(player, playerSecurityClearance);
+                        return; // Exit early after handling "Back" button
+                    }
+
+                    // Handle selected command
                     const selectedCommand = commands[response.selection];
                     if (selectedCommand) {
                         buildCommandMenu(selectedCommand, player, minecraftEnvironment);
@@ -147,7 +160,7 @@ export const guiCommand: Command = {
             const actionForm = minecraftEnvironment.initializeActionFormData().title(title).body(description);
 
             actions.forEach((action) => {
-                actionForm.button(action.name);
+                actionForm.button(action.name.charAt(0).toUpperCase() + action.name.slice(1).toLowerCase());
             });
 
             // Add a "Back" button
@@ -157,7 +170,9 @@ export const guiCommand: Command = {
                 .show(player)
                 .then((response) => {
                     if (!response.canceled && response.selection !== undefined) {
-                        if (response.selection === 0) {
+                        // Check if the last button ("Back") was selected
+                        const backButtonIndex = actions.length; // The "Back" button is always the last one
+                        if (response.selection === backButtonIndex) {
                             // Handle "Back" button: Return to the previous menu.
                             openMainGui(player, playerSecurityClearance);
                         } else {
