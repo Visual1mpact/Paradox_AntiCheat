@@ -41,7 +41,7 @@ import { healthChangeListener } from "./event-listeners/health-sync";
 import { whitelistCommand } from "./commands/moderation/whitelist";
 import { OptimizedDatabase } from "./classes/database/data-hive";
 // @ts-ignore
-import { guiCommand } from "./commands/gui/main";
+import { guiCommand } from "./commands/gui/form_generator";
 
 // Data Hive
 const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
