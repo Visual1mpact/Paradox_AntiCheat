@@ -1,20 +1,9 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command, DynamicField } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { commandHandler } from "../../paradox";
 import { ModalFormResponse } from "@minecraft/server-ui";
 import CryptoES from "crypto-es";
-
-/**
- * Represents a dynamic input field in a form.
- */
-interface DynamicField {
-    type: "text" | "dropdown" | "toggle";
-    name: string;
-    arg?: string;
-    placeholder?: string;
-    options?: string[];
-}
 
 /**
  * Represents an action in an ActionFormData form.
@@ -48,7 +37,7 @@ export const guiCommand: Command = {
         const player = message.sender;
 
         // Use the existing method to get the player's security clearance
-        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) || 0;
+        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
 
         /**
          * Opens the main GUI for the player, filtering by their security clearance.

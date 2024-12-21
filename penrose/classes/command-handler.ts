@@ -12,47 +12,227 @@ enum SecurityClearance {
     Level4 = 4,
 }
 
-// Type representing the form type for GUI instructions
+/**
+ * Type representing the form type for GUI instructions.
+ * This determines the kind of form to generate:
+ * - `"ActionFormData"`: A simple form with action buttons.
+ * - `"ModalFormData"`: A more complex form with input fields (text, dropdown, toggle).
+ * - `"MessageFormData"`: A form to display a simple message without interactivity.
+ */
 type FormType = "ActionFormData" | "ModalFormData" | "MessageFormData";
 
-// Represents a button in an action form, used in ActionFormData GUI type
+/**
+ * Represents a button in an action form, used in ActionFormData GUI type.
+ * This is used to define buttons that the player can click to trigger actions.
+ */
 interface ActionFormButton {
-    name: string; // The display name of the button
-    command: string[]; // The command to execute when the button is pressed
-    description?: string; // Optional description for additional context about the button
-    requiredFields?: string[]; // Optional instructions to target specified dynamic fields
-    crypto?: boolean; // Optional instructions to pass cryptoes to forms
-}
-
-// Represents an input field in a form, used in ModalFormData GUI type
-interface DynamicField {
-    name: string; // The display name or label of the field
-    arg?: string; // The arg to pass back to the command
-    type: "text" | "dropdown" | "toggle"; // Type of input: text field, dropdown selection, or toggle switch
-    placeholder?: string; // Placeholder text for text fields
-    options?: string[]; // Array of options for dropdown type fields
-}
-
-// Interface for the GUI instructions associated with a command
-interface GuiInstructions {
-    formType: FormType; // Type of form to generate, such as ActionFormData, ModalFormData, or MessageFormData
-    title: string; // Title displayed at the top of the form
-    description?: string; // Optional description or context displayed below the title
-    commandOrder?: "command-arg" | "arg-command" | undefined; // Order for appending command and arg or neither
-    actions?: ActionFormButton[]; // List of buttons for ActionFormData forms; each button can trigger a command
-    dynamicFields?: DynamicField[]; // List of fields for ModalFormData forms; each field collects user input
-}
-
-// Interface representing a command in the command handler system
-export interface Command {
+    /**
+     * The display name of the button.
+     * This will be shown to the player as the label for the button.
+     * Example: `"Start Game"`, `"Settings"`.
+     */
     name: string;
+
+    /**
+     * The command(s) to execute when the button is pressed.
+     * This is an array of strings representing the commands.
+     * Example: `["startGame"]`, `["openSettings"]`.
+     */
+    command: string[];
+
+    /**
+     * An optional description for additional context about the button's function.
+     * This will provide players with more information about what the button does.
+     * Example: `"Begin your adventure"`.
+     */
+    description?: string;
+
+    /**
+     * Optional list of required dynamic fields for the button.
+     * These fields must be filled before the button's command can be executed.
+     * Example: `["playerName"]`.
+     */
+    requiredFields?: string[];
+
+    /**
+     * Whether this button requires crypto instructions.
+     * If true, the form will handle crypto-related interactions.
+     */
+    crypto?: boolean;
+}
+
+/**
+ * Represents an input field in a form, used in ModalFormData GUI type.
+ * This defines the type and behavior of input fields in modal forms.
+ */
+export interface DynamicField {
+    /**
+     * The name or label of the field.
+     * This will be displayed as the prompt above the field.
+     * Example: `"Player Name"`, `"Select Difficulty"`.
+     */
+    name: string;
+
+    /**
+     * The argument to pass back to the command.
+     * This can be used to map the field value to a command argument.
+     */
+    arg?: string;
+
+    /**
+     * The type of input field.
+     * Options are:
+     * - `"text"`: A text input.
+     * - `"dropdown"`: A dropdown menu.
+     * - `"toggle"`: A toggle switch.
+     */
+    type: "text" | "dropdown" | "toggle";
+
+    /**
+     * Placeholder text for text fields.
+     * This is shown in the text input field when it's empty.
+     * Example: `"Enter your name here"`.
+     */
+    placeholder?: string;
+
+    /**
+     * Options for dropdown-type fields.
+     * An array of strings representing the available options in the dropdown.
+     * Example: `["Easy", "Medium", "Hard"]`.
+     */
+    options?: string[];
+}
+
+/**
+ * Interface for the GUI instructions associated with a command.
+ * This defines how to create a GUI form with various input fields, buttons, and titles.
+ */
+interface GuiInstructions {
+    /**
+     * Type of form to generate. Choose from:
+     * - `"ActionFormData"`: A form with action buttons.
+     * - `"ModalFormData"`: A form with input fields for user interaction.
+     * - `"MessageFormData"`: A simple message form.
+     */
+    formType: FormType;
+
+    /**
+     * The title displayed at the top of the form.
+     * Example: `"Main Menu"`, `"Settings"`.
+     */
+    title: string;
+
+    /**
+     * Optional description or context displayed below the title.
+     * This can help guide the player on how to use the form.
+     * Example: `"Please select an option from the menu."`.
+     */
+    description?: string;
+
+    /**
+     * Order for appending the command and arguments.
+     * Options are:
+     * - `"command-arg"`: Command first, then argument.
+     * - `"arg-command"`: Argument first, then command.
+     * If `undefined`, the default order will be used.
+     */
+    commandOrder?: "command-arg" | "arg-command" | undefined;
+
+    /**
+     * List of buttons for ActionFormData forms.
+     * Each button has a `name` (label) and a `command` (action to execute).
+     * Each button can also have a `description`, `requiredFields`, and `crypto` flag.
+     */
+    actions?: ActionFormButton[];
+
+    /**
+     * List of input fields for ModalFormData forms.
+     * Each field can be a `text` input, `dropdown` selection, or a `toggle` switch.
+     */
+    dynamicFields?: DynamicField[];
+}
+
+/**
+ * Interface representing a command in the command handler system.
+ * A command is an action that can be executed by the player, often triggered through chat.
+ */
+export interface Command {
+    /**
+     * The name of the command.
+     * This is the keyword that players will type to invoke the command.
+     * Example: `"teleport"`, `"ban"`, `"opengui"`.
+     */
+    name: string;
+
+    /**
+     * A brief description of the command's functionality.
+     * This provides the player with an overview of what the command does.
+     * Example: `"Teleports the player to a specified location"`.
+     */
     description: string;
-    specialNote?: string; // Optional special note for the command
+
+    /**
+     * An optional special note for the command.
+     * This can be used to provide additional context or warnings about using the command.
+     * Example: `"This command is restricted to admins only"`.
+     */
+    specialNote?: string;
+
+    /**
+     * The usage pattern for the command.
+     * This shows players how to use the command, including any required arguments.
+     * Example: `"!teleport <player> <location>"`.
+     */
     usage: string;
+
+    /**
+     * Example usages of the command.
+     * This provides players with sample inputs that will work with the command.
+     * Example: `["!teleport Steve Spawn"]`.
+     */
     examples: string[];
+
+    /**
+     * The category the command belongs to.
+     * Commands can be categorized for easier navigation, like `"Utility"`, `"Moderation"`, etc.
+     * Example: `"Utility"`, `"Moderation"`, `"Combat"`.
+     */
     category: string;
+
+    /**
+     * The security clearance level required to execute the command.
+     * This determines who has permission to run the command based on their security clearance.
+     * Example: `1` for regular players, `4` for admins, etc.
+     */
     securityClearance: SecurityClearance;
+
+    /**
+     * Optional instructions for generating a GUI associated with the command.
+     * If specified, this will be used to create a GUI when the command is executed.
+     * The `GuiInstructions` object provides details on the form type, buttons, dynamic fields, etc.
+     */
     guiInstructions?: GuiInstructions;
+
+    /**
+     * The function that is executed when the command is run.
+     * This function will handle the logic of the command, including any parameters passed in.
+     * The function signature includes:
+     * - `message`: The message object that triggered the command.
+     * - `args`: The arguments passed to the command (optional).
+     * - `minecraftEnvironment`: The Minecraft environment (optional).
+     * - `cryptoES`: A reference to the CryptoES library (optional).
+     * - `returnMonitorFunction`: A flag to indicate if the return monitor should be executed (optional).
+     *
+     * The return value can either be:
+     * - A promise that resolves when the command finishes (useful for asynchronous operations).
+     * - A void function that runs synchronously.
+     * - A function that handles `PlayerSpawnAfterEvent` for specific scenarios.
+     *
+     * @example
+     * execute: (message, args) => {
+     *     // Command logic here
+     * };
+     */
     execute: (message: ChatSendBeforeEvent, args?: string[], minecraftEnvironment?: MinecraftEnvironment, cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
 }
 
