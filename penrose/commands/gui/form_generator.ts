@@ -6,25 +6,6 @@ import { ModalFormResponse } from "@minecraft/server-ui";
 import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
- * Represents an action in an ActionFormData form.
- * @typedef {Object} Action
- * @property {string} name - The name of the action.
- * @property {string[]} command - The command to execute for the action.
- * @property {string} [description] - Optional description for the action.
- * @property {string[]} [requiredFields] - Required fields for the action.
- * @property {boolean} [crypto] - Flag to indicate if encryption is needed.
- * @property {boolean} [generateModalForm] - Flag to generate a ModalForm when selected.
- */
-interface Action {
-    name: string;
-    command: string[];
-    description?: string;
-    requiredFields?: string[];
-    crypto?: boolean;
-    generateModalForm?: boolean;
-}
-
-/**
  * Represents the GUI opening command.
  * @type {Command}
  */
@@ -107,7 +88,7 @@ export const guiCommand: Command = {
             });
 
             // Add "Back" button
-            form.button("Back");
+            form.button("Back", "textures/ui/back_button_default.png");
 
             form.show(player).then((response) => {
                 if (!response.canceled) {
@@ -162,7 +143,7 @@ export const guiCommand: Command = {
          * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
         function showActionForm(
-            actions: Action[],
+            actions: ActionFormButton[],
             title: string,
             description: string,
             player: Player,
@@ -175,11 +156,11 @@ export const guiCommand: Command = {
             const actionForm = minecraftEnvironment.initializeActionFormData().title(title).body(description);
 
             actions.forEach((action) => {
-                actionForm.button(action.name.charAt(0).toUpperCase() + action.name.slice(1).toLowerCase());
+                actionForm.button(action.name.charAt(0).toUpperCase() + action.name.slice(1).toLowerCase(), action.icon);
             });
 
             // Add "Back" button
-            actionForm.button("Back");
+            actionForm.button("Back", "textures/ui/back_button_default.png");
 
             actionForm
                 .show(player)
@@ -199,7 +180,7 @@ export const guiCommand: Command = {
 
         /**
          * Handles the selected action and executes associated commands.
-         * @param {Action} action - The selected action to be executed.
+         * @param {ActionFormButton} action - The selected action to be executed.
          * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
          * @param {string} title - The title of the form.
          * @param {Player} player - The player executing the command.
@@ -208,7 +189,7 @@ export const guiCommand: Command = {
          * @param {string} [commandOrder] - The order of command arguments.
          * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
-        function handleActionSelection(action: Action, dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandOrder?: string, guiInstructions?: GuiInstructions) {
+        function handleActionSelection(action: ActionFormButton, dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandOrder?: string, guiInstructions?: GuiInstructions) {
             const { requiredFields, command: commandArray, crypto } = action;
 
             if (action.generateModalForm) {

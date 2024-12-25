@@ -23,6 +23,7 @@ export const antispamCommand: Command = {
                 description: "Enables or disables AntiSpam to prevent chat spam.",
                 requiredFields: [],
                 crypto: false,
+                icon: "textures/ui/message.png",
             },
         ],
     },

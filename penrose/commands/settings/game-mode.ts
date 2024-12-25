@@ -40,10 +40,11 @@ export const gameModeCommand: Command = {
                 requiredFields: ["toggleGameMode"],
                 command: undefined,
                 generateModalForm: true, // This triggers a modal form with toggles
+                icon: "textures/ui/multiselection.png",
             },
-            { name: "Enable Game Modes", command: ["--enable"], generateModalForm: false },
-            { name: "Disable Game Modes", command: ["--disable"], generateModalForm: false },
-            { name: "List Current Configurations", command: ["--list"], generateModalForm: false },
+            { name: "Enable Game Modes", command: ["--enable"], generateModalForm: false, icon: "textures/ui/realms_green_check.png" },
+            { name: "Disable Game Modes", command: ["--disable"], generateModalForm: false, icon: "textures/ui/realms_red_x.png" },
+            { name: "List Current Configurations", command: ["--list"], generateModalForm: false, icon: "textures/ui/icon_sign.png" },
         ],
         dynamicFields: [
             { name: "Toggle Adventure Mode", arg: "-a", type: "toggle", requiredFields: ["toggleGameMode"] },

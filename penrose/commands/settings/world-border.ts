@@ -36,6 +36,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border size for the Overworld.",
                 requiredFields: ["overworldSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Set Nether Border",
@@ -43,6 +44,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border size for the Nether.",
                 requiredFields: ["netherSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Set End Border",
@@ -50,6 +52,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border size for the End.",
                 requiredFields: ["endSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Set Overworld and Nether Borders",
@@ -57,6 +60,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border sizes for both the Overworld and Nether.",
                 requiredFields: ["overworldSize", "netherSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Set Overworld and End Borders",
@@ -64,6 +68,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border sizes for both the Overworld and End.",
                 requiredFields: ["overworldSize", "endSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Set Nether and End Borders",
@@ -71,6 +76,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border sizes for both the Nether and End.",
                 requiredFields: ["netherSize", "endSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Set All Borders",
@@ -78,6 +84,7 @@ export const worldBorderCommand: Command = {
                 description: "Set the border sizes for the Overworld, Nether, and End.",
                 requiredFields: ["overworldSize", "netherSize", "endSize"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Disable World Border",
@@ -95,9 +102,9 @@ export const worldBorderCommand: Command = {
             },
         ],
         dynamicFields: [
-            { name: "overworldSize", type: "text", placeholder: "Enter Overworld size" },
-            { name: "netherSize", type: "text", placeholder: "Enter Nether size" },
-            { name: "endSize", type: "text", placeholder: "Enter End size" },
+            { name: "overworldSize", type: "text", placeholder: "Enter Overworld size", requiredFields: ["overworldSize"] },
+            { name: "netherSize", type: "text", placeholder: "Enter Nether size", requiredFields: ["netherSize"] },
+            { name: "endSize", type: "text", placeholder: "Enter End size", requiredFields: ["endSize"] },
         ],
     },
 

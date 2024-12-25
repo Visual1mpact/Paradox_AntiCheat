@@ -65,6 +65,12 @@ export interface ActionFormButton {
      * If true, a modal form will be shown when the button is clicked.
      */
     generateModalForm?: boolean;
+
+    /**
+     * Optional icon for the button. This can be a Minecraft texture path.
+     * If provided, it will display an icon alongside the button's name.
+     */
+    icon?: string;
 }
 
 /**
