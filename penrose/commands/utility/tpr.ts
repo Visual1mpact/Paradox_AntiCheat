@@ -32,8 +32,9 @@ export const tprCommand: Command = {
                 name: "Send Teleport Request",
                 command: ["tpr"],
                 description: "Send a request to a player",
-                requiredFields: ["Player Name"],
+                requiredFields: ["PlayerName"],
                 crypto: false,
+                generateModalForm: true,
             },
             {
                 name: "Accept Teleport Request",
@@ -53,9 +54,10 @@ export const tprCommand: Command = {
         dynamicFields: [
             {
                 type: "dropdown",
-                name: "Player Name",
-                placeholder: "Select player's name",
+                name: "Name of Player",
+                placeholder: "Select Players Name:",
                 arg: undefined,
+                requiredFields: ["PlayerName"],
             },
         ],
     },

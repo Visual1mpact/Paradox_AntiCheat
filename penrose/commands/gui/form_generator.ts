@@ -156,7 +156,11 @@ export const guiCommand: Command = {
             const actionForm = minecraftEnvironment.initializeActionFormData().title(title).body(description);
 
             actions.forEach((action) => {
-                actionForm.button(action.name.charAt(0).toUpperCase() + action.name.slice(1).toLowerCase(), action.icon);
+                const formattedName = action.name
+                    .split(" ") // Split the string into words
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+                    .join(" "); // Join the words back into a single string
+                actionForm.button(formattedName, action.icon);
             });
 
             // Add "Back" button
@@ -231,16 +235,40 @@ export const guiCommand: Command = {
             const modalForm = minecraftEnvironment.initializeModalFormData().title(title);
 
             for (const field of dynamicFields) {
+                // Format placeholder if available
+                const formattedPlaceholder = field.placeholder
+                    ? field.placeholder
+                          .split(" ")
+                          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                          .join(" ")
+                    : "";
+
+                // Format name if available
+                const formattedName = field.name
+                    ? field.name
+                          .split(" ")
+                          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                          .join(" ")
+                    : "";
+
                 switch (field.type) {
                     case "text":
-                        modalForm.textField(field.placeholder || "", field.name);
+                        modalForm.textField(formattedPlaceholder, formattedName);
                         break;
                     case "dropdown":
-                        field.options = world.getAllPlayers().map((player) => player.name);
-                        modalForm.dropdown(field.placeholder, field.options, -1);
+                        if (field.options) {
+                            // Capitalize options if available
+                            field.options = field.options.map((option) =>
+                                option
+                                    .split(" ")
+                                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                    .join(" ")
+                            );
+                        }
+                        modalForm.dropdown(formattedPlaceholder, field.options || [], -1);
                         break;
                     case "toggle":
-                        modalForm.toggle(field.name, false);
+                        modalForm.toggle(formattedName, false);
                         break;
                 }
             }

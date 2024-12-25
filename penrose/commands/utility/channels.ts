@@ -37,15 +37,15 @@ export const channelCommand: Command = {
         description: "Select an action to manage channels",
         commandOrder: "command-arg",
         actions: [
-            { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false },
-            { name: "Join Channel", command: ["join"], description: "Join an existing chat channel", requiredFields: ["roomName"], crypto: false },
-            { name: "Invite to Channel", command: ["invite"], description: "Invite a player to a chat channel", requiredFields: ["roomName", "targetName"], crypto: false },
-            { name: "Leave Channel", command: ["leave"], description: "Leave a chat channel", requiredFields: ["roomName"], crypto: false },
-            { name: "Transfer Ownership", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false },
+            { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
+            { name: "Join Channel", command: ["join"], description: "Join an existing chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
+            { name: "Invite to Channel", command: ["invite"], description: "Invite a player to a chat channel", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
+            { name: "Leave Channel", command: ["leave"], description: "Leave a chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
+            { name: "Transfer Ownership", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
         ],
         dynamicFields: [
-            { name: "roomName", arg: "--room", type: "text", placeholder: "Enter channel name" },
-            { name: "targetName", arg: "--target", type: "dropdown", placeholder: "Select player's name" },
+            { name: "Name of Room", arg: "--room", type: "text", placeholder: "Enter Channel Name:", requiredFields: ["roomName"] },
+            { name: "Name of Player", arg: "--target", type: "dropdown", placeholder: "Select Players Name:", requiredFields: ["targetName"] },
         ],
     },
 

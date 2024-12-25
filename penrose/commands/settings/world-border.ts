@@ -102,9 +102,9 @@ export const worldBorderCommand: Command = {
             },
         ],
         dynamicFields: [
-            { name: "overworldSize", type: "text", placeholder: "Enter Overworld size", requiredFields: ["overworldSize"] },
-            { name: "netherSize", type: "text", placeholder: "Enter Nether size", requiredFields: ["netherSize"] },
-            { name: "endSize", type: "text", placeholder: "Enter End size", requiredFields: ["endSize"] },
+            { name: "Overworld Border Size", type: "text", placeholder: "Enter Overworld Size:", requiredFields: ["overworldSize"] },
+            { name: "Nether Border Size", type: "text", placeholder: "Enter Nether size:", requiredFields: ["netherSize"] },
+            { name: "End Border Size", type: "text", placeholder: "Enter End Size:", requiredFields: ["endSize"] },
         ],
     },
 

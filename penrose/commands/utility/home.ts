@@ -19,12 +19,12 @@ export const homeCommand: Command = {
         description: "Select an action to manage your home locations.",
         commandOrder: "command-arg",
         actions: [
-            { name: "Set Home", command: ["set"], description: "Set a new home location", requiredFields: ["homeName"], crypto: true },
-            { name: "Delete Home", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeName"], crypto: true },
-            { name: "Teleport to Home", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeName"], crypto: true },
+            { name: "Set Home", command: ["set"], description: "Set a new home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
+            { name: "Delete Home", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
+            { name: "Teleport to Home", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
             { name: "List Homes", command: ["list"], description: "List all saved home locations", requiredFields: [], crypto: true },
         ],
-        dynamicFields: [{ name: "homeName", arg: undefined, type: "text", placeholder: "Enter home name" }],
+        dynamicFields: [{ name: "Name of Home", arg: undefined, type: "text", placeholder: "Enter Home Name:", requiredFields: ["homeName"] }],
     },
 
     /**
