@@ -25,7 +25,7 @@ type FormType = "ActionFormData" | "ModalFormData" | "MessageFormData";
  * Represents a button in an action form, used in ActionFormData GUI type.
  * This is used to define buttons that the player can click to trigger actions.
  */
-interface ActionFormButton {
+export interface ActionFormButton {
     /**
      * The display name of the button.
      * This will be shown to the player as the label for the button.
@@ -59,6 +59,12 @@ interface ActionFormButton {
      * If true, the form will handle crypto-related interactions.
      */
     crypto?: boolean;
+
+    /**
+     * Whether pressing this button should trigger the generation of a modal form.
+     * If true, a modal form will be shown when the button is clicked.
+     */
+    generateModalForm?: boolean;
 }
 
 /**
@@ -101,13 +107,20 @@ export interface DynamicField {
      * Example: `["Easy", "Medium", "Hard"]`.
      */
     options?: string[];
+
+    /**
+     * Optional list of required dynamic fields for the button.
+     * These fields must be filled before the button's command can be executed.
+     * Example: `["playerName"]`.
+     */
+    requiredFields?: string[];
 }
 
 /**
  * Interface for the GUI instructions associated with a command.
  * This defines how to create a GUI form with various input fields, buttons, and titles.
  */
-interface GuiInstructions {
+export interface GuiInstructions {
     /**
      * Type of form to generate. Choose from:
      * - `"ActionFormData"`: A form with action buttons.

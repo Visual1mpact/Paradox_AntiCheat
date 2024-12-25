@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
-import { Command, DynamicField } from "../../classes/command-handler";
+import { Command, GuiInstructions, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { commandHandler } from "../../paradox";
 import { ModalFormResponse } from "@minecraft/server-ui";
@@ -7,6 +7,13 @@ import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
  * Represents an action in an ActionFormData form.
+ * @typedef {Object} Action
+ * @property {string} name - The name of the action.
+ * @property {string[]} command - The command to execute for the action.
+ * @property {string} [description] - Optional description for the action.
+ * @property {string[]} [requiredFields] - Required fields for the action.
+ * @property {boolean} [crypto] - Flag to indicate if encryption is needed.
+ * @property {boolean} [generateModalForm] - Flag to generate a ModalForm when selected.
  */
 interface Action {
     name: string;
@@ -14,10 +21,12 @@ interface Action {
     description?: string;
     requiredFields?: string[];
     crypto?: boolean;
+    generateModalForm?: boolean;
 }
 
 /**
  * Represents the GUI opening command.
+ * @type {Command}
  */
 export const guiCommand: Command = {
     name: "gui",
@@ -28,27 +37,25 @@ export const guiCommand: Command = {
     securityClearance: 1,
 
     /**
-     * Executes the GUI opening command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * Executes the command to open the main GUI for the player.
+     * @param {ChatSendBeforeEvent} message - The event triggered when the command is executed.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
+     * @param {MinecraftEnvironment} minecraftEnvironment - The environment used to initialize forms and commands.
      */
     execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
         const player = message.sender;
-
-        // Use the existing method to get the player's security clearance
         const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
 
         /**
          * Opens the main GUI for the player, filtering by their security clearance.
-         * @param {Player} player - The player to show the menu to.
+         * @param {Player} player - The player executing the command.
          * @param {number} playerClearance - The security clearance level of the player.
          */
         function openMainGui(player: Player, playerClearance: number) {
-            const commands = commandHandler.getRegisteredCommands().filter((command) => command.name !== "gui"); // Remove guiCommand from the list
-
+            const commands = commandHandler.getRegisteredCommands().filter((command) => command.name !== "gui"); // Remove guiCommand
             const categories: { [key: string]: Command[] } = {};
 
+            // Categorize commands based on security clearance and category
             commands.forEach((command) => {
                 const { category, securityClearance } = command;
                 if (securityClearance <= playerClearance) {
@@ -66,56 +73,49 @@ export const guiCommand: Command = {
                 return;
             }
 
-            // Main menu with categories
             const actionFormData = minecraftEnvironment.initializeActionFormData();
             const mainMenu = actionFormData.title("Main Menu").body("Select a category:");
 
+            // Add buttons for each accessible category
             accessibleCategories.forEach(({ category }) => {
                 mainMenu.button(category.charAt(0).toUpperCase() + category.slice(1).toLowerCase());
             });
 
             mainMenu.show(player).then((response) => {
-                if (response.canceled && response.cancelationReason === "UserBusy") {
-                    return openMainGui(player, playerSecurityClearance);
-                }
                 if (!response.canceled) {
                     const selectedCategory = accessibleCategories[response.selection];
                     openCategoryMenu(player, selectedCategory.category, selectedCategory.commands);
+                } else if (response.cancelationReason === "UserBusy") {
+                    return openMainGui(player, playerSecurityClearance);
                 }
             });
         }
 
         /**
          * Opens the command menu for a specific category.
-         * @param {Player} player - The player to show the menu to.
-         * @param {string} categoryName - The selected category name.
-         * @param {Command[]} commands - The available commands in the category.
+         * @param {Player} player - The player executing the command.
+         * @param {string} categoryName - The name of the category to display.
+         * @param {Command[]} commands - The list of commands to display in this category.
          */
         function openCategoryMenu(player: Player, categoryName: string, commands: Command[]) {
             const actionFormData = minecraftEnvironment.initializeActionFormData();
             const form = actionFormData.title(`${categoryName} Commands`).body("Select a command:");
 
+            // Add buttons for each command
             commands.forEach((command) => {
                 form.button(command.name.charAt(0).toUpperCase() + command.name.slice(1).toLowerCase());
             });
 
-            // Add a "Back" button
+            // Add "Back" button
             form.button("Back");
 
             form.show(player).then((response) => {
                 if (!response.canceled) {
-                    // Check if the last button ("Back") was selected
-                    const backButtonIndex = commands.length; // The "Back" button is always the last one
-
-                    // Handle "Back" button selection
+                    const backButtonIndex = commands.length;
                     if (response.selection === backButtonIndex) {
                         openMainGui(player, playerSecurityClearance);
-                        return; // Exit early after handling "Back" button
-                    }
-
-                    // Handle selected command
-                    const selectedCommand = commands[response.selection];
-                    if (selectedCommand) {
+                    } else {
+                        const selectedCommand = commands[response.selection];
                         buildCommandMenu(selectedCommand, player, minecraftEnvironment);
                     }
                 }
@@ -124,9 +124,9 @@ export const guiCommand: Command = {
 
         /**
          * Builds a form menu based on the provided GUI instructions.
-         * @param {Command} command - The command object containing GUI instructions.
-         * @param {Player} player - The player interacting with the form.
-         * @param {MinecraftEnvironment} minecraftEnvironment - The environment object providing Minecraft-specific utilities.
+         * @param {Command} command - The command whose instructions will be used to build the form.
+         * @param {Player} player - The player executing the command.
+         * @param {MinecraftEnvironment} minecraftEnvironment - The environment used to initialize forms and commands.
          */
         function buildCommandMenu(command: Command, player: Player, minecraftEnvironment: MinecraftEnvironment) {
             const { guiInstructions } = command;
@@ -138,46 +138,59 @@ export const guiCommand: Command = {
 
             const { formType, title, description, actions, dynamicFields, commandOrder } = guiInstructions;
 
+            const requiredFields = (actions as ActionFormButton[]).map((action) => action.requiredFields || []).flat(); // Flatten requiredFields
+
+            const finalRequiredFields = requiredFields.length > 0 ? requiredFields : [];
+
             if (formType === "ActionFormData") {
-                showActionForm(actions || [], title, description || "", player, command, minecraftEnvironment, dynamicFields || [], commandOrder);
+                showActionForm(actions || [], title, description || "", player, command, minecraftEnvironment, dynamicFields || [], commandOrder, guiInstructions);
             } else if (formType === "ModalFormData") {
-                showModalForm(dynamicFields || [], title, player, command, minecraftEnvironment, [], false, commandOrder, []);
+                showModalForm(dynamicFields || [], title, player, command, minecraftEnvironment, [], false, commandOrder, finalRequiredFields, guiInstructions);
             }
         }
 
         /**
          * Displays an ActionFormData form with selectable actions.
-         * @param {Action[]} actions - Array of actions to display in the form.
+         * @param {Action[]} actions - The list of actions to display.
          * @param {string} title - The title of the form.
-         * @param {string} description - The description displayed in the form.
-         * @param {Player} player - The player interacting with the form.
-         * @param {Command} command - The command object to execute based on selection.
-         * @param {MinecraftEnvironment} minecraftEnvironment - The environment object for Minecraft utilities.
-         * @param {DynamicField[]} dynamicFields - Array of dynamic fields associated with the actions.
-         * @param {string | undefined} commandOrder - The order in which commands and arguments are constructed.
+         * @param {string} description - The description of the form.
+         * @param {Player} player - The player executing the command.
+         * @param {Command} command - The command being executed.
+         * @param {MinecraftEnvironment} minecraftEnvironment - The environment used to initialize forms and commands.
+         * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
+         * @param {string} [commandOrder] - The order of command arguments.
+         * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
-        function showActionForm(actions: Action[], title: string, description: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, dynamicFields: DynamicField[], commandOrder?: string) {
+        function showActionForm(
+            actions: Action[],
+            title: string,
+            description: string,
+            player: Player,
+            command: Command,
+            minecraftEnvironment: MinecraftEnvironment,
+            dynamicFields: DynamicField[],
+            commandOrder?: string,
+            guiInstructions?: GuiInstructions
+        ) {
             const actionForm = minecraftEnvironment.initializeActionFormData().title(title).body(description);
 
             actions.forEach((action) => {
                 actionForm.button(action.name.charAt(0).toUpperCase() + action.name.slice(1).toLowerCase());
             });
 
-            // Add a "Back" button
+            // Add "Back" button
             actionForm.button("Back");
 
             actionForm
                 .show(player)
                 .then((response) => {
-                    if (!response.canceled && response.selection !== undefined) {
-                        // Check if the last button ("Back") was selected
-                        const backButtonIndex = actions.length; // The "Back" button is always the last one
+                    if (!response.canceled) {
+                        const backButtonIndex = actions.length;
                         if (response.selection === backButtonIndex) {
-                            // Handle "Back" button: Return to the previous menu.
                             openMainGui(player, playerSecurityClearance);
                         } else {
-                            const selectedAction = actions[response.selection - 1]; // Adjust index for the "Back" button.
-                            handleActionSelection(selectedAction, dynamicFields, title, player, command, minecraftEnvironment, commandOrder);
+                            const selectedAction = actions[response.selection];
+                            handleActionSelection(selectedAction, dynamicFields, title, player, command, minecraftEnvironment, commandOrder, guiInstructions);
                         }
                     }
                 })
@@ -186,39 +199,54 @@ export const guiCommand: Command = {
 
         /**
          * Handles the selected action and executes associated commands.
-         * @param {Action} action - The selected action object.
-         * @param {DynamicField[]} dynamicFields - Array of dynamic fields related to the action.
+         * @param {Action} action - The selected action to be executed.
+         * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
          * @param {string} title - The title of the form.
-         * @param {Player} player - The player interacting with the form.
-         * @param {Command} command - The command object to execute.
-         * @param {MinecraftEnvironment} minecraftEnvironment - The environment object for Minecraft utilities.
-         * @param {string | undefined} commandOrder - The order in which commands and arguments are constructed.
+         * @param {Player} player - The player executing the command.
+         * @param {Command} command - The command being executed.
+         * @param {MinecraftEnvironment} minecraftEnvironment - The environment used to initialize forms and commands.
+         * @param {string} [commandOrder] - The order of command arguments.
+         * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
-        function handleActionSelection(action: Action, dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandOrder?: string) {
+        function handleActionSelection(action: Action, dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandOrder?: string, guiInstructions?: GuiInstructions) {
             const { requiredFields, command: commandArray, crypto } = action;
 
-            if (!requiredFields || requiredFields.length === 0) {
-                const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
-                command.execute(chatSendBeforeEvent, commandArray, minecraftEnvironment, crypto ? CryptoES : undefined);
+            if (action.generateModalForm) {
+                const conditionalFields = dynamicFields.filter((field) => requiredFields.some((requiredField) => field.requiredFields.includes(requiredField)));
+                showModalForm(conditionalFields, title, player, command, minecraftEnvironment, commandArray, crypto, commandOrder, requiredFields, guiInstructions);
             } else {
-                const conditionalFields = dynamicFields.filter((field) => requiredFields.includes(field.name));
-                showModalForm(conditionalFields, title, player, command, minecraftEnvironment, commandArray, crypto, commandOrder, requiredFields);
+                if (!requiredFields || requiredFields.length === 0) {
+                    const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
+                    command.execute(chatSendBeforeEvent, commandArray, minecraftEnvironment, crypto ? CryptoES : undefined);
+                }
             }
         }
 
         /**
          * Displays a ModalFormData form to collect input from the player.
-         * @param {DynamicField[]} dynamicFields - Array of dynamic fields to display in the form.
+         * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
          * @param {string} title - The title of the form.
-         * @param {Player} player - The player interacting with the form.
-         * @param {Command} command - The command object to execute.
-         * @param {MinecraftEnvironment} minecraftEnvironment - The environment object for Minecraft utilities.
-         * @param {string[]} commandArray - Array of commands to execute based on input.
-         * @param {boolean | undefined} cryptoES - Whether to use CryptoES for encryption.
-         * @param {string | undefined} commandOrder - The order in which commands and arguments are constructed.
-         * @param {string[]} requiredFields - The names of the fields required for command execution.
+         * @param {Player} player - The player executing the command.
+         * @param {Command} command - The command being executed.
+         * @param {MinecraftEnvironment} minecraftEnvironment - The environment used to initialize forms and commands.
+         * @param {string[]} commandArray - The list of command arguments.
+         * @param {boolean} [cryptoES] - Flag to indicate encryption is needed.
+         * @param {string} [commandOrder] - The order of command arguments.
+         * @param {string[]} [requiredFields] - Required fields for the form.
+         * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
-        function showModalForm(dynamicFields: DynamicField[], title: string, player: Player, command: Command, minecraftEnvironment: MinecraftEnvironment, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]) {
+        function showModalForm(
+            dynamicFields: DynamicField[],
+            title: string,
+            player: Player,
+            command: Command,
+            minecraftEnvironment: MinecraftEnvironment,
+            commandArray: string[],
+            cryptoES?: boolean,
+            commandOrder?: string,
+            requiredFields?: string[],
+            guiInstructions?: GuiInstructions
+        ) {
             const modalForm = minecraftEnvironment.initializeModalFormData().title(title);
 
             for (const field of dynamicFields) {
@@ -227,8 +255,7 @@ export const guiCommand: Command = {
                         modalForm.textField(field.placeholder || "", field.name);
                         break;
                     case "dropdown":
-                        const allPlayers = world.getAllPlayers().map((player) => player.name);
-                        field.options = allPlayers;
+                        field.options = world.getAllPlayers().map((player) => player.name);
                         modalForm.dropdown(field.placeholder, field.options, -1);
                         break;
                     case "toggle":
@@ -241,7 +268,7 @@ export const guiCommand: Command = {
                 .show(player)
                 .then((response) => {
                     if (!response.canceled) {
-                        const args = parseFormResponse(response, dynamicFields, commandArray, requiredFields);
+                        const args = parseFormResponse(response, dynamicFields, commandArray, requiredFields, guiInstructions);
                         const commandString = buildCommandString(commandOrder, commandArray, args);
                         const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
                         command.execute(chatSendBeforeEvent, commandString, minecraftEnvironment, cryptoES ? CryptoES : undefined);
@@ -252,61 +279,56 @@ export const guiCommand: Command = {
 
         /**
          * Builds the command string based on the specified command order.
-         * @param {string | undefined} commandOrder - Determines the order in which the command and arguments are concatenated.
-         * @param {string[]} selectedAction - The array of commands or actions to be executed.
-         * @param {string[]} args - The array of arguments to be passed to the command.
-         * @returns {string[]} - The constructed command string array.
+         * @param {string} commandOrder - The order of command arguments.
+         * @param {string[]} selectedAction - The selected action arguments.
+         * @param {string[]} args - The parsed command arguments.
+         * @returns {string[]} The combined command string.
          */
         function buildCommandString(commandOrder: string | undefined, selectedAction: string[] = [], args: string[] = []): string[] {
-            /**
-             * Splits each argument by spaces and flattens the resulting arrays.
-             * @param {string[]} args - The array of arguments to split.
-             * @returns {string[]} - A flattened array of split arguments.
-             */
             const splitArgs = (args: string[]): string[] => args.flatMap((arg) => arg.split(" "));
 
             const splitArgsList = splitArgs(args);
-
-            // Combine arguments and actions based on the specified command order.
             return commandOrder === "arg-command" ? [...splitArgsList, ...selectedAction] : [...selectedAction, ...splitArgsList];
         }
 
         /**
          * Parses user response into command arguments based on `DynamicField` definitions.
-         * @param {ModalFormResponse} response - The response object from the modal form.
-         * @param {DynamicField[]} fields - The array of dynamic fields used to construct the form.
-         * @param {string[]} commandArray - The base array of commands to be executed.
-         * @param {string[]} [requiredFields=[]] - The list of required field names for command execution.
-         * @returns {string[]} - The array of parsed arguments constructed from the user's responses.
+         * @param {ModalFormResponse} response - The response from the modal form.
+         * @param {DynamicField[]} fields - The dynamic fields for the form.
+         * @param {string[]} commandArray - The list of command arguments.
+         * @param {string[]} requiredFields - The required fields for the command.
+         * @param {GuiInstructions} guiInstructions - The GUI instructions for the form.
+         * @returns {string[]} The parsed command arguments.
          */
-        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], commandArray: string[], requiredFields: string[] = []): string[] {
+        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], commandArray: string[], requiredFields: string[] = [], guiInstructions: GuiInstructions): string[] {
             const args: string[] = [];
             let formIndex = 0;
 
-            requiredFields.forEach((field, index) => {
-                const dynamicField = fields.find((f) => f.name === field);
-                let value = "";
-
-                if (dynamicField) {
+            fields.forEach((dynamicField) => {
+                if (dynamicField.requiredFields.some((field) => requiredFields.includes(field))) {
+                    let value = "";
                     switch (dynamicField.type) {
                         case "text":
-                            value = response.formValues[formIndex++] as string; // Text input value
+                            value = response.formValues[formIndex++] as string;
                             break;
-
                         case "dropdown":
-                            const selectedIndex = response.formValues[formIndex++] as number; // Dropdown selection index
-                            value = dynamicField.options[selectedIndex]; // Selected option value
+                            const selectedIndex = response.formValues[formIndex++] as number;
+                            value = dynamicField.options[selectedIndex];
                             break;
-
                         case "toggle":
-                            value = (response.formValues[formIndex++] as boolean) ? "true" : "false"; // Toggle value
+                            // Skip the toggle field if action is generating modal form and command is undefined
+                            const isActionWithNoCommand = guiInstructions.actions.some((action) => action.command === undefined && action.generateModalForm === true);
+                            if (isActionWithNoCommand) {
+                                // Skip adding toggle argument if the action is supposed to generate a modal form
+                                formIndex++; // Increment formIndex to prevent incorrect indexing
+                            } else {
+                                // If the command is not undefined, process the toggle normally
+                                value = response.formValues[formIndex++] ? "true" : "false"; // Toggle value
+                            }
                             break;
                     }
+                    args.push(`${dynamicField?.arg ?? commandArray[formIndex - 1]} ${value}`.trim());
                 }
-
-                // Construct argument string by combining the defined argument name (if any) and the field value.
-                const arg = dynamicField?.arg ?? commandArray?.[index] ?? "";
-                args.push(`${arg} ${value}`);
             });
 
             return args;

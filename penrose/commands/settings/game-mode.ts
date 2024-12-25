@@ -28,6 +28,31 @@ export const gameModeCommand: Command = {
     category: "Modules",
     securityClearance: 4,
 
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Configure Game Modes",
+        description: "Toggle game modes and enable or disable gamemode checks.",
+        commandOrder: "command-arg",
+        actions: [
+            // Single button to generate modal form with toggles for game modes
+            {
+                name: "Toggle Game Modes",
+                requiredFields: ["toggleGameMode"],
+                command: undefined,
+                generateModalForm: true, // This triggers a modal form with toggles
+            },
+            { name: "Enable Game Modes", command: ["--enable"], generateModalForm: false },
+            { name: "Disable Game Modes", command: ["--disable"], generateModalForm: false },
+            { name: "List Current Configurations", command: ["--list"], generateModalForm: false },
+        ],
+        dynamicFields: [
+            { name: "Toggle Adventure Mode", arg: "-a", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "Toggle Creative Mode", arg: "-c", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "Toggle Survival Mode", arg: "-s", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "Toggle Spectator Mode", arg: "-sp", type: "toggle", requiredFields: ["toggleGameMode"] },
+        ],
+    },
+
     /**
      * Executes the gamemode command.
      * @param {ChatSendBeforeEvent} message - The message object.
