@@ -4,6 +4,13 @@ import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border";
 import { paradoxModulesDB } from "../../paradox";
 
+// Represents world border settings for each dimension
+interface WorldBorderSettings {
+    overworld: number;
+    nether: number;
+    end: number;
+}
+
 /**
  * Represents the worldborder command.
  */
@@ -126,11 +133,29 @@ export const worldBorderCommand: Command = {
         // Retrieve current worldborder settings from paradoxModulesDB
         const modeStates = {
             worldBorderCheck: paradoxModulesDB.get(modeKeys.worldBorderCheck) ?? false,
-            worldBorderSettings: paradoxModulesDB.get(modeKeys.worldBorderSettings) ?? {
+            worldBorderSettings: paradoxModulesDB.get<WorldBorderSettings>(modeKeys.worldBorderSettings) ?? {
                 overworld: 0,
                 nether: 0,
                 end: 0,
             },
+        };
+
+        /**
+         * Parses a border size input into a valid number.
+         *
+         * @param {string | undefined} value - The input value to parse. Can be undefined or invalid.
+         * @param {number} [defaultValue=0] - The default value to return if the input is invalid or NaN.
+         * @returns {number} The parsed and absolute border size, or the default value if the input is invalid.
+         *
+         * @example
+         * parseBorderSize("10000"); // Returns 10000
+         * parseBorderSize("-5000"); // Returns 5000 (absolute value)
+         * parseBorderSize("invalid", 1000); // Returns 1000
+         * parseBorderSize(undefined, 0); // Returns 0
+         */
+        const parseBorderSize = (value: string | undefined, defaultValue: number = 0): number => {
+            const parsed = parseInt(value ?? "", 10);
+            return isNaN(parsed) ? defaultValue : Math.abs(parsed);
         };
 
         if (!args.length) {
@@ -183,15 +208,15 @@ export const worldBorderCommand: Command = {
             switch (arg) {
                 case "--overworld":
                 case "-o":
-                    overworldSize = Number(args[i + 1]);
+                    overworldSize = parseBorderSize(args[i + 1], 0);
                     break;
                 case "--nether":
                 case "-n":
-                    netherSize = Number(args[i + 1]);
+                    netherSize = parseBorderSize(args[i + 1], 0);
                     break;
                 case "--end":
                 case "-e":
-                    endSize = Number(args[i + 1]);
+                    endSize = parseBorderSize(args[i + 1], 0);
                     break;
             }
         }

@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system } from "@minecraft/server";
 import { Command, GuiInstructions, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { commandHandler } from "../../paradox";
@@ -119,14 +119,14 @@ export const guiCommand: Command = {
 
             const { formType, title, description, actions, dynamicFields, commandOrder } = guiInstructions;
 
-            const requiredFields = (actions as ActionFormButton[]).map((action) => action.requiredFields || []).flat(); // Flatten requiredFields
+            const requiredFields = (actions as ActionFormButton[]).map((action) => action.requiredFields ?? []).flat(); // Flatten requiredFields
 
             const finalRequiredFields = requiredFields.length > 0 ? requiredFields : [];
 
             if (formType === "ActionFormData") {
-                showActionForm(actions || [], title, description || "", player, command, minecraftEnvironment, dynamicFields || [], commandOrder, guiInstructions);
+                showActionForm(actions ?? [], title, description ?? "", player, command, minecraftEnvironment, dynamicFields ?? [], commandOrder, guiInstructions);
             } else if (formType === "ModalFormData") {
-                showModalForm(dynamicFields || [], title, player, command, minecraftEnvironment, [], false, commandOrder, finalRequiredFields, guiInstructions);
+                showModalForm(dynamicFields ?? [], title, player, command, minecraftEnvironment, [], false, commandOrder, finalRequiredFields, guiInstructions);
             }
         }
 
@@ -265,7 +265,7 @@ export const guiCommand: Command = {
                                     .join(" ")
                             );
                         }
-                        modalForm.dropdown(formattedPlaceholder, field.options || [], -1);
+                        modalForm.dropdown(formattedPlaceholder, field.options ?? [], -1);
                         break;
                     case "toggle":
                         modalForm.toggle(formattedName, false);
@@ -318,6 +318,7 @@ export const guiCommand: Command = {
                     let value = "";
                     switch (dynamicField.type) {
                         case "text":
+                            // Directly access the corresponding text field value by formIndex
                             value = response.formValues[formIndex++] as string;
                             break;
                         case "dropdown":
@@ -336,7 +337,7 @@ export const guiCommand: Command = {
                             }
                             break;
                     }
-                    args.push(`${dynamicField?.arg ?? commandArray[formIndex - 1]} ${value}`.trim());
+                    args.push(`${dynamicField?.arg ?? (commandArray ? commandArray[formIndex - 1] : "")} ${value}`.trim());
                 }
             });
 
