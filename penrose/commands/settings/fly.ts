@@ -14,6 +14,7 @@ export const flyCheckCommand: Command = {
     examples: [`{prefix}antifly`, `{prefix}antifly help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/items/elytra.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Anti-Fly Detection Settings",

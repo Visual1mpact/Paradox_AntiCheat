@@ -12,6 +12,7 @@ export const antispamCommand: Command = {
     examples: [`{prefix}antispam`, `{prefix}antispam help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/message.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "AntiSpam Settings",

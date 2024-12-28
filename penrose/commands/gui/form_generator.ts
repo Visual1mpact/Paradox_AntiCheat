@@ -84,7 +84,7 @@ export const guiCommand: Command = {
 
             // Add buttons for each command
             commands.forEach((command) => {
-                form.button(command.name.charAt(0).toUpperCase() + command.name.slice(1).toLowerCase());
+                form.button(command.name.charAt(0).toUpperCase() + command.name.slice(1).toLowerCase(), command.icon);
             });
 
             // Add "Back" button

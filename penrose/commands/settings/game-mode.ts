@@ -27,6 +27,7 @@ export const gameModeCommand: Command = {
     examples: [`{prefix}gamemode -a`, `{prefix}gamemode -c -s`, `{prefix}gamemode -a -c -sp`, `{prefix}gamemode --enable`, `{prefix}gamemode --disable`, `{prefix}gamemode -l`, `{prefix}gamemode --list`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/multiselection.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Configure Game Modes",

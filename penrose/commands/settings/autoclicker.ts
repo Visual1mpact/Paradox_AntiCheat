@@ -14,6 +14,7 @@ export const autoClickerCommand: Command = {
     examples: [`{prefix}autoclicker`, `{prefix}autoclicker help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "AutoClicker Detection Settings",

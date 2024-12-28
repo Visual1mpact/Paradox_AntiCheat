@@ -14,6 +14,7 @@ export const afkCommand: Command = {
     examples: [`{prefix}afk`, `{prefix}afk 0 10 0`, `{prefix}afk 0 15 30`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/clock.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "AFK Module Settings",

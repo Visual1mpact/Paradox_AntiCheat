@@ -226,6 +226,12 @@ export interface Command {
     securityClearance: SecurityClearance;
 
     /**
+     * Optional icon for the button. This can be a Minecraft texture path.
+     * If provided, it will display an icon alongside the button's name.
+     */
+    icon?: string;
+
+    /**
      * Optional instructions for generating a GUI associated with the command.
      * If specified, this will be used to create a GUI when the command is executed.
      * The `GuiInstructions` object provides details on the form type, buttons, dynamic fields, etc.

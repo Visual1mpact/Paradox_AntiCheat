@@ -14,6 +14,7 @@ export const hitReachCheckCommand: Command = {
     examples: [`{prefix}reach`, `{prefix}reach help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/permissions_visitor_hand.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Hit Reach Detection Settings",

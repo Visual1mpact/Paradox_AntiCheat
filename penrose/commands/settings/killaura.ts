@@ -14,6 +14,7 @@ export const killauraCommand: Command = {
     examples: [`{prefix}killaura`, `{prefix}killaura help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/fire_resistance_effect.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Killaura Detection Settings",

@@ -14,6 +14,7 @@ export const xrayCommand: Command = {
     examples: [`{prefix}xray`, `{prefix}xray help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/xyz_axis.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Xray Detection Settings",

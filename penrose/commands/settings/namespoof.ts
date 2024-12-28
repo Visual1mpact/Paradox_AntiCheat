@@ -14,6 +14,7 @@ export const nameSpoofCommand: Command = {
     examples: [`{prefix}namespoof`, `{prefix}namespoof help`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/items/name_tag.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Name-Spoof Detection Settings",
