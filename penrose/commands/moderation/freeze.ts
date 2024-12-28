@@ -4,7 +4,7 @@ import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 // Define the dimensions and block type of the prison
 const PRISON_WIDTH = 5;
-const PRISON_HEIGHT = 3;
+const PRISON_HEIGHT = 4;
 const PRISON_DEPTH = 5;
 const PRISON_BLOCK_TYPE = "minecraft:bedrock"; // Replace with desired block type
 
