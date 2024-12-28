@@ -14,6 +14,19 @@ export const hitReachCheckCommand: Command = {
     examples: [`{prefix}reach`, `{prefix}reach help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Hit Reach Detection Settings",
+        description: "Enable or disable the reach detection module to prevent players from hitting others from an unfair distance.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/ui/permissions_visitor_hand.png",
+            },
+        ],
+    },
 
     /**
      * Executes the hit reach detection command.

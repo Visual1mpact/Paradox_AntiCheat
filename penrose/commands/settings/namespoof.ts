@@ -14,6 +14,19 @@ export const nameSpoofCommand: Command = {
     examples: [`{prefix}namespoof`, `{prefix}namespoof help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Name-Spoof Detection Settings",
+        description: "Enable or disable the Name-Spoof detection module to prevent players from using fake usernames to impersonate others.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/items/name_tag.png",
+            },
+        ],
+    },
 
     /**
      * Executes the name-spoof detection command.

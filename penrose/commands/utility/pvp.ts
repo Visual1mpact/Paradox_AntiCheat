@@ -146,7 +146,7 @@ export const pvpToggleCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Settings",
-        description: "Choose an action to modify or check your PvP settings.",
+        description: "Choose an action to modify or check your PvP settings.\n\n",
         commandOrder: "command-arg",
         actions: [
             { name: "Toggle Global PvP", command: ["global"], description: "Enable or disable PvP for the entire server.", requiredFields: [], crypto: false },

@@ -25,7 +25,7 @@ export const tprCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Teleport Request",
-        description: "Send, accept, or deny tp requests",
+        description: "Send, accept, or deny tp requests.\n\n",
         commandOrder: undefined,
         actions: [
             {

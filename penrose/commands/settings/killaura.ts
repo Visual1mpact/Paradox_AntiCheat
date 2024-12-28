@@ -14,6 +14,19 @@ export const killauraCommand: Command = {
     examples: [`{prefix}killaura`, `{prefix}killaura help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Killaura Detection Settings",
+        description: "Enable or disable the Killaura detection module to prevent players from using a form of aimbots or other combat-related cheats.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/ui/fire_resistance_effect.png",
+            },
+        ],
+    },
 
     /**
      * Executes the killaura detection command.

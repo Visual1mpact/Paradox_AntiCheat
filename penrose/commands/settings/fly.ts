@@ -14,6 +14,19 @@ export const flyCheckCommand: Command = {
     examples: [`{prefix}antifly`, `{prefix}antifly help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Anti-Fly Detection Settings",
+        description: "Enable or disable checks for illegal flying to prevent players from exploiting flight mechanics.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/items/elytra.png",
+            },
+        ],
+    },
 
     /**
      * Executes the antifly command.

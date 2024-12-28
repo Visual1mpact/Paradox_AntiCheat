@@ -34,7 +34,7 @@ export const worldBorderCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "World Border Management",
-        description: "Manage the world border settings for each dimension.",
+        description: "Manage the world border settings for each dimension.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

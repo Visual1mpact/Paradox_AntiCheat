@@ -14,6 +14,18 @@ export const xrayCommand: Command = {
     examples: [`{prefix}xray`, `{prefix}xray help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Xray Detection Settings",
+        description: "Enable or disable the Xray detection module to prevent players from using Xray cheats.\n\n",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/ui/xyz_axis.png",
+            },
+        ],
+    },
 
     /**
      * Executes the Xray detection command.

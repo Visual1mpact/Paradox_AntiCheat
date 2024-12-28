@@ -14,15 +14,12 @@ export const antispamCommand: Command = {
     securityClearance: 4,
     guiInstructions: {
         formType: "ActionFormData",
-        title: "AntiSpam Command",
-        description: "Toggle the AntiSpam feature on or off.",
+        title: "AntiSpam Settings",
+        description: "Enable or disable the AntiSpam feature to prevent excessive chat messages within a short period (default: 2 minutes).\n\n",
         actions: [
             {
-                name: "Enable/Disable AntiSpam",
+                name: "Enable / Disable",
                 command: undefined,
-                description: "Enables or disables AntiSpam to prevent chat spam.",
-                requiredFields: [],
-                crypto: false,
                 icon: "textures/ui/message.png",
             },
         ],

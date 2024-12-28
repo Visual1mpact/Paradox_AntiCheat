@@ -20,7 +20,7 @@ export const setRankCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Set or Reset Rank",
-        description: "Set or reset a player's chat rank.",
+        description: "Set or reset a player's chat rank.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

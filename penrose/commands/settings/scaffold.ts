@@ -14,6 +14,19 @@ export const scaffoldCommand: Command = {
     examples: [`{prefix}scaffold`, `{prefix}scaffold help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Scaffold Detection Settings",
+        description: "Enable or disable the scaffold detection module to prevent players from using illegal scaffold hacks.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/ui/Scaffolding.png",
+            },
+        ],
+    },
 
     /**
      * Executes the scaffold detection command.

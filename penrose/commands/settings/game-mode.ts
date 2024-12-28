@@ -30,7 +30,7 @@ export const gameModeCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Configure Game Modes",
-        description: "Toggle game modes and enable or disable gamemode checks.",
+        description: "Toggle game modes and enable or disable gamemode checks.\n\n",
         commandOrder: "command-arg",
         actions: [
             // Single button to generate modal form with toggles for game modes

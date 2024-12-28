@@ -14,6 +14,19 @@ export const autoClickerCommand: Command = {
     examples: [`{prefix}autoclicker`, `{prefix}autoclicker help`],
     category: "Modules",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "AutoClicker Detection Settings",
+        description: "Enable or disable the auto-clicker detection module to prevent players from using automated clicking tools.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
+            },
+        ],
+    },
 
     /**
      * Executes the auto-clicker detection command.

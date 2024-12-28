@@ -17,7 +17,7 @@ export const afkCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "AFK Module Settings",
-        description: "Configure the AFK check module to automatically kick players who are AFK.",
+        description: "Configure the AFK check module to automatically kick players who are AFK.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -28,9 +28,9 @@ export const afkCommand: Command = {
                 icon: "textures/ui/multiselection.png",
             },
             {
-                name: "Enable/Disable AFK Check",
+                name: "Enable / Disable",
                 command: undefined,
-                icon: "textures/ui/realms_green_check.png",
+                icon: "textures/ui/clock.png",
             },
         ],
         dynamicFields: [

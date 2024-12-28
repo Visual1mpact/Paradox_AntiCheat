@@ -34,7 +34,7 @@ export const channelCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Channel Management",
-        description: "Select an action to manage channels",
+        description: "Select an action to manage channels.\n\n",
         commandOrder: "command-arg",
         actions: [
             { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
