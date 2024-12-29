@@ -175,7 +175,13 @@ export const guiCommand: Command = {
                             openMainGui(player, playerSecurityClearance);
                         } else {
                             const selectedAction = actions[response.selection];
-                            handleActionSelection(selectedAction, dynamicFields, title, player, command, minecraftEnvironment, commandOrder, guiInstructions);
+                            if (selectedAction.generateSubActions) {
+                                // Show nested action form for sub-actions
+                                showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description, player, command, minecraftEnvironment, dynamicFields, commandOrder, guiInstructions);
+                            } else {
+                                const selectedAction = actions[response.selection];
+                                handleActionSelection(selectedAction, dynamicFields, title, player, command, minecraftEnvironment, commandOrder, guiInstructions);
+                            }
                         }
                     }
                 })

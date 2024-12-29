@@ -71,6 +71,18 @@ export interface ActionFormButton {
      * If provided, it will display an icon alongside the button's name.
      */
     icon?: string;
+
+    /**
+     * Whether the button should trigger the generation of sub-actions.
+     * If true, additional actions will be shown when the button is clicked.
+     */
+    generateSubActions?: boolean;
+
+    /**
+     * Optional list of sub-actions for this button.
+     * Each sub-action is an additional action that can be executed after the main button is clicked.
+     */
+    subActions?: ActionFormButton[];
 }
 
 /**
