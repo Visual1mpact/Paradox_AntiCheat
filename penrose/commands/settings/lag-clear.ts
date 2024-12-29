@@ -14,6 +14,50 @@ export const lagClearCommand: Command = {
     examples: [`{prefix}lagclear`, `{prefix}lagclear 0 5 0`, `{prefix}lagclear 0 10 30`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/slowness_effect.png",
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Lag Clear Module Settings",
+        description: "Configure the Lag Clear module to automatically clear items and entities with a custom timer. Specify hours, minutes, and seconds to set the delay for the clearing operation.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Set LagClear Timer",
+                requiredFields: ["lagClearSettings"],
+                command: undefined,
+                generateModalForm: true,
+                icon: "textures/ui/multiselection.png",
+            },
+            {
+                name: "Enable / Disable",
+                command: undefined,
+                icon: "textures/ui/clock.png",
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Hours",
+                arg: undefined,
+                type: "text",
+                placeholder: "Set Lag Clear Timer (Hours):",
+                requiredFields: ["lagClearSettings"],
+            },
+            {
+                name: "Minutes",
+                arg: undefined,
+                type: "text",
+                placeholder: "Set Lag Clear Timer (Minutes):",
+                requiredFields: ["lagClearSettings"],
+            },
+            {
+                name: "Seconds",
+                arg: undefined,
+                type: "text",
+                placeholder: "Set Lag Clear Timer (Seconds):",
+                requiredFields: ["lagClearSettings"],
+            },
+        ],
+    },
 
     /**
      * Executes the lagclear command.
@@ -31,14 +75,49 @@ export const lagClearCommand: Command = {
 
         // Default values
         let hours = 0;
-        let minutes = 5;
+        let minutes = 10; // Default timeout: 10 minutes
         let seconds = 0;
 
+        /**
+         * Safely parses a string into a number, returning a default value if parsing fails.
+         *
+         * @param {string | undefined} value - The string value to parse. Can be undefined or invalid.
+         * @param {number} [defaultValue=0] - The default value to return if the input is not a valid number.
+         * @returns {number} The parsed number, or the default value if the input is invalid.
+         *
+         * @example
+         * parseNumber("42"); // Returns 42
+         * parseNumber("abc", 10); // Returns 10
+         * parseNumber(undefined, 5); // Returns 5
+         */
+        const parseNumber = (value: string | undefined, defaultValue: number = 0): number => {
+            const parsed = parseInt(value ?? "", 10);
+            return isNaN(parsed) ? defaultValue : parsed;
+        };
+
+        /**
+         * Determines the timeout values (hours, minutes, seconds) based on input arguments.
+         * Defaults to 10 minutes if all arguments are invalid or undefined.
+         *
+         * @param {string[]} args - The command arguments for hours, minutes, and seconds.
+         * @returns {{ hours: number; minutes: number; seconds: number }} The parsed or defaulted timeout values.
+         */
+        const getTimeoutValues = (args: string[]): { hours: number; minutes: number; seconds: number } => {
+            const hours = parseNumber(args[0], 0);
+            const minutes = parseNumber(args[1], 0);
+            const seconds = parseNumber(args[2], 0);
+
+            // Default to 10 minutes if all arguments are invalid or undefined
+            if (hours === 0 && minutes === 0 && seconds === 0 && args.every((arg) => isNaN(parseInt(arg ?? "", 10)))) {
+                return { hours: 0, minutes: 10, seconds: 0 };
+            }
+
+            return { hours, minutes, seconds };
+        };
+
         if (args.length === 3) {
-            // Parse provided arguments
-            hours = parseInt(args[0], 10) ?? 0;
-            minutes = parseInt(args[1], 10) ?? 0;
-            seconds = parseInt(args[2], 10) ?? 0;
+            // Determine the timeout values
+            const { hours, minutes, seconds } = getTimeoutValues(args);
 
             // Update the settings and enable lag clear
             paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });

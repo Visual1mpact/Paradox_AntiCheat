@@ -19,6 +19,83 @@ export const platformBlockCommand: Command = {
     examples: [`{prefix}platformblock console -e`, `{prefix}platformblock desktop -d`, `{prefix}platformblock mobile --enable`, `{prefix}platformblock -l`],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/xbox4.png",
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Platform Block Settings",
+        description: "Select a platform to manage blocking/allowing players.\n\n",
+        actions: [
+            {
+                name: "Console Platform",
+                command: undefined,
+                description: "Manage console platform players.\n\n",
+                generateSubActions: true, // Flag to trigger nested action form for this platform
+                icon: "textures/ui/xbox4.png",
+                subActions: [
+                    {
+                        name: "Enable Console Block",
+                        command: ["console", "-e"],
+                        description: "Block console platform players from joining.",
+                        icon: "textures/ui/realms_green_check.png",
+                    },
+                    {
+                        name: "Disable Console Block",
+                        command: ["console", "-d"],
+                        description: "Allow console platform players to join.",
+                        icon: "textures/ui/realms_red_x.png",
+                    },
+                ],
+            },
+            {
+                name: "Desktop Platform",
+                command: undefined,
+                description: "Manage desktop platform players.\n\n",
+                generateSubActions: true, // Flag to trigger nested action form for this platform
+                icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
+                subActions: [
+                    {
+                        name: "Enable Desktop Block",
+                        command: ["desktop", "-e"],
+                        description: "Block desktop platform players from joining.",
+                        icon: "textures/ui/realms_green_check.png",
+                    },
+                    {
+                        name: "Disable Desktop Block",
+                        command: ["desktop", "-d"],
+                        description: "Allow desktop platform players to join.",
+                        icon: "textures/ui/realms_red_x.png",
+                    },
+                ],
+            },
+            {
+                name: "Mobile Platform",
+                command: undefined,
+                description: "Manage mobile platform players.\n\n",
+                generateSubActions: true, // Flag to trigger nested action form for this platform
+                icon: "textures/ui/selecting_items_mobile.png",
+                subActions: [
+                    {
+                        name: "Enable Mobile Block",
+                        command: ["mobile", "-e"],
+                        description: "Block mobile platform players from joining.",
+                        icon: "textures/ui/realms_green_check.png",
+                    },
+                    {
+                        name: "Disable Mobile Block",
+                        command: ["mobile", "-d"],
+                        description: "Allow mobile platform players to join.",
+                        icon: "textures/ui/realms_red_x.png",
+                    },
+                ],
+            },
+            {
+                name: "List Current Restrictions",
+                command: ["-l"],
+                description: "View the current platform restrictions.",
+                icon: "textures/ui/icon_sign.png",
+            },
+        ],
+    },
 
     /**
      * Executes the platformBlock command to enable/disable platform-based restrictions or list current restrictions.
