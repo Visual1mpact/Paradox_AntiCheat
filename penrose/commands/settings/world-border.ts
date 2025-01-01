@@ -207,17 +207,20 @@ export const worldBorderCommand: Command = {
             const arg = args[i].toLowerCase();
             switch (arg) {
                 case "--overworld":
-                case "-o":
+                case "-o": {
                     overworldSize = parseBorderSize(args[i + 1], 0);
                     break;
+                }
                 case "--nether":
-                case "-n":
+                case "-n": {
                     netherSize = parseBorderSize(args[i + 1], 0);
                     break;
+                }
                 case "--end":
-                case "-e":
+                case "-e": {
                     endSize = parseBorderSize(args[i + 1], 0);
                     break;
+                }
             }
         }
 

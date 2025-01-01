@@ -54,8 +54,7 @@ export const tprCommand: Command = {
         dynamicFields: [
             {
                 type: "dropdown",
-                name: "Name of Player",
-                placeholder: "Select Players Name:",
+                name: "Select Players Name:",
                 arg: undefined,
                 requiredFields: ["PlayerName"],
             },
@@ -132,20 +131,23 @@ export const tprCommand: Command = {
         const command = args[0] ? args[0].toLowerCase() : "";
 
         switch (command) {
-            case "accept":
+            case "accept": {
                 system.run(() => {
                     acceptTeleportRequest(message.sender);
                 });
                 return;
-            case "deny":
+            }
+            case "deny": {
                 system.run(() => {
                     denyTeleportRequest(message.sender);
                 });
                 return;
-            case "":
+            }
+            case "": {
                 const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                 message.sender.sendMessage(`§cInvalid arguments. For help, use ${prefix}tpr help.`);
                 return;
+            }
         }
 
         // Handle sending a teleport request

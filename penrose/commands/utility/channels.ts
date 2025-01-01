@@ -44,8 +44,8 @@ export const channelCommand: Command = {
             { name: "Transfer Ownership", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
         ],
         dynamicFields: [
-            { name: "Name of Room", arg: "--room", type: "text", placeholder: "Enter Channel Name:", requiredFields: ["roomName"] },
-            { name: "Name of Player", arg: "--target", type: "dropdown", placeholder: "Select Players Name:", requiredFields: ["targetName"] },
+            { name: "Name of Room:", arg: "--room", type: "text", placeholder: "Enter Channel Name", requiredFields: ["roomName"] },
+            { name: "Select Players Name:", arg: "--target", type: "dropdown", requiredFields: ["targetName"] },
         ],
     },
 
@@ -273,54 +273,61 @@ export const channelCommand: Command = {
         const targetName = getFlagValue(args, ["--target", "-t"])?.replace(/["@]/g, "");
 
         switch (command) {
-            case "create":
+            case "create": {
                 if (roomName) {
                     createChannel(roomName);
                 } else {
                     message.sender.sendMessage(`§cPlease specify a channel name using --room.`);
                 }
                 break;
+            }
 
-            case "join":
+            case "join": {
                 if (roomName) {
                     joinChannel(roomName);
                 } else {
                     message.sender.sendMessage(`§cPlease specify a channel name using --room.`);
                 }
                 break;
+            }
 
-            case "invite":
+            case "invite": {
                 if (roomName && targetName) {
                     inviteToChannel(roomName, targetName);
                 } else {
                     message.sender.sendMessage(`§cPlease specify a channel name using --room and a target player using --target.`);
                 }
                 break;
+            }
 
-            case "leave":
+            case "leave": {
                 if (roomName) {
                     leaveChannel(roomName);
                 } else {
                     message.sender.sendMessage(`§cPlease specify a channel name using --room.`);
                 }
                 break;
+            }
 
-            case "transfer":
+            case "transfer": {
                 if (roomName && targetName) {
                     transferChannelOwnership(roomName, targetName);
                 } else {
                     message.sender.sendMessage(`§cPlease specify a channel name using --room and a target player using --target.`);
                 }
                 break;
+            }
 
-            case "help":
+            case "help": {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${channelCommand.usage}`);
                 break;
+            }
 
-            default:
+            default: {
                 message.sender.sendMessage(`§cUnknown command '${command}'.`);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${channelCommand.usage}`);
                 break;
+            }
         }
     },
 };

@@ -66,20 +66,24 @@ export const punishCommand: Command = {
             if (validFlags.has(arg.toLowerCase())) {
                 switch (arg.toLowerCase()) {
                     case "--inventory":
-                    case "-i":
+                    case "-i": {
                         wipeInventory = true;
                         break;
+                    }
                     case "--equipment":
-                    case "-e":
+                    case "-e": {
                         wipeEquipment = true;
                         break;
+                    }
                     case "--enderchest":
-                    case "-ec":
+                    case "-ec": {
                         wipeEnderChest = true;
                         break;
-                    default:
+                    }
+                    default: {
                         message.sender.sendMessage(`§cUnknown flag: ${arg}`);
                         return;
+                    }
                 }
             } else {
                 // If it's not a flag, treat it as part of the player's name

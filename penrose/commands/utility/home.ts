@@ -227,10 +227,11 @@ export const homeCommand: Command = {
                 listHomeLocations();
                 break;
             }
-            default:
+            default: {
                 const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                 player.sendMessage(`§cInvalid arguments. For help, use ${prefix}home help.`);
                 break;
+            }
         }
     },
 };

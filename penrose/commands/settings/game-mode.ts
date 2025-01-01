@@ -101,36 +101,43 @@ export const gameModeCommand: Command = {
 
         args.forEach((arg) => {
             switch (arg.toLowerCase()) {
-                case "-a":
+                case "-a": {
                     modeStates.adventure = !modeStates.adventure;
                     needsInspectionUpdate = true;
                     break;
-                case "-c":
+                }
+                case "-c": {
                     modeStates.creative = !modeStates.creative;
                     needsInspectionUpdate = true;
                     break;
-                case "-s":
+                }
+                case "-s": {
                     modeStates.survival = !modeStates.survival;
                     needsInspectionUpdate = true;
                     break;
-                case "-sp":
+                }
+                case "-sp": {
                     modeStates.spectator = !modeStates.spectator;
                     needsInspectionUpdate = true;
                     break;
+                }
                 case "-e":
-                case "--enable":
+                case "--enable": {
                     modeStates.gamemodeCheck = true;
                     needsInspectionUpdate = true;
                     break;
+                }
                 case "-d":
-                case "--disable":
+                case "--disable": {
                     modeStates.gamemodeCheck = false;
                     needsInspectionUpdate = false;
                     break;
-                default:
+                }
+                default: {
                     const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                     player.sendMessage(`§cInvalid arguments. For help, use ${prefix}gamemode help.`);
                     return;
+                }
             }
         });
 

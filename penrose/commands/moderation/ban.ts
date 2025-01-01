@@ -10,6 +10,40 @@ export const banCommand: Command = {
     examples: [`{prefix}ban -t Steve`, `{prefix}ban -t Steve -r Griefing`, `{prefix}ban -t Steve Bob -r Inappropriate Behavior`, `{prefix}ban -l`],
     category: "Moderation",
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Ban Player",
+        description: "Manage banned players by adding new bans or listing existing ones.",
+        actions: [
+            {
+                name: "Ban Player(s)",
+                command: undefined,
+                description: "Ban the specified players with the provided reason.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+            {
+                name: "List Banned Players",
+                command: ["-l"],
+                description: "View all players currently banned.",
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Players Name:",
+                arg: "--target",
+                type: "dropdown",
+                requiredFields: ["playerName"],
+            },
+            {
+                name: "Reason:",
+                arg: "--reason",
+                type: "text",
+                placeholder: "Optional reason for banning",
+                requiredFields: ["playerName"],
+            },
+        ],
+    },
 
     /**
      * Executes the ban command.
@@ -69,13 +103,15 @@ export const banCommand: Command = {
             const flag = args.shift();
             switch (flag) {
                 case "-t":
-                case "--target":
+                case "--target": {
                     playerName = captureMultiWordArgument(args);
                     break;
+                }
                 case "-r":
-                case "--reason":
+                case "--reason": {
                     reason = captureMultiWordArgument(args) || "No reason provided.";
                     break;
+                }
             }
         }
 

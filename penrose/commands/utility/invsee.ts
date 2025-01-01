@@ -29,10 +29,9 @@ export const invseeCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Name of Player",
+                name: "Select Players Name:",
                 arg: undefined,
                 type: "dropdown",
-                placeholder: "Select Players Name:",
                 requiredFields: ["playerName"],
             },
         ],

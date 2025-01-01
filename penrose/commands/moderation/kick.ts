@@ -57,13 +57,15 @@ export const kickCommand: Command = {
             const flag = args.shift();
             switch (flag) {
                 case "-t":
-                case "--target":
+                case "--target": {
                     playerName = captureMultiWordArgument(args);
                     break;
+                }
                 case "-r":
-                case "--reason":
+                case "--reason": {
                     reason = captureMultiWordArgument(args) ?? "Farewell";
                     break;
+                }
             }
         }
 

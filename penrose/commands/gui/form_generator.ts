@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, system } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, GuiInstructions, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { commandHandler } from "../../paradox";
@@ -258,24 +258,20 @@ export const guiCommand: Command = {
                     : "";
 
                 switch (field.type) {
-                    case "text":
-                        modalForm.textField(formattedPlaceholder, formattedName);
+                    case "text": {
+                        modalForm.textField(formattedName, formattedPlaceholder);
                         break;
-                    case "dropdown":
-                        if (field.options) {
-                            // Capitalize options if available
-                            field.options = field.options.map((option) =>
-                                option
-                                    .split(" ")
-                                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                                    .join(" ")
-                            );
-                        }
-                        modalForm.dropdown(formattedPlaceholder, field.options ?? [], -1);
+                    }
+                    case "dropdown": {
+                        const allPlayers = world.getAllPlayers().map((player) => player.name);
+                        field.options = allPlayers;
+                        modalForm.dropdown(formattedPlaceholder, field.options ?? [""], -1);
                         break;
-                    case "toggle":
+                    }
+                    case "toggle": {
                         modalForm.toggle(formattedName, false);
                         break;
+                    }
                 }
             }
 
@@ -323,15 +319,17 @@ export const guiCommand: Command = {
                 if (dynamicField.requiredFields.some((field) => requiredFields.includes(field))) {
                     let value = "";
                     switch (dynamicField.type) {
-                        case "text":
+                        case "text": {
                             // Directly access the corresponding text field value by formIndex
                             value = response.formValues[formIndex++] as string;
                             break;
-                        case "dropdown":
+                        }
+                        case "dropdown": {
                             const selectedIndex = response.formValues[formIndex++] as number;
                             value = dynamicField.options[selectedIndex];
                             break;
-                        case "toggle":
+                        }
+                        case "toggle": {
                             // Skip the toggle field if action is generating modal form and command is undefined
                             const isActionWithNoCommand = guiInstructions.actions.some((action) => action.command === undefined && action.generateModalForm === true);
                             if (isActionWithNoCommand) {
@@ -342,6 +340,7 @@ export const guiCommand: Command = {
                                 value = response.formValues[formIndex++] ? "true" : "false"; // Toggle value
                             }
                             break;
+                        }
                     }
                     args.push(`${dynamicField?.arg ?? (commandArray ? commandArray[formIndex - 1] : "")} ${value}`.trim());
                 }

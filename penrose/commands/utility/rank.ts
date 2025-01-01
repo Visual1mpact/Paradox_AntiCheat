@@ -41,15 +41,14 @@ export const setRankCommand: Command = {
         dynamicFields: [
             {
                 type: "dropdown",
-                name: "Player Name",
-                placeholder: "Select Players Name:",
+                name: "Select Players Name:",
                 arg: "--target",
                 requiredFields: ["PlayerName"],
             },
             {
                 type: "text",
-                name: "Rank",
-                placeholder: "Input Rank Here:",
+                name: "Rank:",
+                placeholder: "Input Rank Here",
                 arg: "--rank",
                 requiredFields: ["Rank"],
             },
@@ -96,16 +95,19 @@ export const setRankCommand: Command = {
             const flag = args.shift();
             switch (flag) {
                 case "-t":
-                case "--target":
+                case "--target": {
                     playerName = captureMultiWordArgument(args);
                     break;
+                }
                 case "-r":
-                case "--rank":
+                case "--rank": {
                     rank = captureMultiWordArgument(args);
                     break;
-                case "--reset":
+                }
+                case "--reset": {
                     reset = true;
                     break;
+                }
             }
         }
 
