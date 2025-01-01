@@ -84,6 +84,10 @@ export function startScaffoldCheck() {
 
         // Check the block below for solidity;
         const belowBlock = block.below();
+        // Skip farmland when planting crops like potatoes, carrots, etc.
+        if (belowBlock?.typeId === "minecraft:farmland") {
+            return;
+        }
         if (belowBlock?.isSolid && !EXCLUDED_BLOCKS.includes(belowBlock.typeId)) {
             return;
         }
