@@ -28,6 +28,21 @@ export const guiCommand: Command = {
         const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
 
         /**
+         * Returns the icon path for a given category.
+         * @param {string} category - The category name.
+         * @returns {string} - The resource pack path of the icon for the category.
+         */
+        function getCategoryIconPath(category: string): string {
+            const icons = {
+                Moderation: "textures/items/diamond_sword.png",
+                Utility: "textures/items/compass_item.png",
+                Modules: "textures/ui/gear.png",
+            };
+
+            return icons[category as keyof typeof icons] || ""; // Default icon if category not found
+        }
+
+        /**
          * Opens the main GUI for the player, filtering by their security clearance.
          * @param {Player} player - The player executing the command.
          * @param {number} playerClearance - The security clearance level of the player.
@@ -59,7 +74,9 @@ export const guiCommand: Command = {
 
             // Add buttons for each accessible category
             accessibleCategories.forEach(({ category }) => {
-                mainMenu.button(category.charAt(0).toUpperCase() + category.slice(1).toLowerCase());
+                // Get the icon path for the category
+                const iconPath = getCategoryIconPath(category);
+                mainMenu.button(category.charAt(0).toUpperCase() + category.slice(1).toLowerCase(), iconPath);
             });
 
             mainMenu.show(player).then((response) => {
@@ -119,7 +136,7 @@ export const guiCommand: Command = {
 
             const { formType, title, description, actions, dynamicFields, commandOrder } = guiInstructions;
 
-            const requiredFields = (actions as ActionFormButton[]).map((action) => action.requiredFields ?? []).flat(); // Flatten requiredFields
+            const requiredFields = (actions?.map((action) => action.requiredFields ?? []) ?? []).flat(); // Safely map and handle undefined actions
 
             const finalRequiredFields = requiredFields.length > 0 ? requiredFields : [];
 
@@ -316,7 +333,7 @@ export const guiCommand: Command = {
             let formIndex = 0;
 
             fields.forEach((dynamicField) => {
-                if (dynamicField.requiredFields.some((field) => requiredFields.includes(field))) {
+                if (!dynamicField.requiredFields || dynamicField.requiredFields.some((field) => requiredFields.includes(field))) {
                     let value = "";
                     switch (dynamicField.type) {
                         case "text": {
@@ -342,7 +359,14 @@ export const guiCommand: Command = {
                             break;
                         }
                     }
-                    args.push(`${dynamicField?.arg ?? (commandArray ? commandArray[formIndex - 1] : "")} ${value}`.trim());
+                    // Check for undefined or empty values before adding to args
+                    const dynamicFieldValue = dynamicField?.arg ?? (commandArray ? commandArray[formIndex - 1] : "");
+                    const finalValue = dynamicFieldValue && value ? `${dynamicFieldValue} ${value}`.trim() : value ? value.trim() : "";
+
+                    // Only push to args if the final value is not an empty string
+                    if (finalValue) {
+                        args.push(finalValue);
+                    }
                 }
             });
 

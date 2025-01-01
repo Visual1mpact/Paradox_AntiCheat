@@ -44,6 +44,13 @@ export const pvpToggleCooldownCommand: Command = {
     examples: [`{prefix}pvpToggleCooldown 180`],
     category: "Utility",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "PvP Toggle Cooldown",
+        description: "Set the cooldown time for toggling PvP in seconds. The cooldown time must be between 10 and 3600 seconds (1 hour).\n\n",
+        actions: [{ name: "Continue", command: undefined, requiredFields: ["ptc"], generateModalForm: true }],
+        dynamicFields: [{ name: "Set Cooldown:", type: "text", arg: undefined, placeholder: "Enter cooldown time", requiredFields: ["ptc"] }],
+    },
 
     /**
      * Executes the pvpToggleCooldown command.
@@ -93,6 +100,13 @@ export const pvpCooldownCommand: Command = {
     examples: [`{prefix}pvpCooldown 180`],
     category: "Utility",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "PvP Action Cooldown",
+        description: "Set the cooldown time for PvP actions. The cooldown time must be between 10 and 3600 seconds (1 hour).\n\n",
+        actions: [{ name: "Continue", command: undefined, requiredFields: ["pac"], generateModalForm: true }],
+        dynamicFields: [{ name: "Set Cooldown:", type: "text", arg: undefined, placeholder: "Enter cooldown time", requiredFields: ["pac"] }],
+    },
 
     /**
      * Executes the pvpCooldown command.
