@@ -11,7 +11,30 @@ export const prefixCommand: Command = {
     usage: "{prefix}prefix [ optional ]",
     examples: [`{prefix}prefix !!`, `{prefix}prefix @@`, `{prefix}prefix !@`, `{prefix}prefix help`],
     category: "Moderation",
-    securityClearance: 2,
+    securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Prefix Command",
+        description: "Change the command prefix. Max is two characters.\n\n",
+        actions: [
+            {
+                name: "Change Prefix",
+                command: undefined,
+                description: "Select a new prefix for the commands.",
+                requiredFields: ["prefix"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Enter New Prefix:",
+                arg: undefined,
+                type: "text",
+                placeholder: "Enter prefix (max 2 chars)",
+                requiredFields: ["prefix"],
+            },
+        ],
+    },
 
     /**
      * Executes the prefix command.

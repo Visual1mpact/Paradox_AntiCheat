@@ -23,6 +23,46 @@ export const punishCommand: Command = {
     ],
     category: "Moderation",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Punish Command",
+        description: "Select the punishment actions for the player.\n\n",
+        actions: [
+            {
+                name: "Select Punishments",
+                command: undefined,
+                description: "Choose the punishment to apply (Inventory, Equipment, Ender Chest).",
+                requiredFields: ["punishmentType"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Player Name:",
+                arg: undefined,
+                type: "dropdown",
+                requiredFields: ["punishmentType"],
+            },
+            {
+                name: "Punish Inventory:",
+                arg: "--inventory",
+                type: "toggle",
+                requiredFields: ["punishmentType"],
+            },
+            {
+                name: "Punish Equipment:",
+                arg: "--equipment",
+                type: "toggle",
+                requiredFields: ["punishmentType"],
+            },
+            {
+                name: "Punish Ender Chest:",
+                arg: "--enderchest",
+                type: "toggle",
+                requiredFields: ["punishmentType"],
+            },
+        ],
+    },
 
     /**
      * Executes the punish command.

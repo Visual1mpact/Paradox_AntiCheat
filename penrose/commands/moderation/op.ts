@@ -37,14 +37,14 @@ export const opCommand: Command = {
             },
             {
                 name: "List OP Players",
-                command: undefined,
+                command: ["list"],
                 description: "See who has OP in Paradox.",
             },
         ],
         dynamicFields: [
             {
                 name: "Select Target Player:",
-                arg: "--target",
+                arg: undefined,
                 type: "dropdown",
                 requiredFields: ["playerName"],
             },

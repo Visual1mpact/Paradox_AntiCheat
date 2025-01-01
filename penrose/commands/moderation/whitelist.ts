@@ -10,6 +10,40 @@ export const whitelistCommand: Command = {
     examples: [`{prefix}whitelist add Steve`, `{prefix}whitelist remove Steve`, `{prefix}whitelist list`],
     category: "Moderation",
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Whitelist Management",
+        description: "Manage the server whitelist. You can add, remove, or list players.\n\n",
+        actions: [
+            {
+                name: "Add Player",
+                command: ["add"],
+                description: "Add a player to the whitelist.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+            {
+                name: "Remove Player",
+                command: ["remove"],
+                description: "Remove a player from the whitelist.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+            {
+                name: "List Whitelisted Players",
+                command: ["list"],
+                description: "View all players currently on the whitelist.",
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Enter Player Name:",
+                arg: undefined,
+                type: "text",
+                requiredFields: ["playerName"],
+            },
+        ],
+    },
 
     /**
      * Executes the whitelist command.

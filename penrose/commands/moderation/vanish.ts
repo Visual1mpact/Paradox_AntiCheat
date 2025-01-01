@@ -12,6 +12,33 @@ export const vanishCommand: Command = {
     examples: [`{prefix}vanish`, `{prefix}vanish Player Name`, `{prefix}vanish "Player Name"`, `{prefix}vanish help`],
     category: "Moderation",
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Vanish Command",
+        description: "Toggle vanish mode for yourself or another player.\n\n",
+        actions: [
+            {
+                name: "Vanish Myself",
+                command: undefined,
+                description: "Enable or disable vanish mode for yourself.",
+            },
+            {
+                name: "Vanish Player",
+                command: undefined,
+                description: "Enable or disable vanish mode for another player.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select A Player:",
+                arg: undefined,
+                type: "dropdown",
+                requiredFields: ["playerName"],
+            },
+        ],
+    },
 
     /**
      * Executes the vanish command.

@@ -10,6 +10,35 @@ export const unbanCommand: Command = {
     examples: [`{prefix}unban Steve`, `{prefix}unban Steve --global`],
     category: "Moderation",
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Unban Player",
+        description: "Unban a player from the local or global ban list.\n\n",
+        actions: [
+            {
+                name: "Unban a Player",
+                command: undefined,
+                description: "Select a player to unban and specify whether the unban is global.",
+                requiredFields: ["unbanTarget"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Enter Player to Unban:",
+                arg: undefined,
+                type: "text",
+                placeholder: "Redemption awaits...",
+                requiredFields: ["unbanTarget"],
+            },
+            {
+                name: "Global Unban (optional):",
+                arg: "--global",
+                type: "toggle",
+                requiredFields: ["unbanTarget"],
+            },
+        ],
+    },
 
     /**
      * Executes the unban command.

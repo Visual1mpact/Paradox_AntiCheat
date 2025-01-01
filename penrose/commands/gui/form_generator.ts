@@ -265,7 +265,7 @@ export const guiCommand: Command = {
                     case "dropdown": {
                         const allPlayers = world.getAllPlayers().map((player) => player.name);
                         field.options = allPlayers;
-                        modalForm.dropdown(formattedPlaceholder, field.options ?? [""], -1);
+                        modalForm.dropdown(formattedName, field.options ?? [""], -1);
                         break;
                     }
                     case "toggle": {
