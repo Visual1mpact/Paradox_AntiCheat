@@ -106,7 +106,9 @@ function handleBlockBreak(event: PlayerBreakBlockAfterEvent): void {
             const { x, y, z } = player.location;
             const level4Players = getSecurityClearanceLevel4Players();
             level4Players.forEach((level4Player) => {
-                level4Player.sendMessage(`§2[§7Paradox§2]§7 §4[§7Xray§4]§o§f ${player.name}§f§7 has found §2[§7${blockId.replace("minecraft:", "")}§2]§7 §2x${blockCount + 1}§7 at X=§f${x.toFixed(0)}§7 Y=§f${y.toFixed(0)}§7 Z=§f${z.toFixed(0)}.`);
+                if (level4Player.id !== player.id) {
+                    level4Player.sendMessage(`§2[§7Paradox§2]§7 §4[§7Xray§4]§o§f ${player.name}§f§7 has found §2[§7${blockId.replace("minecraft:", "")}§2]§7 §2x${blockCount + 1}§7 at X=§f${x.toFixed(0)}§7 Y=§f${y.toFixed(0)}§7 Z=§f${z.toFixed(0)}.`);
+                }
             });
 
             // Reset the block count after notifying
