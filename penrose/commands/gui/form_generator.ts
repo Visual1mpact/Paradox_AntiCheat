@@ -373,6 +373,8 @@ export const guiCommand: Command = {
             return args;
         }
 
+        player.sendMessage("§2[§7Paradox§2]§o§7 Please close your chat window to view the GUI.");
+
         // Open the main GUI for the player based on clearance level
         system.run(() => openMainGui(player, playerSecurityClearance));
     },
