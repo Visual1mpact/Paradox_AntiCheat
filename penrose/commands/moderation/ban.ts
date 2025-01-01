@@ -13,7 +13,7 @@ export const banCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Ban Player",
-        description: "Manage banned players by adding new bans or listing existing ones.",
+        description: "Manage banned players by adding new bans or listing existing ones.\n\n",
         actions: [
             {
                 name: "Ban Player(s)",

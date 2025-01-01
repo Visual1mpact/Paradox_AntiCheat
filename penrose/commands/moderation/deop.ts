@@ -23,6 +23,42 @@ export const deopCommand: Command = {
     examples: [`{prefix}deop Player Name`, `{prefix}deop "Player Name"`, `{prefix}deop help`],
     category: "Moderation",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Deop Player",
+        description: "Remove Paradox-Op permissions from a player.\n\n",
+        actions: [
+            {
+                name: "Select Online Player",
+                command: undefined,
+                description: "Remove permissions from an online player.",
+                requiredFields: ["onlineName"],
+                generateModalForm: true,
+            },
+            {
+                name: "Input Player Name",
+                command: undefined,
+                description: "Manually input the name of a player to remove permissions.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Online Player:",
+                arg: undefined,
+                type: "dropdown",
+                requiredFields: ["onlineName"],
+            },
+            {
+                name: "Player Name:",
+                arg: undefined,
+                type: "text",
+                placeholder: "Enter the player's name",
+                requiredFields: ["playerName"],
+            },
+        ],
+    },
 
     /**
      * Executes the deop command.

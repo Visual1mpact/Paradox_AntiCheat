@@ -12,6 +12,34 @@ export const despawnCommand: Command = {
     examples: [`{prefix}despawn all`, `{prefix}despawn iron_golem`, `{prefix}despawn "iron_golem"`, `{prefix}despawn help`],
     category: "Moderation",
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Despawn Entities",
+        description: "Manage and despawn entities in the world.\n\n",
+        actions: [
+            {
+                name: "Despawn All Entities",
+                command: ["all"],
+                description: "Removes all entities except players.",
+            },
+            {
+                name: "Despawn Specific Entity",
+                command: undefined,
+                description: "Despawn entities of a specified type.",
+                requiredFields: ["entityType"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Entity Type:",
+                arg: undefined,
+                type: "dropdown",
+                placeholder: "e.g., iron_golem, zombie",
+                requiredFields: ["entityType"],
+            },
+        ],
+    },
 
     /**
      * Executes the despawn command.

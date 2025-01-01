@@ -125,6 +125,28 @@ export const imprisonCommand: Command = {
     examples: [`{prefix}imprison`, `{prefix}imprison Player Name`, `{prefix}imprison "Player Name"`, `{prefix}imprison help`],
     category: "Moderation",
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Imprison Command",
+        description: "Imprison or release a player with moderation-level control.\n\n",
+        actions: [
+            {
+                name: "Imprison / Release Player",
+                command: undefined,
+                description: "Select a player to imprison.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Target Player:",
+                arg: undefined,
+                type: "dropdown",
+                requiredFields: ["playerName"],
+            },
+        ],
+    },
 
     /**
      * Executes the imprison command to imprison or release a player.
