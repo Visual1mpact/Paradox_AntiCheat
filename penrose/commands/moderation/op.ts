@@ -23,6 +23,33 @@ export const opCommand: Command = {
     examples: [`{prefix}op`, `{prefix}op Player Name`, `{prefix}op \"Player Name\"`, `{prefix}op help`, `{prefix}op list`],
     category: "Moderation",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Grant OP Command",
+        description: "Grant OP to a player or see who has OP.\n\n",
+        actions: [
+            {
+                name: "Grant OP to Player",
+                command: undefined,
+                description: "Select a player to grant OP status.",
+                requiredFields: ["playerName"],
+                generateModalForm: true,
+            },
+            {
+                name: "List OP Players",
+                command: undefined,
+                description: "See who has OP in Paradox.",
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Target Player:",
+                arg: "--target",
+                type: "dropdown",
+                requiredFields: ["playerName"],
+            },
+        ],
+    },
 
     /**
      * Executes the OP command logic.

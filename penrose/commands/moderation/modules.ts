@@ -12,6 +12,18 @@ export const modulesStatusCommand: Command = {
     examples: [`{prefix}modules`, `{prefix}modules help`],
     category: "Moderation",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Modules Status Command",
+        description: "Displays the status of all registered modules, including whether they are enabled or disabled, and the settings for each module.\n\n",
+        actions: [
+            {
+                name: "View Enabled Modules",
+                command: undefined,
+                description: "Shows only the modules that are currently enabled.",
+            },
+        ],
+    },
 
     /**
      * Executes the modules status command.

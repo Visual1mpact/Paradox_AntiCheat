@@ -18,6 +18,35 @@ export const kickCommand: Command = {
         `{prefix}kick help`,
     ],
     securityClearance: 3,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Kick Command",
+        description: "Kick a player from the server with a specified reason.\n\n",
+        actions: [
+            {
+                name: "Kick Player",
+                command: undefined,
+                description: "Select a player to kick from the server.",
+                requiredFields: ["playerName", "reason"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Target Player:",
+                arg: "--target",
+                type: "dropdown",
+                requiredFields: ["playerName"],
+            },
+            {
+                name: "Kick Reason:",
+                arg: "--reason",
+                type: "text",
+                placeholder: "Enter reason for kick (optional)",
+                requiredFields: ["reason"],
+            },
+        ],
+    },
 
     /**
      * Executes the kick command.

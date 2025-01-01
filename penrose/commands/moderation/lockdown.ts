@@ -13,6 +13,18 @@ export const lockdownCommand: Command = {
     examples: [`{prefix}lockdown`, `{prefix}lockdown help`],
     category: "Moderation",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Server Lockdown Command",
+        description: "Toggle server lockdown for maintenance. Lockdown kicks all non-administrator players and prevents them from rejoining.\n\n",
+        actions: [
+            {
+                name: "Toggle Lockdown",
+                command: undefined,
+                description: "Enable or disable server lockdown.",
+            },
+        ],
+    },
 
     /**
      * Executes the lockdown command.

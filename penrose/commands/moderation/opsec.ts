@@ -12,6 +12,35 @@ export const opsecCommand: Command = {
     examples: [`{prefix}opsec PlayerName 3`, `{prefix}opsec Player Name 3`, `{prefix}opsec "PlayerName" 3`],
     category: "Moderation",
     securityClearance: 4,
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "OpSec Command",
+        description: "Change a player's security clearance level.\n\n",
+        actions: [
+            {
+                name: "Change Clearance",
+                command: undefined,
+                description: "Select a player and their new clearance level.",
+                requiredFields: ["playerName", "clearanceLevel"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Select Target Player:",
+                arg: undefined,
+                type: "dropdown",
+                requiredFields: ["playerName"],
+            },
+            {
+                name: "Select New Clearance Level:",
+                arg: undefined,
+                type: "text",
+                requiredFields: ["clearanceLevel"],
+                placeholder: "Enter value 1 through 3",
+            },
+        ],
+    },
 
     /**
      * Executes the opsec command.
