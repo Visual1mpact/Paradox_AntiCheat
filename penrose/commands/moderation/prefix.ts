@@ -12,6 +12,7 @@ export const prefixCommand: Command = {
     examples: [`{prefix}prefix !!`, `{prefix}prefix @@`, `{prefix}prefix !@`, `{prefix}prefix help`],
     category: "Moderation",
     securityClearance: 4,
+    icon: "textures/ui/update.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Prefix Command",
@@ -23,6 +24,7 @@ export const prefixCommand: Command = {
                 description: "Select a new prefix for the commands.",
                 requiredFields: ["prefix"],
                 generateModalForm: true,
+                icon: "textures/ui/WarningGlyph.png",
             },
         ],
         dynamicFields: [

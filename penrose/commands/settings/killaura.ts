@@ -24,7 +24,7 @@ export const killauraCommand: Command = {
             {
                 name: "Enable / Disable",
                 command: undefined,
-                icon: "textures/ui/fire_resistance_effect.png",
+                icon: "textures/ui/resistance_effect.png",
             },
         ],
     },

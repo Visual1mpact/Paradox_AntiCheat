@@ -125,6 +125,7 @@ export const imprisonCommand: Command = {
     examples: [`{prefix}imprison`, `{prefix}imprison Player Name`, `{prefix}imprison "Player Name"`, `{prefix}imprison help`],
     category: "Moderation",
     securityClearance: 3,
+    icon: "textures/blocks/mob_spawner.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Imprison Command",
@@ -136,6 +137,7 @@ export const imprisonCommand: Command = {
                 description: "Select a player to imprison.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
+                icon: "textures/ui/icon_multiplayer.png",
             },
         ],
         dynamicFields: [

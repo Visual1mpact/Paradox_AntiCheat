@@ -13,6 +13,7 @@ export const lockdownCommand: Command = {
     examples: [`{prefix}lockdown`, `{prefix}lockdown help`],
     category: "Moderation",
     securityClearance: 4,
+    icon: "textures/ui/lock_color.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Server Lockdown Command",
@@ -22,6 +23,7 @@ export const lockdownCommand: Command = {
                 name: "Toggle Lockdown",
                 command: undefined,
                 description: "Enable or disable server lockdown.",
+                icon: "textures/ui/icon_lock.png",
             },
         ],
     },

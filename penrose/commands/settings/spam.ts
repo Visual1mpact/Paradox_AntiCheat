@@ -21,7 +21,7 @@ export const antispamCommand: Command = {
             {
                 name: "Enable / Disable",
                 command: undefined,
-                icon: "textures/ui/message.png",
+                icon: "textures/ui/Feedback.png",
             },
         ],
     },

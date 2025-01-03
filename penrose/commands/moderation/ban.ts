@@ -10,6 +10,7 @@ export const banCommand: Command = {
     examples: [`{prefix}ban -t Steve`, `{prefix}ban -t Steve -r Griefing`, `{prefix}ban -t Steve Bob -r Inappropriate Behavior`, `{prefix}ban -l`],
     category: "Moderation",
     securityClearance: 3,
+    icon: "textures/ui/hammer_l.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Ban Player",
@@ -21,11 +22,13 @@ export const banCommand: Command = {
                 description: "Ban the specified players with the provided reason.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
+                icon: "textures/ui/hammer_r.png",
             },
             {
                 name: "List Banned Players",
                 command: ["-l"],
                 description: "View all players currently banned.",
+                icon: "textures/ui/icon_sign.png",
             },
         ],
         dynamicFields: [

@@ -12,6 +12,7 @@ export const modulesStatusCommand: Command = {
     examples: [`{prefix}modules`, `{prefix}modules help`],
     category: "Moderation",
     securityClearance: 4,
+    icon: "textures/ui/invertedmultiselecticon.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Modules Status Command",
@@ -21,6 +22,7 @@ export const modulesStatusCommand: Command = {
                 name: "View Enabled Modules",
                 command: undefined,
                 description: "Shows only the modules that are currently enabled.",
+                icon: "textures/items/book_writable.png",
             },
         ],
     },

@@ -12,6 +12,7 @@ export const tpaCommand: Command = {
     examples: [`{prefix}tpa Lucy Steve`, `{prefix}tpa @Steve @Lucy`, `{prefix}tpa help`],
     category: "Moderation",
     securityClearance: 3,
+    icon: "textures/blocks/end_portal.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Teleport Assistance (TPA)",
@@ -23,6 +24,7 @@ export const tpaCommand: Command = {
                 description: "Choose the players to teleport to/from.",
                 requiredFields: ["playerSelection"],
                 generateModalForm: true,
+                icon: "textures/ui/icon_multiplayer.png",
             },
         ],
         dynamicFields: [

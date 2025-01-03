@@ -18,6 +18,7 @@ export const kickCommand: Command = {
         `{prefix}kick help`,
     ],
     securityClearance: 3,
+    icon: "textures/items/diamond_boots.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Kick Command",
@@ -29,6 +30,7 @@ export const kickCommand: Command = {
                 description: "Select a player to kick from the server.",
                 requiredFields: ["playerName", "reason"],
                 generateModalForm: true,
+                icon: "textures/items/chainmail_boots.png",
             },
         ],
         dynamicFields: [

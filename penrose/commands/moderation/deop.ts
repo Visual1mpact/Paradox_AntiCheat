@@ -23,6 +23,7 @@ export const deopCommand: Command = {
     examples: [`{prefix}deop Player Name`, `{prefix}deop "Player Name"`, `{prefix}deop help`],
     category: "Moderation",
     securityClearance: 4,
+    icon: "textures/items/ender_pearl",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Deop Player",
@@ -34,6 +35,7 @@ export const deopCommand: Command = {
                 description: "Remove permissions from an online player.",
                 requiredFields: ["onlineName"],
                 generateModalForm: true,
+                icon: "textures/ui/icon_multiplayer.png",
             },
             {
                 name: "Input Player Name",
@@ -41,6 +43,7 @@ export const deopCommand: Command = {
                 description: "Manually input the name of a player to remove permissions.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
+                icon: "textures/ui/chat_keyboard.png",
             },
         ],
         dynamicFields: [

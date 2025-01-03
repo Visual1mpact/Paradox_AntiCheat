@@ -23,6 +23,7 @@ export const punishCommand: Command = {
     ],
     category: "Moderation",
     securityClearance: 4,
+    icon: "textures/ui/warning_alex.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Punish Command",
@@ -34,6 +35,7 @@ export const punishCommand: Command = {
                 description: "Choose the punishment to apply (Inventory, Equipment, Ender Chest).",
                 requiredFields: ["punishmentType"],
                 generateModalForm: true,
+                icon: "textures/ui/warning_sad_steve.png",
             },
         ],
         dynamicFields: [

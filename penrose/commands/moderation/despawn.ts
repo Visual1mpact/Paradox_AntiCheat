@@ -12,6 +12,7 @@ export const despawnCommand: Command = {
     examples: [`{prefix}despawn all`, `{prefix}despawn iron_golem`, `{prefix}despawn "iron_golem"`, `{prefix}despawn help`],
     category: "Moderation",
     securityClearance: 3,
+    icon: "textures/ui/csb_purchase_error.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Despawn Entities",
@@ -21,6 +22,7 @@ export const despawnCommand: Command = {
                 name: "Despawn All Entities",
                 command: ["all"],
                 description: "Removes all entities except players.",
+                icon: "textures/ui/csb_faq_pig.png",
             },
             {
                 name: "Despawn Specific Entity",
@@ -28,6 +30,7 @@ export const despawnCommand: Command = {
                 description: "Despawn entities of a specified type.",
                 requiredFields: ["entityType"],
                 generateModalForm: true,
+                icon: "textures/ui/promo_creeper.png",
             },
         ],
         dynamicFields: [
