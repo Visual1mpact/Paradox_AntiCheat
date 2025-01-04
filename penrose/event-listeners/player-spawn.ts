@@ -101,6 +101,12 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
 function isPlatformBlocked(event: PlayerSpawnAfterEvent) {
     const player = event.player;
 
+    const validate = player.getDynamicProperty("PlayerName") as string;
+
+    if (!validate) {
+        player.setDynamicProperty("PlayerName", player.name);
+    }
+
     // Safely parse platformBlockSettings from paradoxModulesDB
     const platformBlockSettings: PlatformBlockSettings = paradoxModulesDB.get("platformBlock_settings") ?? {};
 
