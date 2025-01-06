@@ -13,6 +13,7 @@ export const homeCommand: Command = {
     examples: [`{prefix}home set MyHome`, `{prefix}home delete MyHome`, `{prefix}home teleport MyHome`, `{prefix}home list`, `{prefix}home help`],
     category: "Utility",
     securityClearance: 1,
+    icon: "textures/ui/store_home_icon.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Home Management",

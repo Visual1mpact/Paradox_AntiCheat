@@ -23,7 +23,7 @@ export const deopCommand: Command = {
     examples: [`{prefix}deop Player Name`, `{prefix}deop "Player Name"`, `{prefix}deop help`],
     category: "Moderation",
     securityClearance: 4,
-    icon: "textures/items/ender_pearl",
+    icon: "textures/ui/deop.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Deop Player",

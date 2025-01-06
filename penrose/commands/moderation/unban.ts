@@ -10,6 +10,7 @@ export const unbanCommand: Command = {
     examples: [`{prefix}unban Steve`, `{prefix}unban Steve --global`],
     category: "Moderation",
     securityClearance: 3,
+    icon: "textures/ui/hammer_l_disabled.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Unban Player",
@@ -21,6 +22,7 @@ export const unbanCommand: Command = {
                 description: "Select a player to unban and specify whether the unban is global.",
                 requiredFields: ["unbanTarget"],
                 generateModalForm: true,
+                icon: "textures/ui/hammer_r_disabled.png",
             },
         ],
         dynamicFields: [

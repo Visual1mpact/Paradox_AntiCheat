@@ -44,6 +44,7 @@ export const pvpToggleCooldownCommand: Command = {
     examples: [`{prefix}pvpToggleCooldown 180`],
     category: "Utility",
     securityClearance: 4,
+    icon: "textures/ui/timer.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Toggle Cooldown",
@@ -100,6 +101,7 @@ export const pvpCooldownCommand: Command = {
     examples: [`{prefix}pvpCooldown 180`],
     category: "Utility",
     securityClearance: 4,
+    icon: "textures/ui/icon_timer.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Action Cooldown",
@@ -157,6 +159,7 @@ export const pvpToggleCommand: Command = {
     examples: [`{prefix}pvp`, `{prefix}pvp global`, `{prefix}pvp status`, `{prefix}pvp help`],
     category: "Utility",
     securityClearance: 1,
+    icon: "textures/items/netherite_sword.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Settings",

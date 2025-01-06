@@ -31,6 +31,7 @@ export const worldBorderCommand: Command = {
     ],
     category: "Modules",
     securityClearance: 4,
+    icon: "textures/ui/mashup_world.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "World Border Management",

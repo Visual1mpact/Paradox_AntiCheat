@@ -31,6 +31,7 @@ export const channelCommand: Command = {
     examples: [`{prefix}channel create --room <room>`, `{prefix}channel join --room <room>`, `{prefix}channel invite --room <room> --target <player>`, `{prefix}channel leave --room <room>`, `{prefix}channel transfer --room <room> --target <player>`],
     category: "Utility",
     securityClearance: 1,
+    icon: "textures/gui/newgui/Language18.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Channel Management",

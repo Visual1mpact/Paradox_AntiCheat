@@ -22,6 +22,7 @@ export const tprCommand: Command = {
     examples: [`{prefix}tpr Lucy`, `{prefix}tpr Steve`, `{prefix}tpr accept`, `{prefix}tpr deny`],
     category: "Utility",
     securityClearance: 1,
+    icon: "textures/blocks/end_portal.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Teleport Request",

@@ -17,6 +17,7 @@ export const setRankCommand: Command = {
         `{prefix}setrank -t PlayerName --reset`,
         `{prefix}setrank --target PlayerName --reset`,
     ],
+    icon: "textures/items/book_portfolio.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Set or Reset Rank",

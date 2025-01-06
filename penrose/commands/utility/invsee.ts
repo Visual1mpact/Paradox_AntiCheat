@@ -12,6 +12,7 @@ export const invseeCommand: Command = {
     examples: [`{prefix}invsee PlayerName`, `{prefix}invsee help`],
     category: "Utility",
     securityClearance: 3,
+    icon: "textures/items/minecart_chest.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Viewer",

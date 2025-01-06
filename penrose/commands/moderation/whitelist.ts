@@ -10,6 +10,7 @@ export const whitelistCommand: Command = {
     examples: [`{prefix}whitelist add Steve`, `{prefix}whitelist remove Steve`, `{prefix}whitelist list`],
     category: "Moderation",
     securityClearance: 3,
+    icon: "textures/ui/multiplayer_glyph_color.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Whitelist Management",
@@ -21,6 +22,7 @@ export const whitelistCommand: Command = {
                 description: "Add a player to the whitelist.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
+                icon: "textures/ui/FriendsDiversity.png",
             },
             {
                 name: "Remove Player",
@@ -28,11 +30,13 @@ export const whitelistCommand: Command = {
                 description: "Remove a player from the whitelist.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
+                icon: "textures/ui/friend_glyph_desaturated.png",
             },
             {
                 name: "List Whitelisted Players",
                 command: ["list"],
                 description: "View all players currently on the whitelist.",
+                icon: "textures/ui/multiselection.png",
             },
         ],
         dynamicFields: [
