@@ -40,7 +40,6 @@ import { initializeSecurityClearanceTracking } from "./utility/level-4-security-
 import { healthChangeListener } from "./event-listeners/health-sync";
 import { whitelistCommand } from "./commands/moderation/whitelist";
 import { OptimizedDatabase } from "./classes/database/data-hive";
-// @ts-ignore
 import { guiCommand } from "./commands/gui/form_generator";
 
 // Data Hive
@@ -106,7 +105,7 @@ commandHandler.registerCommand([
     pvpToggleCooldownCommand,
     xrayCommand,
     whitelistCommand,
-    //guiCommand,
+    guiCommand,
 ]);
 
 export { commandHandler, paradoxModulesDB, channelsDB };
