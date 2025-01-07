@@ -81,9 +81,9 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
         return;
     }
 
-    const { memoryTier, maxRenderDistance } = player.clientSystemInfo;
+    const { maxRenderDistance } = player.clientSystemInfo;
 
-    if ((memoryTier === 0 && maxRenderDistance === 0) || maxRenderDistance < 6 || maxRenderDistance > 96) {
+    if (maxRenderDistance < 6 || maxRenderDistance > 96) {
         if (!bannedPlayers.includes(playerName)) {
             bannedPlayers.push(playerName);
             world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
