@@ -68,11 +68,17 @@ export const command: Command = {
         const commandNames = args.slice(1);
         const commandHandlerRegistry = commandHandler.getRegisteredCommands();
 
+        // Create arrays to hold commands for each status
+        const notRegistered: string[] = [];
+        const disabledCommands: string[] = [];
+        const enabledCommands: string[] = [];
+        const invalidCommands: string[] = [];
+
         // Process each command name
         commandNames.forEach((commandName) => {
             // Prevent disabling this command itself
             if (commandName === "command") {
-                message.sender.sendMessage(`§c"${commandName}" cannot be disabled.`);
+                message.sender.sendMessage(`"${commandName}" cannot be disabled.`);
                 return;
             }
 
@@ -80,7 +86,7 @@ export const command: Command = {
                 // Check if the command is already registered
                 const registeredCommand = commandHandlerRegistry.find((cmd) => cmd.name === commandName);
                 if (!registeredCommand) {
-                    message.sender.sendMessage(`§cCommand "${commandName}" is not registered.`);
+                    notRegistered.push(commandName);
                     return;
                 }
 
@@ -92,12 +98,12 @@ export const command: Command = {
 
                 // Add the command to the disabled commands database
                 disabledCommandsDB.set(commandName, registeredCommand);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Command "${commandName}" has been disabled.`);
+                disabledCommands.push(commandName);
             } else if (action === "enable") {
                 const checkCommand = disabledCommandsDB.get<Command>(commandName);
                 // Check if the command is in the disabled commands database
                 if (!checkCommand) {
-                    message.sender.sendMessage(`§cCommand "${commandName}" is not disabled or does not exist.`);
+                    notRegistered.push(commandName);
                     return;
                 }
 
@@ -106,12 +112,62 @@ export const command: Command = {
 
                 // Remove the command from the disabled commands database
                 disabledCommandsDB.delete(commandName);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Command "${commandName}" has been enabled.`);
+                enabledCommands.push(commandName);
             } else {
                 // Handle invalid action input
-                message.sender.sendMessage("§cInvalid action. Use 'enable' or 'disable'.");
+                invalidCommands.push(commandName);
             }
         });
+
+        // Compile all messages into one response, formatted as a tree
+        let responseMessage = "§2[§7Paradox§2]§o§7 Command Management Results:\n";
+
+        /**
+         * Generates a tree structure for a given section and its items.
+         * The tree structure represents command categories (e.g., enable, disable, etc.)
+         * and their respective commands, with special formatting for the last section.
+         *
+         * @param {string} action - The name of the action/category (e.g., "enable", "disable").
+         * @param {string[]} items - A list of commands under the given action.
+         * @param {boolean} [isLastBranch=false] - A flag indicating if this is the last section in the list.
+         *
+         * @returns {void} - This function modifies the global `responseMessage` variable by appending the generated tree structure.
+         */
+        const generateTreeBranch = (action: string, items: string[], isLastBranch: boolean = false): void => {
+            if (items.length > 0) {
+                // Adjusting tree structure for the last branch
+                const branchPrefix = isLastBranch ? "└──" : "├──"; // Use '└──' for the last branch
+                responseMessage += `§r   ${branchPrefix} §2[§7${action}§2]§7\n`;
+
+                items.forEach((cmd, index) => {
+                    // Check if this is the last item in the list to use '└──' for the last item
+                    const isLastItem = index === items.length - 1;
+                    const treeBranch = isLastItem ? "└──" : "├──";
+
+                    // Add the appropriate indentation and the command
+                    responseMessage += `§r   ${isLastBranch ? "    " : "│   "} ${treeBranch} §2${cmd}§r\n`;
+                });
+            }
+        };
+
+        const sections = [
+            { action: "Enable", items: enabledCommands },
+            { action: "Disable", items: disabledCommands },
+            { action: "Not Registered", items: notRegistered },
+            { action: "Invalid Commands", items: invalidCommands },
+        ];
+
+        // Filter out empty sections
+        const populatedSections = sections.filter((section) => section.items.length > 0);
+
+        // Loop through populated sections and call generateTreeBranch with the appropriate last branch flag
+        populatedSections.forEach((section, index) => {
+            const isLastBranch = index === populatedSections.length - 1;
+            generateTreeBranch(section.action, section.items, isLastBranch);
+        });
+
+        // Send the final compiled message
+        message.sender.sendMessage(responseMessage);
 
         // Re-register the updated command list
         commandHandler.registerCommand(commandHandlerRegistry);
