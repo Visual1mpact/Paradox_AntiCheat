@@ -1,6 +1,6 @@
 import { chatSendSubscription } from "./classes/subscriptions/chat-send-subscriptions";
 import { subscribeToWorldInitialize } from "./event-listeners/world-initialize";
-import { CommandHandler } from "./classes/command-handler";
+import { Command, CommandHandler } from "./classes/command-handler";
 import { opCommand } from "./commands/moderation/op";
 import { MinecraftEnvironment } from "./classes/container/dependencies";
 import { deopCommand } from "./commands/moderation/deop";
@@ -41,10 +41,12 @@ import { healthChangeListener } from "./event-listeners/health-sync";
 import { whitelistCommand } from "./commands/moderation/whitelist";
 import { OptimizedDatabase } from "./classes/database/data-hive";
 import { guiCommand } from "./commands/gui/form_generator";
+import { command } from "./commands/moderation/command";
 
 // Data Hive
 const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
 const channelsDB = new OptimizedDatabase("channels");
+const disabledCommandsDB = new OptimizedDatabase("disabledCommands");
 
 // Subscribe to chat send events
 chatSendSubscription.subscribe();
@@ -67,8 +69,8 @@ healthChangeListener.start();
 // Initialize the CommandHandler with the security key and Minecraft environment
 const commandHandler = new CommandHandler(minecraftEnvironment);
 
-// Register commands with the CommandHandler
-commandHandler.registerCommand([
+// Define all available commands
+const allCommands: Command[] = [
     opCommand,
     deopCommand,
     punishCommand,
@@ -106,6 +108,16 @@ commandHandler.registerCommand([
     xrayCommand,
     whitelistCommand,
     guiCommand,
-]);
+    command,
+];
 
-export { commandHandler, paradoxModulesDB, channelsDB };
+// Fetch disabled commands from the database and create a Set for faster lookups
+const disabledCommandsSet = new Set(disabledCommandsDB.entries().map((entry) => entry[0]));
+
+// Filter out disabled commands using the Set for faster lookup
+const enabledCommands = allCommands.filter((command) => !disabledCommandsSet.has(command.name));
+
+// Register only the enabled commands
+commandHandler.registerCommand(enabledCommands);
+
+export { commandHandler, paradoxModulesDB, channelsDB, disabledCommandsDB };

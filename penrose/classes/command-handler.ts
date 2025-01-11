@@ -297,16 +297,26 @@ export class CommandHandler {
 
     /**
      * Registers an array of commands.
+     * Clears any previously registered commands to prevent duplication.
      * @param commands - The commands to register.
      */
     registerCommand(commands: Command[]) {
+        // Clear previously registered commands
+        this.commands.clear();
+        this.commandsByCategory.clear();
+
         commands.forEach((command) => {
+            // Update the command's usage and examples with the current prefix
             command.usage = command.usage.replaceAll("{prefix}", this.prefix);
             command.examples = command.examples.map((example) => example.replace("{prefix}", this.prefix));
+
+            // Categorize the command
             const category = command.category.charAt(0).toUpperCase() + command.category.slice(1).toLowerCase();
             const categoryCommands = this.commandsByCategory.get(category) || [];
             categoryCommands.push(command);
             this.commandsByCategory.set(category, categoryCommands);
+
+            // Store the command in the commands map
             this.commands.set(command.name.toLowerCase(), command);
         });
     }
