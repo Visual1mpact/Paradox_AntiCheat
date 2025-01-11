@@ -13,7 +13,42 @@ export const command: Command = {
     category: "Moderation",
     examples: [`{prefix}command disable kick ban`, `{prefix}command enable kick ban`],
     securityClearance: 4,
-    icon: "textures/items/lever.png",
+    icon: "textures/items/minecart_command_block.png",
+    guiInstructions: {
+        formType: "ActionFormData",
+        title: "Command Management",
+        description: "Select an action to enable or disable commands.\n\n",
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Enable Command",
+                command: ["enable"],
+                description: "Enable one or more commands that are currently disabled.",
+                requiredFields: ["commandNames"],
+                crypto: false,
+                generateModalForm: true,
+                icon: "textures/ui/realms_green_check.png",
+            },
+            {
+                name: "Disable Command",
+                command: ["disable"],
+                description: "Disable one or more commands, preventing them from being used.",
+                requiredFields: ["commandNames"],
+                crypto: false,
+                generateModalForm: true,
+                icon: "textures/ui/realms_red_x.png",
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Commands to Enable/Disable:",
+                arg: undefined,
+                type: "text",
+                placeholder: "Commands (space-separated)",
+                requiredFields: ["commandNames"],
+            },
+        ],
+    },
 
     /**
      * Executes the command to enable or disable multiple commands.

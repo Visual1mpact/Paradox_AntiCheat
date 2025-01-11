@@ -72,9 +72,11 @@ class ChatSendSubscription {
         const channelData = channelsDB.get(channelName) as { Members: { [key: string]: string } } | undefined;
         if (!channelData) return [];
 
-        return Object.keys(channelData.Members)
-            .map((playerId) => world.getAllPlayers().find((p) => p.id === playerId))
-            .filter((p) => p !== undefined) as Player[];
+        // Pre-create a Set of player IDs from the channel data for quick lookup
+        const playerIdsInChannel = new Set(Object.keys(channelData.Members));
+
+        // Use a direct lookup to only fetch the players whose IDs are in the set
+        return world.getAllPlayers().filter((player) => playerIdsInChannel.has(player.id));
     }
 
     /**
