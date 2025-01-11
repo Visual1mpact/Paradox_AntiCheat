@@ -89,6 +89,22 @@ The despawn command is used to remove entities from the game world. It can be ap
 >Example: !despawn help
 >```
 
+## !gui
+### At A Glance
+The GUI command provides access to an interactive menu for managing server settings, player actions, and other administrative tasks. This is designed to streamline complex administrative functions into an easy-to-use interface.
+
+!> Required Clearance Level To Execute: 1
+
+> ```
+> Usage: "!gui"
+> Example: !gui
+> ```
+
+### **Notes**
+- The GUI command is optimized for rapid server administration and reduces potential for input errors.
+- Requires appropriate permissions for specific actions within the GUI.
+- Works best on supported platforms with input and display capabilities (e.g., desktop versions of Minecraft Bedrock).
+
 ## !op
 ### At A Glance
 The op command is used to grant a player Paradox-Op status within the server, providing them with elevated permissions and access.
