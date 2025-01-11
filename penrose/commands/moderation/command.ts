@@ -41,7 +41,7 @@ export const command: Command = {
         ],
         dynamicFields: [
             {
-                name: "Commands to Enable/Disable:",
+                name: "Commands to Enable / Disable:",
                 arg: undefined,
                 type: "text",
                 placeholder: "Commands (space-separated)",

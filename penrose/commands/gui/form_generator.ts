@@ -367,7 +367,14 @@ export const guiCommand: Command = {
                     }
                     // Check for undefined or empty values before adding to args
                     const dynamicFieldValue = dynamicField?.arg ?? (commandArray ? commandArray[formIndex - 1] : "");
-                    const finalValue = dynamicFieldValue && value ? `${dynamicFieldValue} ${value}`.trim() : value ? value.trim() : "";
+                    let finalValue = "";
+
+                    // Check if dynamicFieldValue starts with "-" or "--"
+                    if (dynamicFieldValue.startsWith("-") || dynamicFieldValue.startsWith("--")) {
+                        finalValue = dynamicFieldValue && value ? `${dynamicFieldValue} ${value}`.trim() : dynamicFieldValue.trim();
+                    } else {
+                        finalValue = value ? value.trim() : "";
+                    }
 
                     // Only push to args if the final value is not an empty string
                     if (finalValue) {
