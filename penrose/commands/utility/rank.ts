@@ -7,8 +7,8 @@ import { MinecraftEnvironment } from "../../classes/container/dependencies";
  */
 export const setRankCommand: Command = {
     name: "setrank",
-    description: "Sets or resets the chat rank for a player.",
-    usage: "{prefix}setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ]",
+    description: "Sets or resets the chat rank for a player, or disables rank functionality globally.",
+    usage: "{prefix}setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ --disable ]",
     examples: [
         `{prefix}setrank -t PlayerName -r [Admin]`,
         `{prefix}setrank --target PlayerName --rank [Member]`,
@@ -16,12 +16,13 @@ export const setRankCommand: Command = {
         `{prefix}setrank --rank [Member] --target PlayerName`,
         `{prefix}setrank -t PlayerName --reset`,
         `{prefix}setrank --target PlayerName --reset`,
+        `{prefix}setrank --disable`,
     ],
     icon: "textures/items/book_portfolio.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Set or Reset Rank",
-        description: "Set or reset a player's chat rank.\n\n",
+        description: "Set or reset a player's chat rank, or disable rank functionality globally.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -37,6 +38,13 @@ export const setRankCommand: Command = {
                 requiredFields: ["PlayerName"],
                 crypto: false,
                 generateModalForm: true,
+            },
+            {
+                name: "Disable Ranks Globally",
+                command: ["--disable"],
+                requiredFields: [],
+                crypto: false,
+                generateModalForm: false,
             },
         ],
         dynamicFields: [
@@ -67,13 +75,25 @@ export const setRankCommand: Command = {
     execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
         const world = minecraftEnvironment.getWorld();
 
+        // Check if the global rank setting is disabled
+        const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
+
+        const senderClearance = message.sender.getDynamicProperty("securityClearance") as number;
+
+        // If ranks are disabled globally, prevent setting or resetting ranks
+        if (isRankDisabled && senderClearance < 4) {
+            message.sender.sendMessage(`§cGlobal rank management is currently disabled.`);
+            return;
+        }
+
         // Initialize variables for player name, rank, and reset flag
         let playerName = "";
         let rank = "";
         let reset = false;
+        let disableRanksGlobally = false;
 
         // Define valid flags
-        const validFlags = new Set(["-t", "--target", "-r", "--rank", "--reset"]);
+        const validFlags = new Set(["-t", "--target", "-r", "--rank", "--reset", "--disable"]);
 
         /**
          * Captures and returns a multi-word argument from the provided array of arguments.
@@ -109,11 +129,27 @@ export const setRankCommand: Command = {
                     reset = true;
                     break;
                 }
+                case "--disable": {
+                    if (senderClearance === 4) {
+                        disableRanksGlobally = true;
+                    } else {
+                        message.sender.sendMessage(`§cYou do not have permission to disable ranks globally.`);
+                        return;
+                    }
+                    break;
+                }
             }
         }
 
-        // Check if player name is provided
-        if (!playerName) {
+        // Handle disabling ranks globally (only for level 4 users)
+        if (disableRanksGlobally) {
+            world.setDynamicProperty("globalRankDisabled", true);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been disabled globally.`);
+            return;
+        }
+
+        // Check if player name is provided for rank assignment or reset
+        if (!playerName && !reset) {
             const prefix = world.getDynamicProperty("__prefix") ?? "!";
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}setrank -t <player> [-r <rank> | --reset]`);
             return;
