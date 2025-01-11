@@ -14,6 +14,28 @@ The ban command is used to ban a player from the server, with the option to prov
 > Example: !ban -l
 > ```
 
+## !command
+### At a Glance
+The `!command` command enables or disables other commands dynamically. This provides administrators with flexibility in managing which commands are active on the server. It is an essential moderation tool for customizing command availability without requiring code changes or server restarts.
+
+!> Required Clearance Level To Execute: 4
+
+> ```
+> Usage: "!command [ enable | disable ] <commandName1> [commandName2] ...",
+> Example: !command disable kick ban
+> Example: !command enable kick ban
+> ```
+
+### **Options**
+- `enable`: Activates one or more previously disabled commands, making them available for use.
+- `disable`: Deactivates one or more active commands, preventing them from being executed.
+- `<commandName(s)>`: Specifies one or more command names to enable or disable. Multiple commands should be space-separated.
+
+### **Notes**
+- The `!command` command cannot be disabled itself to prevent accidental loss of administrative control.
+- Use the `disable` option cautiously to ensure critical commands remain functional.
+- This command dynamically updates the command registry, ensuring real-time changes are reflected.
+
 
 ## !kick
 ### At A Glance
