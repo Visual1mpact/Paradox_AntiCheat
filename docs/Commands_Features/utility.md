@@ -102,19 +102,22 @@ Admins can use this command to set a custom cooldown for toggling PvP in seconds
 ## !setrank
 
 ### At A Glance
- The set rank command allows you to set a players rank within chat, you can also use this to reset the rank of a player.
+The `setrank` command allows you to set a player's rank within chat, reset a player's rank, or disable the rank functionality globally.
 
 ### How It Works
-The command uses flags to specify the target player (-t or --target) and the rank (-r or --rank) or to reset the rank (--reset). When executed, it checks the provided arguments and ensures the target player exists. If a rank is specified, it updates the player's rank; if the --reset flag is used, it removes the player's rank. Both the command sender and the target player receive notifications about the rank change. 
+The command uses flags to specify the target player (`-t` or `--target`) and the rank (`-r` or `--rank`), or to reset the rank (`--reset`). Additionally, the `--disable` flag can be used to disable rank functionality for the entire server. 
 
-!> Required Clearance Level To Execute: 3
+When executed, it checks the provided arguments and ensures the target player exists. If a rank is specified, it updates the player's rank; if the `--reset` flag is used, it removes the player's rank. If the `--disable` flag is used, it disables the rank system entirely, but this can only be executed by users with clearance level 4. Both the command sender and the target player (if applicable) receive notifications about the rank change.
+
+!> Required Clearance Level To Execute: 3 for setting ranks, 4 for disabling ranks globally.
 
 > ```
-> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ]"
+> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ --disable ]"
 > Example: setrank --target PlayerName --rank [Member]
 > Example: !setrank -t PlayerName -r [Admin]
 > Example: !setrank -t PlayerName --reset
 > Example: !setrank --target PlayerName --reset
+> Example: !setrank --disable
 > ```
 
 ## !tpr
