@@ -69,10 +69,13 @@ export const guiCommand: Command = {
                 return;
             }
 
+            // Sort categories alphabetically
+            accessibleCategories.sort((a, b) => a.category.localeCompare(b.category));
+
             const actionFormData = minecraftEnvironment.initializeActionFormData();
             const mainMenu = actionFormData.title("Main Menu").body("Select a category:");
 
-            // Add buttons for each accessible category
+            // Add buttons for each accessible category in sorted order
             accessibleCategories.forEach(({ category }) => {
                 // Get the icon path for the category
                 const iconPath = getCategoryIconPath(category);
@@ -99,7 +102,10 @@ export const guiCommand: Command = {
             const actionFormData = minecraftEnvironment.initializeActionFormData();
             const form = actionFormData.title(`${categoryName} Commands`).body("Select a command:");
 
-            // Add buttons for each command
+            // Sort commands alphabetically
+            commands.sort((a, b) => a.name.localeCompare(b.name));
+
+            // Add buttons for each command in sorted order
             commands.forEach((command) => {
                 form.button(command.name.charAt(0).toUpperCase() + command.name.slice(1).toLowerCase(), command.icon);
             });
