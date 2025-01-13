@@ -1,4 +1,4 @@
-import { Player, World } from "@minecraft/server";
+import { Player, system, world } from "@minecraft/server";
 
 // This will store players with security clearance level 4
 let securityClearanceLevel4Players: Set<Player> = new Set();
@@ -34,14 +34,8 @@ export const removePlayerFromSecurityClearanceList = (player: Player): void => {
 /**
  * Initializes the tracking of players with security clearance level 4.
  * This function should be called once when your script starts.
- * @param {World} world - The Minecraft world instance.
  */
-export const initializeSecurityClearanceTracking = (world: World): void => {
-    // Add currently online players with security clearance level 4 to the list
-    world.getAllPlayers().forEach((player) => {
-        addPlayerToSecurityClearanceList(player);
-    });
-
+export const initializeSecurityClearanceTracking = (): void => {
     // Listen for players joining and add them if they have security clearance level 4
     world.afterEvents.playerSpawn.subscribe((event) => {
         if (!event.initialSpawn) {

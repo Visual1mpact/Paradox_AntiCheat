@@ -1,4 +1,3 @@
-import { world } from "@minecraft/server";
 import { chatSendSubscription } from "./classes/subscriptions/chat-send-subscriptions";
 import { subscribeToWorldInitialize } from "./event-listeners/world-initialize";
 import { Command, CommandHandler } from "./classes/command-handler";
@@ -52,7 +51,7 @@ const disabledCommandsDB = new OptimizedDatabase("disabledCommands");
 chatSendSubscription.subscribe();
 
 // Initializes the tracking of players with security clearance level 4.
-initializeSecurityClearanceTracking(world);
+initializeSecurityClearanceTracking();
 
 // Subscribe to world initialization events
 subscribeToWorldInitialize();
