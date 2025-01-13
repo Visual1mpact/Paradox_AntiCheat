@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent, Player, system } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command } from "../../../../penrose/classes/command-handler";
-import { MinecraftEnvironment } from "../../../../penrose/classes/container/dependencies";
 
 interface ScaleObject {
     enabled: boolean;
@@ -24,9 +23,8 @@ export const tinyCommand: Command = {
      * @param {string[]} args - The command arguments.
      * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
 
         // Find the player object based on the command arguments or use the sender
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
