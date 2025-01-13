@@ -30,7 +30,7 @@ export const tprCommand: Command = {
         actions: [
             {
                 name: "Send Teleport Request",
-                command: ["tpr"],
+                command: undefined,
                 description: "Send a request to a player",
                 requiredFields: ["PlayerName"],
                 crypto: false,
