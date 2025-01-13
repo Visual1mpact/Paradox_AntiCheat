@@ -16,7 +16,7 @@ import { globalBanPlayers } from "../data/global-ban";
 import { paradoxVersion } from "../data/versioning";
 import { paradoxModulesDB } from "../paradox";
 import { OptimizedDatabase } from "../classes/database/data-hive";
-import { startSelfAttackCheck } from "penrose/modules/self-infliction";
+import { startSelfAttackCheck } from "../modules/self-infliction";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -132,89 +132,33 @@ function initializeParadoxModules() {
     // Retrieve paradoxModules from the OptimizedDatabase (paradoxModulesDB)
     const paradoxModules = paradoxModulesDB.entries(); // Getting all entries
 
+    // Lookup table for module initialization
+    const moduleActions: { [key: string]: () => void } = {
+        lagClearCheck_b: () => {
+            const settings = (paradoxModulesDB.get("lagClear_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 5, seconds: 0 };
+            startLagClear(settings.hours, settings.minutes, settings.seconds);
+        },
+        gamemodeCheck_b: () => startGameModeCheck(),
+        worldBorderCheck_b: () => startWorldBorderCheck(),
+        flyCheck_b: () => startFlyCheck(),
+        afkCheck_b: () => {
+            const settings = (paradoxModulesDB.get("afk_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 10, seconds: 0 };
+            startAFKChecker(settings.hours, settings.minutes, settings.seconds);
+        },
+        hitReachCheck_b: () => startHitReachCheck(),
+        autoClickerCheck_b: () => startAutoClicker(),
+        killAuraCheck_b: () => startKillAuraCheck(),
+        scaffoldCheck_b: () => startScaffoldCheck(),
+        nameSpoofCheck_b: () => startNamespoofDetection(),
+        xrayDetection_b: () => startXrayDetection(),
+        selfAttackCheck_b: () => startSelfAttackCheck(),
+    };
+
     // Iterate over the entries and start corresponding modules if their value is true
     system.run(() => {
         paradoxModules.forEach(([key, value]) => {
-            switch (key) {
-                case "lagClearCheck_b": {
-                    if (value === true) {
-                        const settings = (paradoxModulesDB.get("lagClear_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 5, seconds: 0 };
-                        startLagClear(settings.hours, settings.minutes, settings.seconds);
-                    }
-                    break;
-                }
-                case "gamemodeCheck_b": {
-                    if (value === true) {
-                        startGameModeCheck();
-                    }
-                    break;
-                }
-                case "worldBorderCheck_b": {
-                    if (value === true) {
-                        startWorldBorderCheck();
-                    }
-                    break;
-                }
-                case "flyCheck_b": {
-                    if (value === true) {
-                        startFlyCheck();
-                    }
-                    break;
-                }
-                case "afkCheck_b": {
-                    if (value === true) {
-                        const settings = (paradoxModulesDB.get("afk_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 10, seconds: 0 };
-                        startAFKChecker(settings.hours, settings.minutes, settings.seconds);
-                    }
-                    break;
-                }
-                case "hitReachCheck_b": {
-                    if (value === true) {
-                        startHitReachCheck();
-                    }
-                    break;
-                }
-                case "autoClickerCheck_b": {
-                    if (value === true) {
-                        startAutoClicker();
-                    }
-                    break;
-                }
-                case "killAuraCheck_b": {
-                    if (value === true) {
-                        startKillAuraCheck();
-                    }
-                    break;
-                }
-                case "scaffoldCheck_b": {
-                    if (value === true) {
-                        startScaffoldCheck();
-                    }
-                    break;
-                }
-                case "nameSpoofCheck_b": {
-                    if (value === true) {
-                        startNamespoofDetection();
-                    }
-                    break;
-                }
-                case "xrayDetection_b": {
-                    if (value === true) {
-                        startXrayDetection();
-                    }
-                    break;
-                }
-                case "selfAttackCheck_b": {
-                    if (value === true) {
-                        startSelfAttackCheck();
-                    }
-                    break;
-                }
-                // Add more cases for other modules here
-                default: {
-                    // Handle unknown properties or log them if needed
-                    break;
-                }
+            if (value === true && moduleActions[key]) {
+                moduleActions[key](); // Call the appropriate function for the module
             }
         });
     });
