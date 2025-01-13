@@ -16,6 +16,7 @@ import { globalBanPlayers } from "../data/global-ban";
 import { paradoxVersion } from "../data/versioning";
 import { paradoxModulesDB } from "../paradox";
 import { OptimizedDatabase } from "../classes/database/data-hive";
+import { startSelfAttackCheck } from "penrose/modules/self-infliction";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -200,6 +201,12 @@ function initializeParadoxModules() {
                 case "xrayDetection_b": {
                     if (value === true) {
                         startXrayDetection();
+                    }
+                    break;
+                }
+                case "selfAttackCheck_b": {
+                    if (value === true) {
+                        startSelfAttackCheck();
                     }
                     break;
                 }
