@@ -102,7 +102,7 @@ export const tprCommand: Command = {
             const request = pendingRequests.get(receiverName);
             if (request) {
                 const sender = request.sender;
-                sender.teleport(receiver.location);
+                sender.teleport(receiver.location, { dimension: receiver.dimension });
                 sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request accepted. Teleporting to ${receiverName}.`);
                 receiver.sendMessage(`§2[§7Paradox§2]§o§7 You accepted the teleport request from ${sender.name}.`);
                 cancelTeleportRequest(receiverName);
