@@ -1,4 +1,4 @@
-import { Player, system, world } from "@minecraft/server";
+import { Player, world } from "@minecraft/server";
 
 // This will store players with security clearance level 4
 let securityClearanceLevel4Players: Set<Player> = new Set();
