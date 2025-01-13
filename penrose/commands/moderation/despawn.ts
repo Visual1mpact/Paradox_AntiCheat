@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent, EntityQueryOptions } from "@minecraft/server";
+import { ChatSendBeforeEvent, EntityQueryOptions, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 /**
  * Represents the despawn command.
@@ -48,12 +47,8 @@ export const despawnCommand: Command = {
      * Executes the despawn command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const parameter = args.join(" ").trim().replace(/["@]/g, "");
 
         system.run(() => {

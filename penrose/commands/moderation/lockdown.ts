@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import _default from "../../node_modules/crypto-es/lib/index";
 
 /**
@@ -32,14 +31,10 @@ export const lockdownCommand: Command = {
      * Executes the lockdown command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      * @param {boolean} [returnMonitorFunction=false] - If true, returns the lockDownMonitor function.
      * @returns {void | (function(PlayerSpawnAfterEvent): void)} - The lockDownMonitor function if returnMonitorFunction is true, otherwise void.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment, __: typeof _default, returnMonitorFunction: boolean = false): void | ((object: PlayerSpawnAfterEvent) => void) => {
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-
+    execute: (message: ChatSendBeforeEvent, _: string[], __: typeof _default, returnMonitorFunction: boolean = false): void | ((object: PlayerSpawnAfterEvent) => void) => {
         // Get Dynamic Property Boolean to check if the server is already in lockdown
         const lockdownBoolean = world.getDynamicProperty("lockdown_b");
 

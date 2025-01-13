@@ -1,6 +1,5 @@
-import { Player, ChatSendBeforeEvent, TicksPerSecond } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, TicksPerSecond, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { channelsDB } from "../../paradox";
 
 type PlayerID = string;
@@ -54,10 +53,8 @@ export const channelCommand: Command = {
      * Executes the channel command.
      * @param {ChatSendBeforeEvent} message - The message object representing the chat event.
      * @param {string[]} args - The command arguments parsed from the chat message.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const playerName = message.sender.name;
         const playerId = message.sender.id; // Get the player's ID
 
@@ -84,7 +81,7 @@ export const channelCommand: Command = {
         function cancelInvitation(receiverName: string): void {
             const invitation = pendingInvitations.get(receiverName);
             if (invitation) {
-                minecraftEnvironment.getSystem().clearRun(invitation.timeoutId);
+                system.clearRun(invitation.timeoutId);
                 pendingInvitations.delete(receiverName);
             }
         }
@@ -142,7 +139,7 @@ export const channelCommand: Command = {
                 return;
             }
 
-            const timeoutId = minecraftEnvironment.getSystem().runTimeout(() => {
+            const timeoutId = system.runTimeout(() => {
                 cancelInvitation(receiverName);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName} did not respond in time. Invitation canceled.`);
                 receiver.sendMessage(`§2[§7Paradox§2]§o§7 You did not respond to the channel invitation in time. Invitation canceled.`);

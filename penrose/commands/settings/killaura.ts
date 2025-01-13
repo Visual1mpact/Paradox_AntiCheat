@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startKillAuraCheck, stopKillAuraCheck } from "../../modules/killaura";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -33,11 +32,9 @@ export const killauraCommand: Command = {
      * Executes the killaura detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
-        const system = minecraftEnvironment.getSystem();
 
         // Retrieve the current state of the module from paradoxModulesDB
         const killauraEnabled = paradoxModulesDB.get("killAuraCheck_b") ?? false;

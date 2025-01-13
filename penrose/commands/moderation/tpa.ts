@@ -1,6 +1,5 @@
-import { Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, world, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 /**
  * Represents the tpa command.
@@ -47,12 +46,8 @@ export const tpaCommand: Command = {
      * Executes the tpa command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         /**
          * Function to look up a player by name and retrieve the player object.
          * @param {string} playerName - The name of the player to look up.

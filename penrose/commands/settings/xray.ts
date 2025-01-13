@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startXrayDetection, stopXrayDetection } from "../../modules/xray";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -32,11 +31,9 @@ export const xrayCommand: Command = {
      * Executes the Xray detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
-        const system = minecraftEnvironment.getSystem();
 
         // Get current Xray detection module state from paradoxModulesDB
         const xrayEnabled = paradoxModulesDB.get("xrayDetection_b") ?? false; // Default to false if not set

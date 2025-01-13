@@ -1,6 +1,5 @@
-import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, world, system, EquipmentSlot } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 /**
  * Represents the punish command.
@@ -72,12 +71,7 @@ export const punishCommand: Command = {
      * @param {string[]} args - The command arguments.
      * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        // Retrieve the world and system from the Minecraft environment
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-        const equipmentSlot = minecraftEnvironment.getEquipmentSlot();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         /**
          * Function to look up a player by name and retrieve the player object.
          * @param {string} playerName - The name of the player to look up.
@@ -146,7 +140,7 @@ export const punishCommand: Command = {
             if (target && target.isValid()) {
                 // Wipe out items in each equipment slot from requested player's equipment container
                 if (wipeEquipment) {
-                    for (const slot of Object.values(equipmentSlot)) {
+                    for (const slot of Object.values(EquipmentSlot)) {
                         const equippableContainer: EntityEquippableComponent = target.getComponent("minecraft:equippable") as EntityEquippableComponent;
                         equippableContainer.setEquipment(slot); // Set the slot to wipe out
                     }

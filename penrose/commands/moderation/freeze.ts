@@ -1,6 +1,5 @@
-import { Player, ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, Vector3, world, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 // Define the dimensions and block type of the prison
 const PRISON_WIDTH = 5;
@@ -154,13 +153,8 @@ export const imprisonCommand: Command = {
      * Executes the imprison command to imprison or release a player.
      * @param {ChatSendBeforeEvent} message - The message event object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        // Retrieve the world and system from the Minecraft environment
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Find the player object based on the command arguments or use the sender
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         let player: Player | undefined = playerName.length > 0 ? world.getAllPlayers().find((p) => p.name === playerName) : message.sender;

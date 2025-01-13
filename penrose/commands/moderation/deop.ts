@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { removePlayerFromSecurityClearanceList } from "../../utility/level-4-security-tracker";
 
 interface PlayerInfo {
@@ -67,14 +66,10 @@ export const deopCommand: Command = {
      * Executes the deop command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      * @returns {Promise<void>} A promise that resolves once the command execution is complete.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment): Promise<void> => {
+    execute: (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         return new Promise<void>((resolve) => {
-            const world = minecraftEnvironment.getWorld();
-            const system = minecraftEnvironment.getSystem();
-
             /**
              * Removes Paradox-Op permissions associated with a player.
              * @param {string} playerName - The name of the player whose permissions should be removed.

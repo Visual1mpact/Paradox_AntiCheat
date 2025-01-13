@@ -1,7 +1,7 @@
-import { ChatSendBeforeEvent, EntityHealthComponent, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, EntityHealthComponent, Player, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { initializePvPSystem, stopPvPSystem, updateCoolDownTicks } from "../../modules/pvp-manager";
+import { MessageFormData } from "@minecraft/server-ui";
 
 /**
  * Converts a given time in seconds to a more human-readable format (hours, minutes, and seconds).
@@ -58,10 +58,8 @@ export const pvpToggleCooldownCommand: Command = {
      *
      * @param {ChatSendBeforeEvent} message - The message object sent by the player.
      * @param {string[]} args - The command arguments. Expects the cooldown time as a number (in seconds).
-     * @param {MinecraftEnvironment} minecraftEnvironment - The environment for Minecraft.
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
+    execute: async (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
 
         // Ensure the argument is a valid number
@@ -115,10 +113,8 @@ export const pvpCooldownCommand: Command = {
      *
      * @param {ChatSendBeforeEvent} message - The message object sent by the player.
      * @param {string[]} args - The command arguments. Expects the cooldown time as a number (in seconds).
-     * @param {MinecraftEnvironment} minecraftEnvironment - The environment for Minecraft.
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
+    execute: async (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
 
         // Ensure the argument is a valid number
@@ -176,9 +172,8 @@ export const pvpToggleCommand: Command = {
      * Executes the pvp command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
         const isGlobal = args.includes("global");
         const showStatus = args.includes("status");
@@ -186,8 +181,6 @@ export const pvpToggleCommand: Command = {
         const dynamicPropertyKey = "pvpEnabled"; // Key for PvP status dynamic property on the player
         const globalDynamicPropertyKey = "pvpGlobalEnabled"; // Key for global PvP status dynamic property
         const cooldownPropertyKey = "pvpToggleCooldown"; // Key for storing the last toggle tick
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
         const currentTick = system.currentTick;
         // Define default cooldown time in ticks (2 minutes = 2 * 60 * 20 ticks)
         const PVP_TOGGLE_COOLDOWN_TICKS = (world.getDynamicProperty("customPvPToggleCooldown") as number) ?? 2 * 60 * 20;
@@ -227,8 +220,7 @@ export const pvpToggleCommand: Command = {
                 system.run(() => {
                     // Show a confirmation form to the player if PvP is still enabled globally
                     function alertNotice(player: Player) {
-                        const form = minecraftEnvironment
-                            .initializeMessageFormData()
+                        const form = new MessageFormData()
                             .title("            PvP System Disabled")
                             .body(
                                 "You have disabled the global PvP management system in Paradox. This system controls how PvP is handled across the server. However, this does not automatically change the PvP game rule, which decides if PvP is allowed in the world. You can still choose to leave the PvP game rule as it is, or you can disable PvP in the world completely. Would you like to change the game rule and disable PvP in the world as well?"

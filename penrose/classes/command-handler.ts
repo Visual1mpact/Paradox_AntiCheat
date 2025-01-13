@@ -1,5 +1,4 @@
 import { Player, ChatSendBeforeEvent, system, world, PlayerSpawnAfterEvent } from "@minecraft/server";
-import { MinecraftEnvironment } from "./container/dependencies";
 import CryptoES from "../node_modules/crypto-es/lib/index";
 
 /**
@@ -256,7 +255,6 @@ export interface Command {
      * The function signature includes:
      * - `message`: The message object that triggered the command.
      * - `args`: The arguments passed to the command (optional).
-     * - `minecraftEnvironment`: The Minecraft environment (optional).
      * - `cryptoES`: A reference to the CryptoES library (optional).
      * - `returnMonitorFunction`: A flag to indicate if the return monitor should be executed (optional).
      *
@@ -270,7 +268,7 @@ export interface Command {
      *     // Command logic here
      * };
      */
-    execute: (message: ChatSendBeforeEvent, args?: string[], minecraftEnvironment?: MinecraftEnvironment, cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
+    execute: (message: ChatSendBeforeEvent, args?: string[], cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
 }
 
 /**
@@ -289,10 +287,9 @@ export class CommandHandler {
 
     /**
      * Constructs a CommandHandler.
-     * @param minecraftEnvironment - The Minecraft environment context.
      */
-    constructor(private minecraftEnvironment: MinecraftEnvironment) {
-        this.prefix = (this.minecraftEnvironment.getWorld().getDynamicProperty("__prefix") as string) || "!";
+    constructor() {
+        this.prefix = (world.getDynamicProperty("__prefix") as string) || "!";
     }
 
     /**
@@ -446,7 +443,7 @@ export class CommandHandler {
         if (command) {
             if ((playerSecurityClearance && playerSecurityClearance >= command.securityClearance) || commandName === "op") {
                 try {
-                    const validateReturn = command.execute(message, args, this.minecraftEnvironment, CryptoES);
+                    const validateReturn = command.execute(message, args, CryptoES);
                     if (commandName === "prefix" && validateReturn) {
                         return true;
                     }

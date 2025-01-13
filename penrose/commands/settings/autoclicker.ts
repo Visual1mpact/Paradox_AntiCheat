@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startAutoClicker, stopAutoClicker } from "../../modules/autoclicker";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -33,11 +32,9 @@ export const autoClickerCommand: Command = {
      * Executes the auto-clicker detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
-        const system = minecraftEnvironment.getSystem();
 
         // Get auto-clicker detection status from the database
         const autoClickerEnabled = (paradoxModulesDB.get("autoClickerCheck_b") as boolean) ?? false;

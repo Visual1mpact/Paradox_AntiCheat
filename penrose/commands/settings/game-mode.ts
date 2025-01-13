@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -58,12 +57,9 @@ export const gameModeCommand: Command = {
      * Executes the gamemode command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
 
         const modeKeys = {
             gamemodeCheck: "gamemodeCheck_b",

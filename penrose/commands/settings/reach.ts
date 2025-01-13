@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startHitReachCheck, stopHitReachCheck } from "../../modules/reach";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -33,11 +32,9 @@ export const hitReachCheckCommand: Command = {
      * Executes the hit reach detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
-        const system = minecraftEnvironment.getSystem();
 
         const hitReachCheckKey = "hitReachCheck_b";
 

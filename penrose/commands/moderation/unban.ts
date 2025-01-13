@@ -1,6 +1,5 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent } from "@minecraft/server";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 
 // Define the unban command
 export const unbanCommand: Command = {
@@ -46,12 +45,9 @@ export const unbanCommand: Command = {
      * Executes the unban command.
      * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments, where the first element should be the player name to unban.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance providing access to world and other utilities.
      * @returns {void}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment): void => {
-        const world = minecraftEnvironment.getWorld();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
         // Check for global flag
         const global = ["--global", "-g"].some((flag) => args.includes(flag));
         const dynamicProperty = global ? "globalBannedPlayers" : "bannedPlayers";

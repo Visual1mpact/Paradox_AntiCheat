@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startLagClear, stopLagClear } from "../../modules/lag-clear";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -63,11 +62,9 @@ export const lagClearCommand: Command = {
      * Executes the lagclear command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
-        const system = minecraftEnvironment.getSystem();
 
         // Keys for lag clear settings in the database
         const lagClearKey = "lagClearCheck_b";

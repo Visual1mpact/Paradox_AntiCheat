@@ -1,6 +1,5 @@
-import { Player, ChatSendBeforeEvent, TicksPerSecond } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, TicksPerSecond, world, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 interface TeleportRequest {
     sender: Player;
@@ -66,12 +65,8 @@ export const tprCommand: Command = {
      * Executes the tpr command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         /**
          * Function to look up a player by name and retrieve the player object.
          * @param {string} playerName - The name of the player to look up.

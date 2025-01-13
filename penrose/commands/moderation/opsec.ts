@@ -1,5 +1,4 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -48,10 +47,8 @@ export const opsecCommand: Command = {
      * Executes the opsec command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const senderClearance = message.sender.getDynamicProperty("securityClearance") as number;
 
         // Validate command arguments

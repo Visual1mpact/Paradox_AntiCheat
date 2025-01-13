@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 /**
  * Represents the prefix command.
@@ -42,13 +41,9 @@ export const prefixCommand: Command = {
      * Executes the prefix command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      * @returns {Promise<boolean>} A promise that resolves to true if the prefix update was successful, otherwise false.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment): Promise<boolean> => {
-        // Retrieve the world and system from the Minecraft environment
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
+    execute: (message: ChatSendBeforeEvent, args: string[]): Promise<boolean> => {
         return new Promise<boolean>((resolve) => {
             system.run(() => {
                 // Check if a new prefix is provided

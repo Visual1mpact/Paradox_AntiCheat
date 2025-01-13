@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -120,11 +119,9 @@ export const worldBorderCommand: Command = {
      * Executes the worldborder command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const player = message.sender;
-        const world = minecraftEnvironment.getWorld();
 
         const modeKeys = {
             worldBorderCheck: "worldBorderCheck_b",

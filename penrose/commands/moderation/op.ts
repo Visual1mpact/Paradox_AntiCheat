@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { addPlayerToSecurityClearanceList } from "../../utility/level-4-security-tracker";
 
 interface PlayerInfo {
@@ -58,10 +57,8 @@ export const opCommand: Command = {
      * Executes the OP command logic.
      * @param {ChatSendBeforeEvent} message - The message object that contains details about the chat event.
      * @param {string[]} args - The arguments passed along with the command.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance providing access to the game world and players.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment): void => {
-        const world = minecraftEnvironment.getWorld();
+    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
         const sender = message.sender;
         const securityCheck = sender.getDynamicProperty("securityClearance") as number;
 

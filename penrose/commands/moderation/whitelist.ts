@@ -1,6 +1,5 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent } from "@minecraft/server";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 
 // Define the whitelist command
 export const whitelistCommand: Command = {
@@ -53,11 +52,9 @@ export const whitelistCommand: Command = {
      * Executes the whitelist command.
      * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments, where the first element specifies the action and the second (optional) is the player name.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance providing access to world and other utilities.
      * @returns {void}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment): void => {
-        const world = minecraftEnvironment.getWorld();
+    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
         const dynamicProperty = "whitelistedPlayers";
 
         // Retrieve the whitelist from dynamic properties and parse it

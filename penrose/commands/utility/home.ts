@@ -1,6 +1,5 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent, Vector3 } from "@minecraft/server";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
+import { ChatSendBeforeEvent, system, Vector3, world } from "@minecraft/server";
 import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
@@ -32,12 +31,9 @@ export const homeCommand: Command = {
      * Executes the home command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      * @param {typeof CryptoES} cryptoES - The CryptoES namespace for encryption/decryption.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment, cryptoES: typeof CryptoES) => {
-        const system = minecraftEnvironment.getSystem();
-        const world = minecraftEnvironment.getWorld();
+    execute: (message: ChatSendBeforeEvent, args: string[], cryptoES: typeof CryptoES) => {
         const player = message.sender;
 
         // Maximum number of homes a player can save
@@ -176,7 +172,7 @@ export const homeCommand: Command = {
                     const [, , location, dimension] = decryptedTag.split(":");
                     const [x, y, z] = location.split(",");
                     const teleportLocation = { x: parseFloat(x), y: parseFloat(y), z: parseFloat(z) };
-                    const dimensionType = minecraftEnvironment.getWorld().getDimension(dimension);
+                    const dimensionType = world.getDimension(dimension);
                     const teleportOptions = { dimension: dimensionType };
                     const success = player.tryTeleport(teleportLocation, teleportOptions);
                     if (success) {

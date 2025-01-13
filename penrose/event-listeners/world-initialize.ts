@@ -1,6 +1,5 @@
 import { PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { lockdownCommand } from "../commands/moderation/lockdown";
-import { MinecraftEnvironment } from "../classes/container/dependencies";
 import { startLagClear } from "../modules/lag-clear";
 import { startGameModeCheck } from "../modules/game-mode";
 import { startWorldBorderCheck } from "../modules/world-border";
@@ -219,8 +218,7 @@ function initializeParadoxModules() {
  * If lockdown is active, the player spawn event will be handled by the lockdown monitor.
  */
 function subscribeToLockDown() {
-    const environment = MinecraftEnvironment.getInstance();
-    lockDownMonitor = lockdownCommand.execute(undefined, undefined, environment, undefined, true) as (event: PlayerSpawnAfterEvent) => void;
+    lockDownMonitor = lockdownCommand.execute(undefined, undefined, undefined, true) as (event: PlayerSpawnAfterEvent) => void;
     if (lockDownMonitor) {
         wrappedLockDownMonitor = (event: PlayerSpawnAfterEvent) => {
             const isLockdownActive = world.getDynamicProperty("lockdown_b");

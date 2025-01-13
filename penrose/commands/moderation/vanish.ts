@@ -1,6 +1,5 @@
-import { GameMode, Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { GameMode, Player, ChatSendBeforeEvent, world, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 /**
  * Represents the vanish command.
@@ -47,14 +46,8 @@ export const vanishCommand: Command = {
      * Executes the vanish command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        // Retrieve the world and system from the Minecraft environment
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-        const gameMode = minecraftEnvironment.getGameMode();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Check if player argument is provided
         let player: Player | undefined = undefined;
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
@@ -83,10 +76,10 @@ export const vanishCommand: Command = {
                 // Determine if messages should be sent (when playerName is provided and doesn't match player.name)
                 const shouldSendMessages = playerName && playerName !== player.name;
 
-                if (playerGameMode !== gameMode.spectator) {
+                if (playerGameMode !== GameMode.spectator) {
                     // Set the player's game mode to spectator and backup the previous game mode
                     player.setDynamicProperty("GameModeBackup", playerGameMode);
-                    player.setGameMode(gameMode.spectator);
+                    player.setGameMode(GameMode.spectator);
 
                     // Send message indicating that vanish is enabled for the player
                     player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);

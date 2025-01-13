@@ -1,8 +1,8 @@
+import { world } from "@minecraft/server";
 import { chatSendSubscription } from "./classes/subscriptions/chat-send-subscriptions";
 import { subscribeToWorldInitialize } from "./event-listeners/world-initialize";
 import { Command, CommandHandler } from "./classes/command-handler";
 import { opCommand } from "./commands/moderation/op";
-import { MinecraftEnvironment } from "./classes/container/dependencies";
 import { deopCommand } from "./commands/moderation/deop";
 import { punishCommand } from "./commands/moderation/punish";
 import { vanishCommand } from "./commands/moderation/vanish";
@@ -51,11 +51,8 @@ const disabledCommandsDB = new OptimizedDatabase("disabledCommands");
 // Subscribe to chat send events
 chatSendSubscription.subscribe();
 
-// Get the Minecraft environment instance
-const minecraftEnvironment = MinecraftEnvironment.getInstance();
-
 // Initializes the tracking of players with security clearance level 4.
-initializeSecurityClearanceTracking(minecraftEnvironment.getWorld());
+initializeSecurityClearanceTracking(world);
 
 // Subscribe to world initialization events
 subscribeToWorldInitialize();
@@ -67,7 +64,7 @@ onPlayerSpawn();
 healthChangeListener.start();
 
 // Initialize the CommandHandler with the security key and Minecraft environment
-const commandHandler = new CommandHandler(minecraftEnvironment);
+const commandHandler = new CommandHandler();
 
 // Define all available commands
 const allCommands: Command[] = [

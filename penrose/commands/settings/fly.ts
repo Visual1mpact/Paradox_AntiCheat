@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 import { startFlyCheck, stopFlyCheck } from "../../modules/fly";
 import { paradoxModulesDB } from "../../paradox";
 
@@ -33,11 +32,9 @@ export const flyCheckCommand: Command = {
      * Executes the antifly command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], minecraftEnvironment: MinecraftEnvironment) => {
+    execute: (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
-        const system = minecraftEnvironment.getSystem();
 
         // Get fly detection status from the database
         const antiflyEnabled = (paradoxModulesDB.get("flyCheck_b") as boolean) ?? false;

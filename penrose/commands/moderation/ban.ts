@@ -1,6 +1,5 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent } from "@minecraft/server";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 
 // Define the ban command
 export const banCommand: Command = {
@@ -52,12 +51,8 @@ export const banCommand: Command = {
      * Executes the ban command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
-        const system = minecraftEnvironment.getSystem();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Initialize or retrieve the banned and whitelisted players lists
         let bannedPlayers: string[] = [];
         let whitelistedPlayers: string[] = [];

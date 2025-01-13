@@ -1,6 +1,5 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { MinecraftEnvironment } from "../../classes/container/dependencies";
 
 /**
  * Represents the rank command.
@@ -70,11 +69,8 @@ export const setRankCommand: Command = {
      * Executes the setrank command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
-     * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], minecraftEnvironment: MinecraftEnvironment) => {
-        const world = minecraftEnvironment.getWorld();
-
+    execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Check if the global rank setting is disabled
         const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
 
