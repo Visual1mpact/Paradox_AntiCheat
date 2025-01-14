@@ -1,3 +1,4 @@
+// Import required modules
 import path from "path";
 import fs from "fs-extra";
 import { spawnSync } from "child_process";
@@ -55,24 +56,27 @@ console.log("Building the project");
 const tsConfigPath = path.resolve("./tsconfig.json");
 runCommand("node", ["./node_modules/typescript/bin/tsc", "-p", tsConfigPath]);
 
-// Check if --server parameter is present
-const isServerMode = process.argv.includes("--server");
+// Helper function to create an archive
+function createArchive(outputFileName, manifestModifier = null) {
+    const outputFilePath = path.resolve("build", outputFileName);
 
-if (!isServerMode) {
-    // Run the 7z command to create the archive
-    const sevenZipPath = path7za;
-    const outputFileName = `Paradox-AntiCheat-v${packageVersion}.${process.argv.includes("--mcpack") ? "mcpack" : "zip"}`;
-    const outputFilePath = path.resolve("build/build", outputFileName);
+    // Apply manifest modification if provided
+    const manifestPath = path.join("build", "manifest.json");
+    if (manifestModifier) {
+        console.log(`Modifying manifest.json for ${outputFileName}...`);
+        const manifest = fs.readJsonSync(manifestPath);
+        manifestModifier(manifest);
+        fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
+    }
 
-    console.log("Creating distribution archive file");
-
-    // Delete existing archive if it exists
+    // Remove existing archive if it exists
     if (fs.existsSync(outputFilePath)) {
         console.log(`Removing existing archive: ${outputFilePath}`);
         fs.unlinkSync(outputFilePath);
     }
 
-    // List of files to include
+    // Create the archive
+    console.log(`Creating archive: ${outputFileName}`);
     const filesToInclude = [
         "CHANGELOG.md",
         "LICENSE",
@@ -81,27 +85,20 @@ if (!isServerMode) {
         "pack_icon.png",
         "scripts\\*", // Include all contents of 'scripts' directory
     ];
-
-    // Print resolved paths for debugging
-    console.log("Verifying paths to files and directories:");
-    filesToInclude.forEach((file) => {
-        const resolvedPath = path.resolve("build", file.replace("\\*", "")); // Strip wildcard for fs check
-        const exists = fs.existsSync(resolvedPath);
-        console.log(`- ${file}: ${resolvedPath} (${exists ? "FOUND" : "NOT FOUND"})`);
-    });
-
-    // Change working directory to "build" so files are added without the "build/" prefix
-    const result = runCommand(sevenZipPath, ["a", "-tzip", outputFilePath, ...filesToInclude], {
-        cwd: "build", // Set working directory to 'build'
-    });
-
-    // Check for system-level error
-    if (result.error) {
-        console.error(`Error while creating distribution archive: ${result.error.message}`);
-        process.exit(1); // Exit the process for system-level errors
-    }
+    runCommand(path7za, ["a", "-tzip", outputFilePath, ...filesToInclude], { cwd: "build" });
 
     console.log(`Archive created successfully: ${outputFilePath}`);
+}
+
+// Create a BDS (zip) build
+createArchive(`Paradox-AntiCheat-v${packageVersion}-BDS.zip`);
+
+// Create a Realms (mcpack) build if --mcpack is specified
+if (process.argv.includes("--mcpack")) {
+    createArchive(`Paradox-AntiCheat-v${packageVersion}-REALMS.mcpack`, (manifest) => {
+        // Remove the @minecraft/server-net dependency
+        manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net");
+    });
 }
 
 console.log("Build process completed successfully.");
