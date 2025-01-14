@@ -17,6 +17,7 @@ import { paradoxVersion } from "../data/versioning";
 import { paradoxModulesDB } from "../paradox";
 import { OptimizedDatabase } from "../classes/database/data-hive";
 import { startSelfAttackCheck } from "../modules/self-infliction";
+import { startPacketHandler } from "../modules/rate-limit";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -152,6 +153,7 @@ function initializeParadoxModules() {
         nameSpoofCheck_b: () => startNamespoofDetection(),
         xrayDetection_b: () => startXrayDetection(),
         selfAttackCheck_b: () => startSelfAttackCheck(),
+        rateLimitCheck_b: () => startPacketHandler(),
     };
 
     // Iterate over the entries and start corresponding modules if their value is true

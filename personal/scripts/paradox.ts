@@ -43,6 +43,7 @@ import { tinyCommand } from "./commands/utility/tiny";
 import { guiCommand } from "penrose/commands/gui/form_generator";
 import { command } from "penrose/commands/moderation/command";
 import { selfAttackCheckCommand } from "penrose/commands/settings/self-infliction";
+import { rateLimitCommand } from "penrose/commands/settings/rate-limit";
 
 // Data Hive
 const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
@@ -109,6 +110,7 @@ const allCommands: Command[] = [
     guiCommand,
     command,
     selfAttackCheckCommand,
+    rateLimitCommand,
 ];
 
 // Fetch disabled commands from the database and create a Set for faster lookups

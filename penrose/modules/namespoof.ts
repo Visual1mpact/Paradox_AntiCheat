@@ -7,7 +7,6 @@ let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | null = nul
 // Configurable constants
 const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 16;
-const BAN_REASON = "Namespoofing";
 
 // Dictionary to track logged-in player names for collision detection
 const playerNameMap = new Map<string, Player>();
@@ -80,7 +79,6 @@ function banPlayer(player: Player, reason: string) {
             world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
         }
 
-        player.addTag(`paradoxBanned:${BAN_REASON}`);
         kickPlayer(player, reason);
     } catch (error) {
         console.error(`Failed to ban player: ${error}`);

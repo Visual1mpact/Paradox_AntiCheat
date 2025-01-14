@@ -24,6 +24,7 @@
     "dependencies": {
         "@minecraft/server-ui": "1.4.0-beta.1.21.50-stable",
         "@minecraft/server": "1.17.0-beta.1.21.50-stable",
+        "@minecraft/server-net": "1.0.0-beta.1.21.51-stable",
         "@minecraft/math": "1.5.1",
         "crypto-es": "2.1.0"
     },

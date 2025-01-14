@@ -14,7 +14,10 @@ function handleSelfAttack(eventData: EntityHitEntityAfterEvent): void {
         // Check if the attacker attacked themselves
         if (attacker.id === victim.id) {
             const reason = "Using a client to attack oneself";
-            attacker.addTag(`paradoxBanned:${reason}`);
+            // Safely parse the bannedPlayers
+            const bannedPlayers: string[] = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
+            bannedPlayers.push(attacker.name);
+            world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
             const dimension = world.getDimension(attacker.dimension.id);
             dimension.runCommandAsync(`kick ${attacker.name} §o§7\n\n${reason}`).catch(console.error); // Log errors if command execution fails
         }

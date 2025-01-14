@@ -88,7 +88,6 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
             bannedPlayers.push(playerName);
             world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
         }
-        player.addTag("paradoxBanned");
         const dimension = player.dimension;
         dimension.runCommand(`kick ${playerName} §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
     }
@@ -136,7 +135,6 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
             world.setDynamicProperty("bannedPlayers", JSON.stringify(updatedBannedPlayers));
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
-            player.addTag("paradoxBanned");
             const dimension = player.dimension;
             dimension.runCommand(`kick ${playerName} §o§7\n\nYou are banned. Please contact an admin for more information.`);
         }
