@@ -43,6 +43,9 @@ async function initializePacketHandler(): Promise<boolean | void> {
             dimension.runCommandAsync(`kick ${player.name} §o§7\n\n${reason}`); // Kick the player from the server
             data.cancel = true;
             return;
+        } else if (!player) {
+            data.cancel = true;
+            return;
         }
 
         const now = Date.now();
