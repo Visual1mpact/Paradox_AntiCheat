@@ -37,7 +37,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
         // Safely parse the bannedPlayers
         const bannedPlayers: string[] = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
         // If the player is banned, cancel the packet reception
-        if (bannedPlayers.includes(player.name)) {
+        if (player && bannedPlayers.includes(player.name)) {
             const reason = "You are banned";
             const dimension = world.getDimension(player.dimension.id);
             dimension.runCommandAsync(`kick ${player.name} §o§7\n\n${reason}`); // Kick the player from the server
