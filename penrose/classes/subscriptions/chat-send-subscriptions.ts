@@ -123,16 +123,24 @@ class ChatSendSubscription {
                     this.spamData.set(playerId, spamData);
                 }
 
-                event.cancel = true;
+                // Handle commands first; if not a command, broadcast the message
+                if (commandHandler.handleCommand(event, player)) {
+                    event.cancel = true;
+                    return;
+                }
 
                 // Check if the global rank setting is disabled
                 const isRankDisabled = world.getDynamicProperty("globalRankDisabled");
+                if (isRankDisabled && !playerChannel) {
+                    // Allow the event to proceed unmodified
+                    return;
+                }
+
+                event.cancel = true;
+
                 const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
                 const rank = playerChannel ?? playerRank;
-                const formattedMessage = isRankDisabled && !playerChannel ? `<${player.name}> ${event.message}` : `${rank} §7${player.name}: §r${event.message}`;
-
-                // Handle commands first; if not a command, broadcast the message
-                if (commandHandler.handleCommand(event, player)) return;
+                const formattedMessage = `${rank} §7${player.name}: §r${event.message}`;
 
                 // Determine the target players based on the channel
                 const targetPlayers = playerChannel ? this.getPlayersInChannel(playerChannel) : world.getPlayers();

@@ -6,22 +6,14 @@ import { Command } from "../../classes/command-handler";
  */
 export const setRankCommand: Command = {
     name: "setrank",
-    description: "Sets or resets the chat rank for a player, or disables rank functionality globally.",
-    usage: "{prefix}setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ --disable ]",
-    examples: [
-        `{prefix}setrank -t PlayerName -r [Admin]`,
-        `{prefix}setrank --target PlayerName --rank [Member]`,
-        `{prefix}setrank -r [Admin] -t PlayerName`,
-        `{prefix}setrank --rank [Member] --target PlayerName`,
-        `{prefix}setrank -t PlayerName --reset`,
-        `{prefix}setrank --target PlayerName --reset`,
-        `{prefix}setrank --disable`,
-    ],
+    description: "Sets or resets the chat rank for a player, or toggles rank functionality globally.",
+    usage: "{prefix}setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]",
+    examples: [`{prefix}setrank -t PlayerName -r [Admin]`, `{prefix}setrank -r [Member] -t PlayerName`, `{prefix}setrank -t PlayerName --reset`, `{prefix}setrank -d`, `{prefix}setrank -e`],
     icon: "textures/items/book_portfolio.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Set or Reset Rank",
-        description: "Set or reset a player's chat rank, or disable rank functionality globally.\n\n",
+        description: "Set or reset a player's chat rank, or toggle rank functionality globally.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -40,7 +32,14 @@ export const setRankCommand: Command = {
             },
             {
                 name: "Disable Ranks Globally",
-                command: ["--disable"],
+                command: ["-d"],
+                requiredFields: [],
+                crypto: false,
+                generateModalForm: false,
+            },
+            {
+                name: "Enable Ranks Globally",
+                command: ["-e"],
                 requiredFields: [],
                 crypto: false,
                 generateModalForm: false,
@@ -49,7 +48,7 @@ export const setRankCommand: Command = {
         dynamicFields: [
             {
                 type: "dropdown",
-                name: "Select Players Name:",
+                name: "Select Player Name:",
                 arg: "--target",
                 requiredFields: ["PlayerName"],
             },
@@ -89,7 +88,7 @@ export const setRankCommand: Command = {
         let disableRanksGlobally = false;
 
         // Define valid flags
-        const validFlags = new Set(["-t", "--target", "-r", "--rank", "--reset", "--disable"]);
+        const validFlags = new Set(["-t", "--target", "-r", "--rank", "--reset", "-d", "-e"]);
 
         /**
          * Captures and returns a multi-word argument from the provided array of arguments.
@@ -125,11 +124,20 @@ export const setRankCommand: Command = {
                     reset = true;
                     break;
                 }
-                case "--disable": {
+                case "-d": {
                     if (senderClearance === 4) {
                         disableRanksGlobally = true;
                     } else {
                         message.sender.sendMessage(`§cYou do not have permission to disable ranks globally.`);
+                        return;
+                    }
+                    break;
+                }
+                case "-e": {
+                    if (senderClearance === 4) {
+                        disableRanksGlobally = false;
+                    } else {
+                        message.sender.sendMessage(`§cYou do not have permission to enable ranks globally.`);
                         return;
                     }
                     break;
@@ -141,6 +149,13 @@ export const setRankCommand: Command = {
         if (disableRanksGlobally) {
             world.setDynamicProperty("globalRankDisabled", true);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been disabled globally.`);
+            return;
+        }
+
+        // Handle enabling ranks globally
+        if (!disableRanksGlobally) {
+            world.setDynamicProperty("globalRankDisabled", false);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been enabled globally.`);
             return;
         }
 
