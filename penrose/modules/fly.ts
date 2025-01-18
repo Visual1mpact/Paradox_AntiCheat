@@ -73,15 +73,17 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
         const majorityAreAir = airBlockCountBelow > surroundingBlocksBelow.length / 2;
 
         const velocity = player.getVelocity();
-        const verticalVelocityThreshold = 0.35;
-        const hoverTimeThreshold = 4;
+        const horizontalVelocity = Math.sqrt(velocity.x ** 2 + velocity.z ** 2); // Calculate horizontal speed
+        const verticalVelocityThreshold = 0.15;
+        const horizontalVelocityThreshold = 0.15;
+        const hoverTimeThreshold = 2;
         let hoverTime = (player.getDynamicProperty("hoverTime") as number) ?? 0;
 
-        if ((!player.isFalling && player.isFlying) || (majorityAreAir && Math.abs(velocity.y) > verticalVelocityThreshold && !player.isFalling && !player.isJumping && !player.isOnGround)) {
+        if ((!player.isFalling && player.isFlying) || (majorityAreAir && (Math.abs(velocity.y) >= verticalVelocityThreshold || horizontalVelocity >= horizontalVelocityThreshold) && !player.isJumping && !player.isOnGround)) {
             hoverTime += 1;
             player.setDynamicProperty("hoverTime", hoverTime);
 
-            if (hoverTime > hoverTimeThreshold) {
+            if (hoverTime >= hoverTimeThreshold) {
                 const airport = player.getDynamicProperty("airportLanding") as Vector3;
                 if (airport) {
                     player.teleport(airport, {
