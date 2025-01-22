@@ -70,6 +70,22 @@ export const setRankCommand: Command = {
      * @param {string[]} args - The command arguments.
      */
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
+        /**
+         * Toggles global rank functionality (enable/disable).
+         * @param {ChatSendBeforeEvent} message - The message object.
+         * @param {number} senderClearance - The clearance level of the command sender.
+         * @param {boolean} disable - Whether to disable ranks globally (true to disable, false to enable).
+         */
+        function toggleGlobalRanks(message: ChatSendBeforeEvent, senderClearance: number, disable: boolean): void {
+            if (senderClearance < 4) {
+                message.sender.sendMessage(`§cYou do not have permission to perform this action.`);
+                return;
+            }
+
+            world.setDynamicProperty("globalRankDisabled", disable);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been ${disable ? "disabled" : "enabled"} globally.`);
+        }
+
         // Check if the global rank setting is disabled
         const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
 
@@ -85,7 +101,6 @@ export const setRankCommand: Command = {
         let playerName = "";
         let rank = "";
         let reset = false;
-        let disableRanksGlobally = false;
 
         // Define valid flags
         const validFlags = new Set(["-t", "--target", "-r", "--rank", "--reset", "-d", "-e"]);
@@ -125,38 +140,14 @@ export const setRankCommand: Command = {
                     break;
                 }
                 case "-d": {
-                    if (senderClearance === 4) {
-                        disableRanksGlobally = true;
-                    } else {
-                        message.sender.sendMessage(`§cYou do not have permission to disable ranks globally.`);
-                        return;
-                    }
-                    break;
+                    toggleGlobalRanks(message, senderClearance, true);
+                    return;
                 }
                 case "-e": {
-                    if (senderClearance === 4) {
-                        disableRanksGlobally = false;
-                    } else {
-                        message.sender.sendMessage(`§cYou do not have permission to enable ranks globally.`);
-                        return;
-                    }
-                    break;
+                    toggleGlobalRanks(message, senderClearance, false);
+                    return;
                 }
             }
-        }
-
-        // Handle disabling ranks globally (only for level 4 users)
-        if (disableRanksGlobally) {
-            world.setDynamicProperty("globalRankDisabled", true);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been disabled globally.`);
-            return;
-        }
-
-        // Handle enabling ranks globally
-        if (!disableRanksGlobally) {
-            world.setDynamicProperty("globalRankDisabled", false);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been enabled globally.`);
-            return;
         }
 
         // Check if player name is provided for rank assignment or reset
