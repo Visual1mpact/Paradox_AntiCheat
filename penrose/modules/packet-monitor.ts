@@ -3,12 +3,12 @@ import type { beforeEvents as BeforeEventsType } from "@minecraft/server-net";
 // Declare types for dynamically imported modules
 let beforeEvents: typeof BeforeEventsType;
 
-type PacketCount = {
+type PlayerPacketCount = {
     count: number;
     firstOccurrence: number;
 };
 
-const packetFrequency: Record<string, PacketCount> = {};
+const packetFrequency: Record<string, Record<string, PlayerPacketCount>> = {}; // Organized by packetId and playerName
 const SPAM_THRESHOLD = 50; // Adjust threshold as needed.
 const TIME_WINDOW = 10000; // 10 seconds in milliseconds.
 const IGNORED_PACKETS = new Set<string>(["PlayerAuthInputPacket"]); // Add packet IDs to ignore here.
@@ -16,22 +16,27 @@ const IGNORED_PACKETS = new Set<string>(["PlayerAuthInputPacket"]); // Add packe
 /**
  * Check for packet spam by monitoring the frequency of received packets.
  * @param packetId The ID of the packet to monitor.
+ * @param playerName The name of the player who sent the packet.
  */
-const checkPacketSpam = (packetId: string) => {
+const checkPacketSpam = (packetId: string, playerName: string) => {
     const currentTime = Date.now();
 
     if (!packetFrequency[packetId]) {
-        packetFrequency[packetId] = { count: 1, firstOccurrence: currentTime };
+        packetFrequency[packetId] = {};
+    }
+
+    if (!packetFrequency[packetId][playerName]) {
+        packetFrequency[packetId][playerName] = { count: 1, firstOccurrence: currentTime };
     } else {
-        const packetData = packetFrequency[packetId];
-        if (currentTime - packetData.firstOccurrence <= TIME_WINDOW) {
-            packetData.count++;
+        const playerPacketData = packetFrequency[packetId][playerName];
+        if (currentTime - playerPacketData.firstOccurrence <= TIME_WINDOW) {
+            playerPacketData.count++;
         } else {
-            packetFrequency[packetId] = { count: 1, firstOccurrence: currentTime };
+            packetFrequency[packetId][playerName] = { count: 1, firstOccurrence: currentTime };
         }
 
-        if (packetData.count > SPAM_THRESHOLD) {
-            console.warn(`Paradox: Potential spam detected for packet: ${packetId} | Count: ${packetData.count}`);
+        if (playerPacketData.count > SPAM_THRESHOLD) {
+            console.warn(`Paradox: Potential spam detected for packet: ${packetId} | Count: ${playerPacketData.count} | Player: ${playerName}`);
         }
     }
 };
@@ -42,10 +47,13 @@ const checkPacketSpam = (packetId: string) => {
  */
 const packetReceiveCallback = (event: import("@minecraft/server-net").PacketReceivedBeforeEvent) => {
     const packetId = event.packetId;
+    const playerName = event.sender?.name ?? "Unknown";
+
     if (IGNORED_PACKETS.has(packetId)) {
         return; // Ignore specified packets.
     }
-    checkPacketSpam(packetId);
+
+    checkPacketSpam(packetId, playerName);
 };
 
 /**
