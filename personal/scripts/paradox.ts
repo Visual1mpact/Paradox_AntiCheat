@@ -44,6 +44,7 @@ import { guiCommand } from "penrose/commands/gui/form_generator";
 import { command } from "penrose/commands/moderation/command";
 import { selfAttackCheckCommand } from "penrose/commands/settings/self-infliction";
 import { rateLimitCommand } from "penrose/commands/settings/rate-limit";
+import { packetMonitorCommand } from "penrose/commands/settings/packet-monitor";
 
 // Data Hive
 const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
@@ -111,6 +112,7 @@ const allCommands: Command[] = [
     command,
     selfAttackCheckCommand,
     rateLimitCommand,
+    packetMonitorCommand,
 ];
 
 // Fetch disabled commands from the database and create a Set for faster lookups
