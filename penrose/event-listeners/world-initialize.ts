@@ -18,6 +18,7 @@ import { paradoxModulesDB } from "../paradox";
 import { OptimizedDatabase } from "../classes/database/data-hive";
 import { startSelfAttackCheck } from "../modules/self-infliction";
 import { startPacketHandler } from "../modules/rate-limit";
+import { startPacketListener } from "../modules/packet-monitor";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -154,6 +155,7 @@ function initializeParadoxModules() {
         xrayDetection_b: () => startXrayDetection(),
         selfAttackCheck_b: () => startSelfAttackCheck(),
         rateLimitCheck_b: () => startPacketHandler(),
+        packetMonitorCheck_b: () => startPacketListener(),
     };
 
     // Iterate over the entries and start corresponding modules if their value is true
