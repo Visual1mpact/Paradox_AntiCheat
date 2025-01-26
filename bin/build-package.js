@@ -83,7 +83,7 @@ function createArchive(outputFileName, manifestModifier = null) {
         "README.md",
         "manifest.json",
         "pack_icon.png",
-        "scripts\\*", // Include all contents of 'scripts' directory
+        "scripts/*", // Include all contents of 'scripts' directory
     ];
     runCommand(path7za, ["a", "-tzip", outputFilePath, ...filesToInclude], { cwd: "build" });
 
