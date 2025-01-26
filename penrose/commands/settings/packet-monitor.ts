@@ -13,7 +13,7 @@ export const packetMonitorCommand: Command = {
     examples: [`{prefix}packetmonitor`, `{prefix}packetmonitor help`],
     category: "Modules",
     securityClearance: 4,
-    icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
+    icon: "textures/items/comparator.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Packet Monitoring Settings",
@@ -23,7 +23,7 @@ export const packetMonitorCommand: Command = {
             {
                 name: "Enable / Disable",
                 command: undefined,
-                icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
+                icon: "textures/items/repeater.png",
             },
         ],
     },
