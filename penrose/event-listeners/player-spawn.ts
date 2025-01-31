@@ -51,6 +51,7 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
         isPlatformBlocked(event);
         handleBanCheck(event);
         handleSecurityClearance(event);
+        allowList(event);
     }
 
     // Check if the player is imprisoned after respawn
@@ -91,6 +92,29 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
         const dimension = player.dimension;
         dimension.runCommand(`kick ${playerName} §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
     }
+}
+
+/**
+ * Checks a allowlist like the native one in BDS.
+ * If the player connecting is not on the list they get kicked.
+ * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ */
+function allowList(event: PlayerSpawnAfterEvent) {
+    const player = event.player;
+    const playerName = player.name;
+    if (!world.getDynamicProperty("allowlistedPlayers")) {
+        //doesnt exist therfore we can return!
+        console.log("allowList is diasbled!");
+        return;
+    }
+    const allowListedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("allowlistedPlayers") as string) ?? "[]");
+
+    if (allowListedPlayers.includes(playerName)) {
+        player.sendMessage("§2[§7Paradox§2]§o§7 You are on the allow list, welcome.");
+        return;
+    }
+    const dimension = player.dimension;
+    dimension.runCommand(`kick ${playerName} §o§7\n\nYou are not on the allow list.`);
 }
 
 /**
