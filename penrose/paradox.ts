@@ -44,6 +44,7 @@ import { command } from "./commands/moderation/command";
 import { selfAttackCheckCommand } from "./commands/settings/self-infliction";
 import { rateLimitCommand } from "./commands/settings/rate-limit";
 import { packetMonitorCommand } from "./commands/settings/packet-monitor";
+import { allowlistCommand } from "./commands/moderation/allowlist";
 
 // Data Hive
 const paradoxModulesDB = new OptimizedDatabase("paradoxModules");
@@ -111,6 +112,7 @@ const allCommands: Command[] = [
     selfAttackCheckCommand,
     rateLimitCommand,
     packetMonitorCommand,
+    allowlistCommand,
 ];
 
 // Fetch disabled commands from the database and create a Set for faster lookups
