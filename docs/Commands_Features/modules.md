@@ -102,6 +102,26 @@ This module helps protect the server by automatically detecting and kicking or b
 > Example: !namespoof help
 > ```
 
+## !packetmonitor
+!> This module is only avaiable to the Bedrock Dedicated Server (BDS) software. This due to the @minecraft/server-net module. This must be enabled via `config/default/permissions.json` file.
+### At A Glance
+The `packet monitor` detection module, monitors incoming network packets to detect and warn about potential packet spam. This helps prevent exploitative behavior, lag, and unfair advantages
+
+### How It Works
+When a player sends a packet, the system records:
+- The packet ID (what type of packet it is).
+- The player's name.
+- The timestamp of when it was first detected.
+
+This data is stored in memory and tracked over time. If a player sends more than 50 packets of the same type within 10 seconds, they are flagged as a potential spammer. No action is taken this is simply logged to the server console. 
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!packetmonitor [ help ]",
+> Example: !packetmonitor
+> ```
+
 ## !platformblock
 ### At A Glance
 Blocks players from joining based on their platform or lists current platform restrictions.
@@ -117,6 +137,21 @@ When a player joins the server or realm, it will check to see if the player's pl
 > Example: !platformblock console -d (Disables Console to be blocked)
 > Example: !platformblock -l (Lists the current configuration.)
 > ```
+
+## !ratelimit
+### At A Glance
+Toggles the module protects the server from players attempting to crash it by sending excessive packets in a short time.
+
+### How It Works
+It monitors packet activity and enforces a limit of 5 packets within 200 milliseconds. If a player exceeds this limit, their packets are canceled, and they are banned automatically. Specific packets, including CommandRequestPacket and LegacyTelemetryEventPacket are monitored as they are commonly used in exploits. These tracked packets are updated with new releases when necessary.  When a banned player attempts to join, they are instantly kicked with a message explaining their ban. Additionally, when a player leaves, their packet data is cleared to optimize performance.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!ratelimit [ help ]",
+> Example: !ratelimit
+> ```
+
 
 ## !reach
 ### At A Glance
@@ -146,6 +181,26 @@ The Scaffold module monitors block placements to detect and prevent scaffold hac
 > Usage: "!scaffold [ help ]",
 > Example: !scaffold
 > Example: !scaffold help
+> ```
+
+## !selfattack
+### At A Glance
+Toggles the module that is  designed to detect and prevent players from using modified clients to attack themselves. This exploit can be used for various cheats, such as bypassing server mechanics or triggering unintended effects.
+
+### How It Works
+The system listens for entity hit events, which occur when one entity damages another.
+When a player attacks another entity, the system checks if the attacker and victim are the same player.
+If a player attacks themselves, they are automatically banned and kicked with a warning message:
+Their name is added to the server's banned list.
+The system executes a kick command to remove them from the game.
+
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!selfattack [ help ]",
+> Example: !selfattack
+> Example: !selfattack help
 > ```
 
 ## !antispam
@@ -185,4 +240,26 @@ The `World Border` module automatically monitors player positions across differe
 > Example: !worldborder disable
 > Example: !worldborder -l
 > Example: !worldborder --list
+> ```
+
+## !xray
+### At A Glance
+The `Xray` module detects and reports suspicious mining activity that may indicate the use of an Xray client or cheats. It monitors players who mine high-value ores at an unusual rate and alerts administrators with Level 4 Security Clearance when suspicious activity is detected.
+
+### How It Works
+The system monitors block-breaking events and tracks when players mine valuable ores like diamonds, ancient debris, and emeralds.
+Each tracked ore has a threshold.
+If a player mines ores too quickly beyond the threshold, an alert is sent to high-security administrators detailing:
+- The player’s name
+- The type and amount of ore mined
+- The exact coordinates (X, Y, Z) where the ore was found.
+
+Player data is reset every 60 seconds to avoid false positives.
+When a player leaves the game, their tracking data is cleared to optimize performance.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!xray [ -Help ]
+> Example: !xray
 > ```
