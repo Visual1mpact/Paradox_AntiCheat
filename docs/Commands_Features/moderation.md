@@ -35,31 +35,6 @@ The `!command` command enables or disables other commands dynamically. This allo
 - The `!command` command itself cannot be disabled.
 - Use the `disable` option with caution to avoid disabling critical commands.
 - The command registry updates dynamically, reflecting real-time changes.
-Required Clearance Level To Execute:
-
-## !kick
-### At A Glance
-The `!kick` command removes a player from the server, with or without a reason. It's useful for addressing disruptive behavior.
-
-!> Required Clearance Level To Execute: `3`
-
-> ```
-> Usage: "!kick [ -t | --target <player> ] [ -r | --reason <reason> ]"
-> Example: !kick -t Pete9x -r Spamming Chat!
-> ```
-Required Clearance Level To Execute:
-
-## !lockdown
-### At A Glance
-The `!lockdown` command prevents players without a security clearance of 4 from connecting to the server, useful for maintenance or during attacks.
-
-!> Required Clearance Level To Execute: `4`
-
-> ```
-> Usage: "!lockdown [optional]"
-> Example: !lockdown
-> ```
-Required Clearance Level To Execute:
 
 ## !deop
 ### At A Glance
@@ -71,7 +46,6 @@ The `!deop` command revokes Paradox-Op permissions from a player, reducing their
 > Usage: "!deop <player>"
 > Example: !deop Peye9xi
 > ```
-Required Clearance Level To Execute:
 
 ## !despawn
 ### At A Glance
@@ -85,7 +59,17 @@ The `!despawn` command removes entities from the game, either all entities or a 
 > Example: !despawn iron_golem
 > Example: !despawn help
 > ```
-Required Clearance Level To Execute:
+
+## !freeze
+### At A Glance
+The `!freeze` command allows administrators to lock a player in place this allows them to investigate any potential issue. This command acts as a toggle.
+
+!> Required Clearance Level To Execute: `3`
+
+> ```
+> Usage: "!freeze"
+> Example: !freeze pete9xi
+> ```
 
 ## !gui
 ### At A Glance
@@ -98,11 +82,40 @@ The `!gui` command provides access to an interactive administrative menu, simpli
 > Example: !gui
 > ```
 
-### **Notes**
-- Optimized for rapid server administration, minimizing input errors.
-- Requires appropriate permissions for specific actions.
-- Best on supported platforms (e.g., desktop versions of Minecraft Bedrock).
-Required Clearance Level To Execute:
+
+## !kick
+### At A Glance
+The `!kick` command removes a player from the server, with or without a reason. It's useful for addressing disruptive behavior.
+
+!> Required Clearance Level To Execute: `3`
+
+> ```
+> Usage: "!kick [ -t | --target <player> ] [ -r | --reason <reason> ]"
+> Example: !kick -t Pete9x -r Spamming Chat!
+> ```
+
+## !lockdown
+### At A Glance
+The `!lockdown` command prevents players without a security clearance of 4 from connecting to the server, useful for maintenance or during attacks.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!lockdown [optional]"
+> Example: !lockdown
+> ```
+
+## !modules
+### At A Glance
+The `!modules` command displays the status of all registered modules, including whether they are enabled or disabled, and the settings for each module.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!modules [optional]"
+> Example: !modules> 
+> ```
+
 
 ## !op
 ### At A Glance
@@ -123,7 +136,6 @@ The `!op list` command displays all players with security clearance level 4.
 > Usage: "!op <player> | !op list"
 > Example: !op Pete9xi
 > ```
-Required Clearance Level To Execute:
 
 ## !opsec
 ### At A Glance
@@ -141,7 +153,6 @@ The `!opsec` command allows administrators to modify a player's security clearan
 > Usage: "!opsec <player> <clearance>"
 > Example: !opsec tim123 3
 > ```
-Required Clearance Level To Execute:
 
 ## !prefix
 ### At A Glance
@@ -154,7 +165,6 @@ The `!prefix` command allows administrators to change the prefix used for comman
 > Example: !prefix @@
 > Example: !prefix $
 > ```
-Required Clearance Level To Execute:
 
 ## !punish
 ### At A Glance
@@ -175,7 +185,6 @@ The `!punish` command removes items from a player's inventory, equipment, or end
 > Example: !punish "Player Name" -i -e -ec
 > Example: !punish help
 > ```
-Required Clearance Level To Execute:
 
 ## !tpa
 ### At A Glance
@@ -188,7 +197,6 @@ The `!tpa` command allows players to teleport to one another, streamlining coord
 > Example: !tpa Lucy Steve
 > Example: !tpa @Steve @Lucy
 > ```
-Required Clearance Level To Execute:
 
 ## !unban
 ### At A Glance
@@ -200,7 +208,6 @@ The `!unban` command lifts a ban from a player, enabling them to rejoin the serv
 > Usage: "!unban <player>"
 > Example: !unban Steve
 > ```
-Required Clearance Level To Execute:
 
 ## !vanish
 ### At A Glance
@@ -215,3 +222,20 @@ The `!vanish` command puts the player into spectator mode, rendering them invisi
 > Usage: "!vanish <player>"
 > Example: !vanish Pete9xi
 > ```
+
+## !whitelist
+### At A Glance
+The `!whitelist` command allows administrators to add or remove players from the whitelist 
+
+!> Required Clearance Level To Execute: `3`
+
+### **How It Works**
+The `!whitelist` automatically checks if a player's device meets the minimum requirements when they join the world. If a player’s render distance is too low or too high, they will be banned.
+
+> ```
+> Usage: "!vanish <player>"
+> Example: !vanish Pete9xi
+> ```
+
+### Notes
+This is amid at blocking external **Bots** from connecting, if you use a discord bot for example ThirdEye you will need to whitelist it in order for the bot to join your server/realm. 
