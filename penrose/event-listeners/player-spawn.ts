@@ -95,26 +95,27 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
 }
 
 /**
- * Checks a allowlist like the native one in BDS.
- * If the player connecting is not on the list they get kicked.
- * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ * Checks an allowlist similar to the native one in BDS.
+ * If the connecting player is not on the list, they get kicked.
+ * @param {PlayerSpawnAfterEvent} event - The event object containing player spawn information.
  */
 function allowList(event: PlayerSpawnAfterEvent) {
     const player = event.player;
     const playerName = player.name;
-    if (!world.getDynamicProperty("allowlistedPlayers")) {
-        //doesnt exist therfore we can return!
-        console.log("allowList is diasbled!");
+    const allowListData = world.getDynamicProperty("allowlistedPlayers");
+
+    if (!allowListData) {
         return;
     }
-    const allowListedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("allowlistedPlayers") as string) ?? "[]");
+
+    const allowListedPlayers: PlayerNameList = JSON.parse(allowListData as string) ?? [];
 
     if (allowListedPlayers.includes(playerName)) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are on the allow list, welcome.");
         return;
     }
-    const dimension = player.dimension;
-    dimension.runCommand(`kick ${playerName} §o§7\n\nYou are not on the allow list.`);
+
+    player.dimension.runCommand(`kick ${playerName} §o§7\n\nYou are not on the allow list.`);
 }
 
 /**
