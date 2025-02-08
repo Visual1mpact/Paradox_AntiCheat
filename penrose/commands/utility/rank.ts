@@ -121,6 +121,16 @@ export const setRankCommand: Command = {
             return result.replace(/["@]/g, "");
         }
 
+        // Check for global rank toggles before processing other arguments
+        if (args.includes("-d")) {
+            toggleGlobalRanks(message, senderClearance, true);
+            return;
+        }
+        if (args.includes("-e")) {
+            toggleGlobalRanks(message, senderClearance, false);
+            return;
+        }
+
         // Parse the arguments using parameter flags
         while (args.length > 0) {
             const flag = args.shift();
@@ -138,14 +148,6 @@ export const setRankCommand: Command = {
                 case "--reset": {
                     reset = true;
                     break;
-                }
-                case "-d": {
-                    toggleGlobalRanks(message, senderClearance, true);
-                    return;
-                }
-                case "-e": {
-                    toggleGlobalRanks(message, senderClearance, false);
-                    return;
                 }
             }
         }
