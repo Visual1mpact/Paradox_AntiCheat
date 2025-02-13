@@ -32,7 +32,10 @@ function* worldBorderGenerator(jobId: number): Generator<void, void, unknown> {
         };
 
         if (!worldBorderEnabled) {
-            system.clearJob(jobId);
+            if (jobId) {
+                system.clearJob(jobId);
+                return;
+            }
             return;
         }
 

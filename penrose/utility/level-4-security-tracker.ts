@@ -36,6 +36,14 @@ export const removePlayerFromSecurityClearanceList = (player: Player): void => {
  * This function should be called once when your script starts.
  */
 export const initializeSecurityClearanceTracking = (): void => {
+    // Validation is necessary in the case of a reload with the script api
+    const initialValidation = getSecurityClearanceLevel4Players();
+    if (initialValidation.size === 0) {
+        const players = world.getAllPlayers();
+        for (const player of players) {
+            addPlayerToSecurityClearanceList(player);
+        }
+    }
     // Listen for players joining and add them if they have security clearance level 4
     world.afterEvents.playerSpawn.subscribe((event) => {
         if (!event.initialSpawn) {

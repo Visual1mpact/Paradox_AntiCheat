@@ -19,6 +19,7 @@ import { OptimizedDatabase } from "../classes/database/data-hive";
 import { startSelfAttackCheck } from "../modules/self-infliction";
 import { startPacketHandler } from "../modules/rate-limit";
 import { startPacketListener } from "../modules/packet-monitor";
+import { startVisionCheck } from "../modules/vision";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -156,6 +157,7 @@ function initializeParadoxModules() {
         selfAttackCheck_b: () => startSelfAttackCheck(),
         rateLimitCheck_b: () => startPacketHandler(),
         packetMonitorCheck_b: () => startPacketListener(),
+        visionCheck_b: () => startVisionCheck(),
     };
 
     // Iterate over the entries and start corresponding modules if their value is true
