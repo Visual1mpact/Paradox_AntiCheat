@@ -1,18 +1,30 @@
 # Changelog
 
-## [v5.3.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.3.0) (2024-01-18)
+## [v5.4.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.4.0) (2025-02-13)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.3.0...v5.4.0)
+
+**Closed issues:**
+
+- prefix glitch [\#65](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/65)
+
+## [v5.3.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.3.0) (2025-01-18)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.2.1...v5.3.0)
 
-## [v5.2.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.2.1) (2024-01-13)
+## [v5.2.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.2.1) (2025-01-13)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.2.0...v5.2.1)
 
-## [v5.2.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.2.0) (2024-01-13)
+## [v5.2.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.2.0) (2025-01-13)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.1.0...v5.2.0)
 
-## [v5.1.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.1.0) (2024-12-04)
+**Merged pull requests:**
+
+- Refactor Channel and ParadoxModules Logic to Use the Data Hive [\#63](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/63) ([Visual1mpact](https://github.com/Visual1mpact))
+
+## [v5.1.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.1.0) (2024-12-06)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.0.3...v5.1.0)
 
