@@ -40,6 +40,8 @@ function* visionGenerator(jobId: number): Generator<void, void, unknown> {
         // Get all players with Level 4 security clearance
         const players = getSecurityClearanceLevel4Players();
 
+        let foundContainer = false;
+
         for (const player of players) {
             // Get the block the player is currently looking at
             const blockTarget = player.getBlockFromViewDirection({ maxDistance: 10 });
@@ -59,6 +61,8 @@ function* visionGenerator(jobId: number): Generator<void, void, unknown> {
 
             if (!blockContainer) continue;
 
+            foundContainer = true; // A container has been found and processed
+
             const blockInventorySize = blockContainer.size;
             const itemCounts: Record<string, number> = {}; // Object to count items
 
@@ -76,15 +80,24 @@ function* visionGenerator(jobId: number): Generator<void, void, unknown> {
 
             // If the container is empty, display a message
             if (!displayText) {
-                displayText = "§c§lContainer Is Empty";
+                displayText = "§cContainer Is Empty";
             }
 
             // Display the item list on the player's action bar
             player.onScreenDisplay.setActionBar(displayText);
 
-            yield; // Yield after processing each player
+            yield; // Allow other tasks to execute before continuing
         }
-        yield;
+
+        if (foundContainer) {
+            // If a container was found, schedule a delayed resume after 40 ticks (2 seconds)
+            let done = false;
+            system.waitTicks(30).then(() => (done = true));
+            while (!done) yield; // Yield until the delay is complete
+        } else {
+            // If no container was found, just yield normally (resume next tick)
+            yield;
+        }
     }
 }
 
