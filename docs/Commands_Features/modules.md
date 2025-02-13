@@ -220,6 +220,14 @@ The spam module monitors player messages within the game. If a player sends 6 me
 
 !> This module listens to `beforeEvents.chatSend`, meaning commands like `/tellraw`, which are used by external bots, will not be flagged. However, we are hoping to bring this feature soon!
 
+## !visioncheck
+### At A Glance
+The `Vision Check` module is designed continuously checks inventory contents of blocks being viewed
+by players with Level 4 security clearance and displays the items on the action bar.
+
+### How It Works
+When a Level 4 player targets a block within a 10-block range, the module checks if the block has an inventory, retrieves its items, and displays a formatted summary on the player's action bar. If the container is empty, a warning message is shown instead. This system provides a quick, non-intrusive way to view inventories. 
+
 ## !worldborder
 ### At A Glance
 The `World Border` module is designed to restrict players from going beyond specific boundaries in each dimension based on coordinates relative to the world's origin (0,0,0), not the world spawn.
