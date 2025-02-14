@@ -90,7 +90,7 @@ function* visionGenerator(jobId: number): Generator<void, void, unknown> {
         }
 
         if (foundContainer) {
-            // If a container was found, schedule a delayed resume after 40 ticks (2 seconds)
+            // If a container was found, schedule a delayed resume after 30 ticks (1.5 seconds)
             let done = false;
             system.waitTicks(30).then(() => (done = true));
             while (!done) yield; // Yield until the delay is complete
