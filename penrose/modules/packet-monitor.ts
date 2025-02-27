@@ -11,7 +11,7 @@ type PlayerPacketCount = {
 const packetFrequency: Record<string, Record<string, PlayerPacketCount>> = {}; // Organized by packetId and playerName
 const SPAM_THRESHOLD = 50; // Adjust threshold as needed.
 const TIME_WINDOW = 10000; // 10 seconds in milliseconds.
-const IGNORED_PACKETS = new Set<string>(["PlayerAuthInputPacket"]); // Add packet IDs to ignore here.
+const IGNORED_PACKETS = new Set<string>(["PlayerAuthInputPacket", "SubChunkRequestPacket", "ClientCacheBlobStatusPacket"]); // Add packet IDs to ignore here.
 
 /**
  * Check for packet spam by monitoring the frequency of received packets.
