@@ -86,8 +86,13 @@ export const lockdownCommand: Command = {
             if (object.initialSpawn === true) {
                 const securityCheck = object.player.getDynamicProperty("securityClearance") as number;
                 if (securityCheck !== 4) {
+                    //check to see if lockdown has been disabled but the server hasn't rebooted??
+                    if (world.getDynamicProperty("lockdown_b") === false) {
+                        return;
+                    }
                     // Kick players from server
                     world.getDimension(object.player.dimension.id).runCommand(`kick ${object.player.name} §o§7\n\n${reason}`);
+
                     return;
                 }
             }
