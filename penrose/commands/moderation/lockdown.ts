@@ -3,6 +3,11 @@ import { Command } from "../../classes/command-handler";
 import _default from "../../node_modules/crypto-es/lib/index";
 
 /**
+ * Persistent Lockdown Monitor Reference
+ */
+let lockDownMonitor: (event: PlayerSpawnAfterEvent) => void;
+
+/**
  * Represents the lockdown command.
  */
 export const lockdownCommand: Command = {
@@ -49,7 +54,11 @@ export const lockdownCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been disabled!`);
             system.run(() => {
                 world.setDynamicProperty("lockdown_b", false); // Set lockdown_b to false to unlock the server
-                world.afterEvents.playerSpawn.unsubscribe(lockDownMonitor); // Unsubscribe from playerSpawnSubscription
+
+                // Ensure we properly unsubscribe using the stored function reference
+                if (lockDownMonitor) {
+                    world.afterEvents.playerSpawn.unsubscribe(lockDownMonitor);
+                }
             });
             return;
         }
@@ -72,30 +81,18 @@ export const lockdownCommand: Command = {
             world.setDynamicProperty("lockdown_b", true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been enabled!`);
 
-            // Subscribe to playerSpawnSubscription
+            // Store and subscribe the persistent function reference
+            lockDownMonitor = function (object: PlayerSpawnAfterEvent) {
+                if (object.initialSpawn === true) {
+                    const securityCheck = object.player.getDynamicProperty("securityClearance") as number;
+                    if (securityCheck !== 4) {
+                        // Kick players from server
+                        world.getDimension(object.player.dimension.id).runCommand(`kick ${object.player.name} §o§7\n\n${reason}`);
+                    }
+                }
+            };
+
             world.afterEvents.playerSpawn.subscribe(lockDownMonitor);
         });
-
-        /**
-         * Function to monitor player spawns during lockdown.
-         * @param {PlayerSpawnAfterEvent} object - The player spawn event object.
-         */
-        function lockDownMonitor(object: PlayerSpawnAfterEvent) {
-            // Default reason for locking it down
-            const reason = "Under Maintenance! Sorry for the inconvenience.";
-            if (object.initialSpawn === true) {
-                const securityCheck = object.player.getDynamicProperty("securityClearance") as number;
-                if (securityCheck !== 4) {
-                    //check to see if lockdown has been disabled but the server hasn't rebooted??
-                    if (world.getDynamicProperty("lockdown_b") === false) {
-                        return;
-                    }
-                    // Kick players from server
-                    world.getDimension(object.player.dimension.id).runCommand(`kick ${object.player.name} §o§7\n\n${reason}`);
-
-                    return;
-                }
-            }
-        }
     },
 };
