@@ -66,7 +66,7 @@ export const invseeCommand: Command = {
 
         // Retrieve the player's inventory
         system.run(() => {
-            if (member && member.isValid()) {
+            if (member && member.isValid) {
                 const inv = member.getComponent("inventory");
                 const container = inv.container;
                 // Display the player's inventory

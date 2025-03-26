@@ -200,7 +200,7 @@ function unsubscribeFromLockDown() {
             wrappedLockDownMonitor = undefined; // Clear the reference
         }
         lockDownMonitor = undefined; // Clear the reference to the original function
-        world.afterEvents.worldInitialize.unsubscribe(onWorldInitialize);
+        world.afterEvents.worldLoad.unsubscribe(onWorldInitialize);
     });
 }
 
@@ -245,5 +245,5 @@ function onWorldInitialize() {
  * Sets up paradoxModules and handles lockdown when the world initializes.
  */
 export function subscribeToWorldInitialize() {
-    world.afterEvents.worldInitialize.subscribe(onWorldInitialize);
+    world.afterEvents.worldLoad.subscribe(onWorldInitialize);
 }

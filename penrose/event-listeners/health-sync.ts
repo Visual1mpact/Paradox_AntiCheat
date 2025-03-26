@@ -35,7 +35,7 @@ function handleHealthChange(event: EntityHealthChangedAfterEvent): void {
 function healthChangeAfterDeath(event: EntityDieAfterEvent): void {
     const entity = event.deadEntity;
     if (entity instanceof Player) {
-        const defaultHealth = entity.isValid() ? entity.getComponent("health")?.defaultValue : 20;
+        const defaultHealth = entity.isValid ? entity.getComponent("health")?.defaultValue : 20;
         entity.setDynamicProperty("paradoxCurrentHealth", defaultHealth);
     }
 }

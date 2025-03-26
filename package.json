@@ -22,18 +22,18 @@
         "7zip-bin": "5.2.0"
     },
     "dependencies": {
-        "@minecraft/server-ui": "1.4.0-beta.1.21.60-stable",
-        "@minecraft/server": "1.18.0-beta.1.21.60-stable",
-        "@minecraft/server-net": "1.0.0-beta.1.21.60-stable",
+        "@minecraft/server-ui": "2.0.0-beta.1.21.70-stable",
+        "@minecraft/server": "2.0.0-beta.1.21.70-stable",
+        "@minecraft/server-net": "1.0.0-beta.1.21.70-stable",
         "@minecraft/math": "2.0.1",
         "crypto-es": "2.1.0"
     },
     "overrides": {
         "@minecraft/math": {
-            "@minecraft/server": "1.18.0-beta.1.21.60-stable"
+            "@minecraft/server": "2.0.0-beta.1.21.70-stable"
         },
         "@minecraft/server-ui": {
-            "@minecraft/server": "1.18.0-beta.1.21.60-stable"
+            "@minecraft/server": "2.0.0-beta.1.21.70-stable"
         }
     },
     "prettier": {

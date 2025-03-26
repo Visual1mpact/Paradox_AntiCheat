@@ -91,7 +91,7 @@ export const tpaCommand: Command = {
                 for (const [name1, name2] of possibleNames) {
                     const player1 = getPlayerObject(name1);
                     const player2 = getPlayerObject(name2);
-                    if (player1 && player1.isValid() && player2 && player2.isValid()) {
+                    if (player1 && player1.isValid && player2 && player2.isValid) {
                         return [player1, player2];
                     }
                 }
@@ -108,12 +108,12 @@ export const tpaCommand: Command = {
                 return;
             }
 
-            if (!target1.isValid()) {
+            if (!target1.isValid) {
                 message.sender.sendMessage(`§cPlayer '${target1.name}' not found or not valid.`);
                 return;
             }
 
-            if (!target2.isValid()) {
+            if (!target2.isValid) {
                 message.sender.sendMessage(`§cPlayer '${target2.name}' not found or not valid.`);
                 return;
             }

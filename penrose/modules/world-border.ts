@@ -42,7 +42,7 @@ function* worldBorderGenerator(jobId: number): Generator<void, void, unknown> {
         const players = world.getPlayers();
 
         for (const player of players) {
-            if (player.isValid() && (player.getDynamicProperty("securityClearance") as number) === 4) {
+            if (player.isValid && (player.getDynamicProperty("securityClearance") as number) === 4) {
                 continue;
             }
 

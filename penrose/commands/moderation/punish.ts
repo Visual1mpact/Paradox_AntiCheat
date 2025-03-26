@@ -137,7 +137,7 @@ export const punishCommand: Command = {
         // Wipe them out
         system.run(() => {
             const target: Player = getPlayerObject(playerName);
-            if (target && target.isValid()) {
+            if (target && target.isValid) {
                 // Wipe out items in each equipment slot from requested player's equipment container
                 if (wipeEquipment) {
                     for (const slot of Object.values(EquipmentSlot)) {

@@ -73,7 +73,7 @@ export const opsecCommand: Command = {
 
         const targetPlayer = world.getAllPlayers().find((player) => player.name === targetPlayerName);
 
-        if (!targetPlayer || !targetPlayer.isValid()) {
+        if (!targetPlayer || !targetPlayer.isValid) {
             message.sender.sendMessage(`§cPlayer "${targetPlayerName}" not found or is invalid.`);
             return;
         }

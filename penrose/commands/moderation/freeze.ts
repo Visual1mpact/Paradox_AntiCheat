@@ -105,8 +105,10 @@ export function buildPrison(player: Player) {
 export function freezePlayer(player: Player, message?: ChatSendBeforeEvent) {
     player.addEffect("minecraft:weakness", 19999999, { amplifier: 255, showParticles: false });
     try {
-        player.inputPermissions.movementEnabled = false;
-        player.inputPermissions.cameraEnabled = false;
+        //Disable movement
+        player.inputPermissions.setPermissionCategory(2, false);
+        //Disable camera
+        player.inputPermissions.setPermissionCategory(1, false);
     } catch {
         if (message) {
             message.sender.sendMessage(`§cPlayer "${player.name}" cannot be frozen, but will be put in it's prison. This is most likely a bot!`);
@@ -207,8 +209,10 @@ export const imprisonCommand: Command = {
                 player.setDynamicProperty(ORIGINAL_DIMENSION_PROPERTY, undefined);
 
                 try {
-                    player.inputPermissions.movementEnabled = true;
-                    player.inputPermissions.cameraEnabled = true;
+                    //Enable movement
+                    player.inputPermissions.setPermissionCategory(2, true);
+                    //Enable camera
+                    player.inputPermissions.setPermissionCategory(1, true);
                 } catch {
                     message.sender.sendMessage(`§cPlayer "${playerName}" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
                 }
@@ -220,7 +224,7 @@ export const imprisonCommand: Command = {
 
         // Execute the command logic in the game tick loop
         system.run(() => {
-            if (player && player.isValid()) {
+            if (player && player.isValid) {
                 // Check if player is already imprisoned
                 const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
 
