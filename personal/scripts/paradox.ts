@@ -59,7 +59,7 @@ chatSendSubscription.subscribe();
 // Initializes the tracking of players with security clearance level 4.
 initializeSecurityClearanceTracking();
 
-// Subscribe to world initialization events
+// Subscribe to world load events
 subscribeToWorldInitialize();
 
 // subscribe to player spawn events

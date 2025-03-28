@@ -231,7 +231,7 @@ function handlePvP() {
 }
 
 /**
- * Initializes paradoxModules and handles lockdown on world initialization.
+ * Initializes paradoxModules and handles lockdown on world load.
  */
 function onWorldInitialize() {
     initializeGlobalBanList(); // Ensure the global banned player list is initialized
@@ -241,7 +241,7 @@ function onWorldInitialize() {
 }
 
 /**
- * Subscribes to the world initialization event.
+ * Subscribes to the world load event.
  * Sets up paradoxModules and handles lockdown when the world initializes.
  */
 export function subscribeToWorldInitialize() {
