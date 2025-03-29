@@ -39,7 +39,7 @@ import { initializeSecurityClearanceTracking } from "./utility/level-4-security-
 import { healthChangeListener } from "./event-listeners/health-sync";
 import { whitelistCommand } from "./commands/moderation/whitelist";
 import { OptimizedDatabase } from "./classes/database/data-hive";
-import { guiCommand } from "./commands/gui/form_generator";
+import { guiCommand } from "./commands/gui/form-generator";
 import { command } from "./commands/moderation/command";
 import { selfAttackCheckCommand } from "./commands/settings/self-infliction";
 import { rateLimitCommand } from "./commands/settings/rate-limit";
