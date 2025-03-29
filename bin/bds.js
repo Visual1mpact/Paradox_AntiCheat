@@ -92,7 +92,7 @@ function downloadBDS(version) {
  * @param {string} version - The version of the BDS server to extract.
  * @returns {Promise<void>} - Resolves when extraction is complete.
  */
-async function extractBDS(version) {
+function extractBDS(version) {
     const zipFile = `bedrock-server-${version}.zip`;
     const extractionDir = `bedrock-server-${version}`;
 
@@ -118,7 +118,7 @@ async function extractBDS(version) {
 async function main() {
     try {
         const latestVersion = await getLatestVersion();
-        const oldVersionDir = getLatestOldVersion();
+        const oldVersionDir = await getLatestOldVersion();
         const newVersionDir = `bedrock-server-${latestVersion}`;
 
         if (oldVersionDir) {
@@ -137,10 +137,10 @@ async function main() {
         await extractBDS(latestVersion);
 
         // Delete the zip archive after extraction is complete
-        deleteZipArchive(downloadLocation);
+        await deleteZipArchive(downloadLocation);
 
-        copyFolders(oldVersionDir, newVersionDir);
-        updateServerProperties(oldVersionDir, newVersionDir);
+        await copyFolders(oldVersionDir, newVersionDir);
+        await updateServerProperties(oldVersionDir, newVersionDir);
     } catch (error) {
         console.error(error);
     }
@@ -150,30 +150,48 @@ async function main() {
  * Deletes the downloaded zip archive after extraction.
  *
  * @param {string} zipFile - The path to the zip file to be deleted.
+ * @returns {Promise<void>} - Resolves when the zip file is successfully deleted.
  */
 function deleteZipArchive(zipFile) {
     console.log(`> Deleting zip archive: ${zipFile}`);
-    fs.unlink(zipFile, (err) => {
-        if (err) {
-            console.error(`   - Error deleting zip archive: ${err.message}`);
-        } else {
-            console.log("   - Zip archive deleted.");
-        }
+
+    if (!fs.existsSync(zipFile)) {
+        console.log(`   - File not found: ${zipFile}\n`);
+        return;
+    }
+
+    return new Promise((resolve, reject) => {
+        fs.unlink(zipFile, (err) => {
+            if (err) {
+                console.error(`   - Error deleting zip archive: ${err.message}\n`);
+                reject(err); // Reject if there's an error
+            } else {
+                console.log("   - Zip archive deleted.\n");
+                resolve(); // Resolve when deletion is complete
+            }
+        });
     });
 }
 
 /**
- * Retrieves the directory of the latest installed BDS version.
+ * Retrieves the directory of the latest installed BDS version asynchronously.
  *
- * @returns {string | null} - The directory of the latest version, or null if no previous version is found.
+ * @returns {Promise<string | null>} - The directory of the latest version, or null if no previous version is found.
  */
-function getLatestOldVersion() {
-    const dirs = fs.readdirSync(process.cwd()).filter((file) => fs.lstatSync(file).isDirectory() && file.startsWith("bedrock-server-"));
-    if (dirs.length === 0) {
+async function getLatestOldVersion() {
+    try {
+        const dirs = await fs.promises.readdir(process.cwd());
+        const directories = dirs.filter((file) => fs.lstatSync(file).isDirectory() && file.startsWith("bedrock-server-"));
+
+        if (directories.length === 0) {
+            return null;
+        }
+
+        return directories.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })).pop();
+    } catch (error) {
+        console.error(`   - Error reading directory: ${error.message}`);
         return null;
     }
-
-    return dirs.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })).pop();
 }
 
 /**
@@ -182,7 +200,7 @@ function getLatestOldVersion() {
  * @param {string} oldVersionDir - The directory of the old BDS version.
  * @param {string} newVersionDir - The directory of the new BDS version.
  */
-function copyFolders(oldVersionDir, newVersionDir) {
+async function copyFolders(oldVersionDir, newVersionDir) {
     console.log("> Copying worlds and development packs folders...");
 
     const oldWorldsDir = `${oldVersionDir}/worlds`;
@@ -284,10 +302,10 @@ async function updateServerProperties(oldVersionDir, newVersionDir) {
     console.log("> Comparing server.properties...");
 
     if (fs.existsSync(oldPropertiesFile) && fs.existsSync(newPropertiesFile)) {
-        const oldProperties = readPropertiesFile(oldPropertiesFile);
-        const newProperties = readPropertiesFile(newPropertiesFile);
+        const { properties: oldProperties, lines: oldLines } = readPropertiesFile(oldPropertiesFile);
+        const { properties: newProperties, lines: newLines } = readPropertiesFile(newPropertiesFile);
 
-        const updatedProperties = { ...oldProperties }; // Copy old properties
+        const updatedProperties = { ...oldProperties }; // Start with the old properties
 
         for (const key in oldProperties) {
             if (newProperties[key] !== oldProperties[key]) {
@@ -296,7 +314,7 @@ async function updateServerProperties(oldVersionDir, newVersionDir) {
                 console.log(`   - New: ${key}=${newProperties[key]}`);
 
                 const validResponses = ["y", "yes"];
-                const choice = await askQuestion("Apply this change? (y/n): ");
+                const choice = await askQuestion("Apply this new change? (y/n): ");
 
                 if (validResponses.includes(choice.toLowerCase())) {
                     updatedProperties[key] = newProperties[key];
@@ -305,43 +323,54 @@ async function updateServerProperties(oldVersionDir, newVersionDir) {
             }
         }
 
-        writePropertiesFile(newPropertiesFile, updatedProperties);
+        writePropertiesFile(newPropertiesFile, updatedProperties, newLines);
         console.log("\n   - server.properties updated.\n");
     }
 }
 
 /**
- * Reads the contents of a properties file and returns it as an object.
+ * Reads the contents of a properties file and returns it as an object along with the original lines.
  *
  * @param {string} filePath - The path to the properties file.
- * @returns {Object} - The key-value pairs from the properties file.
+ * @returns {Object} - The key-value pairs from the properties file, and the original lines.
  */
 function readPropertiesFile(filePath) {
+    const lines = fs.readFileSync(filePath, "utf-8").split("\n");
     const properties = {};
-    const fileContents = fs.readFileSync(filePath, "utf8").split("\n");
 
-    fileContents.forEach((line) => {
-        const match = line.match(/^\s*(\S+)\s*=\s*(\S+)\s*$/);
-        if (match) {
-            properties[match[1]] = match[2];
+    lines.forEach((line) => {
+        if (line && line[0] !== "#") {
+            const [key, value] = line.split("=");
+            if (key && value) {
+                properties[key.trim()] = value.trim();
+            }
         }
     });
 
-    return properties;
+    return { properties, lines };
 }
 
 /**
- * Writes an updated properties object to a file.
+ * Writes an updated properties object to a file, preserving comments and blank lines.
  *
  * @param {string} filePath - The path to the properties file.
  * @param {Object} properties - The updated properties to write to the file.
+ * @param {Array} lines - The original lines of the properties file.
  */
-function writePropertiesFile(filePath, properties) {
-    const fileContents = Object.entries(properties)
-        .map(([key, value]) => `${key}=${value}`)
-        .join("\n");
+function writePropertiesFile(filePath, updatedProperties, lines) {
+    let updatedLines = [...lines];
 
-    fs.writeFileSync(filePath, fileContents, "utf8");
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line && line[0] !== "#") {
+            const [key] = line.split("=");
+            if (updatedProperties[key.trim()] !== undefined) {
+                updatedLines[i] = `${key}=${updatedProperties[key.trim()]}`;
+            }
+        }
+    }
+
+    fs.writeFileSync(filePath, updatedLines.join("\n"), "utf-8");
 }
 
 /**
@@ -356,12 +385,12 @@ function askQuestion(query) {
         output: process.stdout,
     });
 
-    return new Promise((resolve) => {
+    return new Promise((resolve) =>
         rl.question(query, (answer) => {
             rl.close();
             resolve(answer);
-        });
-    });
+        })
+    );
 }
 
 // Execute the main function
