@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, GuiInstructions, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { commandHandler } from "../../paradox";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
-import CryptoES from "crypto-es";
+import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
  * Represents the GUI opening command.
