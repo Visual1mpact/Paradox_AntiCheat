@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { paradoxModulesDB } from "../../paradox";
+import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 // Define a type for platform block settings to ensure type safety
 interface PlatformBlockSettings {

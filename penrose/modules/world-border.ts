@@ -1,5 +1,5 @@
 import { Player, world, system, Dimension } from "@minecraft/server";
-import { paradoxModulesDB } from "../paradox";
+import { paradoxModulesDB } from "../event-listeners/world-initialize";
 
 let currentJobId: number | null = null;
 

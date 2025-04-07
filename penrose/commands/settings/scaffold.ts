@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startScaffoldCheck, stopScaffoldCheck } from "../../modules/scaffold";
-import { paradoxModulesDB } from "../../paradox";
+import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**
  * Represents the scaffold detection command.

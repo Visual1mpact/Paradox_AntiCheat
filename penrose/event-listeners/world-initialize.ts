@@ -14,16 +14,135 @@ import { startNamespoofDetection } from "../modules/namespoof";
 import { startXrayDetection } from "../modules/xray";
 import { globalBanPlayers } from "../data/global-ban";
 import { paradoxVersion } from "../data/versioning";
-import { paradoxModulesDB } from "../paradox";
 import { OptimizedDatabase } from "../classes/database/data-hive";
 import { startSelfAttackCheck } from "../modules/self-infliction";
 import { startPacketHandler } from "../modules/rate-limit";
 import { startPacketListener } from "../modules/packet-monitor";
 import { startVisionCheck } from "../modules/vision";
+import { Command, CommandHandler } from "../classes/command-handler";
+import { opCommand } from "../commands/moderation/op";
+import { deopCommand } from "../commands/moderation/deop";
+import { punishCommand } from "../commands/moderation/punish";
+import { vanishCommand } from "../commands/moderation/vanish";
+import { prefixCommand } from "../commands/moderation/prefix";
+import { despawnCommand } from "../commands/moderation/despawn";
+import { kickCommand } from "../commands/moderation/kick";
+import { tpaCommand } from "../commands/moderation/tpa";
+import { homeCommand } from "../commands/utility/home";
+import { invseeCommand } from "../commands/utility/invsee";
+import { opsecCommand } from "../commands/moderation/opsec";
+import { tprCommand } from "../commands/utility/tpr";
+import { setRankCommand } from "../commands/utility/rank";
+import { banCommand } from "../commands/moderation/ban";
+import { unbanCommand } from "../commands/moderation/unban";
+import { lagClearCommand } from "../commands/settings/lag-clear";
+import { gameModeCommand } from "../commands/settings/game-mode";
+import { worldBorderCommand } from "../commands/settings/world-border";
+import { flyCheckCommand } from "../commands/settings/fly";
+import { afkCommand } from "../commands/settings/afk";
+import { antispamCommand } from "../commands/settings/spam";
+import { pvpCooldownCommand, pvpToggleCommand, pvpToggleCooldownCommand } from "../commands/utility/pvp";
+import { channelCommand } from "../commands/utility/channels";
+import { hitReachCheckCommand } from "../commands/settings/reach";
+import { autoClickerCommand } from "../commands/settings/autoclicker";
+import { killauraCommand } from "../commands/settings/killaura";
+import { modulesStatusCommand } from "../commands/moderation/modules";
+import { scaffoldCommand } from "../commands/settings/scaffold";
+import { imprisonCommand } from "../commands/moderation/freeze";
+import { platformBlockCommand } from "../commands/settings/platform-block";
+import { nameSpoofCommand } from "../commands/settings/namespoof";
+import { xrayCommand } from "../commands/settings/xray";
+import { whitelistCommand } from "../commands/moderation/whitelist";
+import { guiCommand } from "../commands/gui/form-generator";
+import { command } from "../commands/moderation/command";
+import { selfAttackCheckCommand } from "../commands/settings/self-infliction";
+import { rateLimitCommand } from "../commands/settings/rate-limit";
+import { packetMonitorCommand } from "../commands/settings/packet-monitor";
+import { allowlistCommand } from "../commands/moderation/allowlist";
+import { visionCheckCommand } from "../commands/settings/vision";
+import { healthChangeListener } from "./health-sync";
+import { onPlayerSpawn } from "./player-spawn";
+import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
+import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
+
+// Declare the necessary objects to be exported
+let paradoxModulesDB: OptimizedDatabase;
+let channelsDB: OptimizedDatabase;
+let disabledCommandsDB: OptimizedDatabase;
+let commandHandler: CommandHandler;
+
+/**
+ * Initializes and instantiates all necessary systems (databases, command handler, etc.)
+ */
+function initializeSystems() {
+    // Instantiate Databases
+    paradoxModulesDB = new OptimizedDatabase("paradoxModules");
+    channelsDB = new OptimizedDatabase("channels");
+    disabledCommandsDB = new OptimizedDatabase("disabledCommands");
+
+    // Instantiate CommandHandler
+    commandHandler = new CommandHandler();
+
+    // Define all available commands
+    const allCommands: Command[] = [
+        opCommand,
+        deopCommand,
+        punishCommand,
+        vanishCommand,
+        prefixCommand,
+        despawnCommand,
+        kickCommand,
+        lockdownCommand,
+        tpaCommand,
+        homeCommand,
+        invseeCommand,
+        opsecCommand,
+        tprCommand,
+        setRankCommand,
+        banCommand,
+        unbanCommand,
+        lagClearCommand,
+        gameModeCommand,
+        worldBorderCommand,
+        flyCheckCommand,
+        afkCommand,
+        antispamCommand,
+        pvpToggleCommand,
+        channelCommand,
+        hitReachCheckCommand,
+        autoClickerCommand,
+        killauraCommand,
+        modulesStatusCommand,
+        scaffoldCommand,
+        imprisonCommand,
+        platformBlockCommand,
+        nameSpoofCommand,
+        pvpCooldownCommand,
+        pvpToggleCooldownCommand,
+        xrayCommand,
+        whitelistCommand,
+        guiCommand,
+        command,
+        selfAttackCheckCommand,
+        rateLimitCommand,
+        packetMonitorCommand,
+        allowlistCommand,
+        visionCheckCommand,
+    ];
+
+    // Fetch disabled commands from the database and create a Set for faster lookups
+    const disabledCommandsSet = new Set(disabledCommandsDB.entries().map((entry) => entry[0]));
+
+    // Filter out disabled commands using the Set for faster lookup
+    const enabledCommands = allCommands.filter((command) => !disabledCommandsSet.has(command.name));
+
+    // Register only the enabled commands
+    commandHandler.registerCommand(enabledCommands);
+}
 
 /**
  * Compares two version strings in the format "vX.Y.Z" and returns -1 if the first version is smaller,
@@ -234,10 +353,14 @@ function handlePvP() {
  * Initializes paradoxModules and handles lockdown on world load.
  */
 function onWorldInitialize() {
+    chatSendSubscription.subscribe(); // Subscribe to chat send events
+    initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
     initializeGlobalBanList(); // Ensure the global banned player list is initialized
     initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
     handleLockDown(); // Handle lockdown if it's active
     handlePvP(); // Handle PvP if it's enabled
+    onPlayerSpawn(); // Subscribe to player spawn events
+    healthChangeListener.start(); // Synchronize health
 }
 
 /**
@@ -245,5 +368,11 @@ function onWorldInitialize() {
  * Sets up paradoxModules and handles lockdown when the world initializes.
  */
 export function subscribeToWorldInitialize() {
-    world.afterEvents.worldLoad.subscribe(onWorldInitialize);
+    world.afterEvents.worldLoad.subscribe(() => {
+        initializeSystems();
+        onWorldInitialize();
+    });
 }
+
+// Export the instantiated databases and command handler
+export { paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler };

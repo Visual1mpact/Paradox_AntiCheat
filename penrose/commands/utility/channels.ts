@@ -1,6 +1,6 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { channelsDB } from "../../paradox";
+import { channelsDB } from "../../event-listeners/world-initialize";
 
 type PlayerID = string;
 

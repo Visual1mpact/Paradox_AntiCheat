@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { commandHandler } from "../../paradox";
-import { disabledCommandsDB } from "../../paradox";
+import { commandHandler } from "../../event-listeners/world-initialize";
+import { disabledCommandsDB } from "../../event-listeners/world-initialize";
 
 /**
  * Command to dynamically enable or disable other commands.

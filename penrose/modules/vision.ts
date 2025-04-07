@@ -1,5 +1,5 @@
 import { system } from "@minecraft/server";
-import { paradoxModulesDB } from "../paradox";
+import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 let visionEnabled = false;

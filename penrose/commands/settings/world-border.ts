@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border";
-import { paradoxModulesDB } from "../../paradox";
+import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 // Represents world border settings for each dimension
 interface WorldBorderSettings {

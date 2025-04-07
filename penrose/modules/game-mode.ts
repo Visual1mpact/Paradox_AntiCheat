@@ -1,5 +1,5 @@
 import { GameMode, PlayerGameModeChangeAfterEvent, world } from "@minecraft/server";
-import { paradoxModulesDB } from "../paradox";
+import { paradoxModulesDB } from "../event-listeners/world-initialize";
 
 // Represents the game mode settings stored in the database
 interface ModeSettings {

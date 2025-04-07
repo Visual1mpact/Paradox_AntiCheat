@@ -1,5 +1,5 @@
 import { world, system, ChatSendBeforeEvent, Player } from "@minecraft/server";
-import { commandHandler, paradoxModulesDB, channelsDB } from "../../paradox";
+import { commandHandler, paradoxModulesDB, channelsDB } from "../../event-listeners/world-initialize";
 
 // Configuration for spam detection
 const SPAM_THRESHOLD = 5; // Number of allowed messages

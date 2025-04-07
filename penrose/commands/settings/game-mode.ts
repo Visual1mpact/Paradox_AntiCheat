@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode";
-import { paradoxModulesDB } from "../../paradox";
+import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 // Represents the game mode settings stored in the database
 interface ModeSettings {

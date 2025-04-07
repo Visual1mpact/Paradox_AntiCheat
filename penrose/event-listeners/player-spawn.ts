@@ -1,5 +1,5 @@
 import { PlayerSpawnAfterEvent, world } from "@minecraft/server";
-import { paradoxModulesDB } from "../paradox";
+import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 
 // Define a type for player information

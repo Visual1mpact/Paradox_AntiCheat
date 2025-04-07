@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { paradoxModulesDB } from "../../paradox";
+import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**
  * Represents the modules status command.
