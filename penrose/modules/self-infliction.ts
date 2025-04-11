@@ -19,7 +19,7 @@ function handleSelfAttack(eventData: EntityHitEntityAfterEvent): void {
             bannedPlayers.push(attacker.name);
             world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
             const dimension = world.getDimension(attacker.dimension.id);
-            dimension.runCommand(`kick ${attacker.name} §o§7\n\n${reason}`);
+            dimension.runCommand(`kick "${attacker.name}" §o§7\n\n${reason}`);
         }
     }
 }

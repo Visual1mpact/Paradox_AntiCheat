@@ -292,7 +292,7 @@ function setupPvPSystem() {
                     }
 
                     if (result.selection === 0) {
-                        world.getDimension(player.dimension.id).runCommand(`kick ${player.name} §o§7\n\nYou have selected to quit the game.`);
+                        world.getDimension(player.dimension.id).runCommand(`kick "${player.name}" §o§7\n\nYou have selected to quit the game.`);
                     }
                 })
                 .catch((error: Error) => {
