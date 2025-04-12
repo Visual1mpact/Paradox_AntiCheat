@@ -160,8 +160,7 @@ export const banCommand: Command = {
             if (targetPlayer) {
                 // If the player is online, tag and kick them
                 system.run(() => {
-                    const dimension = world.getDimension(targetPlayer.dimension.id);
-                    dimension.runCommand(`kick "${targetPlayer.name}" §o§7\n\n${reason}`);
+                    targetPlayer.runCommand(`kick @s §o§7\n\n${reason}`);
                 });
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}" has been banned with reason: ${reason}`);
             }

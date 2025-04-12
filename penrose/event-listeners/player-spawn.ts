@@ -89,8 +89,7 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
             bannedPlayers.push(playerName);
             world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
         }
-        const dimension = player.dimension;
-        dimension.runCommand(`kick "${playerName}" §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
+        player.runCommand(`kick @s §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
     }
 }
 
@@ -115,7 +114,7 @@ function allowList(event: PlayerSpawnAfterEvent) {
         return;
     }
 
-    player.dimension.runCommand(`kick "${playerName}" §o§7\n\nYou are not on the allow list.`);
+    player.runCommand(`kick @s §o§7\n\nYou are not on the allow list.`);
 }
 
 /**
@@ -137,8 +136,7 @@ function isPlatformBlocked(event: PlayerSpawnAfterEvent) {
     const playerPlatform = player.clientSystemInfo.platformType.toLowerCase();
 
     if (!playerPlatform || platformBlockSettings[playerPlatform]) {
-        const dimension = player.dimension;
-        dimension.runCommand(`kick "${player.name}" §o§7\n\nThis platform is not authorized!`);
+        player.runCommand(`kick @s §o§7\n\nThis platform is not authorized!`);
     }
 }
 
@@ -171,7 +169,7 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
             world.setDynamicProperty("bannedPlayers", JSON.stringify(updated));
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
-            player.dimension.runCommand(`kick "${playerName}" §o§7\n\nYou are banned. Please contact an admin for more information.`);
+            player.runCommand(`kick @s §o§7\n\nYou are banned. Please contact an admin for more information.`);
         }
     }
 }

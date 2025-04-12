@@ -47,7 +47,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             data.cancel = true; // Cancel the packet reception
             system.run(() => {
                 if (player.isValid) {
-                    world.getDimension(player.dimension.id).runCommand(`kick "${player.name}" §o§7\n\n${reason}`);
+                    player.runCommand(`kick @s §o§7\n\n${reason}`);
                 }
             });
             return;
@@ -74,10 +74,9 @@ async function initializePacketHandler(): Promise<boolean | void> {
             packetLimits.delete(player); // Clear the packet data for the player
             startIndices.delete(player); // Clear the start index for the player
             world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} attempted to run a crasher!`); // Notify the server of the attempted crash
-            const dimension = world.getDimension(player.dimension.id);
             system.run(() => {
                 if (player.isValid) {
-                    dimension.runCommand(`kick "${player.name}" §o§7\n\n${reason}`); // Kick the player from the server
+                    player.runCommand(`kick @s §o§7\n\n${reason}`); // Kick the player from the server
                 }
             });
             return;

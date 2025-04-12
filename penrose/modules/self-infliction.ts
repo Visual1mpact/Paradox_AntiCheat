@@ -18,8 +18,7 @@ function handleSelfAttack(eventData: EntityHitEntityAfterEvent): void {
             const bannedPlayers: string[] = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
             bannedPlayers.push(attacker.name);
             world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
-            const dimension = world.getDimension(attacker.dimension.id);
-            dimension.runCommand(`kick "${attacker.name}" §o§7\n\n${reason}`);
+            attacker.runCommand(`kick @s §o§7\n\n${reason}`);
         }
     }
 }

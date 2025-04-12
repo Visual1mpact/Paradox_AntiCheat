@@ -74,7 +74,7 @@ export const lockdownCommand: Command = {
                 const securityCheck = target.getDynamicProperty("securityClearance") as number;
                 if (securityCheck !== 4) {
                     // Kick players from server
-                    world.getDimension(target.dimension.id).runCommand(`kick "${target.name}" §o§7\n\n${reason}`);
+                    target.runCommand(`kick @s §o§7\n\n${reason}`);
                 }
             }
             // Set lockdown_b to true to indicate server lockdown
@@ -87,7 +87,7 @@ export const lockdownCommand: Command = {
                     const securityCheck = object.player.getDynamicProperty("securityClearance") as number;
                     if (securityCheck !== 4) {
                         // Kick players from server
-                        world.getDimension(object.player.dimension.id).runCommand(`kick "${object.player.name}" §o§7\n\n${reason}`);
+                        object.player.runCommand(`kick @s §o§7\n\n${reason}`);
                     }
                 }
             };

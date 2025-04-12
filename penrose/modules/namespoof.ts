@@ -59,8 +59,7 @@ function checkDuplicateName(player: Player) {
  * @param {string} reason - The reason for kicking the player.
  */
 function kickPlayer(player: Player, reason: string) {
-    const dimension = world.getDimension(player.dimension.id);
-    dimension.runCommand(`kick "${player.name}" §o§7\n\n${reason}`);
+    player.runCommand(`kick @s §o§7\n\n${reason}`);
     player.sendMessage(`§2[§7Paradox§2]§o§7 Player "${player.name}" has been ${reason}.`);
 }
 

@@ -62,7 +62,7 @@ async function checkAFKStatus(): Promise<void> {
         const player = world.getPlayers().find((p) => p.id === playerId);
         if (player && !isSecurityClearanceIgnored(player)) {
             if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
-                world.getDimension(player.dimension.id).runCommand(`kick "${player.name}" \n\n§l§o§7You have been kicked for being AFK!`);
+                player.runCommand(`kick @s \n\n§l§o§7You have been kicked for being AFK!`);
                 delete playerLastActive[playerId];
             }
         }
