@@ -1,4 +1,4 @@
-import { PlayerLeaveBeforeEvent, world } from "@minecraft/server";
+import { PlayerLeaveBeforeEvent, system, world } from "@minecraft/server";
 
 // Declare types for dynamically imported modules
 let beforeEvents: typeof import("@minecraft/server-net").beforeEvents;
@@ -44,8 +44,12 @@ async function initializePacketHandler(): Promise<boolean | void> {
         }
         if (bannedPlayers.includes(player.name)) {
             const reason = "You are banned";
-            world.getDimension(player.dimension.id).runCommand(`kick "${player.name}" §o§7\n\n${reason}`);
             data.cancel = true; // Cancel the packet reception
+            system.run(() => {
+                if (player.isValid) {
+                    world.getDimension(player.dimension.id).runCommand(`kick "${player.name}" §o§7\n\n${reason}`);
+                }
+            });
             return;
         }
 
@@ -71,7 +75,11 @@ async function initializePacketHandler(): Promise<boolean | void> {
             startIndices.delete(player); // Clear the start index for the player
             world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} attempted to run a crasher!`); // Notify the server of the attempted crash
             const dimension = world.getDimension(player.dimension.id);
-            dimension.runCommand(`kick "${player.name}" §o§7\n\n${reason}`); // Kick the player from the server
+            system.run(() => {
+                if (player.isValid) {
+                    dimension.runCommand(`kick "${player.name}" §o§7\n\n${reason}`); // Kick the player from the server
+                }
+            });
             return;
         }
 
