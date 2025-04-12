@@ -150,18 +150,28 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
     const player = event.player;
     const playerName = player.name;
 
-    // Safely parse the bannedPlayers and whitelistedPlayers from dynamic properties
     const bannedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
     const whitelistedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("whitelistedPlayers") as string) ?? "[]");
+    const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
 
+    // Always allow the host in
+    if (opsecData.host?.id === player.id) {
+        if (bannedPlayers.includes(playerName)) {
+            const updated = bannedPlayers.filter((name) => name !== playerName);
+            world.setDynamicProperty("bannedPlayers", JSON.stringify(updated));
+        }
+        player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
+        return;
+    }
+
+    // Whitelisted players get unbanned
     if (bannedPlayers.includes(playerName)) {
         if (whitelistedPlayers.includes(playerName)) {
-            const updatedBannedPlayers = bannedPlayers.filter((name) => name !== playerName);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(updatedBannedPlayers));
+            const updated = bannedPlayers.filter((name) => name !== playerName);
+            world.setDynamicProperty("bannedPlayers", JSON.stringify(updated));
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
-            const dimension = player.dimension;
-            dimension.runCommand(`kick "${playerName}" §o§7\n\nYou are banned. Please contact an admin for more information.`);
+            player.dimension.runCommand(`kick "${playerName}" §o§7\n\nYou are banned. Please contact an admin for more information.`);
         }
     }
 }
