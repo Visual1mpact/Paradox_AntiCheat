@@ -392,4 +392,5 @@ export const globalBanPlayers = [
     "fossilmajora",
     "ithcbsyt",
     "bad6boyz07",
+    "iepatomic",
 ];
