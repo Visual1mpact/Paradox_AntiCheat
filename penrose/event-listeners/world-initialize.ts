@@ -60,6 +60,7 @@ import { rateLimitCommand } from "../commands/settings/rate-limit";
 import { packetMonitorCommand } from "../commands/settings/packet-monitor";
 import { allowlistCommand } from "../commands/moderation/allowlist";
 import { visionCheckCommand } from "../commands/settings/vision";
+import { spoofLogCommand } from "../commands/moderation/spooflog";
 import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
@@ -73,6 +74,7 @@ let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined
 let paradoxModulesDB: OptimizedDatabase;
 let channelsDB: OptimizedDatabase;
 let disabledCommandsDB: OptimizedDatabase;
+let spoofDB: OptimizedDatabase;
 let commandHandler: CommandHandler;
 
 /**
@@ -83,6 +85,7 @@ function initializeSystems() {
     paradoxModulesDB = new OptimizedDatabase("paradoxModules");
     channelsDB = new OptimizedDatabase("channels");
     disabledCommandsDB = new OptimizedDatabase("disabledCommands");
+    spoofDB = new OptimizedDatabase("trustedPlayers");
 
     // Instantiate CommandHandler
     commandHandler = new CommandHandler();
@@ -132,6 +135,7 @@ function initializeSystems() {
         packetMonitorCommand,
         allowlistCommand,
         visionCheckCommand,
+        spoofLogCommand,
     ];
 
     // Fetch disabled commands from the database and create a Set for faster lookups
@@ -375,4 +379,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler };
+export { paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler };

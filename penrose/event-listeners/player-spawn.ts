@@ -1,6 +1,41 @@
-import { PlayerSpawnAfterEvent, world } from "@minecraft/server";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
+import { Player, PlayerSpawnAfterEvent, world } from "@minecraft/server";
+import { paradoxModulesDB, spoofDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
+
+/**
+ * Represents stored identity data for a trusted player.
+ */
+interface TrustedPlayerData {
+    /**
+     * The unique player ID originally associated with this name.
+     */
+    id: string;
+
+    /**
+     * The timestamp (in milliseconds) when the name was first seen with the trusted ID.
+     */
+    firstSeen: number;
+
+    /**
+     * The last time this name was seen, regardless of spoof or not.
+     */
+    lastSeen: number;
+
+    /**
+     * Optional list of spoofing attempts, if any other players have tried to use this name.
+     */
+    spoofAttempts?: {
+        /**
+         * The spoofing player's actual ID.
+         */
+        id: string;
+
+        /**
+         * The timestamp when the spoofing attempt occurred.
+         */
+        timestamp: number;
+    }[];
+}
 
 // Define a type for player information
 interface PlayerInfo {
@@ -39,6 +74,63 @@ function initializeEventHandlers() {
 }
 
 /**
+ * Verifies player identity upon joining and enforces strict name-ID consistency.
+ * - If a player ID already exists under a different name, the player is kicked.
+ * - If a player name exists with a different ID, the player is treated as a spoofer and kicked.
+ * - If the name and ID match, the player's record is updated.
+ *
+ * @param {Player} player - The player joining or spawning in the world.
+ */
+function handleSpoofCheck(player: Player) {
+    const now = Date.now();
+    const nameKey = player.name;
+
+    // Step 1: Kick if this ID exists under a different name
+    const idCollision = spoofDB.entries().find(([otherName, data]) => {
+        const record = data as TrustedPlayerData;
+        return record.id === player.id && otherName !== nameKey;
+    });
+
+    if (idCollision) {
+        const [knownName] = idCollision;
+        player.sendMessage(`§c[Paradox] Your ID is already associated with the name "${knownName}".`);
+        player.runCommand(`kick @s §o§7\n\nName change is not allowed on this server.`);
+        return;
+    }
+
+    // Step 2: Check if name is already tied to a different ID (spoof attempt)
+    const record = spoofDB.get<TrustedPlayerData>(nameKey);
+
+    if (!record) {
+        // First time seeing this name
+        spoofDB.set(nameKey, {
+            id: player.id,
+            firstSeen: now,
+            lastSeen: now,
+        });
+        return;
+    }
+
+    if (record.id !== player.id) {
+        // Spoofing attempt: name exists with different ID
+        const attempt = { id: player.id, timestamp: now };
+        if (!record.spoofAttempts) record.spoofAttempts = [];
+        record.spoofAttempts.push(attempt);
+        record.lastSeen = now;
+
+        spoofDB.set(nameKey, record);
+
+        player.sendMessage(`§c[Paradox] Name spoof detected. This name belongs to another player.`);
+        player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
+        return;
+    }
+
+    // Step 3: Valid player, update last seen
+    record.lastSeen = now;
+    spoofDB.set(nameKey, record);
+}
+
+/**
  * Handles player spawn events.
  * This function is triggered when a player spawns in the world.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
@@ -53,6 +145,9 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
         handleSecurityClearance(event);
         allowList(event);
     }
+
+    // They can change their name at any given time so lets check whenever they spawn
+    handleSpoofCheck(player);
 
     // Check if the player is imprisoned after respawn
     const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
@@ -157,8 +252,8 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
         if (bannedPlayers.includes(playerName)) {
             const updated = bannedPlayers.filter((name) => name !== playerName);
             world.setDynamicProperty("bannedPlayers", JSON.stringify(updated));
+            player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
         }
-        player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
         return;
     }
 
