@@ -43,7 +43,7 @@ class ChatSendSubscription {
      * @returns True if the player's dynamic property matches the expected value, false otherwise.
      */
     private isPlayerPropertyEqual(player: Player, propertyKey: string, expectedValue: number): boolean {
-        const propertyValue = player.getDynamicProperty(propertyKey) as number | null;
+        const propertyValue = player.isValid ? (player.getDynamicProperty(propertyKey) as number | null) : null;
         return propertyValue === expectedValue;
     }
 

@@ -42,7 +42,8 @@ async function initializePacketHandler(): Promise<boolean | void> {
             data.cancel = true; // Cancel if player is undefined
             return;
         }
-        if (bannedPlayers.includes(player.name)) {
+
+        if (player.isValid && bannedPlayers.includes(player.name)) {
             const reason = "You are banned";
             data.cancel = true; // Cancel the packet reception
             system.run(() => {

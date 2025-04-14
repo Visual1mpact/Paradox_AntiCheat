@@ -47,7 +47,7 @@ const checkPacketSpam = (packetId: string, playerName: string) => {
  */
 const packetReceiveCallback = (event: import("@minecraft/server-net").PacketReceivedBeforeEvent) => {
     const packetId = event.packetId;
-    const playerName = event.sender?.name ?? "Unknown";
+    const playerName = event.sender.isValid ? event.sender.name : "Unknown";
 
     if (IGNORED_PACKETS.has(packetId)) {
         return; // Ignore specified packets.
