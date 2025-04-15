@@ -88,12 +88,19 @@ function handleSpoofCheck(player: Player) {
     const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
     const staleKeys: string[] = [];
+    const corruptedKeys: string[] = [];
 
     // Step 1: Scan entries once to:
     // - Detect ID conflicts
     // - Track stale records
     const idCollision = spoofDB.entries().find(([storedName, data]) => {
         const record = data as TrustedPlayerData;
+
+        // Auto-clean corrupted entries
+        if (!record?.id || typeof record.lastSeen !== "number") {
+            corruptedKeys.push(storedName);
+            return false;
+        }
 
         // Collect stale records for later cleanup
         if (now - record.lastSeen >= STALE_THRESHOLD) {
@@ -103,6 +110,9 @@ function handleSpoofCheck(player: Player) {
         // Check for ID collision (same ID, different name)
         return record.id === player.id && storedName !== nameKey;
     });
+
+    // Delete corrupted entries before proceeding
+    corruptedKeys.forEach((key) => spoofDB.delete(key));
 
     if (idCollision) {
         const [knownName] = idCollision;
@@ -123,7 +133,7 @@ function handleSpoofCheck(player: Player) {
         });
 
         // Cleanup after setting new record
-        staleKeys.forEach((key) => spoofDB.delete(key));
+        [...staleKeys, ...corruptedKeys].forEach((key) => spoofDB.delete(key));
         return;
     }
 
@@ -139,8 +149,7 @@ function handleSpoofCheck(player: Player) {
         player.sendMessage(`§c[Paradox] Name spoof detected. This name belongs to another player.`);
         player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
 
-        // Still clean up stale after spoof handling
-        staleKeys.forEach((key) => spoofDB.delete(key));
+        [...staleKeys, ...corruptedKeys].forEach((key) => spoofDB.delete(key));
         return;
     }
 
@@ -148,7 +157,7 @@ function handleSpoofCheck(player: Player) {
     record.lastSeen = now;
     spoofDB.set(nameKey, record);
 
-    staleKeys.forEach((key) => spoofDB.delete(key));
+    [...staleKeys, ...corruptedKeys].forEach((key) => spoofDB.delete(key));
 }
 
 /**
