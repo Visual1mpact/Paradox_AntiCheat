@@ -78,17 +78,30 @@ function initializeEventHandlers() {
  * - If a player ID already exists under a different name, the player is kicked.
  * - If a player name exists with a different ID, the player is treated as a spoofer and kicked.
  * - If the name and ID match, the player's record is updated.
+ * - If any record is older than 7 days and unused, it's cleaned up.
  *
  * @param {Player} player - The player joining or spawning in the world.
  */
 function handleSpoofCheck(player: Player) {
     const now = Date.now();
     const nameKey = player.name;
+    const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
-    // Step 1: Kick if this ID exists under a different name
-    const idCollision = spoofDB.entries().find(([otherName, data]) => {
+    const staleKeys: string[] = [];
+
+    // Step 1: Scan entries once to:
+    // - Detect ID conflicts
+    // - Track stale records
+    const idCollision = spoofDB.entries().find(([storedName, data]) => {
         const record = data as TrustedPlayerData;
-        return record.id === player.id && otherName !== nameKey;
+
+        // Collect stale records for later cleanup
+        if (now - record.lastSeen >= STALE_THRESHOLD) {
+            staleKeys.push(storedName);
+        }
+
+        // Check for ID collision (same ID, different name)
+        return record.id === player.id && storedName !== nameKey;
     });
 
     if (idCollision) {
@@ -98,21 +111,24 @@ function handleSpoofCheck(player: Player) {
         return;
     }
 
-    // Step 2: Check if name is already tied to a different ID (spoof attempt)
+    // Step 2: Check for spoof attempt via name reuse
     const record = spoofDB.get<TrustedPlayerData>(nameKey);
 
     if (!record) {
-        // First time seeing this name
+        // First-time entry
         spoofDB.set(nameKey, {
             id: player.id,
             firstSeen: now,
             lastSeen: now,
         });
+
+        // Cleanup after setting new record
+        staleKeys.forEach((key) => spoofDB.delete(key));
         return;
     }
 
     if (record.id !== player.id) {
-        // Spoofing attempt: name exists with different ID
+        // Spoof detected
         const attempt = { id: player.id, timestamp: now };
         if (!record.spoofAttempts) record.spoofAttempts = [];
         record.spoofAttempts.push(attempt);
@@ -122,12 +138,17 @@ function handleSpoofCheck(player: Player) {
 
         player.sendMessage(`§c[Paradox] Name spoof detected. This name belongs to another player.`);
         player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
+
+        // Still clean up stale after spoof handling
+        staleKeys.forEach((key) => spoofDB.delete(key));
         return;
     }
 
-    // Step 3: Valid player, update last seen
+    // Step 3: Valid player — update and clean
     record.lastSeen = now;
     spoofDB.set(nameKey, record);
+
+    staleKeys.forEach((key) => spoofDB.delete(key));
 }
 
 /**
