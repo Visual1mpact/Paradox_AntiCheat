@@ -65,20 +65,39 @@ function* worldBorderGenerator(): Generator<void, void, unknown> {
  */
 function createWorldBorderChecker(spawnLocation: { x: number; y: number; z: number }): (player: Player, x: number, y: number, z: number, borderSize: number, dimension: string) => void {
     return function checkAndTeleportPlayer(player: Player, x: number, y: number, z: number, borderSize: number, dimension: string) {
-        const borderOffset = borderSize - 3;
-
         const dx = x - spawnLocation.x;
         const dz = z - spawnLocation.z;
 
-        if (dx > borderSize || dx < -borderSize || dz > borderSize || dz < -borderSize) {
-            const targetX = dx < -borderSize ? spawnLocation.x - borderOffset + 6 : dx >= borderSize ? spawnLocation.x + borderOffset - 6 : x;
+        const beyondBorder = dx > borderSize + 20 || dx < -borderSize - 20 || dz > borderSize + 20 || dz < -borderSize - 20;
 
-            const targetZ = dz < -borderSize ? spawnLocation.z - borderOffset + 6 : dz >= borderSize ? spawnLocation.z + borderOffset - 6 : z;
+        if (beyondBorder) {
+            // Player is fully beyond the border — teleport to spawn
+            const safeY = findSafeY(player, spawnLocation.x, y, spawnLocation.z);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 You have exceeded the world border in the ${dimension} and were returned to spawn.`);
+            player.teleport({ x: spawnLocation.x, y: safeY, z: spawnLocation.z }, { dimension: player.dimension, checkForBlocks: true });
+        } else {
+            // Player is at or very close to the edge — nudge them back
+            const borderOffset = borderSize - 3;
+            let targetX = x;
+            let targetZ = z;
 
-            const safeY = findSafeY(player, targetX, y, targetZ);
+            if (dx < -borderSize + 2) {
+                targetX = spawnLocation.x - borderOffset + 6;
+            } else if (dx > borderSize - 2) {
+                targetX = spawnLocation.x + borderOffset - 6;
+            }
 
-            player.sendMessage(`§2[§7Paradox§2]§o§7 You have reached the world border in the ${dimension}.`);
-            player.teleport({ x: targetX, y: safeY, z: targetZ }, { dimension: player.dimension });
+            if (dz < -borderSize + 2) {
+                targetZ = spawnLocation.z - borderOffset + 6;
+            } else if (dz > borderSize - 2) {
+                targetZ = spawnLocation.z + borderOffset - 6;
+            }
+
+            if (targetX !== x || targetZ !== z) {
+                const safeY = findSafeY(player, targetX, y, targetZ);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 You have reached the world border in the ${dimension}.`);
+                player.teleport({ x: targetX, y: safeY, z: targetZ }, { dimension: player.dimension });
+            }
         }
     };
 }
@@ -107,20 +126,37 @@ function getDimensionHeightRange(dimension: Dimension): { min: number; max: numb
  */
 function findSafeY(player: Player, x: number, y: number, z: number): number {
     const { min: minHeight, max: maxHeight } = getDimensionHeightRange(player.dimension);
+    const maxSearchDistance = 32; // maximum distance up or down to search
+
     let safeY = Math.max(minHeight, Math.min(y, maxHeight - 1));
 
-    while (safeY >= minHeight && safeY < maxHeight) {
-        const head = player.dimension.getBlock({ x, y: safeY + 1, z });
-        const body = player.dimension.getBlock({ x, y: safeY, z });
-        const feet = player.dimension.getBlock({ x, y: safeY - 1, z });
+    for (let offset = 0; offset <= maxSearchDistance; offset++) {
+        for (const testY of [safeY + offset, safeY - offset]) {
+            if (testY < minHeight || testY > maxHeight - 1) {
+                continue;
+            }
 
-        if (head?.isAir && body?.isAir && feet?.isAir) {
-            break;
-        } else {
-            safeY += 1;
+            const head = player.dimension.getBlock({ x, y: testY + 1, z });
+            const body = player.dimension.getBlock({ x, y: testY, z });
+            const feet = player.dimension.getBlock({ x, y: testY - 1, z });
+
+            if (head?.isAir && body?.isAir && !feet?.isAir) {
+                return testY;
+            }
         }
     }
-    return Math.min(safeY, maxHeight - 1);
+
+    // No safe spot found within search distance
+    const playerEffect = player.getEffect("minecraft:slow_falling");
+
+    if (playerEffect) {
+        player.addEffect("minecraft:slow_falling", playerEffect.duration + 1200, { amplifier: playerEffect.amplifier });
+    } else {
+        player.addEffect("minecraft:slow_falling", 1200); // 60 seconds
+    }
+
+    // Clamp to world bounds if somehow overshot
+    return Math.max(minHeight, Math.min(safeY, maxHeight - 1));
 }
 
 /**
