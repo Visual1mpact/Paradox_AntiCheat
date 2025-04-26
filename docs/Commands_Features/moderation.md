@@ -233,9 +233,32 @@ The `!whitelist` command allows administrators to add or remove players from the
 The `!whitelist` automatically checks if a player's device meets the minimum requirements when they join the world. If a player’s render distance is too low or too high, they will be banned.
 
 > ```
-> Usage: "!vanish <player>"
-> Example: !vanish Pete9xi
+> Usage: "!whitelist <player>"
+> Example: !whitelist Pete9xi
 > ```
 
 ### Notes
-This is amid at blocking external **Bots** from connecting, if you use a discord bot for example ThirdEye you will need to whitelist it in order for the bot to join your server/realm. 
+This is amid at blocking external **Bots** from connecting, if you use a discord bot for example ThirdEye you will need to whitelist it in order for the bot to join your server/realm.
+
+## !spooflog
+### At A Glance
+The `!spooflog` command allows administrators to view and manage spoofing attempts on player names. It provides a log of when a name was first seen, last seen, and any spoofing attempts made by other players. The command can also be used to clear individual spoof logs or all logs.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!spooflog <playerName> [--clear] | !spooflog --clearall"
+> Example: !spooflog Bob
+> Example: !spooflog "Some Player"
+> Example: !spooflog Bob --clear
+> Example: !spooflog --clearall
+> ```
+
+### **Options**
+- `<playerName>`: Specifies the player whose spoof logs are to be displayed.
+- `--clear`: Clears the spoof log for the specified player.
+- `--clearall`: Clears all spoof logs in the database.
+
+### **Notes**
+- The `!spooflog` command is useful for tracking name spoofing attempts, which can help in identifying malicious players.
+- If a player name has been spoofed multiple times, all attempts will be displayed in the log for review.
