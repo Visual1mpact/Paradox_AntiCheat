@@ -55,8 +55,15 @@ The `gamemode` command provides administrators with the ability to manage and co
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!antifly [ help ]",
-> Example: !antifly
+> Usage: "!gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"
+> Examples:
+>   !gamemode -a
+>   !gamemode -c -s
+>   !gamemode -a -c -sp
+>   !gamemode --enable
+>   !gamemode --disable
+>   !gamemode -l
+>   !gamemode --list
 > ```
 
 ## !killaura
@@ -69,7 +76,7 @@ The `Killaura` detection module monitors player attacks to identify and countera
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!killaura [ help ]",
+> Usage: "!killaura [ help ]"
 > Example: !killaura
 > ```
 
@@ -140,7 +147,7 @@ When a player joins the server or realm, it will check to see if the player's pl
 
 ## !ratelimit
 ### At A Glance
-Toggles the module protects the server from players attempting to crash it by sending excessive packets in a short time.
+Toggles the module that protects the server from players attempting to crash it by sending excessive packets in a short time.
 
 ### How It Works
 It monitors packet activity and enforces a limit of 5 packets within 200 milliseconds. If a player exceeds this limit, their packets are canceled, and they are banned automatically. Specific packets, including CommandRequestPacket and LegacyTelemetryEventPacket are monitored as they are commonly used in exploits. These tracked packets are updated with new releases when necessary.  When a banned player attempts to join, they are instantly kicked with a message explaining their ban. Additionally, when a player leaves, their packet data is cleared to optimize performance.
