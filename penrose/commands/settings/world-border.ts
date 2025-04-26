@@ -182,6 +182,17 @@ export const worldBorderCommand: Command = {
             return;
         }
 
+        // Check if the args contain any valid parameters
+        const validArgs = ["--overworld", "-o", "--nether", "-n", "--end", "-e"];
+        const hasValidArgument = args.some((arg) => validArgs.includes(arg));
+
+        // (Skip the check if there were no arguments at all)
+        if (args.length > 0 && !hasValidArgument) {
+            const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
+            player.sendMessage(`§cInvalid arguments. For help, use ${prefix}worldborder help.`);
+            return;
+        }
+
         const paramIndexes: { [key: string]: number } = {
             "--overworld": -1,
             "-o": -1,
@@ -244,8 +255,5 @@ export const worldBorderCommand: Command = {
             });
             return;
         }
-
-        const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-        player.sendMessage(`§cInvalid arguments. For help, use ${prefix}worldborder help.`);
     },
 };
