@@ -302,12 +302,12 @@ export const guiCommand: Command = {
          * Parses user response into command arguments based on `DynamicField` definitions.
          * @param {ModalFormResponse} response - The response from the modal form.
          * @param {DynamicField[]} fields - The dynamic fields for the form.
-         * @param {string[]} commandArray - The list of command arguments.
+         * @param {string[]} _commandArray - The list of command arguments.
          * @param {string[]} requiredFields - The required fields for the command.
          * @param {GuiInstructions} guiInstructions - The GUI instructions for the form.
          * @returns {string[]} The parsed command arguments.
          */
-        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], commandArray: string[], requiredFields: string[] = [], guiInstructions: GuiInstructions): string[] {
+        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], _commandArray: string[], requiredFields: string[] = [], guiInstructions: GuiInstructions): string[] {
             const args: string[] = [];
             let formIndex = 0;
 
@@ -316,7 +316,6 @@ export const guiCommand: Command = {
                     let value = "";
                     switch (dynamicField.type) {
                         case "text": {
-                            // Directly access the corresponding text field value by formIndex
                             value = response.formValues[formIndex++] as string;
                             break;
                         }
@@ -326,32 +325,19 @@ export const guiCommand: Command = {
                             break;
                         }
                         case "toggle": {
-                            // Skip the toggle field if action is generating modal form and command is undefined
-                            const isActionWithNoCommand = guiInstructions.actions.some((action) => action.command === undefined && action.generateModalForm === true);
-                            if (isActionWithNoCommand) {
-                                // Skip adding toggle argument if the action is supposed to generate a modal form
-                                formIndex++; // Increment formIndex to prevent incorrect indexing
-                            } else {
-                                // If the command is not undefined, process the toggle normally
-                                value = response.formValues[formIndex++] ? "true" : "false"; // Toggle value
+                            const toggleValue = response.formValues[formIndex++];
+                            if (dynamicField.arg) {
+                                if (toggleValue === true) {
+                                    args.push(dynamicField.arg);
+                                }
                             }
-                            break;
+                            return; // Early exit toggle, don't continue below
                         }
                     }
-                    // Check for undefined or empty values before adding to args
-                    const dynamicFieldValue = dynamicField?.arg ?? (commandArray ? commandArray[formIndex - 1] : "");
-                    let finalValue = "";
 
-                    // Check if dynamicFieldValue starts with "-" or "--"
-                    if (dynamicFieldValue.startsWith("-") || dynamicFieldValue.startsWith("--")) {
-                        finalValue = dynamicFieldValue && value ? `${dynamicFieldValue} ${value}`.trim() : dynamicFieldValue.trim();
-                    } else {
-                        finalValue = value ? value.trim() : "";
-                    }
-
-                    // Only push to args if the final value is not an empty string
-                    if (finalValue) {
-                        args.push(finalValue);
+                    // Text and Dropdown fields continue here:
+                    if (value) {
+                        args.push(value.trim());
                     }
                 }
             });
