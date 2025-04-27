@@ -111,7 +111,7 @@ export const afkCommand: Command = {
             return { hours, minutes, seconds };
         };
 
-        if (args.length === 3) {
+        if (args.length >= 1 && args.length <= 3) {
             // Determine the timeout values
             const { hours, minutes, seconds } = getTimeoutValues(args);
 
@@ -119,7 +119,7 @@ export const afkCommand: Command = {
             paradoxModulesDB.set(afkSettingsKey, { hours, minutes, seconds });
             paradoxModulesDB.set(afkKey, true);
 
-            player.sendMessage(`§2[§7Paradox§2]§o§7 AFK timer updated to §2[ §7${hours}§7 : §7${minutes}§7 : §7${seconds}§7 §2]§7.`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 AFK timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
 
             // Restart AFK checker with the new settings
             system.run(() => {

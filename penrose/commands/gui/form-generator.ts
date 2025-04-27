@@ -146,7 +146,7 @@ export const guiCommand: Command = {
             if (formType === "ActionFormData") {
                 showActionForm(actions ?? [], title, description ?? "", player, command, dynamicFields ?? [], commandOrder, guiInstructions);
             } else if (formType === "ModalFormData") {
-                showModalForm(dynamicFields ?? [], title, player, command, [], false, commandOrder, finalRequiredFields, guiInstructions);
+                showModalForm(dynamicFields ?? [], title, player, command, [], false, commandOrder, finalRequiredFields);
             }
         }
 
@@ -189,7 +189,7 @@ export const guiCommand: Command = {
                                 showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description, player, command, dynamicFields, commandOrder, guiInstructions);
                             } else {
                                 const selectedAction = actions[response.selection];
-                                handleActionSelection(selectedAction, dynamicFields, title, player, command, commandOrder, guiInstructions);
+                                handleActionSelection(selectedAction, dynamicFields, title, player, command, commandOrder);
                             }
                         }
                     }
@@ -205,14 +205,13 @@ export const guiCommand: Command = {
          * @param {Player} player - The player executing the command.
          * @param {Command} command - The command being executed.
          * @param {string} [commandOrder] - The order of command arguments.
-         * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
-        function handleActionSelection(action: ActionFormButton, dynamicFields: DynamicField[], title: string, player: Player, command: Command, commandOrder?: string, guiInstructions?: GuiInstructions) {
+        function handleActionSelection(action: ActionFormButton, dynamicFields: DynamicField[], title: string, player: Player, command: Command, commandOrder?: string) {
             const { requiredFields, command: commandArray, crypto } = action;
 
             if (action.generateModalForm) {
                 const conditionalFields = dynamicFields.filter((field) => requiredFields.some((requiredField) => field.requiredFields.includes(requiredField)));
-                showModalForm(conditionalFields, title, player, command, commandArray, crypto, commandOrder, requiredFields, guiInstructions);
+                showModalForm(conditionalFields, title, player, command, commandArray, crypto, commandOrder, requiredFields);
             } else {
                 if (!requiredFields || requiredFields.length === 0) {
                     const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
@@ -231,9 +230,8 @@ export const guiCommand: Command = {
          * @param {boolean} [cryptoES] - Flag to indicate encryption is needed.
          * @param {string} [commandOrder] - The order of command arguments.
          * @param {string[]} [requiredFields] - Required fields for the form.
-         * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
          */
-        function showModalForm(dynamicFields: DynamicField[], title: string, player: Player, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[], guiInstructions?: GuiInstructions) {
+        function showModalForm(dynamicFields: DynamicField[], title: string, player: Player, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]) {
             const modalForm = new ModalFormData().title(title);
 
             for (const field of dynamicFields) {
@@ -275,7 +273,7 @@ export const guiCommand: Command = {
                 .show(player)
                 .then((response) => {
                     if (!response.canceled) {
-                        const args = parseFormResponse(response, dynamicFields, commandArray, requiredFields, guiInstructions);
+                        const args = parseFormResponse(response, dynamicFields, requiredFields);
                         const commandString = buildCommandString(commandOrder, commandArray, args);
                         const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
                         command.execute(chatSendBeforeEvent, commandString, cryptoES ? CryptoES : undefined);
@@ -302,12 +300,10 @@ export const guiCommand: Command = {
          * Parses user response into command arguments based on `DynamicField` definitions.
          * @param {ModalFormResponse} response - The response from the modal form.
          * @param {DynamicField[]} fields - The dynamic fields for the form.
-         * @param {string[]} _commandArray - The list of command arguments.
          * @param {string[]} requiredFields - The required fields for the command.
-         * @param {GuiInstructions} guiInstructions - The GUI instructions for the form.
          * @returns {string[]} The parsed command arguments.
          */
-        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], _commandArray: string[], requiredFields: string[] = [], guiInstructions: GuiInstructions): string[] {
+        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], requiredFields: string[] = []): string[] {
             const args: string[] = [];
             let formIndex = 0;
 

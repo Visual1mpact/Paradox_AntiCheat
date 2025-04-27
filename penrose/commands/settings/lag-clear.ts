@@ -112,7 +112,7 @@ export const lagClearCommand: Command = {
             return { hours, minutes, seconds };
         };
 
-        if (args.length === 3) {
+        if (args.length >= 1 && args.length <= 3) {
             // Determine the timeout values
             const { hours, minutes, seconds } = getTimeoutValues(args);
 
@@ -120,7 +120,7 @@ export const lagClearCommand: Command = {
             paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
             paradoxModulesDB.set(lagClearKey, true);
 
-            player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer updated to §2[ §7${hours}§7 : §7${minutes}§7 : §7${seconds}§7 §2]§7.`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
             system.run(() => {
                 startLagClear(hours, minutes, seconds);
             });
