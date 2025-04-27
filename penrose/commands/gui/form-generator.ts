@@ -275,7 +275,7 @@ export const guiCommand: Command = {
                 .show(player)
                 .then((response) => {
                     if (!response.canceled) {
-                        const args = parseFormResponse(response, dynamicFields, commandArray, requiredFields, guiInstructions);
+                        const args = parseFormResponse(response, dynamicFields, requiredFields);
                         const commandString = buildCommandString(commandOrder, commandArray, args);
                         const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
                         command.execute(chatSendBeforeEvent, commandString, cryptoES ? CryptoES : undefined);
@@ -302,12 +302,10 @@ export const guiCommand: Command = {
          * Parses user response into command arguments based on `DynamicField` definitions.
          * @param {ModalFormResponse} response - The response from the modal form.
          * @param {DynamicField[]} fields - The dynamic fields for the form.
-         * @param {string[]} _commandArray - The list of command arguments.
          * @param {string[]} requiredFields - The required fields for the command.
-         * @param {GuiInstructions} guiInstructions - The GUI instructions for the form.
          * @returns {string[]} The parsed command arguments.
          */
-        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], _commandArray: string[], requiredFields: string[] = [], guiInstructions: GuiInstructions): string[] {
+        function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], requiredFields: string[] = []): string[] {
             const args: string[] = [];
             let formIndex = 0;
 
