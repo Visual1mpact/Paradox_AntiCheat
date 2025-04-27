@@ -158,6 +158,60 @@ export class OptimizedDatabase {
     }
 
     /**
+     * Cleans invalid or empty entries from the database.
+     *
+     * By default, it removes entries where the value is:
+     * - `undefined` or `null`
+     * - an empty string `""`
+     * - an empty array `[]`
+     * - an empty object `{}`
+     * - `NaN`
+     * - a `function` or `symbol`
+     *
+     * You can also pass a custom validator function to define your own cleanup rules.
+     *
+     * @param validator - (Optional) A custom validation function `(key, value) => boolean`.
+     *                    Return `true` to keep the entry, or `false` to delete it.
+     *
+     * @example
+     * // Use default cleanup behavior:
+     * db.clean();
+     *
+     * @example
+     * // Use a custom validator to only keep entries where the value is a number > 10:
+     * db.clean((key, value) => typeof value === 'number' && value > 10);
+     *
+     * @example
+     * // Custom validator that removes entries where the key starts with "temp_":
+     * db.clean((key, value) => !key.startsWith("temp_"));
+     */
+    public clean(validator?: (key: string, value: any) => boolean): void {
+        const entries = this.entries();
+        let deletedCount = 0;
+
+        const defaultValidator = (value: any): boolean => {
+            if (value === undefined || value === null) return false;
+            if (typeof value === "string" && value.trim() === "") return false;
+            if (Array.isArray(value) && value.length === 0) return false;
+            if (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) return false;
+            if (typeof value === "number" && isNaN(value)) return false;
+            if (typeof value === "function" || typeof value === "symbol") return false;
+            return true;
+        };
+
+        for (const [key, value] of entries) {
+            const isValid = validator ? validator(key, value) : defaultValidator(value);
+            if (!isValid) {
+                this.delete(key);
+                console.warn(`[${this.name}] Deleted invalid entry "${key}" with value:`, value);
+                deletedCount++;
+            }
+        }
+
+        console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
+    }
+
+    /**
      * Internal helper to delete all chunks of a given base key.
      * @param baseKey - The base dynamic key (without chunk index).
      */

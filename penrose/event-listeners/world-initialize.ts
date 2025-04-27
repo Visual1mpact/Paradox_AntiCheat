@@ -87,6 +87,12 @@ function initializeSystems() {
     disabledCommandsDB = new OptimizedDatabase("disabledCommands");
     spoofDB = new OptimizedDatabase("trustedPlayers");
 
+    // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
+    paradoxModulesDB.clean();
+    channelsDB.clean();
+    disabledCommandsDB.clean();
+    spoofDB.clean();
+
     // Instantiate CommandHandler
     commandHandler = new CommandHandler();
 
@@ -294,36 +300,6 @@ function initializeParadoxModules() {
 }
 
 /**
- * Cleans the paradoxModulesDB by removing invalid or empty entries.
- */
-function cleanParadoxModulesDB() {
-    console.log("[ParadoxModules] Starting cleanup of module database...");
-
-    const entries = paradoxModulesDB.entries();
-    let deletedCount = 0;
-
-    for (const [key, value] of entries) {
-        if (key.endsWith("_b")) {
-            if (typeof value !== "boolean") {
-                paradoxModulesDB.delete(key);
-                console.warn(`[ParadoxModules] Deleted invalid boolean module "${key}" with value:`, value);
-                deletedCount++;
-            }
-        } else if (key.endsWith("_settings")) {
-            if (typeof value !== "object" || value === null || Array.isArray(value) || Object.keys(value).length === 0) {
-                paradoxModulesDB.delete(key);
-                console.warn(`[ParadoxModules] Deleted invalid or empty settings module "${key}" with value:`, value);
-                deletedCount++;
-            }
-        } else {
-            console.warn(`[ParadoxModules] Unknown key format "${key}" skipped.`);
-        }
-    }
-
-    console.log(`[ParadoxModules] Cleanup complete. Total deleted entries: ${deletedCount}`);
-}
-
-/**
  * Subscribes to the lockdown event and sets up a monitor for player spawns.
  * If lockdown is active, the player spawn event will be handled by the lockdown monitor.
  */
@@ -391,7 +367,6 @@ function onWorldInitialize() {
     initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
     initializeGlobalBanList(); // Ensure the global banned player list is initialized
     initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
-    cleanParadoxModulesDB(); // Clean up the database
     handleLockDown(); // Handle lockdown if it's active
     handlePvP(); // Handle PvP if it's enabled
     onPlayerSpawn(); // Subscribe to player spawn events
