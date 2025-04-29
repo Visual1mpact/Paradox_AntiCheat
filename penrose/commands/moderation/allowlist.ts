@@ -1,5 +1,6 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
+import { allowlistDB } from "../../event-listeners/world-initialize";
 
 // Define the allowlist command
 export const allowlistCommand: Command = {
@@ -61,53 +62,36 @@ export const allowlistCommand: Command = {
      * @returns {void}
      */
     execute: (message: ChatSendBeforeEvent, args: string[]): void => {
-        const dynamicProperty = "allowlistedPlayers";
+        const allowlistedPlayers = allowlistDB.get<string[]>("players") ?? [];
 
-        // Retrieve the allowlist from dynamic properties and parse it
-        const allowlistString = world.getDynamicProperty(dynamicProperty) as string;
-        let allowlistedPlayers: string[];
-
-        try {
-            allowlistedPlayers = allowlistString ? JSON.parse(allowlistString) : [];
-        } catch (error) {
-            message.sender.sendMessage("§cFailed to retrieve the allowlist. Please contact an admin.");
-            console.error("Error parsing allowlist:", error);
-            return;
-        }
-
-        // Validate the command arguments
         const action = args.shift()?.toLowerCase();
         if (!["add", "remove", "list", "disable"].includes(action)) {
-            message.sender.sendMessage("§cInvalid action. Use `add`, `remove`, or `list`.");
-            return;
-        }
-        //Handle disabling the allowlist
-        if (action === "disable") {
-            world.setDynamicProperty(dynamicProperty, "");
+            message.sender.sendMessage("§cInvalid action. Use `add`, `remove`, `list`, or `disable`.");
             return;
         }
 
-        // Handle listing all allowlisted players
+        if (action === "disable") {
+            allowlistDB.delete("players");
+            message.sender.sendMessage("§2[§7Paradox§2]§o§7 The allowlist has been disabled and cleared.");
+            return;
+        }
+
         if (action === "list") {
             if (allowlistedPlayers.length === 0) {
                 message.sender.sendMessage("§2[§7Paradox§2]§o§7 No players are currently allowlisted.");
             } else {
-                message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 allowlisted Players:");
-                allowlistedPlayers.forEach((player) => {
-                    message.sender.sendMessage(` §o§7| [§f${player}§7]`);
-                });
+                message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Allowlisted Players:");
+                allowlistedPlayers.forEach((p) => message.sender.sendMessage(` §o§7| [§f${p}§7]`));
             }
             return;
         }
 
-        // Extract player name for add/remove actions
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         if (!playerName) {
             message.sender.sendMessage("§cPlease provide a valid player name.");
             return;
         }
 
-        // Handle adding a player to the allowlist
         if (action === "add") {
             if (allowlistedPlayers.includes(playerName)) {
                 message.sender.sendMessage(`§cPlayer "${playerName}" is already in the allowlist.`);
@@ -115,19 +99,20 @@ export const allowlistCommand: Command = {
             }
 
             allowlistedPlayers.push(playerName);
-            world.setDynamicProperty(dynamicProperty, JSON.stringify(allowlistedPlayers));
+            allowlistDB.set("players", allowlistedPlayers);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been added to the allowlist.`);
         }
 
-        // Handle removing a player from the allowlist
         if (action === "remove") {
             if (!allowlistedPlayers.includes(playerName)) {
                 message.sender.sendMessage(`§cPlayer "${playerName}" is not in the allowlist.`);
                 return;
             }
 
-            allowlistedPlayers = allowlistedPlayers.filter((player) => player !== playerName);
-            world.setDynamicProperty(dynamicProperty, JSON.stringify(allowlistedPlayers));
+            allowlistDB.set(
+                "players",
+                allowlistedPlayers.filter((p) => p !== playerName)
+            );
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been removed from the allowlist.`);
         }
     },

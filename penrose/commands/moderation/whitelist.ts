@@ -1,5 +1,6 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
+import { whitelistDB } from "../../event-listeners/world-initialize";
 
 // Define the whitelist command
 export const whitelistCommand: Command = {
@@ -55,48 +56,30 @@ export const whitelistCommand: Command = {
      * @returns {void}
      */
     execute: (message: ChatSendBeforeEvent, args: string[]): void => {
-        const dynamicProperty = "whitelistedPlayers";
+        const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
 
-        // Retrieve the whitelist from dynamic properties and parse it
-        const whitelistString = world.getDynamicProperty(dynamicProperty) as string;
-        let whitelistedPlayers: string[];
-
-        try {
-            whitelistedPlayers = whitelistString ? JSON.parse(whitelistString) : [];
-        } catch (error) {
-            message.sender.sendMessage("§cFailed to retrieve the whitelist. Please contact an admin.");
-            console.error("Error parsing whitelist:", error);
-            return;
-        }
-
-        // Validate the command arguments
         const action = args.shift()?.toLowerCase();
         if (!["add", "remove", "list"].includes(action)) {
             message.sender.sendMessage("§cInvalid action. Use `add`, `remove`, or `list`.");
             return;
         }
 
-        // Handle listing all whitelisted players
         if (action === "list") {
             if (whitelistedPlayers.length === 0) {
                 message.sender.sendMessage("§2[§7Paradox§2]§o§7 No players are currently whitelisted.");
             } else {
                 message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Whitelisted Players:");
-                whitelistedPlayers.forEach((player) => {
-                    message.sender.sendMessage(` §o§7| [§f${player}§7]`);
-                });
+                whitelistedPlayers.forEach((p) => message.sender.sendMessage(` §o§7| [§f${p}§7]`));
             }
             return;
         }
 
-        // Extract player name for add/remove actions
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         if (!playerName) {
             message.sender.sendMessage("§cPlease provide a valid player name.");
             return;
         }
 
-        // Handle adding a player to the whitelist
         if (action === "add") {
             if (whitelistedPlayers.includes(playerName)) {
                 message.sender.sendMessage(`§cPlayer "${playerName}" is already in the whitelist.`);
@@ -104,19 +87,20 @@ export const whitelistCommand: Command = {
             }
 
             whitelistedPlayers.push(playerName);
-            world.setDynamicProperty(dynamicProperty, JSON.stringify(whitelistedPlayers));
+            whitelistDB.set("players", whitelistedPlayers);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been added to the whitelist.`);
         }
 
-        // Handle removing a player from the whitelist
         if (action === "remove") {
             if (!whitelistedPlayers.includes(playerName)) {
                 message.sender.sendMessage(`§cPlayer "${playerName}" is not in the whitelist.`);
                 return;
             }
 
-            whitelistedPlayers = whitelistedPlayers.filter((player) => player !== playerName);
-            world.setDynamicProperty(dynamicProperty, JSON.stringify(whitelistedPlayers));
+            whitelistDB.set(
+                "players",
+                whitelistedPlayers.filter((p) => p !== playerName)
+            );
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been removed from the whitelist.`);
         }
     },

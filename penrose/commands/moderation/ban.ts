@@ -1,3 +1,4 @@
+import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 
@@ -54,18 +55,8 @@ export const banCommand: Command = {
      */
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Initialize or retrieve the banned and whitelisted players lists
-        let bannedPlayers: string[] = [];
-        let whitelistedPlayers: string[] = [];
-        const bannedPlayersString = world.getDynamicProperty("bannedPlayers") as string;
-        const whitelistedPlayersString = world.getDynamicProperty("whitelistedPlayers") as string;
-
-        try {
-            bannedPlayers = bannedPlayersString ? JSON.parse(bannedPlayersString) : [];
-            whitelistedPlayers = whitelistedPlayersString ? JSON.parse(whitelistedPlayersString) : [];
-        } catch (error) {
-            bannedPlayers = [];
-            whitelistedPlayers = [];
-        }
+        const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
+        const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
 
         // Check if the command is for listing banned players
         if (args.includes("-l") || args.includes("--list")) {
@@ -150,7 +141,7 @@ export const banCommand: Command = {
             // Add player to banned list
             if (!bannedPlayers.includes(name)) {
                 bannedPlayers.push(name);
-                world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
+                banlistDB.set("players", bannedPlayers);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}" has been added to the banned list with reason: ${reason}.`);
                 if (!targetPlayer) {
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Note: The ban will be canceled if the player has high security clearance when they join.`);

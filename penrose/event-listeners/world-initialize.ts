@@ -75,6 +75,9 @@ let paradoxModulesDB: OptimizedDatabase;
 let channelsDB: OptimizedDatabase;
 let disabledCommandsDB: OptimizedDatabase;
 let spoofDB: OptimizedDatabase;
+let whitelistDB: OptimizedDatabase;
+let allowlistDB: OptimizedDatabase;
+let banlistDB: OptimizedDatabase;
 let commandHandler: CommandHandler;
 
 /**
@@ -86,12 +89,18 @@ function initializeSystems() {
     channelsDB = new OptimizedDatabase("channels");
     disabledCommandsDB = new OptimizedDatabase("disabledCommands");
     spoofDB = new OptimizedDatabase("trustedPlayers");
+    whitelistDB = new OptimizedDatabase("whitelist");
+    allowlistDB = new OptimizedDatabase("allowlist");
+    banlistDB = new OptimizedDatabase("banlist");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
     paradoxModulesDB.clean();
     channelsDB.clean();
     disabledCommandsDB.clean();
     spoofDB.clean();
+    whitelistDB.clean();
+    allowlistDB.clean();
+    banlistDB.clean();
 
     // Instantiate CommandHandler
     commandHandler = new CommandHandler();
@@ -385,4 +394,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler };
+export { paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB };

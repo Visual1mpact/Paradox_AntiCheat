@@ -1,5 +1,5 @@
 import { Player, PlayerSpawnAfterEvent, world } from "@minecraft/server";
-import { paradoxModulesDB, spoofDB } from "../event-listeners/world-initialize";
+import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 
 /**
@@ -53,9 +53,6 @@ interface SecurityClearanceData {
 interface PlatformBlockSettings {
     [key: string]: boolean;
 }
-
-// Define the types for banned and whitelisted players
-type PlayerNameList = string[];
 
 /**
  * Function to execute when a player spawns.
@@ -199,8 +196,8 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
     const playerName = player.name;
 
     // Safely parse the bannedPlayers and whitelistedPlayers from dynamic properties
-    const bannedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
-    const whitelistedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("whitelistedPlayers") as string) ?? "[]");
+    const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
+    const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
 
     if (whitelistedPlayers.includes(playerName)) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are exempt from local bans due to being whitelisted.");
@@ -212,7 +209,7 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
     if (maxRenderDistance < 6 || maxRenderDistance > 96) {
         if (!bannedPlayers.includes(playerName)) {
             bannedPlayers.push(playerName);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
+            banlistDB.set("players", bannedPlayers);
         }
         player.runCommand(`kick @s §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
     }
@@ -226,13 +223,12 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
 function allowList(event: PlayerSpawnAfterEvent) {
     const player = event.player;
     const playerName = player.name;
-    const allowListData = world.getDynamicProperty("allowlistedPlayers");
 
-    if (!allowListData) {
+    const allowListedPlayers = allowlistDB.get<string[]>("players") ?? [];
+
+    if (!allowListedPlayers.length) {
         return;
     }
-
-    const allowListedPlayers: PlayerNameList = JSON.parse(allowListData as string) ?? [];
 
     if (allowListedPlayers.includes(playerName)) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are on the allow list, welcome.");
@@ -273,15 +269,15 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
     const player = event.player;
     const playerName = player.name;
 
-    const bannedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
-    const whitelistedPlayers: PlayerNameList = JSON.parse((world.getDynamicProperty("whitelistedPlayers") as string) ?? "[]");
+    const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
+    const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
     const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
 
     // Always allow the host in
     if (opsecData.host?.id === player.id) {
         if (bannedPlayers.includes(playerName)) {
             const updated = bannedPlayers.filter((name) => name !== playerName);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(updated));
+            banlistDB.set("players", updated);
             player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
         }
         return;
@@ -291,7 +287,7 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
     if (bannedPlayers.includes(playerName)) {
         if (whitelistedPlayers.includes(playerName)) {
             const updated = bannedPlayers.filter((name) => name !== playerName);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(updated));
+            banlistDB.set("players", updated);
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
             player.runCommand(`kick @s §o§7\n\nYou are banned. Please contact an admin for more information.`);

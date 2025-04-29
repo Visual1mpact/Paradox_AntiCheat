@@ -1,4 +1,5 @@
 import { PlayerLeaveBeforeEvent, system, world } from "@minecraft/server";
+import { banlistDB } from "../event-listeners/world-initialize";
 
 // Declare types for dynamically imported modules
 let beforeEvents: typeof import("@minecraft/server-net").beforeEvents;
@@ -35,7 +36,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
         const { sender: player } = data;
 
         // Safely parse the bannedPlayers
-        const bannedPlayers: string[] = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
+        const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
 
         // Ensure the player exists and is not banned
         if (!player) {
@@ -71,7 +72,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             data.cancel = true; // Cancel the packet reception
             const reason = "Using a client to crash";
             bannedPlayers.push(player.name);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
+            banlistDB.set("players", bannedPlayers);
             packetLimits.delete(player); // Clear the packet data for the player
             startIndices.delete(player); // Clear the start index for the player
             world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} attempted to run a crasher!`); // Notify the server of the attempted crash

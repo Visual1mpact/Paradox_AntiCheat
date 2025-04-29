@@ -1,4 +1,5 @@
 import { world, Player, EntityHitEntityAfterEvent } from "@minecraft/server";
+import { banlistDB } from "../event-listeners/world-initialize";
 
 /**
  * Handle the entity hit event to check if the attacker attacked themselves.
@@ -15,9 +16,9 @@ function handleSelfAttack(eventData: EntityHitEntityAfterEvent): void {
         if (attacker.id === victim.id) {
             const reason = "Using a client to attack oneself";
             // Safely parse the bannedPlayers
-            const bannedPlayers: string[] = JSON.parse((world.getDynamicProperty("bannedPlayers") as string) ?? "[]");
+            const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
             bannedPlayers.push(attacker.name);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
+            banlistDB.set("players", bannedPlayers);
             attacker.runCommand(`kick @s §o§7\n\n${reason}`);
         }
     }

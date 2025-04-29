@@ -1,4 +1,5 @@
 import { PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, world, Player } from "@minecraft/server";
+import { banlistDB } from "../event-listeners/world-initialize";
 
 // Subscription holders for enabling/disabling
 let playerSpawnSubscription: ((arg: PlayerSpawnAfterEvent) => void) | null = null;
@@ -70,12 +71,11 @@ function kickPlayer(player: Player, reason: string) {
  */
 function banPlayer(player: Player, reason: string) {
     try {
-        const bannedPlayersString = (world.getDynamicProperty("bannedPlayers") as string) ?? "[]";
-        const bannedPlayers = JSON.parse(bannedPlayersString);
+        const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
 
         if (!bannedPlayers.includes(player.name)) {
             bannedPlayers.push(player.name);
-            world.setDynamicProperty("bannedPlayers", JSON.stringify(bannedPlayers));
+            banlistDB.set("players", bannedPlayers);
         }
 
         kickPlayer(player, reason);
