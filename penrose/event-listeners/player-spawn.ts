@@ -7,6 +7,11 @@ import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands
  */
 interface TrustedPlayerData {
     /**
+     * The name originally associated with this ID.
+     */
+    name: string;
+
+    /**
      * The unique player ID originally associated with this name.
      */
     id: string;
@@ -71,6 +76,56 @@ function initializeEventHandlers() {
 }
 
 /**
+ * One-time migration function to move legacy spoof protection data to the new format.
+ *
+ * Legacy format:
+ * - Each player record was stored under their name as a top-level key in the database.
+ *
+ * New format:
+ * - All player records are stored under a single "players" key as a dictionary of name-to-data entries.
+ *
+ * This function:
+ * - Skips if `_migrationDone` is set to true.
+ * - Converts all valid legacy entries into the new structure.
+ * - Deletes invalid or corrupted entries.
+ * - Removes the original per-name keys after migration.
+ * - Sets `_migrationDone` to true to prevent re-execution.
+ *
+ * This should be called once at the start of `handleSpoofCheck()` and can be safely removed afterward.
+ */
+function migrateLegacySpoofData() {
+    if (spoofDB.get<boolean>("_migrationDone")) return;
+
+    const allPlayers = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
+    const now = Date.now();
+
+    for (const [key, value] of spoofDB.entries()) {
+        if (key === "players" || key === "_migrationDone") continue;
+
+        const record = value as Partial<TrustedPlayerData>;
+
+        // Skip and delete invalid entries
+        if (!record?.id || typeof record.lastSeen !== "number") {
+            spoofDB.delete(key);
+            continue;
+        }
+
+        allPlayers[key] = {
+            id: record.id,
+            name: key, // Legacy key is the player name
+            firstSeen: record.firstSeen ?? now,
+            lastSeen: record.lastSeen,
+            spoofAttempts: record.spoofAttempts ?? [],
+        };
+
+        spoofDB.delete(key);
+    }
+
+    spoofDB.set("players", allPlayers);
+    spoofDB.set("_migrationDone", true); // mark migration complete
+}
+
+/**
  * Verifies player identity upon joining and enforces strict name-ID consistency.
  * - If a player ID already exists under a different name, the player is kicked.
  * - If a player name exists with a different ID, the player is treated as a spoofer and kicked.
@@ -80,81 +135,67 @@ function initializeEventHandlers() {
  * @param {Player} player - The player joining or spawning in the world.
  */
 function handleSpoofCheck(player: Player) {
+    migrateLegacySpoofData(); // runs only once ever
+
     const now = Date.now();
     const nameKey = player.name;
     const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
+    const allPlayers = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
     const staleKeys: string[] = [];
     const corruptedKeys: string[] = [];
 
-    // Step 1: Scan entries once to:
-    // - Detect ID conflicts
-    // - Track stale records
-    const idCollision = spoofDB.entries().find(([storedName, data]) => {
-        const record = data as TrustedPlayerData;
-
-        // Auto-clean corrupted entries
+    // Detect ID conflicts and stale/corrupt entries
+    for (const [storedName, record] of Object.entries(allPlayers)) {
         if (!record?.id || typeof record.lastSeen !== "number") {
             corruptedKeys.push(storedName);
-            return false;
+            continue;
         }
-
-        // Collect stale records for later cleanup
         if (now - record.lastSeen >= STALE_THRESHOLD) {
             staleKeys.push(storedName);
         }
-
-        // Check for ID collision (same ID, different name)
-        return record.id === player.id && storedName !== nameKey;
-    });
-
-    // Delete corrupted entries before proceeding
-    corruptedKeys.forEach((key) => spoofDB.delete(key));
-
-    if (idCollision) {
-        const [knownName] = idCollision;
-        player.sendMessage(`§c[Paradox] Your ID is already associated with the name "${knownName}".`);
-        player.runCommand(`kick @s §o§7\n\nName change is not allowed on this server.`);
-        return;
+        if (record.id === player.id && storedName !== nameKey) {
+            player.sendMessage(`§c[Paradox] Your ID is already associated with the name "${storedName}".`);
+            player.runCommand(`kick @s §o§7\n\nName change is not allowed on this server.`);
+            return;
+        }
     }
 
-    // Step 2: Check for spoof attempt via name reuse
-    const record = spoofDB.get<TrustedPlayerData>(nameKey);
+    // Remove corrupted/stale keys
+    [...corruptedKeys, ...staleKeys].forEach((key) => delete allPlayers[key]);
 
-    if (!record) {
-        // First-time entry
-        spoofDB.set(nameKey, {
+    const existing = allPlayers[nameKey];
+
+    if (!existing) {
+        allPlayers[nameKey] = {
+            name: player.name,
             id: player.id,
             firstSeen: now,
             lastSeen: now,
-        });
-
-        // Cleanup after setting new record
-        [...staleKeys, ...corruptedKeys].forEach((key) => spoofDB.delete(key));
+        };
+        spoofDB.set("players", allPlayers);
         return;
     }
 
-    if (record.id !== player.id) {
+    if (existing.id !== player.id) {
         // Spoof detected
         const attempt = { id: player.id, timestamp: now };
-        if (!record.spoofAttempts) record.spoofAttempts = [];
-        record.spoofAttempts.push(attempt);
-        record.lastSeen = now;
+        if (!existing.spoofAttempts) existing.spoofAttempts = [];
+        existing.spoofAttempts.push(attempt);
+        existing.lastSeen = now;
 
-        spoofDB.set(nameKey, record);
+        allPlayers[nameKey] = existing;
+        spoofDB.set("players", allPlayers);
 
         player.sendMessage(`§c[Paradox] Name spoof detected. This name belongs to another player.`);
         player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
-
-        [...staleKeys, ...corruptedKeys].forEach((key) => spoofDB.delete(key));
         return;
     }
 
-    // Step 3: Valid player — update and clean
-    record.lastSeen = now;
-    spoofDB.set(nameKey, record);
-
-    [...staleKeys, ...corruptedKeys].forEach((key) => spoofDB.delete(key));
+    // Valid login — update timestamp
+    existing.lastSeen = now;
+    allPlayers[nameKey] = existing;
+    spoofDB.set("players", allPlayers);
 }
 
 /**

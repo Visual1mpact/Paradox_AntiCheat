@@ -7,6 +7,11 @@ import { spoofDB } from "../../event-listeners/world-initialize";
  */
 interface TrustedPlayerData {
     /**
+     * The name originally associated with this ID.
+     */
+    name: string;
+
+    /**
      * The unique player ID originally associated with this name.
      */
     id: string;
@@ -100,9 +105,10 @@ export const spoofLogCommand: Command = {
             .trim()
             .replace(/[@"]/g, "");
 
+        const allRecords = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
+
         if (args.includes("--clearall")) {
-            // Clear all entries in the spoofDB
-            spoofDB.clear(); // Assuming the `clear()` method is available for the DB
+            spoofDB.set("players", {});
             sender.sendMessage("§cAll spoof logs have been cleared.");
             return;
         }
@@ -113,14 +119,12 @@ export const spoofLogCommand: Command = {
         }
 
         const clearLogs = args.includes("--clear");
+        const record = allRecords[nameQuery];
 
-        // If the --clear flag is present, delete the record
         if (clearLogs) {
-            const record = spoofDB.get<TrustedPlayerData>(nameQuery);
-
             if (record) {
-                // Delete the record from the database
-                spoofDB.delete(nameQuery);
+                delete allRecords[nameQuery];
+                spoofDB.set("players", allRecords);
                 sender.sendMessage(`§cSpoof logs for "${nameQuery}" have been cleared.`);
             } else {
                 sender.sendMessage(`§cNo records found for player name "${nameQuery}".`);
@@ -128,15 +132,12 @@ export const spoofLogCommand: Command = {
             return;
         }
 
-        // Normal spoof log display if not clearing
-        const record = spoofDB.get<TrustedPlayerData>(nameQuery);
-
         if (record) {
             const formatTimestamp = (ms: number) => new Date(ms).toISOString();
 
-            const output: string[] = [`§2[§7Paradox§2] §fSpoof Info for: §6${nameQuery}`, `§7First Seen: §f${formatTimestamp(record.firstSeen)}`, `§7Last Seen: §f${formatTimestamp(record.lastSeen)}`, `§7Stored ID: §f${record.id}`];
+            const output: string[] = [`§2[§7Paradox§2] §fSpoof Info for: §6${record.name}`, `§7First Seen: §f${formatTimestamp(record.firstSeen)}`, `§7Last Seen: §f${formatTimestamp(record.lastSeen)}`, `§7Stored ID: §f${record.id}`];
 
-            if (record.spoofAttempts && record.spoofAttempts.length > 0) {
+            if (record.spoofAttempts?.length) {
                 output.push("§cSpoof Attempts:");
                 record.spoofAttempts.forEach((attempt, index) => {
                     output.push(` §c${index + 1}. ID: ${attempt.id}, Time: ${formatTimestamp(attempt.timestamp)}`);
