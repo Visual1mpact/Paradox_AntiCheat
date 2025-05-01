@@ -134,7 +134,7 @@ export const spoofLogCommand: Command = {
         if (record) {
             const formatTimestamp = (ms: number) => new Date(ms).toISOString();
 
-            const output: string[] = [`§7[§2Paradox§7] §fSpoof Info for: §6${nameQuery}`, `§7First Seen: §f${formatTimestamp(record.firstSeen)}`, `§7Last Seen: §f${formatTimestamp(record.lastSeen)}`, `§7Stored ID: §f${record.id}`];
+            const output: string[] = [`§2[§7Paradox§2] §fSpoof Info for: §6${nameQuery}`, `§7First Seen: §f${formatTimestamp(record.firstSeen)}`, `§7Last Seen: §f${formatTimestamp(record.lastSeen)}`, `§7Stored ID: §f${record.id}`];
 
             if (record.spoofAttempts && record.spoofAttempts.length > 0) {
                 output.push("§cSpoof Attempts:");

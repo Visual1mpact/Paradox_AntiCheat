@@ -7,9 +7,10 @@ const CHUNK_SIZE = 30000;
  * Optimized for Minecraft Bedrock Edition scripting with support for large values via chunking.
  */
 export class OptimizedDatabase {
-    private name: string;
+    public name: string;
     private pointerKey: string;
     private cachedPointers: string[] | null = null;
+    private static instances: OptimizedDatabase[] = []; // Static array to store all instances
 
     /**
      * Constructs an instance of OptimizedDatabase.
@@ -34,6 +35,14 @@ export class OptimizedDatabase {
         if (!world.getDynamicProperty(this.pointerKey)) {
             world.setDynamicProperty(this.pointerKey, JSON.stringify([]));
         }
+
+        // Add this instance to the static array when created
+        OptimizedDatabase.instances.push(this);
+    }
+
+    // Static method to get all database instances
+    public static getAllInstances(): OptimizedDatabase[] {
+        return OptimizedDatabase.instances;
     }
 
     /**
@@ -222,5 +231,96 @@ export class OptimizedDatabase {
             if (existing === undefined || existing === null) break;
             world.setDynamicProperty(chunkKey, null);
         }
+    }
+
+    /**
+     * Retrieves the size in bytes for a specific entry.
+     * If the entry is chunked, it sums the size of all chunks.
+     * Each character in the chunk is counted as 2 bytes (UTF-16 encoding).
+     *
+     * @param key - The key representing the entry for which the size is to be calculated.
+     * @returns The total size of the entry in bytes.
+     */
+    public getEntrySizeBytes(key: string): number {
+        const dynamicKeyBase = `${this.name}/${key}`;
+        let bytes = 0;
+
+        // Iterate over all chunks for the entry
+        for (let i = 0; ; i++) {
+            const chunk = world.getDynamicProperty(`${dynamicKeyBase}/${i}`) as string;
+
+            // If no more chunks are found, exit the loop
+            if (chunk === null || chunk === undefined) break;
+
+            // Accumulate the size of each chunk (UTF-16 encoding)
+            bytes += chunk.length * 2;
+        }
+
+        return bytes;
+    }
+
+    /**
+     * Calculates the total size of all entries stored in the database.
+     * This includes the sizes of all chunks for each entry.
+     * The total size is returned in a human-readable format.
+     *
+     * @returns A formatted string representing the total size of the database entries.
+     */
+    public getTotalSizeFormatted(): string {
+        // Reduce all pointers to calculate the total size in bytes
+        const totalBytes = this._getPointers().reduce((sum, ptr) => {
+            const key = ptr.split("/").pop()!;
+            return sum + this.getEntrySizeBytes(key);
+        }, 0);
+
+        // Return the formatted total size
+        return this._formatBytes(totalBytes);
+    }
+
+    /**
+     * Converts a number of bytes to a human-readable string.
+     *
+     * @param bytes - The size in bytes.
+     * @returns A string representing the size in appropriate units (B, KB, MB, GB, TB).
+     */
+    public _formatBytes(bytes: number): string {
+        const sizes = ["B", "KB", "MB", "GB", "TB"];
+        if (bytes <= 0) return "0 B";
+        const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+        const value = bytes / Math.pow(1024, i);
+        return `${value.toFixed(2)} ${sizes[i]}`;
+    }
+
+    /**
+     * Counts the number of chunks for a given key.
+     * @param key - The key to count chunks for.
+     * @returns The number of chunks.
+     */
+    public getChunkCount(key: string): number {
+        const dynamicKeyBase = `${this.name}/${key}`;
+        let chunkCount = 0;
+
+        while (world.getDynamicProperty(`${dynamicKeyBase}/${chunkCount}`)) {
+            chunkCount++;
+        }
+
+        return chunkCount;
+    }
+
+    /**
+     * Lists all pointer keys currently stored in the database.
+     * @returns An array of strings representing all pointers in the database.
+     */
+    public listPointers(): string[] {
+        return this._getPointers();
+    }
+
+    /**
+     * Verifies whether the database contains a specific entry key.
+     * @param key - The key to check for in the database.
+     * @returns `true` if the key exists, otherwise `false`.
+     */
+    public containsKey(key: string): boolean {
+        return this._getPointers().includes(`${this.name}/${key}`);
     }
 }

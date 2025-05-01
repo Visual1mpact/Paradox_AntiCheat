@@ -65,6 +65,7 @@ import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
+import { debugDBCommand } from "../commands/utility/debugDB";
 
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -151,6 +152,7 @@ function initializeSystems() {
         allowlistCommand,
         visionCheckCommand,
         spoofLogCommand,
+        debugDBCommand,
     ];
 
     // Fetch disabled commands from the database and create a Set for faster lookups
