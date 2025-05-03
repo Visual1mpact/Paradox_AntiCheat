@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startAFKChecker, stopAFKChecker } from "../../modules/afk";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -122,9 +122,7 @@ export const afkCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 AFK timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
 
             // Restart AFK checker with the new settings
-            system.run(() => {
-                startAFKChecker(hours, minutes, seconds);
-            });
+            startAFKChecker(hours, minutes, seconds);
         } else {
             // Retrieve current settings from the database
             const settings = (paradoxModulesDB.get(afkSettingsKey) as { hours: number; minutes: number; seconds: number }) ?? { hours, minutes, seconds };
@@ -141,18 +139,14 @@ export const afkCommand: Command = {
                 player.sendMessage("§2[§7Paradox§2]§o§7 AFK module has been §aenabled§7.");
 
                 // Start the AFK checker
-                system.run(() => {
-                    startAFKChecker(hours, minutes, seconds);
-                });
+                startAFKChecker(hours, minutes, seconds);
             } else {
                 // Disable AFK module
                 paradoxModulesDB.set(afkKey, false);
                 player.sendMessage("§2[§7Paradox§2]§o§7 AFK module has been §4disabled§7.");
 
                 // Stop the AFK checker
-                system.run(() => {
-                    stopAFKChecker();
-                });
+                stopAFKChecker();
             }
         }
     },

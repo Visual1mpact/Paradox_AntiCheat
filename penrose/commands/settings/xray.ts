@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startXrayDetection, stopXrayDetection } from "../../modules/xray";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -42,16 +42,12 @@ export const xrayCommand: Command = {
             // Enable the Xray detection module
             paradoxModulesDB.set("xrayDetection_b", true); // Update the state in the database
             player.sendMessage(`§2[§7Paradox§2]§o§7 Xray detection has been §aenabled§7.`);
-            system.run(() => {
-                startXrayDetection(); // Start Xray detection
-            });
+            startXrayDetection(); // Start Xray detection
         } else {
             // Disable the Xray detection module
             paradoxModulesDB.set("xrayDetection_b", false); // Update the state in the database
             player.sendMessage(`§2[§7Paradox§2]§o§7 Xray detection has been §4disabled§7.`);
-            system.run(() => {
-                stopXrayDetection(); // Stop Xray detection
-            });
+            stopXrayDetection(); // Stop Xray detection
         }
     },
 };

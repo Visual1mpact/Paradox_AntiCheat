@@ -129,15 +129,11 @@ export const tprCommand: Command = {
 
         switch (command) {
             case "accept": {
-                system.run(() => {
-                    acceptTeleportRequest(message.sender);
-                });
+                acceptTeleportRequest(message.sender);
                 return;
             }
             case "deny": {
-                system.run(() => {
-                    denyTeleportRequest(message.sender);
-                });
+                denyTeleportRequest(message.sender);
                 return;
             }
             case "": {

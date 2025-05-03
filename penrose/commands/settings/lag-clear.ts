@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startLagClear, stopLagClear } from "../../modules/lag-clear";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -121,9 +121,7 @@ export const lagClearCommand: Command = {
             paradoxModulesDB.set(lagClearKey, true);
 
             player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
-            system.run(() => {
-                startLagClear(hours, minutes, seconds);
-            });
+            startLagClear(hours, minutes, seconds);
         } else {
             // Retrieve current settings
             const currentSettings = paradoxModulesDB.get(lagClearSettingsKey) as { hours: number; minutes: number; seconds: number } | null;
@@ -141,17 +139,13 @@ export const lagClearCommand: Command = {
                 paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
 
                 player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §aenabled§7.");
-                system.run(() => {
-                    startLagClear(hours, minutes, seconds);
-                });
+                startLagClear(hours, minutes, seconds);
             } else {
                 // Disable LagClear
                 paradoxModulesDB.set(lagClearKey, false);
 
                 player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §4disabled§7.");
-                system.run(() => {
-                    stopLagClear();
-                });
+                stopLagClear();
             }
         }
     },

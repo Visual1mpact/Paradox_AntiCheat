@@ -1,4 +1,4 @@
-import { Player, ChatSendBeforeEvent, Vector3, world, system } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 // Define the dimensions and block type of the prison
@@ -224,24 +224,22 @@ export const imprisonCommand: Command = {
         }
 
         // Execute the command logic in the game tick loop
-        system.run(() => {
-            if (player && player.isValid) {
-                // Check if player is already imprisoned
-                const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
+        if (player && player.isValid) {
+            // Check if player is already imprisoned
+            const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
 
-                if (isImprisoned) {
-                    // Unfreeze and release the player
-                    unfreezePlayer(player);
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 You have been released from imprisonment.`);
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name} has been released.`);
-                } else {
-                    // Imprison the player
-                    freezePlayer(player, message);
-                    buildPrison(player);
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 You have been imprisoned.`);
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name} has been imprisoned.`);
-                }
+            if (isImprisoned) {
+                // Unfreeze and release the player
+                unfreezePlayer(player);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 You have been released from imprisonment.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name} has been released.`);
+            } else {
+                // Imprison the player
+                freezePlayer(player, message);
+                buildPrison(player);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 You have been imprisoned.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name} has been imprisoned.`);
             }
-        });
+        }
     },
 };

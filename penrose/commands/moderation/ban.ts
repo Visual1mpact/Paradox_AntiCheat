@@ -1,6 +1,6 @@
 import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 
 // Define the ban command
 export const banCommand: Command = {
@@ -151,9 +151,7 @@ export const banCommand: Command = {
 
             if (targetPlayer) {
                 // If the player is online, tag and kick them
-                system.run(() => {
-                    targetPlayer.runCommand(`kick @s §o§7\n\n${reason}`);
-                });
+                targetPlayer.runCommand(`kick @s §o§7\n\n${reason}`);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}" has been banned with reason: ${reason}`);
             }
         };

@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startSelfAttackCheck, stopSelfAttackCheck } from "../../modules/self-infliction";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -45,16 +45,12 @@ export const selfAttackCheckCommand: Command = {
             // Enable the module
             paradoxModulesDB.set(selfAttackCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Self-attack detection has been §aenabled§7.`);
-            system.run(() => {
-                startSelfAttackCheck();
-            });
+            startSelfAttackCheck();
         } else {
             // Disable the module
             paradoxModulesDB.set(selfAttackCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Self-attack detection has been §4disabled§7.`);
-            system.run(() => {
-                stopSelfAttackCheck();
-            });
+            stopSelfAttackCheck();
         }
     },
 };

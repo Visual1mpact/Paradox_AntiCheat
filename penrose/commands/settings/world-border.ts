@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -250,9 +250,7 @@ export const worldBorderCommand: Command = {
                 end: Math.abs(endSize),
             });
 
-            system.run(() => {
-                startWorldBorderCheck();
-            });
+            startWorldBorderCheck();
             return;
         }
     },

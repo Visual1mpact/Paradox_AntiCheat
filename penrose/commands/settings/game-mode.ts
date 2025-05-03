@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -161,13 +161,9 @@ export const gameModeCommand: Command = {
         player.sendMessage(formatSettingsMessage(modeStates));
 
         if (!modeStates.gamemodeCheck) {
-            system.run(() => {
-                stopGameModeCheck();
-            });
+            stopGameModeCheck();
         } else if ((needsInspectionUpdate && modeStates.gamemodeCheck) || modeStates.gamemodeCheck) {
-            system.run(() => {
-                startGameModeCheck();
-            });
+            startGameModeCheck();
         }
     },
 };

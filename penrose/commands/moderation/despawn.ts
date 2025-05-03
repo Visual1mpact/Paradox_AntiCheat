@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, EntityQueryOptions, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, EntityQueryOptions, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -52,22 +52,20 @@ export const despawnCommand: Command = {
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const parameter = args.join(" ").trim().replace(/["@]/g, "");
 
-        system.run(() => {
-            const filter: EntityQueryOptions = { excludeTypes: ["player"] };
-            const filteredEntities = world.getDimension(message.sender.dimension.id).getEntities(filter);
+        const filter: EntityQueryOptions = { excludeTypes: ["player"] };
+        const filteredEntities = world.getDimension(message.sender.dimension.id).getEntities(filter);
 
-            const despawnedEntities = new Map();
+        const despawnedEntities = new Map();
 
-            filteredEntities.forEach((entity) => {
-                const typeId = entity.typeId.replace("minecraft:", "");
-                const isAllRequested = parameter === "all";
+        filteredEntities.forEach((entity) => {
+            const typeId = entity.typeId.replace("minecraft:", "");
+            const isAllRequested = parameter === "all";
 
-                if (isAllRequested || typeId === parameter || typeId === parameter.replace("minecraft:", "")) {
-                    const count = despawnedEntities.get(typeId) ?? 0;
-                    despawnedEntities.set(typeId, count + 1);
-                    entity.remove();
-                }
-            });
+            if (isAllRequested || typeId === parameter || typeId === parameter.replace("minecraft:", "")) {
+                const count = despawnedEntities.get(typeId) ?? 0;
+                despawnedEntities.set(typeId, count + 1);
+                entity.remove();
+            }
 
             if (despawnedEntities.size > 0) {
                 message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Despawned:");

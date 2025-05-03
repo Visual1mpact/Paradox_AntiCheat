@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startPacketHandler, stopPacketHandler } from "../../modules/rate-limit";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -33,7 +33,7 @@ export const rateLimitCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
 
         // Get rate-limit detection status from the database
@@ -43,26 +43,20 @@ export const rateLimitCommand: Command = {
             // Enable the module
             paradoxModulesDB.set("rateLimitCheck_b", true);
 
-            // Use system.run to call startPacketHandler to avoid read-only context
-            system.run(async () => {
-                const success = await startPacketHandler(); // Attempt to start the packet handler
-                if (success) {
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §aenabled§7.`);
-                } else {
-                    // Revert the database change if enabling failed
-                    paradoxModulesDB.set("rateLimitCheck_b", false);
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection could not be enabled: §c@minecraft/server-net not found§7.`);
-                }
-            });
+            const success = await startPacketHandler(); // Attempt to start the packet handler
+            if (success) {
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §aenabled§7.`);
+            } else {
+                // Revert the database change if enabling failed
+                paradoxModulesDB.set("rateLimitCheck_b", false);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection could not be enabled: §c@minecraft/server-net not found§7.`);
+            }
         } else {
             // Disable the module
             paradoxModulesDB.set("rateLimitCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §4disabled§7.`);
 
-            // Use system.run to call stopPacketHandler to avoid read-only context
-            system.run(() => {
-                stopPacketHandler(); // Stop the packet handler
-            });
+            stopPacketHandler(); // Stop the packet handler
         }
     },
 };

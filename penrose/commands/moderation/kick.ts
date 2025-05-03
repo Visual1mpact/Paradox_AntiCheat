@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -105,21 +105,19 @@ export const kickCommand: Command = {
             return;
         }
 
-        system.run(() => {
-            if (player.isValid) {
-                // Kick the player with the specified reason
-                player.runCommand(`kick @s §f\n§l§o§7YOU ARE KICKED!\n\n[§fKicked By§7]§f: §7${message.sender.name ?? "§7N/A"}\n§7[§fReason§7]§f: §7${reason ?? "§7Farewell"}§f`);
+        if (player.isValid) {
+            // Kick the player with the specified reason
+            player.runCommand(`kick @s §f\n§l§o§7YOU ARE KICKED!\n\n[§fKicked By§7]§f: §7${message.sender.name ?? "§7N/A"}\n§7[§fReason§7]§f: §7${reason ?? "§7Farewell"}§f`);
 
-                // Check if the player is still in the world
-                const playerStillExists = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            // Check if the player is still in the world
+            const playerStillExists = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
 
-                // Inform the sender about the action based on whether the player is still in the world
-                if (playerStillExists) {
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} has been kicked from the server.`);
-                } else {
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} has not been kicked from the server.`);
-                }
+            // Inform the sender about the action based on whether the player is still in the world
+            if (playerStillExists) {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} has been kicked from the server.`);
+            } else {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} has not been kicked from the server.`);
             }
-        });
+        }
     },
 };

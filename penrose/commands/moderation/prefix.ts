@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -45,39 +45,37 @@ export const prefixCommand: Command = {
      */
     execute: (message: ChatSendBeforeEvent, args: string[]): Promise<boolean> => {
         return new Promise<boolean>((resolve) => {
-            system.run(() => {
-                // Check if a new prefix is provided
-                if (args.length > 0) {
-                    // Limit the prefix to two characters
-                    const newPrefix: string = args[0].slice(0, 2);
+            // Check if a new prefix is provided
+            if (args.length > 0) {
+                // Limit the prefix to two characters
+                const newPrefix: string = args[0].slice(0, 2);
 
-                    // Check if the new prefix contains '/'
-                    if (newPrefix.includes("/")) {
-                        message.sender.sendMessage("§cPrefix cannot include '/'.");
-                        resolve(false); // Return false indicating failure;
-                    }
-                    // Retrieve the current prefix from dynamic properties
-                    const currentPrefix: string = world.getDynamicProperty("__prefix") as string;
+                // Check if the new prefix contains '/'
+                if (newPrefix.includes("/")) {
+                    message.sender.sendMessage("§cPrefix cannot include '/'.");
+                    resolve(false); // Return false indicating failure;
+                }
+                // Retrieve the current prefix from dynamic properties
+                const currentPrefix: string = world.getDynamicProperty("__prefix") as string;
 
-                    // Check if the new prefix is different from the current one
-                    if (newPrefix !== currentPrefix) {
-                        // Save the new prefix to a dynamic property
-                        world.setDynamicProperty("__prefix", newPrefix);
+                // Check if the new prefix is different from the current one
+                if (newPrefix !== currentPrefix) {
+                    // Save the new prefix to a dynamic property
+                    world.setDynamicProperty("__prefix", newPrefix);
 
-                        // Send confirmation message
-                        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix updated to: ${newPrefix}`);
-                        resolve(true); // Return true indicating success
-                    } else {
-                        // Send message indicating the prefix hasn't changed
-                        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix is already "${newPrefix}".`);
-                        resolve(false); // Return false indicating failure
-                    }
+                    // Send confirmation message
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix updated to: ${newPrefix}`);
+                    resolve(true); // Return true indicating success
                 } else {
-                    // Send message indicating no prefix provided
-                    message.sender.sendMessage("§2[§7Paradox§2]§o§7 No new prefix provided.");
+                    // Send message indicating the prefix hasn't changed
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix is already "${newPrefix}".`);
                     resolve(false); // Return false indicating failure
                 }
-            });
+            } else {
+                // Send message indicating no prefix provided
+                message.sender.sendMessage("§2[§7Paradox§2]§o§7 No new prefix provided.");
+                resolve(false); // Return false indicating failure
+            }
         });
     },
 };

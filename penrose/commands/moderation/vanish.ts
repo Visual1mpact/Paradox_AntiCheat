@@ -1,4 +1,4 @@
-import { GameMode, Player, ChatSendBeforeEvent, world, system } from "@minecraft/server";
+import { GameMode, Player, ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -69,41 +69,39 @@ export const vanishCommand: Command = {
             return;
         }
 
-        system.run(() => {
-            if (player && player.isValid) {
-                // Get the player's current game mode
-                const playerGameMode = player.getGameMode();
+        if (player && player.isValid) {
+            // Get the player's current game mode
+            const playerGameMode = player.getGameMode();
 
-                // Determine if messages should be sent (when playerName is provided and doesn't match player.name)
-                const shouldSendMessages = playerName && playerName !== player.name;
+            // Determine if messages should be sent (when playerName is provided and doesn't match player.name)
+            const shouldSendMessages = playerName && playerName !== player.name;
 
-                if (playerGameMode !== GameMode.spectator) {
-                    // Set the player's game mode to spectator and backup the previous game mode
-                    player.setDynamicProperty("GameModeBackup", playerGameMode);
-                    player.setGameMode(GameMode.spectator);
+            if (playerGameMode !== GameMode.spectator) {
+                // Set the player's game mode to spectator and backup the previous game mode
+                player.setDynamicProperty("GameModeBackup", playerGameMode);
+                player.setGameMode(GameMode.spectator);
 
-                    // Send message indicating that vanish is enabled for the player
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);
+                // Send message indicating that vanish is enabled for the player
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);
 
-                    // If playerName is provided and doesn't match the name of the player, send a message to the command sender as well
-                    if (shouldSendMessages) {
-                        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);
-                    }
-                } else {
-                    // Restore the player's previous game mode
-                    const backupGameMode = player.getDynamicProperty("GameModeBackup");
-                    player.setGameMode(backupGameMode as GameMode);
-                    player.setDynamicProperty("GameModeBackup", undefined);
+                // If playerName is provided and doesn't match the name of the player, send a message to the command sender as well
+                if (shouldSendMessages) {
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);
+                }
+            } else {
+                // Restore the player's previous game mode
+                const backupGameMode = player.getDynamicProperty("GameModeBackup");
+                player.setGameMode(backupGameMode as GameMode);
+                player.setDynamicProperty("GameModeBackup", undefined);
 
-                    // Send message indicating that vanish is disabled for the player
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish disabled!`);
+                // Send message indicating that vanish is disabled for the player
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish disabled!`);
 
-                    // If playerName is provided and doesn't match the name of the player, send a message to the command sender as well
-                    if (shouldSendMessages) {
-                        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Vanish disabled!`);
-                    }
+                // If playerName is provided and doesn't match the name of the player, send a message to the command sender as well
+                if (shouldSendMessages) {
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Vanish disabled!`);
                 }
             }
-        });
+        }
     },
 };

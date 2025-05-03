@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startHitReachCheck, stopHitReachCheck } from "../../modules/reach";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -45,16 +45,12 @@ export const hitReachCheckCommand: Command = {
             // Enable the module
             paradoxModulesDB.set(hitReachCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §aenabled§7.`);
-            system.run(() => {
-                startHitReachCheck();
-            });
+            startHitReachCheck();
         } else {
             // Disable the module
             paradoxModulesDB.set(hitReachCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §4disabled§7.`);
-            system.run(() => {
-                stopHitReachCheck();
-            });
+            stopHitReachCheck();
         }
     },
 };

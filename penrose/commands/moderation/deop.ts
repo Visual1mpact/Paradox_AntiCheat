@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { removePlayerFromSecurityClearanceList } from "../../utility/level-4-security-tracker";
 
@@ -145,16 +145,14 @@ export const deopCommand: Command = {
             const playerName = args.join(" ").trim().replace(/["@]/g, "");
 
             // Remove permissions for the player
-            system.run(() => {
-                const isValid = removePlayerPermissions(playerName);
-                // Inform the sender if permissions have been removed
-                if (isValid) {
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions removed for player: "${playerName}"`);
-                } else {
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions not removed for player "${playerName}". Please try again!`);
-                }
-                resolve();
-            });
+            const isValid = removePlayerPermissions(playerName);
+            // Inform the sender if permissions have been removed
+            if (isValid) {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions removed for player: "${playerName}"`);
+            } else {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions not removed for player "${playerName}". Please try again!`);
+            }
+            resolve();
         });
     },
 };

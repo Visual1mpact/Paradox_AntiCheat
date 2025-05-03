@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startAutoClicker, stopAutoClicker } from "../../modules/autoclicker";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -45,18 +45,14 @@ export const autoClickerCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Auto-clicker detection has been §aenabled§7.`);
 
             // Start auto-clicker detection
-            system.run(() => {
-                startAutoClicker();
-            });
+            startAutoClicker();
         } else {
             // Disable the module
             paradoxModulesDB.set("autoClickerCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Auto-clicker detection has been §4disabled§7.`);
 
             // Stop auto-clicker detection
-            system.run(() => {
-                stopAutoClicker();
-            });
+            stopAutoClicker();
         }
     },
 };

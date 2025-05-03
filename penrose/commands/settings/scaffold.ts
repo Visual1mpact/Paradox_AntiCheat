@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startScaffoldCheck, stopScaffoldCheck } from "../../modules/scaffold";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -45,16 +45,12 @@ export const scaffoldCommand: Command = {
             // Enable the scaffold detection module
             paradoxModulesDB.set(scaffoldCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Scaffold detection has been §aenabled§7.`);
-            system.run(() => {
-                startScaffoldCheck();
-            });
+            startScaffoldCheck();
         } else {
             // Disable the scaffold detection module
             paradoxModulesDB.set(scaffoldCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Scaffold detection has been §4disabled§7.`);
-            system.run(() => {
-                stopScaffoldCheck();
-            });
+            stopScaffoldCheck();
         }
     },
 };

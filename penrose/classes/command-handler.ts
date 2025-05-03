@@ -340,7 +340,7 @@ export class CommandHandler {
      * @param message - The chat message event.
      * @param player - The player who sent the message.
      */
-    handleCommand(message: ChatSendBeforeEvent, player: Player) {
+    async handleCommand(message: ChatSendBeforeEvent, player: Player) {
         const defaultPrefix = (world.getDynamicProperty("__prefix") as string) || "!";
         if (!message.message.startsWith(defaultPrefix)) {
             // message.cancel = false;
@@ -361,7 +361,7 @@ export class CommandHandler {
             const commandName = args.shift()?.toLowerCase();
 
             if (commandName) {
-                const result = this.executeCommand(message, player, commandName, args, defaultPrefix);
+                const result = await this.executeCommand(message, player, commandName, args, defaultPrefix);
                 if (result === true) {
                     verifyPrefixUpdate = true;
                 }
@@ -427,7 +427,7 @@ export class CommandHandler {
      * @param defaultPrefix - The default command prefix.
      * @returns - A boolean indicating whether the prefix needs updating.
      */
-    private executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): void | boolean {
+    private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
         const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number as SecurityClearance;
         const helpCommands = ["help", "--help", "-h"];
 
@@ -452,18 +452,38 @@ export class CommandHandler {
         if (command) {
             if ((playerSecurityClearance && playerSecurityClearance >= command.securityClearance) || commandName === "op") {
                 try {
-                    const validateReturn = command.execute(message, args, CryptoES);
-                    if (commandName === "prefix" && validateReturn) {
-                        return true;
+                    // Wrap the command execution inside system.run() using a Promise
+                    const result = await new Promise<boolean>((resolve) => {
+                        system.run(async () => {
+                            try {
+                                const validateReturn = await command.execute(message, args, CryptoES);
+                                resolve(validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false);
+                            } catch (error) {
+                                console.error("Error occurred during command execution:", error);
+                                player.sendMessage("§2[§7Paradox§2]§o§7 There was an error executing the command.");
+                                resolve(false);
+                            }
+                        });
+                    });
+
+                    // If the command is "prefix" and returns a boolean, return it
+                    if (commandName === "prefix") {
+                        return result;
                     }
+
+                    // Return false by default after command execution
+                    return false;
                 } catch (error) {
                     console.error("Error occurred during command execution:", error);
+                    return false; // Ensure a boolean value is returned after an error
                 }
             } else {
                 player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to execute this command.");
+                return false; // Return false if security clearance fails
             }
         } else {
             player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found. Use ${defaultPrefix}help to see available commands.`);
+            return false; // Return false if the command doesn't exist
         }
     }
 

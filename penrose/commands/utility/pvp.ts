@@ -186,12 +186,7 @@ export const pvpToggleCommand: Command = {
         const PVP_TOGGLE_COOLDOWN_TICKS = (world.getDynamicProperty("customPvPToggleCooldown") as number) ?? 2 * 60 * 20;
 
         async function setPvP(status: boolean): Promise<void> {
-            return new Promise((resolve) => {
-                system.run(() => {
-                    world.gameRules.pvp = status;
-                    resolve();
-                });
-            });
+            world.gameRules.pvp = status;
         }
 
         if (showStatus) {
@@ -217,52 +212,50 @@ export const pvpToggleCommand: Command = {
                 world.setDynamicProperty(globalDynamicPropertyKey, false);
                 player.sendMessage("§2[§7Paradox§2]§o§7 Please close your chat window to receive a message regarding your PvP settings.");
 
-                system.run(() => {
-                    // Show a confirmation form to the player if PvP is still enabled globally
-                    function alertNotice(player: Player) {
-                        const form = new MessageFormData()
-                            .title("            PvP System Disabled")
-                            .body(
-                                "You have disabled the global PvP management system in Paradox. This system controls how PvP is handled across the server. However, this does not automatically change the PvP game rule, which decides if PvP is allowed in the world. You can still choose to leave the PvP game rule as it is, or you can disable PvP in the world completely. Would you like to change the game rule and disable PvP in the world as well?"
-                            )
-                            .button1("Disable PvP Game Rule")
-                            .button2("Keep PvP Enabled");
+                // Show a confirmation form to the player if PvP is still enabled globally
+                function alertNotice(player: Player) {
+                    const form = new MessageFormData()
+                        .title("            PvP System Disabled")
+                        .body(
+                            "You have disabled the global PvP management system in Paradox. This system controls how PvP is handled across the server. However, this does not automatically change the PvP game rule, which decides if PvP is allowed in the world. You can still choose to leave the PvP game rule as it is, or you can disable PvP in the world completely. Would you like to change the game rule and disable PvP in the world as well?"
+                        )
+                        .button1("Disable PvP Game Rule")
+                        .button2("Keep PvP Enabled");
 
-                        // Send the form to the player
-                        form.show(player)
-                            .then((result) => {
-                                if (result && result.canceled && result.cancelationReason === "UserBusy") {
-                                    return alertNotice(player);
-                                }
-                                if (result.selection === 0) {
-                                    // Disable PvP in the world entirely
-                                    world.gameRules.pvp = false;
-                                    world.setDynamicProperty(globalDynamicPropertyKey, false);
-                                    player.sendMessage("§2[§7Paradox§2]§o§7 PvP has been §4disabled§7 in the world and the game rule has been updated.");
-                                    stopPvPSystem();
-                                } else {
-                                    // Keep PvP enabled in the world
-                                    world.setDynamicProperty(globalDynamicPropertyKey, false);
-                                    player.sendMessage("§2[§7Paradox§2]§o§7 PvP remains §aenabled§7 in the world, but the PvP management system is now disabled.");
-                                    stopPvPSystem();
-                                }
-                            })
-                            .catch((error: Error) => {
-                                console.error("Paradox Unhandled Rejection: ", error);
-                                if (error instanceof Error) {
-                                    // Check if error.stack exists before trying to split it
-                                    if (error.stack) {
-                                        const stackLines: string[] = error.stack.split("\n");
-                                        if (stackLines.length > 1) {
-                                            const sourceInfo: string[] = stackLines;
-                                            console.error("Error originated from:", sourceInfo[0]);
-                                        }
+                    // Send the form to the player
+                    form.show(player)
+                        .then((result) => {
+                            if (result && result.canceled && result.cancelationReason === "UserBusy") {
+                                return alertNotice(player);
+                            }
+                            if (result.selection === 0) {
+                                // Disable PvP in the world entirely
+                                world.gameRules.pvp = false;
+                                world.setDynamicProperty(globalDynamicPropertyKey, false);
+                                player.sendMessage("§2[§7Paradox§2]§o§7 PvP has been §4disabled§7 in the world and the game rule has been updated.");
+                                stopPvPSystem();
+                            } else {
+                                // Keep PvP enabled in the world
+                                world.setDynamicProperty(globalDynamicPropertyKey, false);
+                                player.sendMessage("§2[§7Paradox§2]§o§7 PvP remains §aenabled§7 in the world, but the PvP management system is now disabled.");
+                                stopPvPSystem();
+                            }
+                        })
+                        .catch((error: Error) => {
+                            console.error("Paradox Unhandled Rejection: ", error);
+                            if (error instanceof Error) {
+                                // Check if error.stack exists before trying to split it
+                                if (error.stack) {
+                                    const stackLines: string[] = error.stack.split("\n");
+                                    if (stackLines.length > 1) {
+                                        const sourceInfo: string[] = stackLines;
+                                        console.error("Error originated from:", sourceInfo[0]);
                                     }
                                 }
-                            });
-                    }
-                    alertNotice(player);
-                });
+                            }
+                        });
+                }
+                alertNotice(player);
             } else {
                 // Enable global PvP
                 await setPvP(true);

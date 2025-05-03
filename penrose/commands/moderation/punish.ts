@@ -1,4 +1,4 @@
-import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, world, system, EquipmentSlot } from "@minecraft/server";
+import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, world, EquipmentSlot } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -136,36 +136,35 @@ export const punishCommand: Command = {
         }
 
         // Wipe them out
-        system.run(() => {
-            const target: Player = getPlayerObject(playerName);
-            if (target && target.isValid) {
-                // Wipe out items in each equipment slot from requested player's equipment container
-                if (wipeEquipment) {
-                    for (const slot of Object.values(EquipmentSlot)) {
-                        const equippableContainer: EntityEquippableComponent = target.getComponent("minecraft:equippable") as EntityEquippableComponent;
-                        equippableContainer.setEquipment(slot); // Set the slot to wipe out
-                    }
-                }
 
-                // Get requested player's inventory so we can wipe it out
-                if (wipeInventory) {
-                    const inventoryContainer: EntityInventoryComponent = target.getComponent("minecraft:inventory") as EntityInventoryComponent;
-                    const inventory = inventoryContainer.container;
-                    inventory.clearAll();
+        const target: Player = getPlayerObject(playerName);
+        if (target && target.isValid) {
+            // Wipe out items in each equipment slot from requested player's equipment container
+            if (wipeEquipment) {
+                for (const slot of Object.values(EquipmentSlot)) {
+                    const equippableContainer: EntityEquippableComponent = target.getComponent("minecraft:equippable") as EntityEquippableComponent;
+                    equippableContainer.setEquipment(slot); // Set the slot to wipe out
                 }
-
-                // Wipe their ender chest
-                if (wipeEnderChest) {
-                    // There are 30 slots ranging from 0 to 29
-                    for (let slot = 0; slot < 30; slot++) {
-                        target.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
-                    }
-                }
-
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Punished "${target.name}"!`);
-            } else {
-                message.sender.sendMessage(`§cFailed to punish "${target ? target.name : playerName}"! Please try again.`);
             }
-        });
+
+            // Get requested player's inventory so we can wipe it out
+            if (wipeInventory) {
+                const inventoryContainer: EntityInventoryComponent = target.getComponent("minecraft:inventory") as EntityInventoryComponent;
+                const inventory = inventoryContainer.container;
+                inventory.clearAll();
+            }
+
+            // Wipe their ender chest
+            if (wipeEnderChest) {
+                // There are 30 slots ranging from 0 to 29
+                for (let slot = 0; slot < 30; slot++) {
+                    target.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
+                }
+            }
+
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Punished "${target.name}"!`);
+        } else {
+            message.sender.sendMessage(`§cFailed to punish "${target ? target.name : playerName}"! Please try again.`);
+        }
     },
 };

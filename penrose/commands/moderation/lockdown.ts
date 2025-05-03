@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import _default from "../../node_modules/crypto-es/lib/index";
 
@@ -52,14 +52,14 @@ export const lockdownCommand: Command = {
         // If already locked down, unlock the server and return
         if (lockdownBoolean) {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been disabled!`);
-            system.run(() => {
-                world.setDynamicProperty("lockdown_b", false); // Set lockdown_b to false to unlock the server
 
-                // Ensure we properly unsubscribe using the stored function reference
-                if (lockDownMonitor) {
-                    world.afterEvents.playerSpawn.unsubscribe(lockDownMonitor);
-                }
-            });
+            world.setDynamicProperty("lockdown_b", false); // Set lockdown_b to false to unlock the server
+
+            // Ensure we properly unsubscribe using the stored function reference
+            if (lockDownMonitor) {
+                world.afterEvents.playerSpawn.unsubscribe(lockDownMonitor);
+            }
+
             return;
         }
 
@@ -67,32 +67,31 @@ export const lockdownCommand: Command = {
         const reason = "Under Maintenance! Sorry for the inconvenience.";
 
         // Run the lockdown operation asynchronously
-        system.run(() => {
-            // Lock down the server
-            const players = world.getAllPlayers();
-            for (const target of players) {
-                const securityCheck = target.getDynamicProperty("securityClearance") as number;
+
+        // Lock down the server
+        const players = world.getAllPlayers();
+        for (const target of players) {
+            const securityCheck = target.getDynamicProperty("securityClearance") as number;
+            if (securityCheck !== 4) {
+                // Kick players from server
+                target.runCommand(`kick @s §o§7\n\n${reason}`);
+            }
+        }
+        // Set lockdown_b to true to indicate server lockdown
+        world.setDynamicProperty("lockdown_b", true);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been enabled!`);
+
+        // Store and subscribe the persistent function reference
+        lockDownMonitor = function (object: PlayerSpawnAfterEvent) {
+            if (object.initialSpawn === true) {
+                const securityCheck = object.player.getDynamicProperty("securityClearance") as number;
                 if (securityCheck !== 4) {
                     // Kick players from server
-                    target.runCommand(`kick @s §o§7\n\n${reason}`);
+                    object.player.runCommand(`kick @s §o§7\n\n${reason}`);
                 }
             }
-            // Set lockdown_b to true to indicate server lockdown
-            world.setDynamicProperty("lockdown_b", true);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been enabled!`);
+        };
 
-            // Store and subscribe the persistent function reference
-            lockDownMonitor = function (object: PlayerSpawnAfterEvent) {
-                if (object.initialSpawn === true) {
-                    const securityCheck = object.player.getDynamicProperty("securityClearance") as number;
-                    if (securityCheck !== 4) {
-                        // Kick players from server
-                        object.player.runCommand(`kick @s §o§7\n\n${reason}`);
-                    }
-                }
-            };
-
-            world.afterEvents.playerSpawn.subscribe(lockDownMonitor);
-        });
+        world.afterEvents.playerSpawn.subscribe(lockDownMonitor);
     },
 };

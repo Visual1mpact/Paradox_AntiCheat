@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, system } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { OptimizedDatabase } from "../../classes/database/data-hive";
 import { MessageFormData } from "@minecraft/server-ui";
@@ -120,8 +120,6 @@ export const debugDBCommand: Command = {
         sender.sendMessage("§2[§7Paradox§2]§o§7 Please close your chat window to view the GUI for DB Debugging Info.");
 
         // Show the debug form to the sender
-        system.run(() => {
-            showDebugForm(sender);
-        });
+        showDebugForm(sender);
     },
 };

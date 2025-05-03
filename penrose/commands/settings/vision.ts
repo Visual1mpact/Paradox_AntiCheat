@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startVisionCheck, stopVisionCheck } from "../../modules/vision";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -46,16 +46,12 @@ export const visionCheckCommand: Command = {
             // Enable the module
             paradoxModulesDB.set(visionCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §aenabled§7.`);
-            system.run(() => {
-                startVisionCheck();
-            });
+            startVisionCheck();
         } else {
             // Disable the module
             paradoxModulesDB.set(visionCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §4disabled§7.`);
-            system.run(() => {
-                stopVisionCheck();
-            });
+            stopVisionCheck();
         }
     },
 };

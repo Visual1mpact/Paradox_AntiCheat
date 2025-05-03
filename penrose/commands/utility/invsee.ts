@@ -1,4 +1,4 @@
-import { Player, ChatSendBeforeEvent, world, system } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -66,38 +66,36 @@ export const invseeCommand: Command = {
         const member: Player | undefined = getPlayerObject(playerName);
 
         // Retrieve the player's inventory
-        system.run(() => {
-            if (member && member.isValid) {
-                const inv = member.getComponent("inventory");
-                const container = inv.container;
-                // Display the player's inventory
-                const inventoryMessage = [
-                    ` `,
-                    `§2[§7Paradox§2]§o§7 ${member.name}'s inventory:`,
-                    ...Array.from(Array(container.size), (_a, i) => {
-                        let enchantmentInfo = "";
-                        const item = container.getItem(i);
-                        if (item) {
-                            const enchantmentComponent = item.getComponent("enchantable");
-                            if (enchantmentComponent) {
-                                const enchantmentList = enchantmentComponent.getEnchantments();
-                                if (enchantmentList.length > 0) {
-                                    const enchantmentLines = enchantmentList.map((enchantment) => `\n          └─ §2[§f${enchantment.type.id}§2] §7Level: §2${enchantment.level} §7/ §2${enchantment.type.maxLevel}\n`);
-                                    enchantmentInfo = `\n    └─ §2[§fEnchantments§2]${enchantmentLines.join("\n")}`;
-                                }
+        if (member && member.isValid) {
+            const inv = member.getComponent("inventory");
+            const container = inv.container;
+            // Display the player's inventory
+            const inventoryMessage = [
+                ` `,
+                `§2[§7Paradox§2]§o§7 ${member.name}'s inventory:`,
+                ...Array.from(Array(container.size), (_a, i) => {
+                    let enchantmentInfo = "";
+                    const item = container.getItem(i);
+                    if (item) {
+                        const enchantmentComponent = item.getComponent("enchantable");
+                        if (enchantmentComponent) {
+                            const enchantmentList = enchantmentComponent.getEnchantments();
+                            if (enchantmentList.length > 0) {
+                                const enchantmentLines = enchantmentList.map((enchantment) => `\n          └─ §2[§f${enchantment.type.id}§2] §7Level: §2${enchantment.level} §7/ §2${enchantment.type.maxLevel}\n`);
+                                enchantmentInfo = `\n    └─ §2[§fEnchantments§2]${enchantmentLines.join("\n")}`;
                             }
                         }
-                        const slotColor = item ? `§2[§fSlot ${i}§2]` : `§7[Slot ${i}]`;
-                        const itemInfo = item ? `§2[§f${item.typeId.replace("minecraft:", "")}§2] §7Amount: §2x${item.amount}` : "§7(empty)";
+                    }
+                    const slotColor = item ? `§2[§fSlot ${i}§2]` : `§7[Slot ${i}]`;
+                    const itemInfo = item ? `§2[§f${item.typeId.replace("minecraft:", "")}§2] §7Amount: §2x${item.amount}` : "§7(empty)";
 
-                        return `  §o§7| ${slotColor} §2=>§f ${itemInfo}${enchantmentInfo}`;
-                    }),
-                    ` `,
-                ];
-                message.sender.sendMessage(inventoryMessage.join("\n"));
-            } else {
-                message.sender.sendMessage(`§cFailed to view inventory of "${member ? member.name : playerName}"! Please try again.`);
-            }
-        });
+                    return `  §o§7| ${slotColor} §2=>§f ${itemInfo}${enchantmentInfo}`;
+                }),
+                ` `,
+            ];
+            message.sender.sendMessage(inventoryMessage.join("\n"));
+        } else {
+            message.sender.sendMessage(`§cFailed to view inventory of "${member ? member.name : playerName}"! Please try again.`);
+        }
     },
 };

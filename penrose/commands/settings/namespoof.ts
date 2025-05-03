@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startNamespoofDetection, stopNamespoofDetection } from "../../modules/namespoof";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -46,16 +46,12 @@ export const nameSpoofCommand: Command = {
             // Enable the module
             paradoxModulesDB.set(nameSpoofKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Name-spoof detection has been §aenabled§7.`);
-            system.run(() => {
-                startNamespoofDetection();
-            });
+            startNamespoofDetection();
         } else {
             // Disable the module
             paradoxModulesDB.set(nameSpoofKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Name-spoof detection has been §4disabled§7.`);
-            system.run(() => {
-                stopNamespoofDetection();
-            });
+            stopNamespoofDetection();
         }
     },
 };

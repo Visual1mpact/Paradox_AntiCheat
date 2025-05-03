@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startKillAuraCheck, stopKillAuraCheck } from "../../modules/killaura";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -43,16 +43,12 @@ export const killauraCommand: Command = {
             // Enable the module
             paradoxModulesDB.set("killAuraCheck_b", true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §aenabled§7.`);
-            system.run(() => {
-                startKillAuraCheck();
-            });
+            startKillAuraCheck();
         } else {
             // Disable the module
             paradoxModulesDB.set("killAuraCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §4disabled§7.`);
-            system.run(() => {
-                stopKillAuraCheck();
-            });
+            stopKillAuraCheck();
         }
     },
 };

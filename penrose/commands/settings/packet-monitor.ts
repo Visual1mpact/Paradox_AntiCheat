@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startPacketListener, stopPacketListener } from "../../modules/packet-monitor";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -33,7 +33,7 @@ export const packetMonitorCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
 
         // Get packet monitoring status from the database
@@ -43,26 +43,20 @@ export const packetMonitorCommand: Command = {
             // Enable the module
             paradoxModulesDB.set("packetMonitorCheck_b", true);
 
-            // Use system.run to call startPacketHandler to avoid read-only context
-            system.run(async () => {
-                const success = await startPacketListener(); // Attempt to start the packet handler
-                if (success) {
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §aenabled§7.`);
-                } else {
-                    // Revert the database change if enabling failed
-                    paradoxModulesDB.set("packetMonitorCheck_b", false);
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring could not be enabled: §c@minecraft/server-net not found§7.`);
-                }
-            });
+            const success = await startPacketListener(); // Attempt to start the packet handler
+            if (success) {
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §aenabled§7.`);
+            } else {
+                // Revert the database change if enabling failed
+                paradoxModulesDB.set("packetMonitorCheck_b", false);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring could not be enabled: §c@minecraft/server-net not found§7.`);
+            }
         } else {
             // Disable the module
             paradoxModulesDB.set("packetMonitorCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §4disabled§7.`);
 
-            // Use system.run to call stopPacketHandler to avoid read-only context
-            system.run(() => {
-                stopPacketListener(); // Stop the packet handler
-            });
+            stopPacketListener(); // Stop the packet handler
         }
     },
 };

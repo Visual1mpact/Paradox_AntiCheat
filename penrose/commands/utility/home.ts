@@ -1,5 +1,5 @@
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent, system, Vector3, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
@@ -191,33 +191,27 @@ export const homeCommand: Command = {
 
         switch (subCommand) {
             case "set": {
-                const id = system.run(() => {
-                    const location = player.location; // Get the player's current location
-                    const dimension = player.dimension.id; // Get the name of the player's current dimension
-                    const existingHome = saveHomeLocation(homeName, location, dimension);
-                    if (existingHome) {
-                        player.sendMessage(`§2[§7Paradox§2]§o§7 A home named "${homeName}" already exists!`);
-                        return system.clearRun(id);
-                    }
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" set successfully!`);
-                });
+                const location = player.location; // Get the player's current location
+                const dimension = player.dimension.id; // Get the name of the player's current dimension
+                const existingHome = saveHomeLocation(homeName, location, dimension);
+                if (existingHome) {
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 A home named "${homeName}" already exists!`);
+                    return;
+                }
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" set successfully!`);
                 break;
             }
             case "delete": {
-                system.run(() => {
-                    const homeDeleted = deleteHomeLocation(homeName);
-                    if (homeDeleted) {
-                        player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" deleted successfully!`);
-                    } else {
-                        player.sendMessage(`§cHome location "${homeName}" not found!`);
-                    }
-                });
+                const homeDeleted = deleteHomeLocation(homeName);
+                if (homeDeleted) {
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" deleted successfully!`);
+                } else {
+                    player.sendMessage(`§cHome location "${homeName}" not found!`);
+                }
                 break;
             }
             case "teleport": {
-                system.run(() => {
-                    teleportToHomeLocation(homeName);
-                });
+                teleportToHomeLocation(homeName);
                 break;
             }
             case "list": {

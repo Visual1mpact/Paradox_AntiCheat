@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startFlyCheck, stopFlyCheck } from "../../modules/fly";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -45,18 +45,14 @@ export const flyCheckCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Fly detection has been §aenabled§7.`);
 
             // Start fly detection
-            system.run(() => {
-                startFlyCheck();
-            });
+            startFlyCheck();
         } else {
             // Disable the module
             paradoxModulesDB.set("flyCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Fly detection has been §4disabled§7.`);
 
             // Stop fly detection
-            system.run(() => {
-                stopFlyCheck();
-            });
+            stopFlyCheck();
         }
     },
 };

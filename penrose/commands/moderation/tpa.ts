@@ -1,4 +1,4 @@
-import { Player, ChatSendBeforeEvent, world, system } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 
 /**
@@ -104,35 +104,33 @@ export const tpaCommand: Command = {
 
         const [target1, target2] = determinePlayers(args);
 
-        system.run(() => {
-            if (!target1 || !target2) {
-                message.sender.sendMessage("§cPlease provide at least two valid player names.");
-                return;
-            }
+        if (!target1 || !target2) {
+            message.sender.sendMessage("§cPlease provide at least two valid player names.");
+            return;
+        }
 
-            if (!target1.isValid) {
-                message.sender.sendMessage(`§cPlayer '${target1.name}' not found or not valid.`);
-                return;
-            }
+        if (!target1.isValid) {
+            message.sender.sendMessage(`§cPlayer '${target1.name}' not found or not valid.`);
+            return;
+        }
 
-            if (!target2.isValid) {
-                message.sender.sendMessage(`§cPlayer '${target2.name}' not found or not valid.`);
-                return;
-            }
+        if (!target2.isValid) {
+            message.sender.sendMessage(`§cPlayer '${target2.name}' not found or not valid.`);
+            return;
+        }
 
-            const result = target1.tryTeleport(target2.location, {
-                dimension: target2.dimension,
-                rotation: target2.getRotation(),
-                facingLocation: target2.getViewDirection(),
-                checkForBlocks: true,
-                keepVelocity: false,
-            });
-
-            if (!result) {
-                message.sender.sendMessage("§cUnable to teleport. Please try again.");
-            } else {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleported '${target1.name}' to '${target2.name}'.`);
-            }
+        const result = target1.tryTeleport(target2.location, {
+            dimension: target2.dimension,
+            rotation: target2.getRotation(),
+            facingLocation: target2.getViewDirection(),
+            checkForBlocks: true,
+            keepVelocity: false,
         });
+
+        if (!result) {
+            message.sender.sendMessage("§cUnable to teleport. Please try again.");
+        } else {
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleported '${target1.name}' to '${target2.name}'.`);
+        }
     },
 };
