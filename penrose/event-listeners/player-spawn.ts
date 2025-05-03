@@ -131,13 +131,19 @@ function migrateLegacySpoofData() {
 }
 
 /**
- * Verifies player identity upon joining and enforces strict name-ID consistency.
- * - If a player ID already exists under a different name, the player is kicked.
- * - If a player name exists with a different ID, the player is treated as a spoofer and kicked.
- * - If the name and ID match, the player's record is updated.
- * - If any record is older than 7 days and unused, it's cleaned up.
+ * Checks and validates the identity of a player joining the world, enforcing consistent name-ID mapping.
  *
- * @param {Player} player - The player joining or spawning in the world.
+ * This function ensures that each player ID is uniquely tied to a set of known names, preventing name spoofing:
+ *
+ * - If the player's ID is new, it creates a new record and registers their current name.
+ * - If the ID exists but the name is new, it is added to the list of known names for that ID.
+ * - If another ID has previously used this name, the current player is considered a spoofer and is kicked.
+ * - Records that are stale (older than 7 days) or corrupted are automatically purged.
+ * - The spoof record is updated with the last seen timestamp and any spoof attempts.
+ *
+ * Migration from older spoof data formats is handled automatically and only once.
+ *
+ * @param {Player} player - The player instance that has joined or spawned in the world.
  */
 function handleSpoofCheck(player: Player) {
     migrateLegacySpoofData(); // runs only once ever
