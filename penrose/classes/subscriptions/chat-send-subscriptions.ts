@@ -11,6 +11,14 @@ interface PlayerSpamData {
     mutedUntil: number | null;
 }
 
+type PlayerID = string;
+
+interface Channel {
+    Owner: PlayerID;
+    Members: Record<PlayerID, string>;
+    lastActive: number; // store `Date.now()` timestamp
+}
+
 /**
  * Handles chat send events, including spam detection and command processing.
  */
@@ -54,29 +62,13 @@ class ChatSendSubscription {
      */
     private getPlayerChannel(player: Player): string | null {
         // Assuming channelsDB stores a map of channels where each member is keyed by player ID
-        const channels = channelsDB.entries();
+        const channels = channelsDB.entries() as [string, Channel][];
         for (const [channelName, channelData] of channels) {
             if (channelData.Members[player.id]) {
                 return channelName;
             }
         }
         return null;
-    }
-
-    /**
-     * Retrieves the list of players in a specific channel using channelsDB.
-     * @param channelName - The name of the channel.
-     * @returns A list of players in the channel.
-     */
-    private getPlayersInChannel(channelName: string): Player[] {
-        const channelData = channelsDB.get(channelName) as { Members: { [key: string]: string } } | undefined;
-        if (!channelData) return [];
-
-        // Pre-create a Set of player IDs from the channel data for quick lookup
-        const playerIdsInChannel = new Set(Object.keys(channelData.Members));
-
-        // Use a direct lookup to only fetch the players whose IDs are in the set
-        return world.getAllPlayers().filter((player) => playerIdsInChannel.has(player.id));
     }
 
     /**
@@ -148,8 +140,24 @@ class ChatSendSubscription {
                 const rank = playerChannel ?? playerRank;
                 const formattedMessage = `${rank} §7${player.name}: §r${event.message}`;
 
-                // Determine the target players based on the channel
-                const targetPlayers = playerChannel ? this.getPlayersInChannel(playerChannel) : world.getPlayers();
+                let targetPlayers: Player[];
+
+                if (playerChannel) {
+                    const channelData = channelsDB.get<Channel>(playerChannel);
+                    if (channelData) {
+                        // Update lastActive only once
+                        channelData.lastActive = Date.now();
+                        channelsDB.set(playerChannel, channelData);
+
+                        // Extract players from channelData.Members
+                        const playerIdsInChannel = new Set(Object.keys(channelData.Members));
+                        targetPlayers = world.getAllPlayers().filter((p) => playerIdsInChannel.has(p.id));
+                    } else {
+                        targetPlayers = world.getPlayers(); // fallback
+                    }
+                } else {
+                    targetPlayers = world.getPlayers();
+                }
 
                 // Broadcast the message to the target players
                 targetPlayers.forEach((p) => p.sendMessage(formattedMessage));

@@ -67,6 +67,14 @@ import { initializeSecurityClearanceTracking } from "../utility/level-4-security
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debugDB";
 
+type PlayerID = string;
+
+interface Channel {
+    Owner: PlayerID;
+    Members: Record<PlayerID, string>;
+    lastActive: number; // store `Date.now()` timestamp
+}
+
 // Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
@@ -102,6 +110,23 @@ function initializeSystems() {
     whitelistDB.clean();
     allowlistDB.clean();
     banlistDB.clean();
+
+    // Clean up stagnant channels
+    function channelsDBCleanup() {
+        const now = Date.now();
+        const cutoff = now - 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+
+        for (const [channelName, channel] of channelsDB.entries() as [string, Channel][]) {
+            if (typeof channel.lastActive !== "number") continue;
+            if (channel.lastActive < cutoff) {
+                channelsDB.delete(channelName);
+                console.warn(`[Paradox] Removed inactive channel '${channelName}' (last active ${new Date(channel.lastActive).toLocaleString()})`);
+            }
+        }
+    }
+
+    // Clean up stagnant channels
+    channelsDBCleanup();
 
     // Instantiate CommandHandler
     commandHandler = new CommandHandler();

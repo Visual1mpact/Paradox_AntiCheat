@@ -7,6 +7,7 @@ type PlayerID = string;
 interface Channel {
     Owner: PlayerID;
     Members: Record<PlayerID, string>;
+    lastActive: number; // store `Date.now()` timestamp
 }
 
 interface Invitation {
@@ -104,6 +105,7 @@ export const channelCommand: Command = {
             }
 
             channel.Members[playerId] = playerName;
+            channel.lastActive = Date.now();
             saveChannels(channelName, channel);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have joined channel '${channelName}§7'.`);
 
@@ -176,6 +178,7 @@ export const channelCommand: Command = {
             }
 
             channel.Owner = newOwnerName;
+            channel.lastActive = Date.now();
             saveChannels(channelName, channel);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ownership of channel '${channelName}§7' transferred to ${newOwnerName}.`);
             newOwner.sendMessage(`§2[§7Paradox§2]§o§7 You are now the owner of channel '${channelName}§7'.`);
@@ -254,7 +257,7 @@ export const channelCommand: Command = {
             if (channel) {
                 message.sender.sendMessage(`§cChannel '${channelName}§c' already exists.`);
             } else {
-                saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName } });
+                saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName }, lastActive: Date.now() });
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
             }
         }
