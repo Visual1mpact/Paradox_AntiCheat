@@ -382,10 +382,12 @@ async function dropStoredPlayerData(playerId: string) {
     if (!data) return; // Exit if no data found
 
     // Drop items from inventory and equipment
-    system.run(() => {
+    function dropStoredItems() {
         dropItems(data.inventory, data.dimension, data.location);
         dropItems(data.equipment, data.dimension, data.location);
-    });
+    }
+
+    system.run(dropStoredItems);
 
     // Remove data from the map
     playerDataMap.delete(playerId);

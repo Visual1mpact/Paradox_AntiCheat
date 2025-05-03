@@ -382,18 +382,23 @@ export class CommandHandler {
         }
 
         this.prefixUpdateLock = true;
-        system.run(async () => {
+
+        const performPrefixUpdate = async () => {
             const newPrefix = world.getDynamicProperty("__prefix") as string;
+
             try {
                 for (const command of this.commands.values()) {
                     command.usage = command.usage.replaceAll(this.prefix + command.name, newPrefix + command.name);
                     command.examples = command.examples.map((example: string) => example.replace(this.prefix + command.name, newPrefix + command.name));
                 }
+
                 this.prefix = newPrefix;
             } finally {
                 this.prefixUpdateLock = false;
             }
-        });
+        };
+
+        system.run(performPrefixUpdate);
     }
 
     /**
@@ -446,31 +451,30 @@ export class CommandHandler {
         const command = this.commands.get(commandName);
         if (command) {
             if ((playerSecurityClearance && playerSecurityClearance >= command.securityClearance) || commandName === "op") {
+                const runCommandExecution = async () => {
+                    try {
+                        const validateReturn = await command.execute(message, args, CryptoES);
+                        return validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false;
+                    } catch (error) {
+                        console.error("Error occurred during command execution:", error);
+                        player.sendMessage("§2[§7Paradox§2]§o§7 There was an error executing the command.");
+                        return false;
+                    }
+                };
+
                 try {
-                    // Wrap the command execution inside system.run() using a Promise
                     const result = await new Promise<boolean>((resolve) => {
-                        system.run(async () => {
-                            try {
-                                const validateReturn = await command.execute(message, args, CryptoES);
-                                resolve(validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false);
-                            } catch (error) {
-                                console.error("Error occurred during command execution:", error);
-                                player.sendMessage("§2[§7Paradox§2]§o§7 There was an error executing the command.");
-                                resolve(false);
-                            }
-                        });
+                        system.run(async () => resolve(await runCommandExecution()));
                     });
 
-                    // If the command is "prefix" and returns a boolean, return it
                     if (commandName === "prefix") {
                         return result;
                     }
 
-                    // Return false by default after command execution
                     return false;
                 } catch (error) {
                     console.error("Error occurred during command execution:", error);
-                    return false; // Ensure a boolean value is returned after an error
+                    return false;
                 }
             } else {
                 player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to execute this command.");

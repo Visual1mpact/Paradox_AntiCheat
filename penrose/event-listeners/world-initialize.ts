@@ -301,13 +301,15 @@ function initializeParadoxModules() {
     };
 
     // Iterate over the entries and start corresponding modules if their value is true
-    system.run(() => {
+    const runModuleInitializers = () => {
         paradoxModules.forEach(([key, value]) => {
             if (value === true && moduleActions[key]) {
-                moduleActions[key](); // Call the appropriate function for the module
+                moduleActions[key]();
             }
         });
-    });
+    };
+
+    system.run(runModuleInitializers);
 }
 
 /**
@@ -334,14 +336,16 @@ function subscribeToLockDown() {
  * Stops handling player spawn events for lockdown if no longer active.
  */
 function unsubscribeFromLockDown() {
-    system.run(() => {
+    const cleanupLockdownState = () => {
         if (wrappedLockDownMonitor) {
             world.afterEvents.playerSpawn.unsubscribe(wrappedLockDownMonitor);
             wrappedLockDownMonitor = undefined; // Clear the reference
         }
         lockDownMonitor = undefined; // Clear the reference to the original function
         world.afterEvents.worldLoad.unsubscribe(onWorldInitialize);
-    });
+    };
+
+    system.run(cleanupLockdownState);
 }
 
 /**
