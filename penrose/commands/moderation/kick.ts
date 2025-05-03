@@ -37,6 +37,7 @@ export const kickCommand: Command = {
                 name: "Select Target Player:",
                 arg: "--target",
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["playerName"],
             },
             {

@@ -257,8 +257,18 @@ export const guiCommand: Command = {
                         break;
                     }
                     case "dropdown": {
-                        const allPlayers = world.getAllPlayers().map((player) => player.name);
-                        field.options = allPlayers;
+                        if (field.sourceType === "players") {
+                            const allPlayers = world.getAllPlayers().map((player) => player.name);
+                            field.options = allPlayers;
+                        } else {
+                            const allEntities = world
+                                .getDimension(player.dimension.id)
+                                .getEntities({ excludeTypes: ["player"] })
+                                .map((entity) => entity.typeId.replace("minecraft:", ""));
+
+                            // Deduplicate entity type IDs
+                            field.options = [...new Set(allEntities)];
+                        }
                         modalForm.dropdown(formattedName, field.options ?? [""], -1);
                         break;
                     }
@@ -313,11 +323,17 @@ export const guiCommand: Command = {
                     switch (dynamicField.type) {
                         case "text": {
                             value = response.formValues[formIndex++] as string;
+                            if (dynamicField.arg) {
+                                args.push(dynamicField.arg);
+                            }
                             break;
                         }
                         case "dropdown": {
                             const selectedIndex = response.formValues[formIndex++] as number;
                             value = dynamicField.options[selectedIndex];
+                            if (dynamicField.arg) {
+                                args.push(dynamicField.arg);
+                            }
                             break;
                         }
                         case "toggle": {

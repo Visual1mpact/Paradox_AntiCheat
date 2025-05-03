@@ -54,6 +54,7 @@ export const tprCommand: Command = {
         dynamicFields: [
             {
                 type: "dropdown",
+                sourceType: "players",
                 name: "Select Players Name:",
                 arg: undefined,
                 requiredFields: ["PlayerName"],

@@ -48,6 +48,7 @@ export const setRankCommand: Command = {
         dynamicFields: [
             {
                 type: "dropdown",
+                sourceType: "players",
                 name: "Select Player Name:",
                 arg: "--target",
                 requiredFields: ["PlayerName"],

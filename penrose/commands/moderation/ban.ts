@@ -36,6 +36,7 @@ export const banCommand: Command = {
                 name: "Select Players Name:",
                 arg: "--target",
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["playerName"],
             },
             {

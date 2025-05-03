@@ -37,6 +37,7 @@ export const despawnCommand: Command = {
                 name: "Select Entity Type:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "entities",
                 placeholder: "e.g., iron_golem, zombie",
                 requiredFields: ["entityType"],
             },
@@ -53,7 +54,7 @@ export const despawnCommand: Command = {
 
         system.run(() => {
             const filter: EntityQueryOptions = { excludeTypes: ["player"] };
-            const filteredEntities = world.getDimension("overworld").getEntities(filter);
+            const filteredEntities = world.getDimension(message.sender.dimension.id).getEntities(filter);
 
             const despawnedEntities = new Map();
 

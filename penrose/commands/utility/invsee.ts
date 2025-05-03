@@ -32,6 +32,7 @@ export const invseeCommand: Command = {
                 name: "Select Players Name:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["playerName"],
             },
         ],

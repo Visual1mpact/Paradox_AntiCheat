@@ -42,6 +42,7 @@ export const punishCommand: Command = {
                 name: "Select Player Name:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["punishmentType"],
             },
             {

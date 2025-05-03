@@ -126,6 +126,15 @@ export interface DynamicField {
     options?: string[];
 
     /**
+     * Dynamically populate dropdown options with players or entities.
+     * Only applies when `type` is `"dropdown"`.
+     * - `"players"`: Populate with active player names.
+     * - `"entities"`: Populate with entity identifiers or display names.
+     * If omitted, `options` array is used instead.
+     */
+    sourceType?: "players" | "entities";
+
+    /**
      * Optional list of required dynamic fields for the button.
      * These fields must be filled before the button's command can be executed.
      * Example: `["playerName"]`.

@@ -45,7 +45,7 @@ export const channelCommand: Command = {
         ],
         dynamicFields: [
             { name: "Name of Room:", arg: "--room", type: "text", placeholder: "Enter Channel Name", requiredFields: ["roomName"] },
-            { name: "Select Players Name:", arg: "--target", type: "dropdown", requiredFields: ["targetName"] },
+            { name: "Select Players Name:", arg: "--target", type: "dropdown", sourceType: "players", requiredFields: ["targetName"] },
         ],
     },
 

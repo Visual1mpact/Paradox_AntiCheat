@@ -37,6 +37,7 @@ export const vanishCommand: Command = {
                 name: "Select A Player:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["playerName"],
             },
         ],

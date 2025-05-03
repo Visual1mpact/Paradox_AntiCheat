@@ -146,6 +146,7 @@ export const imprisonCommand: Command = {
                 name: "Select Target Player:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["playerName"],
             },
         ],

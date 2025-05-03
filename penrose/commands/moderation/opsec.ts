@@ -31,6 +31,7 @@ export const opsecCommand: Command = {
                 name: "Select Target Player:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["playerName"],
             },
             {

@@ -50,6 +50,7 @@ export const deopCommand: Command = {
                 name: "Select Online Player:",
                 arg: undefined,
                 type: "dropdown",
+                sourceType: "players",
                 requiredFields: ["onlineName"],
             },
             {
