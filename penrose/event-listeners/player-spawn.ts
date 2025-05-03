@@ -3,41 +3,25 @@ import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB } from "
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 
 /**
- * Represents stored identity data for a trusted player.
+ * Data model for a trusted player stored in the spoof detection system.
  */
 interface TrustedPlayerData {
-    /**
-     * The name originally associated with this ID.
-     */
-    name: string;
-
-    /**
-     * The unique player ID originally associated with this name.
-     */
+    /** Unique identifier for the player */
     id: string;
-
-    /**
-     * The timestamp (in milliseconds) when the name was first seen with the trusted ID.
-     */
+    /** List of known usernames used by this player */
+    knownNames: string[];
+    /** Timestamp of when this player was first seen */
     firstSeen: number;
-
-    /**
-     * The last time this name was seen, regardless of spoof or not.
-     */
+    /** Timestamp of when this player was last seen */
     lastSeen: number;
-
     /**
-     * Optional list of spoofing attempts, if any other players have tried to use this name.
+     * History of spoof attempts made using this player’s identity.
+     * Each entry contains the spoofed name and the time it occurred.
      */
     spoofAttempts?: {
-        /**
-         * The spoofing player's actual ID.
-         */
-        id: string;
-
-        /**
-         * The timestamp when the spoofing attempt occurred.
-         */
+        /** Name used during the spoof attempt */
+        name: string;
+        /** Timestamp of the spoof attempt */
         timestamp: number;
     }[];
 }
@@ -90,39 +74,60 @@ function initializeEventHandlers() {
  * - Deletes invalid or corrupted entries.
  * - Removes the original per-name keys after migration.
  * - Sets `_migrationDone` to true to prevent re-execution.
- *
- * This should be called once at the start of `handleSpoofCheck()` and can be safely removed afterward.
  */
 function migrateLegacySpoofData() {
-    if (spoofDB.get<boolean>("_migrationDone")) return;
+    const alreadyMigrated = spoofDB.get<boolean>("_migrationDone");
+    if (alreadyMigrated) return;
 
-    const allPlayers = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
-    const now = Date.now();
-
-    for (const [key, value] of spoofDB.entries()) {
-        if (key === "players" || key === "_migrationDone") continue;
-
-        const record = value as Partial<TrustedPlayerData>;
-
-        // Skip and delete invalid entries
-        if (!record?.id || typeof record.lastSeen !== "number") {
-            spoofDB.delete(key);
-            continue;
-        }
-
-        allPlayers[key] = {
-            id: record.id,
-            name: key, // Legacy key is the player name
-            firstSeen: record.firstSeen ?? now,
-            lastSeen: record.lastSeen,
-            spoofAttempts: record.spoofAttempts ?? [],
-        };
-
-        spoofDB.delete(key);
+    const data = spoofDB.get<Record<string, TrustedPlayerData>>("players");
+    if (!data || typeof data !== "object") {
+        spoofDB.set("_migrationDone", true);
+        return;
     }
 
-    spoofDB.set("players", allPlayers);
-    spoofDB.set("_migrationDone", true); // mark migration complete
+    let migrated = false;
+
+    for (const [key, value] of Object.entries(data)) {
+        const isLegacy = typeof key === "string" && typeof value === "object" && value !== null && typeof value.id === "string" && typeof value.firstSeen === "number";
+
+        if (!isLegacy) continue;
+
+        const legacyName = key;
+        const { id, firstSeen, lastSeen, spoofAttempts } = value;
+        const newKey = id;
+
+        const existing = data[newKey];
+
+        if (existing) {
+            if (!existing.knownNames.includes(legacyName)) {
+                existing.knownNames.push(legacyName);
+            }
+
+            existing.firstSeen = Math.min(existing.firstSeen, firstSeen);
+            existing.lastSeen = Math.max(existing.lastSeen, lastSeen);
+
+            if (Array.isArray(spoofAttempts) && (!Array.isArray(existing.spoofAttempts) || spoofAttempts.length > existing.spoofAttempts.length)) {
+                existing.spoofAttempts = spoofAttempts;
+            }
+        } else {
+            data[newKey] = {
+                id,
+                knownNames: [legacyName],
+                firstSeen,
+                lastSeen,
+                spoofAttempts,
+            };
+        }
+
+        delete data[legacyName];
+        migrated = true;
+    }
+
+    if (migrated) {
+        spoofDB.set("players", data);
+    }
+
+    spoofDB.set("_migrationDone", true);
 }
 
 /**
@@ -138,38 +143,33 @@ function handleSpoofCheck(player: Player) {
     migrateLegacySpoofData(); // runs only once ever
 
     const now = Date.now();
-    const nameKey = player.name;
-    const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+    const idKey = player.id;
+    const name = player.name;
+    const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000;
 
     const allPlayers = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
-    const staleKeys: string[] = [];
-    const corruptedKeys: string[] = [];
+    const staleIDs: string[] = [];
+    const corruptedIDs: string[] = [];
 
-    // Detect ID conflicts and stale/corrupt entries
-    for (const [storedName, record] of Object.entries(allPlayers)) {
+    // Cleanup pass
+    for (const [storedID, record] of Object.entries(allPlayers)) {
         if (!record?.id || typeof record.lastSeen !== "number") {
-            corruptedKeys.push(storedName);
+            corruptedIDs.push(storedID);
             continue;
         }
         if (now - record.lastSeen >= STALE_THRESHOLD) {
-            staleKeys.push(storedName);
-        }
-        if (record.id === player.id && storedName !== nameKey) {
-            player.sendMessage(`§c[Paradox] Your ID is already associated with the name "${storedName}".`);
-            player.runCommand(`kick @s §o§7\n\nName change is not allowed on this server.`);
-            return;
+            staleIDs.push(storedID);
         }
     }
 
-    // Remove corrupted/stale keys
-    [...corruptedKeys, ...staleKeys].forEach((key) => delete allPlayers[key]);
+    [...staleIDs, ...corruptedIDs].forEach((id) => delete allPlayers[id]);
 
-    const existing = allPlayers[nameKey];
+    const existing = allPlayers[idKey];
 
     if (!existing) {
-        allPlayers[nameKey] = {
-            name: player.name,
+        allPlayers[idKey] = {
             id: player.id,
+            knownNames: [name],
             firstSeen: now,
             lastSeen: now,
         };
@@ -177,24 +177,29 @@ function handleSpoofCheck(player: Player) {
         return;
     }
 
-    if (existing.id !== player.id) {
-        // Spoof detected
-        const attempt = { id: player.id, timestamp: now };
-        if (!existing.spoofAttempts) existing.spoofAttempts = [];
-        existing.spoofAttempts.push(attempt);
-        existing.lastSeen = now;
-
-        allPlayers[nameKey] = existing;
-        spoofDB.set("players", allPlayers);
-
-        player.sendMessage(`§c[Paradox] Name spoof detected. This name belongs to another player.`);
-        player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
-        return;
+    // Add the current name to knownNames if new
+    if (!existing.knownNames.includes(name)) {
+        existing.knownNames.push(name);
     }
 
-    // Valid login — update timestamp
     existing.lastSeen = now;
-    allPlayers[nameKey] = existing;
+
+    // Check for name spoofing (other players using a name that belongs to this ID)
+    for (const [otherID, record] of Object.entries(allPlayers)) {
+        if (otherID === idKey) continue;
+
+        if (record.knownNames.includes(name)) {
+            if (!record.spoofAttempts) record.spoofAttempts = [];
+            record.spoofAttempts.push({ name, timestamp: now });
+
+            spoofDB.set("players", allPlayers);
+            player.sendMessage(`§c[Paradox] Spoof attempt detected. This name is used by another account.`);
+            player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
+            return;
+        }
+    }
+
+    allPlayers[idKey] = existing;
     spoofDB.set("players", allPlayers);
 }
 

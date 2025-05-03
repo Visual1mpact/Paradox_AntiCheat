@@ -3,47 +3,31 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { spoofDB } from "../../event-listeners/world-initialize";
 
 /**
- * Represents stored identity data for a trusted player.
+ * Data model for a trusted player stored in the spoof detection system.
  */
 interface TrustedPlayerData {
-    /**
-     * The name originally associated with this ID.
-     */
-    name: string;
-
-    /**
-     * The unique player ID originally associated with this name.
-     */
+    /** Unique identifier for the player */
     id: string;
-
-    /**
-     * The timestamp (in milliseconds) when the name was first seen with the trusted ID.
-     */
+    /** List of known usernames used by this player */
+    knownNames: string[];
+    /** Timestamp of when this player was first seen */
     firstSeen: number;
-
-    /**
-     * The last time this name was seen, regardless of spoof or not.
-     */
+    /** Timestamp of when this player was last seen */
     lastSeen: number;
-
     /**
-     * Optional list of spoofing attempts, if any other players have tried to use this name.
+     * History of spoof attempts made using this player’s identity.
+     * Each entry contains the spoofed name and the time it occurred.
      */
     spoofAttempts?: {
-        /**
-         * The spoofing player's actual ID.
-         */
-        id: string;
-
-        /**
-         * The timestamp when the spoofing attempt occurred.
-         */
+        /** Name used during the spoof attempt */
+        name: string;
+        /** Timestamp of the spoof attempt */
         timestamp: number;
     }[];
 }
 
 /**
- * Represents the spooflog command.
+ * Represents the spooflog command for inspecting or clearing spoofing attempts on players.
  */
 export const spoofLogCommand: Command = {
     name: "spooflog",
@@ -94,8 +78,9 @@ export const spoofLogCommand: Command = {
 
     /**
      * Executes the spooflog command.
-     * @param {ChatSendBeforeEvent} message - The message object that contains details about the chat event.
-     * @param {string[]} args - The arguments passed along with the command.
+     *
+     * @param {ChatSendBeforeEvent} message - The chat message event that triggered this command.
+     * @param {string[]} args - The arguments provided with the command (e.g., player name, flags).
      */
     execute: (message: ChatSendBeforeEvent, args: string[]): void => {
         const sender = message.sender;
@@ -105,6 +90,7 @@ export const spoofLogCommand: Command = {
             .trim()
             .replace(/[@"]/g, "");
 
+        /** @type {Record<string, TrustedPlayerData>} */
         const allRecords = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
 
         if (args.includes("--clearall")) {
@@ -119,11 +105,17 @@ export const spoofLogCommand: Command = {
         }
 
         const clearLogs = args.includes("--clear");
-        const record = allRecords[nameQuery];
+
+        /**
+         * Searches for a matching record where the queried name is listed in knownNames.
+         * @type {[string, TrustedPlayerData] | undefined}
+         */
+        const matchedEntry = Object.entries(allRecords).find(([_, record]) => record.knownNames.includes(nameQuery));
 
         if (clearLogs) {
-            if (record) {
-                delete allRecords[nameQuery];
+            if (matchedEntry) {
+                const [id] = matchedEntry;
+                delete allRecords[id];
                 spoofDB.set("players", allRecords);
                 sender.sendMessage(`§cSpoof logs for "${nameQuery}" have been cleared.`);
             } else {
@@ -132,15 +124,28 @@ export const spoofLogCommand: Command = {
             return;
         }
 
-        if (record) {
-            const formatTimestamp = (ms: number) => new Date(ms).toISOString();
+        if (matchedEntry) {
+            const [, record] = matchedEntry;
 
-            const output: string[] = [`§2[§7Paradox§2] §fSpoof Info for: §6${record.name}`, `§7First Seen: §f${formatTimestamp(record.firstSeen)}`, `§7Last Seen: §f${formatTimestamp(record.lastSeen)}`, `§7Stored ID: §f${record.id}`];
+            /**
+             * Formats a timestamp (ms) into a readable ISO date string.
+             * @param {number} ms - Timestamp in milliseconds.
+             * @returns {string} Formatted ISO date string.
+             */
+            const formatTimestamp = (ms: number): string => new Date(ms).toISOString();
+
+            const output: string[] = [
+                `§2[§7Paradox§2] §fSpoof Info for: §6${nameQuery}`,
+                `§7Known Aliases: §f${record.knownNames.join(", ")}`,
+                `§7First Seen: §f${formatTimestamp(record.firstSeen)}`,
+                `§7Last Seen: §f${formatTimestamp(record.lastSeen)}`,
+                `§7Stored ID: §f${record.id}`,
+            ];
 
             if (record.spoofAttempts?.length) {
                 output.push("§cSpoof Attempts:");
                 record.spoofAttempts.forEach((attempt, index) => {
-                    output.push(` §c${index + 1}. ID: ${attempt.id}, Time: ${formatTimestamp(attempt.timestamp)}`);
+                    output.push(` §c${index + 1}. Name: ${attempt.name}, Time: ${formatTimestamp(attempt.timestamp)}`);
                 });
             } else {
                 output.push("§aNo spoof attempts detected.");
