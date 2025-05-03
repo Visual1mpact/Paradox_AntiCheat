@@ -84,7 +84,7 @@ class ChatSendSubscription {
      */
     subscribe() {
         if (this.callback === null) {
-            this.callback = (event: ChatSendBeforeEvent) => {
+            this.callback = async (event: ChatSendBeforeEvent) => {
                 const player = event.sender;
                 const playerId = player.id;
                 const playerChannel = this.getPlayerChannel(player);
@@ -123,9 +123,15 @@ class ChatSendSubscription {
                     this.spamData.set(playerId, spamData);
                 }
 
-                // Handle commands first; if not a command, broadcast the message
-                if (commandHandler.handleCommand(event, player)) {
+                // Pre-check for command prefix ourselves for faster cancel
+                const defaultPrefix = (world.getDynamicProperty("__prefix") as string) || "!";
+                if (event.message.startsWith(defaultPrefix)) {
+                    // Immediately cancel so the message doesn't go through
                     event.cancel = true;
+
+                    // Call the command
+                    commandHandler.handleCommand(event, player, defaultPrefix);
+
                     return;
                 }
 

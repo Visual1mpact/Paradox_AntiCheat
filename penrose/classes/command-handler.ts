@@ -336,44 +336,39 @@ export class CommandHandler {
     }
 
     /**
-     * Handles an incoming chat message to potentially execute a command.
+     * Handles a pre-validated command message.
+     * Assumes message starts with the prefix and event has already been canceled.
      * @param message - The chat message event.
      * @param player - The player who sent the message.
+     * @param prefix - The prefix used to invoke the command.
      */
-    async handleCommand(message: ChatSendBeforeEvent, player: Player) {
-        const defaultPrefix = (world.getDynamicProperty("__prefix") as string) || "!";
-        if (!message.message.startsWith(defaultPrefix)) {
-            // message.cancel = false;
-            return false; // Indicate that a command was not handled
-        }
+    async handleCommand(message: ChatSendBeforeEvent, player: Player, prefix: string): Promise<boolean> {
+        const args = message.message.slice(prefix.length).trim().split(/\s+/);
+        const commandName = args.shift()?.toLowerCase();
+
+        if (!commandName) return false;
+
+        const command = this.commands.get(commandName);
+        if (!command && commandName != "help") return false;
 
         if (!this.canExecuteCommand()) {
             player.sendMessage("\n§2[§7Paradox§2]§o§7 Commands are being rate-limited. Please wait before sending another command.");
-            return true; // Indicate that a command was handled
+            return true;
         }
 
         this.acquireCommandExecutionLock();
 
-        let verifyPrefixUpdate: boolean = false;
+        let shouldUpdatePrefix = false;
 
         try {
-            const args = message.message.slice(defaultPrefix.length).trim().split(/ +/);
-            const commandName = args.shift()?.toLowerCase();
-
-            if (commandName) {
-                const result = await this.executeCommand(message, player, commandName, args, defaultPrefix);
-                if (result === true) {
-                    verifyPrefixUpdate = true;
-                }
-            }
+            const result = await this.executeCommand(message, player, commandName, args, prefix);
+            if (result === true) shouldUpdatePrefix = true;
         } finally {
-            if (verifyPrefixUpdate) {
-                this.updatePrefix(player);
-            }
+            if (shouldUpdatePrefix) this.updatePrefix(player);
             this.releaseCommandExecutionLock();
         }
 
-        return true; // Indicate that a command was handled
+        return true;
     }
 
     /**
