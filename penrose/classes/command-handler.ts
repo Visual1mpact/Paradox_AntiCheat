@@ -349,9 +349,8 @@ export class CommandHandler {
         if (!commandName) return false;
 
         const command = this.commands.get(commandName);
-        const helpCommands = ["help", "--help", "-h"];
 
-        if (!command && !helpCommands.includes(commandName)) return false;
+        if (!command && commandName != "help") return false;
 
         if (!this.canExecuteCommand()) {
             player.sendMessage("\n§2[§7Paradox§2]§o§7 Commands are being rate-limited. Please wait before sending another command.");
