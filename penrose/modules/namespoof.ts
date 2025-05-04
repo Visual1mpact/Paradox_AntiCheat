@@ -61,7 +61,7 @@ function checkDuplicateName(player: Player) {
  */
 function kickPlayer(player: Player, reason: string) {
     player.runCommand(`kick @s §o§7\n\n${reason}`);
-    player.sendMessage(`§2[§7Paradox§2]§o§7 Player "${player.name}" has been ${reason}.`);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Player "${player.name}§7" has been ${reason}§7.`);
 }
 
 /**

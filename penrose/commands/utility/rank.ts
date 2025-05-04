@@ -95,7 +95,7 @@ export const setRankCommand: Command = {
          */
         function toggleGlobalRanks(message: ChatSendBeforeEvent, senderClearance: number, disable: boolean): void {
             if (senderClearance < 4) {
-                message.sender.sendMessage(`§cYou do not have permission to perform this action.`);
+                message.sender.sendMessage(`§o§cYou do not have permission to perform this action.`);
                 return;
             }
 
@@ -115,7 +115,7 @@ export const setRankCommand: Command = {
 
         // If ranks are disabled globally, prevent setting or resetting ranks
         if (isRankDisabled && senderClearance < 4) {
-            message.sender.sendMessage(`§cGlobal rank management is currently disabled.`);
+            message.sender.sendMessage(`§o§cGlobal rank management is currently disabled.`);
             return;
         }
 
@@ -177,7 +177,7 @@ export const setRankCommand: Command = {
         // Check if player name is provided for rank assignment or reset
         if (!playerName && !reset) {
             const prefix = world.getDynamicProperty("__prefix") ?? "!";
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}setrank -t <player> [-r <rank> | --reset]`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> [-r <rank> | --reset]`);
             return;
         }
 
@@ -186,7 +186,7 @@ export const setRankCommand: Command = {
 
         // If player not found, inform the sender
         if (!player) {
-            message.sender.sendMessage(`§cPlayer "${playerName}" not found.`);
+            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
             return;
         }
 
@@ -197,13 +197,13 @@ export const setRankCommand: Command = {
             updateNameTag(player);
 
             // Inform the sender and the target player about the rank reset
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}" has been reset.`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been reset by "${message.sender.name}".`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}§7" has been reset.`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been reset by "${message.sender.name}§7".`);
         } else {
             // Check if rank is provided
             if (!rank) {
                 const prefix = world.getDynamicProperty("__prefix") ?? "!";
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}setrank -t <player> -r <rank> | --reset`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> -r <rank> | --reset`);
                 return;
             }
 
@@ -212,8 +212,8 @@ export const setRankCommand: Command = {
             updateNameTag(player);
 
             // Inform the sender and the target player about the rank update
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}" has been set to ${rank}.`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been set to ${rank} by "${message.sender.name}".`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}§7" has been set to ${rank}§7.`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been set to ${rank}§7 by "${message.sender.name}§7".`);
         }
     },
 };

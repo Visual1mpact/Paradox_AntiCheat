@@ -54,7 +54,7 @@ export const opsecCommand: Command = {
 
         // Validate command arguments
         if (args.length < 2) {
-            message.sender.sendMessage("§cPlease provide a player name and a clearance level.");
+            message.sender.sendMessage("§o§cPlease provide a player name and a clearance level.");
             return;
         }
 
@@ -63,7 +63,7 @@ export const opsecCommand: Command = {
 
         // Check permission for security clearance 4
         if (senderClearance === 4 && newClearance === 4) {
-            message.sender.sendMessage("§cThis action is restricted. Use the OP command for clearance level 4.");
+            message.sender.sendMessage("§o§cThis action is restricted. Use the OP command for clearance level 4.");
             return;
         }
 
@@ -75,13 +75,13 @@ export const opsecCommand: Command = {
         const targetPlayer = world.getAllPlayers().find((player) => player.name === targetPlayerName);
 
         if (!targetPlayer || !targetPlayer.isValid) {
-            message.sender.sendMessage(`§cPlayer "${targetPlayerName}" not found or is invalid.`);
+            message.sender.sendMessage(`§o§cPlayer "${targetPlayerName}§c" not found or is invalid.`);
             return;
         }
 
         // Update and notify about the security clearance change
         targetPlayer.setDynamicProperty("securityClearance", newClearance);
-        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Security clearance for "${targetPlayer.name}" set to ${newClearance}.`);
-        targetPlayer.sendMessage(`§2[§7Paradox§2]§o§7 Your security clearance has been updated to level ${newClearance} by "${message.sender.name}".`);
+        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Security clearance for "${targetPlayer.name}§7" set to ${newClearance}§7.`);
+        targetPlayer.sendMessage(`§2[§7Paradox§2]§o§7 Your security clearance has been updated to level ${newClearance}§7 by "${message.sender.name}§7".`);
     },
 };

@@ -99,8 +99,8 @@ export const tprCommand: Command = {
             if (request) {
                 const sender = request.sender;
                 sender.teleport(receiver.location, { dimension: receiver.dimension });
-                sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request accepted. Teleporting to ${receiverName}.`);
-                receiver.sendMessage(`§2[§7Paradox§2]§o§7 You accepted the teleport request from ${sender.name}.`);
+                sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request accepted. Teleporting to ${receiverName}§7.`);
+                receiver.sendMessage(`§2[§7Paradox§2]§o§7 You accepted the teleport request from ${sender.name}§7.`);
                 cancelTeleportRequest(receiverName);
             } else {
                 receiver.sendMessage(`§2[§7Paradox§2]§o§7 You have no pending teleport requests.`);
@@ -116,8 +116,8 @@ export const tprCommand: Command = {
             const request = pendingRequests.get(receiverName);
             if (request) {
                 const sender = request.sender;
-                sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName} denied your teleport request.`);
-                receiver.sendMessage(`§2[§7Paradox§2]§o§7 You denied the teleport request from ${sender.name}.`);
+                sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 denied your teleport request.`);
+                receiver.sendMessage(`§2[§7Paradox§2]§o§7 You denied the teleport request from ${sender.name}§7.`);
                 cancelTeleportRequest(receiverName);
             } else {
                 receiver.sendMessage(`§2[§7Paradox§2]§o§7 You have no pending teleport requests.`);
@@ -138,14 +138,14 @@ export const tprCommand: Command = {
             }
             case "": {
                 const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-                message.sender.sendMessage(`§cInvalid arguments. For help, use ${prefix}tpr help.`);
+                message.sender.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§ctpr help.`);
                 return;
             }
         }
 
         // Handle sending a teleport request
         if (args.length < 1) {
-            message.sender.sendMessage("§cPlease provide a player name.");
+            message.sender.sendMessage("§o§cPlease provide a player name.");
             return;
         }
 
@@ -153,7 +153,7 @@ export const tprCommand: Command = {
         const receiver = getPlayerObject(receiverName);
 
         if (!receiver) {
-            message.sender.sendMessage(`§cPlayer '${receiverName}' not found.`);
+            message.sender.sendMessage(`§o§cPlayer '${receiverName}§c' not found.`);
             return;
         }
 
@@ -161,21 +161,21 @@ export const tprCommand: Command = {
 
         // Check if there is already a pending teleport request for the receiver
         if (pendingRequests.has(receiver.name)) {
-            sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name} is already handling a teleport request.`);
+            sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name}§7 is already handling a teleport request.`);
             return;
         }
 
         // Check if receiver is already pending a request by iterating through existing requests
         for (const request of pendingRequests.values()) {
             if (request.receiver.name === receiver.name) {
-                sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name} is already handling a teleport request.`);
+                sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name}§7 is already handling a teleport request.`);
                 return;
             }
         }
 
         const timeoutId = system.runTimeout(() => {
             cancelTeleportRequest(receiver.name);
-            sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name} did not respond in time. Teleport request canceled.`);
+            sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name}§7 did not respond in time. Teleport request canceled.`);
             receiver.sendMessage(`§2[§7Paradox§2]§o§7 You did not respond to the teleport request in time. Request canceled.`);
         }, TIMEOUT_SECONDS * TPS);
 
@@ -184,7 +184,7 @@ export const tprCommand: Command = {
         // Retrieve the current prefix from dynamic properties
         const currentPrefix: string = (world.getDynamicProperty("__prefix") as string) ?? "!";
 
-        sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request sent to ${receiver.name}.`);
-        receiver.sendMessage(`§2[§7Paradox§2]§o§7 ${sender.name} wants to teleport to you. Type ${currentPrefix}tpr accept to accept or ${currentPrefix}tpr deny to deny.`);
+        sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request sent to ${receiver.name}§7.`);
+        receiver.sendMessage(`§2[§7Paradox§2]§o§7 ${sender.name}§7 wants to teleport to you. Type ${currentPrefix}§7tpr accept to accept or ${currentPrefix}§7tpr deny to deny.`);
     },
 };

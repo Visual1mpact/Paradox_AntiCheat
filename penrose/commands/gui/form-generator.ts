@@ -63,7 +63,7 @@ export const guiCommand: Command = {
             const accessibleCategories = Object.entries(categories).map(([category, commands]) => ({ category, commands }));
 
             if (accessibleCategories.length === 0) {
-                player.sendMessage("You do not have access to any commands.");
+                player.sendMessage("§o§cYou do not have access to any commands.");
                 return;
             }
 

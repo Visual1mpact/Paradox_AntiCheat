@@ -88,12 +88,12 @@ export const spoofLogCommand: Command = {
 
         if (args.includes("--clearall")) {
             spoofDB.set("players", {});
-            sender.sendMessage("§cAll spoof logs have been cleared.");
+            sender.sendMessage("§o§cAll spoof logs have been cleared.");
             return;
         }
 
         if (!nameQuery) {
-            sender.sendMessage("§cPlease provide a valid player name to search for.");
+            sender.sendMessage("§o§cPlease provide a valid player name to search for.");
             return;
         }
 
@@ -104,14 +104,14 @@ export const spoofLogCommand: Command = {
 
         if (clearLogs) {
             if (!exactMatchEntry) {
-                sender.sendMessage(`§cNo exact match found for "${nameQuery}". No records were cleared.`);
+                sender.sendMessage(`§o§cNo exact match found for "${nameQuery}§c". No records were cleared.`);
                 return;
             }
 
             const [exactId] = exactMatchEntry;
             delete allRecords[exactId];
             spoofDB.set("players", allRecords);
-            sender.sendMessage(`§cSpoof logs for "${nameQuery}" (ID: ${exactId}) have been cleared.`);
+            sender.sendMessage(`§o§cSpoof logs for "${nameQuery}§c" (ID: ${exactId}) have been cleared.`);
             return;
         }
 
@@ -119,7 +119,7 @@ export const spoofLogCommand: Command = {
         const matchingEntries = Object.entries(allRecords).filter(([_, record]) => record.knownNames.includes(nameQuery));
 
         if (matchingEntries.length === 0) {
-            sender.sendMessage(`§cNo records found for player name "${nameQuery}".`);
+            sender.sendMessage(`§o§cNo records found for player name "${nameQuery}§c".`);
             return;
         }
 
@@ -156,7 +156,7 @@ export const spoofLogCommand: Command = {
         if (matchedRecord.spoofAttempts?.length) {
             output.push("§cSpoof Attempts:");
             matchedRecord.spoofAttempts.forEach((attempt, index) => {
-                output.push(` §c${index + 1}. Name: ${attempt.name}, Time: ${formatTimestamp(attempt.timestamp)}`);
+                output.push(` §c${index + 1}. Name: ${attempt.name}§c, Time: ${formatTimestamp(attempt.timestamp)}`);
             });
         } else {
             output.push("§aNo spoof attempts detected.");

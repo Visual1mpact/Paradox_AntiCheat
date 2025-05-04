@@ -60,7 +60,7 @@ export const whitelistCommand: Command = {
 
         const action = args.shift()?.toLowerCase();
         if (!["add", "remove", "list"].includes(action)) {
-            message.sender.sendMessage("§cInvalid action. Use `add`, `remove`, or `list`.");
+            message.sender.sendMessage("§o§cInvalid action. Use `add`, `remove`, or `list`.");
             return;
         }
 
@@ -76,24 +76,24 @@ export const whitelistCommand: Command = {
 
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         if (!playerName) {
-            message.sender.sendMessage("§cPlease provide a valid player name.");
+            message.sender.sendMessage("§o§cPlease provide a valid player name.");
             return;
         }
 
         if (action === "add") {
             if (whitelistedPlayers.includes(playerName)) {
-                message.sender.sendMessage(`§cPlayer "${playerName}" is already in the whitelist.`);
+                message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is already in the whitelist.`);
                 return;
             }
 
             whitelistedPlayers.push(playerName);
             whitelistDB.set("players", whitelistedPlayers);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been added to the whitelist.`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the whitelist.`);
         }
 
         if (action === "remove") {
             if (!whitelistedPlayers.includes(playerName)) {
-                message.sender.sendMessage(`§cPlayer "${playerName}" is not in the whitelist.`);
+                message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is not in the whitelist.`);
                 return;
             }
 
@@ -101,7 +101,7 @@ export const whitelistCommand: Command = {
                 "players",
                 whitelistedPlayers.filter((p) => p !== playerName)
             );
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been removed from the whitelist.`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been removed from the whitelist.`);
         }
     },
 };

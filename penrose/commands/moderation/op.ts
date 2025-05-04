@@ -122,8 +122,8 @@ export const opCommand: Command = {
 
             if (target.id !== sender.id) {
                 target.setDynamicProperty("securityClearance", 4);
-                target.sendMessage(`§2[§7Paradox§2]§o§7 Your security clearance has been updated by ${sender.name}!`);
-                sender.sendMessage(`§2[§7Paradox§2]§o§7 Security clearance has been updated for ${target.name}!`);
+                target.sendMessage(`§2[§7Paradox§2]§o§7 Your security clearance has been updated by ${sender.name}§7!`);
+                sender.sendMessage(`§2[§7Paradox§2]§o§7 Security clearance has been updated for ${target.name}§7!`);
                 addPlayerToSecurityList(target);
                 return;
             }
@@ -133,7 +133,7 @@ export const opCommand: Command = {
 
         if (args[0] === "list") {
             if (securityCheck !== 4) {
-                sender.sendMessage("§cYou do not have permission to view the security clearance list.");
+                sender.sendMessage("§o§cYou do not have permission to view the security clearance list.");
                 return;
             }
             displaySecurityList(sender);
@@ -154,12 +154,12 @@ export const opCommand: Command = {
             }
 
             if (!targetPlayer) {
-                sender.sendMessage(`§cPlayer \"${playerName}\" not found.`);
+                sender.sendMessage(`§o§cPlayer \"${playerName}§c\" not found.`);
                 return;
             }
             processOpCommand(securityClearanceListData, targetPlayer);
         } else {
-            sender.sendMessage("§cYou do not have permissions!");
+            sender.sendMessage("§o§cYou do not have permissions!");
         }
     },
 };

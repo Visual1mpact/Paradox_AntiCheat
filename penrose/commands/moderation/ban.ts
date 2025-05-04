@@ -107,13 +107,13 @@ export const banCommand: Command = {
 
         // Abort if no player name is provided
         if (!playerName) {
-            message.sender.sendMessage("§cPlease provide a player name using the -t or --target flag.");
+            message.sender.sendMessage("§o§cPlease provide a player name using the -t or --target flag.");
             return;
         }
 
         // Abort if the player is whitelisted
         if (whitelistedPlayers.includes(playerName)) {
-            message.sender.sendMessage(`§cPlayer "${playerName}" is whitelisted and cannot be banned.`);
+            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is whitelisted and cannot be banned.`);
             return;
         }
 
@@ -135,7 +135,7 @@ export const banCommand: Command = {
             const playerClearance = targetPlayer ? getPlayerSecurityClearance(name) : undefined;
 
             if (playerClearance === 4) {
-                message.sender.sendMessage(`§cYou cannot ban player "${name}" as they have the highest security clearance.`);
+                message.sender.sendMessage(`§o§cYou cannot ban player "${name}§c" as they have the highest security clearance.`);
                 return;
             }
 
@@ -143,7 +143,7 @@ export const banCommand: Command = {
             if (!bannedPlayers.includes(name)) {
                 bannedPlayers.push(name);
                 banlistDB.set("players", bannedPlayers);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}" has been added to the banned list with reason: ${reason}.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been added to the banned list with reason: ${reason}§7.`);
                 if (!targetPlayer) {
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Note: The ban will be canceled if the player has high security clearance when they join.`);
                 }
@@ -151,8 +151,8 @@ export const banCommand: Command = {
 
             if (targetPlayer) {
                 // If the player is online, tag and kick them
-                targetPlayer.runCommand(`kick @s §o§7\n\n${reason}`);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}" has been banned with reason: ${reason}`);
+                targetPlayer.runCommand(`kick @s §o§7\n\n${reason}§7`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been banned with reason: ${reason}§7`);
             }
         };
 

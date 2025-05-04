@@ -101,7 +101,7 @@ export const kickCommand: Command = {
 
         // If player not found, inform the sender
         if (!player) {
-            message.sender.sendMessage(`§cPlayer "${playerName}" not found.`);
+            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
             return;
         }
 
@@ -114,9 +114,9 @@ export const kickCommand: Command = {
 
             // Inform the sender about the action based on whether the player is still in the world
             if (playerStillExists) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} has been kicked from the server.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 has been kicked from the server.`);
             } else {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} has not been kicked from the server.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 has not been kicked from the server.`);
             }
         }
     },

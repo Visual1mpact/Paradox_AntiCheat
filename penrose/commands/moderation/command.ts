@@ -59,7 +59,7 @@ export const command: Command = {
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Check if the user provided the required arguments
         if (args.length < 2) {
-            message.sender.sendMessage("§cUsage: {prefix}command [enable|disable] <commandName1> [commandName2] ...");
+            message.sender.sendMessage("§o§cUsage: {prefix}command [enable|disable] <commandName1> [commandName2] ...");
             return;
         }
 
@@ -78,7 +78,7 @@ export const command: Command = {
         commandNames.forEach((commandName) => {
             // Prevent disabling this command itself
             if (commandName === "command") {
-                message.sender.sendMessage(`"${commandName}" cannot be disabled.`);
+                message.sender.sendMessage(`§o§c"${commandName}§c" cannot be disabled.`);
                 return;
             }
 

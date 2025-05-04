@@ -31,7 +31,7 @@ export const tinyCommand: Command = {
         const target: Player | undefined = playerName.length > 0 ? world.getAllPlayers().find((p) => p.name === playerName) : message.sender;
 
         if (!target) {
-            return player.sendMessage(`§cPlayer "${playerName}" not found.`);
+            return player.sendMessage(`§o§cPlayer "${playerName}§7" not found.`);
         }
 
         const targetComp = target.getComponent("scale");

@@ -199,7 +199,7 @@ function handleSpoofCheck(player: Player) {
             record.spoofAttempts.push({ name, timestamp: now });
 
             spoofDB.set("players", allPlayers);
-            player.sendMessage(`§c[Paradox] Spoof attempt detected. This name is used by another account.`);
+            player.sendMessage(`§o§c[Paradox] Spoof attempt detected. This name is used by another account.`);
             player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
             return;
         }

@@ -84,7 +84,7 @@ export const punishCommand: Command = {
 
         // Check if player argument is provided
         if (!args.length) {
-            message.sender.sendMessage("§cPlease provide a player name.");
+            message.sender.sendMessage("§o§cPlease provide a player name.");
             return;
         }
 
@@ -118,7 +118,7 @@ export const punishCommand: Command = {
                         break;
                     }
                     default: {
-                        message.sender.sendMessage(`§cUnknown flag: ${arg}`);
+                        message.sender.sendMessage(`§o§cUnknown flag: ${arg}`);
                         return;
                     }
                 }
@@ -162,9 +162,9 @@ export const punishCommand: Command = {
                 }
             }
 
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Punished "${target.name}"!`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Punished "${target.name}§7"!`);
         } else {
-            message.sender.sendMessage(`§cFailed to punish "${target ? target.name : playerName}"! Please try again.`);
+            message.sender.sendMessage(`§o§cFailed to punish "${target ? target.name + "§c" : playerName + "§c"}"! Please try again.`);
         }
     },
 };

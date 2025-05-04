@@ -66,7 +66,7 @@ export const allowlistCommand: Command = {
 
         const action = args.shift()?.toLowerCase();
         if (!["add", "remove", "list", "disable"].includes(action)) {
-            message.sender.sendMessage("§cInvalid action. Use `add`, `remove`, `list`, or `disable`.");
+            message.sender.sendMessage("§o§cInvalid action. Use `add`, `remove`, `list`, or `disable`.");
             return;
         }
 
@@ -88,24 +88,24 @@ export const allowlistCommand: Command = {
 
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         if (!playerName) {
-            message.sender.sendMessage("§cPlease provide a valid player name.");
+            message.sender.sendMessage("§o§cPlease provide a valid player name.");
             return;
         }
 
         if (action === "add") {
             if (allowlistedPlayers.includes(playerName)) {
-                message.sender.sendMessage(`§cPlayer "${playerName}" is already in the allowlist.`);
+                message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is already in the allowlist.`);
                 return;
             }
 
             allowlistedPlayers.push(playerName);
             allowlistDB.set("players", allowlistedPlayers);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been added to the allowlist.`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the allowlist.`);
         }
 
         if (action === "remove") {
             if (!allowlistedPlayers.includes(playerName)) {
-                message.sender.sendMessage(`§cPlayer "${playerName}" is not in the allowlist.`);
+                message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is not in the allowlist.`);
                 return;
             }
 
@@ -113,7 +113,7 @@ export const allowlistCommand: Command = {
                 "players",
                 allowlistedPlayers.filter((p) => p !== playerName)
             );
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" has been removed from the allowlist.`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been removed from the allowlist.`);
         }
     },
 };

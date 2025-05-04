@@ -482,7 +482,7 @@ export class CommandHandler {
                 return false; // Return false if security clearance fails
             }
         } else {
-            player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found. Use ${defaultPrefix}help to see available commands.`);
+            player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}"§7 not found. Use ${defaultPrefix}help to see available commands.`);
             return false; // Return false if the command doesn't exist
         }
     }

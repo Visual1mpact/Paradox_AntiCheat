@@ -50,7 +50,7 @@ export const debugDBCommand: Command = {
 
         // Check security clearance
         if (senderClearance < 4) {
-            sender.sendMessage("§cYou do not have permission to use this command.");
+            sender.sendMessage("§o§cYou do not have permission to use this command.");
             return;
         }
 
@@ -103,7 +103,7 @@ export const debugDBCommand: Command = {
 
             // Truncate if too long for Minecraft UI (~32k char limit; we use ~30k buffer)
             if (debugInfoText.length > 30000) {
-                debugInfoText = debugInfoText.slice(0, 29900) + "\n\n§c[Output truncated due to size limit]";
+                debugInfoText = debugInfoText.slice(0, 29900) + "\n\n§o§c[Output truncated due to size limit]";
             }
 
             // Create and show the form to the player

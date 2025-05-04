@@ -75,7 +75,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             banlistDB.set("players", bannedPlayers);
             packetLimits.delete(player); // Clear the packet data for the player
             startIndices.delete(player); // Clear the start index for the player
-            world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name} attempted to run a crasher!`); // Notify the server of the attempted crash
+            world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 attempted to run a crasher!`); // Notify the server of the attempted crash
             system.run(() => {
                 if (player.isValid) {
                     player.runCommand(`kick @s §o§7\n\n${reason}`); // Kick the player from the server

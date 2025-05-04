@@ -131,7 +131,7 @@ export const gameModeCommand: Command = {
                 }
                 default: {
                     const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-                    player.sendMessage(`§cInvalid arguments. For help, use ${prefix}gamemode help.`);
+                    player.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§cgamemode help.`);
                     return;
                 }
             }
@@ -145,7 +145,7 @@ export const gameModeCommand: Command = {
             const enabledModes = gameModeKeys.filter((key) => modeStates[key]).length;
 
             if (enabledModes === 0) {
-                player.sendMessage("§cYou cannot disable all game modes. At least one must remain enabled.");
+                player.sendMessage("§o§cYou cannot disable all game modes. At least one must remain enabled.");
                 return;
             }
         }

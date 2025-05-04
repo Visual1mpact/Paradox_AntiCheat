@@ -94,7 +94,7 @@ export const deopCommand: Command = {
 
                     // Player is online, remove their permissions if applicable
                     if (securityClearanceListData.host?.id === player.id && message.sender.id !== player.id) {
-                        message.sender.sendMessage("§cYou cannot remove the host from the security clearance list.");
+                        message.sender.sendMessage("§o§cYou cannot remove the host from the security clearance list.");
                         return false;
                     }
 
@@ -117,7 +117,7 @@ export const deopCommand: Command = {
 
                         // Check if the removed player was the host
                         if (securityClearanceListData.host?.id === removedPlayer.id) {
-                            message.sender.sendMessage("§cYou cannot remove the host from the security clearance list.");
+                            message.sender.sendMessage("§o§cYou cannot remove the host from the security clearance list.");
                             return false;
                         }
 
@@ -128,7 +128,7 @@ export const deopCommand: Command = {
                         return true;
                     } else {
                         // Player not found in list
-                        message.sender.sendMessage(`§cPlayer "${playerName}" not found in the security clearance list.`);
+                        message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found in the security clearance list.`);
                         return false;
                     }
                 }
@@ -136,7 +136,7 @@ export const deopCommand: Command = {
 
             // Check if player argument is provided
             if (!args.length) {
-                message.sender.sendMessage("§cPlease provide a player name.");
+                message.sender.sendMessage("§o§cPlease provide a player name.");
                 resolve();
                 return;
             }
@@ -148,9 +148,9 @@ export const deopCommand: Command = {
             const isValid = removePlayerPermissions(playerName);
             // Inform the sender if permissions have been removed
             if (isValid) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions removed for player: "${playerName}"`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions removed for player: "${playerName}§7"`);
             } else {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions not removed for player "${playerName}". Please try again!`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Permissions not removed for player "${playerName}§7". Please try again!`);
             }
             resolve();
         });

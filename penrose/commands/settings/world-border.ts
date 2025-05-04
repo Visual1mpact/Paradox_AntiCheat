@@ -158,7 +158,7 @@ export const worldBorderCommand: Command = {
 
         if (!args.length) {
             const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Usage: {prefix}worldborder <value> [optional]. For help, use ${prefix}worldborder help.`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Usage: {prefix}worldborder <value> [optional]. For help, use ${prefix}§7worldborder help.`);
             return;
         }
 
@@ -189,7 +189,7 @@ export const worldBorderCommand: Command = {
         // (Skip the check if there were no arguments at all)
         if (args.length > 0 && !hasValidArgument) {
             const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-            player.sendMessage(`§cInvalid arguments. For help, use ${prefix}worldborder help.`);
+            player.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§cworldborder help.`);
             return;
         }
 

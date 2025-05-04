@@ -205,7 +205,7 @@ function setupPvPSystem() {
                 }
 
                 if (canSendMessage(attacker.id)) {
-                    attacker.sendMessage(`§2[§7Paradox§2]§o§7 ${victim.name} has PvP disabled!`);
+                    attacker.sendMessage(`§2[§7Paradox§2]§o§7 ${victim.name}§7 has PvP disabled!`);
                 }
             }
         }

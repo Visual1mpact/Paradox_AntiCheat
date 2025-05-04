@@ -102,7 +102,7 @@ export const homeCommand: Command = {
         function saveHomeLocation(homeName: string, location: Vector3, dimension: string): boolean {
             const totalHomes = countHomes();
             if (totalHomes >= MAX_HOMES) {
-                player.sendMessage(`§cYou have reached the maximum number of homes (${MAX_HOMES})!`);
+                player.sendMessage(`§o§cYou have reached the maximum number of homes (${MAX_HOMES})!`);
                 return true;
             }
             const existingHome = player.getTags().find((tag) => {
@@ -176,14 +176,14 @@ export const homeCommand: Command = {
                     const teleportOptions = { dimension: dimensionType };
                     const success = player.tryTeleport(teleportLocation, teleportOptions);
                     if (success) {
-                        player.sendMessage(`§2[§7Paradox§2]§o§7 Welcome to "${homeName}" ${player.name}!`);
+                        player.sendMessage(`§2[§7Paradox§2]§o§7 Welcome to "${homeName}§7" ${player.name}§7!`);
                     } else {
-                        player.sendMessage(`§cFailed to teleport to "${homeName}"! Please try again.`);
+                        player.sendMessage(`§o§cFailed to teleport to "${homeName}§c"! Please try again.`);
                     }
                     return;
                 }
             }
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" not found!`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" not found!`);
         }
 
         const subCommand = args[0]?.toLowerCase();
@@ -195,18 +195,18 @@ export const homeCommand: Command = {
                 const dimension = player.dimension.id; // Get the name of the player's current dimension
                 const existingHome = saveHomeLocation(homeName, location, dimension);
                 if (existingHome) {
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 A home named "${homeName}" already exists!`);
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 A home named "${homeName}§7" already exists!`);
                     return;
                 }
-                player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" set successfully!`);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" set successfully!`);
                 break;
             }
             case "delete": {
                 const homeDeleted = deleteHomeLocation(homeName);
                 if (homeDeleted) {
-                    player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}" deleted successfully!`);
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" deleted successfully!`);
                 } else {
-                    player.sendMessage(`§cHome location "${homeName}" not found!`);
+                    player.sendMessage(`§o§cHome location "${homeName}§c" not found!`);
                 }
                 break;
             }
@@ -220,7 +220,7 @@ export const homeCommand: Command = {
             }
             default: {
                 const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-                player.sendMessage(`§cInvalid arguments. For help, use ${prefix}home help.`);
+                player.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§chome help.`);
                 break;
             }
         }

@@ -52,7 +52,7 @@ export const prefixCommand: Command = {
 
                 // Check if the new prefix contains '/'
                 if (newPrefix.includes("/")) {
-                    message.sender.sendMessage("§cPrefix cannot include '/'.");
+                    message.sender.sendMessage("§o§cPrefix cannot include '/'.");
                     resolve(false); // Return false indicating failure;
                 }
                 // Retrieve the current prefix from dynamic properties
@@ -64,11 +64,11 @@ export const prefixCommand: Command = {
                     world.setDynamicProperty("__prefix", newPrefix);
 
                     // Send confirmation message
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix updated to: ${newPrefix}`);
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix updated to: ${newPrefix}§7`);
                     resolve(true); // Return true indicating success
                 } else {
                     // Send message indicating the prefix hasn't changed
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix is already "${newPrefix}".`);
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix is already "${newPrefix}§7".`);
                     resolve(false); // Return false indicating failure
                 }
             } else {

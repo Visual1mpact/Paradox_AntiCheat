@@ -111,7 +111,7 @@ export function freezePlayer(player: Player, message?: ChatSendBeforeEvent) {
         player.inputPermissions.setPermissionCategory(1, false);
     } catch {
         if (message) {
-            message.sender.sendMessage(`§cPlayer "${player.name}" cannot be frozen, but will be put in it's prison. This is most likely a bot!`);
+            message.sender.sendMessage(`§o§cPlayer "${player.name}§c" cannot be frozen, but will be put in it's prison. This is most likely a bot!`);
         }
     }
 }
@@ -164,7 +164,7 @@ export const imprisonCommand: Command = {
 
         // Inform if the player is not found
         if (!player) {
-            message.sender.sendMessage(`§cPlayer "${playerName}" not found.`);
+            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
             return;
         }
 
@@ -215,11 +215,11 @@ export const imprisonCommand: Command = {
                     //Enable camera
                     player.inputPermissions.setPermissionCategory(1, true);
                 } catch {
-                    message.sender.sendMessage(`§cPlayer "${playerName}" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
+                    message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
                 }
                 player.removeEffect("minecraft:weakness");
             } else {
-                console.log(`No original location, dimension, or prison location found for player ${player.name}`);
+                console.warn(`[Paradox] No original location, dimension, or prison location found for player ${player.name}`);
             }
         }
 
@@ -232,13 +232,13 @@ export const imprisonCommand: Command = {
                 // Unfreeze and release the player
                 unfreezePlayer(player);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 You have been released from imprisonment.`);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name} has been released.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name}§7 has been released.`);
             } else {
                 // Imprison the player
                 freezePlayer(player, message);
                 buildPrison(player);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 You have been imprisoned.`);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name} has been imprisoned.`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player ${player.name}§7 has been imprisoned.`);
             }
         }
     },

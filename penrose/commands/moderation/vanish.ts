@@ -65,7 +65,7 @@ export const vanishCommand: Command = {
 
         // Inform if the player is not found
         if (!player) {
-            message.sender.sendMessage(`§cPlayer "${playerName}" not found.`);
+            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
             return;
         }
 
