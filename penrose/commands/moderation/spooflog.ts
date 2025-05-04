@@ -32,7 +32,7 @@ interface TrustedPlayerData {
 export const spoofLogCommand: Command = {
     name: "spooflog",
     description: "View or clear spoofing history for a player name or clear all logs.",
-    usage: "{prefix}spooflog <playerName> [--clear] | {prefix}spooflog --clearall",
+    usage: "{prefix}spooflog <playerName|id> [--clear] | {prefix}spooflog --clearall",
     examples: ["{prefix}spooflog Bob", '{prefix}spooflog "Some Player"', "{prefix}spooflog Bob --clear", "{prefix}spooflog --clearall"],
     category: "Moderation",
     securityClearance: 4,
@@ -82,7 +82,8 @@ export const spoofLogCommand: Command = {
             .filter((arg) => !arg.startsWith("--"))
             .join(" ")
             .trim()
-            .replace(/[@"]/g, "");
+            .replace(/[@"]/g, "")
+            .toLowerCase();
 
         const allRecords = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
 
@@ -99,10 +100,16 @@ export const spoofLogCommand: Command = {
 
         const clearLogs = args.includes("--clear");
 
-        // Find exact match for clearing
-        const exactMatchEntry = Object.entries(allRecords).find(([_, record]) => record.knownNames.some((name) => name === nameQuery));
-
+        // For clearing: exact match only by ID or known name
         if (clearLogs) {
+            let exactMatchEntry: [string, TrustedPlayerData] | undefined = undefined;
+
+            if (allRecords[nameQuery]) {
+                exactMatchEntry = [nameQuery, allRecords[nameQuery]];
+            } else {
+                exactMatchEntry = Object.entries(allRecords).find(([_, record]) => record.knownNames.includes(nameQuery));
+            }
+
             if (!exactMatchEntry) {
                 sender.sendMessage(`§o§cNo exact match found for "${nameQuery}§c". No records were cleared.`);
                 return;
@@ -115,18 +122,19 @@ export const spoofLogCommand: Command = {
             return;
         }
 
-        // Broad match for display
-        const matchingEntries = Object.entries(allRecords).filter(([_, record]) => record.knownNames.includes(nameQuery));
+        // For viewing: allow partial match by ID or known name
+        const matchingEntries = Object.entries(allRecords).filter(([id, record]) => id.toLowerCase().includes(nameQuery) || record.knownNames.some((name) => name.toLowerCase().includes(nameQuery)));
 
         if (matchingEntries.length === 0) {
-            sender.sendMessage(`§o§cNo records found for player name "${nameQuery}§c".`);
+            sender.sendMessage(`§o§cNo records found matching "${nameQuery}§c".`);
             return;
         }
 
+        const formatTimestamp = (ms: number): string => new Date(ms).toISOString();
+
         if (matchingEntries.length > 1) {
-            sender.sendMessage(`§eMultiple records found for name "${nameQuery}":`);
+            sender.sendMessage(`§eMultiple records found matching "${nameQuery}":`);
             for (const [id, record] of matchingEntries) {
-                const formatTimestamp = (ms: number): string => new Date(ms).toISOString();
                 sender.sendMessage(
                     [
                         `§7- §fStored ID: §6${id}`,
@@ -137,13 +145,11 @@ export const spoofLogCommand: Command = {
                     ].join("\n")
                 );
             }
-            sender.sendMessage(`§7Use the ID or a more specific name to narrow down your query.`);
+            sender.sendMessage(`§7Use a more specific name or ID to narrow your query if needed.`);
             return;
         }
 
         const [, matchedRecord] = matchingEntries[0];
-
-        const formatTimestamp = (ms: number): string => new Date(ms).toISOString();
 
         const output: string[] = [
             `§2[§7Paradox§2] §fSpoof Info for: §6${nameQuery}`,
