@@ -1,5 +1,21 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+
+/**
+ * Updates the player's nameTag based on their chat rank and the global rank setting.
+ *
+ * If ranks are disabled globally, the nameTag will only show the player's name.
+ * Otherwise, it will prepend the player's rank (or the default rank if none is set).
+ * A teleport to the player's current location is issued to force a client sync for the nameTag.
+ *
+ * @param {Player} player - The player whose nameTag should be updated.
+ */
+function updateNameTag(player: Player): void {
+    const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
+    const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+    player.nameTag = isRankDisabled ? player.name : `${rank}§r ${player.name}`;
+    player.teleport(player.location, { dimension: player.dimension }); // Force client sync
+}
 
 /**
  * Represents the rank command.
@@ -84,6 +100,11 @@ export const setRankCommand: Command = {
             }
 
             world.setDynamicProperty("globalRankDisabled", disable);
+
+            for (const player of world.getPlayers()) {
+                updateNameTag(player);
+            }
+
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been ${disable ? "disabled" : "enabled"} globally.`);
         }
 
@@ -173,6 +194,8 @@ export const setRankCommand: Command = {
             // Remove the player's chat rank
             player.setDynamicProperty("chatRank", undefined);
 
+            updateNameTag(player);
+
             // Inform the sender and the target player about the rank reset
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}" has been reset.`);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been reset by "${message.sender.name}".`);
@@ -186,6 +209,7 @@ export const setRankCommand: Command = {
 
             // Update the player's chat rank
             player.setDynamicProperty("chatRank", rank);
+            updateNameTag(player);
 
             // Inform the sender and the target player about the rank update
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}" has been set to ${rank}.`);

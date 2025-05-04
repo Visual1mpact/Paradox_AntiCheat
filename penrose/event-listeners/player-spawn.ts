@@ -1,4 +1,4 @@
-import { Player, PlayerSpawnAfterEvent, world } from "@minecraft/server";
+import { Player, PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 
@@ -223,6 +223,16 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
         handleBanCheck(event);
         handleSecurityClearance(event);
         allowList(event);
+
+        // Logic for setting the nameTag with chat rank
+        const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+        if (!player.nameTag?.startsWith(playerRank)) {
+            const performNameTagUpdate = async () => {
+                player.nameTag = `${playerRank}§r ${player.name}`;
+                player.teleport(player.location, { dimension: player.dimension }); // Force client sync
+            };
+            system.run(performNameTagUpdate);
+        }
     }
 
     // They can change their name at any given time so lets check whenever they spawn
