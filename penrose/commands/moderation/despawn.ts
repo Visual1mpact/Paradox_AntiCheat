@@ -66,15 +66,15 @@ export const despawnCommand: Command = {
                 despawnedEntities.set(typeId, count + 1);
                 entity.remove();
             }
-
-            if (despawnedEntities.size > 0) {
-                message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Despawned:");
-                despawnedEntities.forEach((count, entity) => {
-                    message.sender.sendMessage(` §o§7| §2[§f${entity}§2]§7 Amount: §2x${count}§f`);
-                });
-            } else {
-                message.sender.sendMessage("§2[§7Paradox§2]§o§7 No entities found to despawn!");
-            }
         });
+
+        if (despawnedEntities.size > 0) {
+            message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Despawned:");
+            despawnedEntities.forEach((count, entity) => {
+                message.sender.sendMessage(` §o§7| §2[§f${entity}§2]§7 Amount: §2x${count}§f`);
+            });
+        } else {
+            message.sender.sendMessage("§2[§7Paradox§2]§o§7 No entities found to despawn!");
+        }
     },
 };
