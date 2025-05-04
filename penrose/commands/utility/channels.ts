@@ -28,7 +28,7 @@ export const channelCommand: Command = {
     description: "Manage chat channels: create, join, invite, leave, and transfer ownership.",
     usage: `{prefix}channel <create | join | invite | leave | transfer | help>
             --room <name> [--target <player>]`,
-    examples: [`{prefix}channel create --room <room>`, `{prefix}channel join --room <room>`, `{prefix}channel invite --room <room> --target <player>`, `{prefix}channel leave --room <room>`, `{prefix}channel transfer --room <room> --target <player>`],
+    examples: [`{prefix}channel create --room <room>`, `{prefix}channel join --room <room>`, `{prefix}channel invite --room <room> --target <player>`, `{prefix}channel leave`, `{prefix}channel transfer --room <room> --target <player>`],
     category: "Utility",
     securityClearance: 1,
     icon: "textures/gui/newgui/Language18.png",
@@ -41,7 +41,7 @@ export const channelCommand: Command = {
             { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
             { name: "Join Channel", command: ["join"], description: "Join an existing chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
             { name: "Invite to Channel", command: ["invite"], description: "Invite a player to a chat channel", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
-            { name: "Leave Channel", command: ["leave"], description: "Leave a chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
+            { name: "Leave Channel", command: ["leave"], description: "Leave a chat channel", requiredFields: [], crypto: false, generateModalForm: false },
             { name: "Transfer Ownership", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
         ],
         dynamicFields: [
@@ -186,59 +186,49 @@ export const channelCommand: Command = {
 
         /**
          * Allows a player to leave a channel.
-         * @param {string} channelName - The name of the channel to leave.
          */
-        function leaveChannel(channelName: string): void {
-            const channel = getChannel(channelName);
-            if (!channel) {
-                message.sender.sendMessage(`§o§cChannel '${channelName}§c' does not exist.`);
+        function leaveChannel(): void {
+            const allChannels = channelsDB.entries() as [string, Channel][];
+            const entry = allChannels.find(([, channel]) => channel.Members[playerId]);
+
+            if (!entry) {
+                message.sender.sendMessage(`§o§cYou are not in any channel to leave.`);
                 return;
             }
 
+            const [channelName, channel] = entry;
+
+            delete channel.Members[playerId];
+
             if (channel.Owner === playerName) {
-                if (Object.keys(channel.Members).length > 1) {
-                    // Find the next member to transfer ownership to
-                    const newOwnerId = Object.keys(channel.Members).find((id) => id !== playerId);
-                    if (newOwnerId) {
-                        const newOwnerName = channel.Members[newOwnerId];
-                        channel.Owner = newOwnerName;
+                if (Object.keys(channel.Members).length > 0) {
+                    const newOwnerId = Object.keys(channel.Members)[0];
+                    const newOwnerName = channel.Members[newOwnerId];
+                    channel.Owner = newOwnerName;
 
-                        // Notify all members of the ownership change
-                        for (const memberId in channel.Members) {
-                            const member = world.getAllPlayers().find((player) => player.id === memberId);
-                            if (member) {
-                                member.sendMessage(`§2[§7Paradox§2]§o§7 The owner of channel '${channelName}§7' has left. ${newOwnerName}§7 is now the new owner.`);
-                            }
+                    for (const memberId in channel.Members) {
+                        const member = world.getAllPlayers().find((p) => p.id === memberId);
+                        if (member) {
+                            member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
                         }
-
-                        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have left channel '${channelName}§7'. Ownership has been transferred to ${newOwnerName}§7.`);
-                        saveChannels(channelName, channel);
-                        return;
-                    } else {
-                        // No other members to transfer ownership to
-                        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' was empty and has been deleted.`);
-                        channelsDB.delete(channelName);
-                        return;
                     }
-                } else {
-                    // Only owner left in the channel, delete the channel
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' has been deleted since you were the only member.`);
-                    channelsDB.delete(channelName);
-                    return;
-                }
-            }
 
-            if (channel.Members[playerId]) {
-                delete channel.Members[playerId];
-                if (Object.keys(channel.Members).length === 0) {
-                    channelsDB.delete(channelName);
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' was empty and has been deleted.`);
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
+                    saveChannels(channelName, channel);
                 } else {
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have left channel '${channelName}§7'.`);
+                    channelsDB.delete(channelName);
+                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left and deleted empty channel '${channelName}§7'.`);
                 }
-                saveChannels(channelName, channel);
             } else {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are not a member of channel '${channelName}§7'.`);
+                saveChannels(channelName, channel);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left channel '${channelName}§7'.`);
+
+                for (const memberId in channel.Members) {
+                    const member = world.getAllPlayers().find((p) => p.id === memberId);
+                    if (member) {
+                        member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} has left '${channelName}§7'.`);
+                    }
+                }
             }
         }
 
@@ -302,11 +292,7 @@ export const channelCommand: Command = {
             }
 
             case "leave": {
-                if (roomName) {
-                    leaveChannel(roomName);
-                } else {
-                    message.sender.sendMessage(`§o§cPlease specify a channel name using --room.`);
-                }
+                leaveChannel();
                 break;
             }
 
