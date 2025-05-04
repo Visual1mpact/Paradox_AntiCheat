@@ -50,11 +50,12 @@ export const prefixCommand: Command = {
                 // Limit the prefix to two characters
                 const newPrefix: string = args[0].slice(0, 2);
 
-                // Check if the new prefix contains '/'
-                if (newPrefix.includes("/")) {
-                    message.sender.sendMessage("§o§cPrefix cannot include '/'.");
-                    resolve(false); // Return false indicating failure;
+                // Check if the new prefix contains '/' or '§'
+                if (/[\/§]/.test(newPrefix)) {
+                    message.sender.sendMessage("§o§cPrefix cannot include the forward slash or section sign characters.");
+                    resolve(false); // Return false indicating failure
                 }
+
                 // Retrieve the current prefix from dynamic properties
                 const currentPrefix: string = world.getDynamicProperty("__prefix") as string;
 
