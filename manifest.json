@@ -40,6 +40,5 @@
             "module_name": "@minecraft/server-net",
             "version": "1.0.0-beta"
         }
-    ],
-    "capabilities": ["script_eval"]
+    ]
 }
