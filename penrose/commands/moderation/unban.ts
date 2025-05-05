@@ -75,7 +75,7 @@ export const unbanCommand: Command = {
             }
         } catch (err) {
             message.sender.sendMessage("§o§cFailed to retrieve the ban list. Please contact an admin.");
-            console.error("Unban parsing error:", err);
+            console.error("[Paradox] Unban parsing error:", err);
             return;
         }
 

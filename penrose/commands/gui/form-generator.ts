@@ -133,7 +133,7 @@ export const guiCommand: Command = {
             const { guiInstructions } = command;
 
             if (!guiInstructions) {
-                console.error("No GUI instructions found for command.");
+                console.error("[Paradox] No GUI instructions found for command.");
                 return;
             }
 
@@ -194,7 +194,7 @@ export const guiCommand: Command = {
                         }
                     }
                 })
-                .catch((error) => console.error("Error showing action form:", error));
+                .catch((error) => console.error("[Paradox] Error showing action form:", error));
         }
 
         /**
@@ -289,7 +289,7 @@ export const guiCommand: Command = {
                         command.execute(chatSendBeforeEvent, commandString, cryptoES ? CryptoES : undefined);
                     }
                 })
-                .catch((error) => console.error("Error showing modal form:", error));
+                .catch((error) => console.error("[Paradox] Error showing modal form:", error));
         }
 
         /**

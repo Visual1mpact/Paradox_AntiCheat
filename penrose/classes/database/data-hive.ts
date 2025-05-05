@@ -22,10 +22,10 @@ export class OptimizedDatabase {
      */
     constructor(name: string) {
         if (!name || name.length === 0) {
-            throw new Error("Database name cannot be empty.");
+            throw new Error("[Paradox] Database name cannot be empty.");
         }
         if (name.includes('"') || name.includes("/")) {
-            throw new Error('Database name cannot include the characters `"` or `/`.');
+            throw new Error('[Paradox] Database name cannot include the characters `"` or `/`.');
         }
 
         this.name = name;

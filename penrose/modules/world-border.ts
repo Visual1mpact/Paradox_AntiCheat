@@ -111,7 +111,7 @@ function getDimensionHeightRange(dimension: Dimension): { min: number; max: numb
     try {
         return dimension.heightRange;
     } catch (error) {
-        console.error(`Error accessing height range: ${error}`);
+        console.error(`[Paradox] Error accessing height range: ${error}`);
         return { min: -64, max: 320 };
     }
 }

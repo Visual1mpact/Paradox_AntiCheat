@@ -36,7 +36,7 @@ const checkPacketSpam = (packetId: string, playerName: string) => {
         }
 
         if (playerPacketData.count > SPAM_THRESHOLD) {
-            console.warn(`Paradox: Potential spam detected for packet: ${packetId} | Count: ${playerPacketData.count} | Player: ${playerName}`);
+            console.warn(`[Paradox] Potential spam detected for packet: ${packetId} | Count: ${playerPacketData.count} | Player: ${playerName}`);
         }
     }
 };
@@ -65,7 +65,7 @@ const packetReceiveCallback = (event: import("@minecraft/server-net").PacketRece
 export async function startPacketListener(): Promise<boolean> {
     // Dynamically import @minecraft/server-net and ensure proper typing
     const networkModule: typeof import("@minecraft/server-net") | null = await import("@minecraft/server-net").catch((error: Error): null => {
-        console.warn("Failed to load @minecraft/server-net module. Packet spam detection not initialized.", error);
+        console.warn("[Paradox] Failed to load @minecraft/server-net module. Packet spam detection not initialized.", error);
         return null;
     });
 
@@ -74,7 +74,7 @@ export async function startPacketListener(): Promise<boolean> {
     beforeEvents = networkModule.beforeEvents;
 
     beforeEvents.packetReceive.subscribe(packetReceiveCallback);
-    console.log("Paradox: Packet spam detection initialized. Monitoring packets.");
+    console.log("[Paradox] Packet spam detection initialized. Monitoring packets.");
 
     return true;
 }
@@ -87,8 +87,8 @@ export async function startPacketListener(): Promise<boolean> {
 export function stopPacketListener(): void {
     if (beforeEvents) {
         beforeEvents.packetReceive.unsubscribe(packetReceiveCallback);
-        console.log("Paradox: Packet spam detection stopped.");
+        console.log("[Paradox] Packet spam detection stopped.");
     } else {
-        console.warn("Paradox: Packet listener was not initialized.");
+        console.warn("[Paradox] Packet listener was not initialized.");
     }
 }

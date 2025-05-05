@@ -80,7 +80,7 @@ function banPlayer(player: Player, reason: string) {
 
         kickPlayer(player, reason);
     } catch (error) {
-        console.error(`Failed to ban player: ${error}`);
+        console.error(`[Paradox] Failed to ban player: ${error}`);
     }
 }
 

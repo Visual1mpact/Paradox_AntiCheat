@@ -201,7 +201,7 @@ export const imprisonCommand: Command = {
                 if (originalDimensionObj) {
                     player.teleport(originalLocation, { dimension: originalDimensionObj });
                 } else {
-                    console.log(`Original dimension "${originalDimension}" not found.`);
+                    console.log(`[Paradox] Original dimension "${originalDimension}" not found.`);
                 }
 
                 // Clear dynamic properties

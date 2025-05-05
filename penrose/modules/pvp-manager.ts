@@ -296,7 +296,7 @@ function setupPvPSystem() {
                     }
                 })
                 .catch((error: Error) => {
-                    console.error("Paradox Unhandled Rejection: ", error);
+                    console.error("[Paradox] Unhandled Rejection: ", error);
                     if (error instanceof Error) {
                         // Check if error.stack exists before trying to split it
                         if (error.stack) {
