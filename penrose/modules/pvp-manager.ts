@@ -21,6 +21,7 @@ const punishmentProperty = "pvpPunishment"; // Dynamic property to track if a pl
 const pvpStatusProperty = "pvpEnabled"; // Dynamic property to track if a player has PvP enabled
 const messageCooldownTicks = 600; // Adjust this value as needed
 const playerMessageTimestamps = new Map<string, number>(); // Map to store the last message timestamp for each player
+let pvpCleanupIntervalId: number | undefined;
 
 // Variables to store the subscription references
 let entityHitEntitySubscription: (arg: EntityHitEntityAfterEvent) => void;
@@ -98,6 +99,28 @@ function canSendMessage(playerId: string): boolean {
  * This function should be called to enable the PvP management features in the game.
  */
 function setupPvPSystem() {
+    if (pvpCleanupIntervalId === undefined) {
+        pvpCleanupIntervalId = system.runInterval(() => {
+            const currentTick = system.currentTick;
+
+            for (const [id, _] of playerDataMap.entries()) {
+                const player = world.getAllPlayers().find((p) => p.id === id);
+
+                // If the player is not found, remove their entry from the map
+                if (!player) {
+                    playerDataMap.delete(id);
+                    continue; // Skip to the next iteration if player is not found
+                }
+
+                const cooldownTick = player?.getDynamicProperty("pvpCooldown") as number;
+
+                if (!cooldownTick || currentTick >= cooldownTick) {
+                    playerDataMap.delete(id);
+                }
+            }
+        }, 1200); // Every 60 seconds
+    }
+
     // Event: When effect is added to an entity
     effectAddSubscription = world.beforeEvents.effectAdd.subscribe((event) => {
         const { entity } = event;
@@ -148,6 +171,43 @@ function setupPvPSystem() {
 
             // If both players have PvP enabled, handle combat without restoration
             if (isPvPEnabledForAttacker && isPvPEnabledForVictim) {
+                // Cache inventory/equipment on first PvP hit to prepare for combat logging
+                for (const player of [attacker, victim]) {
+                    if (!playerDataMap.has(player.id)) {
+                        const inventoryComponent = player.getComponent("inventory")?.container;
+                        const equipmentComponent = player.getComponent("equippable");
+
+                        const inventoryItems: ItemStack[] = [];
+                        const equipmentItems: ItemStack[] = [];
+
+                        if (inventoryComponent) {
+                            for (let slot = 0; slot < inventoryComponent.size; slot++) {
+                                const item = inventoryComponent.getItem(slot);
+                                if (item) {
+                                    inventoryItems.push(item.clone());
+                                }
+                            }
+                        }
+
+                        if (equipmentComponent) {
+                            for (const slot of Object.values(EquipmentSlot)) {
+                                if (slot === EquipmentSlot.Mainhand) continue;
+                                const item = equipmentComponent.getEquipment(slot);
+                                if (item) {
+                                    equipmentItems.push(item.clone());
+                                }
+                            }
+                        }
+
+                        playerDataMap.set(player.id, {
+                            inventory: inventoryItems,
+                            equipment: equipmentItems,
+                            location: player.location,
+                            dimension: player.dimension,
+                        });
+                    }
+                }
+
                 // Refresh PvP cooldown for both players
                 const currentTick = system.currentTick;
                 const cooldownExpiryTick = currentTick + cooldownTicks;
@@ -228,51 +288,16 @@ function setupPvPSystem() {
 
         // If the player logs out before the cooldown expires, drop their inventory and mark them for punishment
         if (cooldownExpiryTick && currentTick < cooldownExpiryTick) {
-            // Set punishment property
             player.setDynamicProperty(punishmentProperty, true);
 
-            // Save data to the map
-            const inventoryComponent = player.getComponent("inventory")?.container;
-            const equipmentComponent = player.getComponent("equippable");
-
-            const inventoryItems: ItemStack[] = [];
-            const equipmentItems: ItemStack[] = [];
-
-            // Collect inventory items
-            if (inventoryComponent) {
-                for (let slot = 0; slot < inventoryComponent.size; slot++) {
-                    const item = inventoryComponent.getItem(slot);
-                    if (item) {
-                        inventoryItems.push(item);
-                    }
-                }
+            // Use saved data if present
+            const savedData = playerDataMap.get(player.id);
+            if (savedData) {
+                dropStoredPlayerData(player.id, player.name);
             }
-
-            // Collect equipment items
-            if (equipmentComponent) {
-                for (const slot of Object.values(EquipmentSlot)) {
-                    const item = equipmentComponent.getEquipment(slot);
-                    // Skip the Mainhand slot to prevent duplicates
-                    if (slot === EquipmentSlot.Mainhand) {
-                        continue;
-                    }
-
-                    if (item) {
-                        equipmentItems.push(item);
-                    }
-                }
-            }
-
-            // Save player data
-            playerDataMap.set(player.id, {
-                inventory: inventoryItems,
-                equipment: equipmentItems,
-                location: player.location,
-                dimension: player.dimension,
-            });
-
-            // Drop stored player data
-            await dropStoredPlayerData(player.id);
+        } else {
+            // Cooldown expired — safe to clear from memory
+            playerDataMap.delete(player.id);
         }
     });
 
@@ -345,6 +370,11 @@ function setupPvPSystem() {
  * Unsubscribes from all PvP-related events.
  */
 export function stopPvPSystem() {
+    if (pvpCleanupIntervalId !== undefined) {
+        system.clearRun(pvpCleanupIntervalId);
+        pvpCleanupIntervalId = undefined;
+    }
+
     if (entityHitEntitySubscription) {
         world.afterEvents.entityHitEntity.unsubscribe(entityHitEntitySubscription);
         entityHitEntitySubscription = undefined;
@@ -375,22 +405,21 @@ export function stopPvPSystem() {
  * Drops all items stored in the player data map for a given player.
  *
  * @param {string} playerId - The ID of the player whose data is to be dropped.
+ * @param {string} playerName - The name of the player, used for display in messages.
  */
-async function dropStoredPlayerData(playerId: string) {
+function dropStoredPlayerData(playerId: string, playerName: string) {
     const data = playerDataMap.get(playerId);
-
     if (!data) return; // Exit if no data found
 
-    // Drop items from inventory and equipment
-    function dropStoredItems() {
+    system.run(() => {
         dropItems(data.inventory, data.dimension, data.location);
         dropItems(data.equipment, data.dimension, data.location);
-    }
 
-    system.run(dropStoredItems);
+        world.sendMessage(`§o§c[Paradox] ${playerName}§c logged out during combat! Their items were dropped.`);
 
-    // Remove data from the map
-    playerDataMap.delete(playerId);
+        // Remove data from the map after drop
+        playerDataMap.delete(playerId);
+    });
 }
 
 /**
