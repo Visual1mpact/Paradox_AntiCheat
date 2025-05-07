@@ -269,11 +269,11 @@ export const guiCommand: Command = {
                             // Deduplicate entity type IDs
                             field.options = [...new Set(allEntities)];
                         }
-                        modalForm.dropdown(formattedName, field.options ?? [""], -1);
+                        modalForm.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: -1 });
                         break;
                     }
                     case "toggle": {
-                        modalForm.toggle(formattedName, false);
+                        modalForm.toggle(formattedName, { defaultValue: false });
                         break;
                     }
                 }

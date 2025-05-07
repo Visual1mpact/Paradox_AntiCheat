@@ -260,11 +260,15 @@ function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }, par
 
     // Iterate through the migrations to rename old keys
     for (const [oldKey, newKey] of Object.entries(migrations)) {
-        // If the old key exists, rename it
-        if (paradoxModules[oldKey] !== undefined) {
-            paradoxModules[newKey] = paradoxModules[oldKey];
-            delete paradoxModules[oldKey]; // Remove the old key
-            updated = true;
+        if (oldKey === newKey) continue;
+
+        if (Object.prototype.hasOwnProperty.call(paradoxModules, oldKey)) {
+            if (!Object.prototype.hasOwnProperty.call(paradoxModules, newKey)) {
+                paradoxModules[newKey] = paradoxModules[oldKey];
+                delete paradoxModules[oldKey];
+                updated = true;
+                console.log(`[Migration] Renamed key "${oldKey}" -> "${newKey}"`);
+            }
         }
     }
 
