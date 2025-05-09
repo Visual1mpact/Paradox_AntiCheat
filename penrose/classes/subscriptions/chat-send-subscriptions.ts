@@ -138,7 +138,7 @@ class ChatSendSubscription {
 
                 const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
                 const rank = playerChannel ?? playerRank;
-                const formattedMessage = `${rank} §7${player.name}: §r${event.message}`;
+                const formattedMessage = `${rank} §7${player.name}§7: §r${event.message}`;
 
                 let targetPlayers: Player[];
 
