@@ -1,4 +1,4 @@
-import { PlayerLeaveBeforeEvent, system, world } from "@minecraft/server";
+import { Player, PlayerLeaveBeforeEvent, system, world } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
 
 // Declare types for dynamically imported modules
@@ -6,8 +6,8 @@ let beforeEvents: typeof import("@minecraft/server-net").beforeEvents;
 let PacketId: typeof import("@minecraft/server-net").PacketId;
 
 // Maps to track packet counts and player bans
-const packetLimits = new Map(); // Stores the packets sent by each player
-const startIndices = new Map(); // Tracks the start index for packet timestamps to enforce rate-limiting
+const packetLimits = new Map<Player, number[]>(); // Stores the packets sent by each player
+const startIndices = new Map<Player, number>(); // Tracks the start index for packet timestamps to enforce rate-limiting
 
 // Callbacks for handling packet reception and player leave events
 let packetReceiveCallback: (data: import("@minecraft/server-net").PacketReceivedBeforeEvent) => void;
@@ -71,8 +71,10 @@ async function initializePacketHandler(): Promise<boolean | void> {
         if (packetsSent.length - startIndex > 5) {
             data.cancel = true; // Cancel the packet reception
             const reason = "Using a client to crash";
-            bannedPlayers.push(player.name);
-            banlistDB.set("players", bannedPlayers);
+            if (!bannedPlayers.includes(player.name)) {
+                bannedPlayers.push(player.name);
+                banlistDB.set("players", bannedPlayers);
+            }
             packetLimits.delete(player); // Clear the packet data for the player
             startIndices.delete(player); // Clear the start index for the player
             world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 attempted to run a crasher!`); // Notify the server of the attempted crash
