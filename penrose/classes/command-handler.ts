@@ -425,61 +425,54 @@ export class CommandHandler {
      * @returns - A boolean indicating whether the prefix needs updating.
      */
     private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
-        const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number as SecurityClearance;
-        const helpCommands = ["help", "--help", "-h"];
-
-        if (helpCommands.includes(commandName) || helpCommands.includes(args[0]?.toLowerCase())) {
-            if (playerSecurityClearance && playerSecurityClearance >= SecurityClearance.Level1 && playerSecurityClearance <= SecurityClearance.Level4) {
-                if (args.length === 0 || helpCommands.includes(commandName)) {
-                    this.displayAllCommands(player);
-                    return false;
-                } else {
-                    const specifiedCommandName = helpCommands.includes(commandName) ? args[0] : commandName;
-                    const commandInfo = this.getCommandInfo(specifiedCommandName, player);
-                    player.sendMessage(commandInfo.join("\n") || "\n§2[§7Paradox§2]§o§7 Command not found.");
-                    return false;
-                }
-            } else {
-                player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to use the help command.");
-                return false;
-            }
+        // Fetch command and validate existence
+        const command = this.commands.get(commandName);
+        if (!command) {
+            player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}"§7 not found. Use ${defaultPrefix}help to see available commands.`);
+            return false;
         }
 
-        const command = this.commands.get(commandName);
-        if (command) {
-            if ((playerSecurityClearance && playerSecurityClearance >= command.securityClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op") {
-                const runCommandExecution = async () => {
+        const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number as SecurityClearance;
+        const helpCommands = ["help", "--help", "-h"];
+        const isHelpRequest = helpCommands.includes(commandName) || helpCommands.includes(args[0]?.toLowerCase());
+        const hasPermission = (playerSecurityClearance >= command.securityClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op";
+
+        if (!hasPermission) {
+            player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to execute this command.");
+            return false;
+        }
+
+        // Handle help requests
+        if (isHelpRequest) {
+            const specifiedCommandName = helpCommands.includes(commandName) ? args[0] : commandName;
+            if (args.length === 0 || helpCommands.includes(commandName)) {
+                this.displayAllCommands(player);
+            } else {
+                const commandInfo = this.getCommandInfo(specifiedCommandName, player);
+                player.sendMessage(commandInfo.join("\n") || "\n§2[§7Paradox§2]§o§7 Command not found.");
+            }
+            return false;
+        }
+
+        // Run command execution
+        try {
+            const result = await new Promise<boolean>((resolve) => {
+                system.run(async () => {
                     try {
                         const validateReturn = await command.execute(message, args, CryptoES);
-                        return validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false;
+                        resolve(validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false);
                     } catch (error) {
                         console.error("Error occurred during command execution:", error);
                         player.sendMessage("§2[§7Paradox§2]§o§7 There was an error executing the command.");
-                        return false;
+                        resolve(false);
                     }
-                };
+                });
+            });
 
-                try {
-                    const result = await new Promise<boolean>((resolve) => {
-                        system.run(async () => resolve(await runCommandExecution()));
-                    });
-
-                    if (commandName === "prefix") {
-                        return result;
-                    }
-
-                    return false;
-                } catch (error) {
-                    console.error("Error occurred during command execution:", error);
-                    return false;
-                }
-            } else {
-                player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to execute this command.");
-                return false; // Return false if security clearance fails
-            }
-        } else {
-            player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}"§7 not found. Use ${defaultPrefix}help to see available commands.`);
-            return false; // Return false if the command doesn't exist
+            return commandName === "prefix" ? result : false;
+        } catch (error) {
+            console.error("Error occurred during command execution:", error);
+            return false;
         }
     }
 
