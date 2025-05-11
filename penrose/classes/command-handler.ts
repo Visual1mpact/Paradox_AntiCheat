@@ -462,7 +462,7 @@ export class CommandHandler {
                         const validateReturn = await command.execute(message, args, CryptoES);
                         resolve(validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false);
                     } catch (error) {
-                        console.error("Error occurred during command execution:", error);
+                        console.error("[Paradox] Error occurred during command execution:", error);
                         player.sendMessage("§2[§7Paradox§2]§o§7 There was an error executing the command.");
                         resolve(false);
                     }
@@ -471,7 +471,7 @@ export class CommandHandler {
 
             return commandName === "prefix" ? result : false;
         } catch (error) {
-            console.error("Error occurred during command execution:", error);
+            console.error("[Paradox] Error occurred during command execution:", error);
             return false;
         }
     }
