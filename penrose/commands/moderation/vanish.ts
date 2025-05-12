@@ -51,7 +51,7 @@ export const vanishCommand: Command = {
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
         // Check if player argument is provided
         let player: Player | undefined = undefined;
-        const playerName = args.join(" ").trim().replace(/["@]/g, "");
+        const playerName = Array.isArray(args) ? args.join(" ").trim().replace(/["@]/g, "") : "";
 
         if (playerName.length > 0) {
             // Find the player object in the world
