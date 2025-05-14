@@ -51,7 +51,7 @@ export const lockdownCommand: Command = {
 
         // If already locked down, unlock the server and return
         if (lockdownBoolean) {
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been disabled!`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been §4disabled§7!`);
 
             world.setDynamicProperty("lockdown_b", false); // Set lockdown_b to false to unlock the server
 
@@ -79,7 +79,7 @@ export const lockdownCommand: Command = {
         }
         // Set lockdown_b to true to indicate server lockdown
         world.setDynamicProperty("lockdown_b", true);
-        player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been enabled!`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been §aenabled§7!`);
 
         // Store and subscribe the persistent function reference
         lockDownMonitor = function (object: PlayerSpawnAfterEvent) {
