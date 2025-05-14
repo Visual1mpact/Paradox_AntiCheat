@@ -1,135 +1,192 @@
 import { Player, PlayerLeaveBeforeEvent, system, world } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
+import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
+import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 
-// Declare types for dynamically imported modules
-let beforeEvents: typeof import("@minecraft/server-net").beforeEvents;
+// Dynamic import references to handle network and admin events conditionally
+let serverNet: typeof import("@minecraft/server-net").beforeEvents;
 let PacketId: typeof import("@minecraft/server-net").PacketId;
+let serverAdmin: typeof import("@minecraft/server-admin").beforeEvents;
 
-// Maps to track packet counts and player bans
-const packetLimits = new Map<Player, number[]>(); // Stores the packets sent by each player
-const startIndices = new Map<Player, number>(); // Tracks the start index for packet timestamps to enforce rate-limiting
+// Per-player packet timestamp buffer
+const packetLimits = new Map<Player, number[]>();
+const startIndices = new Map<Player, number>();
 
-// Callbacks for handling packet reception and player leave events
-let packetReceiveCallback: (data: import("@minecraft/server-net").PacketReceivedBeforeEvent) => void;
-let playerLeaveCallback: (event: PlayerLeaveBeforeEvent) => void;
+// Recent violators used for attack pattern detection and triggering lockdown
+const recentViolators: { timestamp: number; name: string }[] = [];
+
+// Lockdown status and timeout reference
+let isLockedDown = false;
+let lockdownTimeout: number | undefined;
+
+// Reference to event handlers for proper unsubscription later
+let packetHandlerRef: (data: PacketReceivedBeforeEvent) => void;
+let asyncJoinRef: (event: AsyncPlayerJoinBeforeEvent) => Promise<void>;
+let playerLeaveRef: (event: PlayerLeaveBeforeEvent) => void;
 
 /**
- * Initialize the packet handler, dynamically importing the network module
- * and setting up the packet receive and player leave event listeners.
+ * Initializes packet spam detection and lockdown logic.
+ * Dynamically imports required modules and sets up handlers.
  *
- * This function handles rate-limiting of network packets by each player.
- * Players who exceed a packet sending threshold are banned.
+ * @returns {Promise<boolean | void>} Whether initialization succeeded.
  */
 async function initializePacketHandler(): Promise<boolean | void> {
     try {
-        // Dynamically import the @minecraft/server-net module to access the beforeEvents and PacketId
         const networkModule = await import("@minecraft/server-net");
-        beforeEvents = networkModule.beforeEvents;
+        const adminModule = await import("@minecraft/server-admin");
+        serverNet = networkModule.beforeEvents;
         PacketId = networkModule.PacketId;
-    } catch (error) {
-        // Return early if the module cannot be imported
+        serverAdmin = adminModule.beforeEvents;
+    } catch {
+        // Module may not be supported in this environment
         return false;
     }
 
-    // Define the packet receive callback to check for rate-limiting violations
-    packetReceiveCallback = (data) => {
+    /**
+     * Handles early player join events, disconnecting banned players or during lockdown.
+     */
+    asyncJoinRef = async (event) => {
+        const { name } = event;
+        const banned = banlistDB.get<string[]>("players") ?? [];
+        isLockedDown = (world.getDynamicProperty("lockdown_b") as boolean) || false;
+
+        if (isLockedDown) {
+            event.disconnect(`§o§7\n\nUnder Maintenance! Sorry for the inconvenience.`);
+            return;
+        }
+
+        if (banned.includes(name)) {
+            event.disconnect(`§o§cYou are banned from this server.`);
+            return;
+        }
+    };
+
+    /**
+     * Handles incoming packets, enforcing rate limits and initiating lockdown if abuse is detected.
+     */
+    packetHandlerRef = (data) => {
         const { sender: player } = data;
-
-        // Safely parse the bannedPlayers
-        const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
-
-        // Ensure the player exists and is not banned
-        if (!player) {
-            data.cancel = true; // Cancel if player is undefined
-            return;
-        }
-
-        if (player.isValid && bannedPlayers.includes(player.name)) {
-            const reason = "You are banned";
-            data.cancel = true; // Cancel the packet reception
-            system.run(() => {
-                if (player.isValid) {
-                    player.runCommand(`kick @s §o§7\n\n${reason}`);
-                }
-            });
-            return;
-        }
-
         const now = Date.now();
-        const packetsSent = packetLimits.get(player) ?? []; // Retrieve the player's sent packets (or empty array if none)
-        let startIndex = startIndices.get(player) ?? 0; // Get the starting index of packets for the player
+        const banned = banlistDB.get<string[]>("players") ?? [];
 
-        // Clean up old packet timestamps that are outside the 200ms window
-        while (startIndex < packetsSent.length && packetsSent[startIndex] <= now - 200) {
+        // Block unknown or invalid senders
+        if (!player || !player.isValid) {
+            data.cancel = true;
+            return;
+        }
+
+        const packets = packetLimits.get(player) ?? [];
+        let startIndex = startIndices.get(player) ?? 0;
+
+        // Remove old timestamps outside of the 200ms window
+        while (startIndex < packets.length && packets[startIndex] <= now - 200) {
             startIndex++;
         }
 
-        // Record the timestamp for the current packet
-        packetsSent.push(now);
+        packets.push(now);
 
-        // Check if the player has sent more than 5 packets in 200ms, indicating a rate-limit violation
-        if (packetsSent.length - startIndex > 5) {
-            data.cancel = true; // Cancel the packet reception
-            const reason = "Using a client to crash";
-            if (!bannedPlayers.includes(player.name)) {
-                bannedPlayers.push(player.name);
-                banlistDB.set("players", bannedPlayers);
+        // If rate limit exceeded (5 packets in 200ms), block and respond
+        if (packets.length - startIndex > 5) {
+            data.cancel = true;
+
+            recentViolators.push({ timestamp: now, name: player.name });
+
+            // Prune old entries older than 2 seconds
+            const cutoff = now - 2000;
+            while (recentViolators.length > 0 && recentViolators[0].timestamp < cutoff) {
+                recentViolators.shift();
             }
-            packetLimits.delete(player); // Clear the packet data for the player
-            startIndices.delete(player); // Clear the start index for the player
-            world.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 attempted to run a crasher!`); // Notify the server of the attempted crash
+
+            // If enough violators in short time, enter lockdown
+            if (!isLockedDown && recentViolators.length >= 3) {
+                isLockedDown = true;
+                world.sendMessage(`§o§c[Paradox] DoS attack detected. Locking down server for 60 seconds.`);
+
+                lockdownTimeout = system.runTimeout(() => {
+                    isLockedDown = false;
+                    recentViolators.length = 0;
+                    world.sendMessage(`§o§a[Paradox] Lockdown lifted. Server is now open.`);
+                }, 1200); // 60 seconds
+            }
+
+            // Ban offending player if not already banned
+            if (!banned.includes(player.name)) {
+                banned.push(player.name);
+                banlistDB.set("players", banned);
+            }
+
+            // Cleanup per-player tracking
+            packetLimits.delete(player);
+            startIndices.delete(player);
+
+            world.sendMessage(`§2[§7Paradox§2]§r §o§7${player.name}§7 triggered rate-limiting.`);
+
             system.run(() => {
                 if (player.isValid) {
-                    player.runCommand(`kick @s §o§7\n\n${reason}`); // Kick the player from the server
+                    player.runCommand(`kick @s §o§7\n\nUsing a modified client or causing spam.`);
                 }
             });
+
             return;
         }
 
-        // Update the player's packet history
-        packetLimits.set(player, packetsSent);
+        // Update tracking
+        packetLimits.set(player, packets);
         startIndices.set(player, startIndex);
     };
 
-    // Subscribe to the packet receive event and monitor specific packet types
-    beforeEvents.packetReceive.subscribe(packetReceiveCallback, {
+    /**
+     * Cleans up tracking data when a player leaves the server.
+     */
+    playerLeaveRef = (event) => {
+        packetLimits.delete(event.player);
+        startIndices.delete(event.player);
+    };
+
+    // Subscribe to monitored packet types
+    serverNet.packetReceive.subscribe(packetHandlerRef, {
         monitoredPacketIds: [PacketId.CommandRequestPacket, PacketId.LegacyTelemetryEventPacket],
     });
 
-    // Define the player leave callback to clean up packet data when a player leaves
-    playerLeaveCallback = (event: PlayerLeaveBeforeEvent) => {
-        packetLimits.delete(event.player); // Remove the player's packet history
-        startIndices.delete(event.player); // Remove the player's start index
-    };
-
-    // Subscribe to the player leave event to handle cleanup
-    world.beforeEvents.playerLeave.subscribe(playerLeaveCallback);
+    // Subscribe to early join event and leave cleanup
+    serverAdmin.asyncPlayerJoin.subscribe(asyncJoinRef);
+    world.beforeEvents.playerLeave.subscribe(playerLeaveRef);
 }
 
 /**
- * Start the packet handler by initializing the packet processing system.
- * @returns {Promise<boolean>} Resolves to `true` if successful, `false` otherwise.
+ * Starts the packet handling system and DoS mitigation.
+ *
+ * @returns {Promise<boolean>} Whether the handler started successfully.
  */
 export async function startPacketHandler(): Promise<boolean> {
     const success = await initializePacketHandler();
-    if (success === false) {
-        return false;
-    }
-    return true;
+    return success === false ? false : true;
 }
 
 /**
- * Stop the packet handler by unsubscribing from events and clearing state.
- * This will stop monitoring packets and remove any tracked packet data.
+ * Stops all event handlers and resets packet tracking and lockdown state.
  */
 export function stopPacketHandler(): void {
-    // Unsubscribe from the packet receive and player leave events
-    if (beforeEvents && packetReceiveCallback && playerLeaveCallback) {
-        beforeEvents.packetReceive.unsubscribe(packetReceiveCallback); // Unsubscribe from packet receive event
-        world.beforeEvents.playerLeave.unsubscribe(playerLeaveCallback); // Unsubscribe from player leave event
+    if (serverNet && packetHandlerRef) {
+        serverNet.packetReceive.unsubscribe(packetHandlerRef);
+    }
 
-        // Clear all packet tracking data and banned players
-        packetLimits.clear();
-        startIndices.clear();
+    if (serverAdmin && asyncJoinRef) {
+        serverAdmin.asyncPlayerJoin.unsubscribe(asyncJoinRef);
+    }
+
+    if (playerLeaveRef) {
+        world.beforeEvents.playerLeave.unsubscribe(playerLeaveRef);
+    }
+
+    // Reset all tracking
+    packetLimits.clear();
+    startIndices.clear();
+    recentViolators.length = 0;
+
+    if (lockdownTimeout !== undefined) {
+        system.clearRun(lockdownTimeout);
+        isLockedDown = false;
+        lockdownTimeout = undefined;
     }
 }
