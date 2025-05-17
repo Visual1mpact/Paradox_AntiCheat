@@ -17,8 +17,8 @@ const packetFrequency: Record<string, Record<string, PlayerPacketCount>> = {};
 const lastWarning: Record<string, number> = {};
 
 // Constants for spam detection and cleanup
-const SPAM_THRESHOLD = 50; // Max allowed packets within TIME_WINDOW
-const TIME_WINDOW = 10000; // 10 seconds in milliseconds
+const SPAM_THRESHOLD = 250; // Max allowed packets within TIME_WINDOW
+const TIME_WINDOW = 5000; // 5 seconds in milliseconds
 const CLEANUP_INTERVAL_TICKS = 1200; // 60 seconds at 20 ticks per second
 
 // Packets to ignore during monitoring
