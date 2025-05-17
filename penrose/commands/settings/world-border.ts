@@ -189,7 +189,7 @@ export const worldBorderCommand: Command = {
         // (Skip the check if there were no arguments at all)
         if (args.length > 0 && !hasValidArgument) {
             const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-            player.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§cworldborder help.`);
+            player.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§cworldborder help.`);
             return;
         }
 

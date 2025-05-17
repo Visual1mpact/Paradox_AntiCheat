@@ -52,7 +52,7 @@ export const prefixCommand: Command = {
 
                 // Check if the new prefix contains '/' or '§'
                 if (/[\/§]/.test(newPrefix)) {
-                    message.sender.sendMessage("§o§cPrefix cannot include the forward slash or section sign characters.");
+                    message.sender.sendMessage("§o§c[Paradox] Prefix cannot include the forward slash or section sign characters.");
                     resolve(false); // Return false indicating failure
                 }
 

@@ -56,7 +56,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
         }
 
         if (banned.includes(name)) {
-            event.disconnect(`§o§cYou are banned from this server.`);
+            event.disconnect(`§o§c[Paradox] You are banned from this server.`);
             return;
         }
     };

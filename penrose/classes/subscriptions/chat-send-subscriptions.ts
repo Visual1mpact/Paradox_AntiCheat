@@ -90,7 +90,7 @@ class ChatSendSubscription {
                     if (spamData.mutedUntil && currentTick < spamData.mutedUntil) {
                         event.cancel = true;
                         const remainingMuteTime = Math.ceil((spamData.mutedUntil - currentTick) / 20); // in seconds
-                        player.sendMessage(`§o§cYou are muted for spamming. Please wait ${remainingMuteTime} seconds before sending messages again.`);
+                        player.sendMessage(`§o§c[Paradox] You are muted for spamming. Please wait ${remainingMuteTime} seconds before sending messages again.`);
                         return;
                     }
 
@@ -108,7 +108,7 @@ class ChatSendSubscription {
                         player.setDynamicProperty("mutedUntil", spamData.mutedUntil); // Save mute time
                         event.cancel = true;
                         const muteDurationSeconds = Math.ceil(MUTE_DURATION / 20); // Convert ticks to seconds
-                        player.sendMessage(`§o§cYou have been muted for spamming. Please wait ${muteDurationSeconds} seconds before sending messages again.`);
+                        player.sendMessage(`§o§c[Paradox] You have been muted for spamming. Please wait ${muteDurationSeconds} seconds before sending messages again.`);
                         return;
                     }
 

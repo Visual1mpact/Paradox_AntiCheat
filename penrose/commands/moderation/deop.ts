@@ -94,7 +94,7 @@ export const deopCommand: Command = {
 
                     // Player is online, remove their permissions if applicable
                     if (securityClearanceListData.host?.id === player.id && message.sender.id !== player.id) {
-                        message.sender.sendMessage("§o§cYou cannot remove the host from the security clearance list.");
+                        message.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");
                         return false;
                     }
 
@@ -117,7 +117,7 @@ export const deopCommand: Command = {
 
                         // Check if the removed player was the host
                         if (securityClearanceListData.host?.id === removedPlayer.id) {
-                            message.sender.sendMessage("§o§cYou cannot remove the host from the security clearance list.");
+                            message.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");
                             return false;
                         }
 
@@ -128,7 +128,7 @@ export const deopCommand: Command = {
                         return true;
                     } else {
                         // Player not found in list
-                        message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found in the security clearance list.`);
+                        message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found in the security clearance list.`);
                         return false;
                     }
                 }
@@ -136,7 +136,7 @@ export const deopCommand: Command = {
 
             // Check if player argument is provided
             if (!args.length) {
-                message.sender.sendMessage("§o§cPlease provide a player name.");
+                message.sender.sendMessage("§o§c[Paradox] Please provide a player name.");
                 resolve();
                 return;
             }

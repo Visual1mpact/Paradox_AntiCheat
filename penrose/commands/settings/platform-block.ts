@@ -132,7 +132,7 @@ export const platformBlockCommand: Command = {
 
         // Validate platform argument
         if (!["console", "desktop", "mobile"].includes(platform)) {
-            player.sendMessage(`§o§cInvalid platform. Use console, desktop, or mobile.`);
+            player.sendMessage(`§o§c[Paradox] Invalid platform. Use console, desktop, or mobile.`);
             return;
         }
 
@@ -146,14 +146,14 @@ export const platformBlockCommand: Command = {
         } else if (disableFlags.includes(action)) {
             blockPlatform = false;
         } else {
-            player.sendMessage(`§o§cInvalid action. Use "-e" to block or "-d" to allow.`);
+            player.sendMessage(`§o§c[Paradox] Invalid action. Use "-e" to block or "-d" to allow.`);
             return;
         }
 
         // Restrict the player from blocking their own platform
         const playerPlatform = player.clientSystemInfo.platformType.toLowerCase();
         if (blockPlatform && playerPlatform === platform) {
-            player.sendMessage(`§o§cYou cannot block your own platform.`);
+            player.sendMessage(`§o§c[Paradox] You cannot block your own platform.`);
             return;
         }
 
@@ -166,7 +166,7 @@ export const platformBlockCommand: Command = {
         if (blockedPlatforms.length > 2) {
             // Revert the change to ensure at least one platform is unblocked
             platformSettings[platform] = !blockPlatform;
-            player.sendMessage(`§o§cCannot block all platforms. At least one platform must remain unblocked.`);
+            player.sendMessage(`§o§c[Paradox] Cannot block all platforms. At least one platform must remain unblocked.`);
             return;
         }
 

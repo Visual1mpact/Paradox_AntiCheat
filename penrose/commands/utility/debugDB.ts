@@ -50,7 +50,7 @@ export const debugDBCommand: Command = {
 
         // Check security clearance
         if (senderClearance < 4) {
-            sender.sendMessage("§o§cYou do not have permission to use this command.");
+            sender.sendMessage("§o§c[Paradox] You do not have permission to use this command.");
             return;
         }
 

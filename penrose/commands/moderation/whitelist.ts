@@ -60,7 +60,7 @@ export const whitelistCommand: Command = {
 
         const action = args.shift()?.toLowerCase();
         if (!["add", "remove", "list"].includes(action)) {
-            message.sender.sendMessage("§o§cInvalid action. Use `add`, `remove`, or `list`.");
+            message.sender.sendMessage("§o§c[Paradox] Invalid action. Use `add`, `remove`, or `list`.");
             return;
         }
 
@@ -76,13 +76,13 @@ export const whitelistCommand: Command = {
 
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         if (!playerName) {
-            message.sender.sendMessage("§o§cPlease provide a valid player name.");
+            message.sender.sendMessage("§o§c[Paradox] Please provide a valid player name.");
             return;
         }
 
         if (action === "add") {
             if (whitelistedPlayers.includes(playerName)) {
-                message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is already in the whitelist.`);
+                message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is already in the whitelist.`);
                 return;
             }
 
@@ -93,7 +93,7 @@ export const whitelistCommand: Command = {
 
         if (action === "remove") {
             if (!whitelistedPlayers.includes(playerName)) {
-                message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is not in the whitelist.`);
+                message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is not in the whitelist.`);
                 return;
             }
 

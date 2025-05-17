@@ -133,7 +133,7 @@ export const opCommand: Command = {
 
         if (args[0] === "list") {
             if (securityCheck !== 4) {
-                sender.sendMessage("§o§cYou do not have permission to view the security clearance list.");
+                sender.sendMessage("§o§c[Paradox] You do not have permission to view the security clearance list.");
                 return;
             }
             displaySecurityList(sender);
@@ -154,12 +154,12 @@ export const opCommand: Command = {
             }
 
             if (!targetPlayer) {
-                sender.sendMessage(`§o§cPlayer \"${playerName}§c\" not found.`);
+                sender.sendMessage(`§o§c[Paradox] Player \"${playerName}§c\" not found.`);
                 return;
             }
             processOpCommand(securityClearanceListData, targetPlayer);
         } else {
-            sender.sendMessage("§o§cYou do not have permissions!");
+            sender.sendMessage("§o§c[Paradox] You do not have permissions!");
         }
     },
 };

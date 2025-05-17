@@ -105,17 +105,17 @@ export const tpaCommand: Command = {
         const [target1, target2] = determinePlayers(args);
 
         if (!target1 || !target2) {
-            message.sender.sendMessage("§o§cPlease provide at least two valid player names.");
+            message.sender.sendMessage("§o§c[Paradox] Please provide at least two valid player names.");
             return;
         }
 
         if (!target1.isValid) {
-            message.sender.sendMessage(`§o§cPlayer '${target1.name}§c' not found or not valid.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player '${target1.name}§c' not found or not valid.`);
             return;
         }
 
         if (!target2.isValid) {
-            message.sender.sendMessage(`§o§cPlayer '${target2.name}§c' not found or not valid.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player '${target2.name}§c' not found or not valid.`);
             return;
         }
 
@@ -128,7 +128,7 @@ export const tpaCommand: Command = {
         });
 
         if (!result) {
-            message.sender.sendMessage("§o§cUnable to teleport. Please try again.");
+            message.sender.sendMessage("§o§c[Paradox] Unable to teleport. Please try again.");
         } else {
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleported '${target1.name}§7' to '${target2.name}§7'.`);
         }

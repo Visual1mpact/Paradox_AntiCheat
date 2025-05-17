@@ -102,7 +102,7 @@ export const homeCommand: Command = {
         function saveHomeLocation(homeName: string, location: Vector3, dimension: string): boolean {
             const totalHomes = countHomes();
             if (totalHomes >= MAX_HOMES) {
-                player.sendMessage(`§o§cYou have reached the maximum number of homes (${MAX_HOMES})!`);
+                player.sendMessage(`§o§c[Paradox] You have reached the maximum number of homes (${MAX_HOMES})!`);
                 return true;
             }
             const existingHome = player.getTags().find((tag) => {
@@ -178,7 +178,7 @@ export const homeCommand: Command = {
                     if (success) {
                         player.sendMessage(`§2[§7Paradox§2]§o§7 Welcome to "${homeName}§7" ${player.name}§7!`);
                     } else {
-                        player.sendMessage(`§o§cFailed to teleport to "${homeName}§c"! Please try again.`);
+                        player.sendMessage(`§o§c[Paradox] Failed to teleport to "${homeName}§c"! Please try again.`);
                     }
                     return;
                 }
@@ -206,7 +206,7 @@ export const homeCommand: Command = {
                 if (homeDeleted) {
                     player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" deleted successfully!`);
                 } else {
-                    player.sendMessage(`§o§cHome location "${homeName}§c" not found!`);
+                    player.sendMessage(`§o§c[Paradox] Home location "${homeName}§c" not found!`);
                 }
                 break;
             }
@@ -220,7 +220,7 @@ export const homeCommand: Command = {
             }
             default: {
                 const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-                player.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§chome help.`);
+                player.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§chome help.`);
                 break;
             }
         }

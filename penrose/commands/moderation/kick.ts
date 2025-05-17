@@ -101,7 +101,7 @@ export const kickCommand: Command = {
 
         // If player not found, inform the sender
         if (!player) {
-            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found.`);
             return;
         }
 

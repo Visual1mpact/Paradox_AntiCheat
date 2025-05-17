@@ -100,7 +100,7 @@ export const channelCommand: Command = {
 
             const channel = getChannel(channelName);
             if (!channel) {
-                message.sender.sendMessage(`§o§cChannel '${channelName}§c' does not exist.`);
+                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
@@ -126,7 +126,7 @@ export const channelCommand: Command = {
         function inviteToChannel(channelName: string, receiverName: string): void {
             const receiver = world.getAllPlayers().find((player) => player.name === receiverName);
             if (!receiver) {
-                message.sender.sendMessage(`§o§cPlayer '${receiverName}§c' not found.`);
+                message.sender.sendMessage(`§o§c[Paradox] Player '${receiverName}§c' not found.`);
                 return;
             }
 
@@ -137,7 +137,7 @@ export const channelCommand: Command = {
 
             const channel = getChannel(channelName);
             if (!channel) {
-                message.sender.sendMessage(`§o§cChannel '${channelName}§c' does not exist.`);
+                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
@@ -162,7 +162,7 @@ export const channelCommand: Command = {
         function transferChannelOwnership(channelName: string, newOwnerName: string): void {
             const channel = getChannel(channelName);
             if (!channel) {
-                message.sender.sendMessage(`§o§cChannel '${channelName}§c' does not exist.`);
+                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
@@ -173,7 +173,7 @@ export const channelCommand: Command = {
 
             const newOwner = world.getAllPlayers().find((player) => player.name === newOwnerName);
             if (!newOwner) {
-                message.sender.sendMessage(`§o§cPlayer '${newOwnerName}§c' not found.`);
+                message.sender.sendMessage(`§o§c[Paradox] Player '${newOwnerName}§c' not found.`);
                 return;
             }
 
@@ -192,7 +192,7 @@ export const channelCommand: Command = {
             const entry = allChannels.find(([, channel]) => channel.Members[playerId]);
 
             if (!entry) {
-                message.sender.sendMessage(`§o§cYou are not in any channel to leave.`);
+                message.sender.sendMessage(`§o§c[Paradox] You are not in any channel to leave.`);
                 return;
             }
 
@@ -245,7 +245,7 @@ export const channelCommand: Command = {
 
             const channel = channelsDB.get<Channel>(channelName); // Ensure the type of the channel
             if (channel) {
-                message.sender.sendMessage(`§o§cChannel '${channelName}§c' already exists.`);
+                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
             } else {
                 saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName }, lastActive: Date.now() });
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
@@ -268,7 +268,7 @@ export const channelCommand: Command = {
                 if (roomName) {
                     createChannel(roomName);
                 } else {
-                    message.sender.sendMessage(`§o§cPlease specify a channel name using --room.`);
+                    message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room.`);
                 }
                 break;
             }
@@ -277,7 +277,7 @@ export const channelCommand: Command = {
                 if (roomName) {
                     joinChannel(roomName);
                 } else {
-                    message.sender.sendMessage(`§o§cPlease specify a channel name using --room.`);
+                    message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room.`);
                 }
                 break;
             }
@@ -286,7 +286,7 @@ export const channelCommand: Command = {
                 if (roomName && targetName) {
                     inviteToChannel(roomName, targetName);
                 } else {
-                    message.sender.sendMessage(`§o§cPlease specify a channel name using --room and a target player using --target.`);
+                    message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room and a target player using --target.`);
                 }
                 break;
             }
@@ -300,7 +300,7 @@ export const channelCommand: Command = {
                 if (roomName && targetName) {
                     transferChannelOwnership(roomName, targetName);
                 } else {
-                    message.sender.sendMessage(`§o§cPlease specify a channel name using --room and a target player using --target.`);
+                    message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room and a target player using --target.`);
                 }
                 break;
             }
@@ -311,7 +311,7 @@ export const channelCommand: Command = {
             }
 
             default: {
-                message.sender.sendMessage(`§o§cUnknown command '${command}'.`);
+                message.sender.sendMessage(`§o§c[Paradox] Unknown command '${command}'.`);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${channelCommand.usage}`);
                 break;
             }

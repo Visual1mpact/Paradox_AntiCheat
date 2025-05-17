@@ -138,14 +138,14 @@ export const tprCommand: Command = {
             }
             case "": {
                 const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-                message.sender.sendMessage(`§o§cInvalid arguments. For help, use ${prefix}§ctpr help.`);
+                message.sender.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§ctpr help.`);
                 return;
             }
         }
 
         // Handle sending a teleport request
         if (args.length < 1) {
-            message.sender.sendMessage("§o§cPlease provide a player name.");
+            message.sender.sendMessage("§o§c[Paradox] Please provide a player name.");
             return;
         }
 
@@ -153,7 +153,7 @@ export const tprCommand: Command = {
         const receiver = getPlayerObject(receiverName);
 
         if (!receiver) {
-            message.sender.sendMessage(`§o§cPlayer '${receiverName}§c' not found.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player '${receiverName}§c' not found.`);
             return;
         }
 

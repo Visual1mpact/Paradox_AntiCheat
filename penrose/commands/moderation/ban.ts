@@ -107,13 +107,13 @@ export const banCommand: Command = {
 
         // Abort if no player name is provided
         if (!playerName) {
-            message.sender.sendMessage("§o§cPlease provide a player name using the -t or --target flag.");
+            message.sender.sendMessage("§o§c[Paradox] Please provide a player name using the -t or --target flag.");
             return;
         }
 
         // Abort if the player is whitelisted
         if (whitelistedPlayers.includes(playerName)) {
-            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is whitelisted and cannot be banned.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is whitelisted and cannot be banned.`);
             return;
         }
 
@@ -135,7 +135,7 @@ export const banCommand: Command = {
             const playerClearance = targetPlayer ? getPlayerSecurityClearance(name) : undefined;
 
             if (playerClearance === 4) {
-                message.sender.sendMessage(`§o§cYou cannot ban player "${name}§c" as they have the highest security clearance.`);
+                message.sender.sendMessage(`§o§c[Paradox] You cannot ban player "${name}§c" as they have the highest security clearance.`);
                 return;
             }
 

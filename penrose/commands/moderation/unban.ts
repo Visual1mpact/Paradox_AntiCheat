@@ -58,7 +58,7 @@ export const unbanCommand: Command = {
         // Extract player name and sanitize input
         const playerName = filteredArgs.join(" ").trim().replace(/["@]/g, "");
         if (!playerName) {
-            message.sender.sendMessage("§o§cPlease provide a valid player name.");
+            message.sender.sendMessage("§o§c[Paradox] Please provide a valid player name.");
             return;
         }
 
@@ -74,14 +74,14 @@ export const unbanCommand: Command = {
                 bannedPlayers = banlistDB.get<string[]>("players") ?? [];
             }
         } catch (err) {
-            message.sender.sendMessage("§o§cFailed to retrieve the ban list. Please contact an admin.");
+            message.sender.sendMessage("§o§c[Paradox] Failed to retrieve the ban list. Please contact an admin.");
             console.error("[Paradox] Unban parsing error:", err);
             return;
         }
 
         // If player not found in list, show error
         if (!bannedPlayers.includes(playerName)) {
-            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is not in the ${global ? "global" : "local"} ban list.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is not in the ${global ? "global" : "local"} ban list.`);
             return;
         }
 

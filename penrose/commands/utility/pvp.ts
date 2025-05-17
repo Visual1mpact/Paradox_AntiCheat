@@ -64,7 +64,7 @@ export const pvpToggleCooldownCommand: Command = {
 
         // Ensure the argument is a valid number
         if (args.length === 0 || isNaN(Number(args[0]))) {
-            player.sendMessage("§o§cPlease provide a valid number for the cooldown time in seconds.");
+            player.sendMessage("§o§c[Paradox] Please provide a valid number for the cooldown time in seconds.");
             return;
         }
 
@@ -72,7 +72,7 @@ export const pvpToggleCooldownCommand: Command = {
 
         // Ensure the cooldown time is within a reasonable range (e.g., between 10 and 3600 seconds)
         if (cooldownTime < 10 || cooldownTime > 3600) {
-            player.sendMessage("§o§cPlease provide a cooldown time between 10 and 3600 seconds (1 hour).");
+            player.sendMessage("§o§c[Paradox] Please provide a cooldown time between 10 and 3600 seconds (1 hour).");
             return;
         }
 
@@ -119,7 +119,7 @@ export const pvpCooldownCommand: Command = {
 
         // Ensure the argument is a valid number
         if (args.length === 0 || isNaN(Number(args[0]))) {
-            player.sendMessage("§o§cPlease provide a valid number for the cooldown time in seconds.");
+            player.sendMessage("§o§c[Paradox] Please provide a valid number for the cooldown time in seconds.");
             return;
         }
 
@@ -127,7 +127,7 @@ export const pvpCooldownCommand: Command = {
 
         // Ensure the cooldown time is within a reasonable range (e.g., between 10 and 3600 seconds)
         if (cooldownTime < 10 || cooldownTime > 3600) {
-            player.sendMessage("§o§cPlease provide a cooldown time between 10 and 3600 seconds (1 hour).");
+            player.sendMessage("§o§c[Paradox] Please provide a cooldown time between 10 and 3600 seconds (1 hour).");
             return;
         }
 
@@ -201,7 +201,7 @@ export const pvpToggleCommand: Command = {
 
         if (isGlobal) {
             if (playerClearance < 4) {
-                player.sendMessage(`§o§cYou do not have permission to toggle PvP globally.`);
+                player.sendMessage(`§o§c[Paradox] You do not have permission to toggle PvP globally.`);
                 return;
             }
 

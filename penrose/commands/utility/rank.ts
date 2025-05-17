@@ -95,7 +95,7 @@ export const setRankCommand: Command = {
          */
         function toggleGlobalRanks(message: ChatSendBeforeEvent, senderClearance: number, disable: boolean): void {
             if (senderClearance < 4) {
-                message.sender.sendMessage(`§o§cYou do not have permission to perform this action.`);
+                message.sender.sendMessage(`§o§c[Paradox] You do not have permission to perform this action.`);
                 return;
             }
 
@@ -115,7 +115,7 @@ export const setRankCommand: Command = {
 
         // If ranks are disabled globally, prevent setting or resetting ranks
         if (isRankDisabled && senderClearance < 4) {
-            message.sender.sendMessage(`§o§cGlobal rank management is currently disabled.`);
+            message.sender.sendMessage(`§o§c[Paradox] Global rank management is currently disabled.`);
             return;
         }
 
@@ -186,7 +186,7 @@ export const setRankCommand: Command = {
 
         // If player not found, inform the sender
         if (!player) {
-            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found.`);
             return;
         }
 

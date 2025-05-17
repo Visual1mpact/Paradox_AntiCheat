@@ -89,12 +89,12 @@ export const spoofLogCommand: Command = {
 
         if (args.includes("--clearall")) {
             spoofDB.set("players", {});
-            sender.sendMessage("§o§cAll spoof logs have been cleared.");
+            sender.sendMessage("§o§c[Paradox] All spoof logs have been cleared.");
             return;
         }
 
         if (!nameQuery) {
-            sender.sendMessage("§o§cPlease provide a valid player name to search for.");
+            sender.sendMessage("§o§c[Paradox] Please provide a valid player name to search for.");
             return;
         }
 
@@ -111,14 +111,14 @@ export const spoofLogCommand: Command = {
             }
 
             if (!exactMatchEntry) {
-                sender.sendMessage(`§o§cNo exact match found for "${nameQuery}§c". No records were cleared.`);
+                sender.sendMessage(`§o§c[Paradox] No exact match found for "${nameQuery}§c". No records were cleared.`);
                 return;
             }
 
             const [exactId] = exactMatchEntry;
             delete allRecords[exactId];
             spoofDB.set("players", allRecords);
-            sender.sendMessage(`§o§cSpoof logs for "${nameQuery}§c" (ID: ${exactId}) have been cleared.`);
+            sender.sendMessage(`§o§c[Paradox] Spoof logs for "${nameQuery}§c" (ID: ${exactId}) have been cleared.`);
             return;
         }
 
@@ -126,7 +126,7 @@ export const spoofLogCommand: Command = {
         const matchingEntries = Object.entries(allRecords).filter(([id, record]) => id.toLowerCase().includes(nameQuery) || record.knownNames.some((name) => name.toLowerCase().includes(nameQuery)));
 
         if (matchingEntries.length === 0) {
-            sender.sendMessage(`§o§cNo records found matching "${nameQuery}§c".`);
+            sender.sendMessage(`§o§c[Paradox] No records found matching "${nameQuery}§c".`);
             return;
         }
 

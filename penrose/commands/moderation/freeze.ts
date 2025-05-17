@@ -111,7 +111,7 @@ export function freezePlayer(player: Player, message?: ChatSendBeforeEvent) {
         player.inputPermissions.setPermissionCategory(1, false);
     } catch {
         if (message) {
-            message.sender.sendMessage(`§o§cPlayer "${player.name}§c" cannot be frozen, but will be put in it's prison. This is most likely a bot!`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${player.name}§c" cannot be frozen, but will be put in it's prison. This is most likely a bot!`);
         }
     }
 }
@@ -164,7 +164,7 @@ export const imprisonCommand: Command = {
 
         // Inform if the player is not found
         if (!player) {
-            message.sender.sendMessage(`§o§cPlayer "${playerName}§c" not found.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found.`);
             return;
         }
 
@@ -215,7 +215,7 @@ export const imprisonCommand: Command = {
                     //Enable camera
                     player.inputPermissions.setPermissionCategory(1, true);
                 } catch {
-                    message.sender.sendMessage(`§o§cPlayer "${playerName}§c" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
+                    message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
                 }
                 player.removeEffect("minecraft:weakness");
             } else {
