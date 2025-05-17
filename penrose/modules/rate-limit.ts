@@ -145,7 +145,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
 
     // Subscribe to monitored packet types
     serverNet.packetReceive.subscribe(packetHandlerRef, {
-        monitoredPacketIds: [PacketId.CommandRequestPacket, PacketId.LegacyTelemetryEventPacket],
+        monitoredPacketIds: [PacketId.CommandRequestPacket, PacketId.LegacyTelemetryEventPacket, PacketId.TextPacket, PacketId.EmotePacket, PacketId.MovePlayerPacket],
     });
 
     // Subscribe to early join event and leave cleanup
