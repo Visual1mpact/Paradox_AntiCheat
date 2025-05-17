@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "typeRoots": ["node_modules/@minecraft", "node_modules/@types"],
-        "types": ["node", "server", "server-ui"],
+        "types": ["node", "server", "server-ui", "server-admin"],
         "lib": ["esnext"],
         "target": "esnext",
         "module": "esnext",
