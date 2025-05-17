@@ -426,16 +426,17 @@ export class CommandHandler {
      */
     private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
         // Fetch command and validate existence
+        const helpCommands = ["help", "--help", "-h"];
+        const isHelpRequest = helpCommands.includes(commandName) || helpCommands.includes(args[0]?.toLowerCase());
         const command = this.commands.get(commandName);
-        if (!command) {
+        if (!command && !isHelpRequest) {
             player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}"§7 not found. Use ${defaultPrefix}help to see available commands.`);
             return false;
         }
 
         const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number as SecurityClearance;
-        const helpCommands = ["help", "--help", "-h"];
-        const isHelpRequest = helpCommands.includes(commandName) || helpCommands.includes(args[0]?.toLowerCase());
-        const hasPermission = (playerSecurityClearance >= command.securityClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op";
+        const requiredClearance = command?.securityClearance ?? 1;
+        const hasPermission = (playerSecurityClearance >= requiredClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op";
 
         if (!hasPermission) {
             player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to execute this command.");
