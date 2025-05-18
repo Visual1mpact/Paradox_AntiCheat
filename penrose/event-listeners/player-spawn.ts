@@ -225,13 +225,26 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
         allowList(event);
 
         // Logic for setting the nameTag with chat rank
-        const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-        if (!player.nameTag?.startsWith(playerRank)) {
-            const performNameTagUpdate = async () => {
-                player.nameTag = `${playerRank}§r ${player.name}`;
-                player.teleport(player.location, { dimension: player.dimension }); // Force client sync
-            };
-            system.run(performNameTagUpdate);
+        const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+        const rankedTag = `${rank}§r ${player.name}`;
+        const plainTag = player.name;
+
+        const ranksDisabled = !!world.getDynamicProperty("globalRankDisabled");
+
+        let targetTag: string;
+
+        if (ranksDisabled) {
+            // Only strip if the tag is exactly the one Paradox would set
+            targetTag = player.nameTag === rankedTag ? plainTag : player.nameTag;
+        } else {
+            targetTag = rankedTag;
+        }
+
+        if (player.nameTag !== targetTag) {
+            system.run(() => {
+                player.nameTag = targetTag;
+                player.teleport(player.location, { dimension: player.dimension }); // force client sync
+            });
         }
     }
 
