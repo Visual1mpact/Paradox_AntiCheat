@@ -1,21 +1,26 @@
-import { world } from "@minecraft/server";
+import { system, world } from "@minecraft/server";
 
 const CHUNK_SIZE = 30000;
 
 /**
- * A modular database class for managing key-value pairs using dynamic properties.
- * Optimized for Minecraft Bedrock Edition scripting with support for large values via chunking.
+ * A modular and efficient database class for managing key-value pairs
+ * using dynamic properties in Minecraft Bedrock Edition scripting.
+ *
+ * Supports large values via chunking and provides useful methods for
+ * setting, retrieving, cleaning, and iterating over entries.
  */
 export class OptimizedDatabase {
     public name: string;
     private pointerKey: string;
     private cachedPointers: string[] | null = null;
-    private static instances: OptimizedDatabase[] = []; // Static array to store all instances
+    private static instances: OptimizedDatabase[] = [];
+    private static _locks = new Set<string>();
 
     /**
-     * Constructs an instance of OptimizedDatabase.
-     * @param name - The name of the database. Must be unique, non-empty, and follow specific constraints.
-     * @throws Will throw an error if the name is empty, or contains invalid characters.
+     * Creates a new instance of the OptimizedDatabase.
+     *
+     * @param name - A unique, non-empty name for the database. Must not contain `"` or `/`.
+     * @throws Will throw an error if the name is empty or contains invalid characters.
      *
      * @example
      * const db = new OptimizedDatabase('myDatabase');
@@ -31,23 +36,27 @@ export class OptimizedDatabase {
         this.name = name;
         this.pointerKey = `${this.name}/pointers`;
 
-        // Initialize the pointers array if it doesn't exist.
         if (!world.getDynamicProperty(this.pointerKey)) {
             world.setDynamicProperty(this.pointerKey, JSON.stringify([]));
         }
 
-        // Add this instance to the static array when created
         OptimizedDatabase.instances.push(this);
     }
 
-    // Static method to get all database instances
+    /**
+     * Returns all existing instances of OptimizedDatabase.
+     *
+     * @returns An array of all created database instances.
+     */
     public static getAllInstances(): OptimizedDatabase[] {
         return OptimizedDatabase.instances;
     }
 
     /**
-     * Retrieves the list of pointers stored in the database (cached).
-     * @returns An array of strings representing the dynamic keys in the database.
+     * Retrieves the internal pointer list used to track dynamic keys.
+     *
+     * @returns An array of dynamic property keys managed by this database.
+     * @internal
      */
     private _getPointers(): string[] {
         if (this.cachedPointers !== null) return this.cachedPointers;
@@ -57,8 +66,10 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Updates the list of pointers in the database.
-     * @param pointers - An array of strings representing the dynamic keys to store.
+     * Updates the internal pointer list with the provided array.
+     *
+     * @param pointers - An array of dynamic keys to persist.
+     * @internal
      */
     private _setPointers(pointers: string[]): void {
         this.cachedPointers = pointers;
@@ -66,83 +77,123 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Stores a key-value pair in the database. Automatically chunks the value if it exceeds the safe limit.
-     * @param key - The key to store the value under. Must be unique within the database.
-     * @param value - The value to associate with the key. Must be serializable to JSON.
+     * Schedules a function to run on the next tick.
      *
-     * @example
-     * db.set('key1', { name: 'item', value: 100 });
+     * @returns A promise that resolves on the next tick.
+     * @internal
      */
-    public set(key: string, value: any): void {
-        const json = JSON.stringify(value);
-        const dynamicKeyBase = `${this.name}/${key}`;
-        const pointers = this._getPointers();
+    private static nextTick(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            system.run(resolve);
+        });
+    }
 
-        // Remove old chunks
-        this._deleteChunks(dynamicKeyBase);
-
-        // Chunk and store
-        const chunks = [];
-        for (let i = 0; i < json.length; i += CHUNK_SIZE) {
-            const chunk = json.slice(i, i + CHUNK_SIZE);
-            const chunkKey = `${dynamicKeyBase}/${i / CHUNK_SIZE}`;
-            world.setDynamicProperty(chunkKey, chunk);
-            chunks.push(chunkKey);
-        }
-
-        if (!pointers.includes(dynamicKeyBase)) {
-            pointers.push(dynamicKeyBase);
-            this._setPointers(pointers);
+    /**
+     * Ensures exclusive access to a resource using an internal lock.
+     *
+     * @param resource - The resource name to lock.
+     * @param fn - The async or sync function to execute with the lock.
+     * @returns The result of the executed function.
+     * @internal
+     */
+    private static async _withLock<T>(resource: string, fn: () => T | Promise<T>): Promise<T> {
+        while (this._locks.has(resource)) await this.nextTick();
+        this._locks.add(resource);
+        try {
+            return await fn();
+        } finally {
+            this._locks.delete(resource);
         }
     }
 
     /**
-     * Retrieves a value associated with a given key. Automatically reassembles chunked data.
-     * @param key - The key to retrieve the value for.
-     * @returns The value associated with the key, or `undefined` if the key does not exist.
+     * Stores a value in the database. Large values are automatically chunked.
+     *
+     * @param key - A unique key within the database.
+     * @param value - Any JSON-serializable value to store.
      *
      * @example
-     * const value = db.get('key1');
-     * console.log(value); // { name: 'item', value: 100 }
+     * await db.set("playerStats", { kills: 5, deaths: 2 });
+     */
+    public async set(key: string, value: any): Promise<void> {
+        const base = `${this.name}/${key}`;
+        await OptimizedDatabase._withLock(base, async () => {
+            const json = JSON.stringify(value);
+            const tmpBase = `${base}~tmp`;
+
+            this._deleteChunks(tmpBase);
+
+            for (let i = 0; i < json.length; i += CHUNK_SIZE) {
+                world.setDynamicProperty(`${tmpBase}/${i / CHUNK_SIZE}`, json.slice(i, i + CHUNK_SIZE));
+            }
+
+            world.setDynamicProperty(base, "USE_TMP");
+
+            this._deleteChunks(base);
+
+            for (let i = 0; ; ++i) {
+                const c = world.getDynamicProperty(`${tmpBase}/${i}`);
+                if (c === undefined || c === null) break;
+                world.setDynamicProperty(`${base}/${i}`, c);
+                world.setDynamicProperty(`${tmpBase}/${i}`, null);
+            }
+
+            system.run(() => {
+                world.setDynamicProperty(base, null);
+                world.setDynamicProperty(tmpBase, null);
+            });
+        });
+
+        const pointers = this._getPointers();
+        if (!pointers.includes(base)) this._setPointers([...pointers, base]);
+    }
+
+    /**
+     * Retrieves a value from the database by key.
+     *
+     * @param key - The key to retrieve.
+     * @returns The parsed value, or `undefined` if not found.
+     *
+     * @example
+     * const data = db.get("playerStats");
+     * console.log(data?.kills); // 5
      */
     public get<T = any>(key: string): T | undefined {
-        const dynamicKeyBase = `${this.name}/${key}`;
-        const chunks: string[] = [];
+        const base = `${this.name}/${key}`;
+        const marker = world.getDynamicProperty(base) as string | null;
+        const real = marker === "USE_TMP" ? `${base}~tmp` : base;
 
-        for (let i = 0; ; i++) {
-            const chunk = world.getDynamicProperty(`${dynamicKeyBase}/${i}`) as string | null;
-            if (chunk === null || chunk === undefined) break;
-            chunks.push(chunk);
+        let chunks: string[] = [];
+        for (let i = 0; ; ++i) {
+            const c = world.getDynamicProperty(`${real}/${i}`) as string | null;
+            if (c === null || c === undefined) break;
+            chunks.push(c);
         }
 
-        if (chunks.length === 0) return undefined;
-
-        const data = chunks.join("");
-        return JSON.parse(data) as T;
+        return chunks.length ? (JSON.parse(chunks.join("")) as T) : undefined;
     }
 
     /**
-     * Deletes a key-value pair and all its chunks from the database.
-     * @param key - The key to delete from the database.
+     * Deletes a key-value pair from the database.
+     *
+     * @param key - The key to delete.
      *
      * @example
-     * db.delete('key1');
+     * await db.delete("playerStats");
      */
-    public delete(key: string): void {
-        const dynamicKeyBase = `${this.name}/${key}`;
-        const pointers = this._getPointers();
-
-        if (pointers.includes(dynamicKeyBase)) {
-            this._deleteChunks(dynamicKeyBase);
-            this._setPointers(pointers.filter((p) => p !== dynamicKeyBase));
-        }
+    public async delete(key: string): Promise<void> {
+        const base = `${this.name}/${key}`;
+        await OptimizedDatabase._withLock(base, async () => {
+            this._deleteChunks(base);
+            this._setPointers(this._getPointers().filter((p) => p !== base));
+        });
     }
 
     /**
-     * Clears all key-value pairs from the database, including chunked data.
+     * Clears all data from the database, removing all keys and chunks.
      *
      * @example
-     * db.clear(); // Clears all entries in the database
+     * db.clear();
      */
     public clear(): void {
         const pointers = this._getPointers();
@@ -151,12 +202,13 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Retrieves all entries (key-value pairs) in the database.
-     * @returns An array of tuples where each tuple contains a key and its associated value.
+     * Returns all entries in the database as an array of key-value pairs.
+     *
+     * @returns An array of tuples: `[key, value]`.
      *
      * @example
-     * const entries = db.entries();
-     * console.log(entries); // [['key1', { name: 'item', value: 100 }], ['key2', { name: 'another item', value: 50 }]]
+     * const data = db.entries();
+     * data.forEach(([key, value]) => console.log(key, value));
      */
     public entries(): [string, any][] {
         return this._getPointers().map((ptr) => {
@@ -167,32 +219,22 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Cleans invalid or empty entries from the database.
+     * Removes invalid or unwanted entries from the database.
      *
-     * By default, it removes entries where the value is:
-     * - `undefined` or `null`
-     * - an empty string `""`
-     * - an empty array `[]`
-     * - an empty object `{}`
-     * - `NaN`
-     * - a `function` or `symbol`
+     * By default, deletes entries where the value is:
+     * - `undefined`, `null`, `NaN`
+     * - an empty string, array, or object
+     * - a function or symbol
      *
-     * You can also pass a custom validator function to define your own cleanup rules.
+     * You can override this behavior by passing a custom validator function.
      *
-     * @param validator - (Optional) A custom validation function `(key, value) => boolean`.
-     *                    Return `true` to keep the entry, or `false` to delete it.
+     * @param validator - Optional function `(key, value) => boolean` to decide which entries to keep.
      *
      * @example
-     * // Use default cleanup behavior:
-     * db.clean();
+     * db.clean(); // uses default validator
      *
      * @example
-     * // Use a custom validator to only keep entries where the value is a number > 10:
-     * db.clean((key, value) => typeof value === 'number' && value > 10);
-     *
-     * @example
-     * // Custom validator that removes entries where the key starts with "temp_":
-     * db.clean((key, value) => !key.startsWith("temp_"));
+     * db.clean((key, value) => typeof value === "number" && value > 0);
      */
     public clean(validator?: (key: string, value: any) => boolean): void {
         const entries = this.entries();
@@ -221,16 +263,19 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Internal helper to delete all chunks of a given base key.
-     * @param baseKey - The base dynamic key (without chunk index).
+     * Internal method to delete all chunks associated with a base key.
+     *
+     * @param baseKey - The prefix key for the chunked data.
+     * @internal
      */
     private _deleteChunks(baseKey: string): void {
-        for (let i = 0; ; i++) {
-            const chunkKey = `${baseKey}/${i}`;
-            const existing = world.getDynamicProperty(chunkKey);
-            if (existing === undefined || existing === null) break;
-            world.setDynamicProperty(chunkKey, null);
+        for (let i = 0; ; ++i) {
+            const key = `${baseKey}/${i}`;
+            const exists = world.getDynamicProperty(key);
+            if (exists === undefined || exists === null) break;
+            world.setDynamicProperty(key, null);
         }
+        world.setDynamicProperty(baseKey, null);
     }
 
     /**
