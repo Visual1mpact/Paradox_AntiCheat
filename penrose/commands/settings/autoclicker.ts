@@ -32,8 +32,9 @@ export const autoClickerCommand: Command = {
      * Executes the auto-clicker detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Get auto-clicker detection status from the database
@@ -41,14 +42,14 @@ export const autoClickerCommand: Command = {
 
         if (!autoClickerEnabled) {
             // Enable the module
-            paradoxModulesDB.set("autoClickerCheck_b", true);
+            await paradoxModulesDB.set("autoClickerCheck_b", true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Auto-clicker detection has been §aenabled§7.`);
 
             // Start auto-clicker detection
             startAutoClicker();
         } else {
             // Disable the module
-            paradoxModulesDB.set("autoClickerCheck_b", false);
+            await paradoxModulesDB.set("autoClickerCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Auto-clicker detection has been §4disabled§7.`);
 
             // Stop auto-clicker detection

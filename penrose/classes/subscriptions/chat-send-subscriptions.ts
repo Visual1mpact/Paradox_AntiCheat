@@ -147,7 +147,7 @@ class ChatSendSubscription {
                     if (channelData) {
                         // Update lastActive only once
                         channelData.lastActive = Date.now();
-                        channelsDB.set(playerChannel, channelData);
+                        await channelsDB.set(playerChannel, channelData);
 
                         // Extract players from channelData.Members
                         const playerIdsInChannel = new Set(Object.keys(channelData.Members));

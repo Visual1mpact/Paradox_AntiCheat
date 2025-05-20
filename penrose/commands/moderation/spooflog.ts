@@ -76,7 +76,13 @@ export const spoofLogCommand: Command = {
         ],
     },
 
-    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
+    /**
+     * Executes the spooflog command.
+     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
+     */
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const sender = message.sender;
         const nameQuery = args
             .filter((arg) => !arg.startsWith("--"))
@@ -88,7 +94,7 @@ export const spoofLogCommand: Command = {
         const allRecords = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
 
         if (args.includes("--clearall")) {
-            spoofDB.set("players", {});
+            await spoofDB.set("players", {});
             sender.sendMessage("§o§c[Paradox] All spoof logs have been cleared.");
             return;
         }
@@ -117,7 +123,7 @@ export const spoofLogCommand: Command = {
 
             const [exactId] = exactMatchEntry;
             delete allRecords[exactId];
-            spoofDB.set("players", allRecords);
+            await spoofDB.set("players", allRecords);
             sender.sendMessage(`§o§c[Paradox] Spoof logs for "${nameQuery}§c" (ID: ${exactId}) have been cleared.`);
             return;
         }

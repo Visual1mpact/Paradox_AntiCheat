@@ -32,8 +32,9 @@ export const flyCheckCommand: Command = {
      * Executes the antifly command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Get fly detection status from the database
@@ -41,14 +42,14 @@ export const flyCheckCommand: Command = {
 
         if (!antiflyEnabled) {
             // Enable the module
-            paradoxModulesDB.set("flyCheck_b", true);
+            await paradoxModulesDB.set("flyCheck_b", true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Fly detection has been §aenabled§7.`);
 
             // Start fly detection
             startFlyCheck();
         } else {
             // Disable the module
-            paradoxModulesDB.set("flyCheck_b", false);
+            await paradoxModulesDB.set("flyCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Fly detection has been §4disabled§7.`);
 
             // Stop fly detection

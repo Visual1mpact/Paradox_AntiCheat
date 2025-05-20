@@ -246,8 +246,9 @@ function initializeGlobalBanList() {
 
 /**
  * Migrates outdated keys in paradoxModules to their updated versions based on a given mapping.
+ * @returns {Promise<void>}
  */
-function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }, paradoxModulesDB: OptimizedDatabase) {
+async function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }, paradoxModulesDB: OptimizedDatabase): Promise<void> {
     // Retrieve the paradoxModules object from the database
     let paradoxModules = paradoxModulesDB.get<{ [key: string]: any }>("paradoxModules");
 
@@ -274,15 +275,16 @@ function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }, par
 
     // If there were any changes, save the updated paradoxModules back to the database
     if (updated) {
-        paradoxModulesDB.set("paradoxModules", paradoxModules);
+        await paradoxModulesDB.set("paradoxModules", paradoxModules);
     }
 }
 
 /**
  * Initializes and updates paradoxModules from the world dynamic property.
  * Starts corresponding modules based on their configured values.
+ * @returns {Promise<void>}
  */
-function initializeParadoxModules() {
+async function initializeParadoxModules(): Promise<void> {
     /**
      * A mapping of outdated keys to their updated versions for `paradoxModules`.
      * This is used to ensure backward compatibility when key names are updated.
@@ -299,7 +301,7 @@ function initializeParadoxModules() {
     };
 
     // Migrate outdated keys first
-    migrateParadoxModulesKeys(keyMigrations, paradoxModulesDB);
+    await migrateParadoxModulesKeys(keyMigrations, paradoxModulesDB);
 
     // Retrieve paradoxModules from the OptimizedDatabase (paradoxModulesDB)
     const paradoxModules = paradoxModulesDB.entries(); // Getting all entries
@@ -405,12 +407,13 @@ function handlePvP() {
 
 /**
  * Initializes paradoxModules and handles lockdown on world load.
+ * @returns {Promise<void>}
  */
-function onWorldInitialize() {
+async function onWorldInitialize(): Promise<void> {
     chatSendSubscription.subscribe(); // Subscribe to chat send events
     initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
     initializeGlobalBanList(); // Ensure the global banned player list is initialized
-    initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
+    await initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
     handleLockDown(); // Handle lockdown if it's active
     handlePvP(); // Handle PvP if it's enabled
     onPlayerSpawn(); // Subscribe to player spawn events
@@ -422,9 +425,9 @@ function onWorldInitialize() {
  * Sets up paradoxModules and handles lockdown when the world initializes.
  */
 export function subscribeToWorldInitialize() {
-    world.afterEvents.worldLoad.subscribe(() => {
+    world.afterEvents.worldLoad.subscribe(async () => {
         initializeSystems();
-        onWorldInitialize();
+        await onWorldInitialize();
     });
 }
 

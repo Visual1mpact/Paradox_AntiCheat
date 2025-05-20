@@ -54,8 +54,9 @@ export const channelCommand: Command = {
      * Executes the channel command.
      * @param {ChatSendBeforeEvent} message - The message object representing the chat event.
      * @param {string[]} args - The command arguments parsed from the chat message.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const playerName = message.sender.name;
         const playerId = message.sender.id; // Get the player's ID
 
@@ -70,9 +71,10 @@ export const channelCommand: Command = {
 
         /**
          * Saves the channels data to the database.
+         * @returns {Promise<void>}
          */
-        function saveChannels(channelName: string, channel: Channel): void {
-            channelsDB.set(channelName, channel);
+        async function saveChannels(channelName: string, channel: Channel): Promise<void> {
+            await channelsDB.set(channelName, channel);
         }
 
         /**
@@ -90,8 +92,9 @@ export const channelCommand: Command = {
         /**
          * Joins a channel if the player is not already in a channel.
          * @param {string} channelName - The name of the channel to join.
+         * @returns {Promise<void>}
          */
-        function joinChannel(channelName: string): void {
+        async function joinChannel(channelName: string): Promise<void> {
             const channels = getChannel(channelName);
             if (channels && channels.Members[playerId]) {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel.`);
@@ -106,7 +109,7 @@ export const channelCommand: Command = {
 
             channel.Members[playerId] = playerName;
             channel.lastActive = Date.now();
-            saveChannels(channelName, channel);
+            await saveChannels(channelName, channel);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have joined channel '${channelName}§7'.`);
 
             // Notify other members of the new player
@@ -122,8 +125,9 @@ export const channelCommand: Command = {
          * Sends an invitation to a player to join a channel.
          * @param {string} channelName - The name of the channel.
          * @param {string} receiverName - The name of the player to invite.
+         * @returns {Promise<void>}
          */
-        function inviteToChannel(channelName: string, receiverName: string): void {
+        async function inviteToChannel(channelName: string, receiverName: string): Promise<void> {
             const receiver = world.getAllPlayers().find((player) => player.name === receiverName);
             if (!receiver) {
                 message.sender.sendMessage(`§o§c[Paradox] Player '${receiverName}§c' not found.`);
@@ -158,8 +162,9 @@ export const channelCommand: Command = {
          * Transfers ownership of a channel to a new player.
          * @param {string} channelName - The name of the channel.
          * @param {string} newOwnerName - The name of the new owner.
+         * @returns {Promise<void>}
          */
-        function transferChannelOwnership(channelName: string, newOwnerName: string): void {
+        async function transferChannelOwnership(channelName: string, newOwnerName: string): Promise<void> {
             const channel = getChannel(channelName);
             if (!channel) {
                 message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
@@ -179,15 +184,16 @@ export const channelCommand: Command = {
 
             channel.Owner = newOwnerName;
             channel.lastActive = Date.now();
-            saveChannels(channelName, channel);
+            await saveChannels(channelName, channel);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ownership of channel '${channelName}§7' transferred to ${newOwnerName}§7.`);
             newOwner.sendMessage(`§2[§7Paradox§2]§o§7 You are now the owner of channel '${channelName}§7'.`);
         }
 
         /**
          * Allows a player to leave a channel.
+         * @returns {Promise<void>}
          */
-        function leaveChannel(): void {
+        async function leaveChannel(): Promise<void> {
             const allChannels = channelsDB.entries() as [string, Channel][];
             const entry = allChannels.find(([, channel]) => channel.Members[playerId]);
 
@@ -214,13 +220,13 @@ export const channelCommand: Command = {
                     }
 
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
-                    saveChannels(channelName, channel);
+                    await saveChannels(channelName, channel);
                 } else {
                     channelsDB.delete(channelName);
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left and deleted empty channel '${channelName}§7'.`);
                 }
             } else {
-                saveChannels(channelName, channel);
+                await saveChannels(channelName, channel);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left channel '${channelName}§7'.`);
 
                 for (const memberId in channel.Members) {
@@ -235,8 +241,9 @@ export const channelCommand: Command = {
         /**
          * Creates a channel if the player is not already in a channel.
          * @param {string} channelName - The name of the channel to create.
+         * @returns {Promise<void>}
          */
-        function createChannel(channelName: string): void {
+        async function createChannel(channelName: string): Promise<void> {
             const channels = channelsDB.entries() as [string, Channel][]; // Explicitly type the entries as [string, Channel][]
             if (channels.some(([, channel]: [string, Channel]) => channel.Members?.[playerId])) {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel. Please leave your current channel before creating a new one.`);
@@ -247,7 +254,7 @@ export const channelCommand: Command = {
             if (channel) {
                 message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
             } else {
-                saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName }, lastActive: Date.now() });
+                await saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName }, lastActive: Date.now() });
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
             }
         }
@@ -266,7 +273,7 @@ export const channelCommand: Command = {
         switch (command) {
             case "create": {
                 if (roomName) {
-                    createChannel(roomName);
+                    await createChannel(roomName);
                 } else {
                     message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room.`);
                 }
@@ -275,7 +282,7 @@ export const channelCommand: Command = {
 
             case "join": {
                 if (roomName) {
-                    joinChannel(roomName);
+                    await joinChannel(roomName);
                 } else {
                     message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room.`);
                 }
@@ -284,7 +291,7 @@ export const channelCommand: Command = {
 
             case "invite": {
                 if (roomName && targetName) {
-                    inviteToChannel(roomName, targetName);
+                    await inviteToChannel(roomName, targetName);
                 } else {
                     message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room and a target player using --target.`);
                 }
@@ -292,13 +299,13 @@ export const channelCommand: Command = {
             }
 
             case "leave": {
-                leaveChannel();
+                await leaveChannel();
                 break;
             }
 
             case "transfer": {
                 if (roomName && targetName) {
-                    transferChannelOwnership(roomName, targetName);
+                    await transferChannelOwnership(roomName, targetName);
                 } else {
                     message.sender.sendMessage(`§o§c[Paradox] Please specify a channel name using --room and a target player using --target.`);
                 }

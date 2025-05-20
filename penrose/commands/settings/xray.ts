@@ -31,8 +31,9 @@ export const xrayCommand: Command = {
      * Executes the Xray detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Get current Xray detection module state from paradoxModulesDB
@@ -40,12 +41,12 @@ export const xrayCommand: Command = {
 
         if (!xrayEnabled) {
             // Enable the Xray detection module
-            paradoxModulesDB.set("xrayDetection_b", true); // Update the state in the database
+            await paradoxModulesDB.set("xrayDetection_b", true); // Update the state in the database
             player.sendMessage(`§2[§7Paradox§2]§o§7 Xray detection has been §aenabled§7.`);
             startXrayDetection(); // Start Xray detection
         } else {
             // Disable the Xray detection module
-            paradoxModulesDB.set("xrayDetection_b", false); // Update the state in the database
+            await paradoxModulesDB.set("xrayDetection_b", false); // Update the state in the database
             player.sendMessage(`§2[§7Paradox§2]§o§7 Xray detection has been §4disabled§7.`);
             stopXrayDetection(); // Stop Xray detection
         }

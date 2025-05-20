@@ -24,15 +24,16 @@ function getBaseName(name: string): string {
 /**
  * Checks if a player's name violates naming conventions and initiates kick or ban actions.
  * @param {Player} player - The player whose name is being validated.
+ * @returns {Promise<void>}
  */
-function checkNamespoof(player: Player) {
+async function checkNamespoof(player: Player): Promise<void> {
     const banRegex = /[^\x00-\x7F]|[/:\\*?"<>]|^\.$|\.$/gu;
     const kickRegex = /^(?![A-Za-z0-9_\s]{3,16}$).*$/g;
     const nameLength = player.name.length;
 
     // Check for invalid name length or banned characters
     if (nameLength < MIN_NAME_LENGTH || nameLength > MAX_NAME_LENGTH || banRegex.test(player.name)) {
-        banPlayer(player, "banned for violating naming rules");
+        await banPlayer(player, "banned for violating naming rules");
     } else if (kickRegex.test(player.name)) {
         kickPlayer(player, "kicked for invalid name format");
     } else {
@@ -68,14 +69,15 @@ function kickPlayer(player: Player, reason: string) {
  * Bans a player, adds them to the banned list, and then kicks them.
  * @param {Player} player - The player to be banned.
  * @param {string} reason - The reason for banning the player.
+ * @returns {Promise<void>}
  */
-function banPlayer(player: Player, reason: string) {
+async function banPlayer(player: Player, reason: string): Promise<void> {
     try {
         const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
 
         if (!bannedPlayers.includes(player.name)) {
             bannedPlayers.push(player.name);
-            banlistDB.set("players", bannedPlayers);
+            await banlistDB.set("players", bannedPlayers);
         }
 
         kickPlayer(player, reason);
@@ -89,9 +91,9 @@ function banPlayer(player: Player, reason: string) {
  */
 export function startNamespoofDetection() {
     if (!playerSpawnSubscription) {
-        playerSpawnSubscription = world.afterEvents.playerSpawn.subscribe((event) => {
+        playerSpawnSubscription = world.afterEvents.playerSpawn.subscribe(async (event) => {
             if (event.initialSpawn) {
-                checkNamespoof(event.player);
+                await checkNamespoof(event.player);
             }
         });
     }

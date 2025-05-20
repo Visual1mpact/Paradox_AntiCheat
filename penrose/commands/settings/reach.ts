@@ -31,9 +31,10 @@ export const hitReachCheckCommand: Command = {
     /**
      * Executes the hit reach detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} _ - The command arguments.
+     * @param {string[]} _ - The command arguments.]
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         const hitReachCheckKey = "hitReachCheck_b";
@@ -43,12 +44,12 @@ export const hitReachCheckCommand: Command = {
 
         if (!hitReachCheckEnabled) {
             // Enable the module
-            paradoxModulesDB.set(hitReachCheckKey, true);
+            await paradoxModulesDB.set(hitReachCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §aenabled§7.`);
             startHitReachCheck();
         } else {
             // Disable the module
-            paradoxModulesDB.set(hitReachCheckKey, false);
+            await paradoxModulesDB.set(hitReachCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §4disabled§7.`);
             stopHitReachCheck();
         }

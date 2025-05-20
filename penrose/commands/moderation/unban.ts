@@ -46,9 +46,9 @@ export const unbanCommand: Command = {
      * Executes the unban command.
      * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments, where the first element should be the player name to unban.
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         // Detect global unban flag
         const global = args.includes("--global") || args.includes("-g");
 
@@ -92,7 +92,7 @@ export const unbanCommand: Command = {
         if (global) {
             world.setDynamicProperty("globalBannedPlayers", JSON.stringify(bannedPlayers));
         } else {
-            banlistDB.set("players", bannedPlayers);
+            await banlistDB.set("players", bannedPlayers);
         }
 
         // Confirm success to the user

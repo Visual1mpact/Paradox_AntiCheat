@@ -74,14 +74,16 @@ function initializeEventHandlers() {
  * - Deletes invalid or corrupted entries.
  * - Removes the original per-name keys after migration.
  * - Sets `_migrationDone` to true to prevent re-execution.
+ *
+ * @returns {Promise<void>}
  */
-function migrateLegacySpoofData() {
+async function migrateLegacySpoofData(): Promise<void> {
     const alreadyMigrated = spoofDB.get<boolean>("_migrationDone");
     if (alreadyMigrated) return;
 
     const data = spoofDB.get<Record<string, TrustedPlayerData>>("players");
     if (!data || typeof data !== "object") {
-        spoofDB.set("_migrationDone", true);
+        await spoofDB.set("_migrationDone", true);
         return;
     }
 
@@ -124,10 +126,10 @@ function migrateLegacySpoofData() {
     }
 
     if (migrated) {
-        spoofDB.set("players", data);
+        await spoofDB.set("players", data);
     }
 
-    spoofDB.set("_migrationDone", true);
+    await spoofDB.set("_migrationDone", true);
 }
 
 /**
@@ -144,9 +146,10 @@ function migrateLegacySpoofData() {
  * Migration from older spoof data formats is handled automatically and only once.
  *
  * @param {Player} player - The player instance that has joined or spawned in the world.
+ * @returns {Promise<void>}
  */
-function handleSpoofCheck(player: Player) {
-    migrateLegacySpoofData(); // runs only once ever
+async function handleSpoofCheck(player: Player): Promise<void> {
+    await migrateLegacySpoofData(); // runs only once ever
 
     const now = Date.now();
     const idKey = player.id;
@@ -179,7 +182,7 @@ function handleSpoofCheck(player: Player) {
             firstSeen: now,
             lastSeen: now,
         };
-        spoofDB.set("players", allPlayers);
+        await spoofDB.set("players", allPlayers);
         return;
     }
 
@@ -198,7 +201,7 @@ function handleSpoofCheck(player: Player) {
             if (!record.spoofAttempts) record.spoofAttempts = [];
             record.spoofAttempts.push({ name, timestamp: now });
 
-            spoofDB.set("players", allPlayers);
+            await spoofDB.set("players", allPlayers);
             player.sendMessage(`§o§c[Paradox] Spoof attempt detected. This name is used by another account.`);
             player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
             return;
@@ -206,21 +209,22 @@ function handleSpoofCheck(player: Player) {
     }
 
     allPlayers[idKey] = existing;
-    spoofDB.set("players", allPlayers);
+    await spoofDB.set("players", allPlayers);
 }
 
 /**
  * Handles player spawn events.
  * This function is triggered when a player spawns in the world.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ * @returns {Promise<void>}
  */
-function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
+async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
 
     if (event.initialSpawn) {
-        checkMemoryAndRenderDistance(event);
+        await checkMemoryAndRenderDistance(event);
         isPlatformBlocked(event);
-        handleBanCheck(event);
+        await handleBanCheck(event);
         handleSecurityClearance(event);
         allowList(event);
 
@@ -249,7 +253,7 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
     }
 
     // They can change their name at any given time so lets check whenever they spawn
-    handleSpoofCheck(player);
+    await handleSpoofCheck(player);
 
     // Check if the player is imprisoned after respawn
     const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
@@ -265,8 +269,9 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
  * Checks the player's memoryTier and maxRenderDistance.
  * If both are undefined, the player will be banned.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ * @returns {Promise<void>}
  */
-function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
+async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
     const playerName = player.name;
 
@@ -284,7 +289,7 @@ function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent) {
     if (maxRenderDistance < 6 || maxRenderDistance > 96) {
         if (!bannedPlayers.includes(playerName)) {
             bannedPlayers.push(playerName);
-            banlistDB.set("players", bannedPlayers);
+            await banlistDB.set("players", bannedPlayers);
         }
         player.runCommand(`kick @s §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
     }
@@ -339,8 +344,9 @@ function isPlatformBlocked(event: PlayerSpawnAfterEvent) {
 /**
  * Checks if a player is banned during their spawn event.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ * @returns {Promise<void>}
  */
-function handleBanCheck(event: PlayerSpawnAfterEvent) {
+async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
     const playerName = player.name;
 
@@ -352,7 +358,7 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
     if (opsecData.host?.id === player.id) {
         if (bannedPlayers.includes(playerName)) {
             const updated = bannedPlayers.filter((name) => name !== playerName);
-            banlistDB.set("players", updated);
+            await banlistDB.set("players", updated);
             player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
         }
         return;
@@ -362,7 +368,7 @@ function handleBanCheck(event: PlayerSpawnAfterEvent) {
     if (bannedPlayers.includes(playerName)) {
         if (whitelistedPlayers.includes(playerName)) {
             const updated = bannedPlayers.filter((name) => name !== playerName);
-            banlistDB.set("players", updated);
+            await banlistDB.set("players", updated);
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
             player.runCommand(`kick @s §o§7\n\nYou are banned. Please contact an admin for more information.`);

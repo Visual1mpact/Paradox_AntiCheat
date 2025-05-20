@@ -55,8 +55,9 @@ export const command: Command = {
      *
      * @param {ChatSendBeforeEvent} message - The event triggered by a player's chat message.
      * @param {string[]} args - The arguments passed to the command.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         // Check if the user provided the required arguments
         if (args.length < 2) {
             message.sender.sendMessage("§o§c[Paradox] Usage: {prefix}command [enable|disable] <commandName1> [commandName2] ...");
@@ -75,7 +76,7 @@ export const command: Command = {
         const invalidCommands: string[] = [];
 
         // Process each command name
-        commandNames.forEach((commandName) => {
+        commandNames.forEach(async (commandName) => {
             // Prevent disabling this command itself
             if (commandName === "command") {
                 message.sender.sendMessage(`§o§c[Paradox] "${commandName}§c" cannot be disabled.`);
@@ -97,7 +98,7 @@ export const command: Command = {
                 }
 
                 // Add the command to the disabled commands database
-                disabledCommandsDB.set(commandName, registeredCommand);
+                await disabledCommandsDB.set(commandName, registeredCommand);
                 disabledCommands.push(commandName);
             } else if (action === "enable") {
                 const checkCommand = disabledCommandsDB.get<Command>(commandName);

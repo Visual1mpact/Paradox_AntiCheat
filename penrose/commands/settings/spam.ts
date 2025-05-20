@@ -29,8 +29,9 @@ export const antispamCommand: Command = {
     /**
      * Executes the antispam command.
      * @param {ChatSendBeforeEvent} message - The message object.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent) => {
+    execute: async (message: ChatSendBeforeEvent): Promise<void> => {
         const player = message.sender;
 
         const spamCheckKey = "spamCheck_b";
@@ -40,11 +41,11 @@ export const antispamCommand: Command = {
 
         if (!antispamEnabled) {
             // Enable anti-spam
-            paradoxModulesDB.set(spamCheckKey, true);
+            await paradoxModulesDB.set(spamCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 AntiSpam has been §aenabled§7.`);
         } else {
             // Disable anti-spam
-            paradoxModulesDB.set(spamCheckKey, false);
+            await paradoxModulesDB.set(spamCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 AntiSpam has been §4disabled§7.`);
         }
     },

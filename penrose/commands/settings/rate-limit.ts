@@ -32,8 +32,9 @@ export const rateLimitCommand: Command = {
      * Executes the rate-limit detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Get rate-limit detection status from the database
@@ -41,19 +42,19 @@ export const rateLimitCommand: Command = {
 
         if (!rateLimitEnabled) {
             // Enable the module
-            paradoxModulesDB.set("rateLimitCheck_b", true);
+            await paradoxModulesDB.set("rateLimitCheck_b", true);
 
             const success = await startPacketHandler(); // Attempt to start the packet handler
             if (success) {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §aenabled§7.`);
             } else {
                 // Revert the database change if enabling failed
-                paradoxModulesDB.set("rateLimitCheck_b", false);
+                await paradoxModulesDB.set("rateLimitCheck_b", false);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection could not be enabled: §c@minecraft/server-net not found§7.`);
             }
         } else {
             // Disable the module
-            paradoxModulesDB.set("rateLimitCheck_b", false);
+            await paradoxModulesDB.set("rateLimitCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §4disabled§7.`);
 
             stopPacketHandler(); // Stop the packet handler

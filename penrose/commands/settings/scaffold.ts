@@ -32,8 +32,9 @@ export const scaffoldCommand: Command = {
      * Executes the scaffold detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         const scaffoldCheckKey = "scaffoldCheck_b";
@@ -43,12 +44,12 @@ export const scaffoldCommand: Command = {
 
         if (!scaffoldCheckEnabled) {
             // Enable the scaffold detection module
-            paradoxModulesDB.set(scaffoldCheckKey, true);
+            await paradoxModulesDB.set(scaffoldCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Scaffold detection has been §aenabled§7.`);
             startScaffoldCheck();
         } else {
             // Disable the scaffold detection module
-            paradoxModulesDB.set(scaffoldCheckKey, false);
+            await paradoxModulesDB.set(scaffoldCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Scaffold detection has been §4disabled§7.`);
             stopScaffoldCheck();
         }

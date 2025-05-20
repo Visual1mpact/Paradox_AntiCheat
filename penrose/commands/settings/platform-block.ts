@@ -101,8 +101,9 @@ export const platformBlockCommand: Command = {
      * Executes the platformBlock command to enable/disable platform-based restrictions or list current restrictions.
      * @param {ChatSendBeforeEvent} message - The chat message triggering the command.
      * @param {string[]} args - The command arguments (e.g., platform and action).
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
 
         const platformBlockSettingsKey = "platformBlock_settings";
@@ -171,7 +172,7 @@ export const platformBlockCommand: Command = {
         }
 
         // Commit the validated platform block settings
-        paradoxModulesDB.set(platformBlockSettingsKey, platformSettings);
+        await paradoxModulesDB.set(platformBlockSettingsKey, platformSettings);
 
         // Notify the player of the change
         const status = blockPlatform ? "blocked" : "allowed";

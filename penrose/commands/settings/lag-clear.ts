@@ -62,8 +62,9 @@ export const lagClearCommand: Command = {
      * Executes the lagclear command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
 
         // Keys for lag clear settings in the database
@@ -117,8 +118,8 @@ export const lagClearCommand: Command = {
             const { hours, minutes, seconds } = getTimeoutValues(args);
 
             // Update the settings and enable lag clear
-            paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
-            paradoxModulesDB.set(lagClearKey, true);
+            await paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
+            await paradoxModulesDB.set(lagClearKey, true);
 
             player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
             startLagClear(hours, minutes, seconds);
@@ -135,14 +136,14 @@ export const lagClearCommand: Command = {
 
             if (!lagClearEnabled) {
                 // Enable LagClear
-                paradoxModulesDB.set(lagClearKey, true);
-                paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
+                await paradoxModulesDB.set(lagClearKey, true);
+                await paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
 
                 player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §aenabled§7.");
                 startLagClear(hours, minutes, seconds);
             } else {
                 // Disable LagClear
-                paradoxModulesDB.set(lagClearKey, false);
+                await paradoxModulesDB.set(lagClearKey, false);
 
                 player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §4disabled§7.");
                 stopLagClear();

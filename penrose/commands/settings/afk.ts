@@ -62,8 +62,9 @@ export const afkCommand: Command = {
      * Executes the AFK command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
 
         // Default values
@@ -116,8 +117,8 @@ export const afkCommand: Command = {
             const { hours, minutes, seconds } = getTimeoutValues(args);
 
             // Update settings and enable the module
-            paradoxModulesDB.set(afkSettingsKey, { hours, minutes, seconds });
-            paradoxModulesDB.set(afkKey, true);
+            await paradoxModulesDB.set(afkSettingsKey, { hours, minutes, seconds });
+            await paradoxModulesDB.set(afkKey, true);
 
             player.sendMessage(`§2[§7Paradox§2]§o§7 AFK timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
 
@@ -134,15 +135,15 @@ export const afkCommand: Command = {
 
             if (!isAFKEnabled) {
                 // Enable AFK module
-                paradoxModulesDB.set(afkKey, true);
-                paradoxModulesDB.set(afkSettingsKey, { hours, minutes, seconds });
+                await paradoxModulesDB.set(afkKey, true);
+                await paradoxModulesDB.set(afkSettingsKey, { hours, minutes, seconds });
                 player.sendMessage("§2[§7Paradox§2]§o§7 AFK module has been §aenabled§7.");
 
                 // Start the AFK checker
                 startAFKChecker(hours, minutes, seconds);
             } else {
                 // Disable AFK module
-                paradoxModulesDB.set(afkKey, false);
+                await paradoxModulesDB.set(afkKey, false);
                 player.sendMessage("§2[§7Paradox§2]§o§7 AFK module has been §4disabled§7.");
 
                 // Stop the AFK checker

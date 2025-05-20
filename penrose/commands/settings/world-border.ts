@@ -119,8 +119,9 @@ export const worldBorderCommand: Command = {
      * Executes the worldborder command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
 
         const modeKeys = {
@@ -164,7 +165,7 @@ export const worldBorderCommand: Command = {
 
         if (args[0] === "--disable" || args[0] === "-d") {
             player.sendMessage(`§2[§7Paradox§2]§o§7 World Border has been §4disabled§7.`);
-            paradoxModulesDB.set(modeKeys.worldBorderCheck, false);
+            await paradoxModulesDB.set(modeKeys.worldBorderCheck, false);
             stopWorldBorderCheck();
             return;
         }
@@ -243,8 +244,8 @@ export const worldBorderCommand: Command = {
                 ].join("\n")
             );
 
-            paradoxModulesDB.set(modeKeys.worldBorderCheck, true);
-            paradoxModulesDB.set(modeKeys.worldBorderSettings, {
+            await paradoxModulesDB.set(modeKeys.worldBorderCheck, true);
+            await paradoxModulesDB.set(modeKeys.worldBorderSettings, {
                 overworld: Math.abs(overworldSize),
                 nether: Math.abs(netherSize),
                 end: Math.abs(endSize),

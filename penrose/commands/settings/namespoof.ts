@@ -32,8 +32,9 @@ export const nameSpoofCommand: Command = {
      * Executes the name-spoof detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Key for name-spoof detection status
@@ -44,12 +45,12 @@ export const nameSpoofCommand: Command = {
 
         if (!nameSpoofEnabled) {
             // Enable the module
-            paradoxModulesDB.set(nameSpoofKey, true);
+            await paradoxModulesDB.set(nameSpoofKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Name-spoof detection has been §aenabled§7.`);
             startNamespoofDetection();
         } else {
             // Disable the module
-            paradoxModulesDB.set(nameSpoofKey, false);
+            await paradoxModulesDB.set(nameSpoofKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Name-spoof detection has been §4disabled§7.`);
             stopNamespoofDetection();
         }

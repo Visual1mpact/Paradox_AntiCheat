@@ -5,8 +5,9 @@ import { banlistDB } from "../event-listeners/world-initialize";
  * Handle the entity hit event to check if the attacker attacked themselves.
  * If so, kick the attacker from the world.
  * @param eventData - The event data containing information about the hit.
+ * @returns {Promise<void>}
  */
-function handleSelfAttack(eventData: EntityHitEntityAfterEvent): void {
+async function handleSelfAttack(eventData: EntityHitEntityAfterEvent): Promise<void> {
     const attacker = eventData.damagingEntity;
     const victim = eventData.hitEntity;
 
@@ -18,7 +19,7 @@ function handleSelfAttack(eventData: EntityHitEntityAfterEvent): void {
             // Safely parse the bannedPlayers
             const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
             bannedPlayers.push(attacker.name);
-            banlistDB.set("players", bannedPlayers);
+            await banlistDB.set("players", bannedPlayers);
             attacker.runCommand(`kick @s §o§7\n\n${reason}`);
         }
     }

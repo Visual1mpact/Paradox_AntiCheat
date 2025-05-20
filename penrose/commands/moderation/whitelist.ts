@@ -53,9 +53,9 @@ export const whitelistCommand: Command = {
      * Executes the whitelist command.
      * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments, where the first element specifies the action and the second (optional) is the player name.
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
 
         const action = args.shift()?.toLowerCase();
@@ -87,7 +87,7 @@ export const whitelistCommand: Command = {
             }
 
             whitelistedPlayers.push(playerName);
-            whitelistDB.set("players", whitelistedPlayers);
+            await whitelistDB.set("players", whitelistedPlayers);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the whitelist.`);
         }
 
@@ -97,7 +97,7 @@ export const whitelistCommand: Command = {
                 return;
             }
 
-            whitelistDB.set(
+            await whitelistDB.set(
                 "players",
                 whitelistedPlayers.filter((p) => p !== playerName)
             );

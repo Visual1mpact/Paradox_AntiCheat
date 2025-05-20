@@ -64,7 +64,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
     /**
      * Handles incoming packets, enforcing rate limits and initiating lockdown if abuse is detected.
      */
-    packetHandlerRef = (data) => {
+    packetHandlerRef = async (data) => {
         const { sender: player } = data;
         const now = Date.now();
         const banned = banlistDB.get<string[]>("players") ?? [];
@@ -112,7 +112,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             // Ban offending player if not already banned
             if (!banned.includes(player.name)) {
                 banned.push(player.name);
-                banlistDB.set("players", banned);
+                await banlistDB.set("players", banned);
             }
 
             // Cleanup per-player tracking

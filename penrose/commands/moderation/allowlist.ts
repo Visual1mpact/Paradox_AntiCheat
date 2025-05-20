@@ -59,9 +59,9 @@ export const allowlistCommand: Command = {
      * Executes the allowlist command.
      * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments, where the first element specifies the action and the second (optional) is the player name.
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const allowlistedPlayers = allowlistDB.get<string[]>("players") ?? [];
 
         const action = args.shift()?.toLowerCase();
@@ -99,7 +99,7 @@ export const allowlistCommand: Command = {
             }
 
             allowlistedPlayers.push(playerName);
-            allowlistDB.set("players", allowlistedPlayers);
+            await allowlistDB.set("players", allowlistedPlayers);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the allowlist.`);
         }
 
@@ -109,7 +109,7 @@ export const allowlistCommand: Command = {
                 return;
             }
 
-            allowlistDB.set(
+            await allowlistDB.set(
                 "players",
                 allowlistedPlayers.filter((p) => p !== playerName)
             );

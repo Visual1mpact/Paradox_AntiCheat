@@ -32,8 +32,9 @@ export const visionCheckCommand: Command = {
      * Executes the vision check command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Key for vision check status
@@ -44,12 +45,12 @@ export const visionCheckCommand: Command = {
 
         if (!visionCheckEnabled) {
             // Enable the module
-            paradoxModulesDB.set(visionCheckKey, true);
+            await paradoxModulesDB.set(visionCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §aenabled§7.`);
             startVisionCheck();
         } else {
             // Disable the module
-            paradoxModulesDB.set(visionCheckKey, false);
+            await paradoxModulesDB.set(visionCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §4disabled§7.`);
             stopVisionCheck();
         }

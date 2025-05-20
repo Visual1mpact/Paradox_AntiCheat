@@ -32,8 +32,9 @@ export const packetMonitorCommand: Command = {
      * Executes the packet monitoring command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Get packet monitoring status from the database
@@ -41,19 +42,19 @@ export const packetMonitorCommand: Command = {
 
         if (!packetMonitorEnabled) {
             // Enable the module
-            paradoxModulesDB.set("packetMonitorCheck_b", true);
+            await paradoxModulesDB.set("packetMonitorCheck_b", true);
 
             const success = await startPacketListener(); // Attempt to start the packet handler
             if (success) {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §aenabled§7.`);
             } else {
                 // Revert the database change if enabling failed
-                paradoxModulesDB.set("packetMonitorCheck_b", false);
+                await paradoxModulesDB.set("packetMonitorCheck_b", false);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring could not be enabled: §c@minecraft/server-net not found§7.`);
             }
         } else {
             // Disable the module
-            paradoxModulesDB.set("packetMonitorCheck_b", false);
+            await paradoxModulesDB.set("packetMonitorCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §4disabled§7.`);
 
             stopPacketListener(); // Stop the packet handler

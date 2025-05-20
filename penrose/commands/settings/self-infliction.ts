@@ -32,8 +32,9 @@ export const selfAttackCheckCommand: Command = {
      * Executes the self-attack detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         const selfAttackCheckKey = "selfAttackCheck_b";
@@ -43,12 +44,12 @@ export const selfAttackCheckCommand: Command = {
 
         if (!selfAttackCheckEnabled) {
             // Enable the module
-            paradoxModulesDB.set(selfAttackCheckKey, true);
+            await paradoxModulesDB.set(selfAttackCheckKey, true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Self-attack detection has been §aenabled§7.`);
             startSelfAttackCheck();
         } else {
             // Disable the module
-            paradoxModulesDB.set(selfAttackCheckKey, false);
+            await paradoxModulesDB.set(selfAttackCheckKey, false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Self-attack detection has been §4disabled§7.`);
             stopSelfAttackCheck();
         }

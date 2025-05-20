@@ -57,8 +57,9 @@ export const gameModeCommand: Command = {
      * Executes the gamemode command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
 
         const modeKeys = {
@@ -150,8 +151,8 @@ export const gameModeCommand: Command = {
             }
         }
 
-        paradoxModulesDB.set(modeKeys.gamemodeCheck, modeStates.gamemodeCheck);
-        paradoxModulesDB.set(modeKeys.settings, {
+        await paradoxModulesDB.set(modeKeys.gamemodeCheck, modeStates.gamemodeCheck);
+        await paradoxModulesDB.set(modeKeys.settings, {
             adventure: modeStates.adventure,
             creative: modeStates.creative,
             survival: modeStates.survival,

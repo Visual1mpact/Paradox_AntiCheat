@@ -48,8 +48,9 @@ export const despawnCommand: Command = {
      * Executes the despawn command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const parameter = args.join(" ").trim().replace(/["@]/g, "");
 
         const filter: EntityQueryOptions = { excludeTypes: ["player"] };
@@ -57,13 +58,13 @@ export const despawnCommand: Command = {
 
         const despawnedEntities = new Map();
 
-        filteredEntities.forEach((entity) => {
+        filteredEntities.forEach(async (entity) => {
             const typeId = entity.typeId.replace("minecraft:", "");
             const isAllRequested = parameter === "all";
 
             if (isAllRequested || typeId === parameter || typeId === parameter.replace("minecraft:", "")) {
                 const count = despawnedEntities.get(typeId) ?? 0;
-                despawnedEntities.set(typeId, count + 1);
+                await despawnedEntities.set(typeId, count + 1);
                 entity.remove();
             }
         });

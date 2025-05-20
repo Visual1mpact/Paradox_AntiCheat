@@ -53,8 +53,9 @@ export const banCommand: Command = {
      * Executes the ban command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         // Initialize or retrieve the banned and whitelisted players lists
         const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
         const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
@@ -129,7 +130,7 @@ export const banCommand: Command = {
         };
 
         // Function to handle banning
-        const banPlayer = (name: string) => {
+        const banPlayer = async (name: string) => {
             // Check if player is online
             const targetPlayer = getPlayerObject(name);
             const playerClearance = targetPlayer ? getPlayerSecurityClearance(name) : undefined;
@@ -142,7 +143,7 @@ export const banCommand: Command = {
             // Add player to banned list
             if (!bannedPlayers.includes(name)) {
                 bannedPlayers.push(name);
-                banlistDB.set("players", bannedPlayers);
+                await banlistDB.set("players", bannedPlayers);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been added to the banned list with reason: ${reason}§7.`);
                 if (!targetPlayer) {
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Note: The ban will be canceled if the player has high security clearance when they join.`);

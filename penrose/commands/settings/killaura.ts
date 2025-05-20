@@ -32,8 +32,9 @@ export const killauraCommand: Command = {
      * Executes the killaura detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
         const player = message.sender;
 
         // Retrieve the current state of the module from paradoxModulesDB
@@ -41,12 +42,12 @@ export const killauraCommand: Command = {
 
         if (!killauraEnabled) {
             // Enable the module
-            paradoxModulesDB.set("killAuraCheck_b", true);
+            await paradoxModulesDB.set("killAuraCheck_b", true);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §aenabled§7.`);
             startKillAuraCheck();
         } else {
             // Disable the module
-            paradoxModulesDB.set("killAuraCheck_b", false);
+            await paradoxModulesDB.set("killAuraCheck_b", false);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §4disabled§7.`);
             stopKillAuraCheck();
         }
