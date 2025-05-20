@@ -6,7 +6,7 @@
     "private": true,
     "type": "module",
     "devDependencies": {
-        "@types/node": "22.15.18",
+        "@types/node": "22.15.19",
         "@types/glob": "8.1.0",
         "@types/fs-extra": "11.0.4",
         "finalhandler": "2.1.0",
@@ -22,19 +22,19 @@
         "7zip-bin": "5.2.0"
     },
     "dependencies": {
-        "@minecraft/server-ui": "2.0.0-beta.1.21.81-stable",
-        "@minecraft/server": "2.0.0-beta.1.21.81-stable",
-        "@minecraft/server-net": "1.0.0-beta.1.21.81-stable",
-        "@minecraft/server-admin": "1.0.0-beta.1.21.81-stable",
+        "@minecraft/server-ui": "2.0.0-beta.1.21.82-stable",
+        "@minecraft/server": "2.0.0-beta.1.21.82-stable",
+        "@minecraft/server-net": "1.0.0-beta.1.21.82-stable",
+        "@minecraft/server-admin": "1.0.0-beta.1.21.82-stable",
         "@minecraft/math": "2.2.4",
         "crypto-es": "2.1.0"
     },
     "overrides": {
         "@minecraft/math": {
-            "@minecraft/server": "2.0.0-beta.1.21.81-stable"
+            "@minecraft/server": "2.0.0-beta.1.21.82-stable"
         },
         "@minecraft/server-ui": {
-            "@minecraft/server": "2.0.0-beta.1.21.81-stable"
+            "@minecraft/server": "2.0.0-beta.1.21.82-stable"
         }
     },
     "prettier": {

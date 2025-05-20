@@ -65,7 +65,7 @@ import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
-import { debugDBCommand } from "../commands/utility/debugDB";
+import { debugDBCommand } from "../commands/utility/debug-db";
 
 type PlayerID = string;
 
