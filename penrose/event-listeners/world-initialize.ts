@@ -90,6 +90,55 @@ let allowlistDB: OptimizedDatabase<AllowlistPlayersSchema>;
 let banlistDB: OptimizedDatabase<BanlistPlayersSchema>;
 let commandHandler: CommandHandler;
 
+// Define all available commands
+const allCommands: Command[] = [
+    opCommand,
+    deopCommand,
+    punishCommand,
+    vanishCommand,
+    prefixCommand,
+    despawnCommand,
+    kickCommand,
+    lockdownCommand,
+    tpaCommand,
+    homeCommand,
+    invseeCommand,
+    opsecCommand,
+    tprCommand,
+    setRankCommand,
+    banCommand,
+    unbanCommand,
+    lagClearCommand,
+    gameModeCommand,
+    worldBorderCommand,
+    flyCheckCommand,
+    afkCommand,
+    antispamCommand,
+    pvpToggleCommand,
+    channelCommand,
+    hitReachCheckCommand,
+    autoClickerCommand,
+    killauraCommand,
+    modulesStatusCommand,
+    scaffoldCommand,
+    imprisonCommand,
+    platformBlockCommand,
+    nameSpoofCommand,
+    pvpCooldownCommand,
+    pvpToggleCooldownCommand,
+    xrayCommand,
+    whitelistCommand,
+    guiCommand,
+    command,
+    selfAttackCheckCommand,
+    rateLimitCommand,
+    packetMonitorCommand,
+    allowlistCommand,
+    visionCheckCommand,
+    spoofLogCommand,
+    debugDBCommand,
+];
+
 /**
  * Initializes and instantiates all necessary systems (databases, command handler, etc.)
  */
@@ -131,55 +180,6 @@ function initializeSystems() {
 
     // Instantiate CommandHandler
     commandHandler = new CommandHandler();
-
-    // Define all available commands
-    const allCommands: Command[] = [
-        opCommand,
-        deopCommand,
-        punishCommand,
-        vanishCommand,
-        prefixCommand,
-        despawnCommand,
-        kickCommand,
-        lockdownCommand,
-        tpaCommand,
-        homeCommand,
-        invseeCommand,
-        opsecCommand,
-        tprCommand,
-        setRankCommand,
-        banCommand,
-        unbanCommand,
-        lagClearCommand,
-        gameModeCommand,
-        worldBorderCommand,
-        flyCheckCommand,
-        afkCommand,
-        antispamCommand,
-        pvpToggleCommand,
-        channelCommand,
-        hitReachCheckCommand,
-        autoClickerCommand,
-        killauraCommand,
-        modulesStatusCommand,
-        scaffoldCommand,
-        imprisonCommand,
-        platformBlockCommand,
-        nameSpoofCommand,
-        pvpCooldownCommand,
-        pvpToggleCooldownCommand,
-        xrayCommand,
-        whitelistCommand,
-        guiCommand,
-        command,
-        selfAttackCheckCommand,
-        rateLimitCommand,
-        packetMonitorCommand,
-        allowlistCommand,
-        visionCheckCommand,
-        spoofLogCommand,
-        debugDBCommand,
-    ];
 
     // Fetch disabled commands from the database and create a Set for faster lookups
     const disabledCommandsSet = new Set(disabledCommandsDB.entries().map((entry) => entry[0]));
@@ -387,4 +387,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB };
