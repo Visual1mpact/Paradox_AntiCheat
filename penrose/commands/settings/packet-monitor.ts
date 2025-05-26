@@ -22,7 +22,6 @@ export const packetMonitorCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/items/repeater.png",
             },
         ],
@@ -38,23 +37,29 @@ export const packetMonitorCommand: Command = {
         const player = message.sender;
 
         // Get packet monitoring status from the database
-        const packetMonitorEnabled = (paradoxModulesDB.get("packetMonitorCheck_b") as boolean) ?? false;
+        const moduleData = paradoxModulesDB.get("packetMonitorCheck_b") ?? {
+            enabled: false,
+        };
+        const packetMonitorEnabled = moduleData?.enabled ?? false;
 
         if (!packetMonitorEnabled) {
             // Enable the module
-            await paradoxModulesDB.set("packetMonitorCheck_b", true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set("packetMonitorCheck_b", moduleData);
 
             const success = await startPacketListener(); // Attempt to start the packet handler
             if (success) {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §aenabled§7.`);
             } else {
                 // Revert the database change if enabling failed
-                await paradoxModulesDB.set("packetMonitorCheck_b", false);
+                moduleData.enabled = false;
+                await paradoxModulesDB.set("packetMonitorCheck_b", moduleData);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring could not be enabled: §c@minecraft/server-net not found§7.`);
             }
         } else {
             // Disable the module
-            await paradoxModulesDB.set("packetMonitorCheck_b", false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set("packetMonitorCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Packet monitoring has been §4disabled§7.`);
 
             stopPacketListener(); // Stop the packet handler

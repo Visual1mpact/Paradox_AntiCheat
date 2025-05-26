@@ -66,6 +66,7 @@ import { onPlayerSpawn } from "./player-spawn";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
+import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema } from "../classes/database/db-types";
 
 type PlayerID = string;
 
@@ -80,13 +81,13 @@ let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 
 // Declare the necessary objects to be exported
-let paradoxModulesDB: OptimizedDatabase;
-let channelsDB: OptimizedDatabase;
-let disabledCommandsDB: OptimizedDatabase;
-let spoofDB: OptimizedDatabase;
-let whitelistDB: OptimizedDatabase;
-let allowlistDB: OptimizedDatabase;
-let banlistDB: OptimizedDatabase;
+let paradoxModulesDB: OptimizedDatabase<ParadoxModulesSchema>;
+let channelsDB: OptimizedDatabase<ChannelsSchema>;
+let disabledCommandsDB: OptimizedDatabase<DisabledCommandsSchema>;
+let spoofDB: OptimizedDatabase<TrustedPlayersSchema>;
+let whitelistDB: OptimizedDatabase<WhitelistPlayersSchema>;
+let allowlistDB: OptimizedDatabase<AllowlistPlayersSchema>;
+let banlistDB: OptimizedDatabase<BanlistPlayersSchema>;
 let commandHandler: CommandHandler;
 
 /**
@@ -245,79 +246,34 @@ function initializeGlobalBanList() {
 }
 
 /**
- * Migrates outdated keys in paradoxModules to their updated versions based on a given mapping.
- * @returns {Promise<void>}
- */
-async function migrateParadoxModulesKeys(migrations: { [oldKey: string]: string }, paradoxModulesDB: OptimizedDatabase): Promise<void> {
-    // Retrieve the paradoxModules object from the database
-    let paradoxModules = paradoxModulesDB.get<{ [key: string]: any }>("paradoxModules");
-
-    // If paradoxModules doesn't exist in the DB, no migration is necessary
-    if (!paradoxModules) {
-        return;
-    }
-
-    let updated = false;
-
-    // Iterate through the migrations to rename old keys
-    for (const [oldKey, newKey] of Object.entries(migrations)) {
-        if (oldKey === newKey) continue;
-
-        if (Object.prototype.hasOwnProperty.call(paradoxModules, oldKey)) {
-            if (!Object.prototype.hasOwnProperty.call(paradoxModules, newKey)) {
-                paradoxModules[newKey] = paradoxModules[oldKey];
-                delete paradoxModules[oldKey];
-                updated = true;
-                console.log(`[Migration] Renamed key "${oldKey}" -> "${newKey}"`);
-            }
-        }
-    }
-
-    // If there were any changes, save the updated paradoxModules back to the database
-    if (updated) {
-        await paradoxModulesDB.set("paradoxModules", paradoxModules);
-    }
-}
-
-/**
  * Initializes and updates paradoxModules from the world dynamic property.
  * Starts corresponding modules based on their configured values.
  * @returns {Promise<void>}
  */
 async function initializeParadoxModules(): Promise<void> {
-    /**
-     * A mapping of outdated keys to their updated versions for `paradoxModules`.
-     * This is used to ensure backward compatibility when key names are updated.
-     *
-     * @example
-     * const keyMigrations = {
-     *     platformBlockSettings: "platformBlock_settings", // Renames platformBlockSettings to platformBlock_settings
-     *     oldSetting1: "newSetting1", // Renames oldSetting1 to newSetting1
-     *     oldSetting2: "newSetting2", // Renames oldSetting2 to newSetting2
-     * };
-     */
-    const keyMigrations = {
-        platformBlockSettings: "platformBlock_settings",
-    };
-
-    // Migrate outdated keys first
-    await migrateParadoxModulesKeys(keyMigrations, paradoxModulesDB);
-
     // Retrieve paradoxModules from the OptimizedDatabase (paradoxModulesDB)
-    const paradoxModules = paradoxModulesDB.entries(); // Getting all entries
+    const paradoxModules = paradoxModulesDB.entries();
 
     // Lookup table for module initialization
-    const moduleActions: { [key: string]: () => void } = {
+    const moduleActions: Record<string, () => void> = {
         lagClearCheck_b: () => {
-            const settings = (paradoxModulesDB.get("lagClear_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 5, seconds: 0 };
-            startLagClear(settings.hours, settings.minutes, settings.seconds);
+            const settings = paradoxModulesDB.get("lagClearCheck_b")?.settings;
+            if (settings && "hours" in settings && "minutes" in settings && "seconds" in settings) {
+                startLagClear(settings.hours, settings.minutes, settings.seconds);
+            } else {
+                startLagClear(0, 5, 0); // fallback
+            }
         },
         gamemodeCheck_b: () => startGameModeCheck(),
         worldBorderCheck_b: () => startWorldBorderCheck(),
         flyCheck_b: () => startFlyCheck(),
         afkCheck_b: () => {
-            const settings = (paradoxModulesDB.get("afk_settings") as { hours: number; minutes: number; seconds: number }) ?? { hours: 0, minutes: 10, seconds: 0 };
-            startAFKChecker(settings.hours, settings.minutes, settings.seconds);
+            const settings = paradoxModulesDB.get("afkCheck_b")?.settings;
+            if (settings && "hours" in settings && "minutes" in settings && "seconds" in settings) {
+                startAFKChecker(settings.hours, settings.minutes, settings.seconds);
+            } else {
+                startAFKChecker(0, 10, 0);
+            }
         },
         hitReachCheck_b: () => startHitReachCheck(),
         autoClickerCheck_b: () => startAutoClicker(),
@@ -331,10 +287,9 @@ async function initializeParadoxModules(): Promise<void> {
         visionCheck_b: () => startVisionCheck(),
     };
 
-    // Iterate over the entries and start corresponding modules if their value is true
     const runModuleInitializers = () => {
         paradoxModules.forEach(([key, value]) => {
-            if (value === true && moduleActions[key]) {
+            if ("enabled" in value && value.enabled && moduleActions[key]) {
                 moduleActions[key]();
             }
         });

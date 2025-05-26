@@ -73,16 +73,22 @@ function kickPlayer(player: Player, reason: string) {
  */
 async function banPlayer(player: Player, reason: string): Promise<void> {
     try {
-        const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
+        const name = player.name;
 
-        if (!bannedPlayers.includes(player.name)) {
-            bannedPlayers.push(player.name);
+        const bannedPlayers = banlistDB.get("players") ?? {};
+
+        if (!(name in bannedPlayers)) {
+            bannedPlayers[name] = {
+                reason,
+                bannedBy: "Server", // You can customize this to track who issued the ban
+                timestamp: Date.now(),
+            };
             await banlistDB.set("players", bannedPlayers);
         }
 
         kickPlayer(player, reason);
     } catch (error) {
-        console.error(`[Paradox] Failed to ban player: ${error}`);
+        console.error(`[Paradox] Failed to ban player '${player.name}': ${error}`);
     }
 }
 

@@ -22,7 +22,6 @@ export const killauraCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/resistance_effect.png",
             },
         ],
@@ -38,16 +37,21 @@ export const killauraCommand: Command = {
         const player = message.sender;
 
         // Retrieve the current state of the module from paradoxModulesDB
-        const killauraEnabled = paradoxModulesDB.get("killAuraCheck_b") ?? false;
+        const moduleData = paradoxModulesDB.get("killAuraCheck_b") ?? {
+            enabled: false,
+        };
+        const killauraEnabled = moduleData?.enabled ?? false;
 
         if (!killauraEnabled) {
             // Enable the module
-            await paradoxModulesDB.set("killAuraCheck_b", true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set("killAuraCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §aenabled§7.`);
             startKillAuraCheck();
         } else {
             // Disable the module
-            await paradoxModulesDB.set("killAuraCheck_b", false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set("killAuraCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Killaura detection has been §4disabled§7.`);
             stopKillAuraCheck();
         }

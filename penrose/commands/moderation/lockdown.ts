@@ -22,10 +22,10 @@ export const lockdownCommand: Command = {
         formType: "ActionFormData",
         title: "Server Lockdown Command",
         description: "Toggle server lockdown for maintenance. Lockdown kicks all non-administrator players and prevents them from rejoining.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Toggle Lockdown",
-                command: undefined,
                 description: "Enable or disable server lockdown.",
                 icon: "textures/ui/icon_lock.png",
             },

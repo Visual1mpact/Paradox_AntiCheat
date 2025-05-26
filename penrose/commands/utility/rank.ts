@@ -34,30 +34,23 @@ export const setRankCommand: Command = {
         actions: [
             {
                 name: "Set Rank",
-                command: undefined,
                 requiredFields: ["PlayerName", "Rank"],
-                crypto: false,
                 generateModalForm: true,
             },
             {
                 name: "Reset Rank",
                 command: ["--reset"],
                 requiredFields: ["PlayerName"],
-                crypto: false,
                 generateModalForm: true,
             },
             {
                 name: "Disable Ranks Globally",
                 command: ["-d"],
-                requiredFields: [],
-                crypto: false,
                 generateModalForm: false,
             },
             {
                 name: "Enable Ranks Globally",
                 command: ["-e"],
-                requiredFields: [],
-                crypto: false,
                 generateModalForm: false,
             },
         ],
@@ -65,14 +58,14 @@ export const setRankCommand: Command = {
             {
                 type: "dropdown",
                 sourceType: "players",
-                name: "Select Player Name:",
+                name: "\nSelect Player Name:",
                 arg: "--target",
                 requiredFields: ["PlayerName"],
             },
             {
                 type: "text",
-                name: "Rank:",
-                placeholder: "Input Rank Here",
+                name: "\nInput Rank Here:",
+                placeholder: "Rank",
                 arg: "--rank",
                 requiredFields: ["Rank"],
             },

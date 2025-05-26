@@ -22,7 +22,6 @@ export const hitReachCheckCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/permissions_visitor_hand.png",
             },
         ],
@@ -40,16 +39,21 @@ export const hitReachCheckCommand: Command = {
         const hitReachCheckKey = "hitReachCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const hitReachCheckEnabled = paradoxModulesDB.get(hitReachCheckKey) ?? false;
+        const moduleData = paradoxModulesDB.get(hitReachCheckKey) ?? {
+            enabled: false,
+        };
+        const hitReachCheckEnabled = moduleData?.enabled ?? false;
 
         if (!hitReachCheckEnabled) {
             // Enable the module
-            await paradoxModulesDB.set(hitReachCheckKey, true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set(hitReachCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §aenabled§7.`);
             startHitReachCheck();
         } else {
             // Disable the module
-            await paradoxModulesDB.set(hitReachCheckKey, false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set(hitReachCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Hit reach detection has been §4disabled§7.`);
             stopHitReachCheck();
         }

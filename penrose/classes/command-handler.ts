@@ -37,7 +37,7 @@ export interface ActionFormButton {
      * This is an array of strings representing the commands.
      * Example: `["startGame"]`, `["openSettings"]`.
      */
-    command: string[];
+    command?: string[];
 
     /**
      * An optional description for additional context about the button's function.

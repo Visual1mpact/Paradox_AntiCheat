@@ -1,14 +1,7 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { channelsDB } from "../../event-listeners/world-initialize";
-
-type PlayerID = string;
-
-interface Channel {
-    Owner: PlayerID;
-    Members: Record<PlayerID, string>;
-    lastActive: number; // store `Date.now()` timestamp
-}
+import { Channel } from "../../classes/database/db-types";
 
 interface Invitation {
     sender: Player;
@@ -45,8 +38,8 @@ export const channelCommand: Command = {
             { name: "Transfer Ownership", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
         ],
         dynamicFields: [
-            { name: "Name of Room:", arg: "--room", type: "text", placeholder: "Enter Channel Name", requiredFields: ["roomName"] },
-            { name: "Select Players Name:", arg: "--target", type: "dropdown", sourceType: "players", requiredFields: ["targetName"] },
+            { name: "\nName of Room:", arg: "--room", type: "text", placeholder: "Enter Channel Name", requiredFields: ["roomName"] },
+            { name: "\nSelect Players Name:", arg: "--target", type: "dropdown", sourceType: "players", requiredFields: ["targetName"] },
         ],
     },
 
@@ -66,7 +59,7 @@ export const channelCommand: Command = {
          * @returns {Channel | undefined} The channel object if found, otherwise undefined.
          */
         function getChannel(channelName: string): Channel | undefined {
-            return channelsDB.get<Channel>(channelName);
+            return channelsDB.get(channelName);
         }
 
         /**
@@ -194,7 +187,7 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function leaveChannel(): Promise<void> {
-            const allChannels = channelsDB.entries() as [string, Channel][];
+            const allChannels = channelsDB.entries();
             const entry = allChannels.find(([, channel]) => channel.Members[playerId]);
 
             if (!entry) {
@@ -220,13 +213,13 @@ export const channelCommand: Command = {
                     }
 
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
-                    await saveChannels(channelName, channel);
+                    await saveChannels(channelName as string, channel);
                 } else {
                     channelsDB.delete(channelName);
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left and deleted empty channel '${channelName}§7'.`);
                 }
             } else {
-                await saveChannels(channelName, channel);
+                await saveChannels(channelName as string, channel);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left channel '${channelName}§7'.`);
 
                 for (const memberId in channel.Members) {
@@ -244,13 +237,13 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function createChannel(channelName: string): Promise<void> {
-            const channels = channelsDB.entries() as [string, Channel][]; // Explicitly type the entries as [string, Channel][]
-            if (channels.some(([, channel]: [string, Channel]) => channel.Members?.[playerId])) {
+            const channels = channelsDB.entries();
+            if (channels.some(([, channel]) => channel.Members?.[playerId])) {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel. Please leave your current channel before creating a new one.`);
                 return;
             }
 
-            const channel = channelsDB.get<Channel>(channelName); // Ensure the type of the channel
+            const channel = channelsDB.get(channelName); // Ensure the type of the channel
             if (channel) {
                 message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
             } else {

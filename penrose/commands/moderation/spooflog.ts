@@ -3,30 +3,6 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { spoofDB } from "../../event-listeners/world-initialize";
 
 /**
- * Data model for a trusted player stored in the spoof detection system.
- */
-interface TrustedPlayerData {
-    /** Unique identifier for the player */
-    id: string;
-    /** List of known usernames used by this player */
-    knownNames: string[];
-    /** Timestamp of when this player was first seen */
-    firstSeen: number;
-    /** Timestamp of when this player was last seen */
-    lastSeen: number;
-    /**
-     * History of spoof attempts made using this player’s identity.
-     * Each entry contains the spoofed name and the time it occurred.
-     */
-    spoofAttempts?: {
-        /** Name used during the spoof attempt */
-        name: string;
-        /** Timestamp of the spoof attempt */
-        timestamp: number;
-    }[];
-}
-
-/**
  * Represents the spooflog command for inspecting or clearing spoofing attempts on players.
  */
 export const spoofLogCommand: Command = {
@@ -41,10 +17,10 @@ export const spoofLogCommand: Command = {
         formType: "ActionFormData",
         title: "Check or Clear Spoof Logs",
         description: "Enter the name of the player to view or clear spoofing attempts, or clear all logs.",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Select Player",
-                command: undefined,
                 description: "Choose a player to view or clear spoof attempts by other imposters.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
@@ -60,14 +36,13 @@ export const spoofLogCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Player Name",
-                arg: undefined,
+                name: "\nPlayer Name",
                 type: "text",
                 placeholder: "Enter player name to lookup",
                 requiredFields: ["playerName"],
             },
             {
-                name: "Clear Spoof Logs",
+                name: "\nClear Spoof Logs",
                 arg: "--clear",
                 type: "toggle",
                 placeholder: "Check this to clear logs",
@@ -91,8 +66,9 @@ export const spoofLogCommand: Command = {
             .replace(/[@"]/g, "")
             .toLowerCase();
 
-        const allRecords = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
+        const spoofData = spoofDB.get("players") ?? {};
 
+        // Clear all logs
         if (args.includes("--clearall")) {
             await spoofDB.set("players", {});
             sender.sendMessage("§o§c[Paradox] All spoof logs have been cleared.");
@@ -100,80 +76,44 @@ export const spoofLogCommand: Command = {
         }
 
         if (!nameQuery) {
-            sender.sendMessage("§o§c[Paradox] Please provide a valid player name to search for.");
+            sender.sendMessage("§o§c[Paradox] Please enter a name or ID to search for.");
             return;
         }
 
-        const clearLogs = args.includes("--clear");
+        const clearRecord = args.includes("--clear");
 
-        // For clearing: exact match only by ID or known name
-        if (clearLogs) {
-            let exactMatchEntry: [string, TrustedPlayerData] | undefined = undefined;
+        // Find matching entry
+        const matched = Object.entries(spoofData).find(([id, record]) => {
+            const nameMatch = record.Name.toLowerCase().includes(nameQuery);
+            const knownMatch = record.knownNames.some((n) => n.toLowerCase().includes(nameQuery));
+            const idMatch = id.toLowerCase().includes(nameQuery);
+            return idMatch || nameMatch || knownMatch;
+        });
 
-            if (allRecords[nameQuery]) {
-                exactMatchEntry = [nameQuery, allRecords[nameQuery]];
-            } else {
-                exactMatchEntry = Object.entries(allRecords).find(([_, record]) => record.knownNames.includes(nameQuery));
-            }
-
-            if (!exactMatchEntry) {
-                sender.sendMessage(`§o§c[Paradox] No exact match found for "${nameQuery}§c". No records were cleared.`);
-                return;
-            }
-
-            const [exactId] = exactMatchEntry;
-            delete allRecords[exactId];
-            await spoofDB.set("players", allRecords);
-            sender.sendMessage(`§o§c[Paradox] Spoof logs for "${nameQuery}§c" (ID: ${exactId}) have been cleared.`);
+        if (!matched) {
+            sender.sendMessage(`§o§c[Paradox] No spoof record found matching "${nameQuery}§c".`);
             return;
         }
 
-        // For viewing: allow partial match by ID or known name
-        const matchingEntries = Object.entries(allRecords).filter(([id, record]) => id.toLowerCase().includes(nameQuery) || record.knownNames.some((name) => name.toLowerCase().includes(nameQuery)));
+        const [matchedId, matchedRecord] = matched;
 
-        if (matchingEntries.length === 0) {
-            sender.sendMessage(`§o§c[Paradox] No records found matching "${nameQuery}§c".`);
+        if (clearRecord) {
+            delete spoofData[matchedId];
+            await spoofDB.set("players", spoofData);
+            sender.sendMessage(`§o§c[Paradox] Record for "${matchedRecord.Name}" (ID: ${matchedId}) has been cleared.`);
             return;
         }
 
-        const formatTimestamp = (ms: number): string => new Date(ms).toISOString();
+        const formatTimestamp = (ms: number): string => new Date(ms).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
 
-        if (matchingEntries.length > 1) {
-            sender.sendMessage(`§eMultiple records found matching "${nameQuery}":`);
-            for (const [id, record] of matchingEntries) {
-                sender.sendMessage(
-                    [
-                        `§7- §fStored ID: §6${id}`,
-                        `  §7Aliases: §f${record.knownNames.join(", ")}`,
-                        `  §7First Seen: §f${formatTimestamp(record.firstSeen)}`,
-                        `  §7Last Seen: §f${formatTimestamp(record.lastSeen)}`,
-                        `  §7Spoof Attempts: §f${record.spoofAttempts?.length ?? 0}`,
-                    ].join("\n")
-                );
-            }
-            sender.sendMessage(`§7Use a more specific name or ID to narrow your query if needed.`);
-            return;
-        }
-
-        const [, matchedRecord] = matchingEntries[0];
-
-        const output: string[] = [
-            `§2[§7Paradox§2] §fSpoof Info for: §6${nameQuery}`,
+        const lines: string[] = [
+            `§2[§7Paradox§2] §fSpoof Info for: §6${matchedRecord.Name}`,
             `§7Known Aliases: §f${matchedRecord.knownNames.join(", ")}`,
             `§7First Seen: §f${formatTimestamp(matchedRecord.firstSeen)}`,
             `§7Last Seen: §f${formatTimestamp(matchedRecord.lastSeen)}`,
-            `§7Stored ID: §f${matchedRecord.id}`,
+            `§7Stored ID: §f${matchedId}`,
         ];
 
-        if (matchedRecord.spoofAttempts?.length) {
-            output.push("§cSpoof Attempts:");
-            matchedRecord.spoofAttempts.forEach((attempt, index) => {
-                output.push(` §c${index + 1}. Name: ${attempt.name}§c, Time: ${formatTimestamp(attempt.timestamp)}`);
-            });
-        } else {
-            output.push("§aNo spoof attempts detected.");
-        }
-
-        sender.sendMessage(output.join("\n"));
+        sender.sendMessage(lines.join("\n"));
     },
 };

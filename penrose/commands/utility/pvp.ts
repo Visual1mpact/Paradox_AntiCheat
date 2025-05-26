@@ -49,8 +49,22 @@ export const pvpToggleCooldownCommand: Command = {
         formType: "ActionFormData",
         title: "PvP Toggle Cooldown",
         description: "Set the cooldown time for toggling PvP in seconds. The cooldown time must be between 10 and 3600 seconds (1 hour).\n\n",
-        actions: [{ name: "Continue", command: undefined, requiredFields: ["ptc"], generateModalForm: true }],
-        dynamicFields: [{ name: "Set Cooldown:", type: "text", arg: undefined, placeholder: "Enter cooldown time", requiredFields: ["ptc"] }],
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Continue",
+                requiredFields: ["ptc"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "\nSet Cooldown:",
+                type: "text",
+                placeholder: "Enter cooldown time",
+                requiredFields: ["ptc"],
+            },
+        ],
     },
 
     /**
@@ -104,8 +118,22 @@ export const pvpCooldownCommand: Command = {
         formType: "ActionFormData",
         title: "PvP Action Cooldown",
         description: "Set the cooldown time for PvP actions. The cooldown time must be between 10 and 3600 seconds (1 hour).\n\n",
-        actions: [{ name: "Continue", command: undefined, requiredFields: ["pac"], generateModalForm: true }],
-        dynamicFields: [{ name: "Set Cooldown:", type: "text", arg: undefined, placeholder: "Enter cooldown time", requiredFields: ["pac"] }],
+        commandOrder: "command-arg",
+        actions: [
+            {
+                name: "Continue",
+                requiredFields: ["pac"],
+                generateModalForm: true,
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "\nSet Cooldown:",
+                type: "text",
+                placeholder: "Enter cooldown time",
+                requiredFields: ["pac"],
+            },
+        ],
     },
 
     /**
@@ -162,9 +190,20 @@ export const pvpToggleCommand: Command = {
         description: "Choose an action to modify or check your PvP settings.\n\n",
         commandOrder: "command-arg",
         actions: [
-            { name: "Toggle Global PvP", command: ["global"], description: "Enable or disable PvP for the entire server.", requiredFields: [], crypto: false },
-            { name: "Check PvP Status", command: ["status"], description: "View the current PvP status for yourself and the server.", requiredFields: [], crypto: false },
-            { name: "Toggle Your PvP", command: undefined, description: "Enable or disable PvP for yourself only.", requiredFields: [], crypto: false },
+            {
+                name: "Toggle Global PvP",
+                command: ["global"],
+                description: "Enable or disable PvP for the entire server.",
+            },
+            {
+                name: "Check PvP Status",
+                command: ["status"],
+                description: "View the current PvP status for yourself and the server.",
+            },
+            {
+                name: "Toggle Your PvP",
+                description: "Enable or disable PvP for yourself only.",
+            },
         ],
     },
 

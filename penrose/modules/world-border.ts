@@ -4,51 +4,35 @@ import { paradoxModulesDB } from "../event-listeners/world-initialize";
 let worldBorderJobId: number | null = null;
 let worldBorderRunId: number | null = null;
 
-interface WorldBorderSettings {
-    overworld: number;
-    nether: number;
-    end: number;
-}
-
 /**
  * Generator function that checks and enforces world borders on players.
  * @yields {void} - Yields after processing each player.
  */
 function* worldBorderGenerator(): Generator<void, void, unknown> {
-    const modeKeys = {
-        worldBorderCheck: "worldBorderCheck_b",
-        worldBorderSettings: "worldBorder_settings",
-    };
+    const module = paradoxModulesDB.get("worldBorderCheck_b");
 
-    const worldBorderEnabled = paradoxModulesDB.get<boolean>(modeKeys.worldBorderCheck) ?? false;
-    const worldBorderSettings = paradoxModulesDB.get<WorldBorderSettings>(modeKeys.worldBorderSettings) ?? {
-        overworld: 0,
-        nether: 0,
-        end: 0,
-    };
+    if (!module?.enabled || !module?.settings) return;
 
-    if (!worldBorderEnabled) {
-        return;
-    }
-
+    const { overworld, nether, end } = module.settings;
     const players = world.getPlayers();
     const spawnLocation = world.getDefaultSpawnLocation();
     const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
 
     for (const player of players) {
-        if (player.isValid && (player.getDynamicProperty("securityClearance") as number) === 4) {
-            continue;
-        }
+        if (!player.isValid) continue;
+        if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
 
         const { x, y, z } = player.location;
+        const dimId = player.dimension.id;
 
-        if (player.dimension.id === "minecraft:overworld" && worldBorderSettings.overworld > 0) {
-            checkAndTeleportPlayer(player, x, y, z, worldBorderSettings.overworld, "Overworld");
-        } else if (player.dimension.id === "minecraft:nether" && worldBorderSettings.nether > 0) {
-            checkAndTeleportPlayer(player, x, y, z, worldBorderSettings.nether, "Nether");
-        } else if (player.dimension.id === "minecraft:the_end" && worldBorderSettings.end > 0) {
-            checkAndTeleportPlayer(player, x, y, z, worldBorderSettings.end, "End");
+        if (dimId === "minecraft:overworld" && overworld > 0) {
+            checkAndTeleportPlayer(player, x, y, z, overworld, "Overworld");
+        } else if (dimId === "minecraft:nether" && nether > 0) {
+            checkAndTeleportPlayer(player, x, y, z, nether, "Nether");
+        } else if (dimId === "minecraft:the_end" && end > 0) {
+            checkAndTeleportPlayer(player, x, y, z, end, "End");
         }
+
         yield;
     }
 }

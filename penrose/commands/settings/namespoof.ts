@@ -22,7 +22,6 @@ export const nameSpoofCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/items/name_tag.png",
             },
         ],
@@ -41,16 +40,21 @@ export const nameSpoofCommand: Command = {
         const nameSpoofKey = "nameSpoofCheck_b";
 
         // Retrieve the current state of the module
-        const nameSpoofEnabled = paradoxModulesDB.get(nameSpoofKey) ?? false;
+        const moduleData = paradoxModulesDB.get(nameSpoofKey) ?? {
+            enabled: false,
+        };
+        const nameSpoofEnabled = moduleData?.enabled ?? false;
 
         if (!nameSpoofEnabled) {
             // Enable the module
-            await paradoxModulesDB.set(nameSpoofKey, true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set(nameSpoofKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Name-spoof detection has been §aenabled§7.`);
             startNamespoofDetection();
         } else {
             // Disable the module
-            await paradoxModulesDB.set(nameSpoofKey, false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set(nameSpoofKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Name-spoof detection has been §4disabled§7.`);
             stopNamespoofDetection();
         }

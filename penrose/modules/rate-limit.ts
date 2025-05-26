@@ -47,7 +47,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
      */
     asyncJoinRef = async (event) => {
         const { name } = event;
-        const banned = banlistDB.get<string[]>("players") ?? [];
+        const bannedPlayers = banlistDB.get("players") ?? {};
         isLockedDown = (world.getDynamicProperty("lockdown_b") as boolean) || false;
 
         if (isLockedDown) {
@@ -55,7 +55,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             return;
         }
 
-        if (banned.includes(name)) {
+        if (name in bannedPlayers) {
             event.disconnect(`§o§c[Paradox] You are banned from this server.`);
             return;
         }
@@ -67,9 +67,8 @@ async function initializePacketHandler(): Promise<boolean | void> {
     packetHandlerRef = async (data) => {
         const { sender: player } = data;
         const now = Date.now();
-        const banned = banlistDB.get<string[]>("players") ?? [];
+        const bannedPlayers = banlistDB.get("players") ?? {};
 
-        // Block unknown or invalid senders
         if (!player || !player.isValid) {
             data.cancel = true;
             return;
@@ -91,13 +90,12 @@ async function initializePacketHandler(): Promise<boolean | void> {
 
             recentViolators.push({ timestamp: now, name: player.name });
 
-            // Prune old entries older than 2 seconds
             const cutoff = now - 2000;
             while (recentViolators.length > 0 && recentViolators[0].timestamp < cutoff) {
                 recentViolators.shift();
             }
 
-            // If enough violators in short time, enter lockdown
+            // Lockdown trigger
             if (!isLockedDown && recentViolators.length >= 3) {
                 isLockedDown = true;
                 world.sendMessage(`§o§c[Paradox] DoS attack detected. Locking down server for 60 seconds.`);
@@ -106,16 +104,19 @@ async function initializePacketHandler(): Promise<boolean | void> {
                     isLockedDown = false;
                     recentViolators.length = 0;
                     world.sendMessage(`§o§a[Paradox] Lockdown lifted. Server is now open.`);
-                }, 1200); // 60 seconds
+                }, 1200);
             }
 
-            // Ban offending player if not already banned
-            if (!banned.includes(player.name)) {
-                banned.push(player.name);
-                await banlistDB.set("players", banned);
+            // Ban the player if not already banned
+            if (!(player.name in bannedPlayers)) {
+                bannedPlayers[player.name] = {
+                    reason: "Rate limit abuse",
+                    bannedBy: "System",
+                    timestamp: now,
+                };
+                await banlistDB.set("players", bannedPlayers);
             }
 
-            // Cleanup per-player tracking
             packetLimits.delete(player);
             startIndices.delete(player);
 
@@ -130,7 +131,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             return;
         }
 
-        // Update tracking
+        // Track packet timing
         packetLimits.set(player, packets);
         startIndices.set(player, startIndex);
     };

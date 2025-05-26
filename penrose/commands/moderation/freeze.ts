@@ -131,10 +131,10 @@ export const imprisonCommand: Command = {
         formType: "ActionFormData",
         title: "Imprison Command",
         description: "Imprison or release a player with moderation-level control.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Imprison / Release Player",
-                command: undefined,
                 description: "Select a player to imprison.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
@@ -143,8 +143,7 @@ export const imprisonCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Target Player:",
-                arg: undefined,
+                name: "\nSelect Target Player:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],

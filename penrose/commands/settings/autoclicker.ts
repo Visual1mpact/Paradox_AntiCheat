@@ -22,7 +22,6 @@ export const autoClickerCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
             },
         ],
@@ -38,18 +37,23 @@ export const autoClickerCommand: Command = {
         const player = message.sender;
 
         // Get auto-clicker detection status from the database
-        const autoClickerEnabled = (paradoxModulesDB.get("autoClickerCheck_b") as boolean) ?? false;
+        const moduleData = paradoxModulesDB.get("autoClickerCheck_b") ?? {
+            enabled: false,
+        };
+        const autoClickerEnabled = moduleData?.enabled ?? false;
 
         if (!autoClickerEnabled) {
             // Enable the module
-            await paradoxModulesDB.set("autoClickerCheck_b", true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set("autoClickerCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Auto-clicker detection has been §aenabled§7.`);
 
             // Start auto-clicker detection
             startAutoClicker();
         } else {
             // Disable the module
-            await paradoxModulesDB.set("autoClickerCheck_b", false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set("autoClickerCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Auto-clicker detection has been §4disabled§7.`);
 
             // Stop auto-clicker detection

@@ -16,10 +16,10 @@ export const opsecCommand: Command = {
         formType: "ActionFormData",
         title: "OpSec Command",
         description: "Change a player's security clearance level.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Change Clearance",
-                command: undefined,
                 description: "Select a player and their new clearance level.",
                 requiredFields: ["playerName", "clearanceLevel"],
                 generateModalForm: true,
@@ -28,15 +28,13 @@ export const opsecCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Target Player:",
-                arg: undefined,
+                name: "\nSelect Target Player:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],
             },
             {
-                name: "Select New Clearance Level:",
-                arg: undefined,
+                name: "\nSelect New Clearance Level:",
                 type: "text",
                 requiredFields: ["clearanceLevel"],
                 placeholder: "Enter value 1 through 3",

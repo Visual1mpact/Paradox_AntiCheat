@@ -1,34 +1,33 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
-import { Command, GuiInstructions, DynamicField, ActionFormButton } from "../../classes/command-handler";
+import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { commandHandler } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import CryptoES from "../../node_modules/crypto-es/lib/index";
 
 /**
- * Represents the GUI opening command.
- * @type {Command}
+ * Command that opens the main GUI for the player, filtered by their security clearance.
  */
 export const guiCommand: Command = {
     name: "gui",
     description: "Opens the main GUI for the player, filtered by their security clearance.",
     usage: "{prefix}gui",
     category: "Utility",
-    examples: [`{prefix}gui`],
+    examples: ["{prefix}gui"],
     securityClearance: 1,
 
     /**
-     * Executes the command to open the main GUI for the player.
-     * @param {ChatSendBeforeEvent} message - The event triggered when the command is executed.
-     * @param {string[]} _ - The command arguments.
+     * Executes the GUI command when invoked by a player.
+     * @param message The chat event that triggered the command.
+     * @param _ Unused arguments.
      */
     execute: (message: ChatSendBeforeEvent, _: string[]) => {
         const player = message.sender;
         const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
 
         /**
-         * Returns the icon path for a given category.
-         * @param {string} category - The category name.
-         * @returns {string} - The resource pack path of the icon for the category.
+         * Returns the texture path for a given category.
+         * @param category The command category name.
+         * @returns The texture path for the category's icon.
          */
         function getCategoryIconPath(category: string): string {
             const icons = {
@@ -36,330 +35,260 @@ export const guiCommand: Command = {
                 Utility: "textures/items/compass_item.png",
                 Modules: "textures/ui/gear.png",
             };
-
-            return icons[category as keyof typeof icons] || ""; // Default icon if category not found
+            return icons[category as keyof typeof icons] || "";
         }
 
         /**
-         * Opens the main GUI for the player, filtering by their security clearance.
-         * @param {Player} player - The player executing the command.
-         * @param {number} playerClearance - The security clearance level of the player.
+         * Displays the main GUI to the player, showing categories they have access to.
+         * @param player The player to show the GUI to.
+         * @param playerClearance The player's security clearance level.
          */
         function openMainGui(player: Player, playerClearance: number) {
-            const commands = commandHandler.getRegisteredCommands().filter((command) => command.name !== "gui"); // Remove guiCommand
-            const categories: { [key: string]: Command[] } = {};
+            const commands = commandHandler.getRegisteredCommands().filter((cmd) => cmd.name !== "gui");
+            const categories: Record<string, Command[]> = {};
 
-            // Categorize commands based on security clearance and category
-            commands.forEach((command) => {
-                const { category, securityClearance } = command;
-                if (securityClearance <= playerClearance) {
-                    if (!categories[category]) {
-                        categories[category] = [];
-                    }
-                    categories[category].push(command);
+            for (const cmd of commands) {
+                if (cmd.securityClearance <= playerClearance) {
+                    categories[cmd.category] ??= [];
+                    categories[cmd.category].push(cmd);
                 }
-            });
+            }
 
-            const accessibleCategories = Object.entries(categories).map(([category, commands]) => ({ category, commands }));
+            const accessibleCategories = Object.entries(categories)
+                .map(([category, cmds]) => ({ category, commands: cmds }))
+                .sort((a, b) => a.category.localeCompare(b.category));
 
             if (accessibleCategories.length === 0) {
                 player.sendMessage("§o§c[Paradox] You do not have access to any commands.");
                 return;
             }
 
-            // Sort categories alphabetically
-            accessibleCategories.sort((a, b) => a.category.localeCompare(b.category));
+            const form = new ActionFormData().title("Main Menu").body("Select a category:");
+            for (const { category } of accessibleCategories) {
+                form.button(category, getCategoryIconPath(category));
+            }
 
-            const actionFormData = new ActionFormData();
-            const mainMenu = actionFormData.title("Main Menu").body("Select a category:");
-
-            // Add buttons for each accessible category in sorted order
-            accessibleCategories.forEach(({ category }) => {
-                // Get the icon path for the category
-                const iconPath = getCategoryIconPath(category);
-                mainMenu.button(category.charAt(0).toUpperCase() + category.slice(1).toLowerCase(), iconPath);
-            });
-
-            mainMenu.show(player).then((response) => {
-                if (!response.canceled) {
-                    const selectedCategory = accessibleCategories[response.selection];
-                    openCategoryMenu(player, selectedCategory.category, selectedCategory.commands);
-                } else if (response.cancelationReason === "UserBusy") {
-                    return openMainGui(player, playerSecurityClearance);
-                }
+            form.show(player).then((res) => {
+                if (res.canceled && res.cancelationReason === "UserBusy") return openMainGui(player, playerClearance);
+                if (!res.canceled) openCategoryMenu(player, accessibleCategories[res.selection].category, accessibleCategories[res.selection].commands);
             });
         }
 
         /**
-         * Opens the command menu for a specific category.
-         * @param {Player} player - The player executing the command.
-         * @param {string} categoryName - The name of the category to display.
-         * @param {Command[]} commands - The list of commands to display in this category.
+         * Displays a submenu of commands for a specific category.
+         * @param player The player to show the GUI to.
+         * @param categoryName The name of the category.
+         * @param commands The list of commands in that category.
          */
         function openCategoryMenu(player: Player, categoryName: string, commands: Command[]) {
-            const actionFormData = new ActionFormData();
-            const form = actionFormData.title(`${categoryName} Commands`).body("Select a command:");
+            const form = new ActionFormData().title(`${categoryName} Commands`).body("Select a command:");
 
-            // Sort commands alphabetically
             commands.sort((a, b) => a.name.localeCompare(b.name));
-
-            // Add buttons for each command in sorted order
-            commands.forEach((command) => {
-                form.button(command.name.charAt(0).toUpperCase() + command.name.slice(1).toLowerCase(), command.icon);
-            });
-
-            // Add "Back" button
+            for (const cmd of commands) form.button(cmd.name, cmd.icon);
             form.button("Back", "textures/ui/back_button_default.png");
 
-            form.show(player).then((response) => {
-                if (!response.canceled) {
-                    const backButtonIndex = commands.length;
-                    if (response.selection === backButtonIndex) {
-                        openMainGui(player, playerSecurityClearance);
-                    } else {
-                        const selectedCommand = commands[response.selection];
-                        buildCommandMenu(selectedCommand, player);
-                    }
-                }
+            form.show(player).then((res) => {
+                if (res.canceled) return;
+                if (res.selection === commands.length) return openMainGui(player, playerSecurityClearance);
+                buildCommandMenu(commands[res.selection], player);
             });
         }
 
         /**
-         * Builds a form menu based on the provided GUI instructions.
-         * @param {Command} command - The command whose instructions will be used to build the form.
-         * @param {Player} player - The player executing the command.
+         * Builds and displays the GUI form for a specific command.
+         * @param command The command object containing GUI instructions.
+         * @param player The player to show the GUI to.
          */
         function buildCommandMenu(command: Command, player: Player) {
-            const { guiInstructions } = command;
+            const gui = command.guiInstructions;
+            if (!gui) return console.error("[Paradox] No GUI instructions found for command.");
 
-            if (!guiInstructions) {
-                console.error("[Paradox] No GUI instructions found for command.");
-                return;
-            }
-
-            const { formType, title, description, actions, dynamicFields, commandOrder } = guiInstructions;
-
-            const requiredFields = (actions?.map((action) => action.requiredFields ?? []) ?? []).flat(); // Safely map and handle undefined actions
-
-            const finalRequiredFields = requiredFields.length > 0 ? requiredFields : [];
+            const { formType, title, description = "", actions = [], dynamicFields = [], commandOrder } = gui;
+            const requiredFields = actions.flatMap((a) => a.requiredFields ?? []);
+            const staticCommands = actions.flatMap((a) => a.command ?? []);
 
             if (formType === "ActionFormData") {
-                showActionForm(actions ?? [], title, description ?? "", player, command, dynamicFields ?? [], commandOrder, guiInstructions);
+                showActionForm(actions, title, description, player, command, dynamicFields, commandOrder);
             } else if (formType === "ModalFormData") {
-                showModalForm(dynamicFields ?? [], title, player, command, [], false, commandOrder, finalRequiredFields);
+                showModalForm(dynamicFields, title, player, command, staticCommands, false, commandOrder, requiredFields);
             }
         }
 
         /**
-         * Displays an ActionFormData form with selectable actions.
-         * @param {Action[]} actions - The list of actions to display.
-         * @param {string} title - The title of the form.
-         * @param {string} description - The description of the form.
-         * @param {Player} player - The player executing the command.
-         * @param {Command} command - The command being executed.
-         * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
-         * @param {string} [commandOrder] - The order of command arguments.
-         * @param {GuiInstructions} [guiInstructions] - The GUI instructions for the form.
+         * Displays an ActionFormData form with a list of command actions.
+         * @param actions List of action buttons to display.
+         * @param title The form title.
+         * @param description The form description.
+         * @param player The player to show the GUI to.
+         * @param command The command to execute on action.
+         * @param dynamicFields The dynamic fields related to this command.
+         * @param commandOrder The order in which command arguments should be concatenated.
          */
-        function showActionForm(actions: ActionFormButton[], title: string, description: string, player: Player, command: Command, dynamicFields: DynamicField[], commandOrder?: string, guiInstructions?: GuiInstructions) {
-            const actionForm = new ActionFormData().title(title).body(description);
+        function showActionForm(actions: ActionFormButton[], title: string, description: string, player: Player, command: Command, dynamicFields: DynamicField[], commandOrder?: string) {
+            const form = new ActionFormData().title(title).body(description);
 
-            actions.forEach((action) => {
-                const formattedName = action.name
-                    .split(" ") // Split the string into words
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
-                    .join(" "); // Join the words back into a single string
-                actionForm.button(formattedName, action.icon);
-            });
+            for (const action of actions) {
+                form.button(action.name, action.icon);
+            }
+            form.button("Back", "textures/ui/back_button_default.png");
 
-            // Add "Back" button
-            actionForm.button("Back", "textures/ui/back_button_default.png");
+            form.show(player)
+                .then((res) => {
+                    if (res.canceled) return;
+                    if (res.selection === actions.length) return openMainGui(player, playerSecurityClearance);
+                    const selectedAction = actions[res.selection];
 
-            actionForm
-                .show(player)
-                .then((response) => {
-                    if (!response.canceled) {
-                        const backButtonIndex = actions.length;
-                        if (response.selection === backButtonIndex) {
-                            openMainGui(player, playerSecurityClearance);
-                        } else {
-                            const selectedAction = actions[response.selection];
-                            if (selectedAction.generateSubActions) {
-                                // Show nested action form for sub-actions
-                                showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description, player, command, dynamicFields, commandOrder, guiInstructions);
-                            } else {
-                                const selectedAction = actions[response.selection];
-                                handleActionSelection(selectedAction, dynamicFields, title, player, command, commandOrder);
-                            }
-                        }
+                    if (selectedAction.generateSubActions && selectedAction.subActions?.length) {
+                        showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description ?? "", player, command, dynamicFields, commandOrder);
+                    } else {
+                        handleActionSelection(selectedAction, dynamicFields, title, player, command, commandOrder);
                     }
                 })
-                .catch((error) => console.error("[Paradox] Error showing action form:", error));
+                .catch(console.error);
         }
 
         /**
-         * Handles the selected action and executes associated commands.
-         * @param {ActionFormButton} action - The selected action to be executed.
-         * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
-         * @param {string} title - The title of the form.
-         * @param {Player} player - The player executing the command.
-         * @param {Command} command - The command being executed.
-         * @param {string} [commandOrder] - The order of command arguments.
+         * Handles the selection of an action button.
+         * @param action The selected action.
+         * @param dynamicFields Dynamic fields related to this action.
+         * @param title The form title.
+         * @param player The player executing the command.
+         * @param command The command associated with the action.
+         * @param commandOrder Order in which to concatenate arguments.
          */
         function handleActionSelection(action: ActionFormButton, dynamicFields: DynamicField[], title: string, player: Player, command: Command, commandOrder?: string) {
-            const { requiredFields, command: commandArray, crypto } = action;
+            const { requiredFields = [], crypto } = action;
 
-            if (action.generateModalForm) {
-                const conditionalFields = dynamicFields.filter((field) => requiredFields.some((requiredField) => field.requiredFields.includes(requiredField)));
-                showModalForm(conditionalFields, title, player, command, commandArray, crypto, commandOrder, requiredFields);
+            if (requiredFields.length > 0) {
+                const fields = dynamicFields.filter((f) => requiredFields.some((rf) => f.requiredFields?.includes(rf)));
+                showModalForm(fields, title, player, command, action.command ?? [], crypto, commandOrder, requiredFields);
             } else {
-                if (!requiredFields || requiredFields.length === 0) {
-                    const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
-                    command.execute(chatSendBeforeEvent, commandArray, crypto ? CryptoES : undefined);
-                }
+                const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
+                const staticCommand = action.command ?? [];
+                command.execute(chatSendBeforeEvent, staticCommand, crypto ? CryptoES : undefined);
             }
         }
 
         /**
-         * Displays a ModalFormData form to collect input from the player.
-         * @param {DynamicField[]} dynamicFields - The dynamic fields for the form.
-         * @param {string} title - The title of the form.
-         * @param {Player} player - The player executing the command.
-         * @param {Command} command - The command being executed.
-         * @param {string[]} commandArray - The list of command arguments.
-         * @param {boolean} [cryptoES] - Flag to indicate encryption is needed.
-         * @param {string} [commandOrder] - The order of command arguments.
-         * @param {string[]} [requiredFields] - Required fields for the form.
+         * Displays a ModalFormData with input fields.
+         * @param fields The list of fields to show.
+         * @param title The title of the form.
+         * @param player The player to show the form to.
+         * @param command The command to execute after input.
+         * @param commandArray Static command parts to include.
+         * @param cryptoES Whether to use CryptoES for the command.
+         * @param commandOrder How to concatenate arguments.
+         * @param requiredFields Required field identifiers.
          */
-        function showModalForm(dynamicFields: DynamicField[], title: string, player: Player, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]) {
-            const modalForm = new ModalFormData().title(title);
+        function showModalForm(fields: DynamicField[], title: string, player: Player, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]) {
+            const form = new ModalFormData().title(title);
 
-            for (const field of dynamicFields) {
-                // Format placeholder if available
-                const formattedPlaceholder = field.placeholder
-                    ? field.placeholder
-                          .split(" ")
-                          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                          .join(" ")
-                    : "";
-
-                // Format name if available
-                const formattedName = field.name
-                    ? field.name
-                          .split(" ")
-                          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                          .join(" ")
-                    : "";
+            for (const field of fields) {
+                const name = field.name || "";
+                const placeholder = field.placeholder || "";
+                const formattedName = name
+                    .split(" ")
+                    .map((w) => w[0].toUpperCase() + w.slice(1))
+                    .join(" ");
+                const formattedPlaceholder = (placeholder ?? "")
+                    .split(" ")
+                    .map((w) => w[0]?.toUpperCase() + w.slice(1))
+                    .join(" ");
 
                 switch (field.type) {
-                    case "text": {
-                        modalForm.textField(formattedName, formattedPlaceholder);
+                    case "text":
+                        form.textField(formattedName, formattedPlaceholder);
                         break;
-                    }
-                    case "dropdown": {
+                    case "dropdown":
                         if (field.sourceType === "players") {
-                            const allPlayers = world.getAllPlayers().map((player) => player.name);
-                            field.options = allPlayers;
-                        } else {
-                            const allEntities = world
-                                .getDimension(player.dimension.id)
-                                .getEntities({ excludeTypes: ["player"] })
-                                .map((entity) => entity.typeId.replace("minecraft:", ""));
-
-                            // Deduplicate entity type IDs
-                            field.options = [...new Set(allEntities)];
+                            field.options = world.getAllPlayers().map((p) => p.name);
+                        } else if (field.sourceType === "entities") {
+                            field.options = [
+                                ...new Set(
+                                    world
+                                        .getDimension(player.dimension.id)
+                                        .getEntities({ excludeTypes: ["player"] })
+                                        .map((e) => e.typeId.replace("minecraft:", ""))
+                                ),
+                            ];
                         }
-                        modalForm.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });
+                        form.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });
                         break;
-                    }
-                    case "toggle": {
-                        modalForm.toggle(formattedName, { defaultValue: false });
+                    case "toggle":
+                        form.toggle(formattedName, { defaultValue: false });
                         break;
-                    }
                 }
             }
 
-            modalForm
-                .show(player)
+            form.show(player)
                 .then((response) => {
-                    if (!response.canceled) {
-                        const args = parseFormResponse(response, dynamicFields, requiredFields);
-                        const commandString = buildCommandString(commandOrder, commandArray, args);
-                        const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
-                        command.execute(chatSendBeforeEvent, commandString, cryptoES ? CryptoES : undefined);
-                    }
+                    if (response.canceled) return;
+                    const args = parseFormResponse(response, fields, requiredFields);
+                    const commandString = buildCommandString(commandOrder, commandArray, args);
+                    const chatSendBeforeEvent = { cancel: false, message: "", sender: player };
+                    command.execute(chatSendBeforeEvent, commandString, cryptoES ? CryptoES : undefined);
                 })
-                .catch((error) => console.error("[Paradox] Error showing modal form:", error));
+                .catch(console.error);
         }
 
         /**
-         * Builds the command string based on the specified command order.
-         * @param {string} commandOrder - The order of command arguments.
-         * @param {string[]} selectedAction - The selected action arguments.
-         * @param {string[]} args - The parsed command arguments.
-         * @returns {string[]} The combined command string.
+         * Combines static and dynamic arguments into the final command string array.
+         * @param order The order in which to merge arguments.
+         * @param staticArgs Arguments that are static and always included.
+         * @param dynamicArgs Arguments generated from user input.
+         * @returns An array of command arguments.
          */
-        function buildCommandString(commandOrder: string | undefined, selectedAction: string[] = [], args: string[] = []): string[] {
-            const splitArgs = (args: string[]): string[] => args.flatMap((arg) => arg.split(" "));
-
-            const splitArgsList = splitArgs(args);
-            return commandOrder === "arg-command" ? [...splitArgsList, ...selectedAction] : [...selectedAction, ...splitArgsList];
+        function buildCommandString(order: string | undefined, staticArgs: string[] = [], dynamicArgs: string[] = []): string[] {
+            const flatten = (arr: string[]) => arr.flatMap((s) => s.trim().split(/\s+/)).filter(Boolean);
+            return order === "arg-command" ? [...flatten(dynamicArgs), ...flatten(staticArgs)] : [...flatten(staticArgs), ...flatten(dynamicArgs)];
         }
 
         /**
-         * Parses user response into command arguments based on `DynamicField` definitions.
-         * @param {ModalFormResponse} response - The response from the modal form.
-         * @param {DynamicField[]} fields - The dynamic fields for the form.
-         * @param {string[]} requiredFields - The required fields for the command.
-         * @returns {string[]} The parsed command arguments.
+         * Parses the form response into an array of command arguments.
+         * @param response The response from the modal form.
+         * @param fields The dynamic fields used in the form.
+         * @param requiredFields List of required field names.
+         * @returns An array of parsed arguments.
          */
         function parseFormResponse(response: ModalFormResponse, fields: DynamicField[], requiredFields: string[] = []): string[] {
             const args: string[] = [];
-            let formIndex = 0;
+            let index = 0;
+            const groupedValues: Record<string, string[]> = {};
 
-            fields.forEach((dynamicField) => {
-                if (!dynamicField.requiredFields || dynamicField.requiredFields.some((field) => requiredFields.includes(field))) {
-                    let value = "";
-                    switch (dynamicField.type) {
-                        case "text": {
-                            value = response.formValues[formIndex++] as string;
-                            if (dynamicField.arg) {
-                                args.push(dynamicField.arg);
-                            }
+            for (const field of fields) {
+                if (!field.requiredFields || field.requiredFields.some((rf) => requiredFields.includes(rf))) {
+                    let value: string = "";
+                    switch (field.type) {
+                        case "text":
+                            value = (response.formValues[index++] as string)?.trim() ?? "0";
                             break;
-                        }
-                        case "dropdown": {
-                            const selectedIndex = response.formValues[formIndex++] as number;
-                            value = dynamicField.options[selectedIndex];
-                            if (dynamicField.arg) {
-                                args.push(dynamicField.arg);
-                            }
+                        case "dropdown":
+                            const selectedIndex = response.formValues[index++] as number;
+                            value = field.options?.[selectedIndex]?.trim() ?? "0";
                             break;
-                        }
-                        case "toggle": {
-                            const toggleValue = response.formValues[formIndex++];
-                            if (dynamicField.arg) {
-                                if (toggleValue === true) {
-                                    args.push(dynamicField.arg);
-                                }
-                            }
-                            return; // Early exit toggle, don't continue below
-                        }
+                        case "toggle":
+                            const toggle = response.formValues[index++] as boolean;
+                            if (field.arg && toggle) args.push(field.arg);
+                            continue;
                     }
 
-                    // Text and Dropdown fields continue here:
-                    if (value) {
-                        args.push(value.trim());
+                    if (field.arg) {
+                        if (!groupedValues[field.arg]) groupedValues[field.arg] = [];
+                        groupedValues[field.arg].push(value || "0");
+                    } else {
+                        args.push(value || "0");
                     }
                 }
-            });
+            }
+
+            for (const [arg, values] of Object.entries(groupedValues)) {
+                args.push(arg, ...values);
+            }
 
             return args;
         }
 
         player.sendMessage("§2[§7Paradox§2]§o§7 Please close your chat window to view the GUI.");
-
-        // Open the main GUI for the player based on clearance level
         system.run(() => openMainGui(player, playerSecurityClearance));
     },
 };

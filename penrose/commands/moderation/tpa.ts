@@ -16,6 +16,7 @@ export const tpaCommand: Command = {
         formType: "ActionFormData",
         title: "Teleport Assistance (TPA)",
         description: "Teleport to a player or assist them in teleporting.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Select Players",
@@ -28,15 +29,13 @@ export const tpaCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Teleport From:",
-                arg: undefined,
+                name: "\nTeleport From:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerSelection"],
             },
             {
-                name: "Teleport To:",
-                arg: undefined,
+                name: "\nTeleport To:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerSelection"],

@@ -22,7 +22,6 @@ export const scaffoldCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/Scaffolding.png",
             },
         ],
@@ -40,16 +39,21 @@ export const scaffoldCommand: Command = {
         const scaffoldCheckKey = "scaffoldCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const scaffoldCheckEnabled = paradoxModulesDB.get(scaffoldCheckKey) ?? false;
+        const moduleData = paradoxModulesDB.get(scaffoldCheckKey) ?? {
+            enabled: false,
+        };
+        const scaffoldCheckEnabled = moduleData?.enabled ?? false;
 
         if (!scaffoldCheckEnabled) {
             // Enable the scaffold detection module
-            await paradoxModulesDB.set(scaffoldCheckKey, true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set(scaffoldCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Scaffold detection has been §aenabled§7.`);
             startScaffoldCheck();
         } else {
             // Disable the scaffold detection module
-            await paradoxModulesDB.set(scaffoldCheckKey, false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set(scaffoldCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Scaffold detection has been §4disabled§7.`);
             stopScaffoldCheck();
         }

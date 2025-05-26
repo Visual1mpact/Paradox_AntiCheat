@@ -15,6 +15,7 @@ export const banCommand: Command = {
         formType: "ActionFormData",
         title: "Ban Player",
         description: "Manage banned players by adding new bans or listing existing ones.\n\n",
+        commandOrder: "arg-command",
         actions: [
             {
                 name: "Ban Player(s)",
@@ -33,14 +34,14 @@ export const banCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Players Name:",
+                name: "\nSelect Players Name:",
                 arg: "--target",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],
             },
             {
-                name: "Reason:",
+                name: "\nReason For Ban:",
                 arg: "--reason",
                 type: "text",
                 placeholder: "Optional reason for banning",
@@ -56,16 +57,18 @@ export const banCommand: Command = {
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
-        // Initialize or retrieve the banned and whitelisted players lists
-        const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
-        const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
+        // Load ban and whitelist records, defaulting to empty objects if not found
+        const bannedPlayers = (banlistDB.get("players") ?? {}) as Record<string, any>;
+        const whitelistedPlayers = (whitelistDB.get("players") ?? {}) as Record<string, any>;
 
-        // Check if the command is for listing banned players
+        // Handle the list command first
         if (args.includes("-l") || args.includes("--list")) {
-            if (bannedPlayers.length > 0) {
+            const names = Object.keys(bannedPlayers);
+            if (names.length > 0) {
                 message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Banned Players:");
-                bannedPlayers.forEach((player) => {
-                    message.sender.sendMessage(` §o§7| [§f${player}§7]`);
+                names.forEach((name) => {
+                    const reason = bannedPlayers[name]?.reason ?? "No reason";
+                    message.sender.sendMessage(` §o§7| [§f${name}§7] - §8${reason}`);
                 });
             } else {
                 message.sender.sendMessage("§2[§7Paradox§2]§o§7 No players are currently banned.");
@@ -73,23 +76,25 @@ export const banCommand: Command = {
             return;
         }
 
-        // Initialize variables for player name and reason
+        // Argument parsing setup
         let playerName = "";
         let reason = "No reason provided.";
 
-        // Define valid flags
         const validFlags = new Set(["-t", "--target", "-r", "--reason"]);
 
-        // Capture multi-word argument helper
-        function captureMultiWordArgument(args: string[]): string {
+        /**
+         * Helper function to parse multi-word arguments after a flag.
+         * Stops collecting words when it encounters another flag.
+         */
+        const captureMultiWordArgument = (args: string[]): string => {
             let result = "";
             while (args.length > 0 && !validFlags.has(args[0])) {
                 result += (result ? " " : "") + args.shift();
             }
             return result.replace(/["@]/g, "");
-        }
+        };
 
-        // Parse the arguments
+        // Parse all flags and their values
         while (args.length > 0) {
             const flag = args.shift();
             switch (flag) {
@@ -100,64 +105,68 @@ export const banCommand: Command = {
                 }
                 case "-r":
                 case "--reason": {
-                    reason = captureMultiWordArgument(args) || "No reason provided.";
+                    reason = captureMultiWordArgument(args);
                     break;
                 }
             }
         }
 
-        // Abort if no player name is provided
+        // Ensure a player name was provided
         if (!playerName) {
             message.sender.sendMessage("§o§c[Paradox] Please provide a player name using the -t or --target flag.");
             return;
         }
 
-        // Abort if the player is whitelisted
-        if (whitelistedPlayers.includes(playerName)) {
+        // Prevent banning players on the whitelist
+        if (whitelistedPlayers[playerName]) {
             message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is whitelisted and cannot be banned.`);
             return;
         }
 
-        // Function to get the player object by name
-        const getPlayerObject = (name: string) => {
-            return world.getAllPlayers().find((playerObject) => playerObject.name === name);
-        };
+        /**
+         * Looks up an online player by name.
+         */
+        const getPlayerObject = (name: string) => world.getAllPlayers().find((p) => p.name === name);
 
-        // Function to get player's security clearance
+        /**
+         * Returns the security clearance level of the player, if known.
+         */
         const getPlayerSecurityClearance = (playerName: string) => {
             const player = getPlayerObject(playerName);
             return player ? (player.getDynamicProperty("securityClearance") as number) : undefined;
         };
 
-        // Function to handle banning
+        /**
+         * Bans the player, stores reason, and optionally kicks if online.
+         */
         const banPlayer = async (name: string) => {
-            // Check if player is online
             const targetPlayer = getPlayerObject(name);
-            const playerClearance = targetPlayer ? getPlayerSecurityClearance(name) : undefined;
+            const clearance = getPlayerSecurityClearance(name);
 
-            if (playerClearance === 4) {
+            if (clearance === 4) {
                 message.sender.sendMessage(`§o§c[Paradox] You cannot ban player "${name}§c" as they have the highest security clearance.`);
                 return;
             }
 
-            // Add player to banned list
-            if (!bannedPlayers.includes(name)) {
-                bannedPlayers.push(name);
+            if (!bannedPlayers[name]) {
+                bannedPlayers[name] = {
+                    reason,
+                    bannedBy: message.sender.name,
+                    timestamp: Date.now(),
+                };
                 await banlistDB.set("players", bannedPlayers);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been added to the banned list with reason: ${reason}§7.`);
-                if (!targetPlayer) {
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Note: The ban will be canceled if the player has high security clearance when they join.`);
-                }
             }
 
             if (targetPlayer) {
-                // If the player is online, tag and kick them
                 targetPlayer.runCommand(`kick @s §o§7\n\n${reason}§7`);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been banned with reason: ${reason}§7`);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been kicked and banned.`);
+            } else {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" will be kicked if found online.`);
             }
         };
 
-        // Proceed to ban the player
+        // Execute the ban
         banPlayer(playerName);
     },
 };

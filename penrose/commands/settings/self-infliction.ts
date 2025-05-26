@@ -22,7 +22,6 @@ export const selfAttackCheckCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/attack_pressed.png",
             },
         ],
@@ -40,16 +39,21 @@ export const selfAttackCheckCommand: Command = {
         const selfAttackCheckKey = "selfAttackCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const selfAttackCheckEnabled = paradoxModulesDB.get(selfAttackCheckKey) ?? false;
+        const moduleData = paradoxModulesDB.get(selfAttackCheckKey) ?? {
+            enabled: false,
+        };
+        const selfAttackCheckEnabled = moduleData?.enabled ?? false;
 
         if (!selfAttackCheckEnabled) {
             // Enable the module
-            await paradoxModulesDB.set(selfAttackCheckKey, true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set(selfAttackCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Self-attack detection has been §aenabled§7.`);
             startSelfAttackCheck();
         } else {
             // Disable the module
-            await paradoxModulesDB.set(selfAttackCheckKey, false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set(selfAttackCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Self-attack detection has been §4disabled§7.`);
             stopSelfAttackCheck();
         }

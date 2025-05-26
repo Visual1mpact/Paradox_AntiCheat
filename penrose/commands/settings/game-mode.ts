@@ -37,7 +37,6 @@ export const gameModeCommand: Command = {
             {
                 name: "Toggle Game Modes",
                 requiredFields: ["toggleGameMode"],
-                command: undefined,
                 generateModalForm: true, // This triggers a modal form with toggles
                 icon: "textures/ui/multiselection.png",
             },
@@ -46,10 +45,10 @@ export const gameModeCommand: Command = {
             { name: "List Current Configurations", command: ["--list"], generateModalForm: false, icon: "textures/ui/icon_sign.png" },
         ],
         dynamicFields: [
-            { name: "Toggle Adventure Mode", arg: "-a", type: "toggle", requiredFields: ["toggleGameMode"] },
-            { name: "Toggle Creative Mode", arg: "-c", type: "toggle", requiredFields: ["toggleGameMode"] },
-            { name: "Toggle Survival Mode", arg: "-s", type: "toggle", requiredFields: ["toggleGameMode"] },
-            { name: "Toggle Spectator Mode", arg: "-sp", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "\nToggle Adventure Mode", arg: "-a", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "\nToggle Creative Mode", arg: "-c", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "\nToggle Survival Mode", arg: "-s", type: "toggle", requiredFields: ["toggleGameMode"] },
+            { name: "\nToggle Spectator Mode", arg: "-sp", type: "toggle", requiredFields: ["toggleGameMode"] },
         ],
     },
 
@@ -62,31 +61,33 @@ export const gameModeCommand: Command = {
     execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
 
-        const modeKeys = {
-            gamemodeCheck: "gamemodeCheck_b",
-            settings: "gamemode_settings",
+        const gamemodeEntry = paradoxModulesDB.get("gamemodeCheck_b") ?? {
+            enabled: true,
+            settings: {
+                adventure: true,
+                creative: true,
+                survival: true,
+                spectator: true,
+            },
         };
-
-        const modeSettings = paradoxModulesDB.get<ModeSettings>(modeKeys.settings);
 
         const modeStates: ModeStates = {
-            adventure: modeSettings?.adventure ?? true,
-            creative: modeSettings?.creative ?? true,
-            survival: modeSettings?.survival ?? true,
-            spectator: modeSettings?.spectator ?? true,
-            gamemodeCheck: paradoxModulesDB.get<boolean>(modeKeys.gamemodeCheck) ?? true,
+            gamemodeCheck: gamemodeEntry.enabled,
+            adventure: gamemodeEntry.settings?.adventure ?? true,
+            creative: gamemodeEntry.settings?.creative ?? true,
+            survival: gamemodeEntry.settings?.survival ?? true,
+            spectator: gamemodeEntry.settings?.spectator ?? true,
         };
 
-        const formatSettingsMessage = (modeStates: ModeStates) => {
-            const lines = [
+        const formatSettingsMessage = (modeStates: ModeStates): string => {
+            return [
                 `§2[§7Paradox§2]§o§7 Current Game Mode Settings:`,
                 `  | Adventure: ${modeStates.adventure ? "§aAllowed§7" : "§2Disallowed§7"}`,
                 `  | Creative: ${modeStates.creative ? "§aAllowed§7" : "§2Disallowed§7"}`,
                 `  | Survival: ${modeStates.survival ? "§aAllowed§7" : "§2Disallowed§7"}`,
                 `  | Spectator: ${modeStates.spectator ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Gamemode Checks: ${modeStates.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}.`,
-            ];
-            return lines.join("\n");
+                `  | Gamemode Checks: ${modeStates.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}`,
+            ].join("\n");
         };
 
         if (args.includes("-l") || args.includes("--list")) {
@@ -96,74 +97,63 @@ export const gameModeCommand: Command = {
 
         let needsInspectionUpdate = false;
 
-        args.forEach((arg) => {
+        for (const arg of args) {
             switch (arg.toLowerCase()) {
-                case "-a": {
+                case "-a":
                     modeStates.adventure = !modeStates.adventure;
                     needsInspectionUpdate = true;
                     break;
-                }
-                case "-c": {
+                case "-c":
                     modeStates.creative = !modeStates.creative;
                     needsInspectionUpdate = true;
                     break;
-                }
-                case "-s": {
+                case "-s":
                     modeStates.survival = !modeStates.survival;
                     needsInspectionUpdate = true;
                     break;
-                }
-                case "-sp": {
+                case "-sp":
                     modeStates.spectator = !modeStates.spectator;
                     needsInspectionUpdate = true;
                     break;
-                }
                 case "-e":
-                case "--enable": {
+                case "--enable":
                     modeStates.gamemodeCheck = true;
                     needsInspectionUpdate = true;
                     break;
-                }
                 case "-d":
-                case "--disable": {
+                case "--disable":
                     modeStates.gamemodeCheck = false;
-                    needsInspectionUpdate = false;
                     break;
-                }
-                default: {
+                default:
                     const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                     player.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§cgamemode help.`);
                     return;
-                }
             }
-        });
+        }
 
         if (modeStates.gamemodeCheck) {
-            // Use keys from ModeStates interface, excluding `gamemodeCheck`
-            const gameModeKeys: (keyof Omit<ModeStates, "gamemodeCheck">)[] = ["adventure", "creative", "survival", "spectator"];
-
-            // Count enabled game modes
-            const enabledModes = gameModeKeys.filter((key) => modeStates[key]).length;
-
-            if (enabledModes === 0) {
+            const enabledModes = ["adventure", "creative", "survival", "spectator"].filter((mode) => modeStates[mode as keyof ModeSettings]);
+            if (enabledModes.length === 0) {
                 player.sendMessage("§o§c[Paradox] You cannot disable all game modes. At least one must remain enabled.");
                 return;
             }
         }
 
-        await paradoxModulesDB.set(modeKeys.gamemodeCheck, modeStates.gamemodeCheck);
-        await paradoxModulesDB.set(modeKeys.settings, {
-            adventure: modeStates.adventure,
-            creative: modeStates.creative,
-            survival: modeStates.survival,
-            spectator: modeStates.spectator,
+        await paradoxModulesDB.set("gamemodeCheck_b", {
+            enabled: modeStates.gamemodeCheck,
+            settings: {
+                adventure: modeStates.adventure,
+                creative: modeStates.creative,
+                survival: modeStates.survival,
+                spectator: modeStates.spectator,
+            },
         });
 
         player.sendMessage(formatSettingsMessage(modeStates));
 
         if (!modeStates.gamemodeCheck) {
             stopGameModeCheck();
-        } else if ((needsInspectionUpdate && modeStates.gamemodeCheck) || modeStates.gamemodeCheck) {
+        } else if (needsInspectionUpdate) {
             startGameModeCheck();
         }
     },

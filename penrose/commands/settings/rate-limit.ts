@@ -22,7 +22,6 @@ export const rateLimitCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
             },
         ],
@@ -38,23 +37,29 @@ export const rateLimitCommand: Command = {
         const player = message.sender;
 
         // Get rate-limit detection status from the database
-        const rateLimitEnabled = (paradoxModulesDB.get("rateLimitCheck_b") as boolean) ?? false;
+        const moduleData = paradoxModulesDB.get("rateLimitCheck_b") ?? {
+            enabled: false,
+        };
+        const rateLimitEnabled = moduleData?.enabled ?? false;
 
         if (!rateLimitEnabled) {
             // Enable the module
-            await paradoxModulesDB.set("rateLimitCheck_b", true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set("rateLimitCheck_b", moduleData);
 
             const success = await startPacketHandler(); // Attempt to start the packet handler
             if (success) {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §aenabled§7.`);
             } else {
                 // Revert the database change if enabling failed
-                await paradoxModulesDB.set("rateLimitCheck_b", false);
+                moduleData.enabled = false;
+                await paradoxModulesDB.set("rateLimitCheck_b", moduleData);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection could not be enabled: §c@minecraft/server-net not found§7.`);
             }
         } else {
             // Disable the module
-            await paradoxModulesDB.set("rateLimitCheck_b", false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set("rateLimitCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Rate-limit detection has been §4disabled§7.`);
 
             stopPacketHandler(); // Stop the packet handler

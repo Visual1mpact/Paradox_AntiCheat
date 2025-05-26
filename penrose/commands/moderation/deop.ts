@@ -27,10 +27,10 @@ export const deopCommand: Command = {
         formType: "ActionFormData",
         title: "Deop Player",
         description: "Remove Paradox-Op permissions from a player.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Select Online Player",
-                command: undefined,
                 description: "Remove permissions from an online player.",
                 requiredFields: ["onlineName"],
                 generateModalForm: true,
@@ -38,7 +38,6 @@ export const deopCommand: Command = {
             },
             {
                 name: "Input Player Name",
-                command: undefined,
                 description: "Manually input the name of a player to remove permissions.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
@@ -47,15 +46,13 @@ export const deopCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Online Player:",
-                arg: undefined,
+                name: "\nSelect Online Player:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["onlineName"],
             },
             {
-                name: "Player Name:",
-                arg: undefined,
+                name: "\nPlayer Name:",
                 type: "text",
                 placeholder: "Enter the player's name",
                 requiredFields: ["playerName"],

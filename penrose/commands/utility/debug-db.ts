@@ -17,7 +17,7 @@ export const debugDBCommand: Command = {
     description: "Displays detailed debug information about the database entries.",
     usage: "{prefix}debugdb",
     examples: ["{prefix}debugdb"],
-    icon: "textures/items/compass_item.png",
+    icon: "textures/ui/infobulb.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Database Debug Info",
@@ -26,13 +26,9 @@ export const debugDBCommand: Command = {
         actions: [
             {
                 name: "View Debug Info",
-                command: [],
-                requiredFields: [],
-                crypto: false,
-                generateModalForm: false,
+                icon: "textures/ui/debug_glyph_color.png",
             },
         ],
-        dynamicFields: [],
     },
     category: "Utility",
     securityClearance: 4,

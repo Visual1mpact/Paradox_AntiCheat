@@ -22,10 +22,10 @@ export const kickCommand: Command = {
         formType: "ActionFormData",
         title: "Kick Command",
         description: "Kick a player from the server with a specified reason.\n\n",
+        commandOrder: "arg-command",
         actions: [
             {
                 name: "Kick Player",
-                command: undefined,
                 description: "Select a player to kick from the server.",
                 requiredFields: ["playerName", "reason"],
                 generateModalForm: true,
@@ -34,14 +34,14 @@ export const kickCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Target Player:",
+                name: "\nSelect Target Player:",
                 arg: "--target",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],
             },
             {
-                name: "Kick Reason:",
+                name: "\nKick Reason:",
                 arg: "--reason",
                 type: "text",
                 placeholder: "Enter reason for kick (optional)",

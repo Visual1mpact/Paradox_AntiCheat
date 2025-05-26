@@ -22,7 +22,6 @@ export const flyCheckCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/items/elytra.png",
             },
         ],
@@ -38,18 +37,23 @@ export const flyCheckCommand: Command = {
         const player = message.sender;
 
         // Get fly detection status from the database
-        const antiflyEnabled = (paradoxModulesDB.get("flyCheck_b") as boolean) ?? false;
+        const moduleData = paradoxModulesDB.get("flyCheck_b") ?? {
+            enabled: false,
+        };
+        const antiflyEnabled = moduleData?.enabled ?? false;
 
         if (!antiflyEnabled) {
             // Enable the module
-            await paradoxModulesDB.set("flyCheck_b", true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set("flyCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Fly detection has been §aenabled§7.`);
 
             // Start fly detection
             startFlyCheck();
         } else {
             // Disable the module
-            await paradoxModulesDB.set("flyCheck_b", false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set("flyCheck_b", moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Fly detection has been §4disabled§7.`);
 
             // Stop fly detection

@@ -16,21 +16,18 @@ export const invseeCommand: Command = {
         formType: "ActionFormData",
         title: "Inventory Viewer",
         description: "View another player's inventory.\n\n",
-        commandOrder: undefined,
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "View Inventory",
-                command: undefined,
                 description: "Displays the inventory of a specified player",
                 requiredFields: ["playerName"],
-                crypto: false,
                 generateModalForm: true,
             },
         ],
         dynamicFields: [
             {
                 name: "Select Players Name:",
-                arg: undefined,
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],

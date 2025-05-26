@@ -22,7 +22,6 @@ export const visionCheckCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/items/spyglass.png",
             },
         ],
@@ -41,16 +40,21 @@ export const visionCheckCommand: Command = {
         const visionCheckKey = "visionCheck_b";
 
         // Retrieve the current state of the module
-        const visionCheckEnabled = paradoxModulesDB.get(visionCheckKey) ?? false;
+        const moduleData = paradoxModulesDB.get(visionCheckKey) ?? {
+            enabled: false,
+        };
+        const visionCheckEnabled = moduleData?.enabled ?? false;
 
         if (!visionCheckEnabled) {
             // Enable the module
-            await paradoxModulesDB.set(visionCheckKey, true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set(visionCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §aenabled§7.`);
             startVisionCheck();
         } else {
             // Disable the module
-            await paradoxModulesDB.set(visionCheckKey, false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set(visionCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §4disabled§7.`);
             stopVisionCheck();
         }

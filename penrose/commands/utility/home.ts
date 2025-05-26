@@ -24,7 +24,7 @@ export const homeCommand: Command = {
             { name: "Teleport to Home", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
             { name: "List Homes", command: ["list"], description: "List all saved home locations", requiredFields: [], crypto: true },
         ],
-        dynamicFields: [{ name: "Name of Home", arg: undefined, type: "text", placeholder: "Enter Home Name:", requiredFields: ["homeName"] }],
+        dynamicFields: [{ name: "\nName of Home:", type: "text", placeholder: "Enter Home Name", requiredFields: ["homeName"] }],
     },
 
     /**

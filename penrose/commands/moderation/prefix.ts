@@ -16,10 +16,10 @@ export const prefixCommand: Command = {
         formType: "ActionFormData",
         title: "Prefix Command",
         description: "Change the command prefix. Max is two characters.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Change Prefix",
-                command: undefined,
                 description: "Select a new prefix for the commands.",
                 requiredFields: ["prefix"],
                 generateModalForm: true,
@@ -28,8 +28,7 @@ export const prefixCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Enter New Prefix:",
-                arg: undefined,
+                name: "\nEnter New Prefix:",
                 type: "text",
                 placeholder: "Enter prefix (max 2 chars)",
                 requiredFields: ["prefix"],

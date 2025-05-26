@@ -20,7 +20,6 @@ export const antispamCommand: Command = {
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/Feedback.png",
             },
         ],
@@ -37,15 +36,20 @@ export const antispamCommand: Command = {
         const spamCheckKey = "spamCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const antispamEnabled = paradoxModulesDB.get(spamCheckKey) ?? false;
+        const moduleData = paradoxModulesDB.get(spamCheckKey) ?? {
+            enabled: false,
+        };
+        const antispamEnabled = moduleData?.enabled ?? false;
 
         if (!antispamEnabled) {
             // Enable anti-spam
-            await paradoxModulesDB.set(spamCheckKey, true);
+            moduleData.enabled = true;
+            await paradoxModulesDB.set(spamCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 AntiSpam has been §aenabled§7.`);
         } else {
             // Disable anti-spam
-            await paradoxModulesDB.set(spamCheckKey, false);
+            moduleData.enabled = false;
+            await paradoxModulesDB.set(spamCheckKey, moduleData);
             player.sendMessage(`§2[§7Paradox§2]§o§7 AntiSpam has been §4disabled§7.`);
         }
     },

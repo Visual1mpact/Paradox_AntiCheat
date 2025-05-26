@@ -119,7 +119,7 @@ export function startVisionCheck(): void {
 
     visionEnabled = true;
     visionCheckInterval = system.runInterval(() => {
-        if (!visionEnabled || paradoxModulesDB.get("visionCheck_b") === false) {
+        if (!visionEnabled || paradoxModulesDB.get("visionCheck_b")?.enabled === false) {
             stopVisionCheck();
             return;
         }

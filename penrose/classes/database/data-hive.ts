@@ -3,32 +3,42 @@ import { system, world } from "@minecraft/server";
 const CHUNK_SIZE = 30000;
 
 /**
- * A modular and efficient database class for managing key-value pairs
- * using dynamic properties in Minecraft Bedrock Edition scripting.
- *
- * Supports large values via chunking and provides useful methods for
- * setting, retrieving, cleaning, and iterating over entries.
+ * Defines a valid structure for database values.
+ * All entries must be plain objects.
  */
-export class OptimizedDatabase {
+export type DatabaseValueObject = Record<string, any>;
+
+/**
+ * A type-safe and efficient database class for storing object-based key-value pairs
+ * using Minecraft Bedrock Edition dynamic properties.
+ *
+ * @typeParam T - A shape of allowed keys and their corresponding object values.
+ *
+ * @example
+ * ```ts
+ * type DBShape = {
+ *   playerStats: { kills: number; deaths: number };
+ *   playerPrefs: { theme: string };
+ * };
+ * const db = new OptimizedDatabase<DBShape>("main");
+ * await db.set("playerStats", { kills: 5, deaths: 2 });
+ * ```
+ */
+export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     public name: string;
     private pointerKey: string;
     private cachedPointers: string[] | null = null;
-    private static instances: OptimizedDatabase[] = [];
+    private static instances: OptimizedDatabase<any>[] = [];
     private static _locks = new Set<string>();
 
     /**
-     * Creates a new instance of the OptimizedDatabase.
-     *
-     * @param name - A unique, non-empty name for the database. Must not contain `"` or `/`.
-     * @throws Will throw an error if the name is empty or contains invalid characters.
-     *
-     * @example
-     * const db = new OptimizedDatabase('myDatabase');
+     * Initializes a new named database instance.
+     * @param name - A unique, non-empty identifier for this database.
+     *               Cannot contain `"` or `/`.
+     * @throws Will throw if the name is invalid.
      */
     constructor(name: string) {
-        if (!name || name.length === 0) {
-            throw new Error("[Paradox] Database name cannot be empty.");
-        }
+        if (!name || name.length === 0) throw new Error("[Paradox] Database name cannot be empty.");
         if (name.includes('"') || name.includes("/")) {
             throw new Error('[Paradox] Database name cannot include the characters `"` or `/`.');
         }
@@ -44,12 +54,10 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Returns all existing instances of OptimizedDatabase.
-     *
-     * @returns An array of all created database instances.
+     * Returns all existing instances of the database.
      */
-    public static getAllInstances(): OptimizedDatabase[] {
-        return OptimizedDatabase.instances;
+    public static getAllInstances(): OptimizedDatabase<any>[] {
+        return this.instances;
     }
 
     /**
@@ -107,16 +115,14 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Stores a value in the database. Large values are automatically chunked.
+     * Sets a key-value pair in the database.
+     * Automatically chunks large values.
      *
-     * @param key - A unique key within the database.
-     * @param value - Any JSON-serializable value to store.
-     *
-     * @example
-     * await db.set("playerStats", { kills: 5, deaths: 2 });
+     * @param key - A key defined in the schema `T`.
+     * @param value - The value to store (must be an object).
      */
-    public async set(key: string, value: any): Promise<void> {
-        const base = `${this.name}/${key}`;
+    public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
+        const base = `${this.name}/${String(key)}`;
         await OptimizedDatabase._withLock(base, async () => {
             const json = JSON.stringify(value);
             const tmpBase = `${base}~tmp`;
@@ -149,17 +155,13 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Retrieves a value from the database by key.
+     * Gets a stored object by its key.
      *
      * @param key - The key to retrieve.
-     * @returns The parsed value, or `undefined` if not found.
-     *
-     * @example
-     * const data = db.get("playerStats");
-     * console.log(data?.kills); // 5
+     * @returns The stored object or `undefined` if not found.
      */
-    public get<T = any>(key: string): T | undefined {
-        const base = `${this.name}/${key}`;
+    public get<K extends keyof T>(key: K): T[K] | undefined {
+        const base = `${this.name}/${String(key)}`;
         const marker = world.getDynamicProperty(base) as string | null;
         const real = marker === "USE_TMP" ? `${base}~tmp` : base;
 
@@ -170,19 +172,16 @@ export class OptimizedDatabase {
             chunks.push(c);
         }
 
-        return chunks.length ? (JSON.parse(chunks.join("")) as T) : undefined;
+        return chunks.length ? (JSON.parse(chunks.join("")) as T[K]) : undefined;
     }
 
     /**
-     * Deletes a key-value pair from the database.
+     * Deletes a key and its value from the database.
      *
      * @param key - The key to delete.
-     *
-     * @example
-     * await db.delete("playerStats");
      */
-    public async delete(key: string): Promise<void> {
-        const base = `${this.name}/${key}`;
+    public async delete<K extends keyof T>(key: K): Promise<void> {
+        const base = `${this.name}/${String(key)}`;
         await OptimizedDatabase._withLock(base, async () => {
             this._deleteChunks(base);
             this._setPointers(this._getPointers().filter((p) => p !== base));
@@ -202,41 +201,24 @@ export class OptimizedDatabase {
     }
 
     /**
-     * Returns all entries in the database as an array of key-value pairs.
+     * Returns all stored key-value pairs.
      *
-     * @returns An array of tuples: `[key, value]`.
-     *
-     * @example
-     * const data = db.entries();
-     * data.forEach(([key, value]) => console.log(key, value));
+     * @returns Array of [key, value] tuples.
      */
-    public entries(): [string, any][] {
+    public entries(): [keyof T, T[keyof T]][] {
         return this._getPointers().map((ptr) => {
-            const key = ptr.split("/").pop()!;
-            const value = this.get(key);
+            const key = ptr.split("/").pop() as keyof T;
+            const value = this.get(key)!;
             return [key, value];
         });
     }
 
     /**
-     * Removes invalid or unwanted entries from the database.
+     * Removes entries with invalid or unwanted data.
      *
-     * By default, deletes entries where the value is:
-     * - `undefined`, `null`, `NaN`
-     * - an empty string, array, or object
-     * - a function or symbol
-     *
-     * You can override this behavior by passing a custom validator function.
-     *
-     * @param validator - Optional function `(key, value) => boolean` to decide which entries to keep.
-     *
-     * @example
-     * db.clean(); // uses default validator
-     *
-     * @example
-     * db.clean((key, value) => typeof value === "number" && value > 0);
+     * @param validator - Optional function to filter valid entries.
      */
-    public clean(validator?: (key: string, value: any) => boolean): void {
+    public clean(validator?: (key: keyof T, value: T[keyof T]) => boolean): void {
         const entries = this.entries();
         let deletedCount = 0;
 
@@ -254,7 +236,7 @@ export class OptimizedDatabase {
             const isValid = validator ? validator(key, value) : defaultValidator(value);
             if (!isValid) {
                 this.delete(key);
-                console.warn(`[${this.name}] Deleted invalid entry "${key}" with value:`, value);
+                console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
                 deletedCount++;
             }
         }

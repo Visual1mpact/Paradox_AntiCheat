@@ -27,10 +27,10 @@ export const punishCommand: Command = {
         formType: "ActionFormData",
         title: "Punish Command",
         description: "Select the punishment actions for the player.\n\n",
+        commandOrder: "arg-command",
         actions: [
             {
                 name: "Select Punishments",
-                command: undefined,
                 description: "Choose the punishment to apply (Inventory, Equipment, Ender Chest).",
                 requiredFields: ["punishmentType"],
                 generateModalForm: true,
@@ -39,26 +39,25 @@ export const punishCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Player Name:",
-                arg: undefined,
+                name: "\nSelect Player Name:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["punishmentType"],
             },
             {
-                name: "Punish Inventory:",
+                name: "\nPunish Inventory:",
                 arg: "--inventory",
                 type: "toggle",
                 requiredFields: ["punishmentType"],
             },
             {
-                name: "Punish Equipment:",
+                name: "\nPunish Equipment:",
                 arg: "--equipment",
                 type: "toggle",
                 requiredFields: ["punishmentType"],
             },
             {
-                name: "Punish Ender Chest:",
+                name: "\nPunish Ender Chest:",
                 arg: "--enderchest",
                 type: "toggle",
                 requiredFields: ["punishmentType"],

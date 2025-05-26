@@ -15,10 +15,10 @@ export const unbanCommand: Command = {
         formType: "ActionFormData",
         title: "Unban Player",
         description: "Unban a player from the local or global ban list.\n\n",
+        commandOrder: "arg-command",
         actions: [
             {
                 name: "Unban a Player",
-                command: undefined,
                 description: "Select a player to unban and specify whether the unban is global.",
                 requiredFields: ["unbanTarget"],
                 generateModalForm: true,
@@ -27,14 +27,13 @@ export const unbanCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Enter Player to Unban:",
-                arg: undefined,
+                name: "\nEnter Player to Unban:",
                 type: "text",
                 placeholder: "Redemption awaits...",
                 requiredFields: ["unbanTarget"],
             },
             {
-                name: "Global Unban (optional):",
+                name: "\nGlobal Unban (optional):",
                 arg: "--global",
                 type: "toggle",
                 requiredFields: ["unbanTarget"],
@@ -49,29 +48,25 @@ export const unbanCommand: Command = {
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
-        // Detect global unban flag
         const global = args.includes("--global") || args.includes("-g");
-
-        // Remove flag from args so only the name remains
         const filteredArgs = args.filter((arg) => !["--global", "-g"].includes(arg));
-
-        // Extract player name and sanitize input
         const playerName = filteredArgs.join(" ").trim().replace(/["@]/g, "");
+
         if (!playerName) {
             message.sender.sendMessage("§o§c[Paradox] Please provide a valid player name.");
             return;
         }
 
-        let bannedPlayers: string[];
+        let bannedPlayers: Record<string, any>;
 
         try {
             if (global) {
-                // Fetch global banned players from dynamic property
+                // Handle global ban list from dynamic property
                 const globalBanStr = world.getDynamicProperty("globalBannedPlayers") as string;
-                bannedPlayers = globalBanStr ? JSON.parse(globalBanStr) : [];
+                const parsed = globalBanStr ? JSON.parse(globalBanStr) : [];
+                bannedPlayers = Object.fromEntries(parsed.map((name: string) => [name, {}])); // Dummy structure
             } else {
-                // Fetch local banned players from banlistDB
-                bannedPlayers = banlistDB.get<string[]>("players") ?? [];
+                bannedPlayers = banlistDB.get("players") ?? {};
             }
         } catch (err) {
             message.sender.sendMessage("§o§c[Paradox] Failed to retrieve the ban list. Please contact an admin.");
@@ -79,23 +74,24 @@ export const unbanCommand: Command = {
             return;
         }
 
-        // If player not found in list, show error
-        if (!bannedPlayers.includes(playerName)) {
+        const playerExists = playerName in bannedPlayers;
+
+        if (!playerExists) {
             message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is not in the ${global ? "global" : "local"} ban list.`);
             return;
         }
 
-        // Remove player from the list
-        bannedPlayers = bannedPlayers.filter((name) => name !== playerName);
+        // Remove the player
+        delete bannedPlayers[playerName];
 
-        // Save the updated list to the appropriate source
         if (global) {
-            world.setDynamicProperty("globalBannedPlayers", JSON.stringify(bannedPlayers));
+            // Save as array again
+            const newList = Object.keys(bannedPlayers);
+            world.setDynamicProperty("globalBannedPlayers", JSON.stringify(newList));
         } else {
             await banlistDB.set("players", bannedPlayers);
         }
 
-        // Confirm success to the user
         message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been unbanned from the ${global ? "global" : "local"} ban list.`);
     },
 };

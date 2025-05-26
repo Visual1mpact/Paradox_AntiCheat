@@ -16,16 +16,15 @@ export const vanishCommand: Command = {
         formType: "ActionFormData",
         title: "Vanish Command",
         description: "Toggle vanish mode for yourself or another player.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Vanish Myself",
-                command: undefined,
                 description: "Enable or disable vanish mode for yourself.",
                 icon: "textures/ui/icon_steve.png",
             },
             {
                 name: "Vanish Player",
-                command: undefined,
                 description: "Enable or disable vanish mode for another player.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
@@ -34,8 +33,7 @@ export const vanishCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select A Player:",
-                arg: undefined,
+                name: "\nSelect A Player:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],

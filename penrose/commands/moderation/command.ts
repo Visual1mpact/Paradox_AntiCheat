@@ -41,8 +41,7 @@ export const command: Command = {
         ],
         dynamicFields: [
             {
-                name: "Commands to Enable / Disable:",
-                arg: undefined,
+                name: "\nCommands to Enable / Disable:",
                 type: "text",
                 placeholder: "Commands (space-separated)",
                 requiredFields: ["commandNames"],
@@ -76,11 +75,11 @@ export const command: Command = {
         const invalidCommands: string[] = [];
 
         // Process each command name
-        commandNames.forEach(async (commandName) => {
+        for (const commandName of commandNames) {
             // Prevent disabling this command itself
             if (commandName === "command") {
-                message.sender.sendMessage(`§o§c[Paradox] "${commandName}§c" cannot be disabled.`);
-                return;
+                message.sender.sendMessage(`§o§c[Paradox] "${commandName}" cannot be disabled.`);
+                continue;
             }
 
             if (action === "disable") {
@@ -88,37 +87,46 @@ export const command: Command = {
                 const registeredCommand = commandHandlerRegistry.find((cmd) => cmd.name === commandName);
                 if (!registeredCommand) {
                     notRegistered.push(commandName);
-                    return;
+                    continue;
                 }
 
                 // Remove the command from the registry
                 const index = commandHandlerRegistry.indexOf(registeredCommand);
-                if (index > -1) {
-                    commandHandlerRegistry.splice(index, 1);
-                }
+                if (index > -1) commandHandlerRegistry.splice(index, 1);
 
-                // Add the command to the disabled commands database
-                await disabledCommandsDB.set(commandName, registeredCommand);
+                // Add the command to the disabled commands database with metadata
+                await disabledCommandsDB.set(commandName, {
+                    disabledBy: message.sender.name,
+                    timestamp: Date.now(),
+                });
+
                 disabledCommands.push(commandName);
             } else if (action === "enable") {
-                const checkCommand = disabledCommandsDB.get<Command>(commandName);
-                // Check if the command is in the disabled commands database
-                if (!checkCommand) {
+                // Check if the command exists in the disabled commands database
+                const disabledMeta = disabledCommandsDB.get(commandName);
+                if (!disabledMeta) {
                     notRegistered.push(commandName);
-                    return;
+                    continue;
                 }
 
-                // Add the command back to the registry
-                commandHandlerRegistry.push(checkCommand);
+                // Attempt to find and re-register the command
+                const commandToRestore = commandHandler.getRegisteredCommands().find((cmd) => cmd.name === commandName);
+                if (!commandToRestore) {
+                    invalidCommands.push(commandName);
+                    continue;
+                }
+
+                commandHandlerRegistry.push(commandToRestore);
 
                 // Remove the command from the disabled commands database
-                disabledCommandsDB.delete(commandName);
+                await disabledCommandsDB.delete(commandName);
+
                 enabledCommands.push(commandName);
             } else {
                 // Handle invalid action input
                 invalidCommands.push(commandName);
             }
-        });
+        }
 
         // Compile all messages into one response, formatted as a tree
         let responseMessage = "§2[§7Paradox§2]§o§7 Command Management Results:\n";
@@ -137,7 +145,7 @@ export const command: Command = {
         const generateTreeBranch = (action: string, items: string[], isLastBranch: boolean = false): void => {
             if (items.length > 0) {
                 // Adjusting tree structure for the last branch
-                const branchPrefix = isLastBranch ? "└──" : "├──"; // Use '└──' for the last branch
+                const branchPrefix = isLastBranch ? "└──" : "├──";
                 responseMessage += `§r   ${branchPrefix} §2[§7${action}§2]§7\n`;
 
                 items.forEach((cmd, index) => {

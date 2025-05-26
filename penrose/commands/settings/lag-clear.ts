@@ -23,36 +23,31 @@ export const lagClearCommand: Command = {
             {
                 name: "Set LagClear Timer",
                 requiredFields: ["lagClearSettings"],
-                command: undefined,
                 generateModalForm: true,
                 icon: "textures/ui/multiselection.png",
             },
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/clock.png",
             },
         ],
         dynamicFields: [
             {
-                name: "Hours",
-                arg: undefined,
+                name: "\nSet Lag Clear Timer (Hours):",
                 type: "text",
-                placeholder: "Set Lag Clear Timer (Hours):",
+                placeholder: "Hours",
                 requiredFields: ["lagClearSettings"],
             },
             {
-                name: "Minutes",
-                arg: undefined,
+                name: "\nSet Lag Clear Timer (Minutes):",
                 type: "text",
-                placeholder: "Set Lag Clear Timer (Minutes):",
+                placeholder: "Minutes",
                 requiredFields: ["lagClearSettings"],
             },
             {
-                name: "Seconds",
-                arg: undefined,
+                name: "\nSet Lag Clear Timer (Seconds):",
                 type: "text",
-                placeholder: "Set Lag Clear Timer (Seconds):",
+                placeholder: "Seconds",
                 requiredFields: ["lagClearSettings"],
             },
         ],
@@ -66,88 +61,73 @@ export const lagClearCommand: Command = {
      */
     execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
-
-        // Keys for lag clear settings in the database
-        const lagClearKey = "lagClearCheck_b";
-        const lagClearSettingsKey = "lagClear_settings";
-
-        // Default values
-        let hours = 0;
-        let minutes = 10; // Default timeout: 10 minutes
-        let seconds = 0;
+        const moduleKey = "lagClearCheck_b";
 
         /**
-         * Safely parses a string into a number, returning a default value if parsing fails.
+         * Parses a string to a number or returns a default fallback.
          *
-         * @param {string | undefined} value - The string value to parse. Can be undefined or invalid.
-         * @param {number} [defaultValue=0] - The default value to return if the input is not a valid number.
-         * @returns {number} The parsed number, or the default value if the input is invalid.
-         *
-         * @example
-         * parseNumber("42"); // Returns 42
-         * parseNumber("abc", 10); // Returns 10
-         * parseNumber(undefined, 5); // Returns 5
+         * @param {string | undefined} value - String value to parse.
+         * @param {number} [fallback=0] - Default value if parsing fails.
+         * @returns {number}
          */
-        const parseNumber = (value: string | undefined, defaultValue: number = 0): number => {
+        const parseNumber = (value: string | undefined, fallback: number = 0): number => {
             const parsed = parseInt(value ?? "", 10);
-            return isNaN(parsed) ? defaultValue : parsed;
+            return isNaN(parsed) ? fallback : parsed;
         };
 
         /**
-         * Determines the timeout values (hours, minutes, seconds) based on input arguments.
-         * Defaults to 10 minutes if all arguments are invalid or undefined.
+         * Resolves the timer from provided args or returns a default 10-minute timer.
          *
-         * @param {string[]} args - The command arguments for hours, minutes, and seconds.
-         * @returns {{ hours: number; minutes: number; seconds: number }} The parsed or defaulted timeout values.
+         * @param {string[]} args - Input arguments.
+         * @returns {{ hours: number, minutes: number, seconds: number }}
          */
-        const getTimeoutValues = (args: string[]): { hours: number; minutes: number; seconds: number } => {
-            const hours = parseNumber(args[0], 0);
-            const minutes = parseNumber(args[1], 0);
-            const seconds = parseNumber(args[2], 0);
+        const getTimeout = (args: string[]) => {
+            const hours = parseNumber(args[0]);
+            const minutes = parseNumber(args[1]);
+            const seconds = parseNumber(args[2]);
 
-            // Default to 10 minutes if all arguments are invalid or undefined
-            if (hours === 0 && minutes === 0 && seconds === 0 && args.every((arg) => isNaN(parseInt(arg ?? "", 10)))) {
-                return { hours: 0, minutes: 10, seconds: 0 };
-            }
-
-            return { hours, minutes, seconds };
+            const allInvalid = hours === 0 && minutes === 0 && seconds === 0 && args.every((a) => isNaN(parseInt(a ?? "", 10)));
+            return allInvalid ? { hours: 0, minutes: 10, seconds: 0 } : { hours, minutes, seconds };
         };
 
+        const moduleData = paradoxModulesDB.get(moduleKey) ?? {
+            enabled: false,
+            settings: { hours: 0, minutes: 10, seconds: 0 },
+        };
+
+        // If arguments are provided: update the timer and enable the module
         if (args.length >= 1 && args.length <= 3) {
-            // Determine the timeout values
-            const { hours, minutes, seconds } = getTimeoutValues(args);
+            const newSettings = getTimeout(args);
 
-            // Update the settings and enable lag clear
-            await paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
-            await paradoxModulesDB.set(lagClearKey, true);
+            await paradoxModulesDB.set(moduleKey, {
+                enabled: true,
+                settings: newSettings,
+            });
 
-            player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer updated to §2[ §sH: §7${hours}§7 §sM: §7${minutes}§7 §sS: §7${seconds}§7 §2]§7.`);
-            startLagClear(hours, minutes, seconds);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 LagClear timer set to §2[ §sH: §7${newSettings.hours} §sM: §7${newSettings.minutes} §sS: §7${newSettings.seconds} §2]§7.`);
+            startLagClear(newSettings.hours, newSettings.minutes, newSettings.seconds);
+            return;
+        }
+
+        // No args: toggle the module on/off
+        if (!moduleData?.enabled) {
+            const settings = moduleData?.settings ?? { hours: 0, minutes: 10, seconds: 0 };
+
+            await paradoxModulesDB.set(moduleKey, {
+                enabled: true,
+                settings,
+            });
+
+            player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §aenabled§7.");
+            startLagClear(settings.hours, settings.minutes, settings.seconds);
         } else {
-            // Retrieve current settings
-            const currentSettings = paradoxModulesDB.get(lagClearSettingsKey) as { hours: number; minutes: number; seconds: number } | null;
-            const lagClearEnabled = paradoxModulesDB.get(lagClearKey) ?? false;
+            await paradoxModulesDB.set(moduleKey, {
+                ...moduleData,
+                enabled: false,
+            });
 
-            if (currentSettings) {
-                hours = currentSettings.hours;
-                minutes = currentSettings.minutes;
-                seconds = currentSettings.seconds;
-            }
-
-            if (!lagClearEnabled) {
-                // Enable LagClear
-                await paradoxModulesDB.set(lagClearKey, true);
-                await paradoxModulesDB.set(lagClearSettingsKey, { hours, minutes, seconds });
-
-                player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §aenabled§7.");
-                startLagClear(hours, minutes, seconds);
-            } else {
-                // Disable LagClear
-                await paradoxModulesDB.set(lagClearKey, false);
-
-                player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §4disabled§7.");
-                stopLagClear();
-            }
+            player.sendMessage("§2[§7Paradox§2]§o§7 LagClear has been §4disabled§7.");
+            stopLagClear();
         }
     },
 };

@@ -1,0 +1,161 @@
+import { Player } from "@minecraft/server";
+
+/**
+ * Represents the unique identifier for a Player (`Player.id`).
+ */
+type PlayerID = Player["id"];
+
+/**
+ * Represents the display name of a Player (`Player.name`).
+ */
+type PlayerName = Player["name"];
+
+// Settings schema for AFK check module (used to configure timer)
+type AFKCheckSettings = {
+    hours: number;
+    minutes: number;
+    seconds: number;
+};
+
+// Settings schema for LagClear check module (used to configure timer)
+type LagClearCheckSettings = {
+    hours: number;
+    minutes: number;
+    seconds: number;
+};
+
+// Settings schema for game mode enforcement
+export type GamemodeCheckSettings = {
+    adventure: boolean;
+    creative: boolean;
+    survival: boolean;
+    spectator: boolean;
+};
+
+// Settings schema for platform block enforcement
+export type PlatformBlockSettings = {
+    console: boolean;
+    desktop: boolean;
+    mobile: boolean;
+};
+
+// Settings schema for world borders in each dimension
+type WorldBorderSettings = {
+    overworld: number;
+    nether: number;
+    end: number;
+};
+
+// Mapping of modules to their expected settings structure
+export type ModuleSettingsMap = {
+    afkCheck_b: AFKCheckSettings;
+    gamemodeCheck_b: GamemodeCheckSettings;
+    autoClickerCheck_b: undefined; // This module has no configurable settings
+    flyCheck_b: undefined; // This module has no configurable settings
+    killAuraCheck_b: undefined; // This module has no configurable settings
+    scaffoldCheck_b: undefined; // This module has no configurable settings
+    nameSpoofCheck_b: undefined; // This module has no configurable settings
+    xrayDetection_b: undefined; // This module has no configurable settings
+    selfAttackCheck_b: undefined; // This module has no configurable settings
+    rateLimitCheck_b: undefined; // This module has no configurable settings
+    packetMonitorCheck_b: undefined; // This module has no configurable settings
+    visionCheck_b: undefined; // This module has no configurable settings
+    lagClearCheck_b: LagClearCheckSettings;
+    platformBlock_b: PlatformBlockSettings;
+    hitReachCheck_b: undefined; // This module has no configurable settings
+    spamCheck_b: undefined; // This module has no configurable settings
+    worldBorderCheck_b: WorldBorderSettings;
+};
+
+/**
+ * Schema for the paradoxModules database.
+ * Each key represents a module and its associated state/configuration.
+ */
+export type ParadoxModulesSchema = {
+    [K in keyof ModuleSettingsMap]: {
+        enabled: boolean;
+        settings?: ModuleSettingsMap[K];
+    };
+};
+
+/**
+ * Schema for the channels database.
+ * Each key is a channel name, mapped to a Channel object.
+ */
+export interface Channel {
+    Owner: PlayerID;
+    Members: Record<PlayerID, string>;
+    lastActive: number;
+}
+
+export type ChannelsSchema = {
+    [channelName: string]: Channel;
+};
+
+/**
+ * Schema for the disabled commands database.
+ * Each key is a command name.
+ */
+export type DisabledCommandsSchema = {
+    [commandName: string]: {
+        disabledBy: PlayerName;
+        timestamp: number;
+    };
+};
+
+/**
+ * Schema for the trusted players database.
+ * Each key is a player ID, mapped to identity tracking info.
+ */
+export type TrustedPlayersSchema = {
+    players: {
+        [playerId: PlayerID]: {
+            Name: PlayerName;
+            knownNames: PlayerName[];
+            firstSeen: number;
+            lastSeen: number;
+            spoofAttempts?: {
+                name: PlayerName;
+                timestamp: number;
+            }[];
+        };
+    };
+};
+
+/**
+ * Schema for the whitelist database.
+ * Each key is a player name, optionally storing their persistent ID.
+ */
+export type WhitelistPlayersSchema = {
+    players: {
+        [playerName: PlayerName]: {
+            ID?: PlayerID;
+        };
+    };
+};
+
+/**
+ * Schema for the allowlist database.
+ * Each key is a player name, optionally storing their persistent ID.
+ */
+export type AllowlistPlayersSchema = {
+    players: {
+        [playerName: PlayerName]: {
+            ID?: PlayerID;
+        };
+    };
+};
+
+/**
+ * Schema for the banlist database.
+ * Each key is a player name, optionally storing their persistent ID.
+ */
+export type BanlistPlayersSchema = {
+    players: {
+        [playerName: PlayerName]: {
+            reason: string;
+            bannedBy: string;
+            timestamp: number;
+        };
+    };
+};

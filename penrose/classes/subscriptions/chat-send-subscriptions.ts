@@ -39,7 +39,7 @@ class ChatSendSubscription {
      * @returns True if spam detection is enabled, false otherwise.
      */
     private isSpamCheckEnabled(): boolean {
-        const paradoxModules = paradoxModulesDB.get("spamCheck_b");
+        const paradoxModules = paradoxModulesDB.get("spamCheck_b")?.enabled;
         return paradoxModules === true;
     }
 
@@ -143,7 +143,7 @@ class ChatSendSubscription {
                 let targetPlayers: Player[];
 
                 if (playerChannel) {
-                    const channelData = channelsDB.get<Channel>(playerChannel);
+                    const channelData = channelsDB.get(playerChannel);
                     if (channelData) {
                         // Update lastActive only once
                         channelData.lastActive = Date.now();

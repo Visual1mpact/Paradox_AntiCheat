@@ -18,10 +18,10 @@ export const xrayCommand: Command = {
         formType: "ActionFormData",
         title: "Xray Detection Settings",
         description: "Enable or disable the Xray detection module to prevent players from using Xray cheats.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
-                command: undefined,
                 icon: "textures/ui/xyz_axis.png",
             },
         ],
@@ -37,16 +37,21 @@ export const xrayCommand: Command = {
         const player = message.sender;
 
         // Get current Xray detection module state from paradoxModulesDB
-        const xrayEnabled = paradoxModulesDB.get("xrayDetection_b") ?? false; // Default to false if not set
+        const moduleData = paradoxModulesDB.get("xrayDetection_b") ?? {
+            enabled: false,
+        };
+        const xrayEnabled = moduleData?.enabled ?? false; // Default to false if not set
 
         if (!xrayEnabled) {
             // Enable the Xray detection module
-            await paradoxModulesDB.set("xrayDetection_b", true); // Update the state in the database
+            moduleData.enabled = true;
+            await paradoxModulesDB.set("xrayDetection_b", moduleData); // Update the state in the database
             player.sendMessage(`§2[§7Paradox§2]§o§7 Xray detection has been §aenabled§7.`);
             startXrayDetection(); // Start Xray detection
         } else {
             // Disable the Xray detection module
-            await paradoxModulesDB.set("xrayDetection_b", false); // Update the state in the database
+            moduleData.enabled = false;
+            await paradoxModulesDB.set("xrayDetection_b", moduleData); // Update the state in the database
             player.sendMessage(`§2[§7Paradox§2]§o§7 Xray detection has been §4disabled§7.`);
             stopXrayDetection(); // Stop Xray detection
         }

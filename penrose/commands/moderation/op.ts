@@ -27,10 +27,10 @@ export const opCommand: Command = {
         formType: "ActionFormData",
         title: "Grant OP Command",
         description: "Grant OP to a player or see who has OP.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Grant OP to Player",
-                command: undefined,
                 description: "Select a player to grant OP status.",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
@@ -45,8 +45,7 @@ export const opCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Target Player:",
-                arg: undefined,
+                name: "\nSelect Target Player:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerName"],

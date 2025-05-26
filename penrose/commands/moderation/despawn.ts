@@ -16,6 +16,7 @@ export const despawnCommand: Command = {
         formType: "ActionFormData",
         title: "Despawn Entities",
         description: "Manage and despawn entities in the world.\n\n",
+        commandOrder: "command-arg",
         actions: [
             {
                 name: "Despawn All Entities",
@@ -25,7 +26,6 @@ export const despawnCommand: Command = {
             },
             {
                 name: "Despawn Specific Entity",
-                command: undefined,
                 description: "Despawn entities of a specified type.",
                 requiredFields: ["entityType"],
                 generateModalForm: true,
@@ -34,11 +34,9 @@ export const despawnCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "Select Entity Type:",
-                arg: undefined,
+                name: "\nSelect Entity Type:",
                 type: "dropdown",
                 sourceType: "entities",
-                placeholder: "e.g., iron_golem, zombie",
                 requiredFields: ["entityType"],
             },
         ],

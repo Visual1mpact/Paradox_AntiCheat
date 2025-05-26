@@ -1,30 +1,7 @@
 import { Player, PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
-
-/**
- * Data model for a trusted player stored in the spoof detection system.
- */
-interface TrustedPlayerData {
-    /** Unique identifier for the player */
-    id: string;
-    /** List of known usernames used by this player */
-    knownNames: string[];
-    /** Timestamp of when this player was first seen */
-    firstSeen: number;
-    /** Timestamp of when this player was last seen */
-    lastSeen: number;
-    /**
-     * History of spoof attempts made using this player’s identity.
-     * Each entry contains the spoofed name and the time it occurred.
-     */
-    spoofAttempts?: {
-        /** Name used during the spoof attempt */
-        name: string;
-        /** Timestamp of the spoof attempt */
-        timestamp: number;
-    }[];
-}
+import { PlatformBlockSettings } from "../classes/database/db-types";
 
 // Define a type for player information
 interface PlayerInfo {
@@ -36,11 +13,6 @@ interface PlayerInfo {
 interface SecurityClearanceData {
     host?: PlayerInfo;
     securityClearanceList: PlayerInfo[];
-}
-
-// Define the type for platform block settings
-interface PlatformBlockSettings {
-    [key: string]: boolean;
 }
 
 /**
@@ -60,124 +32,43 @@ function initializeEventHandlers() {
 }
 
 /**
- * One-time migration function to move legacy spoof protection data to the new format.
- *
- * Legacy format:
- * - Each player record was stored under their name as a top-level key in the database.
- *
- * New format:
- * - All player records are stored under a single "players" key as a dictionary of name-to-data entries.
- *
- * This function:
- * - Skips if `_migrationDone` is set to true.
- * - Converts all valid legacy entries into the new structure.
- * - Deletes invalid or corrupted entries.
- * - Removes the original per-name keys after migration.
- * - Sets `_migrationDone` to true to prevent re-execution.
- *
- * @returns {Promise<void>}
- */
-async function migrateLegacySpoofData(): Promise<void> {
-    const alreadyMigrated = spoofDB.get<boolean>("_migrationDone");
-    if (alreadyMigrated) return;
-
-    const data = spoofDB.get<Record<string, TrustedPlayerData>>("players");
-    if (!data || typeof data !== "object") {
-        await spoofDB.set("_migrationDone", true);
-        return;
-    }
-
-    let migrated = false;
-
-    for (const [key, value] of Object.entries(data)) {
-        const isLegacy = typeof key === "string" && typeof value === "object" && value !== null && typeof value.id === "string" && typeof value.firstSeen === "number";
-
-        if (!isLegacy) continue;
-
-        const legacyName = key;
-        const { id, firstSeen, lastSeen, spoofAttempts } = value;
-        const newKey = id;
-
-        const existing = data[newKey];
-
-        if (existing) {
-            if (!existing.knownNames.includes(legacyName)) {
-                existing.knownNames.push(legacyName);
-            }
-
-            existing.firstSeen = Math.min(existing.firstSeen, firstSeen);
-            existing.lastSeen = Math.max(existing.lastSeen, lastSeen);
-
-            if (Array.isArray(spoofAttempts) && (!Array.isArray(existing.spoofAttempts) || spoofAttempts.length > existing.spoofAttempts.length)) {
-                existing.spoofAttempts = spoofAttempts;
-            }
-        } else {
-            data[newKey] = {
-                id,
-                knownNames: [legacyName],
-                firstSeen,
-                lastSeen,
-                spoofAttempts,
-            };
-        }
-
-        delete data[legacyName];
-        migrated = true;
-    }
-
-    if (migrated) {
-        await spoofDB.set("players", data);
-    }
-
-    await spoofDB.set("_migrationDone", true);
-}
-
-/**
  * Checks and validates the identity of a player joining the world, enforcing consistent name-ID mapping.
- *
- * This function ensures that each player ID is uniquely tied to a set of known names, preventing name spoofing:
- *
- * - If the player's ID is new, it creates a new record and registers their current name.
- * - If the ID exists but the name is new, it is added to the list of known names for that ID.
- * - If another ID has previously used this name, the current player is considered a spoofer and is kicked.
- * - Records that are stale (older than 7 days) or corrupted are automatically purged.
- * - The spoof record is updated with the last seen timestamp and any spoof attempts.
- *
- * Migration from older spoof data formats is handled automatically and only once.
+ * Prevents name spoofing by ensuring ID-to-name mappings are unique and consistent.
  *
  * @param {Player} player - The player instance that has joined or spawned in the world.
  * @returns {Promise<void>}
  */
 async function handleSpoofCheck(player: Player): Promise<void> {
-    await migrateLegacySpoofData(); // runs only once ever
-
     const now = Date.now();
     const idKey = player.id;
     const name = player.name;
     const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000;
 
-    const allPlayers = spoofDB.get<Record<string, TrustedPlayerData>>("players") ?? {};
+    const allPlayers = spoofDB.get("players") ?? {};
     const staleIDs: string[] = [];
     const corruptedIDs: string[] = [];
 
-    // Cleanup pass
+    // Cleanup stale or malformed records
     for (const [storedID, record] of Object.entries(allPlayers)) {
-        if (!record?.id || typeof record.lastSeen !== "number") {
+        if (typeof record !== "object" || typeof record.lastSeen !== "number" || !Array.isArray(record.knownNames)) {
             corruptedIDs.push(storedID);
             continue;
         }
+
         if (now - record.lastSeen >= STALE_THRESHOLD) {
             staleIDs.push(storedID);
         }
     }
 
+    // Remove stale and corrupted records
     [...staleIDs, ...corruptedIDs].forEach((id) => delete allPlayers[id]);
 
-    const existing = allPlayers[idKey];
+    let existing = allPlayers[idKey];
 
+    // New player record
     if (!existing) {
         allPlayers[idKey] = {
-            id: player.id,
+            Name: name,
             knownNames: [name],
             firstSeen: now,
             lastSeen: now,
@@ -186,28 +77,29 @@ async function handleSpoofCheck(player: Player): Promise<void> {
         return;
     }
 
-    // Add the current name to knownNames if new
+    // Update existing player record
     if (!existing.knownNames.includes(name)) {
         existing.knownNames.push(name);
     }
-
     existing.lastSeen = now;
 
-    // Check for name spoofing (other players using a name that belongs to this ID)
+    // Check for spoofing: another ID already claimed this name
     for (const [otherID, record] of Object.entries(allPlayers)) {
         if (otherID === idKey) continue;
 
         if (record.knownNames.includes(name)) {
-            if (!record.spoofAttempts) record.spoofAttempts = [];
+            record.spoofAttempts ??= [];
             record.spoofAttempts.push({ name, timestamp: now });
 
             await spoofDB.set("players", allPlayers);
+
             player.sendMessage(`§o§c[Paradox] Spoof attempt detected. This name is used by another account.`);
             player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
             return;
         }
     }
 
+    // Commit updates to the database
     allPlayers[idKey] = existing;
     await spoofDB.set("players", allPlayers);
 }
@@ -267,7 +159,7 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
 
 /**
  * Checks the player's memoryTier and maxRenderDistance.
- * If both are undefined, the player will be banned.
+ * If the device is suspicious or non-compliant, the player will be banned and kicked.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
  * @returns {Promise<void>}
  */
@@ -275,22 +167,27 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
     const player = event.player;
     const playerName = player.name;
 
-    // Safely parse the bannedPlayers and whitelistedPlayers from dynamic properties
-    const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
-    const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
+    const bannedPlayers = banlistDB.get("players") ?? {};
+    const whitelistedPlayers = whitelistDB.get("players") ?? {};
 
-    if (whitelistedPlayers.includes(playerName)) {
+    // Whitelisted players are exempt
+    if (playerName in whitelistedPlayers) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are exempt from local bans due to being whitelisted.");
         return;
     }
 
     const { maxRenderDistance } = player.clientSystemInfo;
 
-    if (maxRenderDistance < 6 || maxRenderDistance > 96) {
-        if (!bannedPlayers.includes(playerName)) {
-            bannedPlayers.push(playerName);
+    if (maxRenderDistance < 6 || maxRenderDistance > 96 || isNaN(maxRenderDistance)) {
+        if (!(playerName in bannedPlayers)) {
+            bannedPlayers[playerName] = {
+                reason: "Invalid device specifications (render distance)",
+                bannedBy: "System",
+                timestamp: Date.now(),
+            };
             await banlistDB.set("players", bannedPlayers);
         }
+
         player.runCommand(`kick @s §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
     }
 }
@@ -304,45 +201,71 @@ function allowList(event: PlayerSpawnAfterEvent) {
     const player = event.player;
     const playerName = player.name;
 
-    const allowListedPlayers = allowlistDB.get<string[]>("players") ?? [];
+    // Get the allowlisted players object from the DB
+    const allowListedPlayers = allowlistDB.get("players") ?? {};
 
-    if (!allowListedPlayers.length) {
+    // If no allowlist is enforced, let everyone in
+    if (Object.keys(allowListedPlayers).length === 0) {
         return;
     }
 
-    if (allowListedPlayers.includes(playerName)) {
+    // If the player is on the allowlist, welcome them
+    if (playerName in allowListedPlayers) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are on the allow list, welcome.");
         return;
     }
 
+    // Kick the player if they're not on the list
     player.runCommand(`kick @s §o§7\n\nYou are not on the allow list.`);
 }
 
 /**
- * Checks if the player's platform is blocked.
- * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ * List of all recognized platform keys used in PlatformBlockSettings.
  */
-function isPlatformBlocked(event: PlayerSpawnAfterEvent) {
+const validPlatforms = ["console", "desktop", "mobile"] as const;
+type ValidPlatform = (typeof validPlatforms)[number];
+
+/**
+ * Type guard to check if a string is a valid platform key.
+ */
+function isValidPlatform(key: string): key is ValidPlatform {
+    return validPlatforms.includes(key as ValidPlatform);
+}
+
+/**
+ * Kicks players whose platform is blocked in configured module settings.
+ * @param {PlayerSpawnAfterEvent} event - The event containing player spawn info.
+ */
+function isPlatformBlocked(event: PlayerSpawnAfterEvent): void {
     const player = event.player;
 
-    const validate = player.getDynamicProperty("PlayerName") as string;
-
-    if (!validate) {
+    // Ensure spoof tracking property exists
+    if (!player.getDynamicProperty("PlayerName")) {
         player.setDynamicProperty("PlayerName", player.name);
     }
 
-    // Safely parse platformBlockSettings from paradoxModulesDB
-    const platformBlockSettings: PlatformBlockSettings = paradoxModulesDB.get("platformBlock_settings") ?? {};
+    const platformModule = paradoxModulesDB.get("platformBlock_b");
 
-    const playerPlatform = player.clientSystemInfo.platformType.toLowerCase();
+    if (!platformModule?.enabled) return;
 
-    if (!playerPlatform || platformBlockSettings[playerPlatform]) {
+    const settings: PlatformBlockSettings = platformModule.settings ?? {
+        console: false,
+        desktop: false,
+        mobile: false,
+    };
+
+    const platform = player.clientSystemInfo.platformType?.toLowerCase();
+
+    // Use type guard to safely index into settings
+    if (platform && isValidPlatform(platform) && settings[platform]) {
         player.runCommand(`kick @s §o§7\n\nThis platform is not authorized!`);
     }
 }
 
 /**
  * Checks if a player is banned during their spawn event.
+ * If the player is the host or whitelisted, they are removed from the ban list.
+ * Otherwise, banned players are kicked.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
  * @returns {Promise<void>}
  */
@@ -350,27 +273,29 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
     const playerName = player.name;
 
-    const bannedPlayers = banlistDB.get<string[]>("players") ?? [];
-    const whitelistedPlayers = whitelistDB.get<string[]>("players") ?? [];
+    const bannedPlayers = banlistDB.get("players") ?? {};
+    const whitelistedPlayers = whitelistDB.get("players") ?? {};
     const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
 
-    // Always allow the host in
+    // Always allow the host in, remove them from banlist if needed
     if (opsecData.host?.id === player.id) {
-        if (bannedPlayers.includes(playerName)) {
-            const updated = bannedPlayers.filter((name) => name !== playerName);
-            await banlistDB.set("players", updated);
+        if (playerName in bannedPlayers) {
+            delete bannedPlayers[playerName];
+            await banlistDB.set("players", bannedPlayers);
             player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
         }
         return;
     }
 
-    // Whitelisted players get unbanned
-    if (bannedPlayers.includes(playerName)) {
-        if (whitelistedPlayers.includes(playerName)) {
-            const updated = bannedPlayers.filter((name) => name !== playerName);
-            await banlistDB.set("players", updated);
+    // If the player is banned
+    if (playerName in bannedPlayers) {
+        // If also whitelisted, unban them
+        if (playerName in whitelistedPlayers) {
+            delete bannedPlayers[playerName];
+            await banlistDB.set("players", bannedPlayers);
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
+            // Otherwise, kick the player
             player.runCommand(`kick @s §o§7\n\nYou are banned. Please contact an admin for more information.`);
         }
     }
