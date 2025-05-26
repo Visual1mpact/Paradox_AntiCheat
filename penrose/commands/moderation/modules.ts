@@ -75,7 +75,7 @@ export const modulesStatusCommand: Command = {
         lines.push("§2[§7Paradox§2]§o§7 Registered Modules:");
 
         if (filteredModules.length === 0) {
-            lines.push("§r§2│  └─§o§7 No matching module commands found.");
+            lines.push("§r§2  └─§o§7 No matching module commands found.");
         } else {
             filteredModules.forEach(([key, value], index) => {
                 const commandName = moduleToCommandMap[key];
