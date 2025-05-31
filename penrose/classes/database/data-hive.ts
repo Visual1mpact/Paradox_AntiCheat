@@ -27,7 +27,7 @@ export type DatabaseValueObject = Record<string, any>;
 export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     public name: string;
     private pointerKey: string;
-    private cachedPointers: string[] | null = null;
+    private cachedPointers: string[] | undefined = undefined;
     private static instances: OptimizedDatabase<any>[] = [];
     private static _locks = new Set<string>();
 
@@ -67,8 +67,8 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @internal
      */
     private _getPointers(): string[] {
-        if (this.cachedPointers !== null) return this.cachedPointers;
-        const pointers = world.getDynamicProperty(this.pointerKey) as string | null;
+        if (this.cachedPointers !== undefined) return this.cachedPointers;
+        const pointers = world.getDynamicProperty(this.pointerKey) as string | undefined;
         this.cachedPointers = pointers ? JSON.parse(pointers) : [];
         return this.cachedPointers;
     }
@@ -129,25 +129,28 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
             this._deleteChunks(tmpBase);
 
+            const tmpChunks: Record<string, string> = {};
             for (let i = 0; i < json.length; i += CHUNK_SIZE) {
-                world.setDynamicProperty(`${tmpBase}/${i / CHUNK_SIZE}`, json.slice(i, i + CHUNK_SIZE));
+                tmpChunks[`${tmpBase}/${i / CHUNK_SIZE}`] = json.slice(i, i + CHUNK_SIZE);
             }
 
+            world.setDynamicProperties(tmpChunks);
             world.setDynamicProperty(base, "USE_TMP");
 
             this._deleteChunks(base);
 
+            const realChunks: Record<string, string> = {};
+            const deleteChunks: string[] = [];
+
             for (let i = 0; ; ++i) {
                 const c = world.getDynamicProperty(`${tmpBase}/${i}`);
-                if (c === undefined || c === null) break;
-                world.setDynamicProperty(`${base}/${i}`, c);
-                world.setDynamicProperty(`${tmpBase}/${i}`, null);
+                if (c === undefined) break;
+                realChunks[`${base}/${i}`] = c as string;
+                deleteChunks.push(`${tmpBase}/${i}`);
             }
 
-            system.run(() => {
-                world.setDynamicProperty(base, null);
-                world.setDynamicProperty(tmpBase, null);
-            });
+            world.setDynamicProperties(realChunks);
+            this._deleteKeys([...deleteChunks, base, tmpBase]);
         });
 
         const pointers = this._getPointers();
@@ -162,13 +165,13 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      */
     public get<K extends keyof T>(key: K): T[K] | undefined {
         const base = `${this.name}/${String(key)}`;
-        const marker = world.getDynamicProperty(base) as string | null;
+        const marker = world.getDynamicProperty(base) as string | undefined;
         const real = marker === "USE_TMP" ? `${base}~tmp` : base;
 
         let chunks: string[] = [];
         for (let i = 0; ; ++i) {
-            const c = world.getDynamicProperty(`${real}/${i}`) as string | null;
-            if (c === null || c === undefined) break;
+            const c = world.getDynamicProperty(`${real}/${i}`) as string | undefined;
+            if (c === undefined) break;
             chunks.push(c);
         }
 
@@ -223,7 +226,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         let deletedCount = 0;
 
         const defaultValidator = (value: any): boolean => {
-            if (value === undefined || value === null) return false;
+            if (value === undefined) return false;
             if (typeof value === "string" && value.trim() === "") return false;
             if (Array.isArray(value) && value.length === 0) return false;
             if (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) return false;
@@ -251,13 +254,33 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @internal
      */
     private _deleteChunks(baseKey: string): void {
+        const keysToDelete: string[] = [];
         for (let i = 0; ; ++i) {
             const key = `${baseKey}/${i}`;
-            const exists = world.getDynamicProperty(key);
-            if (exists === undefined || exists === null) break;
-            world.setDynamicProperty(key, null);
+            if (world.getDynamicProperty(key) === undefined) break;
+            keysToDelete.push(key);
         }
-        world.setDynamicProperty(baseKey, null);
+        keysToDelete.push(baseKey);
+        this._deleteKeys(keysToDelete);
+    }
+
+    /**
+     * Deletes multiple dynamic properties by key, one by one.
+     *
+     * > This avoids using `world.setDynamicProperties()` since setting values to `undefined` in batch mode is not supported.
+     * > Instead, each key is deleted individually using `world.setDynamicProperty(key, undefined)`.
+     *
+     * @private
+     * @param {string[]} keys - The list of dynamic property keys to delete.
+     */
+    private _deleteKeys(keys: string[]): void {
+        for (const key of keys) {
+            try {
+                world.setDynamicProperty(key, undefined);
+            } catch (err) {
+                console.warn(`[${this.name}] Failed to delete dynamic property key "${key}":`, err);
+            }
+        }
     }
 
     /**
@@ -277,7 +300,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             const chunk = world.getDynamicProperty(`${dynamicKeyBase}/${i}`) as string;
 
             // If no more chunks are found, exit the loop
-            if (chunk === null || chunk === undefined) break;
+            if (chunk === undefined) break;
 
             // Accumulate the size of each chunk (UTF-16 encoding)
             bytes += chunk.length * 2;
