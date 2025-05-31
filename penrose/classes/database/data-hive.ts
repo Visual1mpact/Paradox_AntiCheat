@@ -82,6 +82,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     private _setPointers(pointers: string[]): void {
         this.cachedPointers = pointers;
         world.setDynamicProperty(this.pointerKey, JSON.stringify(pointers));
+        this._markDirty(); // Force reload next time
     }
 
     /**
@@ -94,6 +95,16 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return new Promise<void>((resolve) => {
             system.run(resolve);
         });
+    }
+
+    /**
+     * Marks the internal pointer cache as dirty,
+     * forcing a re-read from dynamic properties the next time it's accessed.
+     *
+     * This should be used when pointer state changes outside of `_setPointers`.
+     */
+    private _markDirty(): void {
+        this.cachedPointers = undefined;
     }
 
     /**
