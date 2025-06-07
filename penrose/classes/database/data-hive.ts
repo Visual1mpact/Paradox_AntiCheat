@@ -149,32 +149,35 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
             // Write to temporary chunk space
             this._deleteChunks(tmpBase);
+
             const tmpChunks: Record<string, string> = {};
             for (let i = 0; i < json.length; i += CHUNK_SIZE) {
                 tmpChunks[`${tmpBase}/${i / CHUNK_SIZE}`] = json.slice(i, i + CHUNK_SIZE);
             }
+
             world.setDynamicProperties(tmpChunks);
+            world.setDynamicProperty(base, "USE_TMP");
+
+            this._deleteChunks(base);
 
             // Finalize swap
             const realChunks: Record<string, string> = {};
             const deleteChunks: string[] = [];
+
             for (let i = 0; ; ++i) {
                 const c = world.getDynamicProperty(`${tmpBase}/${i}`);
                 if (c === undefined) break;
                 realChunks[`${base}/${i}`] = c as string;
                 deleteChunks.push(`${tmpBase}/${i}`);
             }
-            world.setDynamicProperties(realChunks);
-            world.setDynamicProperty(base, "USE_TMP");
 
-            this._deleteChunks(base);
-            this._deleteKeys([...deleteChunks, tmpBase]);
+            world.setDynamicProperties(realChunks);
+            this._deleteKeys([...deleteChunks, base, tmpBase]);
         });
 
         const pointers = this._getPointers();
         if (!pointers.includes(base)) this._setPointers([...pointers, base]);
     }
-
     /**
      * Gets a stored object by its key.
      *
@@ -195,7 +198,15 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             if (c === undefined) break;
             chunks.push(c);
         }
-        return chunks.length ? (JSON.parse(chunks.join("")) as T[K]) : undefined;
+
+        if (!chunks.length) return undefined;
+
+        try {
+            return JSON.parse(chunks.join("")) as T[K];
+        } catch (err) {
+            console.warn(`[${this.name}] Failed to parse entry for key "${String(key)}":`, err);
+            return undefined;
+        }
     }
 
     /**
@@ -234,11 +245,14 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @returns Array of [key, value] tuples.
      */
     public entries(): [keyof T, T[keyof T]][] {
-        return this._getPointers().map((ptr) => {
-            const key = ptr.split("/").pop() as keyof T;
-            const value = this.get(key)!;
-            return [key, value];
-        });
+        return this._getPointers()
+            .map((ptr) => {
+                const key = ptr.split("/").pop() as keyof T;
+                const value = this.get(key);
+                if (value === undefined) return null;
+                return [key, value] as [keyof T, T[keyof T]];
+            })
+            .filter((entry): entry is [keyof T, T[keyof T]] => entry !== null);
     }
 
     /**
