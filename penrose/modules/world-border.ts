@@ -131,12 +131,10 @@ function findSafeY(player: Player, x: number, y: number, z: number): number {
     }
 
     // No safe spot found within search distance
-    const playerEffect = player.getEffect("minecraft:slow_falling");
+    const existingEffect = player.getEffect("minecraft:slow_falling");
 
-    if (playerEffect) {
-        player.addEffect("minecraft:slow_falling", playerEffect.duration + 1200, { amplifier: playerEffect.amplifier });
-    } else {
-        player.addEffect("minecraft:slow_falling", 1200); // 60 seconds
+    if (!existingEffect || existingEffect.duration < 1200) {
+        player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
     }
 
     // Clamp to world bounds if somehow overshot
