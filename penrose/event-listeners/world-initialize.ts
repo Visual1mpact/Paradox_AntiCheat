@@ -142,7 +142,7 @@ const allCommands: Command[] = [
 /**
  * Initializes and instantiates all necessary systems (databases, command handler, etc.)
  */
-function initializeSystems() {
+async function initializeSystems() {
     // Instantiate Databases
     paradoxModulesDB = new OptimizedDatabase("paradoxModules");
     channelsDB = new OptimizedDatabase("channels");
@@ -153,30 +153,31 @@ function initializeSystems() {
     banlistDB = new OptimizedDatabase("banlist");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
-    paradoxModulesDB.clean();
-    channelsDB.clean();
-    disabledCommandsDB.clean();
-    spoofDB.clean();
-    whitelistDB.clean();
-    allowlistDB.clean();
-    banlistDB.clean();
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB];
+
+    const results = await Promise.allSettled(dbs.map((db) => db.clean()));
+    results.forEach((result, i) => {
+        if (result.status === "rejected") {
+            console.warn(`[Paradox] Failed to clean DB at index ${i}:`, result.reason);
+        }
+    });
 
     // Clean up stagnant channels
-    function channelsDBCleanup() {
+    async function channelsDBCleanup() {
         const now = Date.now();
         const cutoff = now - 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
         for (const [channelName, channel] of channelsDB.entries() as [string, Channel][]) {
             if (typeof channel.lastActive !== "number") continue;
             if (channel.lastActive < cutoff) {
-                channelsDB.delete(channelName);
+                await channelsDB.delete(channelName);
                 console.warn(`[Paradox] Removed inactive channel '${channelName}' (last active ${new Date(channel.lastActive).toLocaleString()})`);
             }
         }
     }
 
     // Clean up stagnant channels
-    channelsDBCleanup();
+    await channelsDBCleanup();
 
     // Instantiate CommandHandler
     commandHandler = new CommandHandler();
@@ -381,7 +382,7 @@ async function onWorldInitialize(): Promise<void> {
  */
 export function subscribeToWorldInitialize() {
     world.afterEvents.worldLoad.subscribe(async () => {
-        initializeSystems();
+        await initializeSystems();
         await onWorldInitialize();
     });
 }

@@ -215,7 +215,7 @@ export const channelCommand: Command = {
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
                     await saveChannels(channelName as string, channel);
                 } else {
-                    channelsDB.delete(channelName);
+                    await channelsDB.delete(channelName);
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left and deleted empty channel '${channelName}§7'.`);
                 }
             } else {

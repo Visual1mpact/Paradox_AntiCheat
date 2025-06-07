@@ -218,12 +218,14 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * Clears all data from the database, removing all keys and chunks.
      *
      * @example
-     * db.clear();
+     * await db.clear();
      */
-    public clear(): void {
-        const pointers = this._getPointers();
-        pointers.forEach((ptr) => this._deleteChunks(ptr));
-        this._setPointers([]);
+    public async clear(): Promise<void> {
+        await OptimizedDatabase._withLock(this.name, async () => {
+            const pointers = this._getPointers();
+            pointers.forEach((ptr) => this._deleteChunks(ptr));
+            this._setPointers([]);
+        });
     }
 
     /**
@@ -245,29 +247,34 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @param validator - Optional function to filter valid entries.
      *
      * @example
-     * db.clean((key, val) => typeof val === "object");
+     * await db.clean((key, val) => typeof val === "object");
      */
     public async clean(validator?: (key: keyof T, value: T[keyof T]) => boolean): Promise<void> {
-        const entries = this.entries();
-        let deletedCount = 0;
-        const defaultValidator = (value: any): boolean => {
-            if (value === undefined) return false;
-            if (typeof value === "string" && value.trim() === "") return false;
-            if (Array.isArray(value) && value.length === 0) return false;
-            if (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) return false;
-            if (typeof value === "number" && isNaN(value)) return false;
-            if (typeof value === "function" || typeof value === "symbol") return false;
-            return true;
-        };
-        for (const [key, value] of entries) {
-            const isValid = validator ? validator(key, value) : defaultValidator(value);
-            if (!isValid) {
-                await this.delete(key);
-                console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
-                deletedCount++;
+        await OptimizedDatabase._withLock(this.name, async () => {
+            const entries = this.entries();
+            let deletedCount = 0;
+
+            const defaultValidator = (value: any): boolean => {
+                if (value === undefined) return false;
+                if (typeof value === "string" && value.trim() === "") return false;
+                if (Array.isArray(value) && value.length === 0) return false;
+                if (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) return false;
+                if (typeof value === "number" && isNaN(value)) return false;
+                if (typeof value === "function" || typeof value === "symbol") return false;
+                return true;
+            };
+
+            for (const [key, value] of entries) {
+                const isValid = validator ? validator(key, value) : defaultValidator(value);
+                if (!isValid) {
+                    await this.delete(key);
+                    console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
+                    deletedCount++;
+                }
             }
-        }
-        console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
+
+            console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
+        });
     }
 
     /**
