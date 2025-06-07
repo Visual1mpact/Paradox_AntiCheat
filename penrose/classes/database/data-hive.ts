@@ -42,15 +42,14 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         if (name.includes('"') || name.includes("/")) {
             throw new Error('[Paradox] Database name cannot include the characters `"` or `/`.');
         }
-
         this.name = name;
         this.pointerKey = `${this.name}/pointers`;
-
         if (!world.getDynamicProperty(this.pointerKey)) {
             world.setDynamicProperty(this.pointerKey, JSON.stringify([]));
         }
-
-        OptimizedDatabase.instances.push(this);
+        if (!OptimizedDatabase.instances.includes(this)) {
+            OptimizedDatabase.instances.push(this);
+        }
     }
 
     /**
@@ -80,9 +79,11 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @internal
      */
     private _setPointers(pointers: string[]): void {
-        this.cachedPointers = pointers;
-        world.setDynamicProperty(this.pointerKey, JSON.stringify(pointers));
-        this._markDirty(); // Force reload next time
+        if (JSON.stringify(pointers) !== JSON.stringify(this.cachedPointers)) {
+            this.cachedPointers = pointers;
+            world.setDynamicProperty(this.pointerKey, JSON.stringify(pointers));
+            this._markDirty();
+        }
     }
 
     /**
@@ -116,7 +117,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @internal
      */
     private static async _withLock<T>(resource: string, fn: () => T | Promise<T>): Promise<T> {
-        while (this._locks.has(resource)) await this.nextTick();
+        const TIMEOUT = 10000;
+        const start = Date.now();
+        while (this._locks.has(resource)) {
+            if (Date.now() - start > TIMEOUT) throw new Error(`Lock timeout for resource: ${resource}`);
+            await this.nextTick();
+        }
         this._locks.add(resource);
         try {
             return await fn();
@@ -131,6 +137,9 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      *
      * @param key - A key defined in the schema `T`.
      * @param value - The value to store (must be an object).
+     *
+     * @example
+     * await db.set("session", { id: 123 });
      */
     public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
         const base = `${this.name}/${String(key)}`;
@@ -138,30 +147,28 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             const json = JSON.stringify(value);
             const tmpBase = `${base}~tmp`;
 
+            // Write to temporary chunk space
             this._deleteChunks(tmpBase);
-
             const tmpChunks: Record<string, string> = {};
             for (let i = 0; i < json.length; i += CHUNK_SIZE) {
                 tmpChunks[`${tmpBase}/${i / CHUNK_SIZE}`] = json.slice(i, i + CHUNK_SIZE);
             }
-
             world.setDynamicProperties(tmpChunks);
-            world.setDynamicProperty(base, "USE_TMP");
 
-            this._deleteChunks(base);
-
+            // Finalize swap
             const realChunks: Record<string, string> = {};
             const deleteChunks: string[] = [];
-
             for (let i = 0; ; ++i) {
                 const c = world.getDynamicProperty(`${tmpBase}/${i}`);
                 if (c === undefined) break;
                 realChunks[`${base}/${i}`] = c as string;
                 deleteChunks.push(`${tmpBase}/${i}`);
             }
-
             world.setDynamicProperties(realChunks);
-            this._deleteKeys([...deleteChunks, base, tmpBase]);
+            world.setDynamicProperty(base, "USE_TMP");
+
+            this._deleteChunks(base);
+            this._deleteKeys([...deleteChunks, tmpBase]);
         });
 
         const pointers = this._getPointers();
@@ -173,6 +180,9 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      *
      * @param key - The key to retrieve.
      * @returns The stored object or `undefined` if not found.
+     *
+     * @example
+     * const data = db.get("session");
      */
     public get<K extends keyof T>(key: K): T[K] | undefined {
         const base = `${this.name}/${String(key)}`;
@@ -185,7 +195,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             if (c === undefined) break;
             chunks.push(c);
         }
-
         return chunks.length ? (JSON.parse(chunks.join("")) as T[K]) : undefined;
     }
 
@@ -193,6 +202,9 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * Deletes a key and its value from the database.
      *
      * @param key - The key to delete.
+     *
+     * @example
+     * await db.delete("session");
      */
     public async delete<K extends keyof T>(key: K): Promise<void> {
         const base = `${this.name}/${String(key)}`;
@@ -231,11 +243,13 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * Removes entries with invalid or unwanted data.
      *
      * @param validator - Optional function to filter valid entries.
+     *
+     * @example
+     * db.clean((key, val) => typeof val === "object");
      */
-    public clean(validator?: (key: keyof T, value: T[keyof T]) => boolean): void {
+    public async clean(validator?: (key: keyof T, value: T[keyof T]) => boolean): Promise<void> {
         const entries = this.entries();
         let deletedCount = 0;
-
         const defaultValidator = (value: any): boolean => {
             if (value === undefined) return false;
             if (typeof value === "string" && value.trim() === "") return false;
@@ -245,16 +259,14 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             if (typeof value === "function" || typeof value === "symbol") return false;
             return true;
         };
-
         for (const [key, value] of entries) {
             const isValid = validator ? validator(key, value) : defaultValidator(value);
             if (!isValid) {
-                this.delete(key);
+                await this.delete(key);
                 console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
                 deletedCount++;
             }
         }
-
         console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
     }
 
@@ -265,14 +277,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @internal
      */
     private _deleteChunks(baseKey: string): void {
-        const keysToDelete: string[] = [];
         for (let i = 0; ; ++i) {
             const key = `${baseKey}/${i}`;
             if (world.getDynamicProperty(key) === undefined) break;
-            keysToDelete.push(key);
+            world.setDynamicProperty(key, undefined);
         }
-        keysToDelete.push(baseKey);
-        this._deleteKeys(keysToDelete);
+        world.setDynamicProperty(baseKey, undefined);
     }
 
     /**
@@ -305,18 +315,11 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     public getEntrySizeBytes(key: string): number {
         const dynamicKeyBase = `${this.name}/${key}`;
         let bytes = 0;
-
-        // Iterate over all chunks for the entry
         for (let i = 0; ; i++) {
             const chunk = world.getDynamicProperty(`${dynamicKeyBase}/${i}`) as string;
-
-            // If no more chunks are found, exit the loop
             if (chunk === undefined) break;
-
-            // Accumulate the size of each chunk (UTF-16 encoding)
             bytes += chunk.length * 2;
         }
-
         return bytes;
     }
 
@@ -328,14 +331,11 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @returns A formatted string representing the total size of the database entries.
      */
     public getTotalSizeFormatted(): string {
-        // Reduce all pointers to calculate the total size in bytes
         const totalBytes = this._getPointers().reduce((sum, ptr) => {
             const key = ptr.split("/").pop()!;
             return sum + this.getEntrySizeBytes(key);
         }, 0);
-
-        // Return the formatted total size
-        return this._formatBytes(totalBytes);
+        return this.formatBytes(totalBytes);
     }
 
     /**
@@ -344,7 +344,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * @param bytes - The size in bytes.
      * @returns A string representing the size in appropriate units (B, KB, MB, GB, TB).
      */
-    public _formatBytes(bytes: number): string {
+    public formatBytes(bytes: number): string {
         const sizes = ["B", "KB", "MB", "GB", "TB"];
         if (bytes <= 0) return "0 B";
         const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
@@ -360,11 +360,9 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     public getChunkCount(key: string): number {
         const dynamicKeyBase = `${this.name}/${key}`;
         let chunkCount = 0;
-
         while (world.getDynamicProperty(`${dynamicKeyBase}/${chunkCount}`)) {
             chunkCount++;
         }
-
         return chunkCount;
     }
 
@@ -380,6 +378,9 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
      * Verifies whether the database contains a specific entry key.
      * @param key - The key to check for in the database.
      * @returns `true` if the key exists, otherwise `false`.
+     *
+     * @example
+     * if (db.containsKey("playerData")) {...}
      */
     public containsKey(key: string): boolean {
         return this._getPointers().includes(`${this.name}/${key}`);

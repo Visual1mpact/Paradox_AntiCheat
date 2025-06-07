@@ -82,7 +82,7 @@ export const debugDBCommand: Command = {
                     debugInfoText += "  - Pointers:\n";
                     pointers.forEach((pointer) => {
                         const entrySize = db.getEntrySizeBytes(pointer.split("/").pop()!);
-                        debugInfoText += `    - ${pointer}: ${db._formatBytes(entrySize)}\n`;
+                        debugInfoText += `    - ${pointer}: ${db.formatBytes(entrySize)}\n`;
 
                         // Check if the entry is chunked and count the number of chunks
                         const chunkCount = db.getChunkCount(pointer.split("/").pop()!);
