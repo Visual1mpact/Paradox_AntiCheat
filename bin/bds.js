@@ -4,35 +4,38 @@ import readline from "readline";
 import path from "path";
 import AdmZip from "adm-zip";
 import os from "os";
+import puppeteer from "puppeteer";
 
 /**
- * Retrieves the latest version of the Bedrock Dedicated Server (BDS) from a remote API.
+ * Retrieves the latest Minecraft Bedrock Dedicated Server version
+ * by scraping the official download page.
  *
- * @returns {Promise<string>} - The latest version of BDS.
+ * @returns {Promise<string>} Latest version number (e.g. "1.21.92.1").
  */
-function getLatestVersion() {
-    const apiURL = "https://ssk.taiyu.workers.dev/zh-hans/download/server/bedrock";
-    return new Promise((resolve, reject) => {
-        https
-            .get(apiURL, (res) => {
-                let data = "";
-                res.on("data", (chunk) => {
-                    data += chunk;
-                });
-                res.on("end", () => {
-                    const versionMatches = data.match(/bedrock-server-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/g);
-                    if (versionMatches && versionMatches.length > 0) {
-                        const latestVersion = versionMatches.map((version) => version.split("-").pop()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))[0];
-                        resolve(latestVersion);
-                    } else {
-                        reject("Failed to retrieve the latest version.");
-                    }
-                });
-            })
-            .on("error", (error) => {
-                reject(error);
+async function getLatestVersion(retries = 3) {
+    const url = "https://www.minecraft.net/en-us/download/server/bedrock";
+    for (let i = 0; i < retries; i++) {
+        const browser = await puppeteer.launch({ args: ["--disable-http2"] });
+        try {
+            const page = await browser.newPage();
+            await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36");
+            await page.goto(url, { waitUntil: "networkidle2" });
+
+            const version = await page.evaluate(() => {
+                const links = Array.from(document.querySelectorAll("a[href*='bedrock-server-']"));
+                const match = links.map((link) => link.href.match(/bedrock-server-(\d+\.\d+\.\d+\.\d+)\.zip/)).find(Boolean);
+                return match ? match[1] : null;
             });
-    });
+
+            await browser.close();
+
+            if (!version) throw new Error("Version not found.");
+            return version;
+        } catch (e) {
+            await browser.close();
+            if (i === retries - 1) throw e;
+        }
+    }
 }
 
 /**

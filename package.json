@@ -19,7 +19,8 @@
         "chalk": "5.4.1",
         "tsc-alias": "1.8.16",
         "esbuild": "0.25.5",
-        "7zip-bin": "5.2.0"
+        "7zip-bin": "5.2.0",
+        "puppeteer": "24.10.2"
     },
     "dependencies": {
         "@minecraft/server-ui": "2.0.0-beta.1.21.83-stable",
