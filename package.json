@@ -36,6 +36,9 @@
         },
         "@minecraft/server-ui": {
             "@minecraft/server": "2.1.0-beta.1.21.90-stable"
+        },
+        "@minecraft/server-net": {
+            "@minecraft/server": "2.1.0-beta.1.21.90-stable"
         }
     },
     "prettier": {

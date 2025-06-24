@@ -127,7 +127,7 @@ function handleEntityHit(eventData: EntityHitEntityAfterEvent): void {
     const victim = eventData.hitEntity;
 
     if (!(attacker instanceof Player && victim instanceof Player)) return;
-    if (attacker.getGameMode() === GameMode.creative) return;
+    if (attacker.getGameMode() === GameMode.Creative) return;
 
     const directDistance = calculateDistance(attacker.location, victim.location);
     if (directDistance <= MAX_ATTACK_DISTANCE) return;

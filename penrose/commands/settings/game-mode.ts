@@ -5,10 +5,10 @@ import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 // Represents the game mode settings stored in the database
 interface ModeSettings {
-    adventure: boolean;
-    creative: boolean;
-    survival: boolean;
-    spectator: boolean;
+    Adventure: boolean;
+    Creative: boolean;
+    Survival: boolean;
+    Spectator: boolean;
 }
 
 // Represents the full mode states including the gamemode check
@@ -64,28 +64,28 @@ export const gameModeCommand: Command = {
         const gamemodeEntry = paradoxModulesDB.get("gamemodeCheck_b") ?? {
             enabled: true,
             settings: {
-                adventure: true,
-                creative: true,
-                survival: true,
-                spectator: true,
+                Adventure: true,
+                Creative: true,
+                Survival: true,
+                Spectator: true,
             },
         };
 
         const modeStates: ModeStates = {
             gamemodeCheck: gamemodeEntry.enabled,
-            adventure: gamemodeEntry.settings?.adventure ?? true,
-            creative: gamemodeEntry.settings?.creative ?? true,
-            survival: gamemodeEntry.settings?.survival ?? true,
-            spectator: gamemodeEntry.settings?.spectator ?? true,
+            Adventure: gamemodeEntry.settings?.Adventure ?? true,
+            Creative: gamemodeEntry.settings?.Creative ?? true,
+            Survival: gamemodeEntry.settings?.Survival ?? true,
+            Spectator: gamemodeEntry.settings?.Spectator ?? true,
         };
 
         const formatSettingsMessage = (modeStates: ModeStates): string => {
             return [
                 `§2[§7Paradox§2]§o§7 Current Game Mode Settings:`,
-                `  | Adventure: ${modeStates.adventure ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Creative: ${modeStates.creative ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Survival: ${modeStates.survival ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Spectator: ${modeStates.spectator ? "§aAllowed§7" : "§2Disallowed§7"}`,
+                `  | Adventure: ${modeStates.Adventure ? "§aAllowed§7" : "§2Disallowed§7"}`,
+                `  | Creative: ${modeStates.Creative ? "§aAllowed§7" : "§2Disallowed§7"}`,
+                `  | Survival: ${modeStates.Survival ? "§aAllowed§7" : "§2Disallowed§7"}`,
+                `  | Spectator: ${modeStates.Spectator ? "§aAllowed§7" : "§2Disallowed§7"}`,
                 `  | Gamemode Checks: ${modeStates.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}`,
             ].join("\n");
         };
@@ -100,19 +100,19 @@ export const gameModeCommand: Command = {
         for (const arg of args) {
             switch (arg.toLowerCase()) {
                 case "-a":
-                    modeStates.adventure = !modeStates.adventure;
+                    modeStates.Adventure = !modeStates.Adventure;
                     needsInspectionUpdate = true;
                     break;
                 case "-c":
-                    modeStates.creative = !modeStates.creative;
+                    modeStates.Creative = !modeStates.Creative;
                     needsInspectionUpdate = true;
                     break;
                 case "-s":
-                    modeStates.survival = !modeStates.survival;
+                    modeStates.Survival = !modeStates.Survival;
                     needsInspectionUpdate = true;
                     break;
                 case "-sp":
-                    modeStates.spectator = !modeStates.spectator;
+                    modeStates.Spectator = !modeStates.Spectator;
                     needsInspectionUpdate = true;
                     break;
                 case "-e":
@@ -142,10 +142,10 @@ export const gameModeCommand: Command = {
         await paradoxModulesDB.set("gamemodeCheck_b", {
             enabled: modeStates.gamemodeCheck,
             settings: {
-                adventure: modeStates.adventure,
-                creative: modeStates.creative,
-                survival: modeStates.survival,
-                spectator: modeStates.spectator,
+                Adventure: modeStates.Adventure,
+                Creative: modeStates.Creative,
+                Survival: modeStates.Survival,
+                Spectator: modeStates.Spectator,
             },
         });
 

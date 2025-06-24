@@ -74,10 +74,10 @@ export const vanishCommand: Command = {
             // Determine if messages should be sent (when playerName is provided and doesn't match player.name)
             const shouldSendMessages = playerName && playerName !== player.name;
 
-            if (playerGameMode !== GameMode.spectator) {
+            if (playerGameMode !== GameMode.Spectator) {
                 // Set the player's game mode to spectator and backup the previous game mode
                 player.setDynamicProperty("GameModeBackup", playerGameMode);
-                player.setGameMode(GameMode.spectator);
+                player.setGameMode(GameMode.Spectator);
 
                 // Send message indicating that vanish is enabled for the player
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);

@@ -26,10 +26,10 @@ type LagClearCheckSettings = {
 
 // Settings schema for game mode enforcement
 export type GamemodeCheckSettings = {
-    adventure: boolean;
-    creative: boolean;
-    survival: boolean;
-    spectator: boolean;
+    Adventure: boolean;
+    Creative: boolean;
+    Survival: boolean;
+    Spectator: boolean;
 };
 
 // Settings schema for platform block enforcement

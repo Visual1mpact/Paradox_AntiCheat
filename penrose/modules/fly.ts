@@ -33,7 +33,7 @@ const itemUseCheck = world.beforeEvents.itemUse.subscribe((event) => {
  * @yields {void} Pauses the generator after processing each player.
  */
 function* flyCheckGenerator(): Generator<void, void, unknown> {
-    const gm = { excludeGameModes: [GameMode.creative, GameMode.spectator] };
+    const gm = { excludeGameModes: [GameMode.Creative, GameMode.Spectator] };
     const filteredPlayers = world.getPlayers(gm);
 
     for (const player of filteredPlayers) {

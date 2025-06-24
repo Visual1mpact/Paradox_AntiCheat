@@ -73,12 +73,12 @@ export function startScaffoldCheck() {
     blockPlacementCallback = (event: PlayerPlaceBlockBeforeEvent) => {
         const player = event.player;
         const block = event.block;
-        const blockPermutation = event.permutationBeingPlaced;
+        const blockPermutation = event.permutationToPlace;
         const gamemode = player.getGameMode();
         const playerId = player.id;
 
         // Skip spectators, creative mode, sneaking, or excluded blocks
-        if (gamemode === GameMode.spectator || gamemode === GameMode.creative || player.isSneaking || (block && EXCLUDED_BLOCKS.includes(blockPermutation.type.id))) {
+        if (gamemode === GameMode.Spectator || gamemode === GameMode.Creative || player.isSneaking || (block && EXCLUDED_BLOCKS.includes(blockPermutation.type.id))) {
             return;
         }
 

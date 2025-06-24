@@ -13,10 +13,10 @@ function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
     if ((player.getDynamicProperty("securityClearance") as number) === 4) return;
 
     const settings = paradoxModulesDB.get("gamemodeCheck_b")?.settings ?? {
-        adventure: true,
-        creative: true,
-        survival: true,
-        spectator: true,
+        Adventure: true,
+        Creative: true,
+        Survival: true,
+        Spectator: true,
     };
 
     const to = event.toGameMode as GameMode;
@@ -31,7 +31,7 @@ function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
         return;
     }
 
-    const fallback = [GameMode.survival, GameMode.adventure, GameMode.creative, GameMode.spectator].find((gm) => isAllowed(gm));
+    const fallback = [GameMode.Survival, GameMode.Adventure, GameMode.Creative, GameMode.Spectator].find((gm) => isAllowed(gm));
 
     if (fallback) {
         player.setGameMode(fallback);
