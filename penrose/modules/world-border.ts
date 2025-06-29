@@ -169,6 +169,10 @@ export async function startWorldBorderCheck(): Promise<void> {
         system.clearRun(worldBorderRunId);
     }
 
+    if (worldBorderJobId !== null) {
+        system.clearJob(worldBorderJobId);
+    }
+
     let isRunning = false;
     let runIdBackup: number;
 

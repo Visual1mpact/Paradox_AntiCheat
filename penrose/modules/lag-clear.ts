@@ -107,7 +107,14 @@ export async function startLagClear(hours: number = 0, minutes: number = 5, seco
         system.clearRun(lagClearRunId);
     }
 
+    if (lagClearJobId !== null) {
+        system.clearJob(lagClearJobId);
+    }
+
     const clockSettings = { hours, minutes, seconds };
+    const newEndTick = system.currentTick + (hours * 72000 + minutes * 1200 + seconds * 20);
+    globalEndTick = newEndTick;
+
     let isRunning = false;
     let runIdBackup: number;
 
