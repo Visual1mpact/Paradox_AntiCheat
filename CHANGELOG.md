@@ -1,10 +1,14 @@
 # Changelog
 
+## [v5.7.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.7.1) (2025-06-29)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.7.0...v5.7.1)
+
 ## [v5.7.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.7.0) (2025-06-24)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.6.2...v5.7.0)
 
-## [v5.6.2](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.6.2) (2025-05-19)
+## [v5.6.2](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.6.2) (2025-05-20)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.6.1...v5.6.2)
 
@@ -12,7 +16,7 @@
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.6.0...v5.6.1)
 
-## [v5.6.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.6.0) (2025-05-06)
+## [v5.6.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.6.0) (2025-05-07)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.5.4...v5.6.0)
 
