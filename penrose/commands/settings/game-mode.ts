@@ -132,7 +132,7 @@ export const gameModeCommand: Command = {
         }
 
         if (modeStates.gamemodeCheck) {
-            const enabledModes = ["adventure", "creative", "survival", "spectator"].filter((mode) => modeStates[mode as keyof ModeSettings]);
+            const enabledModes = ["Adventure", "Creative", "Survival", "Spectator"].filter((mode) => modeStates[mode as keyof ModeSettings]);
             if (enabledModes.length === 0) {
                 player.sendMessage("§o§c[Paradox] You cannot disable all game modes. At least one must remain enabled.");
                 return;
