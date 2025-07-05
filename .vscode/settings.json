@@ -23,8 +23,8 @@
     },
     "files.eol": "\n",
     "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit",
+        "source.fixAll.ts": "explicit",
     },
     "files.autoGuessEncoding": true,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
 }
