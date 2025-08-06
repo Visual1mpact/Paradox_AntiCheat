@@ -197,15 +197,20 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
  * If the connecting player is not on the list, they get kicked.
  * @param {PlayerSpawnAfterEvent} event - The event object containing player spawn information.
  */
-function allowList(event: PlayerSpawnAfterEvent) {
+function allowList(event: PlayerSpawnAfterEvent): void {
     const player = event.player;
     const playerName = player.name;
-
-    // Get the allowlisted players object from the DB
     const allowListedPlayers = allowlistDB.get("players") ?? {};
 
     // If no allowlist is enforced, let everyone in
-    if (Object.keys(allowListedPlayers).length === 0) {
+    if (Object.keys(allowListedPlayers).length === 0) return;
+
+    // Get host info
+    const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
+
+    // Always allow the host
+    if (opsecData.host?.id === player.id) {
+        player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and bypass the allowlist. Welcome back!");
         return;
     }
 
@@ -215,7 +220,7 @@ function allowList(event: PlayerSpawnAfterEvent) {
         return;
     }
 
-    // Kick the player if they're not on the list
+    // Otherwise, kick the player
     player.runCommand(`kick @s §o§7\n\nYou are not on the allow list.`);
 }
 
