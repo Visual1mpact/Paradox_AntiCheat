@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import { spawnSync } from "child_process";
 import { fileURLToPath } from "url";
 import { path7za } from "7zip-bin";
+import os from "os";
 
 // Constants
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,39 @@ function runCommand(command, args, options = {}) {
         process.exit(1); // Exit immediately if the command fails
     }
     return result;
+}
+
+// Get 7za path based on platform
+function get7zaPath() {
+    const platform = os.platform();
+
+    if (platform === "win32") {
+        return path7za; // Windows binary from 7zip-bin
+    }
+
+    if (platform === "linux") {
+        // Try system 7z first
+        const system7z = spawnSync("which", ["7z"]);
+        if (system7z.status === 0) {
+            return "7z";
+        }
+
+        const system7za = spawnSync("which", ["7za"]);
+        if (system7za.status === 0) {
+            return "7za";
+        }
+
+        // Fallback to 7zip-bin (but check if executable)
+        try {
+            fs.chmodSync(path7za, 0o755); // Ensure it's executable
+        } catch (e) {
+            console.warn("Could not make path7za executable:", e.message);
+        }
+
+        return path7za;
+    }
+
+    throw new Error(`Unsupported platform: ${platform}`);
 }
 
 // Execute version-sync.js to ensure versions are synchronized
@@ -85,7 +119,7 @@ function createArchive(outputFileName, manifestModifier = null) {
         "pack_icon.png",
         "scripts/*", // Include all contents of 'scripts' directory
     ];
-    runCommand(path7za, ["a", "-tzip", outputFilePath, ...filesToInclude], { cwd: "build" });
+    runCommand(get7zaPath(), ["a", "-tzip", outputFilePath, ...filesToInclude], { cwd: "build" });
 
     console.log(`Archive created successfully: ${outputFilePath}`);
 }
