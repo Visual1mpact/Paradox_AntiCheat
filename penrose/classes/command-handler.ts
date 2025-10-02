@@ -1,5 +1,5 @@
 import { Player, ChatSendBeforeEvent, system, world, PlayerSpawnAfterEvent } from "@minecraft/server";
-import CryptoES from "../node_modules/crypto-es/lib/index";
+import CryptoES from "../node_modules/crypto-es/dist/index";
 
 /**
  * Enum representing different levels of security clearance for commands.

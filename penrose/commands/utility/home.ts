@@ -1,6 +1,6 @@
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
-import CryptoES from "../../node_modules/crypto-es/lib/index";
+import CryptoES from "../../node_modules/crypto-es/dist/index";
 
 /**
  * Represents the home command.

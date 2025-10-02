@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import _default from "../../node_modules/crypto-es/lib/index";
+import _default from "../../node_modules/crypto-es/dist/index";
 
 let lockdownMonitorFn: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 

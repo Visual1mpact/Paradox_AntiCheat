@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs/promises"; // Use promises API for better async handling
 
 // Define input modules
-const modulesToConvert = ["./node_modules/@minecraft/math/dist/minecraft-math.js", "./node_modules/crypto-es/lib/index.js"];
+const modulesToConvert = ["./node_modules/@minecraft/math/dist/minecraft-math.js", "./node_modules/crypto-es/dist/index.js"];
 
 // Output directory
 const outputDir = "./build/scripts/node_modules";
