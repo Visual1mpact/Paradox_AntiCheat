@@ -1,43 +1,46 @@
 {
     "name": "paradox-anticheat",
-    "version": "5.10.0",
+    "version": "5.11.0",
     "productName": "Paradox-AntiCheat",
     "description": "A utility to fight against malicious hackers on Bedrock Edition",
     "private": true,
     "type": "module",
     "devDependencies": {
-        "@types/node": "24.3.0",
+        "@types/node": "24.10.2",
         "@types/fs-extra": "11.0.4",
-        "finalhandler": "2.1.0",
-        "prettier": "3.6.2",
+        "finalhandler": "2.1.1",
+        "prettier": "3.7.4",
         "serve-static": "2.2.0",
-        "typescript": "5.9.2",
-        "fs-extra": "11.3.1",
-        "glob": "11.0.3",
+        "typescript": "5.9.3",
+        "fs-extra": "11.3.2",
+        "glob": "13.0.0",
         "adm-zip": "0.5.16",
-        "chalk": "5.6.0",
+        "chalk": "5.6.2",
         "tsc-alias": "1.8.16",
-        "esbuild": "0.25.9",
+        "esbuild": "0.27.1",
         "7zip-bin": "5.2.0",
-        "puppeteer": "24.17.0"
+        "puppeteer": "24.32.1"
     },
     "dependencies": {
-        "@minecraft/server-ui": "2.1.0-beta.1.21.120-stable",
-        "@minecraft/server": "2.4.0-beta.1.21.120-stable",
-        "@minecraft/server-net": "1.0.0-beta.1.21.120-stable",
-        "@minecraft/server-admin": "1.0.0-beta.1.21.111-stable",
+        "@minecraft/server-ui": "2.1.0-beta.1.21.130-stable",
+        "@minecraft/server": "2.5.0-beta.1.21.130-stable",
+        "@minecraft/server-net": "1.0.0-beta.1.21.130-stable",
+        "@minecraft/server-admin": "1.0.0-beta.1.21.130-stable",
         "@minecraft/math": "2.2.11",
         "crypto-es": "3.0.0"
     },
     "overrides": {
         "@minecraft/math": {
-            "@minecraft/server": "2.4.0-beta.1.21.120-stable"
+            "@minecraft/server": "2.5.0-beta.1.21.130-stable"
         },
         "@minecraft/server-ui": {
-            "@minecraft/server": "2.4.0-beta.1.21.120-stable"
+            "@minecraft/server": "2.5.0-beta.1.21.130-stable"
         },
         "@minecraft/server-net": {
-            "@minecraft/server": "2.4.0-beta.1.21.120-stable"
+            "@minecraft/server": "2.5.0-beta.1.21.130-stable"
+        },
+        "@minecraft/server-admin": {
+            "@minecraft/server": "2.5.0-beta.1.21.130-stable"
         }
     },
     "prettier": {
