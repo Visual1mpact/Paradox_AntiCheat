@@ -19,6 +19,30 @@ function shuffleArray(array: string[]) {
     return copy;
 }
 
+// ===== WRAPPER HELPER =====
+function wrapVerseText(text: string, maxLineLength = 42): string {
+    const [reference, verseText] = text.split(" — ");
+    if (!verseText) return text;
+
+    const words = verseText.split(" ");
+    const lines: string[] = [];
+    let currentLine = "";
+
+    for (const word of words) {
+        if ((currentLine + word).length > maxLineLength) {
+            lines.push(currentLine.trim());
+            currentLine = "";
+        }
+        currentLine += word + " ";
+    }
+
+    if (currentLine.trim().length > 0) {
+        lines.push(currentLine.trim());
+    }
+
+    return `${reference}\n${lines.join("\n")}`;
+}
+
 // ===== RESET DAILY COUNTER =====
 function resetDailyCounters(player: Player) {
     player.setDynamicProperty("diamondsToday", 0);
@@ -42,10 +66,13 @@ function broadcastScriptureToPlayer(player: Player) {
     if (!data.verseQueue.length) data.verseQueue = shuffleArray([...verses]);
 
     const verse = data.verseQueue.pop()!;
-    player.onScreenDisplay.setTitle("Scripture Time!", {
-        subtitle: verse,
+    const wrapped = wrapVerseText(verse);
+    const [reference, ...lines] = wrapped.split("\n");
+
+    player.onScreenDisplay.setTitle(reference, {
+        subtitle: lines.join("\n"),
         fadeInDuration: 7,
-        stayDuration: 100,
+        stayDuration: 120,
         fadeOutDuration: 7,
     });
     player.playSound("random.levelup", { volume: 1, pitch: 1 });
