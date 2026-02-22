@@ -7,7 +7,11 @@ const INTERVAL_TICKS = 30 * 60 * 20; // 30 minutes
 const MAX_DIAMONDS_PER_DAY = 10;
 
 // ===== PER-PLAYER STATE =====
-const playerData = new Map<string, { verseQueue: string[]; lastDay: number }>();
+const playerData = new Map<string, { verseQueue: string[]; lastDay: string }>();
+
+world.afterEvents.playerLeave.subscribe((event) => {
+    playerData.delete(event.playerId);
+});
 
 // ===== SHUFFLE HELPER =====
 function shuffleArray(array: string[]) {
@@ -45,12 +49,12 @@ function wrapVerseText(text: string, maxLineLength = 42): string {
 
 // ===== RESET DAILY COUNTER =====
 function resetDailyCounters(player: Player) {
-    player.setDynamicProperty("diamondsToday", 0);
+    player.setDynamicProperty("scriptureRewardsToday", 0);
 }
 
 // ===== BROADCAST SCRIPTURE TO PLAYER =====
 function broadcastScriptureToPlayer(player: Player) {
-    const today = new Date().getDate();
+    const today = new Date().toDateString();
 
     if (!playerData.has(player.id)) {
         playerData.set(player.id, { verseQueue: shuffleArray([...verses]), lastDay: today });
@@ -77,11 +81,18 @@ function broadcastScriptureToPlayer(player: Player) {
     });
     player.playSound("random.levelup", { volume: 1, pitch: 1 });
 
-    let diamondsGiven = (player.getDynamicProperty("diamondsToday") as number) || 0;
-    if (diamondsGiven < MAX_DIAMONDS_PER_DAY) {
-        const diamondsToGive = Math.min(1, MAX_DIAMONDS_PER_DAY - diamondsGiven);
-        player.getComponent("inventory").container.addItem(new ItemStack("minecraft:diamond", diamondsToGive));
-        player.setDynamicProperty("diamondsToday", diamondsGiven + diamondsToGive);
+    let rewardsGivenToday = (player.getDynamicProperty("scriptureRewardsToday") as number) || 0;
+
+    if (rewardsGivenToday < MAX_DIAMONDS_PER_DAY) {
+        const remaining = MAX_DIAMONDS_PER_DAY - rewardsGivenToday;
+        const amountToGive = Math.min(1, remaining);
+
+        // 75% Diamond, 25% Netherite
+        const rewardItem = Math.random() < 0.75 ? "minecraft:diamond" : "minecraft:netherite_ingot";
+
+        player.getComponent("inventory").container.addItem(new ItemStack(rewardItem, amountToGive));
+
+        player.setDynamicProperty("scriptureRewardsToday", rewardsGivenToday + amountToGive);
     }
 }
 
