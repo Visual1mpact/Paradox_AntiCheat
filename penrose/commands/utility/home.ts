@@ -1,6 +1,8 @@
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
-import CryptoES from "../../node_modules/crypto-es/dist/index";
+import * as CryptoESImport from "../../node_modules/crypto-es";
+
+const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
 
 /**
  * Represents the home command.
@@ -64,7 +66,7 @@ export const homeCommand: Command = {
          */
         function decryptData(encryptedData: string): string {
             const bytes = cryptoES.AES.decrypt(encryptedData, obfuscatedKey);
-            return bytes.toString(cryptoES.enc.Utf8);
+            return cryptoES.Utf8.stringify(bytes);
         }
 
         /**

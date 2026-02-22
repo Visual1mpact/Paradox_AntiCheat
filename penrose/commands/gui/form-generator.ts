@@ -2,7 +2,9 @@ import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { commandHandler } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
-import CryptoES from "../../node_modules/crypto-es/dist/index";
+import * as CryptoESImport from "../../node_modules/crypto-es";
+
+const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
 
 /**
  * Command that opens the main GUI for the player, filtered by their security clearance.
