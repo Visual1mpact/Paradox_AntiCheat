@@ -49,24 +49,29 @@ export const despawnCommand: Command = {
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+        // Clean up the argument: remove quotes and @ symbols
         const parameter = args.join(" ").trim().replace(/["@]/g, "");
 
+        // Filter out players
         const filter: EntityQueryOptions = { excludeTypes: ["player"] };
         const filteredEntities = world.getDimension(message.sender.dimension.id).getEntities(filter);
 
-        const despawnedEntities = new Map();
+        // Map to track despawned entity counts
+        const despawnedEntities = new Map<string, number>();
 
-        filteredEntities.forEach(async (entity) => {
+        // Iterate over entities using for...of for proper async handling
+        for (const entity of filteredEntities) {
             const typeId = entity.typeId.replace("minecraft:", "");
             const isAllRequested = parameter === "all";
 
             if (isAllRequested || typeId === parameter || typeId === parameter.replace("minecraft:", "")) {
                 const count = despawnedEntities.get(typeId) ?? 0;
-                await despawnedEntities.set(typeId, count + 1);
-                entity.remove();
+                despawnedEntities.set(typeId, count + 1);
+                entity.remove(); // synchronous
             }
-        });
+        }
 
+        // Send feedback to the player
         if (despawnedEntities.size > 0) {
             message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Despawned:");
             despawnedEntities.forEach((count, entity) => {
