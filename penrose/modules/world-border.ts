@@ -5,12 +5,10 @@ let worldBorderJobId: number | null = null;
 let worldBorderRunId: number | null = null;
 
 /**
- * Generator function that checks and enforces world borders on players.
- * @yields {void} - Yields after processing each player.
+ * Generator that iterates over players to enforce world borders.
  */
 function* worldBorderGenerator(): Generator<void, void, unknown> {
     const module = paradoxModulesDB.get("worldBorderCheck_b");
-
     if (!module?.enabled || !module?.settings) return;
 
     const { overworld, nether, end } = module.settings;
@@ -38,60 +36,60 @@ function* worldBorderGenerator(): Generator<void, void, unknown> {
 }
 
 /**
- * Creates a world border checker function based on a specified spawn location.
- *
- * The returned function checks if a player exceeds the border size relative
- * to the spawn location, and teleports them back inside the boundary if necessary.
- *
- * @param {{ x: number; y: number; z: number }} spawnLocation - The center point used as the border reference.
- * @returns {(player: Player, x: number, y: number, z: number, borderSize: number, dimension: string) => void}
- * A function that checks a player's position and enforces the border rules.
+ * Creates a border checker function with optimized Y teleport.
  */
-function createWorldBorderChecker(spawnLocation: { x: number; y: number; z: number }): (player: Player, x: number, y: number, z: number, borderSize: number, dimension: string) => void {
+function createWorldBorderChecker(spawnLocation: { x: number; y: number; z: number }) {
+    const DEBOUNCE_TICKS = 20; // 1 second
+    const BUFFER = 2; // deadzone inside border to prevent jitter
+
     return function checkAndTeleportPlayer(player: Player, x: number, y: number, z: number, borderSize: number, dimension: string) {
         const dx = x - spawnLocation.x;
         const dz = z - spawnLocation.z;
 
         const beyondBorder = dx > borderSize + 20 || dx < -borderSize - 20 || dz > borderSize + 20 || dz < -borderSize - 20;
+        let targetX = beyondBorder ? spawnLocation.x : x;
+        let targetZ = beyondBorder ? spawnLocation.z : z;
 
-        if (beyondBorder) {
-            // Player is fully beyond the border — teleport to spawn
-            const safeY = findSafeY(player, spawnLocation.x, y, spawnLocation.z);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 You have exceeded the world border in the ${dimension} and were returned to spawn.`);
-            player.teleport({ x: spawnLocation.x, y: safeY, z: spawnLocation.z }, { dimension: player.dimension, checkForBlocks: true });
-        } else {
-            // Player is at or very close to the edge — nudge them back
-            const borderOffset = borderSize - 3;
-            let targetX = x;
-            let targetZ = z;
+        // Determine if nudging is needed
+        if (!beyondBorder) {
+            if (dx < -borderSize + BUFFER) targetX = spawnLocation.x - (borderSize - BUFFER);
+            else if (dx > borderSize - BUFFER) targetX = spawnLocation.x + (borderSize - BUFFER);
 
-            if (dx < -borderSize + 2) {
-                targetX = spawnLocation.x - borderOffset + 6;
-            } else if (dx > borderSize - 2) {
-                targetX = spawnLocation.x + borderOffset - 6;
-            }
-
-            if (dz < -borderSize + 2) {
-                targetZ = spawnLocation.z - borderOffset + 6;
-            } else if (dz > borderSize - 2) {
-                targetZ = spawnLocation.z + borderOffset - 6;
-            }
-
-            if (targetX !== x || targetZ !== z) {
-                const safeY = findSafeY(player, targetX, y, targetZ);
-                player.sendMessage(`§2[§7Paradox§2]§o§7 You have reached the world border in the ${dimension}.`);
-                player.teleport({ x: targetX, y: safeY, z: targetZ }, { dimension: player.dimension });
-            }
+            if (dz < -borderSize + BUFFER) targetZ = spawnLocation.z - (borderSize - BUFFER);
+            else if (dz > borderSize - BUFFER) targetZ = spawnLocation.z + (borderSize - BUFFER);
         }
+
+        // Only teleport if necessary
+        const needTeleport = beyondBorder || targetX !== x || targetZ !== z;
+        if (!needTeleport) return;
+
+        // Debounce nudges (only for nudges, not full teleport)
+        if (!beyondBorder) {
+            const nowTick = system.currentTick;
+            const lastNudge = (player.getDynamicProperty("lastBorderNudge") as number | null) ?? 0;
+            if (nowTick - lastNudge < DEBOUNCE_TICKS) return; // skip if recently nudged
+            player.setDynamicProperty("lastBorderNudge", nowTick);
+        }
+
+        // Calculate safe Y
+        const safeY = findSafeY(player, targetX, y, targetZ);
+
+        // Send messages
+        if (beyondBorder) {
+            player.sendMessage(`§2[§7Paradox§2]§o§7 You exceeded the world border in the ${dimension} and were returned to spawn.`);
+        } else {
+            player.sendMessage(`§2[§7Paradox§2]§o§7 You reached the world border in the ${dimension}.`);
+        }
+
+        // Teleport
+        player.teleport({ x: targetX, y: safeY, z: targetZ }, { dimension: player.dimension, checkForBlocks: true });
     };
 }
 
 /**
- * Gets valid height range for a dimension.
- * @param {Dimension} dimension - The dimension to check.
- * @returns {{ min: number; max: number }} - The height range.
+ * Get valid height range for a dimension safely.
  */
-function getDimensionHeightRange(dimension: Dimension): { min: number; max: number } {
+function getDimensionHeightRange(dimension: Dimension) {
     try {
         return dimension.heightRange;
     } catch (error) {
@@ -101,77 +99,63 @@ function getDimensionHeightRange(dimension: Dimension): { min: number; max: numb
 }
 
 /**
- * Finds a safe Y-coordinate to teleport the player to.
- * @param {Player} player - The player to teleport.
- * @param {number} x - Target x-coordinate.
- * @param {number} y - Starting y-coordinate.
- * @param {number} z - Target z-coordinate.
- * @returns {number} - A safe Y-coordinate.
+ * Optimized safe Y calculation preventing suffocation.
  */
 function findSafeY(player: Player, x: number, y: number, z: number): number {
     const { min: minHeight, max: maxHeight } = getDimensionHeightRange(player.dimension);
-    const maxSearchDistance = 32; // maximum distance up or down to search
+    const maxSearchDistance = 32;
+    const startY = Math.max(minHeight + 1, Math.min(y, maxHeight - 2)); // leave room for head
 
-    let safeY = Math.max(minHeight, Math.min(y, maxHeight - 1));
-
+    // Search upwards first, then downwards
     for (let offset = 0; offset <= maxSearchDistance; offset++) {
-        for (const testY of [safeY + offset, safeY - offset]) {
-            if (testY < minHeight || testY > maxHeight - 1) {
-                continue;
-            }
+        const candidates = [startY + offset, startY - offset].filter((testY) => testY > minHeight && testY < maxHeight - 1);
 
-            const head = player.dimension.getBlock({ x, y: testY + 1, z });
-            const body = player.dimension.getBlock({ x, y: testY, z });
+        for (const testY of candidates) {
             const feet = player.dimension.getBlock({ x, y: testY - 1, z });
+            const body = player.dimension.getBlock({ x, y: testY, z });
+            const head = player.dimension.getBlock({ x, y: testY + 1, z });
 
-            if (head?.isAir && body?.isAir && !feet?.isAir) {
+            if (!feet || !body || !head) continue;
+
+            // Feet must be solid, body & head must be air
+            if (feet.isSolid && !body.isSolid && !head.isSolid) {
                 return testY;
             }
         }
     }
 
-    // No safe spot found within search distance
-    const existingEffect = player.getEffect("minecraft:slow_falling");
-
-    if (!existingEffect || existingEffect.duration < 1200) {
+    // Fallback: give slow falling if no safe spot found
+    const effect = player.getEffect("minecraft:slow_falling");
+    if (!effect || effect.duration < 1200) {
         player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
     }
 
-    // Clamp to world bounds if somehow overshot
-    return Math.max(minHeight, Math.min(safeY, maxHeight - 1));
+    return Math.max(minHeight + 1, Math.min(startY, maxHeight - 2));
 }
 
 /**
- * Executes the world border generator as a background job.
- * @returns {Promise<void>} Resolves when the generator completes.
+ * Executes the world border generator as a job.
  */
 async function executeWorldBorderCheck(): Promise<void> {
-    if (worldBorderJobId !== null) {
-        system.clearJob(worldBorderJobId);
-    }
+    if (worldBorderJobId !== null) system.clearJob(worldBorderJobId);
 
     const jobPromise = new Promise<void>((resolve) => {
-        function* jobRunner() {
+        function* runner() {
             yield* worldBorderGenerator();
             resolve();
         }
-        worldBorderJobId = system.runJob(jobRunner());
+        worldBorderJobId = system.runJob(runner());
     });
 
     await jobPromise;
 }
 
 /**
- * Starts world border enforcement at regular intervals.
+ * Start world border enforcement.
  */
 export async function startWorldBorderCheck(): Promise<void> {
-    if (worldBorderRunId !== null) {
-        system.clearRun(worldBorderRunId);
-    }
-
-    if (worldBorderJobId !== null) {
-        system.clearJob(worldBorderJobId);
-    }
+    if (worldBorderRunId !== null) system.clearRun(worldBorderRunId);
+    if (worldBorderJobId !== null) system.clearJob(worldBorderJobId);
 
     let isRunning = false;
     let runIdBackup: number;
@@ -192,13 +176,9 @@ export async function startWorldBorderCheck(): Promise<void> {
 }
 
 /**
- * Stops the world border enforcement system and cleans up jobs and intervals.
+ * Stops the world border system.
  */
 export function stopWorldBorderCheck(): void {
-    if (worldBorderJobId !== null) {
-        system.clearJob(worldBorderJobId);
-    }
-    if (worldBorderRunId !== null) {
-        system.clearRun(worldBorderRunId);
-    }
+    if (worldBorderJobId !== null) system.clearJob(worldBorderJobId);
+    if (worldBorderRunId !== null) system.clearRun(worldBorderRunId);
 }

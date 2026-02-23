@@ -4,10 +4,12 @@
     {
       "type": "minecraft-js",
       "request": "attach",
-      "name": "Attach to Minecraft Bedrock Dedicated Server",
+      "name": "Debug with Minecraft",
+      "mode": "listen",
+      "preLaunchTask": "build",
+      "targetModuleUuid": "7c7e693f-99f4-41a9-95e0-1f57b37e1e12",
       "localRoot": "${workspaceFolder}/",
-      "port": 19144,
-      "targetModuleUuid": "1326c87b-37f3-4543-9f0f-0d03893134e1"
-    }
+      "port": 19144
+   }
   ]
 }
