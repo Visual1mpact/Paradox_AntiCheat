@@ -175,6 +175,10 @@ export const homeCommand: Command = {
                     const [x, y, z] = location.split(",");
                     const teleportLocation = { x: parseFloat(x), y: parseFloat(y), z: parseFloat(z) };
                     const dimensionType = world.getDimension(dimension);
+                    if (!dimensionType) {
+                        player.sendMessage("§o§c[Paradox] Dimension not found. Teleport failed!");
+                        return;
+                    }
                     const teleportOptions = { dimension: dimensionType };
                     const success = player.tryTeleport(teleportLocation, teleportOptions);
                     if (success) {
@@ -190,6 +194,11 @@ export const homeCommand: Command = {
 
         const subCommand = args[0]?.toLowerCase();
         const homeName = args.slice(1).join(" ");
+
+        if (!homeName && ["set", "delete", "teleport"].includes(subCommand)) {
+            player.sendMessage(`§o§c[Paradox] Please provide a home name.`);
+            return;
+        }
 
         switch (subCommand) {
             case "set": {
