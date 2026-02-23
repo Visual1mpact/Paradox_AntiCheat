@@ -61,6 +61,9 @@ export const tprCommand: Command = {
      * @param {string[]} args - The command arguments.
      */
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
+        // Retrieve the current prefix from dynamic properties
+        const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
+
         /**
          * Function to look up a player by name and retrieve the player object.
          * @param {string} playerName - The name of the player to look up.
@@ -130,7 +133,6 @@ export const tprCommand: Command = {
                 return;
             }
             case "": {
-                const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
                 message.sender.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§ctpr help.`);
                 return;
             }
@@ -152,18 +154,16 @@ export const tprCommand: Command = {
 
         const sender = message.sender;
 
-        // Check if there is already a pending teleport request for the receiver
-        if (pendingRequests.has(receiver.name)) {
-            sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name}§7 is already handling a teleport request.`);
+        // Prevent self-request
+        if (sender.id === receiver.id) {
+            sender.sendMessage("§o§c[Paradox] You cannot send a teleport request to yourself.");
             return;
         }
 
-        // Check if receiver is already pending a request by iterating through existing requests
-        for (const request of pendingRequests.values()) {
-            if (request.receiver.name === receiver.name) {
-                sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name}§7 is already handling a teleport request.`);
-                return;
-            }
+        // Check if receiver already has a request
+        if (pendingRequests.has(receiver.name)) {
+            sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiver.name}§7 is already handling a teleport request.`);
+            return;
         }
 
         const timeoutId = system.runTimeout(() => {
@@ -174,10 +174,7 @@ export const tprCommand: Command = {
 
         pendingRequests.set(receiver.name, { sender, receiver, timeoutId });
 
-        // Retrieve the current prefix from dynamic properties
-        const currentPrefix: string = (world.getDynamicProperty("__prefix") as string) ?? "!";
-
         sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request sent to ${receiver.name}§7.`);
-        receiver.sendMessage(`§2[§7Paradox§2]§o§7 ${sender.name}§7 wants to teleport to you. Type ${currentPrefix}§7tpr accept to accept or ${currentPrefix}§7tpr deny to deny.`);
+        receiver.sendMessage(`§2[§7Paradox§2]§o§7 ${sender.name}§7 wants to teleport to you. Type ${prefix}§7tpr accept to accept or ${prefix}§7tpr deny to deny.`);
     },
 };
