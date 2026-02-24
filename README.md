@@ -57,20 +57,20 @@
 
 <h2>Development Environment Setup for Linux</h2>
 <ol>
-  <li><strong>Install Node.js v22.11.0 (LTS):</strong>
+  <li>
+    <strong>Install Node.js (Latest LTS Automatically):</strong>
     <ul>
-      <li>You can use Node Version Manager (nvm) to install Node.js. First, install nvm if you don't have it:
-        <pre><code>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash</code></pre>
+      <li>
+        This project includes a setup script that installs:
+        <ul>
+          <li>The latest <strong>nvm</strong></li>
+          <li>The latest <strong>Node.js LTS</strong></li>
+          <li>Sets LTS as your default Node version</li>
+        </ul>
       </li>
-      <li>Load nvm:
-        <pre><code>source ~/.bashrc</code></pre>
-      </li>
-      <li>Install Node.js v22.11.0 (LTS) using nvm:
-        <pre><code>nvm install 22.11.0</code></pre>
-      </li>
-      <li>Set it as the default version:
-        <pre><code>nvm use 22.11.0
-nvm alias default 22.11.0</code></pre>
+      <li>
+        From the project root, run:
+        <pre><code>node bin/setup-node.js</code></pre>
       </li>
     </ul>
   </li>
