@@ -317,7 +317,7 @@ function setupPvPSystem() {
                     }
 
                     if (result.selection === 0) {
-                        player.runCommand(`kick @s §o§7\n\nYou have selected to quit the game.`);
+                        player.runCommand(`kick @s You have selected to quit the game.`);
                     }
                 })
                 .catch((error: Error) => {

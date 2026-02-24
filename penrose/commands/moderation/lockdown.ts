@@ -46,7 +46,7 @@ export const lockdownCommand: Command = {
                 if (event.initialSpawn === true) {
                     const securityCheck = event.player.getDynamicProperty("securityClearance") as number;
                     if (securityCheck !== 4) {
-                        event.player.runCommand(`kick @s §o§7\n\n${reason}`);
+                        event.player.runCommand(`kick @s ${reason}`);
                     }
                 }
             };
@@ -75,7 +75,7 @@ export const lockdownCommand: Command = {
         for (const target of world.getAllPlayers()) {
             const securityCheck = target.getDynamicProperty("securityClearance") as number;
             if (securityCheck !== 4) {
-                target.runCommand(`kick @s §o§7\n\n${reason}`);
+                target.runCommand(`kick @s ${reason}`);
             }
         }
 

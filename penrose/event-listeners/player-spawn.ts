@@ -94,7 +94,7 @@ async function handleSpoofCheck(player: Player): Promise<void> {
             await spoofDB.set("players", allPlayers);
 
             player.sendMessage(`§o§c[Paradox] Spoof attempt detected. This name is used by another account.`);
-            player.runCommand(`kick @s §o§7\n\nSpoofing is not allowed.`);
+            player.runCommand(`kick @s Spoofing is not allowed.`);
             return;
         }
     }
@@ -188,7 +188,7 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
             await banlistDB.set("players", bannedPlayers);
         }
 
-        player.runCommand(`kick @s §o§7\n\nYour device does not meet the minimum requirements to join this world. You have been banned.`);
+        player.runCommand(`kick @s Your device does not meet the minimum requirements to join this world. You have been banned.`);
     }
 }
 
@@ -221,7 +221,7 @@ function allowList(event: PlayerSpawnAfterEvent): void {
     }
 
     // Otherwise, kick the player
-    player.runCommand(`kick @s §o§7\n\nYou are not on the allow list.`);
+    player.runCommand(`kick @s You are not on the allow list.`);
 }
 
 /**
@@ -263,7 +263,7 @@ function isPlatformBlocked(event: PlayerSpawnAfterEvent): void {
 
     // Use type guard to safely index into settings
     if (platform && isValidPlatform(platform) && settings[platform]) {
-        player.runCommand(`kick @s §o§7\n\nThis platform is not authorized!`);
+        player.runCommand(`kick @s This platform is not authorized!`);
     }
 }
 
@@ -301,7 +301,7 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
             // Otherwise, kick the player
-            player.runCommand(`kick @s §o§7\n\nYou are banned. Please contact an admin for more information.`);
+            player.runCommand(`kick @s You are banned. Please contact an admin for more information.`);
         }
     }
 }

@@ -159,7 +159,7 @@ export const banCommand: Command = {
             }
 
             if (targetPlayer) {
-                targetPlayer.runCommand(`kick @s §o§7\n\n${reason}§7`);
+                targetPlayer.runCommand(`kick @s ${reason}`);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" has been kicked and banned.`);
             } else {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${name}§7" will be kicked if found online.`);

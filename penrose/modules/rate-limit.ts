@@ -124,7 +124,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
 
             system.run(() => {
                 if (player.isValid) {
-                    player.runCommand(`kick @s §o§7\n\nUsing a modified client or causing spam.`);
+                    player.runCommand(`kick @s Using a modified client or causing spam.`);
                 }
             });
 

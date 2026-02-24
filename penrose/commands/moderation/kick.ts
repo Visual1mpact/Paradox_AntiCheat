@@ -107,7 +107,7 @@ export const kickCommand: Command = {
 
         if (player.isValid) {
             // Kick the player with the specified reason
-            player.runCommand(`kick @s §f\n§l§o§7YOU ARE KICKED!\n\n[§fKicked By§7]§f: §7${message.sender.name ?? "§7N/A"}\n§7[§fReason§7]§f: §7${reason ?? "§7Farewell"}§f`);
+            player.runCommand(`kick @s \nYOU ARE KICKED!\n\n[Kicked By]: ${message.sender.name ?? "N/A"}\n[Reason]: ${reason ?? "Farewell"}`);
 
             // Check if the player is still in the world
             const playerStillExists = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);

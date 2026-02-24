@@ -26,7 +26,7 @@ async function handleSelfAttack(eventData: EntityHitEntityAfterEvent): Promise<v
         await banlistDB.set("players", bannedPlayers);
     }
 
-    attacker.runCommand(`kick @s §o§7\n\n${reason}`);
+    attacker.runCommand(`kick @s ${reason}`);
 }
 
 /**
