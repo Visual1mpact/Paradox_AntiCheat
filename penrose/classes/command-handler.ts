@@ -4,7 +4,8 @@ import * as CryptoESImport from "../node_modules/crypto-es";
 const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
 
 /**
- * Enum representing different levels of security clearance for commands.
+ * Security clearance levels for commands.
+ * Determines which players can execute certain commands.
  */
 enum SecurityClearance {
     Level1 = 1,
@@ -14,356 +15,219 @@ enum SecurityClearance {
 }
 
 /**
- * Type representing the form type for GUI instructions.
- * This determines the kind of form to generate:
- * - `"ActionFormData"`: A simple form with action buttons.
- * - `"ModalFormData"`: A more complex form with input fields (text, dropdown, toggle).
- * - `"MessageFormData"`: A form to display a simple message without interactivity.
+ * Types of GUI forms supported by commands.
  */
 type FormType = "ActionFormData" | "ModalFormData" | "MessageFormData";
 
 /**
- * Represents a button in an action form, used in ActionFormData GUI type.
- * This is used to define buttons that the player can click to trigger actions.
+ * Represents a button in an action form GUI.
  */
 export interface ActionFormButton {
-    /**
-     * The display name of the button.
-     * This will be shown to the player as the label for the button.
-     * Example: `"Start Game"`, `"Settings"`.
-     */
+    /** Display name of the button */
     name: string;
 
-    /**
-     * The command(s) to execute when the button is pressed.
-     * This is an array of strings representing the commands.
-     * Example: `["startGame"]`, `["openSettings"]`.
-     */
+    /** Commands to execute when clicked */
     command?: string[];
 
-    /**
-     * An optional description for additional context about the button's function.
-     * This will provide players with more information about what the button does.
-     * Example: `"Begin your adventure"`.
-     */
+    /** Optional description shown to the player */
     description?: string;
 
-    /**
-     * Optional list of required dynamic fields for the button.
-     * These fields must be filled before the button's command can be executed.
-     * Example: `["playerName"]`.
-     */
+    /** Fields that must be filled before executing */
     requiredFields?: string[];
 
-    /**
-     * Whether this button requires crypto instructions.
-     * If true, the form will handle crypto-related interactions.
-     */
+    /** Whether crypto handling is required */
     crypto?: boolean;
 
-    /**
-     * Whether pressing this button should trigger the generation of a modal form.
-     * If true, a modal form will be shown when the button is clicked.
-     */
+    /** If true, clicking generates a modal form */
     generateModalForm?: boolean;
 
-    /**
-     * Optional icon for the button. This can be a Minecraft texture path.
-     * If provided, it will display an icon alongside the button's name.
-     */
+    /** Optional Minecraft texture path for an icon */
     icon?: string;
 
-    /**
-     * Whether the button should trigger the generation of sub-actions.
-     * If true, additional actions will be shown when the button is clicked.
-     */
+    /** Whether sub-actions should appear when clicked */
     generateSubActions?: boolean;
 
-    /**
-     * Optional list of sub-actions for this button.
-     * Each sub-action is an additional action that can be executed after the main button is clicked.
-     */
+    /** Optional array of sub-action buttons */
     subActions?: ActionFormButton[];
 }
 
 /**
- * Represents an input field in a form, used in ModalFormData GUI type.
- * This defines the type and behavior of input fields in modal forms.
+ * Represents a dynamic input field in a modal form GUI.
  */
 export interface DynamicField {
-    /**
-     * The name or label of the field.
-     * This will be displayed as the prompt above the field.
-     * Example: `"Player Name"`, `"Select Difficulty"`.
-     */
+    /** Field name or label */
     name: string;
 
-    /**
-     * The argument to pass back to the command.
-     * This can be used to map the field value to a command argument.
-     */
+    /** Argument key to pass back to the command */
     arg?: string;
 
-    /**
-     * The type of input field.
-     * Options are:
-     * - `"text"`: A text input.
-     * - `"dropdown"`: A dropdown menu.
-     * - `"toggle"`: A toggle switch.
-     */
+    /** Type of input field */
     type: "text" | "dropdown" | "toggle";
 
-    /**
-     * Placeholder text for text fields.
-     * This is shown in the text input field when it's empty.
-     * Example: `"Enter your name here"`.
-     */
+    /** Placeholder text for text fields */
     placeholder?: string;
 
-    /**
-     * Options for dropdown-type fields.
-     * An array of strings representing the available options in the dropdown.
-     * Example: `["Easy", "Medium", "Hard"]`.
-     */
+    /** Dropdown options */
     options?: string[];
 
-    /**
-     * Dynamically populate dropdown options with players or entities.
-     * Only applies when `type` is `"dropdown"`.
-     * - `"players"`: Populate with active player names.
-     * - `"entities"`: Populate with entity identifiers or display names.
-     * If omitted, `options` array is used instead.
-     */
+    /** Automatically populate dropdown with players or entities */
     sourceType?: "players" | "entities";
 
-    /**
-     * Optional list of required dynamic fields for the button.
-     * These fields must be filled before the button's command can be executed.
-     * Example: `["playerName"]`.
-     */
+    /** Required fields that must be filled before execution */
     requiredFields?: string[];
 }
 
 /**
- * Interface for the GUI instructions associated with a command.
- * This defines how to create a GUI form with various input fields, buttons, and titles.
+ * Instructions for generating a GUI for a command.
  */
 export interface GuiInstructions {
-    /**
-     * Type of form to generate. Choose from:
-     * - `"ActionFormData"`: A form with action buttons.
-     * - `"ModalFormData"`: A form with input fields for user interaction.
-     * - `"MessageFormData"`: A simple message form.
-     */
+    /** Type of form to generate */
     formType: FormType;
 
-    /**
-     * The title displayed at the top of the form.
-     * Example: `"Main Menu"`, `"Settings"`.
-     */
+    /** Form title */
     title: string;
 
-    /**
-     * Optional description or context displayed below the title.
-     * This can help guide the player on how to use the form.
-     * Example: `"Please select an option from the menu."`.
-     */
+    /** Optional form description */
     description?: string;
 
-    /**
-     * Order for appending the command and arguments.
-     * Options are:
-     * - `"command-arg"`: Command first, then argument.
-     * - `"arg-command"`: Argument first, then command.
-     * If `undefined`, the default order will be used.
-     */
+    /** Command execution order */
     commandOrder?: "command-arg" | "arg-command" | undefined;
 
-    /**
-     * List of buttons for ActionFormData forms.
-     * Each button has a `name` (label) and a `command` (action to execute).
-     * Each button can also have a `description`, `requiredFields`, and `crypto` flag.
-     */
+    /** Action buttons for ActionFormData */
     actions?: ActionFormButton[];
 
-    /**
-     * List of input fields for ModalFormData forms.
-     * Each field can be a `text` input, `dropdown` selection, or a `toggle` switch.
-     */
+    /** Input fields for ModalFormData */
     dynamicFields?: DynamicField[];
 }
 
 /**
- * Interface representing a command in the command handler system.
- * A command is an action that can be executed by the player, often triggered through chat.
+ * Represents a single server command.
  */
 export interface Command {
-    /**
-     * The name of the command.
-     * This is the keyword that players will type to invoke the command.
-     * Example: `"teleport"`, `"ban"`, `"opengui"`.
-     */
+    /** Command keyword */
     name: string;
 
-    /**
-     * A brief description of the command's functionality.
-     * This provides the player with an overview of what the command does.
-     * Example: `"Teleports the player to a specified location"`.
-     */
+    /** Description of command functionality */
     description: string;
 
-    /**
-     * An optional special note for the command.
-     * This can be used to provide additional context or warnings about using the command.
-     * Example: `"This command is restricted to admins only"`.
-     */
+    /** Optional special note for admins */
     specialNote?: string;
 
-    /**
-     * The usage pattern for the command.
-     * This shows players how to use the command, including any required arguments.
-     * Example: `"!teleport <player> <location>"`.
-     */
+    /** Usage instructions string */
     usage: string;
 
-    /**
-     * Example usages of the command.
-     * This provides players with sample inputs that will work with the command.
-     * Example: `["!teleport Steve Spawn"]`.
-     */
+    /** Array of example commands */
     examples: string[];
 
-    /**
-     * The category the command belongs to.
-     * Commands can be categorized for easier navigation, like `"Utility"`, `"Moderation"`, etc.
-     * Example: `"Utility"`, `"Moderation"`, `"Combat"`.
-     */
+    /** Command category */
     category: string;
 
-    /**
-     * The security clearance level required to execute the command.
-     * This determines who has permission to run the command based on their security clearance.
-     * Example: `1` for regular players, `4` for admins, etc.
-     */
+    /** Required security clearance to execute */
     securityClearance: SecurityClearance;
 
-    /**
-     * Optional icon for the button. This can be a Minecraft texture path.
-     * If provided, it will display an icon alongside the button's name.
-     */
+    /** Optional GUI icon */
     icon?: string;
 
-    /**
-     * Optional instructions for generating a GUI associated with the command.
-     * If specified, this will be used to create a GUI when the command is executed.
-     * The `GuiInstructions` object provides details on the form type, buttons, dynamic fields, etc.
-     */
+    /** Optional GUI instructions */
     guiInstructions?: GuiInstructions;
 
     /**
-     * The function that is executed when the command is run.
-     * This function will handle the logic of the command, including any parameters passed in.
-     * The function signature includes:
-     * - `message`: The message object that triggered the command.
-     * - `args`: The arguments passed to the command (optional).
-     * - `cryptoES`: A reference to the CryptoES library (optional).
-     * - `returnMonitorFunction`: A flag to indicate if the return monitor should be executed (optional).
-     *
-     * The return value can either be:
-     * - A promise that resolves when the command finishes (useful for asynchronous operations).
-     * - A void function that runs synchronously.
-     * - A function that handles `PlayerSpawnAfterEvent` for specific scenarios.
-     *
-     * @example
-     * execute: (message, args) => {
-     *     // Command logic here
-     * };
+     * Function executed when the command runs.
+     * @param message - Chat message event
+     * @param args - Command arguments
+     * @param cryptoES - Optional CryptoES reference
+     * @param returnMonitorFunction - Optional flag
      */
     execute: (message: ChatSendBeforeEvent, args?: string[], cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
 }
 
 /**
- * Class responsible for handling commands in the Minecraft environment.
+ * Handles command registration, execution, and GUI integration.
  */
 export class CommandHandler {
+    /** Commands organized by category */
     private commandsByCategory: Map<string, Command[]> = new Map();
+
+    /** Commands lookup by name */
     private commands: Map<string, Command> = new Map();
+
+    /** Current command prefix */
     private prefix: string;
-    private prefixLock: boolean = false;
-    private prefixUpdateLock: boolean = false;
-    private readonly rateLimitInterval: number = 20; // 20 ticks equals 1 second
-    private readonly maxCommandsPerInterval: number = 5;
-    private commandCount: number = 0;
-    private lastCommandTimestamp: number = 0;
+
+    /** Lock to serialize command execution */
+    private prefixLock = false;
+
+    /** Lock for prefix updates */
+    private prefixUpdateLock = false;
+
+    /** Rate-limit interval in ticks */
+    private readonly rateLimitInterval = 20;
+
+    /** Maximum commands per interval */
+    private readonly maxCommandsPerInterval = 5;
+
+    /** Commands executed in current interval */
+    private commandCount = 0;
+
+    /** Tick of last executed command */
+    private lastCommandTimestamp = 0;
 
     /**
-     * Constructs a CommandHandler.
+     * Initializes a new CommandHandler and sets the prefix.
      */
     constructor() {
-        this.prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+        this.prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
     }
 
     /**
-     * Registers an array of commands.
-     * Clears any previously registered commands to prevent duplication.
-     * @param commands - The commands to register.
+     * Registers an array of commands and organizes them by category.
+     * @param commands - Array of Command objects
      */
     registerCommand(commands: Command[]) {
-        // Clear previously registered commands
         this.commands.clear();
         this.commandsByCategory.clear();
 
         commands.forEach((command) => {
-            // Update the command's usage and examples with the current prefix
             command.usage = command.usage.replaceAll("{prefix}", this.prefix);
-            command.examples = command.examples.map((example) => example.replace("{prefix}", this.prefix));
+            command.examples = command.examples.map((ex) => ex.replaceAll("{prefix}", this.prefix));
 
-            // Categorize the command
             const category = command.category.charAt(0).toUpperCase() + command.category.slice(1).toLowerCase();
-            const categoryCommands = this.commandsByCategory.get(category) || [];
-            categoryCommands.push(command);
-            this.commandsByCategory.set(category, categoryCommands);
+            const catCommands = this.commandsByCategory.get(category) ?? [];
+            catCommands.push(command);
+            this.commandsByCategory.set(category, catCommands);
 
-            // Store the command in the commands map
             this.commands.set(command.name.toLowerCase(), command);
         });
     }
 
     /**
-     * Retrieves all registered commands.
-     * @returns - An array of all registered commands.
+     * Returns all registered commands.
      */
     getRegisteredCommands(): Command[] {
         return Array.from(this.commands.values());
     }
 
     /**
-     * Handles a pre-validated command message.
-     * Assumes message starts with the prefix and event has already been canceled.
-     * @param message - The chat message event.
-     * @param player - The player who sent the message.
-     * @param prefix - The prefix used to invoke the command.
+     * Handles a player sending a command message.
+     * @param message - Chat event
+     * @param player - Player sending the command
+     * @param prefix - Command prefix
      */
     async handleCommand(message: ChatSendBeforeEvent, player: Player, prefix: string): Promise<boolean> {
         const args = message.message.slice(prefix.length).trim().split(/\s+/);
         const commandName = args.shift()?.toLowerCase();
-
         if (!commandName) return false;
 
         if (!this.canExecuteCommand()) {
-            player.sendMessage("\n§2[§7Paradox§2]§o§7 Commands are being rate-limited. Please wait before sending another command.");
+            player.sendMessage("\n§2[§7Paradox§2]§o§7 Commands are being rate-limited. Please wait.");
             return true;
         }
 
-        this.acquireCommandExecutionLock();
-
-        let shouldUpdatePrefix = false;
-
+        await this.acquireCommandExecutionLock();
         try {
-            const result = await this.executeCommand(message, player, commandName, args, prefix);
-            if (result === true) shouldUpdatePrefix = true;
-        } finally {
+            const shouldUpdatePrefix = await this.executeCommand(message, player, commandName, args, prefix);
             if (shouldUpdatePrefix) this.updatePrefix(player);
+        } finally {
             this.releaseCommandExecutionLock();
         }
 
@@ -371,41 +235,39 @@ export class CommandHandler {
     }
 
     /**
-     * Updates the prefix used for commands.
-     * @param player - The player requesting the prefix update.
+     * Updates the command prefix dynamically and updates all command usage strings and examples.
+     * @param player - Player triggering prefix update
      */
     updatePrefix(player: Player) {
         if (this.prefixUpdateLock) {
-            player.sendMessage("\n§2[§7Paradox§2]§o§7 Cannot update prefix while another update is in progress.");
+            player.sendMessage("\n§2[§7Paradox§2]§o§7 Another prefix update is in progress.");
             return;
         }
 
         this.prefixUpdateLock = true;
 
-        const performPrefixUpdate = async () => {
-            const newPrefix = world.getDynamicProperty("__prefix") as string;
-
+        (async () => {
             try {
-                for (const command of this.commands.values()) {
-                    command.usage = command.usage.replaceAll(this.prefix + command.name, newPrefix + command.name);
-                    command.examples = command.examples.map((example: string) => example.replace(this.prefix + command.name, newPrefix + command.name));
+                const newPrefix = (world.getDynamicProperty("__prefix") as string) ?? this.prefix;
+                if (newPrefix !== this.prefix) {
+                    for (const command of this.commands.values()) {
+                        command.usage = command.usage.replaceAll(this.prefix + command.name, newPrefix + command.name);
+                        command.examples = command.examples.map((ex) => ex.replaceAll(this.prefix + command.name, newPrefix + command.name));
+                    }
+                    this.prefix = newPrefix;
                 }
-
-                this.prefix = newPrefix;
             } finally {
                 this.prefixUpdateLock = false;
             }
-        };
-
-        system.run(performPrefixUpdate);
+        })();
     }
 
     /**
-     * Acquires a lock to ensure that command execution is serialized.
+     * Waits for locks to clear and acquires command execution lock.
      */
     private async acquireCommandExecutionLock() {
         while (this.prefixLock || this.prefixUpdateLock) {
-            await new Promise<void>((resolve) => system.runTimeout(() => resolve(), 100));
+            await new Promise<void>((resolve) => setTimeout(resolve, 10));
         }
         this.prefixLock = true;
     }
@@ -418,160 +280,117 @@ export class CommandHandler {
     }
 
     /**
-     * Executes a command based on the message and player input.
-     * @param message - The chat message event.
-     * @param player - The player who sent the message.
-     * @param commandName - The name of the command to execute.
-     * @param args - The arguments provided with the command.
-     * @param defaultPrefix - The default command prefix.
-     * @returns - A boolean indicating whether the prefix needs updating.
+     * Executes a command safely, checks security, and handles help requests.
+     * @param message - Chat message event
+     * @param player - Player executing the command
+     * @param commandName - Command keyword
+     * @param args - Command arguments
+     * @param defaultPrefix - Current command prefix
      */
     private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
-        // Fetch command and validate existence
-        const helpCommands = ["help", "--help", "-h"];
-        const isHelpRequest = helpCommands.includes(commandName) || helpCommands.includes(args[0]?.toLowerCase());
+        const helpAliases = ["help", "--help", "-h"];
+        const isHelpRequest = helpAliases.includes(commandName) || helpAliases.includes(args[0]?.toLowerCase());
         const command = this.commands.get(commandName);
+
         if (!command && !isHelpRequest) {
-            player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}"§7 not found. Use ${defaultPrefix}help to see available commands.`);
+            player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found. Use ${defaultPrefix}help.`);
             return false;
         }
 
-        const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number as SecurityClearance;
-        const requiredClearance = command?.securityClearance ?? 1;
+        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
+        const requiredClearance = command?.securityClearance ?? SecurityClearance.Level1;
         const hasPermission = (playerSecurityClearance >= requiredClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op";
 
         if (!hasPermission) {
-            player.sendMessage("§2[§7Paradox§2]§o§7 You do not have sufficient clearance to execute this command.");
+            player.sendMessage("§2[§7Paradox§2]§o§7 Insufficient clearance to execute this command.");
             return false;
         }
 
-        // Handle help requests
         if (isHelpRequest) {
-            const specifiedCommandName = helpCommands.includes(commandName) ? args[0] : commandName;
-            if (args.length === 0 || helpCommands.includes(commandName)) {
+            const targetCommand = helpAliases.includes(commandName) ? args[0]?.toLowerCase() : commandName;
+            if (!targetCommand) {
                 this.displayAllCommands(player);
             } else {
-                const commandInfo = this.getCommandInfo(specifiedCommandName, player);
-                player.sendMessage(commandInfo.join("\n") || "\n§2[§7Paradox§2]§o§7 Command not found.");
+                const info = this.getCommandInfo(targetCommand, player);
+                player.sendMessage(info.join("\n") || "\n§2[§7Paradox§2]§o§7 Command not found.");
             }
             return false;
         }
 
-        // Run command execution
         try {
-            const result = await new Promise<boolean>((resolve) => {
-                system.run(async () => {
-                    try {
-                        const validateReturn = await command.execute(message, args, CryptoES);
-                        resolve(validateReturn !== undefined && typeof validateReturn === "boolean" ? validateReturn : false);
-                    } catch (error) {
-                        console.error("[Paradox] Error occurred during command execution:", error);
-                        player.sendMessage("§2[§7Paradox§2]§o§7 There was an error executing the command.");
-                        resolve(false);
-                    }
-                });
-            });
-
-            return commandName === "prefix" ? result : false;
-        } catch (error) {
-            console.error("[Paradox] Error occurred during command execution:", error);
+            const execResult = await command!.execute(message, args, CryptoES);
+            return commandName === "prefix" && typeof execResult === "boolean" ? execResult : false;
+        } catch (err) {
+            console.error("[Paradox] Command execution error:", err);
+            player.sendMessage("§2[§7Paradox§2]§o§7 Error executing the command.");
             return false;
         }
     }
 
     /**
-     * Retrieves information about a specific command with enhanced formatting.
-     * @param commandName - The name of the command.
-     * @returns - An array of strings containing the command information.
+     * Returns detailed command information for display.
+     * @param commandName - Name of the command
+     * @param player - Player requesting info
      */
     private getCommandInfo(commandName: string, player: Player): string[] {
         const command = this.commands.get(commandName);
-        const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number;
-        if (command) {
-            let info = [
-                `\n§2[§7Command§2]§f: §o${command.name}§r`,
-                `§2[§7Usage§2]§f: §o${this.formatUsage(command.usage)}§r`,
-                `§2[§7Description§2]§f: §o${command.description}§r`,
-                `§2[§7Examples§2]§f:\n${command.examples.map((example: string) => `    §o${example}`).join("\n")}`,
-            ];
+        if (!command) return [`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found.`];
 
-            // Include the special note if it exists
-            if (command.specialNote && playerSecurityClearance === 4) {
-                info.push(`§2[§7Note§2]§f: §o${command.specialNote}§r`);
-            }
+        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
+        const info = [
+            `\n§2[§7Command§2]§f: §o${command.name}§r`,
+            `§2[§7Usage§2]§f: §o${this.formatUsage(command.usage)}§r`,
+            `§2[§7Description§2]§f: §o${command.description}§r`,
+            `§2[§7Examples§2]§f:\n${command.examples.map((ex) => `    §o${ex}`).join("\n")}`,
+        ];
 
-            return info;
-        } else {
-            return [`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found.`];
+        if (command.specialNote && playerSecurityClearance === SecurityClearance.Level4) {
+            info.push(`§2[§7Note§2]§f: §o${command.specialNote}§r`);
         }
+
+        return info;
     }
 
     /**
-     * Formats the usage string by adding color to specific characters.
-     * @param usage - The original usage string.
-     * @returns - The formatted usage string.
+     * Formats usage string with Minecraft color codes.
+     * @param usage - Command usage string
      */
     private formatUsage(usage: string): string {
-        const formattedUsage = usage.replace(/\[|\]|\<|\>|\|/g, (match) => {
-            switch (match) {
-                case "[":
-                case "]":
-                case "<":
-                case ">":
-                    return `§2${match}§f`;
-                case "|":
-                    return `§2|§f`;
-                default:
-                    return match;
-            }
-        });
-        return formattedUsage;
+        return usage.replace(/[\[\]<>\|]/g, (m) => `§2${m}§f`);
     }
 
     /**
-     * Displays all commands available to the player, sorted alphabetically.
-     * @param player - The player requesting the list of commands.
+     * Displays all commands available to the player, sorted and filtered by security clearance.
+     * @param player - Player requesting the command list
      */
-    private displayAllCommands(player: Player): void {
-        let helpMessage = "\n§2[§7Available Commands§2]§r\n";
-        const playerSecurityClearance = player.getDynamicProperty("securityClearance") as number;
+    private displayAllCommands(player: Player) {
+        let message = "\n§2[§7Available Commands§2]§r\n";
+        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
 
         this.commandsByCategory.forEach((commands, category) => {
-            const filteredCommands = commands.filter((command) => command.securityClearance <= playerSecurityClearance);
-            if (filteredCommands.length > 0) {
-                helpMessage += `\n§2[§7${category}§2]§r\n`;
-                filteredCommands
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .forEach((command) => {
-                        helpMessage += this.getCommandDescription(command);
-                    });
-            }
+            const filtered = commands.filter((c) => c.securityClearance <= playerSecurityClearance);
+            if (!filtered.length) return;
+
+            message += `\n§2[§7${category}§2]§r\n`;
+            filtered
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach((c) => {
+                    message += `§7${c.name}§2: §o§f${c.description}§r\n`;
+                });
         });
 
-        player.sendMessage(helpMessage || "\n§2[§7Paradox§2]§o§7 No commands registered.");
+        player.sendMessage(message || "\n§2[§7Paradox§2]§o§7 No commands registered.");
     }
 
     /**
-     * Returns the description of a command.
-     * @param command - The command to describe.
-     * @returns - A string describing the command.
-     */
-    private getCommandDescription(command: Command): string {
-        return `§7${command.name}§2: §o§f${command.description}§r\n`;
-    }
-
-    /**
-     * Checks if a command can be executed based on rate limiting.
-     * @returns - A boolean indicating whether a command can be executed.
+     * Checks if a command can be executed based on rate-limiting.
      */
     private canExecuteCommand(): boolean {
-        const currentTick = system.currentTick;
-
-        if (currentTick - this.lastCommandTimestamp >= this.rateLimitInterval) {
+        const tick = system.currentTick;
+        if (tick - this.lastCommandTimestamp >= this.rateLimitInterval) {
             this.commandCount = 0;
-            this.lastCommandTimestamp = currentTick;
+            this.lastCommandTimestamp = tick;
         }
-
         return this.commandCount++ < this.maxCommandsPerInterval;
     }
 }
