@@ -1,27 +1,43 @@
-# PowerShell script to bootstrap Node LTS on Windows
+# PowerShell script to bootstrap latest Node LTS on Windows
 $ErrorActionPreference = "Stop"
 
 Write-Host "🔎 Checking for Node..."
 
+# Fetch latest LTS version once
+$IndexJson = Invoke-RestMethod "https://nodejs.org/download/release/index.json"
+$LatestLTS = ($IndexJson | Where-Object { $_.lts } | Select-Object -First 1).version
+Write-Host "➡ Latest Node LTS: $LatestLTS"
+
+$InstallNode = $true
+
 if (Get-Command node -ErrorAction SilentlyContinue) {
-    Write-Host "✅ Node is already installed: $(node -v)"
-    Write-Host "💡 You can run 'npm install' to install dependencies."
-    exit 0
+    $CurrentVersion = (node -v).Trim()
+    Write-Host "ℹ Current installed Node: $CurrentVersion"
+
+    if ([version]$CurrentVersion.TrimStart("v") -ge [version]$LatestLTS.TrimStart("v")) {
+        Write-Host "✅ Node is already latest LTS or newer."
+        $InstallNode = $false
+    }
+    else {
+        Write-Host "⬆ Updating Node to latest LTS..."
+    }
+}
+else {
+    Write-Host "📦 Node not found. Installing latest LTS..."
 }
 
-Write-Host "📦 Node not found. Installing latest Node LTS..."
-
-# Fetch Node release index and find latest LTS
-$IndexJson = Invoke-RestMethod "https://nodejs.org/download/release/index.json"
-$LatestLTS = ($IndexJson | Where-Object { $_.lts } | Select-Object -Last 1).version
-Write-Host "➡ Latest Node LTS: $LatestLTS"
+if (-not $InstallNode) {
+    exit 0
+}
 
 # Determine architecture
 $Arch = if ([Environment]::Is64BitOperatingSystem) { "x64" } else { "x86" }
 
 # Installation directory
 $InstallDir = "$env:USERPROFILE\nodejs"
-if (-not (Test-Path $InstallDir)) { New-Item -ItemType Directory -Path $InstallDir | Out-Null }
+if (-not (Test-Path $InstallDir)) {
+    New-Item -ItemType Directory -Path $InstallDir | Out-Null
+}
 
 # Download Node zip
 $ZipUrl = "https://nodejs.org/download/release/$LatestLTS/node-$LatestLTS-win-$Arch.zip"
@@ -30,24 +46,26 @@ $ZipPath = "$InstallDir\node.zip"
 Write-Host "📥 Downloading Node from $ZipUrl..."
 Invoke-WebRequest $ZipUrl -OutFile $ZipPath
 
+# Remove old extracted versions (clean upgrade)
+Get-ChildItem $InstallDir -Directory -Filter "node-v*" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
 # Extract Node
 Write-Host "🗜 Extracting Node..."
 Expand-Archive $ZipPath -DestinationPath $InstallDir -Force
 Remove-Item $ZipPath
 
-# Find extracted folder
-$NodeFolder = Get-ChildItem $InstallDir | Where-Object { $_.Name -like "node-v*" } | Select-Object -First 1
-$NodeBin = Join-Path $NodeFolder.FullName ""
+# Get extracted folder
+$NodeFolder = Get-ChildItem $InstallDir -Directory -Filter "node-v*" | Select-Object -First 1
+$NodeBin = $NodeFolder.FullName
 
-# Update PATH temporarily for current session
+# Update PATH for current session
 $env:PATH = "$NodeBin;$env:PATH"
 
-# Update user PATH permanently
-try {
+# Update user PATH permanently (avoid duplicates)
+$UserPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+if ($UserPath -notlike "*$NodeBin*") {
     Write-Host "⚡ Updating user PATH permanently..."
-    setx PATH "$NodeBin;%PATH%" | Out-Null
-} catch {
-    Write-Warning "⚠ Failed to update user PATH permanently. Node will work in this session only."
+    [Environment]::SetEnvironmentVariable("PATH", "$NodeBin;$UserPath", "User")
 }
 
 # Verify installation
