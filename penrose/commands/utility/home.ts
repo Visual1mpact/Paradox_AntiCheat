@@ -38,6 +38,13 @@ export const homeCommand: Command = {
     execute: (message: ChatSendBeforeEvent, args: string[], cryptoES: typeof CryptoES) => {
         const player = message.sender;
 
+        // Prevent command if player is imprisoned
+        const isImprisoned = player.getDynamicProperty("prisonLocation"); // matches PRISON_LOCATION_PROPERTY
+        if (isImprisoned) {
+            player.sendMessage(`§o§c[Paradox] You cannot use the home command while imprisoned!`);
+            return;
+        }
+
         // Maximum number of homes a player can save
         const MAX_HOMES = 5;
 

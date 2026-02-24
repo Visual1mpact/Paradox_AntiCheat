@@ -1,4 +1,4 @@
-import { Player, PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
+import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
@@ -147,13 +147,28 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
     // They can change their name at any given time so lets check whenever they spawn
     await handleSpoofCheck(player);
 
-    // Check if the player is imprisoned after respawn
-    const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
-    if (isImprisoned) {
-        // Rebuild the prison and freeze the player if they were previously imprisoned
-        buildPrison(player);
-        freezePlayer(player);
-        player.sendMessage(`§2[§7Paradox§2]§o§7 You have been imprisoned again after respawn.`);
+    const prisonLocation = player.getDynamicProperty(PRISON_LOCATION_PROPERTY) as Vector3 | undefined;
+    if (prisonLocation) {
+        // Only rebuild/freeze if the player is outside their prison bounds
+        const px = player.location.x;
+        const py = player.location.y;
+        const pz = player.location.z;
+
+        const PRISON_WIDTH = 5;
+        const PRISON_HEIGHT = 4;
+        const PRISON_DEPTH = 5;
+
+        const insideX = px >= prisonLocation.x && px < prisonLocation.x + PRISON_WIDTH;
+        const insideZ = pz >= prisonLocation.z && pz < prisonLocation.z + PRISON_DEPTH;
+        const insideY = py >= prisonLocation.y + 1 && py < prisonLocation.y + PRISON_HEIGHT;
+
+        const isOutsidePrison = !(insideX && insideY && insideZ);
+
+        if (isOutsidePrison) {
+            buildPrison(player); // rebuild walls if needed
+            freezePlayer(player); // freeze again
+            player.sendMessage(`§2[§7Paradox§2]§o§7 You were returned to your prison after respawn.`);
+        }
     }
 }
 
