@@ -1,139 +1,306 @@
-import { PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, world, system } from "@minecraft/server";
+import { world, system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
-// Configuration Constants for Xray detection
-const XRAY_BLOCKS = new Set([
-    "minecraft:ancient_debris",
+/* ============================================================
+   CONFIGURATION
+============================================================ */
+
+// All ores we track
+const TRACKED_ORES = new Set([
+    "minecraft:iron_ore",
+    "minecraft:deepslate_iron_ore",
+    "minecraft:gold_ore",
+    "minecraft:deepslate_gold_ore",
+    "minecraft:lapis_ore",
+    "minecraft:deepslate_lapis_ore",
+    "minecraft:redstone_ore",
+    "minecraft:deepslate_redstone_ore",
     "minecraft:diamond_ore",
     "minecraft:deepslate_diamond_ore",
     "minecraft:emerald_ore",
     "minecraft:deepslate_emerald_ore",
-    "minecraft:redstone_ore",
-    "minecraft:deepslate_redstone_ore",
-    "minecraft:lapis_ore",
-    "minecraft:deepslate_lapis_ore",
-    "minecraft:gold_ore",
-    "minecraft:deepslate_gold_ore",
-    "minecraft:iron_ore",
-    "minecraft:deepslate_iron_ore",
+    "minecraft:ancient_debris",
 ]);
 
-// Define thresholds based on ore rarity
-const XRAY_THRESHOLDS: Record<string, number> = {
-    "minecraft:iron_ore": 5,
-    "minecraft:gold_ore": 5,
-    "minecraft:lapis_ore": 5,
-    "minecraft:deepslate_iron_ore": 5,
-    "minecraft:deepslate_gold_ore": 5,
-    "minecraft:deepslate_lapis_ore": 5,
-    "minecraft:redstone_ore": 4,
-    "minecraft:deepslate_redstone_ore": 4,
-    "minecraft:diamond_ore": 3,
-    "minecraft:deepslate_diamond_ore": 3,
-    "minecraft:emerald_ore": 3,
-    "minecraft:deepslate_emerald_ore": 3,
-    "minecraft:ancient_debris": 2,
+// Suspicion weight per ore (rarer ores = higher weight)
+const ORE_SUSPICION_WEIGHT: Record<string, number> = {
+    "minecraft:iron_ore": 1,
+    "minecraft:deepslate_iron_ore": 1,
+    "minecraft:gold_ore": 2,
+    "minecraft:deepslate_gold_ore": 2,
+    "minecraft:lapis_ore": 1,
+    "minecraft:deepslate_lapis_ore": 1,
+    "minecraft:redstone_ore": 1,
+    "minecraft:deepslate_redstone_ore": 1,
+    "minecraft:diamond_ore": 5,
+    "minecraft:deepslate_diamond_ore": 5,
+    "minecraft:emerald_ore": 5,
+    "minecraft:deepslate_emerald_ore": 5,
+    "minecraft:ancient_debris": 8,
 };
 
-// Interface for tracking player Xray activity
-interface XrayData {
-    lastNotifyTime: number; // Last notify time in ticks
+const WINDOW_TICKS = 2400; // 2 minutes
+const DECAY_INTERVAL = 600; // 30 seconds
+const DECAY_AMOUNT = 3;
+
+/* Escalation thresholds */
+const ALERT_SCORE = 15;
+const PRIORITY_SCORE = 25;
+const FREEZE_SCORE = 40;
+
+/* ============================================================
+   DATA MODEL
+============================================================ */
+
+interface MiningProfile {
+    suspicion: number;
+    lastDecayTick: number;
+
+    totalBlocks: number;
+    rareBlocks: number;
+
+    windowStart: number;
+    windowBlocks: number;
+    windowRare: number;
+
+    lastOreLocation?: { x: number; y: number; z: number };
+    lastOreTick?: number;
+    veinChain: number;
 }
 
-// Data structures to track Xray-related information
-const xrayData: Map<string, XrayData> = new Map();
-const blocksBrokenCount: Map<string, number> = new Map();
+const profiles = new Map<string, MiningProfile>();
+
+/* ============================================================
+   UTILITY
+============================================================ */
 
 /**
- * Determines if a player is suspicious based on the number of blocks they've broken and the time window.
- * @param playerId - The player's ID.
- * @param blockId - The block type ID.
- * @returns {boolean} - Whether the player is suspicious for Xray behavior.
+ * Retrieves the mining profile for a player, initializing it if needed.
  */
-function isXraySuspicious(playerId: string, blockId: string): boolean {
-    const threshold = XRAY_THRESHOLDS[blockId];
-    if (!threshold) return false; // Block is not an Xray block, no need to check
+function getProfile(playerId: string): MiningProfile {
+    let profile = profiles.get(playerId);
+    if (!profile) {
+        profile = {
+            suspicion: 0,
+            lastDecayTick: system.currentTick,
 
-    const data = xrayData.get(playerId);
-    if (!data) return false;
+            totalBlocks: 0,
+            rareBlocks: 0,
 
-    const currentTick = system.currentTick;
-    let timeSinceLastNotify = currentTick - data.lastNotifyTime;
+            windowStart: system.currentTick,
+            windowBlocks: 0,
+            windowRare: 0,
 
-    // If the time gap exceeds 1200 ticks (60 seconds), reset the timer
-    if (timeSinceLastNotify > 1200) {
-        data.lastNotifyTime = currentTick; // Reset the last notify time to current tick
-        timeSinceLastNotify = 0; // Reset time gap
+            veinChain: 0,
+        };
+        profiles.set(playerId, profile);
+    }
+    return profile;
+}
+
+/**
+ * Gradually reduces a player's suspicion over time to prevent stale alerts.
+ */
+function decaySuspicion(profile: MiningProfile) {
+    const now = system.currentTick;
+    if (now - profile.lastDecayTick >= DECAY_INTERVAL) {
+        profile.suspicion = Math.max(0, profile.suspicion - DECAY_AMOUNT);
+        profile.lastDecayTick = now;
+    }
+}
+
+/**
+ * Adds suspicion points to a player and triggers escalation if thresholds are met.
+ */
+function addSuspicion(playerId: string, profile: MiningProfile, amount: number, reason: string) {
+    profile.suspicion += amount;
+
+    if (profile.suspicion >= FREEZE_SCORE) {
+        freezePlayer(playerId, profile, reason);
+    } else if (profile.suspicion >= PRIORITY_SCORE) {
+        alertStaff(playerId, profile, "§6[Priority]");
+    } else if (profile.suspicion >= ALERT_SCORE) {
+        alertStaff(playerId, profile, "§e[Alert]");
+    }
+}
+
+/* ============================================================
+   DETECTION SIGNALS
+============================================================ */
+
+/**
+ * Determines if a mined ore is "hidden," i.e., fully surrounded by blocks, which increases suspicion.
+ */
+function isHiddenOre(block: Block): boolean {
+    const neighbors = [block.north(), block.south(), block.east(), block.west(), block.above(), block.below()];
+
+    for (const n of neighbors) {
+        if (!n) continue;
+        if (n.typeId === "minecraft:air" || n.typeId === "minecraft:cave_air") {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Evaluates the ratio of rare ores mined in the current window and escalates suspicion if high.
+ */
+function checkOreRatio(profile: MiningProfile, playerId: string, blockId: string) {
+    const now = system.currentTick;
+
+    if (now - profile.windowStart > WINDOW_TICKS) {
+        profile.windowStart = now;
+        profile.windowBlocks = 0;
+        profile.windowRare = 0;
+        return;
     }
 
-    // Check if the player broke enough blocks within 1200 ticks (60 seconds threshold)
-    return blocksBrokenCount.get(playerId)! >= threshold && timeSinceLastNotify <= 1200;
+    if (profile.windowBlocks < 20) return;
+
+    // Weighted ratio based on ore rarity
+    const ratio = profile.windowRare / profile.windowBlocks;
+
+    const weight = ORE_SUSPICION_WEIGHT[blockId] ?? 1;
+    const thresholdHigh = weight >= 5 ? 0.08 : 0.15; // rarer ores trigger sooner
+    const thresholdMedium = weight >= 5 ? 0.05 : 0.08;
+
+    if (ratio > thresholdHigh) {
+        addSuspicion(playerId, profile, weight + 2, `High ore ratio (${blockId})`);
+    } else if (ratio > thresholdMedium) {
+        addSuspicion(playerId, profile, weight, `Elevated ore ratio (${blockId})`);
+    }
 }
 
 /**
- * Cleans up player data when they leave the game.
- * @param event - The event object for player logout.
+ * Checks for vein-jumping behavior by measuring distance between consecutive ore blocks.
+ * Rarer ores flag shorter distances to increase sensitivity.
  */
-function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
-    const playerId = event.playerId;
-    xrayData.delete(playerId);
-    blocksBrokenCount.delete(playerId);
+function checkVeinJump(profile: MiningProfile, playerId: string, location: { x: number; y: number; z: number }, blockId: string) {
+    if (!profile.lastOreLocation) {
+        profile.lastOreLocation = location;
+        profile.veinChain = 0;
+        return;
+    }
+
+    const dx = location.x - profile.lastOreLocation.x;
+    const dy = location.y - profile.lastOreLocation.y;
+    const dz = location.z - profile.lastOreLocation.z;
+    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+    const weight = ORE_SUSPICION_WEIGHT[blockId] ?? 1;
+    const veinJumpThreshold = weight >= 5 ? 10 : 15; // rarer ores flag closer distances
+
+    if (distance > veinJumpThreshold) {
+        profile.veinChain++;
+        if (profile.veinChain >= 3) {
+            addSuspicion(playerId, profile, weight + 3, `Vein jumping behavior (${blockId})`);
+            profile.veinChain = 0;
+        }
+    } else {
+        profile.veinChain = 0;
+    }
+
+    profile.lastOreLocation = location;
+}
+
+/* ============================================================
+   ESCALATION
+============================================================ */
+
+/**
+ * Notifies staff of a player’s suspicion level.
+ */
+function alertStaff(playerId: string, profile: MiningProfile, level: string) {
+    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    if (!player) return;
+
+    const staff = getSecurityClearanceLevel4Players();
+    for (const s of staff) {
+        if (s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 ${level} §f${player.name} §7Suspicion: §c${profile.suspicion}`);
+    }
 }
 
 /**
- * Handles the block break event and checks for suspicious Xray activity.
- * @param event - The event object for player breaking a block.
+ * Applies freeze effects to a player and alerts staff.
  */
-function handleBlockBreak(event: PlayerBreakBlockAfterEvent): void {
-    const { player, brokenBlockPermutation } = event;
+function freezePlayer(playerId: string, profile: MiningProfile, reason: string) {
+    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    if (!player) return;
+
+    const duration = 100; // 5 seconds
+    player.addEffect("minecraft:slowness", duration, { amplifier: 255, showParticles: false });
+    player.addEffect("minecraft:mining_fatigue", duration, { amplifier: 255, showParticles: false });
+
+    alertStaff(playerId, profile, `§4[FREEZE] §7Reason: §f${reason}`);
+}
+
+/* ============================================================
+   EVENT HANDLERS
+============================================================ */
+
+/**
+ * Handles a block break event: updates mining profile, evaluates ore ratios,
+ * vein-jumping behavior, and triggers suspicion escalation if necessary.
+ */
+function handleBlockBreak(event: PlayerBreakBlockAfterEvent) {
+    const { player, brokenBlockPermutation, block } = event;
     const playerId = player.id;
     const blockId = brokenBlockPermutation.type.id;
 
-    // Only check if the block is an Xray block
-    if (XRAY_BLOCKS.has(blockId)) {
-        // Retrieve or initialize player data
-        let playerData = xrayData.get(playerId);
-        if (!playerData) {
-            playerData = { lastNotifyTime: system.currentTick - 1 }; // Initialize lastNotifyTime to current tick - 1
-            xrayData.set(playerId, playerData);
-        }
+    if (!TRACKED_ORES.has(blockId)) return;
 
-        let blockCount = blocksBrokenCount.get(playerId) ?? 0;
-        blocksBrokenCount.set(playerId, blockCount + 1);
+    const profile = getProfile(playerId);
+    decaySuspicion(profile);
 
-        // Check if the player is suspicious
-        if (isXraySuspicious(playerId, blockId)) {
-            const { x, y, z } = player.location;
-            const level4Players = getSecurityClearanceLevel4Players();
-            level4Players.forEach((level4Player) => {
-                if (level4Player.id !== player.id) {
-                    level4Player.sendMessage(`§2[§7Paradox§2]§7 §4[§7Xray§4]§o§f ${player.name}§f§7 has found §2[§7${blockId.replace("minecraft:", "")}§2]§7 §2x${blockCount + 1}§7 at X=§f${x.toFixed(0)}§7 Y=§f${y.toFixed(0)}§7 Z=§f${z.toFixed(0)}.`);
-                }
-            });
+    profile.totalBlocks++;
+    profile.windowBlocks++;
 
-            // Reset the block count after notifying
-            blocksBrokenCount.set(playerId, 0);
+    const weight = ORE_SUSPICION_WEIGHT[blockId] ?? 1;
+    profile.rareBlocks += weight;
+    profile.windowRare += weight;
 
-            // Update lastNotifyTime to the current tick only after the player is flagged
-            playerData.lastNotifyTime = system.currentTick;
+    if (isHiddenOre(block) && weight >= 3) {
+        addSuspicion(playerId, profile, weight + 2, `Hidden ore mined (${blockId})`);
+    }
+
+    checkOreRatio(profile, playerId, blockId);
+    checkVeinJump(profile, playerId, player.location, blockId);
+
+    if (blockId === "minecraft:ancient_debris") {
+        if (profile.lastOreTick && system.currentTick - profile.lastOreTick < 900) {
+            addSuspicion(playerId, profile, weight + 3, "Ancient debris burst");
         }
     }
+
+    profile.lastOreTick = system.currentTick;
 }
 
 /**
- * Initializes the Xray detection system by subscribing to relevant events.
+ * Cleans up the player's profile when they leave the game.
+ */
+function onLeave(event: PlayerLeaveAfterEvent) {
+    profiles.delete(event.playerId);
+}
+
+/* ============================================================
+   START / STOP
+============================================================ */
+
+/**
+ * Subscribes to block break and player leave events to start Xray detection.
  */
 export function startXrayDetection() {
     world.afterEvents.playerBreakBlock.subscribe(handleBlockBreak);
-    world.afterEvents.playerLeave.subscribe(onPlayerLogout);
+    world.afterEvents.playerLeave.subscribe(onLeave);
 }
 
 /**
- * Stops the Xray detection system and unsubscribes from events.
+ * Unsubscribes from events and clears profiles to stop Xray detection.
  */
 export function stopXrayDetection() {
     world.afterEvents.playerBreakBlock.unsubscribe(handleBlockBreak);
-    world.afterEvents.playerLeave.unsubscribe(onPlayerLogout);
-    xrayData.clear();
-    blocksBrokenCount.clear();
+    world.afterEvents.playerLeave.unsubscribe(onLeave);
+    profiles.clear();
 }
