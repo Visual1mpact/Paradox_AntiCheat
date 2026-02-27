@@ -1,12 +1,12 @@
 {
     "name": "paradox-anticheat",
-    "version": "5.12.3",
+    "version": "5.12.4",
     "productName": "Paradox-AntiCheat",
     "description": "A utility to fight against malicious hackers on Bedrock Edition",
     "private": true,
     "type": "module",
     "devDependencies": {
-        "@types/node": "25.3.0",
+        "@types/node": "25.3.2",
         "@types/fs-extra": "11.0.4",
         "finalhandler": "2.1.1",
         "prettier": "3.8.1",
@@ -22,25 +22,25 @@
         "puppeteer": "24.37.5"
     },
     "dependencies": {
-        "@minecraft/server-ui": "2.1.0-beta.1.26.1-stable",
-        "@minecraft/server": "2.6.0-beta.1.26.1-stable",
-        "@minecraft/server-net": "1.0.0-beta.1.26.1-stable",
-        "@minecraft/server-admin": "1.0.0-beta.1.26.1-stable",
-        "@minecraft/math": "2.3.1",
+        "@minecraft/server-ui": "2.1.0-beta.1.26.2-stable",
+        "@minecraft/server": "2.6.0-beta.1.26.2-stable",
+        "@minecraft/server-net": "1.0.0-beta.1.26.2-stable",
+        "@minecraft/server-admin": "1.0.0-beta.1.26.2-stable",
+        "@minecraft/math": "2.4.0",
         "crypto-es": "3.1.2"
     },
     "overrides": {
         "@minecraft/math": {
-            "@minecraft/server": "2.6.0-beta.1.26.1-stable"
+            "@minecraft/server": "2.6.0-beta.1.26.2-stable"
         },
         "@minecraft/server-ui": {
-            "@minecraft/server": "2.6.0-beta.1.26.1-stable"
+            "@minecraft/server": "2.6.0-beta.1.26.2-stable"
         },
         "@minecraft/server-net": {
-            "@minecraft/server": "2.6.0-beta.1.26.1-stable"
+            "@minecraft/server": "2.6.0-beta.1.26.2-stable"
         },
         "@minecraft/server-admin": {
-            "@minecraft/server": "2.6.0-beta.1.26.1-stable"
+            "@minecraft/server": "2.6.0-beta.1.26.2-stable"
         }
     },
     "prettier": {
