@@ -60,10 +60,10 @@
         "test": "node bin/test-build.js",
         "personal-test": "node bin/test-build.js --personal",
         "check-naming": "node bin/tree-format.js",
-        "build": "npm run check-naming & node bin/build-package.js",
-        "dist": "npm run check-naming & node bin/build-package.js --mcpack",
-        "pete9xi-build": "npm run check-naming & node bin/build-package.js & node bin/pete9xi-build-package.js",
-        "personal-build": "npm run check-naming & node bin/build-package.js & node bin/personal-build-package.js",
-        "personal-dist": "npm run check-naming & node bin/build-package.js --mcpack & node bin/personal-build-package.js --mcpack"
+        "build": "npm run check-naming && node bin/build-package.js",
+        "dist": "npm run check-naming && node bin/build-package.js --mcpack",
+        "pete9xi-build": "npm run check-naming && node bin/build-package.js && node bin/pete9xi-build-package.js",
+        "personal-build": "npm run check-naming && node bin/build-package.js && node bin/personal-build-package.js",
+        "personal-dist": "npm run check-naming && node bin/build-package.js --mcpack && node bin/personal-build-package.js --mcpack"
     }
 }

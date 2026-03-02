@@ -92,7 +92,7 @@ runCommand("node", ["./node_modules/typescript/bin/tsc", "-p", tsConfigPath]);
 
 // Helper function to create an archive
 function createArchive(outputFileName, manifestModifier = null) {
-    const outputFilePath = path.resolve("build", outputFileName);
+    const outputFilePath = path.resolve("build/build", outputFileName);
 
     // Apply manifest modification if provided
     const manifestPath = path.join("build", "manifest.json");

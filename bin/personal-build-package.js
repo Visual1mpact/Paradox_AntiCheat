@@ -99,29 +99,29 @@ function resolvePaths(tsConfigPath) {
 }
 
 /**
- * Updates a distribution archive with the latest files using 7z.
+ * Creates a distribution archive with the latest files using 7z.
  *
  * @param {string} archiveType - The type of archive (zip or mcpack).
  * @param {string} buildDir - The build directory.
  */
-function updateArchive(archiveType, buildDir) {
-    console.log(`Updating ${archiveType} archive...`);
-    const archiveName = `Paradox-AntiCheat-v${packageJson.version}.${archiveType}`;
-    const archivePath = path.join(buildDir, archiveName);
-    const excludePatterns = ["build", "tsconfig.json"];
-    const filesToAdd = fs.readdirSync(buildDir).filter((file) => !excludePatterns.includes(file));
-    const sevenZipPath = path7za;
+function createArchive(archiveType, buildDir) {
+    const archiveName = archiveType === "mcpack" ? `Paradox-AntiCheat-v${packageJson.version}-REALMS.mcpack` : `Paradox-AntiCheat-v${packageJson.version}-BDS.zip`;
 
-    const args = [
-        "u",
-        `-tzip`, // Use zip format for consistency
-        archivePath,
-        ...filesToAdd,
-        `-x!${path.join(buildDir, "build")}`, // Exclude build directory itself
-    ];
+    const outputFilePath = path.join(buildDir, archiveName);
 
-    console.log(`Running 7z with arguments: ${args.join(" ")}`);
-    runCommand(sevenZipPath, args, buildDir);
+    // Remove existing archive
+    if (fs.existsSync(outputFilePath)) {
+        console.log(`Removing existing archive: ${outputFilePath}`);
+        fs.unlinkSync(outputFilePath);
+    }
+
+    console.log(`Creating archive: ${archiveName}`);
+
+    const filesToInclude = ["CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts/*"];
+
+    runCommand(path7za, ["a", "-tzip", outputFilePath, ...filesToInclude], buildDir);
+
+    console.log(`Archive created successfully: ${outputFilePath}`);
 }
 
 /**
@@ -151,7 +151,7 @@ async function main() {
     // Handle optional server and archive updates
     if (!process.argv.includes("--server")) {
         const archiveType = process.argv.includes("--mcpack") ? "mcpack" : "zip";
-        updateArchive(archiveType, buildDir);
+        createArchive(archiveType, buildDir);
     }
 }
 
