@@ -1,3 +1,4 @@
+// Import required modules
 import path from "path";
 import fs from "fs-extra";
 import { spawnSync } from "child_process";
@@ -5,139 +6,133 @@ import { fileURLToPath } from "url";
 import { path7za } from "7zip-bin";
 import os from "os";
 
+// Constants
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BUILD_DIR = "build";
-const PERSONAL_DIR = "personal";
 
-// ---------- Helper: run commands ----------
+// Function to run a command and handle errors
 function runCommand(command, args, options = {}) {
-    const result = spawnSync(command, args, { stdio: ["ignore", "inherit", "inherit"], ...options });
-    if (result.error) {
-        console.error(`Failed: ${command} ${args.join(" ")}\n`, result.error.message);
-        process.exit(1);
+    const result = spawnSync(command, args, { stdio: "inherit", ...options });
+
+    if (result.status !== 0) {
+        console.error(`${command} failed with code ${result.status}:`);
+        if (result.stderr && result.stderr.length > 0) {
+            console.error(result.stderr.toString());
+        } else if (result.stdout && result.stdout.length > 0) {
+            console.error(result.stdout.toString());
+        }
+        process.exit(1); // Exit immediately if the command fails
     }
-    if (result.status !== 0) process.exit(result.status);
+    return result;
 }
 
-// ---------- Helper: get 7za path ----------
+// Get 7za path based on platform
 function get7zaPath() {
     const platform = os.platform();
-    if (platform === "win32") return path7za;
-    const which7z = spawnSync("which", ["7z"]);
-    if (which7z.status === 0) return "7z";
-    const which7za = spawnSync("which", ["7za"]);
-    if (which7za.status === 0) return "7za";
-    try {
-        fs.chmodSync(path7za, 0o755);
-    } catch {}
-    return path7za;
+
+    if (platform === "win32") {
+        return path7za; // Windows binary from 7zip-bin
+    }
+
+    if (platform === "linux") {
+        // Try system 7z first
+        const system7z = spawnSync("which", ["7z"]);
+        if (system7z.status === 0) {
+            return "7z";
+        }
+
+        const system7za = spawnSync("which", ["7za"]);
+        if (system7za.status === 0) {
+            return "7za";
+        }
+
+        // Fallback to 7zip-bin (but check if executable)
+        try {
+            fs.chmodSync(path7za, 0o755); // Ensure it's executable
+        } catch (e) {
+            console.warn("Could not make path7za executable:", e.message);
+        }
+
+        return path7za;
+    }
+
+    throw new Error(`Unsupported platform: ${platform}`);
 }
 
-// ---------- Overlay personal files ----------
-function overlayFiles(srcDir, destDir, excludeDirs = ["scripts", "penrose"], excludeFiles = ["tsconfig.json"]) {
-    if (!fs.existsSync(srcDir)) return;
-    console.log(`Overlaying personal files from ${srcDir}...`);
-    fs.copySync(srcDir, destDir, {
-        overwrite: true,
-        filter: (src) => !excludeDirs.some((d) => src.includes(d)) && !excludeFiles.some((f) => path.basename(src) === f),
-    });
-}
+// Execute version-sync.js to ensure versions are synchronized
+console.log("\nSyncing version with version-sync.js...");
+runCommand("node", ["./bin/version-sync.js"]);
 
-// ---------- Compile TypeScript ----------
-function compileTypeScript(tsConfigPath) {
-    console.log(`Compiling TypeScript: ${tsConfigPath}`);
-    const tsConfigDir = path.dirname(tsConfigPath);
-    let tscPath = path.join(tsConfigDir, "node_modules", ".bin", process.platform === "win32" ? "tsc.cmd" : "tsc");
-    if (!fs.existsSync(tscPath)) tscPath = path.join(__dirname, "..", "node_modules", ".bin", process.platform === "win32" ? "tsc.cmd" : "tsc");
-    runCommand("node", [tscPath, "-p", tsConfigPath], tsConfigDir);
-}
+// Read package.json to get the version
+const packageJson = fs.readJsonSync("package.json");
+const packageVersion = packageJson.version;
 
-// ---------- Resolve paths ----------
-function resolvePaths(tsConfigPath) {
-    const tsConfigDir = path.dirname(tsConfigPath);
-    let tscAlias = path.join(tsConfigDir, "node_modules", ".bin", process.platform === "win32" ? "tsc-alias.cmd" : "tsc-alias");
-    if (!fs.existsSync(tscAlias)) tscAlias = path.join(__dirname, "..", "node_modules", ".bin", process.platform === "win32" ? "tsc-alias.cmd" : "tsc-alias");
-    console.log("Resolving paths with tsc-alias...");
-    const args = ["--resolve-full-paths", "--project", tsConfigPath];
-    if (process.platform === "win32") runCommand("cmd.exe", ["/c", tscAlias, ...args], tsConfigDir);
-    else runCommand(tscAlias, args, tsConfigDir);
-}
+// Clean build directory
+console.log("Cleaning build directory");
+fs.removeSync("build");
 
-// ---------- Create archive ----------
-function createArchive(fileName, manifestModifier = null) {
-    const filePath = path.resolve(BUILD_DIR, fileName);
-    const sevenZip = get7zaPath();
+// Create necessary directories
+console.log("Creating build directory");
+fs.mkdirSync("build", { recursive: true });
 
-    const manifestPath = path.join(BUILD_DIR, "manifest.json");
-    if (manifestModifier && fs.existsSync(manifestPath)) {
+// Copy assets
+console.log("Copying assets");
+const assets = ["CHANGELOG.md", "LICENSE", "manifest.json", "pack_icon.png", "README.md"];
+assets.forEach((asset) => {
+    fs.copyFileSync(asset, path.join("build", asset));
+});
+
+// Bundle penrose/node_modules to build/scripts/node_modules
+console.log("Running esbuild for bundling");
+runCommand("node", ["./bin/esbuild.js"]);
+
+// Build project using TypeScript
+console.log("Building the project");
+const tsConfigPath = path.resolve("./tsconfig.json");
+runCommand("node", ["./node_modules/typescript/bin/tsc", "-p", tsConfigPath]);
+
+// Helper function to create an archive
+function createArchive(outputFileName, manifestModifier = null) {
+    const outputFilePath = path.resolve("build", outputFileName);
+
+    // Apply manifest modification if provided
+    const manifestPath = path.join("build", "manifest.json");
+    if (manifestModifier) {
+        console.log(`Modifying manifest.json for ${outputFileName}...`);
         const manifest = fs.readJsonSync(manifestPath);
         manifestModifier(manifest);
         fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
     }
 
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    const files = ["CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts/*"];
-    console.log(`Creating archive: ${fileName}`);
-    runCommand(sevenZip, ["a", "-tzip", "-y", filePath, ...files], { cwd: BUILD_DIR });
-    console.log(`Archive created: ${fileName}`);
+    // Remove existing archive if it exists
+    if (fs.existsSync(outputFilePath)) {
+        console.log(`Removing existing archive: ${outputFilePath}`);
+        fs.unlinkSync(outputFilePath);
+    }
+
+    // Create the archive
+    console.log(`Creating archive: ${outputFileName}`);
+    const filesToInclude = [
+        "CHANGELOG.md",
+        "LICENSE",
+        "README.md",
+        "manifest.json",
+        "pack_icon.png",
+        "scripts/*", // Include all contents of 'scripts' directory
+    ];
+    runCommand(get7zaPath(), ["a", "-tzip", outputFilePath, ...filesToInclude], { cwd: "build" });
+
+    console.log(`Archive created successfully: ${outputFilePath}`);
 }
 
-// ---------- Main build ----------
-async function main() {
-    const isPersonal = process.argv.includes("--personal");
-    const isMcpack = process.argv.includes("--mcpack");
+// Create a BDS (zip) build
+createArchive(`Paradox-AntiCheat-v${packageVersion}-BDS.zip`);
 
-    // Sync version
-    console.log("\nSyncing version...");
-    runCommand("node", ["./bin/version-sync.js"]);
-
-    const packageJson = fs.readJsonSync("package.json");
-    const version = packageJson.version;
-
-    // Clean & prepare build
-    fs.removeSync(BUILD_DIR);
-    fs.mkdirSync(BUILD_DIR, { recursive: true });
-
-    // Copy core assets & bundle scripts
-    ["CHANGELOG.md", "LICENSE", "manifest.json", "pack_icon.png", "README.md"].forEach((f) => {
-        fs.copyFileSync(f, path.join(BUILD_DIR, f));
+// Create a Realms (mcpack) build if --mcpack is specified
+if (process.argv.includes("--mcpack")) {
+    createArchive(`Paradox-AntiCheat-v${packageVersion}-REALMS.mcpack`, (manifest) => {
+        // Remove the @minecraft/server-net dependency
+        manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net");
     });
-    console.log("Running esbuild...");
-    runCommand("node", ["./bin/esbuild.js"]);
-
-    // Compile standard TypeScript first
-    compileTypeScript(path.resolve("./tsconfig.json"));
-    resolvePaths(path.resolve("./tsconfig.json"));
-
-    // ---------- Apply personal overlay if requested ----------
-    if (isPersonal) {
-        console.log("Applying personal updates...");
-        overlayFiles(PERSONAL_DIR, BUILD_DIR);
-
-        const personalTsConfig = path.resolve(PERSONAL_DIR, "tsconfig.json");
-        compileTypeScript(personalTsConfig);
-        resolvePaths(personalTsConfig);
-
-        // Organize personal scripts
-        const scriptsDir = path.join(BUILD_DIR, "scripts");
-        if (fs.existsSync(path.join(scriptsDir, "personal", "scripts"))) {
-            fs.copySync(path.join(scriptsDir, "personal", "scripts"), scriptsDir, { overwrite: true });
-        }
-        fs.removeSync(path.join(scriptsDir, "personal"));
-        fs.removeSync(path.join(scriptsDir, "penrose"));
-    }
-
-    console.log("Build completed successfully.");
-
-    // Create archives
-    createArchive(`Paradox-AntiCheat-v${version}-BDS.zip`);
-    if (isMcpack) {
-        createArchive(`Paradox-AntiCheat-v${version}-REALMS.mcpack`, (manifest) => {
-            manifest.dependencies = manifest.dependencies?.filter((d) => d.module_name !== "@minecraft/server-net") || [];
-        });
-    }
-
-    console.log("All done!");
 }
 
-main();
+console.log("Build process completed successfully.");
