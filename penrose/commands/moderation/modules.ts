@@ -61,6 +61,7 @@ export const modulesStatusCommand: Command = {
             hitReachCheck_b: "reach",
             spamCheck_b: "antispam",
             worldBorderCheck_b: "worldborder",
+            invSync_b: "invsync",
         };
 
         const entries = paradoxModulesDB.entries();

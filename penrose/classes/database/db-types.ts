@@ -46,6 +46,25 @@ type WorldBorderSettings = {
     end: number;
 };
 
+export type InvSyncSnapshots = {
+    [playerId: string]: {
+        counts: Record<string, number>;
+        time: number;
+        name: string;
+        suspicionScore: number;
+    };
+};
+
+export type InvSyncAudit = {
+    [playerId: string]: {
+        events: {
+            time: number;
+            excessItems: Record<string, number>;
+            totalExcess: number;
+        }[];
+    };
+};
+
 // Mapping of modules to their expected settings structure
 export type ModuleSettingsMap = {
     afkCheck_b: AFKCheckSettings;
@@ -65,6 +84,7 @@ export type ModuleSettingsMap = {
     hitReachCheck_b: undefined; // This module has no configurable settings
     spamCheck_b: undefined; // This module has no configurable settings
     worldBorderCheck_b: WorldBorderSettings;
+    invSync_b: undefined;
 };
 
 /**
