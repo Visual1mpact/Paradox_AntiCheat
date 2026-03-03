@@ -1,12 +1,15 @@
-// commands/settings/invsync.ts
-
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startInvSync, stopInvSync, forceSnapshotAll, forceCheckAll, clearAllSnapshots } from "../../modules/invsync";
 import { paradoxModulesDB, invSyncSnapshotsDB, invSyncAuditDB } from "../../event-listeners/world-initialize";
 
 /**
- * Represents the InvSync command with forensic capabilities.
+ * InvSync command controller.
+ *
+ * Provides administrative control over the Inventory Synchronization module
+ * and exposes forensic reporting tools for anomaly investigation.
+ *
+ * Required clearance: Level 4
  */
 export const invSyncCommand: Command = {
     name: "invsync",
@@ -17,6 +20,10 @@ export const invSyncCommand: Command = {
     securityClearance: 4,
     icon: "textures/ui/switch_accounts.png",
 
+    /**
+     * GUI configuration used by the command framework
+     * to generate the module settings interface.
+     */
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Sync Settings",
@@ -40,17 +47,21 @@ export const invSyncCommand: Command = {
         ],
     },
 
+    /**
+     * Command execution entry point.
+     * Routes subcommands and enforces module state requirements where applicable.
+     */
     execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
         const player = message.sender;
+
         const key = "invSync_b";
         const moduleData = paradoxModulesDB.get(key) ?? { enabled: false };
         const enabled = moduleData.enabled ?? false;
+
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
         const sub = args[0]?.toLowerCase();
 
-        // =========================
-        // Toggle
-        // =========================
+        // Toggle module when no subcommand is provided.
         if (!sub) {
             moduleData.enabled = !enabled;
             await paradoxModulesDB.set(key, moduleData);
@@ -65,53 +76,51 @@ export const invSyncCommand: Command = {
             return;
         }
 
-        // =========================
-        // Status
-        // =========================
+        // Display current module state.
         if (sub === "status") {
             player.sendMessage(`§2[§7Paradox§2]§o§7 InvSync is currently ${enabled ? "§aENABLED" : "§4DISABLED"}§7.`);
             return;
         }
 
-        // =========================
-        // Snapshot
-        // =========================
+        // Force snapshot of all online players.
         if (sub === "snapshot") {
             if (!enabled) return player.sendMessage("§2[§7Paradox§2]§o§7 §c§oInvSync must be enabled first.");
+
             await forceSnapshotAll();
             player.sendMessage("§2[§7Paradox§2]§o§7 §a[InvSync] Snapshot forced for all online players.");
             return;
         }
 
-        // =========================
-        // Check
-        // =========================
+        // Force immediate anomaly check for all online players.
         if (sub === "check") {
             if (!enabled) return player.sendMessage("§2[§7Paradox§2]§o§7 §cInvSync must be enabled first.");
+
             await forceCheckAll();
             player.sendMessage("§2[§7Paradox§2]§o§7 §a[InvSync] Rejoin check forced for all online players.");
             return;
         }
 
-        // =========================
-        // Clear Snapshots
-        // =========================
+        // Clear all stored snapshots and audit history.
         if (sub === "clear") {
             await clearAllSnapshots();
             player.sendMessage("§2[§7Paradox§2]§o§7 §6[InvSync] All stored snapshots cleared.");
             return;
         }
 
-        // =========================
-        // Forensic
-        // =========================
+        /**
+         * Forensic report:
+         * Displays stored snapshot data and recent anomaly history
+         * for a specified player.
+         */
         if (sub === "forensic") {
             const targetName = args[1];
+
             if (!targetName) {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 §cUsage: ${prefix}invsync forensic <player>`);
                 return;
             }
 
+            // Locate snapshot by case-insensitive name match.
             const snapshotEntry = [...invSyncSnapshotsDB.entries()].find(([_, snapshot]) => snapshot.name.toLowerCase() === targetName.toLowerCase());
 
             if (!snapshotEntry) {
@@ -122,11 +131,11 @@ export const invSyncCommand: Command = {
             const [targetId, snapshot] = snapshotEntry;
             const audit = invSyncAuditDB.get(targetId) ?? { events: [] };
 
-            // Header Info
+            // Header information
             player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${snapshot.name}`);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Last Snapshot: §f${new Date(snapshot.time).toLocaleString()}`);
 
-            // Top 3 Suspicious Items
+            // Highlight items exceeding standard stack size (64).
             const suspiciousItems = Object.entries(snapshot.counts)
                 .filter(([_, amount]) => amount > 64)
                 .sort((a, b) => b[1] - a[1])
@@ -140,22 +149,23 @@ export const invSyncCommand: Command = {
                 });
             }
 
-            // Inventory Counts - Slot by Slot
+            // Full stored inventory snapshot (aggregated counts).
             player.sendMessage("§2[§7Paradox§2]§o§7 Full Inventory Counts:");
+
             Object.entries(snapshot.counts).forEach(([itemId, amount], index) => {
                 const slotLabel = `§2[§fSlot ${index}§2]`;
                 const itemName = `§2[§f${itemId.replace("minecraft:", "")}§2]`;
-
-                // Highlight high-count anomalies in red
                 const anomalyHighlight = amount > 64 ? " §c(!)" : "";
 
                 player.sendMessage(`  §o§7| ${slotLabel} §2=>§f ${itemName} §7Amount: §2${amount}${anomalyHighlight}`);
             });
 
-            // Recent Anomalies
+            // Display last 10 recorded anomaly events.
             const recentEvents = audit.events.slice(-10);
+
             if (recentEvents.length) {
                 player.sendMessage("§2[§7Paradox§2]§o§7 Recent Anomalies:");
+
                 recentEvents.forEach((e, i) => {
                     const items = Object.entries(e.excessItems)
                         .map(([id]) => {
@@ -163,6 +173,7 @@ export const invSyncCommand: Command = {
                             return clean.charAt(0).toUpperCase() + clean.slice(1);
                         })
                         .join(", ");
+
                     player.sendMessage(`  §8[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: §2[§7${items}§2]§o§7§f, §cTotal: ${e.totalExcess}`);
                 });
             } else {
@@ -172,6 +183,7 @@ export const invSyncCommand: Command = {
             return;
         }
 
+        // Fallback for unknown subcommands.
         player.sendMessage(`§2[§7Paradox§2]§o§7 §cUnknown subcommand. Use §f${prefix}invsync help`);
     },
 };

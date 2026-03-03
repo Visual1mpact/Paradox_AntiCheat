@@ -2,30 +2,42 @@ import { world, system, Player, PlayerInventoryItemChangeAfterEvent, PlayerLeave
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
+/**
+ * Configuration
+ */
 const SNAPSHOT_INTERVAL_TICKS = 100; // ~5 seconds
-const JOIN_DELAY_TICKS = 20; // ~1 second
+const JOIN_DELAY_TICKS = 20; // ~1 second after join
 const MAX_AUDIT_EVENTS = 200;
 const SNAPSHOT_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const ITEM_TOLERANCE = 0;
 
+/**
+ * Runtime state
+ */
 let running = false;
 let joinSub: any = null;
 let leaveSub: any = null;
 let inventoryChangeSub: any = null;
 let intervalId: any = null;
+
 const pendingJoinChecks = new Map<string, number>();
 const pendingInventoryChecks = new Map<string, boolean>();
 
+/**
+ * Stored inventory snapshot structure.
+ * Counts are aggregated per item type.
+ */
 interface InvSyncSnapshot {
     counts: Record<string, number>;
     time: number;
     name: string;
 }
 
-/* ===========================
-   START / STOP
-=========================== */
-
+/**
+ * Starts the InvSync module.
+ * Subscribes to events, schedules maintenance loop,
+ * and initializes baseline snapshots.
+ */
 export async function startInvSync() {
     if (running) return;
     running = true;
@@ -40,6 +52,9 @@ export async function startInvSync() {
     alertStaffSystem("§2[§7Paradox§2]§o§7 §aInvSync module started.");
 }
 
+/**
+ * Stops the InvSync module and unsubscribes from all listeners.
+ */
 export function stopInvSync() {
     if (!running) return;
     running = false;
@@ -57,10 +72,10 @@ export function stopInvSync() {
     alertStaffSystem("§2[§7Paradox§2]§o§7 §cInvSync module stopped.");
 }
 
-/* ===========================
-   TICK LOOP
-=========================== */
-
+/**
+ * Maintenance loop.
+ * Processes delayed join checks and removes expired snapshots.
+ */
 async function tickLoop() {
     if (!running) return;
 
@@ -68,14 +83,16 @@ async function tickLoop() {
     await cleanExpiredSnapshots();
 }
 
-/* ===========================
-   SNAPSHOT LOGIC
-=========================== */
-
+/**
+ * Forces a snapshot refresh for all online players.
+ */
 export async function forceSnapshotAll() {
     await snapshotAllPlayers();
 }
 
+/**
+ * Captures current inventory state for all online players.
+ */
 async function snapshotAllPlayers() {
     for (const player of world.getPlayers()) {
         const counts = getInventoryCounts(player);
@@ -89,6 +106,9 @@ async function snapshotAllPlayers() {
     }
 }
 
+/**
+ * Saves a final snapshot when a player leaves.
+ */
 function onPlayerLeave(event: PlayerLeaveBeforeEvent) {
     const player = event.player;
     if (!player) return;
@@ -103,15 +123,16 @@ function onPlayerLeave(event: PlayerLeaveBeforeEvent) {
     });
 }
 
-/* ===========================
-   JOIN CHECK LOGIC
-=========================== */
-
+/**
+ * Schedules a delayed inventory verification after player join.
+ */
 function onPlayerJoin(event: PlayerJoinAfterEvent) {
-    const playerId = event.playerId;
-    pendingJoinChecks.set(playerId, system.currentTick + JOIN_DELAY_TICKS);
+    pendingJoinChecks.set(event.playerId, system.currentTick + JOIN_DELAY_TICKS);
 }
 
+/**
+ * Executes delayed join validations.
+ */
 async function processPendingJoins() {
     const currentTick = system.currentTick;
 
@@ -124,16 +145,19 @@ async function processPendingJoins() {
     }
 }
 
+/**
+ * Forces immediate validation for all online players.
+ */
 export async function forceCheckAll() {
     for (const player of world.getPlayers()) {
         await checkPlayerInventory(player);
     }
 }
 
-/* ===========================
-   DEBOUNCED INVENTORY CHANGE
-=========================== */
-
+/**
+ * Inventory change listener with debounce protection.
+ * Prevents multi-slot updates from triggering duplicate anomaly checks.
+ */
 async function onInventoryChange(event: PlayerInventoryItemChangeAfterEvent) {
     const player = event.player;
 
@@ -143,10 +167,13 @@ async function onInventoryChange(event: PlayerInventoryItemChangeAfterEvent) {
         system.runTimeout(async () => {
             pendingInventoryChecks.delete(player.id);
             await debouncedInventoryCheck(player);
-        }, 1); // 1 tick debounce
+        }, 1);
     }
 }
 
+/**
+ * Performs a consolidated inventory comparison after debounce delay.
+ */
 async function debouncedInventoryCheck(player: Player) {
     const snapshot: InvSyncSnapshot = invSyncSnapshotsDB.get(player.id) ?? {
         counts: {},
@@ -178,10 +205,10 @@ async function debouncedInventoryCheck(player: Player) {
     await invSyncSnapshotsDB.set(player.id, snapshot);
 }
 
-/* ===========================
-   PERIODIC FULL INVENTORY CHECK
-=========================== */
-
+/**
+ * Full periodic inventory comparison.
+ * Used during join validation and manual checks.
+ */
 async function checkPlayerInventory(player: Player) {
     const snapshot: InvSyncSnapshot = invSyncSnapshotsDB.get(player.id) ?? {
         counts: {},
@@ -213,20 +240,20 @@ async function checkPlayerInventory(player: Player) {
     await invSyncSnapshotsDB.set(player.id, snapshot);
 }
 
-/* ===========================
-   HANDLE ANOMALY
-=========================== */
-
+/**
+ * Handles anomaly response:
+ *  - Notifies player
+ *  - Removes excess items
+ *  - Records immutable audit entry
+ *  - Alerts staff
+ */
 async function handleAnomaly(player: Player, excess: Record<string, number>, totalExcess: number) {
-    // Deep clone excess BEFORE mutation
     const excessSnapshot: Record<string, number> = JSON.parse(JSON.stringify(excess));
 
     player.sendMessage(`§2[§7Paradox§2]§o§7 §cInventory anomaly detected: §e${totalExcess} §cexcess items.`);
 
-    // Remove items (this mutates the original excess object)
     removeExcessItems(player, excess);
 
-    // Persist audit entry using the immutable clone
     const audit = invSyncAuditDB.get(player.id) ?? { events: [] };
 
     audit.events.push({
@@ -244,14 +271,22 @@ async function handleAnomaly(player: Player, excess: Record<string, number>, tot
     alertStaff(player, totalExcess);
 }
 
+/**
+ * Notifies Level 4 staff members of anomaly detection.
+ */
 function alertStaff(player: Player, totalExcess: number) {
     const staff = getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
         if (s.id === player.id) continue;
+
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvSync] §f${player.name} §7Excess: §e${totalExcess}`);
     }
 }
 
+/**
+ * Broadcasts a system-level message to Level 4 staff.
+ */
 function alertStaffSystem(message: string) {
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
@@ -259,16 +294,20 @@ function alertStaffSystem(message: string) {
     }
 }
 
+/**
+ * Removes excess items from player inventory.
+ * Stops early once required removals are satisfied.
+ */
 function removeExcessItems(player: Player, excess: Record<string, number>) {
     const container = player.getComponent("inventory")?.container;
     if (!container) return;
 
-    // Track whether there are any remaining excess items
     let remainingExcess = Object.values(excess).reduce((sum, v) => sum + v, 0);
+
     if (remainingExcess <= 0) return;
 
     for (let i = 0; i < container.size; i++) {
-        if (remainingExcess <= 0) break; // Stop early if nothing left to remove
+        if (remainingExcess <= 0) break;
 
         const item = container.getItem(i);
         if (!item) continue;
@@ -292,32 +331,36 @@ function removeExcessItems(player: Player, excess: Record<string, number>) {
     }
 }
 
-/* ===========================
-   SNAPSHOT CLEANUP / CLEAR
-=========================== */
-
+/**
+ * Removes expired snapshots based on retention policy.
+ */
 async function cleanExpiredSnapshots() {
     await invSyncSnapshotsDB.clean((_: string, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS);
 }
 
+/**
+ * Clears all stored snapshots and audit records.
+ */
 export async function clearAllSnapshots() {
     await invSyncSnapshotsDB.clear();
     await invSyncAuditDB.clear();
 }
 
-/* ===========================
-   UTILITY
-=========================== */
-
+/**
+ * Aggregates total item counts from a player's inventory.
+ */
 function getInventoryCounts(player: Player): Record<string, number> | null {
     const container = player.getComponent("inventory")?.container;
     if (!container) return null;
 
     const counts: Record<string, number> = {};
+
     for (let i = 0; i < container.size; i++) {
         const item = container.getItem(i);
         if (!item) continue;
+
         counts[item.typeId] = (counts[item.typeId] ?? 0) + item.amount;
     }
+
     return counts;
 }
