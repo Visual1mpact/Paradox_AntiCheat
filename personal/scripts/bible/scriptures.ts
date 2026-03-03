@@ -115,6 +115,42 @@ export const scriptureCommand: Command = {
     examples: [`{prefix}scripture -t PlayerName -e`, `{prefix}scripture -t PlayerName -d`],
     category: "Utility",
     securityClearance: 3,
+    icon: "textures/items/book_enchanted",
+    guiInstructions: {
+        formType: "ActionFormData",
+        commandOrder: "arg-command",
+        title: "Scripture",
+        description: "Select a player and choose whether to Enable or Disable Scripture mode.\n\n",
+        actions: [
+            {
+                name: "Apply Changes",
+                description: "Enable or Disable Scripture mode for the selected player.",
+                generateModalForm: true,
+                requiredFields: ["scriptureAction"],
+            },
+        ],
+        dynamicFields: [
+            {
+                name: "Player",
+                type: "dropdown",
+                sourceType: "players",
+                arg: "-t",
+                requiredFields: ["scriptureAction"],
+            },
+            {
+                name: "Enable Scripture",
+                type: "toggle",
+                arg: "-e",
+                requiredFields: ["scriptureAction"],
+            },
+            {
+                name: "Disable Scripture",
+                type: "toggle",
+                arg: "-d",
+                requiredFields: ["scriptureAction"],
+            },
+        ],
+    },
 
     execute: (message: ChatSendBeforeEvent, args: string[]) => {
         const validFlags = new Set(["-t", "--target", "-e", "-d"]);
