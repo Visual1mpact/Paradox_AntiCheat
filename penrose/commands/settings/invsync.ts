@@ -158,9 +158,12 @@ export const invSyncCommand: Command = {
                 player.sendMessage("§2[§7Paradox§2]§o§7 Recent Anomalies:");
                 recentEvents.forEach((e, i) => {
                     const items = Object.entries(e.excessItems)
-                        .map(([id, amt]) => `${id}x${amt}`)
+                        .map(([id]) => {
+                            const clean = id.replace("minecraft:", "").replace(/_/g, " ");
+                            return clean.charAt(0).toUpperCase() + clean.slice(1);
+                        })
                         .join(", ");
-                    player.sendMessage(`  §8[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: ${items} §cTotal: ${e.totalExcess}`);
+                    player.sendMessage(`  §8[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: §2[§7${items}§2]§o§7§f, §cTotal: ${e.totalExcess}`);
                 });
             } else {
                 player.sendMessage("§2[§7Paradox§2]§o§7 No anomalies detected.");

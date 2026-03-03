@@ -1,5 +1,3 @@
-// modules/invsync.ts
-
 import { world, system, Player, PlayerInventoryItemChangeAfterEvent, PlayerLeaveBeforeEvent, PlayerJoinAfterEvent } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
@@ -220,18 +218,29 @@ async function checkPlayerInventory(player: Player) {
 =========================== */
 
 async function handleAnomaly(player: Player, excess: Record<string, number>, totalExcess: number) {
+    // Deep clone excess BEFORE mutation
+    const excessSnapshot: Record<string, number> = JSON.parse(JSON.stringify(excess));
+
     player.sendMessage(`§2[§7Paradox§2]§o§7 §cInventory anomaly detected: §e${totalExcess} §cexcess items.`);
 
+    // Remove items (this mutates the original excess object)
     removeExcessItems(player, excess);
 
+    // Persist audit entry using the immutable clone
     const audit = invSyncAuditDB.get(player.id) ?? { events: [] };
-    audit.events.push({ time: Date.now(), excessItems: excess, totalExcess });
+
+    audit.events.push({
+        time: Date.now(),
+        excessItems: excessSnapshot,
+        totalExcess,
+    });
 
     if (audit.events.length > MAX_AUDIT_EVENTS) {
         audit.events = audit.events.slice(-MAX_AUDIT_EVENTS);
     }
 
     await invSyncAuditDB.set(player.id, audit);
+
     alertStaff(player, totalExcess);
 }
 
