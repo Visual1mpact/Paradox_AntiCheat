@@ -124,7 +124,6 @@ export const invSyncCommand: Command = {
 
             // Header Info
             player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${snapshot.name}`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Suspicion Score: §c${snapshot.suspicionScore}`);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Last Snapshot: §f${new Date(snapshot.time).toLocaleString()}`);
 
             // Top 3 Suspicious Items

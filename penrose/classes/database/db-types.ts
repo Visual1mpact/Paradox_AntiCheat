@@ -51,7 +51,6 @@ export type InvSyncSnapshots = {
         counts: Record<string, number>;
         time: number;
         name: string;
-        suspicionScore: number;
     };
 };
 

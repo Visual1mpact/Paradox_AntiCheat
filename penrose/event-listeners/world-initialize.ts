@@ -293,7 +293,7 @@ async function initializeParadoxModules(): Promise<void> {
         rateLimitCheck_b: () => startPacketHandler(),
         packetMonitorCheck_b: () => startPacketListener(),
         visionCheck_b: () => startVisionCheck(),
-        invSyncCheck_b: () => startInvSync(),
+        invSync_b: () => startInvSync(),
     };
 
     const runModuleInitializers = () => {

@@ -5,7 +5,7 @@
       "type": "minecraft-js",
       "request": "attach",
       "name": "Debug with Minecraft",
-      "mode": "listen",
+      "mode": "connect",
       "preLaunchTask": "build",
       "targetModuleUuid": "7c7e693f-99f4-41a9-95e0-1f57b37e1e12",
       "localRoot": "${workspaceFolder}/",
