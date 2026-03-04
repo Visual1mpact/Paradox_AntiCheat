@@ -12,6 +12,7 @@ import { startKillAuraCheck } from "penrose/modules/killaura";
 import { startScaffoldCheck } from "penrose/modules/scaffold";
 import { startNamespoofDetection } from "penrose/modules/namespoof";
 import { startXrayDetection } from "penrose/modules/xray";
+import { startInvSync } from "penrose/modules/invsync";
 import { globalBanPlayers } from "penrose/data/global-ban";
 import { paradoxVersion } from "penrose/data/versioning";
 import { OptimizedDatabase } from "penrose/classes/database/data-hive";
@@ -61,12 +62,13 @@ import { packetMonitorCommand } from "penrose/commands/settings/packet-monitor";
 import { allowlistCommand } from "penrose/commands/moderation/allowlist";
 import { visionCheckCommand } from "penrose/commands/settings/vision";
 import { spoofLogCommand } from "penrose/commands/moderation/spooflog";
+import { invSyncCommand } from "penrose/commands/settings/invsync";
 import { healthChangeListener } from "penrose/event-listeners/health-sync";
 import { onPlayerSpawn } from "penrose/event-listeners/player-spawn";
 import { initializeSecurityClearanceTracking } from "penrose/utility/level-4-security-tracker";
 import { chatSendSubscription } from "penrose/classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "penrose/commands/utility/debug-db";
-import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema } from "penrose/classes/database/db-types";
+import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema, InvSyncAudit, InvSyncSnapshots } from "penrose/classes/database/db-types";
 import { scriptureCommand } from "../bible/scriptures";
 
 type PlayerID = string;
@@ -89,6 +91,8 @@ let spoofDB: OptimizedDatabase<TrustedPlayersSchema>;
 let whitelistDB: OptimizedDatabase<WhitelistPlayersSchema>;
 let allowlistDB: OptimizedDatabase<AllowlistPlayersSchema>;
 let banlistDB: OptimizedDatabase<BanlistPlayersSchema>;
+let invSyncSnapshotsDB: OptimizedDatabase<InvSyncSnapshots>;
+let invSyncAuditDB: OptimizedDatabase<InvSyncAudit>;
 let commandHandler: CommandHandler;
 
 // Define all available commands
@@ -138,6 +142,7 @@ const allCommands: Command[] = [
     visionCheckCommand,
     spoofLogCommand,
     debugDBCommand,
+    invSyncCommand,
     scriptureCommand,
 ];
 
@@ -153,9 +158,11 @@ async function initializeSystems() {
     whitelistDB = new OptimizedDatabase("whitelist");
     allowlistDB = new OptimizedDatabase("allowlist");
     banlistDB = new OptimizedDatabase("banlist");
+    invSyncSnapshotsDB = new OptimizedDatabase("invSyncSnapshots");
+    invSyncAuditDB = new OptimizedDatabase("invSyncAudit");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, invSyncAuditDB, invSyncSnapshotsDB];
 
     const results = await Promise.allSettled(dbs.map((db) => db.clean()));
     results.forEach((result, i) => {
@@ -288,6 +295,7 @@ async function initializeParadoxModules(): Promise<void> {
         rateLimitCheck_b: () => startPacketHandler(),
         packetMonitorCheck_b: () => startPacketListener(),
         visionCheck_b: () => startVisionCheck(),
+        invSync_b: () => startInvSync(),
     };
 
     const runModuleInitializers = () => {
@@ -390,4 +398,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, invSyncAuditDB, invSyncSnapshotsDB };
