@@ -29,11 +29,12 @@ export const autoClickerCommand: Command = {
 
     /**
      * Executes the auto-clicker detection command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} _ - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, _: string[] = []): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         // Get auto-clicker detection status from the database

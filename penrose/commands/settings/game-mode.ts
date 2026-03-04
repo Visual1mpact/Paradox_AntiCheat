@@ -54,11 +54,12 @@ export const gameModeCommand: Command = {
 
     /**
      * Executes the gamemode command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         const gamemodeEntry = paradoxModulesDB.get("gamemodeCheck_b") ?? {

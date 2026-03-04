@@ -69,6 +69,10 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
         }
 
         const blockBelow = blockAtLocation.below(); // Block directly beneath the player
+        if (!blockBelow) {
+            // if there's no block below, skip this player
+            continue;
+        }
         const surroundingBlocksBelow = [blockBelow, blockBelow.north(), blockBelow.north()?.east(), blockBelow.east(), blockBelow.south()?.east(), blockBelow.south(), blockBelow.south()?.west(), blockBelow.west(), blockBelow.north()?.west()];
 
         const airBlockCountBelow = surroundingBlocksBelow.filter((block) => block?.isAir).length;
@@ -136,7 +140,7 @@ export async function startFlyCheck(): Promise<void> {
     }
 
     let isRunning = false;
-    let runIdBackup: number;
+    let runIdBackup: number | null = null;
 
     if (!itemUseCheck) {
         world.beforeEvents.itemUse.subscribe(itemUseCheck);
@@ -149,7 +153,9 @@ export async function startFlyCheck(): Promise<void> {
     currentRunId = system.runInterval(async () => {
         if (isRunning) {
             // Restore the backup runId if an overlap is detected
-            system.clearRun(currentRunId);
+            if (currentRunId !== null) {
+                system.clearRun(currentRunId);
+            }
             currentRunId = runIdBackup;
             return; // Skip this iteration if the previous one is still running
         }

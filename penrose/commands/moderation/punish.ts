@@ -67,17 +67,18 @@ export const punishCommand: Command = {
 
     /**
      * Executes the punish command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @param {MinecraftEnvironment} minecraftEnvironment - The Minecraft environment instance.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+        if (!message) return;
         /**
          * Function to look up a player by name and retrieve the player object.
          * @param {string} playerName - The name of the player to look up.
-         * @returns {Player} The player object corresponding to the provided player name.
+         * @returns {Player | undefined} The player object corresponding to the provided player name, or undefined if not found.
          */
-        function getPlayerObject(playerName: string): Player {
+        function getPlayerObject(playerName: string): Player | undefined {
             return world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
         }
 
@@ -136,7 +137,7 @@ export const punishCommand: Command = {
 
         // Wipe them out
 
-        const target: Player = getPlayerObject(playerName);
+        const target: Player | undefined = getPlayerObject(playerName);
         if (target && target.isValid) {
             // Wipe out items in each equipment slot from requested player's equipment container
             if (wipeEquipment) {

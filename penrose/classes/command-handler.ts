@@ -138,7 +138,7 @@ export interface Command {
      * @param cryptoES - Optional CryptoES reference
      * @param returnMonitorFunction - Optional flag
      */
-    execute: (message: ChatSendBeforeEvent, args?: string[], cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
+    execute: (message: ChatSendBeforeEvent | undefined, args?: string[], cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
 }
 
 /**

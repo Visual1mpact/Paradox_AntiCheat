@@ -94,6 +94,9 @@ function onEntityHit(event: EntityHitEntityAfterEvent) {
     if (!isFacingTarget || distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes)) {
         const healthComponentVictim = target.getComponent("health");
 
+        // Only proceed if the health component exists
+        if (healthComponentVictim === undefined) return;
+
         // Get or initialize the victim's health
         let previousHealth = target.getDynamicProperty("paradoxCurrentHealth") as number;
         if (previousHealth === undefined) {

@@ -120,7 +120,7 @@ export async function startLagClear(hours: number = 0, minutes: number = 5, seco
 
     lagClearRunId = system.runInterval(async () => {
         if (isRunning) {
-            system.clearRun(lagClearRunId);
+            system.clearRun(lagClearRunId as number);
             lagClearRunId = runIdBackup;
             return;
         }

@@ -53,11 +53,12 @@ export const spoofLogCommand: Command = {
 
     /**
      * Executes the spooflog command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         const sender = message.sender;
         const nameQuery = args
             .filter((arg) => !arg.startsWith("--"))

@@ -50,8 +50,12 @@ export const invSyncCommand: Command = {
     /**
      * Command execution entry point.
      * Routes subcommands and enforces module state requirements where applicable.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
+     * @param {string[]} _ - The command arguments.
+     * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         const key = "invSync_b";

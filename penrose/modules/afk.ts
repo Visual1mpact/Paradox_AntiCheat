@@ -1,7 +1,7 @@
 import { world, system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
 
 let currentRunId: number | null = null;
-let playerLeaveCallback: (arg: PlayerLeaveAfterEvent) => void;
+let playerLeaveCallback: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
 
 // Initial AFK time in ticks; this will be updated based on the user's input.
 let AFK_TIME_TICKS = 12000; // Default: 10 minutes in ticks (20 ticks per second * 60 seconds * 10 minutes)
@@ -104,7 +104,9 @@ function onPlayerLogout(event: PlayerLeaveAfterEvent): void {
 export function startAFKChecker(hours: number = 0, minutes: number = 10, seconds: number = 0): void {
     // If an AFK checker is already running, clear it
     if (currentRunId !== null) {
-        world.afterEvents.playerLeave.unsubscribe(playerLeaveCallback);
+        if (playerLeaveCallback !== undefined) {
+            world.afterEvents.playerLeave.unsubscribe(playerLeaveCallback);
+        }
         system.clearRun(currentRunId);
         currentRunId = null;
     }
@@ -122,7 +124,7 @@ export function startAFKChecker(hours: number = 0, minutes: number = 10, seconds
     currentRunId = system.runInterval(async () => {
         if (isRunning) {
             // Restore the backup runId if an overlap is detected
-            system.clearRun(currentRunId);
+            system.clearRun(currentRunId as number);
             currentRunId = runIdBackup;
             return; // Skip this iteration if the previous one is still running
         }
@@ -145,7 +147,7 @@ export function stopAFKChecker(): void {
         currentRunId = null;
     }
 
-    if (playerLeaveCallback) {
+    if (playerLeaveCallback !== undefined) {
         world.afterEvents.playerLeave.unsubscribe(playerLeaveCallback);
         playerLeaveCallback = undefined;
     }

@@ -52,11 +52,12 @@ export const banCommand: Command = {
 
     /**
      * Executes the ban command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         // Load ban and whitelist records, defaulting to empty objects if not found
         const bannedPlayers = (banlistDB.get("players") ?? {}) as Record<string, any>;
         const whitelistedPlayers = (whitelistDB.get("players") ?? {}) as Record<string, any>;

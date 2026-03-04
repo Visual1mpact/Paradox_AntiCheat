@@ -9,8 +9,8 @@ const EXCLUDED_BLOCKS = ["minecraft:scaffolding"]; // Excluded blocks like scaff
 const playerBlockPlacements: Map<string, { positions: Block[]; times: number[] }> = new Map();
 
 // Variables to store the subscription references
-let blockPlacementCallback: (arg: PlayerPlaceBlockBeforeEvent) => void;
-let playerLeaveCallback: (arg: PlayerLeaveBeforeEvent) => void;
+let blockPlacementCallback: ((arg: PlayerPlaceBlockBeforeEvent) => void) | undefined;
+let playerLeaveCallback: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
 
 /**
  * Unsubscribes from the scaffold detection events.

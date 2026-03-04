@@ -27,10 +27,11 @@ export const antispamCommand: Command = {
 
     /**
      * Executes the antispam command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         const spamCheckKey = "spamCheck_b";

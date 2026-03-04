@@ -73,7 +73,8 @@ export const pvpToggleCooldownCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object sent by the player.
      * @param {string[]} args - The command arguments. Expects the cooldown time as a number (in seconds).
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
+        if (!message || !args) return;
         const player = message.sender;
 
         // Ensure the argument is a valid number
@@ -142,7 +143,8 @@ export const pvpCooldownCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object sent by the player.
      * @param {string[]} args - The command arguments. Expects the cooldown time as a number (in seconds).
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
+        if (!message || !args) return;
         const player = message.sender;
 
         // Ensure the argument is a valid number
@@ -212,7 +214,8 @@ export const pvpToggleCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
+        if (!message || !args) return;
         const player = message.sender;
         const isGlobal = args.includes("global");
         const showStatus = args.includes("status");

@@ -62,11 +62,12 @@ export const deopCommand: Command = {
 
     /**
      * Executes the deop command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>} A promise that resolves once the command execution is complete.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return Promise.resolve();
         return new Promise<void>((resolve) => {
             /**
              * Removes Paradox-Op permissions associated with a player.
@@ -90,8 +91,8 @@ export const deopCommand: Command = {
                     securityClearanceListData.securityClearanceList = updatedList;
 
                     // Player is online, remove their permissions if applicable
-                    if (securityClearanceListData.host?.id === player.id && message.sender.id !== player.id) {
-                        message.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");
+                    if (securityClearanceListData.host?.id === player.id && message?.sender.id !== player.id) {
+                        message?.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");
                         return false;
                     }
 
@@ -114,7 +115,7 @@ export const deopCommand: Command = {
 
                         // Check if the removed player was the host
                         if (securityClearanceListData.host?.id === removedPlayer.id) {
-                            message.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");
+                            message?.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");
                             return false;
                         }
 
@@ -125,7 +126,7 @@ export const deopCommand: Command = {
                         return true;
                     } else {
                         // Player not found in list
-                        message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found in the security clearance list.`);
+                        message?.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found in the security clearance list.`);
                         return false;
                     }
                 }

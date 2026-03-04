@@ -29,11 +29,12 @@ export const xrayCommand: Command = {
 
     /**
      * Executes the Xray detection command.
-     * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} _ - The command arguments.
-     * @returns {Promise<void>}
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
+     * @param {string[] | undefined} args - The command arguments.
+     * @returns {Promise<boolean | void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (message: ChatSendBeforeEvent | undefined): Promise<boolean | void> => {
+        if (!message) return;
         const player = message.sender;
 
         // Get current Xray detection module state from paradoxModulesDB

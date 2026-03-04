@@ -103,11 +103,13 @@ export const worldBorderCommand: Command = {
 
     /**
      * Executes the worldborder command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]): Promise<void> => {
+        if (!message) return;
+        if (!args) args = [];
         const player = message.sender;
         const moduleKey = "worldBorderCheck_b";
 

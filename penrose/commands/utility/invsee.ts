@@ -40,13 +40,18 @@ export const invseeCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
+        // Check if message is provided
+        if (!message || !args) {
+            return;
+        }
+
         /**
          * Function to look up a player by name and retrieve the player object.
          * @param {string} playerName - The name of the player to look up.
          * @returns {Player} The player object corresponding to the provided player name.
          */
-        function getPlayerObject(playerName: string): Player {
+        function getPlayerObject(playerName: string): Player | undefined {
             return world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
         }
 
@@ -65,6 +70,10 @@ export const invseeCommand: Command = {
         // Retrieve the player's inventory
         if (member && member.isValid) {
             const inv = member.getComponent("inventory");
+            if (!inv || !inv.container) {
+                message.sender.sendMessage(`§o§c[Paradox] Failed to view inventory of "${member.name}§c"! Please try again.`);
+                return;
+            }
             const container = inv.container;
             // Display the player's inventory
             const inventoryMessage = [

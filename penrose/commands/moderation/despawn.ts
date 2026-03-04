@@ -44,11 +44,12 @@ export const despawnCommand: Command = {
 
     /**
      * Executes the despawn command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         // Clean up the argument: remove quotes and @ symbols
         const parameter = args.join(" ").trim().replace(/["@]/g, "");
 

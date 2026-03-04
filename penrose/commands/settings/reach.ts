@@ -29,11 +29,12 @@ export const hitReachCheckCommand: Command = {
 
     /**
      * Executes the hit reach detection command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} _ - The command arguments.]
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (message: ChatSendBeforeEvent | undefined, _?: string[]): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         const hitReachCheckKey = "hitReachCheck_b";

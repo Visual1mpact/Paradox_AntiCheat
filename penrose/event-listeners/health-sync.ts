@@ -53,19 +53,19 @@ export const healthChangeListener = {
      * Callback function for handling player spawn events.
      * @type {(event: PlayerSpawnAfterEvent) => void}
      */
-    playerSpawnCallback: null as unknown as (event: PlayerSpawnAfterEvent) => void,
+    playerSpawnCallback: null as unknown as ((event: PlayerSpawnAfterEvent) => void) | null,
 
     /**
      * Callback function for handling health change events.
      * @type {(event: EntityHealthChangedAfterEvent) => void}
      */
-    healthChangeCallback: null as unknown as (event: EntityHealthChangedAfterEvent) => void,
+    healthChangeCallback: null as unknown as ((event: EntityHealthChangedAfterEvent) => void) | null,
 
     /**
      * Callback function for handling health reset upon player death.
      * @type {(event: EntityDieAfterEvent) => void}
      */
-    healthChangeAfterDeathCallback: null as unknown as (event: EntityDieAfterEvent) => void,
+    healthChangeAfterDeathCallback: null as unknown as ((event: EntityDieAfterEvent) => void) | null,
 
     /**
      * Start listening for player spawn and health change events.

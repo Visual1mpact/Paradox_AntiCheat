@@ -94,7 +94,9 @@ export const platformBlockCommand: Command = {
      * @param {string[]} args - The command arguments (e.g., platform and action).
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args?: string[]): Promise<void> => {
+        // handler signature allows undefined; ignore if not provided
+        if (!message || !args) return;
         const player = message.sender;
 
         // Retrieve settings safely from the typed schema

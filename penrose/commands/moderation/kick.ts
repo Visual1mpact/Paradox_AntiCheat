@@ -52,10 +52,11 @@ export const kickCommand: Command = {
 
     /**
      * Executes the kick command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+        if (!message) return;
         // Initialize variables for player name and reason
         let playerName = "";
         let reason = "";

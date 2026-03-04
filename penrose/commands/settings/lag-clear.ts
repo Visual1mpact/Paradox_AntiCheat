@@ -55,11 +55,12 @@ export const lagClearCommand: Command = {
 
     /**
      * Executes the lagclear command.
-     * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} args - The command arguments.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
+     * @param {string[]} [args] - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
         const moduleKey = "lagClearCheck_b";
 

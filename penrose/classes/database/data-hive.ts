@@ -36,7 +36,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         if (this.cachedPointers !== undefined) return this.cachedPointers;
         const pointers = world.getDynamicProperty(this.pointerKey) as string | undefined;
         this.cachedPointers = pointers ? JSON.parse(pointers) : [];
-        return this.cachedPointers;
+        return this.cachedPointers || [];
     }
 
     /** Update pointers and mark cache dirty */

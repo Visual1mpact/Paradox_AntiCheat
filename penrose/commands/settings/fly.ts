@@ -29,11 +29,12 @@ export const flyCheckCommand: Command = {
 
     /**
      * Executes the antifly command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} _ - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, _: string[] = []): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         // Get fly detection status from the database

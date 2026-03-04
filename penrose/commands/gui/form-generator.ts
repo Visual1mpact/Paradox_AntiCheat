@@ -78,7 +78,7 @@ class GUIManager {
                 return this.openMainGui();
             }
             if (!res.canceled) {
-                const selected = accessibleCategories[res.selection];
+                const selected = accessibleCategories[res.selection || 0];
                 // Open the category menu for the selected category
                 await this.openCategoryMenu(selected.category, selected.commands);
             }
@@ -106,7 +106,7 @@ class GUIManager {
             // If "Back" is selected, return to main menu
             if (res.selection === commands.length) return this.openMainGui();
 
-            const selectedCommand = commands[res.selection];
+            const selectedCommand = commands[res.selection || 0];
             // Open the command-specific menu (action or modal)
             await this.buildCommandMenu(selectedCommand);
         } catch (err) {
@@ -155,7 +155,7 @@ class GUIManager {
             // "Back" selected
             if (res.selection === actions.length) return this.openMainGui();
 
-            const selectedAction = actions[res.selection];
+            const selectedAction = actions[res.selection || 0];
             // If action generates sub-actions, show them recursively
             if (selectedAction.generateSubActions && selectedAction.subActions?.length) {
                 await this.showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description ?? "", command, dynamicFields, commandOrder);
@@ -250,7 +250,9 @@ class GUIManager {
     /**
      * Parses the player's input from a modal form into an array of command arguments.
      */
-    private parseFormResponse(response: ModalFormResponse, fields: DynamicField[], requiredFields: string[] = []): string[] {
+    private parseFormResponse(response?: ModalFormResponse, fields: DynamicField[] = [], requiredFields: string[] = []): string[] {
+        if (!response?.formValues) return []; // early exit if no values
+
         const args: string[] = [];
         let index = 0;
         const groupedValues: Record<string, string[]> = {};
@@ -281,7 +283,6 @@ class GUIManager {
             }
         }
 
-        // Flatten grouped values into command arguments
         for (const [arg, values] of Object.entries(groupedValues)) {
             args.push(arg, ...values);
         }
@@ -309,7 +310,8 @@ export const guiCommand: Command = {
     examples: ["{prefix}gui"],
     securityClearance: 1,
 
-    execute: (message: ChatSendBeforeEvent, _: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, _: string[] = []) => {
+        if (!message) return;
         const player = message.sender;
         // Inform the player to close chat for the GUI
         player.sendMessage("§2[§7Paradox§2]§o§7 Please close your chat window to view the GUI.");

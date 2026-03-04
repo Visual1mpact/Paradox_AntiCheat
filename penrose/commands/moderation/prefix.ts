@@ -38,11 +38,12 @@ export const prefixCommand: Command = {
 
     /**
      * Executes the prefix command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<boolean>} A promise that resolves to true if the prefix update was successful, otherwise false.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]): Promise<boolean> => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []): Promise<boolean> => {
+        if (!message) return Promise.resolve(false);
         return new Promise<boolean>((resolve) => {
             // Check if a new prefix is provided
             if (args.length > 0) {

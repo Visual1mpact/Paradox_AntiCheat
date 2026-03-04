@@ -29,9 +29,10 @@ export const modulesStatusCommand: Command = {
 
     /**
      * Executes the modules status command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      */
-    execute: (message: ChatSendBeforeEvent) => {
+    execute: (message?: ChatSendBeforeEvent) => {
+        if (!message) return;
         const player = message.sender;
 
         const status = (enabled: boolean) => (enabled ? "§aENABLED" : "§4DISABLED");

@@ -58,12 +58,13 @@ export const allowlistCommand: Command = {
 
     /**
      * Executes the allowlist command.
-     * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments.
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         const action = args.shift()?.toLowerCase();
-        if (!["add", "remove", "list", "disable"].includes(action)) {
+        if (!["add", "remove", "list", "disable"].includes(action as string)) {
             message.sender.sendMessage("§o§c[Paradox] Invalid action. Use `add`, `remove`, `list`, or `disable`.");
             return;
         }

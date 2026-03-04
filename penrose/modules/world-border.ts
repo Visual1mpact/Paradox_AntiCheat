@@ -162,7 +162,7 @@ export async function startWorldBorderCheck(): Promise<void> {
 
     worldBorderRunId = system.runInterval(async () => {
         if (isRunning) {
-            system.clearRun(worldBorderRunId);
+            system.clearRun(worldBorderRunId as number);
             worldBorderRunId = runIdBackup;
             return;
         }

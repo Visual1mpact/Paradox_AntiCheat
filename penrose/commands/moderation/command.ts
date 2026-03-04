@@ -60,11 +60,12 @@ export const command: Command = {
      * Executes the `command` command.
      * Handles subcommands: enable, disable, list.
      *
-     * @param {ChatSendBeforeEvent} message - The chat event triggered by the player.
+     * @param {ChatSendBeforeEvent | undefined} message - The chat event triggered by the player.
      * @param {string[]} args - The command arguments provided by the player.
      * @returns {Promise<void>}
      */
-    async execute(message: ChatSendBeforeEvent, args: string[]): Promise<void> {
+    async execute(message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> {
+        if (!message) return;
         if (args.length < 1) {
             message.sender.sendMessage("§o§c[Paradox] Usage: {prefix}command [enable|disable|list] <commandName1> [commandName2] ...");
             return;

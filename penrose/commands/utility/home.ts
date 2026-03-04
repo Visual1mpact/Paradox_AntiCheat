@@ -35,8 +35,10 @@ export const homeCommand: Command = {
      * @param {string[]} args - The command arguments.
      * @param {typeof CryptoES} cryptoES - The CryptoES namespace for encryption/decryption.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[], cryptoES: typeof CryptoES) => {
+    execute: (message?: ChatSendBeforeEvent, args?: string[], cryptoParam?: typeof CryptoES): void | Promise<boolean | void> | ((object: any) => void) => {
+        if (!message || !message.sender) return;
         const player = message.sender;
+        const cryptoES = (cryptoParam ?? CryptoES) as typeof CryptoES;
 
         // Prevent command if player is imprisoned
         const isImprisoned = player.getDynamicProperty("prisonLocation"); // matches PRISON_LOCATION_PROPERTY
@@ -199,10 +201,10 @@ export const homeCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" not found!`);
         }
 
-        const subCommand = args[0]?.toLowerCase();
-        const homeName = args.slice(1).join(" ");
+        const subCommand = args?.[0]?.toLowerCase();
+        const homeName = args?.slice(1).join(" ") ?? "";
 
-        if (!homeName && ["set", "delete", "teleport"].includes(subCommand)) {
+        if (!homeName && subCommand && ["set", "delete", "teleport"].includes(subCommand)) {
             player.sendMessage(`§o§c[Paradox] Please provide a home name.`);
             return;
         }

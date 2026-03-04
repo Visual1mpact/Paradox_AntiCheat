@@ -90,7 +90,7 @@ function broadcastScriptureToPlayer(player: Player) {
         // 75% Diamond, 25% Netherite
         const rewardItem = Math.random() < 0.75 ? "minecraft:diamond" : "minecraft:netherite_ingot";
 
-        player.getComponent("inventory").container.addItem(new ItemStack(rewardItem, amountToGive));
+        player?.getComponent("inventory")?.container.addItem(new ItemStack(rewardItem, amountToGive));
 
         player.setDynamicProperty("scriptureRewardsToday", rewardsGivenToday + amountToGive);
     }
@@ -152,7 +152,8 @@ export const scriptureCommand: Command = {
         ],
     },
 
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+        if (!message) return;
         const validFlags = new Set(["-t", "--target", "-e", "-d"]);
         let playerName = "";
         let enable = false;

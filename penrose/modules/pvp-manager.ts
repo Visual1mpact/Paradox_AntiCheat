@@ -24,11 +24,11 @@ const playerMessageTimestamps = new Map<string, number>(); // Map to store the l
 let pvpCleanupIntervalId: number | undefined;
 
 // Variables to store the subscription references
-let entityHitEntitySubscription: (arg: EntityHitEntityAfterEvent) => void;
-let playerLeaveSubscription: (arg: PlayerLeaveBeforeEvent) => void;
-let playerSpawnSubscription: (arg: PlayerSpawnAfterEvent) => void;
-let projectileHitEntitySubscription: (arg: ProjectileHitEntityAfterEvent) => void;
-let effectAddSubscription: (arg: EffectAddBeforeEvent) => void;
+let entityHitEntitySubscription: ((arg: EntityHitEntityAfterEvent) => void) | undefined;
+let playerLeaveSubscription: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
+let playerSpawnSubscription: ((arg: PlayerSpawnAfterEvent) => void) | undefined;
+let projectileHitEntitySubscription: ((arg: ProjectileHitEntityAfterEvent) => void) | undefined;
+let effectAddSubscription: ((arg: EffectAddBeforeEvent) => void) | undefined;
 
 // Map to store player data with player ID as the key
 const playerDataMap = new Map<

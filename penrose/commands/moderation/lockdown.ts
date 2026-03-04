@@ -33,12 +33,13 @@ export const lockdownCommand: Command = {
 
     /**
      * Executes the lockdown command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} _ - The command arguments.
      * @param {boolean} [returnMonitorFunction=false] - If true, returns the lockDownMonitor function.
      * @returns {void | (function(PlayerSpawnAfterEvent): void)} - The lockDownMonitor function if returnMonitorFunction is true, otherwise void.
      */
-    execute: (message: ChatSendBeforeEvent, _: string[], __: typeof _default, returnMonitorFunction: boolean = false): void | ((event: PlayerSpawnAfterEvent) => void) => {
+    execute: (message?: ChatSendBeforeEvent, _: string[] = [], __?: typeof _default, returnMonitorFunction: boolean = false): void | ((event: PlayerSpawnAfterEvent) => void) => {
+        if (!message) return;
         const reason = "Under Maintenance! Sorry for the inconvenience.";
 
         function createLockDownMonitor(reason: string): (event: PlayerSpawnAfterEvent) => void {

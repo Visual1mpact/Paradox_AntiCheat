@@ -44,10 +44,11 @@ export const opsecCommand: Command = {
 
     /**
      * Executes the opsec command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+        if (!message) return;
         const senderClearance = message.sender.getDynamicProperty("securityClearance") as number;
 
         // Validate command arguments

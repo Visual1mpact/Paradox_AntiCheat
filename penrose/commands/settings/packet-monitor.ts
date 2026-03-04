@@ -29,11 +29,20 @@ export const packetMonitorCommand: Command = {
 
     /**
      * Executes the packet monitoring command.
-     * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} _ - The command arguments.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object (may be undefined when invoked by a monitor).
+     * @param {string[]} [_] - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (
+        message?: ChatSendBeforeEvent,
+        _?: string[],
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        returnMonitorFunction?: boolean
+    ): Promise<void> => {
+        // read the optional parameter to avoid "declared but its value is never read" compiler warning
+        void returnMonitorFunction;
+
+        if (!message) return;
         const player = message.sender;
 
         // Get packet monitoring status from the database

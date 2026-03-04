@@ -30,10 +30,11 @@ export const selfAttackCheckCommand: Command = {
     /**
      * Executes the self-attack detection command.
      * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} _ - The command arguments.
+     * @param {string[]} [_] - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (message: ChatSendBeforeEvent | undefined, _?: string[]): Promise<void> => {
+        if (!message) return;
         const player = message.sender;
 
         const selfAttackCheckKey = "selfAttackCheck_b";

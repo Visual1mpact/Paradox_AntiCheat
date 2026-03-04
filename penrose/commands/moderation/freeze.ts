@@ -153,10 +153,11 @@ export const imprisonCommand: Command = {
 
     /**
      * Executes the imprison command to imprison or release a player.
-     * @param {ChatSendBeforeEvent} message - The message event object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message event object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+        if (!message) return;
         // Find the player object based on the command arguments or use the sender
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
         let player: Player | undefined = playerName.length > 0 ? world.getAllPlayers().find((p) => p.name === playerName) : message.sender;
@@ -213,8 +214,10 @@ export const imprisonCommand: Command = {
                     player.inputPermissions.setPermissionCategory(2, true);
                     //Enable camera
                     player.inputPermissions.setPermissionCategory(1, true);
-                } catch {
-                    message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
+                } catch (error) {
+                    if (message) {
+                        message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" is being skipped to unfreeze, but will be released from its prison. This is most likely a bot!`);
+                    }
                 }
                 player.removeEffect("minecraft:weakness");
             } else {

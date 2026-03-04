@@ -49,9 +49,16 @@ export const channelCommand: Command = {
      * @param {string[]} args - The command arguments parsed from the chat message.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
-        const playerName = message.sender.name;
-        const playerId = message.sender.id; // Get the player's ID
+    execute: async (message?: ChatSendBeforeEvent, args?: string[]): Promise<void> => {
+        if (!message) return;
+        args = args ?? [];
+
+        // message has been validated above; keep a non‑nullable reference for use
+        // inside helper functions so TypeScript doesn’t complain.
+        const msg = message;
+
+        const playerName = msg.sender.name;
+        const playerId = msg.sender.id; // Get the player's ID
 
         /**
          * Retrieves a channel by its name.
@@ -90,20 +97,20 @@ export const channelCommand: Command = {
         async function joinChannel(channelName: string): Promise<void> {
             const channels = getChannel(channelName);
             if (channels && channels.Members[playerId]) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel.`);
                 return;
             }
 
             const channel = getChannel(channelName);
             if (!channel) {
-                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
+                msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
             channel.Members[playerId] = playerName;
             channel.lastActive = Date.now();
             await saveChannels(channelName, channel);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have joined channel '${channelName}§7'.`);
+            msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have joined channel '${channelName}§7'.`);
 
             // Notify other members of the new player
             for (const memberId in channel.Members) {
@@ -123,32 +130,32 @@ export const channelCommand: Command = {
         async function inviteToChannel(channelName: string, receiverName: string): Promise<void> {
             const receiver = world.getAllPlayers().find((player) => player.name === receiverName);
             if (!receiver) {
-                message.sender.sendMessage(`§o§c[Paradox] Player '${receiverName}§c' not found.`);
+                msg.sender.sendMessage(`§o§c[Paradox] Player '${receiverName}§c' not found.`);
                 return;
             }
 
             if (pendingInvitations.has(receiverName)) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 is already handling an invitation.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 is already handling an invitation.`);
                 return;
             }
 
             const channel = getChannel(channelName);
             if (!channel) {
-                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
+                msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
             const timeoutId = system.runTimeout(() => {
                 cancelInvitation(receiverName);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 did not respond in time. Invitation canceled.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 did not respond in time. Invitation canceled.`);
                 receiver.sendMessage(`§2[§7Paradox§2]§o§7 You did not respond to the channel invitation in time. Invitation canceled.`);
             }, TIMEOUT_SECONDS * TPS);
 
-            pendingInvitations.set(receiverName, { sender: message.sender, channel: channelName, timeoutId });
+            pendingInvitations.set(receiverName, { sender: msg.sender, channel: channelName, timeoutId });
             receiver.sendMessage(
-                `§2[§7Paradox§2]§o§7 ${message.sender.name}§7 invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") ?? "!"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") ?? "!"}channel leave --room ${channelName}§7 to decline.`
+                `§2[§7Paradox§2]§o§7 ${msg.sender.name}§7 invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") ?? "!"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") ?? "!"}channel leave --room ${channelName}§7 to decline.`
             );
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Invitation sent to ${receiverName}§7 to join channel '${channelName}§7'.`);
+            msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 Invitation sent to ${receiverName}§7 to join channel '${channelName}§7'.`);
         }
 
         /**
@@ -160,25 +167,25 @@ export const channelCommand: Command = {
         async function transferChannelOwnership(channelName: string, newOwnerName: string): Promise<void> {
             const channel = getChannel(channelName);
             if (!channel) {
-                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
+                msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
             if (channel.Owner !== playerName) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are not the owner of channel '${channelName}§7'.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are not the owner of channel '${channelName}§7'.`);
                 return;
             }
 
             const newOwner = world.getAllPlayers().find((player) => player.name === newOwnerName);
             if (!newOwner) {
-                message.sender.sendMessage(`§o§c[Paradox] Player '${newOwnerName}§c' not found.`);
+                msg.sender.sendMessage(`§o§c[Paradox] Player '${newOwnerName}§c' not found.`);
                 return;
             }
 
             channel.Owner = newOwnerName;
             channel.lastActive = Date.now();
             await saveChannels(channelName, channel);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ownership of channel '${channelName}§7' transferred to ${newOwnerName}§7.`);
+            msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ownership of channel '${channelName}§7' transferred to ${newOwnerName}§7.`);
             newOwner.sendMessage(`§2[§7Paradox§2]§o§7 You are now the owner of channel '${channelName}§7'.`);
         }
 
@@ -191,7 +198,7 @@ export const channelCommand: Command = {
             const entry = allChannels.find(([, channel]) => channel.Members[playerId]);
 
             if (!entry) {
-                message.sender.sendMessage(`§o§c[Paradox] You are not in any channel to leave.`);
+                msg.sender.sendMessage(`§o§c[Paradox] You are not in any channel to leave.`);
                 return;
             }
 
@@ -212,15 +219,15 @@ export const channelCommand: Command = {
                         }
                     }
 
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
+                    msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
                     await saveChannels(channelName as string, channel);
                 } else {
                     await channelsDB.delete(channelName);
-                    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left and deleted empty channel '${channelName}§7'.`);
+                    msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left and deleted empty channel '${channelName}§7'.`);
                 }
             } else {
                 await saveChannels(channelName as string, channel);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left channel '${channelName}§7'.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left channel '${channelName}§7'.`);
 
                 for (const memberId in channel.Members) {
                     const member = world.getAllPlayers().find((p) => p.id === memberId);
@@ -239,16 +246,16 @@ export const channelCommand: Command = {
         async function createChannel(channelName: string): Promise<void> {
             const channels = channelsDB.entries();
             if (channels.some(([, channel]) => channel.Members?.[playerId])) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel. Please leave your current channel before creating a new one.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel. Please leave your current channel before creating a new one.`);
                 return;
             }
 
             const channel = channelsDB.get(channelName); // Ensure the type of the channel
             if (channel) {
-                message.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
+                msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
             } else {
                 await saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName }, lastActive: Date.now() });
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
+                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
             }
         }
 

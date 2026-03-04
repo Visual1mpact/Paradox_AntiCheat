@@ -45,10 +45,11 @@ export const tpaCommand: Command = {
 
     /**
      * Executes the tpa command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+        if (!message) return;
         // Prevent command if player is imprisoned
         const isImprisoned = message.sender.getDynamicProperty("prisonLocation"); // matches PRISON_LOCATION_PROPERTY
         if (isImprisoned) {

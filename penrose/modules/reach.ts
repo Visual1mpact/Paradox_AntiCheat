@@ -167,7 +167,7 @@ export function startHitReachCheck(): void {
 
     currentRunId = system.runInterval(() => {
         if (isRunning) {
-            system.clearRun(currentRunId);
+            system.clearRun(currentRunId as number);
             currentRunId = runIdBackup;
             return;
         }
@@ -192,6 +192,6 @@ export function startHitReachCheck(): void {
  * and unsubscribing from the entity hit event.
  */
 export function stopHitReachCheck(): void {
-    system.clearRun(currentRunId);
+    system.clearRun(currentRunId as number);
     world.afterEvents.entityHitEntity.unsubscribe(handleEntityHit);
 }

@@ -43,11 +43,12 @@ export const unbanCommand: Command = {
 
     /**
      * Executes the unban command.
-     * @param {ChatSendBeforeEvent} message - The message object containing information about the command execution context.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object containing information about the command execution context.
      * @param {string[]} args - The command arguments, where the first element should be the player name to unban.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, args: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
+        if (!message) return;
         const global = args.includes("--global") || args.includes("-g");
         const filteredArgs = args.filter((arg) => !["--global", "-g"].includes(arg));
         const playerName = filteredArgs.join(" ").trim().replace(/["@]/g, "");

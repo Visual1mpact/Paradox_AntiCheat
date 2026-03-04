@@ -29,11 +29,13 @@ export const nameSpoofCommand: Command = {
 
     /**
      * Executes the name-spoof detection command.
-     * @param {ChatSendBeforeEvent} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object; may be undefined when invoked
+     *        outside of a chat event.
      * @param {string[]} _ - The command arguments.
      * @returns {Promise<void>}
      */
-    execute: async (message: ChatSendBeforeEvent, _: string[]): Promise<void> => {
+    execute: async (message: ChatSendBeforeEvent | undefined, _: string[] = []): Promise<void> => {
+        if (!message) return; // nothing to do without an event
         const player = message.sender;
 
         // Key for name-spoof detection status

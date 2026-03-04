@@ -38,9 +38,10 @@ export const debugDBCommand: Command = {
      * Checks if the sender has sufficient security clearance and displays
      * debug information on all initialized databases.
      *
-     * @param message - The event triggered when a player sends a chat message.
+     * @param {ChatSendBeforeEvent | undefined} message - The event triggered when a player sends a chat message.
      */
-    execute: (message: ChatSendBeforeEvent) => {
+    execute: (message?: ChatSendBeforeEvent) => {
+        if (!message) return;
         const sender = message.sender as Player;
         const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 0;
 

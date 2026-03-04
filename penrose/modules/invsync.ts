@@ -335,7 +335,7 @@ function removeExcessItems(player: Player, excess: Record<string, number>) {
  * Removes expired snapshots based on retention policy.
  */
 async function cleanExpiredSnapshots() {
-    await invSyncSnapshotsDB.clean((_: string, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS);
+    await invSyncSnapshotsDB.clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS);
 }
 
 /**

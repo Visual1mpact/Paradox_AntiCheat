@@ -76,10 +76,11 @@ export const setRankCommand: Command = {
 
     /**
      * Executes the setrank command.
-     * @param {ChatSendBeforeEvent} message - The message object.
-     * @param {string[]} args - The command arguments.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object.
+     * @param {string[] | undefined} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message: ChatSendBeforeEvent | undefined, args: string[] | undefined) => {
+        if (!message || !args) return;
         /**
          * Toggles global rank functionality (enable/disable).
          * @param {ChatSendBeforeEvent} message - The message object.

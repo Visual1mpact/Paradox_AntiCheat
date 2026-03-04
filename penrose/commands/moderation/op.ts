@@ -55,10 +55,11 @@ export const opCommand: Command = {
 
     /**
      * Executes the OP command logic.
-     * @param {ChatSendBeforeEvent} message - The message object that contains details about the chat event.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object that contains details about the chat event.
      * @param {string[]} args - The arguments passed along with the command.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]): void => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []): void => {
+        if (!message) return;
         const sender = message.sender;
         const securityCheck = sender.getDynamicProperty("securityClearance") as number;
 

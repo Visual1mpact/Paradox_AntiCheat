@@ -320,7 +320,9 @@ function subscribeToLockDown() {
                 unsubscribeFromLockDown();
                 return;
             }
-            lockDownMonitor(event); // Call the original lockDownMonitor
+            if (lockDownMonitor) {
+                lockDownMonitor(event); // Call the original lockDownMonitor
+            }
         };
         world.afterEvents.playerSpawn.subscribe(wrappedLockDownMonitor);
     }

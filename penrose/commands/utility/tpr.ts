@@ -60,7 +60,10 @@ export const tprCommand: Command = {
      * @param {ChatSendBeforeEvent} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message: ChatSendBeforeEvent, args: string[]) => {
+    execute: (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
+        if (!message) return;
+        args = args ?? [];
+
         // Retrieve the current prefix from dynamic properties
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
 
