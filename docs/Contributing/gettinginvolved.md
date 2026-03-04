@@ -1,129 +1,157 @@
-<img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo">
+<img src="Media/paradox-header.png" alt="Paradox AntiCheat Logo">
 
-## How
+# Getting Involved
 
-Paradox is an open-source project maintained and developed by multiple members over the years. We welcome anyone wishing to be part of the project. Once you've set up your development environment, feel free to send a PR request or have a chat with either Pete9xi or Visual1mpact via the Discord support server.
+Paradox AntiCheat is an open-source project maintained and developed by multiple contributors over the years. We welcome anyone who wants to help improve the project.
 
-## TypeScript
+If you need assistance at any time, join the Discord support server and reach out to a maintainer.
 
-Paradox is written in TypeScript, which is an extension of JavaScript that allows for stricter and more structured coding. JavaScript, on the other hand, is more flexible and forgiving. TypeScript is designed to help developers write more reliable and maintainable code, but it requires stricter adherence to coding standards. JavaScript is often used for rapid prototyping and quick development, while TypeScript is better suited for larger, more complex projects where the benefits of type checking and strict coding outweigh the added complexity.
+---
 
-JavaScript is a dynamic, interpreted language used to create interactive elements. TypeScript, a superset of JavaScript, adds features like static typing, which can help catch errors before the code is run. This is extremely useful in a Minecraft environment, as it saves a developer a lot of time having to load a world to debug blocks of code that TypeScript can catch right away before even getting that far.
+# Tech Stack
 
-## Development Environment Setup
+Paradox is written in **TypeScript**, a superset of JavaScript that adds static typing and stricter structure.
 
-The following guide will help you set up a local development environment. Once completed, you will be able to edit Paradox, make changes, and submit pull requests.
+### Why TypeScript?
 
-## Installing Visual Studio Code (VSC)
+* Detects errors before runtime
+* Improves maintainability
+* Prevents common scripting mistakes
+* Saves time when developing for Minecraft Bedrock
 
-<ol>
-  <li>Install Visual Studio Code (VSC) from the official website: <a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></li>
-  <li>Install the latest Node.js version from the official website: <a href="https://nodejs.org/">https://nodejs.org/</a></li>
-</ol>
+Because Minecraft scripting environments require reloading worlds to test changes, TypeScript helps catch many issues before that step is even necessary.
 
-## Forking the Repository
+---
 
-<ol>
-  <li>Fork the project repository by clicking on the "Fork" button in the top-right corner of the repository page: <a href="https://github.com/Visual1mpact/Paradox_AntiCheat">https://github.com/Visual1mpact/Paradox_AntiCheat</a></li>
-  <li>Clone the forked repository to your local machine using the built-in terminal of Visual Studio Code:</li>
-</ol>
+# Development Environment Setup
+
+Follow the steps below to configure your local environment.
+
+---
+
+## 1️⃣ Install Visual Studio Code
+
+Download and install VS Code:
+
+[https://code.visualstudio.com/](https://code.visualstudio.com/)
+
+Alternatively, on Linux you can install via your package manager:
+
+```bash
+sudo apt update
+sudo apt install code
+```
+
+---
+
+## 2️⃣ Install Node.js (Automatic Setup)
+
+This project includes automated setup scripts that install:
+
+* Latest **nvm** (Linux only)
+* Latest **Node.js LTS**
+* Sets LTS as default version
+
+### Linux
+
+From the project root:
+
+```bash
+chmod +x ./bin/setup-node-linux.sh
+./bin/setup-node-linux.sh
+```
+
+### Windows (PowerShell)
+
+From the project root:
+
+```powershell
+bin\setup-node-windows.ps1
+```
+
+---
+
+## 3️⃣ Install Project Dependencies
+
+After Node.js is installed, run:
+
+```bash
+npm install
+```
+
+---
+
+## 4️⃣ Fork and Clone the Repository
+
+1. Fork the repository on GitHub.
+2. Clone your fork:
 
 ```bash
 git clone https://github.com/<your-github-username>/Paradox_AntiCheat.git
-```
-
-<ol start="3">
-  <li>Navigate to the cloned project directory using the built-in terminal of Visual Studio Code:</li>
-</ol>
-
-```bash
 cd Paradox_AntiCheat
 ```
 
-<ol start="4">
-  <li>Install project dependencies using the built-in terminal of Visual Studio Code:</li>
-</ol>
+---
+
+## 5️⃣ Open the Project in VS Code
 
 ```bash
-npm i
+code .
 ```
 
-## Building for Development
+---
 
-<ul>
-  <li>To build the project for development on Linux, run the following command in the built-in terminal of Visual Studio Code:</li>
-</ul>
+# Making Changes
 
-```bash
-npm run build
-```
+1. Edit files using VS Code
+2. Save your changes
 
-<ul>
-  <li>To build the project for development on Windows, use the following command in the built-in terminal of Visual Studio Code:</li>
-</ul>
+---
 
-```bash
-npm run build_win
-```
+# Committing Changes
 
-## Making and Committing Changes
-
-<ol>
-  <li>Make changes to the project files using Visual Studio Code.</li>
-  <li>Save the files.</li>
-</ol>
-
-## Committing Changes to Git
-
-<ol>
-  <li>Stage the changes to include all modifications in the built-in terminal of Visual Studio Code:</li>
-</ol>
+Stage your changes:
 
 ```bash
 git add .
 ```
 
-<p>(Alternatively, use <code>git add <filename></code> to stage specific files.)</p>
-
-<ol start="2">
-  <li>Commit the changes with a meaningful commit message in the built-in terminal of Visual Studio Code:</li>
-</ol>
+Commit with a meaningful message:
 
 ```bash
 git commit -m "Your commit message here"
 ```
 
-## Pushing Commits Upstream
+---
 
-<ol>
-  <li>Before pushing, pull any changes from the original repository to avoid conflicts in the built-in terminal of Visual Studio Code:</li>
-</ol>
-
-```bash
-git pull origin main
-```
-
-<p>(This ensures your fork is up to date with the original repository.)</p>
-
-<ol start="2">
-  <li>Push the committed changes to your forked repository on GitHub in the built-in terminal of Visual Studio Code:</li>
-</ol>
+# Pushing Changes to Your Fork
 
 ```bash
 git push origin main
 ```
 
-## Creating a Pull Request
+---
 
-<ol>
-  <li>Go to your forked repository on GitHub: <a href="https://github.com/<your-github-username>/Paradox_AntiCheat">https://github.com/<your-github-username>/Paradox_AntiCheat</a></li>
-  <li>Click on the "Compare & pull request" button.</li>
-  <li>Review the changes in the pull request and provide a meaningful description of your changes.</li>
-  <li>Click on the "Create pull request" button to submit the pull request to the original repository.</li>
-</ol>
+# Creating a Pull Request
 
-<p>Congratulations! You have successfully set up the development environment, cloned the project, built it for development, made changes, committed those changes, pushed them upstream, and created a pull request to contribute your changes back to the original repository.</p>
+1. Go to your fork on GitHub.
+2. Click **Compare & pull request**.
+3. Provide a clear description of your changes.
+4. Submit the PR.
 
-?> Please note that the project maintainers will review your pull request, and if they find it suitable, they will merge it into the main project. Keep an eye on your pull request for any feedback or updates from the maintainers.
+Project maintainers will review your request and may provide feedback before merging.
 
-<p>Happy contributing to the Paradox AntiCheat project! If you have any further questions or need additional assistance, feel free to ask.</p>
+---
+
+# Contribution Guidelines
+
+To improve review speed:
+
+* Follow existing code style.
+* Keep PRs focused (avoid massive unrelated changes).
+* Clearly explain *why* changes were made.
+* Test builds before submitting.
+
+---
+
+Thank you for contributing to Paradox AntiCheat 🚀

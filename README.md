@@ -12,13 +12,13 @@
   <div align="center">
     <h2>About Paradox AntiCheat</h2>
   </div>
-  <p>Paradox AntiCheat is a powerful tool designed to combat cheating in Minecraft Bedrock worlds. The name "Paradox" was chosen because the concept of paradox perfectly represents the essence of what we do.</p>
-  <p>Paradox AntiCheat is a statement that contradicts itself. It is a tool that fights cheating by using advanced algorithms and techniques that are themselves paradoxical in nature.</p>
+  <p>Paradox AntiCheat is a high-performance anti-cheat system for Minecraft Bedrock. It is designed to detect and prevent cheating in both Realms and BDS environments, ensuring a fair gameplay experience for all players.</p>
+  <p>The name "Paradox" reflects our approach: a system that uses sophisticated algorithms and advanced detection techniques to outsmart cheaters in ways that might seem counterintuitive at first glance.</p>
   <blockquote>
-    <p>Paradox: A statement or situation that contradicts itself, opposed to common sense and yet perhaps true.</p>
+    <p>Paradox: A statement or situation that contradicts itself yet reveals truth.</p>
   </blockquote>
-  <p>Paradox AntiCheat offers a comprehensive solution for detecting and preventing cheating in Minecraft Bedrock. It uses detection methods to ensure that cheaters are caught and punished. In addition, Paradox AntiCheat is highly customizable, allowing game developers to tailor the tool to their specific needs and requirements.</p>
-  <p>If you're looking for a reliable and effective anti-cheat solution for your Minecraft Bedrock experience, look no further than Paradox AntiCheat. For more information, check out the <a href="https://visual1mpact.github.io/Paradox_AntiCheat/#/">Documentation</a>.</p>
+  <p>Highly modular and customizable, Paradox AntiCheat allows developers to tailor detection and enforcement to their worlds’ specific needs. Whether you’re managing a public server or a private Realm, Paradox provides reliable protection against unfair play.</p>
+  <p>For full documentation and setup guides, visit the <a href="https://visual1mpact.github.io/Paradox_AntiCheat/#/">official documentation site</a>.</p>
 </div>
 <hr>
 <div align="left">

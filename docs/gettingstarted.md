@@ -1,19 +1,65 @@
-![Paradox AntiCheat Logo](Media\paradox-header.png)
+![Paradox AntiCheat Logo](Media/paradox-header.png)
 
-## Required Experimental Flags
+# Required Experimental Flags
 
-Paradox uses the following experimental flags. You need to make sure these are enabled in your world.
+Paradox requires certain experimental features to be enabled in your world:
 
--   Scripting API
+* **Scripting API**
 
-![ScriptingAPI](Media\BetaAPI_Setting.PNG)
+![ScriptingAPI](Media/BetaAPI_Setting.PNG)
 
-## How do I set my OP password?
+Make sure these are enabled in your world settings before loading Paradox.
 
-!> Paradox v5.0.0 and onward doesn't have a configuration file as this is all handled in game. By default all modules are disabled. If a module is required you must enabled it.
+---
 
-Simply import the pack into your world and load in. Type `!op`, and a UI will pop up asking you to set a new password. Paradox has various levels of clearance; currently, you will have a clearance value of 4, which is the highest. We will cover this in more detail here.
+# Granting OP Access
 
-## Ending Notes
+All security and OP management is handled **in-game** via the `!op` command.
 
-You should now have Paradox up and running. The next steps would be to check out all the commands.To see all commands in chat, run the `!help` command.
+### How it Works
+
+* The first player to run `!op` in the world automatically becomes the **host**.
+* The host has full security clearance (**level 4**) and can grant OP to other players.
+* Use the following command in chat:
+
+```
+!op
+```
+
+* Running `!op` without arguments grants OP if you are the first player (host).
+* Running `!op <playerName>` grants OP to another player.
+* Running `!op list` displays all players with OP (security clearance level 4) along with the host.
+
+**Example Commands:**
+
+```
+!op
+!op Alice
+!op "Player Name"
+!op list
+```
+
+All OP grants are tracked automatically.
+
+---
+
+# Security Clearance Levels
+
+* Level 4: Highest clearance, can manage OP and modules.
+* Players granted OP by the host are automatically given level 4 clearance.
+* Only players with level 4 clearance or the host can grant OP.
+
+---
+
+# Next Steps
+
+Once Paradox is loaded and OP is assigned:
+
+* Check available commands in chat:
+
+```
+!help
+```
+
+* Enable the modules you want to use for your world.
+* Paradox is now fully running and ready to monitor and manage your world.
