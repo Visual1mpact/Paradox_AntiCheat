@@ -12,7 +12,7 @@ import { startKillAuraCheck } from "../modules/killaura";
 import { startScaffoldCheck } from "../modules/scaffold";
 import { startNamespoofDetection } from "../modules/namespoof";
 import { startXrayDetection } from "../modules/xray";
-// import { startInvSync } from "../modules/invsync";
+import { startInvSync } from "../modules/invsync";
 import { globalBanPlayers } from "../data/global-ban";
 import { paradoxVersion } from "../data/versioning";
 import { OptimizedDatabase } from "../classes/database/data-hive";
@@ -62,7 +62,7 @@ import { packetMonitorCommand } from "../commands/settings/packet-monitor";
 import { allowlistCommand } from "../commands/moderation/allowlist";
 import { visionCheckCommand } from "../commands/settings/vision";
 import { spoofLogCommand } from "../commands/moderation/spooflog";
-// import { invSyncCommand } from "../commands/settings/invsync";
+import { invSyncCommand } from "../commands/settings/invsync";
 import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
@@ -141,7 +141,7 @@ const allCommands: Command[] = [
     visionCheckCommand,
     spoofLogCommand,
     debugDBCommand,
-    // invSyncCommand,
+    invSyncCommand,
 ];
 
 /**
@@ -293,7 +293,7 @@ async function initializeParadoxModules(): Promise<void> {
         rateLimitCheck_b: () => startPacketHandler(),
         packetMonitorCheck_b: () => startPacketListener(),
         visionCheck_b: () => startVisionCheck(),
-        // invSync_b: () => startInvSync(),
+        invSync_b: () => startInvSync(),
     };
 
     const runModuleInitializers = () => {
