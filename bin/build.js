@@ -124,7 +124,7 @@ function createArchive(type = "zip") {
     }
 
     console.log(`Creating archive: ${archiveName}`);
-    run(get7zaPath(), ["a", "-tzip", archiveName, "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"], { cwd: BUILD_DIR });
+    run(get7zaPath(), ["a", "-tzip", archiveName, "-xr!*.d.ts", "-xr!*.d.ts.map", "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"], { cwd: BUILD_DIR });
     console.log(`Archive created successfully: ${outputFilePath}`);
 }
 
@@ -217,21 +217,22 @@ async function main() {
     // Regular build
     console.log("Running regular build...");
     run("node", ["./bin/esbuild.js"]);
+
+    // Compile penrose first
     compile("./tsconfig.json");
 
-    // Personal overlay
+    // Compile personal overlay
     if (isPersonal) {
-        console.log("\nApplying personal layer...\n");
         compile(`./${PERSONAL_DIR}/tsconfig.json`);
 
-        overlayPersonalRoot();
-        flattenPersonalScripts();
+        overlayPersonalRoot(); // copy root-level personal files
+        flattenPersonalScripts(); // flatten nested scripts
 
-        // Run tsc-alias AFTER flattening so paths match final folder structure
+        // Rewrite all imports to relative paths after flattening
         resolveAliases(`./${PERSONAL_DIR}/tsconfig.json`);
     }
 
-    // Resolve aliases for main build
+    // Final alias resolution for penrose imports
     resolveAliases("./tsconfig.json");
 
     console.log("\nBuild finished successfully.\n");

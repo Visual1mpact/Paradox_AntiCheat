@@ -1,28 +1,40 @@
 {
-    "compilerOptions": {
-        "baseUrl": "../",
-        "paths": {
-            "penrose": ["penrose/*"],
-        },
-        "typeRoots": ["../node_modules/@minecraft", "../node_modules/@types"],
-        "types": ["node", "server", "server-ui"],
-        "lib": ["esnext"],
-        "target": "esnext",
-        "module": "esnext",
-        "moduleResolution": "node10",
-        "outDir": "../build/scripts",
-        "allowJs": false,
-        "checkJs": false,
-        "useDefineForClassFields": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "noImplicitAny": true,
-        "alwaysStrict": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitThis": true,
-        "noUnusedParameters": true
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "penrose/*": ["penrose/*"]
     },
-    "include": ["../personal"],
-    "exclude": ["../penrose/"]
-  }
-  
+
+    "typeRoots": [
+      "../node_modules/@minecraft",
+      "../node_modules/@types"
+    ],
+
+    "types": ["node", "server", "server-ui"],
+
+    "lib": ["esnext"],
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+
+    "outDir": "../build/scripts",
+
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+
+    "allowJs": false,
+    "checkJs": false,
+    "useDefineForClassFields": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noUnusedParameters": true
+  },
+
+  "include": ["./scripts"],
+  "exclude": ["../penrose"]
+}
