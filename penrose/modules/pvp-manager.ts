@@ -3,7 +3,7 @@ import {
     Effect,
     EffectAddBeforeEvent,
     EntityEquippableComponent,
-    EntityHitEntityAfterEvent,
+    EntityHurtBeforeEvent,
     EquipmentSlot,
     ItemStack,
     Player,
@@ -16,21 +16,35 @@ import {
 } from "@minecraft/server";
 import { MessageFormData } from "@minecraft/server-ui";
 
-let cooldownTicks = 2400; // 2 minutes cooldown in ticks (2400 ticks = 2 minutes)
-const punishmentProperty = "pvpPunishment"; // Dynamic property to track if a player should be punished
-const pvpStatusProperty = "pvpEnabled"; // Dynamic property to track if a player has PvP enabled
-const messageCooldownTicks = 600; // Adjust this value as needed
-const playerMessageTimestamps = new Map<string, number>(); // Map to store the last message timestamp for each player
+/** PvP cooldown in ticks (default 2 minutes = 2400 ticks) */
+let cooldownTicks = 2400;
+
+/** Dynamic property to track if a player should be punished for logging out */
+const punishmentProperty = "pvpPunishment";
+
+/** Dynamic property to track if a player has PvP enabled */
+const pvpStatusProperty = "pvpEnabled";
+
+/** Message cooldown to prevent spamming PvP warnings */
+const messageCooldownTicks = 600;
+
+/** Last message timestamp per player */
+const playerMessageTimestamps = new Map<string, number>();
+
+/** Interval ID for cleaning up expired PvP data */
 let pvpCleanupIntervalId: number | undefined;
 
-// Variables to store the subscription references
-let entityHitEntitySubscription: ((arg: EntityHitEntityAfterEvent) => void) | undefined;
+/** Event subscriptions */
+let entityHurtSubscription: ((arg: EntityHurtBeforeEvent) => void) | undefined;
 let playerLeaveSubscription: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
 let playerSpawnSubscription: ((arg: PlayerSpawnAfterEvent) => void) | undefined;
 let projectileHitEntitySubscription: ((arg: ProjectileHitEntityAfterEvent) => void) | undefined;
 let effectAddSubscription: ((arg: EffectAddBeforeEvent) => void) | undefined;
 
-// Map to store player data with player ID as the key
+/**
+ * Stores player inventory, equipment, location, and dimension for combat logging purposes.
+ * Keyed by player ID.
+ */
 const playerDataMap = new Map<
     string,
     {
@@ -41,52 +55,32 @@ const playerDataMap = new Map<
     }
 >();
 
+/** ----------------------------- Utility Functions ----------------------------- */
+
 /**
- * Converts a given time in seconds to a more human-readable format (hours, minutes, and seconds).
- *
- * @param {number} seconds - The time in seconds to be converted.
- * @returns {string} - A string representing the time in a human-readable format.
+ * Converts seconds into a human-readable format: hours, minutes, seconds.
  */
 function formatTime(seconds: number): string {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
 
-    let formattedTime = "";
+    let formatted = "";
+    if (hours > 0) formatted += `${hours} hour${hours > 1 ? "s" : ""}`;
+    if (minutes > 0) formatted += (formatted ? " " : "") + `${minutes} minute${minutes > 1 ? "s" : ""}`;
+    if (remainingSeconds > 0 || (hours === 0 && minutes === 0)) formatted += (formatted ? " " : "") + `${remainingSeconds} second${remainingSeconds > 1 ? "s" : ""}`;
 
-    if (hours > 0) {
-        formattedTime += `${hours} hour${hours > 1 ? "s" : ""}`;
-    }
-
-    if (minutes > 0) {
-        if (formattedTime) formattedTime += " ";
-        formattedTime += `${minutes} minute${minutes > 1 ? "s" : ""}`;
-    }
-
-    if (remainingSeconds > 0 || (hours === 0 && minutes === 0)) {
-        if (formattedTime) formattedTime += " ";
-        formattedTime += `${remainingSeconds} second${remainingSeconds > 1 ? "s" : ""}`;
-    }
-
-    return formattedTime;
+    return formatted;
 }
 
 /**
- * Determines if a message can be sent to a player based on the cooldown period.
- * This helps prevent spamming by ensuring messages are only sent if a certain amount of time has passed
- * since the last message was sent to the player.
- *
- * @param {string} playerId - The ID of the player to check.
- * @returns {boolean} - Returns `true` if the message can be sent (i.e., the cooldown period has elapsed),
- * otherwise returns `false`.
+ * Determines whether a message can be sent to a player based on cooldown.
  */
 function canSendMessage(playerId: string): boolean {
     const currentTick = system.currentTick;
     const lastMessageTick = playerMessageTimestamps.get(playerId) ?? 0;
 
-    // Check if the cooldown period has passed since the last message was sent
     if (currentTick - lastMessageTick >= messageCooldownTicks) {
-        // Update the timestamp of the last message sent
         playerMessageTimestamps.set(playerId, currentTick);
         return true;
     }
@@ -95,321 +89,146 @@ function canSendMessage(playerId: string): boolean {
 }
 
 /**
- * Initializes the PvP system by setting up event listeners for PvP interactions and player actions.
- * This function should be called to enable the PvP management features in the game.
+ * Caches a player's inventory, equipment, location, and dimension for combat logging.
  */
-function setupPvPSystem() {
-    if (pvpCleanupIntervalId === undefined) {
-        pvpCleanupIntervalId = system.runInterval(() => {
-            const currentTick = system.currentTick;
+function cachePlayerInventory(player: Player) {
+    if (playerDataMap.has(player.id)) return;
 
-            for (const [id, _] of playerDataMap.entries()) {
-                const player = world.getAllPlayers().find((p) => p.id === id);
+    const inventoryComponent = player.getComponent("inventory")?.container;
+    const equipmentComponent = player.getComponent("equippable");
 
-                // If the player is not found, remove their entry from the map
-                if (!player) {
-                    playerDataMap.delete(id);
-                    continue; // Skip to the next iteration if player is not found
-                }
+    const inventoryItems: ItemStack[] = [];
+    const equipmentItems: ItemStack[] = [];
 
-                const cooldownTick = player?.getDynamicProperty("pvpCooldown") as number;
-
-                if (!cooldownTick || currentTick >= cooldownTick) {
-                    playerDataMap.delete(id);
-                }
-            }
-        }, 1200); // Every 60 seconds
+    if (inventoryComponent) {
+        for (let slot = 0; slot < inventoryComponent.size; slot++) {
+            const item = inventoryComponent.getItem(slot);
+            if (item) inventoryItems.push(item.clone());
+        }
     }
 
-    // Event: When effect is added to an entity
-    effectAddSubscription = world.beforeEvents.effectAdd.subscribe((event) => {
-        const { entity } = event;
-
-        if (!(entity instanceof Player)) {
-            return;
+    if (equipmentComponent) {
+        for (const slot of Object.values(EquipmentSlot)) {
+            if (slot === EquipmentSlot.Mainhand) continue;
+            const item = equipmentComponent.getEquipment(slot);
+            if (item) equipmentItems.push(item.clone());
         }
+    }
 
-        const effects = entity.getEffects();
-
-        entity.setDynamicProperty("storedEffects", JSON.stringify(effects));
-    });
-
-    // Event: When one entity hits another entity
-    entityHitEntitySubscription = world.afterEvents.entityHitEntity.subscribe((event) => {
-        const attacker = event.damagingEntity;
-        const victim = event.hitEntity;
-
-        // Ensure both entities are players
-        if (attacker instanceof Player && victim instanceof Player) {
-            // Check if the victim is in a non-PvP area (has the bypass tag)
-            if (victim.hasTag("paradoxBypassPvPCheck")) {
-                // Restore the victim's health without penalizing the attacker
-                const healthComponentVictim = victim.getComponent("health");
-                if (healthComponentVictim) {
-                    const currentHealthVictim = healthComponentVictim.currentValue;
-                    const beforeHealthVictim = (victim.getDynamicProperty("paradoxCurrentHealth") as number) ?? currentHealthVictim;
-
-                    if (beforeHealthVictim > currentHealthVictim) {
-                        const healthDiffVictim = beforeHealthVictim - currentHealthVictim;
-                        const restoreHealthVictim = currentHealthVictim + healthDiffVictim;
-
-                        // Restore the victim's health only
-                        healthComponentVictim.setCurrentValue(restoreHealthVictim);
-                    }
-                }
-
-                if (canSendMessage(attacker.id)) {
-                    attacker.sendMessage(`§2[§7Paradox§2]§o§7 PvP is disabled in this area. No damage was dealt.`);
-                }
-
-                return; // Skip further logic
-            }
-
-            // Get PvP status for both attacker and victim
-            const isPvPEnabledForAttacker = attacker.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
-            const isPvPEnabledForVictim = victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
-
-            // If both players have PvP enabled, handle combat without restoration
-            if (isPvPEnabledForAttacker && isPvPEnabledForVictim) {
-                // Cache inventory/equipment on first PvP hit to prepare for combat logging
-                for (const player of [attacker, victim]) {
-                    if (!playerDataMap.has(player.id)) {
-                        const inventoryComponent = player.getComponent("inventory")?.container;
-                        const equipmentComponent = player.getComponent("equippable");
-
-                        const inventoryItems: ItemStack[] = [];
-                        const equipmentItems: ItemStack[] = [];
-
-                        if (inventoryComponent) {
-                            for (let slot = 0; slot < inventoryComponent.size; slot++) {
-                                const item = inventoryComponent.getItem(slot);
-                                if (item) {
-                                    inventoryItems.push(item.clone());
-                                }
-                            }
-                        }
-
-                        if (equipmentComponent) {
-                            for (const slot of Object.values(EquipmentSlot)) {
-                                if (slot === EquipmentSlot.Mainhand) continue;
-                                const item = equipmentComponent.getEquipment(slot);
-                                if (item) {
-                                    equipmentItems.push(item.clone());
-                                }
-                            }
-                        }
-
-                        playerDataMap.set(player.id, {
-                            inventory: inventoryItems,
-                            equipment: equipmentItems,
-                            location: player.location,
-                            dimension: player.dimension,
-                        });
-                    }
-                }
-
-                // Refresh PvP cooldown for both players
-                const currentTick = system.currentTick;
-                const cooldownExpiryTick = currentTick + cooldownTicks;
-
-                attacker.setDynamicProperty("pvpCooldown", cooldownExpiryTick);
-                victim.setDynamicProperty("pvpCooldown", cooldownExpiryTick);
-
-                if (canSendMessage(attacker.id)) {
-                    const remainingSeconds = Math.floor(cooldownTicks / 20); // Convert ticks to seconds
-                    const remainingTime = formatTime(remainingSeconds);
-                    attacker.sendMessage(`§2[§7Paradox§2]§o§7 You are in PvP combat! Logging out is disabled for ${remainingTime}.`);
-                }
-
-                if (canSendMessage(victim.id)) {
-                    const remainingSeconds = Math.floor(cooldownTicks / 20);
-                    const remainingTime = formatTime(remainingSeconds);
-                    victim.sendMessage(`§2[§7Paradox§2]§o§7 You are in PvP combat! Logging out is disabled for ${remainingTime}.`);
-                }
-                return; // Skip further adjustments
-            }
-
-            // Health restoration logic for PvP-disabled victim
-            if (!isPvPEnabledForVictim) {
-                const healthComponentVictim = victim.getComponent("health");
-                if (healthComponentVictim) {
-                    const currentHealthVictim = healthComponentVictim.currentValue;
-                    const beforeHealthVictim = (victim.getDynamicProperty("paradoxCurrentHealth") as number) ?? currentHealthVictim;
-
-                    if (beforeHealthVictim > currentHealthVictim) {
-                        const healthDiffVictim = beforeHealthVictim - currentHealthVictim;
-                        const restoreHealthVictim = currentHealthVictim + healthDiffVictim;
-
-                        const healthComponentAttacker = attacker.getComponent("health");
-                        if (healthComponentAttacker) {
-                            const currentHealthAttacker = healthComponentAttacker.currentValue;
-                            const newHealthAttacker = Math.max(currentHealthAttacker - healthDiffVictim, 0);
-
-                            healthComponentAttacker.setCurrentValue(newHealthAttacker);
-                        }
-
-                        healthComponentVictim.setCurrentValue(restoreHealthVictim);
-                    }
-                }
-
-                // Refresh PvP cooldown for the attacker
-                const currentTick = system.currentTick;
-                const cooldownExpiryTick = currentTick + cooldownTicks;
-
-                attacker.setDynamicProperty("pvpCooldown", cooldownExpiryTick);
-
-                if (canSendMessage(attacker.id)) {
-                    const remainingSeconds = Math.floor(cooldownTicks / 20); // Convert ticks to seconds
-                    const remainingTime = formatTime(remainingSeconds);
-                    attacker.sendMessage(`§2[§7Paradox§2]§o§7 You are in PvP combat! Logging out is disabled for ${remainingTime}.`);
-                }
-
-                if (canSendMessage(attacker.id)) {
-                    attacker.sendMessage(`§2[§7Paradox§2]§o§7 ${victim.name}§7 has PvP disabled!`);
-                }
-            }
-        }
-    });
-
-    // Event: When a player logs out
-    playerLeaveSubscription = world.beforeEvents.playerLeave.subscribe(async (event) => {
-        const player = event.player;
-
-        playerMessageTimestamps.delete(player.id);
-
-        // Bypass if they have the tag
-        if (player.hasTag("paradoxBypassPvPCheck")) {
-            return;
-        }
-
-        // Check if the player is in cooldown
-        const cooldownExpiryTick = player.getDynamicProperty("pvpCooldown") as number;
-        const currentTick = system.currentTick;
-
-        // If the player logs out before the cooldown expires, drop their inventory and mark them for punishment
-        if (cooldownExpiryTick && currentTick < cooldownExpiryTick) {
-            player.setDynamicProperty(punishmentProperty, true);
-
-            // Use saved data if present
-            const savedData = playerDataMap.get(player.id);
-            if (savedData) {
-                dropStoredPlayerData(player.id, player.name);
-            }
-        } else {
-            // Cooldown expired — safe to clear from memory
-            playerDataMap.delete(player.id);
-        }
-    });
-
-    // Event: When a player spawns
-    playerSpawnSubscription = world.afterEvents.playerSpawn.subscribe((event) => {
-        function alertNotice(player: Player) {
-            const alertGUI = new MessageFormData();
-            alertGUI.title("               PvP Punishment"); // title does not center automatically
-            alertGUI.body("You have been punished for logging out during PvP! Your inventory and equipment has been wiped out!");
-            alertGUI.button2("Confirm");
-            alertGUI.button1("Quit");
-            alertGUI
-                .show(player)
-                .then((result) => {
-                    if (result && result.canceled && result.cancelationReason === "UserBusy") {
-                        return alertNotice(player);
-                    }
-
-                    if (result.selection === 0) {
-                        player.runCommand(`kick @s You have selected to quit the game.`);
-                    }
-                })
-                .catch((error: Error) => {
-                    console.error("[Paradox] Unhandled Rejection: ", error);
-                    if (error instanceof Error) {
-                        // Check if error.stack exists before trying to split it
-                        if (error.stack) {
-                            const stackLines: string[] = error.stack.split("\n");
-                            if (stackLines.length > 1) {
-                                const sourceInfo: string[] = stackLines;
-                                console.error("Error originated from:", sourceInfo[0]);
-                            }
-                        }
-                    }
-                });
-        }
-
-        const player = event.player;
-
-        // Bypass if they have the tag
-        if (player.hasTag("paradoxBypassPvPCheck")) {
-            return;
-        }
-
-        // Check if the player should be punished
-        if (player.getDynamicProperty(punishmentProperty)) {
-            clearPlayerInventory(player);
-            player.setDynamicProperty(punishmentProperty, false); // Clear the punishment property after punishing the player
-            alertNotice(player);
-        }
-    });
-
-    // Event: When a projectile hits an entity
-    projectileHitEntitySubscription = world.afterEvents.projectileHitEntity.subscribe((event) => {
-        const attacker = event.source;
-        const victim = event.getEntityHit().entity as Player;
-        const projectileType = event.projectile.typeId;
-
-        if (victim instanceof Player && projectileType === "minecraft:arrow") {
-            handleArrowHit(victim);
-        }
-
-        if (attacker instanceof Player && victim instanceof Player) {
-            handlePvP(attacker, victim);
-        }
+    playerDataMap.set(player.id, {
+        inventory: inventoryItems,
+        equipment: equipmentItems,
+        location: player.location,
+        dimension: player.dimension,
     });
 }
 
 /**
- * Unsubscribes from all PvP-related events.
+ * Starts PvP combat cooldown for a player.
  */
-export function stopPvPSystem() {
-    if (pvpCleanupIntervalId !== undefined) {
-        system.clearRun(pvpCleanupIntervalId);
-        pvpCleanupIntervalId = undefined;
-    }
+function startCombat(player: Player) {
+    const currentTick = system.currentTick;
+    player.setDynamicProperty("pvpCooldown", currentTick + cooldownTicks);
 
-    if (entityHitEntitySubscription) {
-        world.afterEvents.entityHitEntity.unsubscribe(entityHitEntitySubscription);
-        entityHitEntitySubscription = undefined;
-    }
-
-    if (playerLeaveSubscription) {
-        world.beforeEvents.playerLeave.unsubscribe(playerLeaveSubscription);
-        playerLeaveSubscription = undefined;
-    }
-
-    if (playerSpawnSubscription) {
-        world.afterEvents.playerSpawn.unsubscribe(playerSpawnSubscription);
-        playerSpawnSubscription = undefined;
-    }
-
-    if (projectileHitEntitySubscription) {
-        world.afterEvents.projectileHitEntity.unsubscribe(projectileHitEntitySubscription);
-        projectileHitEntitySubscription = undefined;
-    }
-
-    if (effectAddSubscription) {
-        world.beforeEvents.effectAdd.unsubscribe(effectAddSubscription);
-        effectAddSubscription = undefined;
+    if (canSendMessage(player.id)) {
+        const remainingTime = formatTime(Math.floor(cooldownTicks / 20));
+        player.sendMessage(`§2[§7Paradox§2]§o§7 You are in PvP combat! Logging out is disabled for ${remainingTime}.`);
     }
 }
 
 /**
- * Drops all items stored in the player data map for a given player.
- *
- * @param {string} playerId - The ID of the player whose data is to be dropped.
- * @param {string} playerName - The name of the player, used for display in messages.
+ * Restores health for a player if it has decreased from stored health.
+ */
+function restoreHealthIfNeeded(player: Player) {
+    const health = player.getComponent("health");
+    if (!health) return;
+
+    const previous = (player.getDynamicProperty("paradoxCurrentHealth") as number) ?? health.currentValue;
+    if (previous > health.currentValue) health.setCurrentValue(previous);
+}
+
+/**
+ * Removes any newly applied effects not in storedEffects.
+ */
+function removeNewEffects(player: Player) {
+    const currentEffects = player.getEffects();
+    const storedEffectsString = player.getDynamicProperty("storedEffects") as string;
+
+    let storedEffects: Effect[] = [];
+    if (storedEffectsString) storedEffects = JSON.parse(storedEffectsString);
+
+    const storedMap = new Map(storedEffects.map((e) => [e.typeId, e]));
+
+    currentEffects.forEach((effect) => {
+        if (!storedMap.has(effect.typeId)) player.removeEffect(effect.typeId);
+    });
+}
+
+/** ----------------------------- Event Handlers ----------------------------- */
+
+/**
+ * Handles arrow/projectile hits on a player.
+ */
+function handleArrowHit(victim: Player) {
+    const pvpEnabled = victim.hasTag("paradoxBypassPvPCheck") ? false : (victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp);
+
+    if (!pvpEnabled) {
+        restoreHealthIfNeeded(victim);
+        removeNewEffects(victim);
+    }
+}
+
+/**
+ * Handles PvP interactions between attacker and victim.
+ */
+function handlePvP(attacker: Player, victim: Player) {
+    const victimPvP = victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
+    const bypass = victim.hasTag("paradoxBypassPvPCheck");
+
+    if (bypass || !victimPvP) {
+        victim.extinguishFire(false);
+        restoreHealthIfNeeded(victim);
+
+        const attackerHealth = attacker.getComponent("health");
+        const damage = (victim.getDynamicProperty("paradoxCurrentHealth") as number) - (victim.getComponent("health")?.currentValue ?? 0);
+        if (attackerHealth && damage) attackerHealth.setCurrentValue(Math.max(attackerHealth.currentValue - damage, 0));
+    }
+
+    if (!bypass) {
+        enablePvPIfNeeded(attacker);
+        startCombat(attacker);
+    }
+}
+
+/**
+ * Enables PvP for a player if it was previously disabled.
+ */
+function enablePvPIfNeeded(player: Player) {
+    const enabled = player.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
+    if (!enabled) {
+        player.setDynamicProperty(pvpStatusProperty, true);
+        player.sendMessage("§2[§7Paradox§2]§o§7 PvP has been enabled for you!");
+        player.setDynamicProperty("pvpToggleCooldown", system.currentTick);
+    }
+}
+
+/**
+ * Clears a player's inventory and equipment.
+ */
+function clearPlayerInventory(player: Player) {
+    const inv = player.getComponent("inventory")?.container;
+    if (inv) for (let i = 0; i < inv.size; i++) inv.setItem(i, undefined);
+
+    const equip = player.getComponent(EntityEquippableComponent.componentId) as EntityEquippableComponent;
+    if (equip) for (const slot of Object.values(EquipmentSlot)) equip.setEquipment(slot, undefined);
+}
+
+/**
+ * Drops all stored items for a player.
  */
 function dropStoredPlayerData(playerId: string, playerName: string) {
     const data = playerDataMap.get(playerId);
-    if (!data) return; // Exit if no data found
+    if (!data) return;
 
     system.run(() => {
         dropItems(data.inventory, data.dimension, data.location);
@@ -417,187 +236,136 @@ function dropStoredPlayerData(playerId: string, playerName: string) {
 
         world.sendMessage(`§o§c[Paradox] ${playerName}§c logged out during combat! Their items were dropped.`);
 
-        // Remove data from the map after drop
         playerDataMap.delete(playerId);
     });
 }
 
 /**
- * Spawns items in the specified dimension at the given location.
- *
- * @param {ItemStack[]} items - An array of items to spawn.
- * @param {Dimension} dimension - The dimension where items will be spawned.
- * @param {Vector3} location - The location where items will be spawned.
- */
-function dropItems(items: ItemStack[], dimension: Dimension, location: Vector3) {
-    for (const itemStack of items) {
-        if (itemStack) {
-            dimension.spawnItem(itemStack, location);
-        }
-    }
-}
-
-/**
- * Clears all items in a player's inventory and equipment slots.
- * This function is typically called when a player rejoins after logging out during PvP.
- *
- * @param {Player} player - The player whose inventory and equipment will be cleared.
- */
-function clearPlayerInventory(player: Player) {
-    const inventory = player.getComponent("inventory")?.container;
-
-    // Clear inventory items
-    if (inventory) {
-        for (let slot = 0; slot < inventory.size; slot++) {
-            inventory.setItem(slot, undefined); // Clear the slot
-        }
-    }
-
-    // Clear equipment items
-    const equipmentComponent = player.getComponent(EntityEquippableComponent.componentId) as EntityEquippableComponent;
-    if (equipmentComponent) {
-        // Iterate over each equipment slot
-        for (let slot of Object.values(EquipmentSlot)) {
-            // Clear the slot
-            equipmentComponent.setEquipment(slot, undefined);
-        }
-    }
-}
-
-/**
- * Handles the effects on a player when hit by an arrow.
- * @param {Player} victim - The player who was hit by the arrow.
- */
-function handleArrowHit(victim: Player): void {
-    const isPvPEnabledForVictim = victim.hasTag("paradoxBypassPvPCheck") ? false : (victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp);
-
-    if (!isPvPEnabledForVictim) {
-        removeNewEffects(victim);
-    }
-}
-
-/**
- * Removes effects from the player that are not in the stored effects.
- * @param {Player} victim - The player whose effects need to be checked and potentially removed.
- */
-function removeNewEffects(victim: Player): void {
-    const currentEffects = victim.getEffects();
-    const storedEffectsString = victim.getDynamicProperty("storedEffects") as string;
-
-    let storedEffects: Effect[] = [];
-    if (storedEffectsString) {
-        storedEffects = JSON.parse(storedEffectsString);
-    }
-
-    const storedEffectsMap = new Map(storedEffects.map((effect) => [effect.typeId, effect]));
-
-    currentEffects.forEach((effect) => {
-        if (!storedEffectsMap.has(effect.typeId)) {
-            victim.removeEffect(effect.typeId);
-        }
-    });
-}
-
-/**
- * Handles PvP logic when two players interact.
- * @param {Player} attacker - The player who is attacking.
- * @param {Player} victim - The player who is being attacked.
- */
-function handlePvP(attacker: Player, victim: Player): void {
-    const isPvPEnabledForVictim = victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
-
-    // Bypass if they have the tag
-    const bypass = victim.hasTag("paradoxBypassPvPCheck");
-
-    if (bypass || !isPvPEnabledForVictim) {
-        extinguishFireIfNecessary(victim);
-        adjustHealth(attacker, victim);
-    }
-
-    if (!bypass) {
-        enablePvPIfNeeded(attacker);
-        updatePvPCooldown(attacker);
-    }
-}
-
-/**
- * Extinguishes fire on the player if necessary.
- * @param {Player} victim - The player who may need to be extinguished.
- */
-function extinguishFireIfNecessary(victim: Player): void {
-    victim.extinguishFire(false);
-}
-
-/**
- * Adjusts health values between the attacker and the victim.
- * @param {Player} attacker - The player who is attacking.
- * @param {Player} victim - The player who is being attacked.
- */
-function adjustHealth(attacker: Player, victim: Player): void {
-    const healthComponentVictim = victim.getComponent("health");
-    if (healthComponentVictim) {
-        const beforeHealthVictim = victim.getDynamicProperty("paradoxCurrentHealth") as number;
-        const currentHealthVictim = healthComponentVictim.currentValue;
-        const healthDiffVictim = beforeHealthVictim - currentHealthVictim;
-        const restoreHealthVictim = currentHealthVictim + healthDiffVictim;
-
-        const healthComponentAttacker = attacker.getComponent("health");
-        const pvpBypass = attacker.hasTag("paradoxBypassPvPCheck");
-        if (!pvpBypass && healthComponentAttacker) {
-            healthComponentAttacker.setCurrentValue(healthComponentAttacker.currentValue - healthDiffVictim);
-        }
-
-        healthComponentVictim.setCurrentValue(restoreHealthVictim);
-    }
-}
-
-/**
- * Enables PvP for the attacker if it was previously disabled.
- * @param {Player} attacker - The player who is attacking.
- */
-function enablePvPIfNeeded(attacker: Player): void {
-    const isPvPEnabledForAttacker = attacker.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
-    if (!isPvPEnabledForAttacker) {
-        attacker.setDynamicProperty(pvpStatusProperty, true);
-        attacker.sendMessage("§2[§7Paradox§2]§o§7 PvP has been enabled for you!");
-        attacker.setDynamicProperty("pvpToggleCooldown", system.currentTick);
-    }
-}
-
-/**
- * Updates the PvP cooldown for the attacker.
- * @param {Player} attacker - The player who is attacking.
- */
-function updatePvPCooldown(attacker: Player): void {
-    const currentTick = system.currentTick;
-    const cooldownExpiryTick = currentTick + cooldownTicks;
-    attacker.setDynamicProperty("pvpCooldown", cooldownExpiryTick);
-}
-
-/**
- * Updates the PvP cooldown ticks in memory based on the dynamic property `customPvPCooldown` in the world.
- *
- * This function retrieves the value of the `customPvPCooldown` property, which represents the PvP cooldown time in seconds,
- * and converts it to ticks (1 minute = 1200 ticks). If the property is not set, it defaults to 2400 ticks (2 minutes).
- *
- * It updates the global `cooldownTicks` variable, which is used throughout the system to handle PvP cooldown logic.
- *
- * @example
- * // Update the cooldown in memory whenever the property is modified
- * updateCoolDownTicks();
- *
- * @remarks
- * This function is called when the `customPvPCooldown` property is updated, so the `cooldownTicks` variable always reflects
- * the current value for the cooldown.
+ * Updates the PvP cooldown ticks in memory based on the world property `customPvPCooldown`.
+ * Defaults to 2400 ticks (2 minutes) if the property is not set.
  */
 export function updateCoolDownTicks() {
     cooldownTicks = (world.getDynamicProperty("customPvPCooldown") as number) ?? 2400;
 }
 
 /**
- * Initializes the PvP system by calling the internal setup function.
- * This function should be called from another script to enable PvP features.
+ * Spawns items in the world at a given location.
+ */
+function dropItems(items: ItemStack[], dimension: Dimension, location: Vector3) {
+    for (const item of items) if (item) dimension.spawnItem(item, location);
+}
+
+/** ----------------------------- Initialization ----------------------------- */
+
+/**
+ * Initializes the PvP system by subscribing to events.
  */
 export function initializePvPSystem() {
-    setupPvPSystem();
+    if (!pvpCleanupIntervalId) {
+        pvpCleanupIntervalId = system.runInterval(() => {
+            const tick = system.currentTick;
+            for (const [id] of playerDataMap.entries()) {
+                const p = world.getAllPlayers().find((pl) => pl.id === id);
+                if (!p) playerDataMap.delete(id);
+                else if ((p.getDynamicProperty("pvpCooldown") as number) <= tick) playerDataMap.delete(id);
+            }
+        }, 1200);
+    }
+
+    // Track effects for PvP-disabled players
+    effectAddSubscription = world.beforeEvents.effectAdd.subscribe((e) => {
+        const ent = e.entity;
+        if (!(ent instanceof Player)) return;
+        ent.setDynamicProperty("storedEffects", JSON.stringify(ent.getEffects()));
+    });
+
+    // PvP before-hurt handling
+    entityHurtSubscription = world.beforeEvents.entityHurt.subscribe((event) => {
+        const victim = event.hurtEntity;
+        const attacker = event.damageSource.damagingEntity;
+        if (!(victim instanceof Player) || !(attacker instanceof Player)) return;
+
+        const bypass = victim.hasTag("paradoxBypassPvPCheck");
+        const pvpEnabled = victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
+
+        if (bypass || !pvpEnabled) {
+            event.cancel = true;
+            cachePlayerInventory(attacker);
+            startCombat(attacker);
+
+            if (canSendMessage(attacker.id)) {
+                attacker.sendMessage(bypass ? "§2[§7Paradox§2]§o§7 PvP disabled in this area." : `§2[§7Paradox§2]§o§7 ${victim.name} has PvP disabled!`);
+            }
+            return;
+        }
+
+        // PvP-enabled combat
+        cachePlayerInventory(attacker);
+        cachePlayerInventory(victim);
+        startCombat(attacker);
+        startCombat(victim);
+    });
+
+    // Player leaves
+    playerLeaveSubscription = world.beforeEvents.playerLeave.subscribe((event) => {
+        const player = event.player;
+        playerMessageTimestamps.delete(player.id);
+
+        if (player.hasTag("paradoxBypassPvPCheck")) return;
+
+        const cooldown = player.getDynamicProperty("pvpCooldown") as number;
+        const tick = system.currentTick;
+
+        if (cooldown && tick < cooldown) {
+            player.setDynamicProperty(punishmentProperty, true);
+            const saved = playerDataMap.get(player.id);
+            if (saved) dropStoredPlayerData(player.id, player.name);
+        } else {
+            playerDataMap.delete(player.id);
+        }
+    });
+
+    // Player spawns
+    playerSpawnSubscription = world.afterEvents.playerSpawn.subscribe((event) => {
+        const player = event.player;
+        if (player.hasTag("paradoxBypassPvPCheck")) return;
+
+        if (player.getDynamicProperty(punishmentProperty)) {
+            clearPlayerInventory(player);
+            player.setDynamicProperty(punishmentProperty, false);
+
+            const alert = new MessageFormData();
+            alert.title("               PvP Punishment").body("You have been punished for logging out during PvP! Your inventory and equipment has been wiped out!").button1("Quit").button2("Confirm").show(player);
+        }
+    });
+
+    // Projectile hits
+    projectileHitEntitySubscription = world.afterEvents.projectileHitEntity.subscribe((event) => {
+        const attacker = event.source;
+        const victim = event.getEntityHit().entity as Player;
+        const type = event.projectile.typeId;
+
+        if (victim instanceof Player && type === "minecraft:arrow") handleArrowHit(victim);
+        if (attacker instanceof Player && victim instanceof Player) handlePvP(attacker, victim);
+    });
+}
+
+/**
+ * Stops PvP system and unsubscribes all events.
+ */
+export function stopPvPSystem() {
+    if (pvpCleanupIntervalId !== undefined) system.clearRun(pvpCleanupIntervalId);
+
+    if (entityHurtSubscription) world.beforeEvents.entityHurt.unsubscribe(entityHurtSubscription);
+    if (playerLeaveSubscription) world.beforeEvents.playerLeave.unsubscribe(playerLeaveSubscription);
+    if (playerSpawnSubscription) world.afterEvents.playerSpawn.unsubscribe(playerSpawnSubscription);
+    if (projectileHitEntitySubscription) world.afterEvents.projectileHitEntity.unsubscribe(projectileHitEntitySubscription);
+    if (effectAddSubscription) world.beforeEvents.effectAdd.unsubscribe(effectAddSubscription);
+
+    pvpCleanupIntervalId = undefined;
+    entityHurtSubscription = undefined;
+    playerLeaveSubscription = undefined;
+    playerSpawnSubscription = undefined;
+    projectileHitEntitySubscription = undefined;
+    effectAddSubscription = undefined;
 }
