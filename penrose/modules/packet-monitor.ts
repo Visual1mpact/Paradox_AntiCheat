@@ -5,15 +5,12 @@ import type { beforeEvents as BeforeEventsType } from "@minecraft/server-net";
 let beforeEvents: typeof BeforeEventsType;
 
 /**
- * Structure to track individual player's packet activity.
+ * Structure to track individual player's packet timestamps.
  */
-type PlayerPacketCount = {
-    count: number;
-    firstOccurrence: number;
-};
+type PlayerPacketTimestamps = number[];
 
 // Memory stores for packet activity and warning cooldowns
-const packetFrequency: Record<string, Record<string, PlayerPacketCount>> = {};
+const packetFrequency: Record<string, Record<string, PlayerPacketTimestamps>> = {};
 const lastWarning: Record<string, number> = {};
 
 // Constants for spam detection and cleanup
@@ -28,41 +25,40 @@ const IGNORED_PACKETS = new Set<string>(["PlayerAuthInputPacket", "SubChunkReque
 let cleanupTaskId: number | undefined;
 
 /**
- * Tracks and evaluates packet frequency to detect spammy behavior.
+ * Tracks packet timestamps and detects spam using a sliding window.
  *
  * @param packetId - The identifier of the packet being received.
  * @param playerName - The name of the player who sent the packet.
  */
 const checkPacketSpam = (packetId: string, playerName: string): void => {
-    const currentTime = Date.now();
+    const now = Date.now();
 
-    // Initialize packet entry for this packetId and playerName if needed
-    if (!packetFrequency[packetId]) {
-        packetFrequency[packetId] = {};
+    if (!packetFrequency[packetId]) packetFrequency[packetId] = {};
+    if (!packetFrequency[packetId][playerName]) packetFrequency[packetId][playerName] = [];
+
+    const timestamps = packetFrequency[packetId][playerName];
+
+    // Add current timestamp
+    timestamps.push(now);
+
+    // Remove timestamps outside the TIME_WINDOW
+    while (timestamps.length > 0 && now - timestamps[0] > TIME_WINDOW) {
+        timestamps.shift();
     }
 
-    if (!packetFrequency[packetId][playerName]) {
-        packetFrequency[packetId][playerName] = { count: 1, firstOccurrence: currentTime };
-        return;
-    }
-
-    const data = packetFrequency[packetId][playerName];
-
-    // Increment count or reset if outside time window
-    if (currentTime - data.firstOccurrence <= TIME_WINDOW) {
-        data.count++;
-    } else {
-        packetFrequency[packetId][playerName] = { count: 1, firstOccurrence: currentTime };
+    // Optional: limit array size to prevent extreme memory usage
+    if (timestamps.length > SPAM_THRESHOLD * 2) {
+        timestamps.splice(0, timestamps.length - SPAM_THRESHOLD * 2);
     }
 
     // Check if the player exceeded the spam threshold
-    if (data.count > SPAM_THRESHOLD) {
+    if (timestamps.length > SPAM_THRESHOLD) {
         const key = playerName + packetId;
         const lastTime = lastWarning[key] ?? 0;
 
-        if (currentTime - lastTime > TIME_WINDOW) {
-            console.warn(`[Paradox] Potential spam detected for packet: ${packetId} | Count: ${data.count} | Player: ${playerName}`);
-            lastWarning[key] = currentTime;
+        if (now - lastTime > TIME_WINDOW) {
+            console.warn(`[Paradox] Potential spam detected for packet: ${packetId} | Count: ${timestamps.length} | Player: ${playerName}`);
+            lastWarning[key] = now;
         }
     }
 };
@@ -89,11 +85,17 @@ const packetReceiveCallback = (event: import("@minecraft/server-net").PacketRece
 const runCleanup = (): void => {
     const now = Date.now();
 
-    // Cleanup old entries in packetFrequency
     for (const packetId in packetFrequency) {
         for (const playerName in packetFrequency[packetId]) {
-            const data = packetFrequency[packetId][playerName];
-            if (now - data.firstOccurrence > TIME_WINDOW) {
+            const timestamps = packetFrequency[packetId][playerName];
+
+            // Remove timestamps outside TIME_WINDOW
+            while (timestamps.length > 0 && now - timestamps[0] > TIME_WINDOW) {
+                timestamps.shift();
+            }
+
+            // Remove empty arrays
+            if (timestamps.length === 0) {
                 delete packetFrequency[packetId][playerName];
             }
         }
@@ -104,7 +106,7 @@ const runCleanup = (): void => {
         }
     }
 
-    // Cleanup old entries in lastWarning
+    // Cleanup old warning timestamps
     for (const key in lastWarning) {
         if (now - lastWarning[key] > TIME_WINDOW) {
             delete lastWarning[key];
