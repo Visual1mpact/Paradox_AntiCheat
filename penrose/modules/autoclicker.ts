@@ -1,107 +1,77 @@
-import { world, Player, EntityHitEntityAfterEvent, system } from "@minecraft/server";
+import { world, Player, EntityHurtBeforeEvent, system } from "@minecraft/server";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
-// Define constants
+// CONFIGURATION
 const MAX_CPS = 14; // Maximum allowed clicks per second
 const TICKS_PER_SECOND = 20; // Number of ticks in one second
-const CLICK_HISTORY_SIZE = 100; // Maximum size of the click history array
+const CLICK_HISTORY_SIZE = 100; // Maximum click history stored
 
-// Define interface for player click tracking
+// PLAYER CLICK TRACKING
 interface Click {
-    tick: number; // The tick at which the click occurred
+    tick: number;
 }
 
 interface PlayerWithClicks extends Player {
-    clicks?: Click[]; // Array to store click timestamps
+    clicks?: Click[];
 }
 
 /**
- * Calculate the number of clicks per second for a player.
- * @param player - The player whose CPS is to be calculated.
- * @returns The number of clicks per second.
+ * Calculate CPS for a player over the last second
  */
 function calculateClicksPerSecond(player: PlayerWithClicks): number {
     const currentTick = system.currentTick;
     const clicks = player.clicks ?? [];
-
-    // Count clicks within the last second
-    let recentClicksCount = 0;
-    for (const click of clicks) {
-        if (currentTick - click.tick < TICKS_PER_SECOND) {
-            recentClicksCount++;
-        }
-    }
-
-    return recentClicksCount;
+    return clicks.filter((c) => currentTick - c.tick < TICKS_PER_SECOND).length;
 }
 
 /**
- * Validate the player's clicks per second and handle victim's health restoration if CPS exceeds the limit.
- * @param player - The player whose CPS is to be validated.
- * @param victim - The entity that was hit by the player.
+ * Notify Level 4 staff of an autoclicker violation
  */
-function validateAndRestoreHealth(player: PlayerWithClicks, victim: Player): void {
-    const cps = calculateClicksPerSecond(player);
-    if (cps > MAX_CPS) {
-        // Get the victim's health component
-        const healthComponent = victim.getComponent("health");
-        if (healthComponent) {
-            // Retrieve or initialize the victim's health before the attack
-            let initialHealth = victim.getDynamicProperty("paradoxCurrentHealth") as number;
-            if (initialHealth === undefined) {
-                initialHealth = healthComponent.currentValue;
-                victim.setDynamicProperty("paradoxCurrentHealth", initialHealth);
-            }
-
-            const currentHealth = healthComponent.currentValue;
-            const healthLost = initialHealth - currentHealth;
-            // Restore the victim's health to the initial value
-            const restoredHealth = currentHealth + healthLost;
-            healthComponent.setCurrentValue(restoredHealth);
-        }
+function alertStaff(attacker: PlayerWithClicks, cps: number) {
+    const staff = getSecurityClearanceLevel4Players();
+    for (const s of staff) {
+        if (s.id === attacker.id) continue; // skip attacker if they are staff
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[AutoClicker] §f${attacker.name} §7exceeded CPS limit: §e${cps} CPS`);
     }
 }
 
 /**
- * Track clicks made by a player and update the click history.
- * @param event - The event containing information about the hit.
+ * Handle the CPS check before damage is applied
  */
-function handleClickEvent(event: EntityHitEntityAfterEvent): void {
-    const { damagingEntity, hitEntity } = event;
+function handleHurtEvent(event: EntityHurtBeforeEvent) {
+    const { damageSource, hurtEntity: victim } = event;
 
-    // Proceed only if both entities involved are players
-    if (!(damagingEntity instanceof Player && hitEntity instanceof Player)) {
-        return;
-    }
+    if (!(damageSource.damagingEntity instanceof Player) || !(victim instanceof Player)) return;
 
-    const attacker = damagingEntity as PlayerWithClicks;
-    const victim = hitEntity as Player;
+    const attacker = damageSource.damagingEntity as PlayerWithClicks;
 
     // Update attacker's click history
     const currentTick = system.currentTick;
-    if (!attacker.clicks) {
-        attacker.clicks = [];
-    }
+    if (!attacker.clicks) attacker.clicks = [];
     attacker.clicks.unshift({ tick: currentTick });
 
-    // Trim click history to maintain size
-    if (attacker.clicks.length > CLICK_HISTORY_SIZE) {
-        attacker.clicks.pop();
-    }
+    // Trim history
+    if (attacker.clicks.length > CLICK_HISTORY_SIZE) attacker.clicks.pop();
 
-    // Validate CPS and restore victim's health if necessary
-    validateAndRestoreHealth(attacker, victim);
+    // Calculate CPS
+    const cps = calculateClicksPerSecond(attacker);
+
+    if (cps > MAX_CPS) {
+        // Cancel damage
+        event.cancel = true;
+
+        // Notify staff only
+        alertStaff(attacker, cps);
+    }
 }
 
 /**
- * Start the AutoClicker functionality by subscribing to the entity hit event.
+ * START / STOP
  */
 export function startAutoClicker(): void {
-    world.afterEvents.entityHitEntity.subscribe(handleClickEvent);
+    world.beforeEvents.entityHurt.subscribe(handleHurtEvent);
 }
 
-/**
- * Stop the AutoClicker functionality by unsubscribing from the entity hit event.
- */
 export function stopAutoClicker(): void {
-    world.afterEvents.entityHitEntity.unsubscribe(handleClickEvent);
+    world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
 }
