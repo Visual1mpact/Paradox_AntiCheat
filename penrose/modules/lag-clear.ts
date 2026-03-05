@@ -59,13 +59,36 @@ async function clearEntityItems() {
 }
 
 /**
- * Clears monster entities without name tags in the overworld.
+ * Clears monster entities without name tags in the overworld,
+ * skipping important boss/raid mobs.
  */
 async function clearEntities() {
-    const entityException = ["minecraft:ender_dragon", "minecraft:shulker", "minecraft:hoglin", "minecraft:zoglin", "minecraft:piglin_brute", "minecraft:evocation_illager", "minecraft:vindicator", "minecraft:elder_guardian"];
-    const entitiesCache = world.getDimension("overworld").getEntities({ families: ["monster"] });
-    for (const entity of entitiesCache) {
-        if (!entityException.includes(entity.typeId) && !entity.nameTag) {
+    const overworld = world.getDimension("overworld");
+    const allMonsters = overworld.getEntities({ families: ["monster"] });
+
+    const entityException = [
+        "minecraft:ender_dragon",
+        "minecraft:wither",
+        "minecraft:elder_guardian",
+        "minecraft:evocation_illager",
+        "minecraft:illusion_illager",
+        "minecraft:vindicator",
+        "minecraft:pillager",
+        "minecraft:ravager",
+        "minecraft:shulker",
+        "minecraft:warden",
+        "minecraft:creaking",
+
+        // Happy ghast family
+        "minecraft:happy_ghast",
+        "minecraft:ghastling",
+    ];
+
+    for (const entity of allMonsters) {
+        const hasTameable = entity.hasComponent("tameable");
+        const isTamed = hasTameable ? entity.getComponent("tameable").isTamed : false;
+
+        if (!entityException.includes(entity.typeId) && !isTamed && !entity.nameTag) {
             entity.remove();
         }
     }
