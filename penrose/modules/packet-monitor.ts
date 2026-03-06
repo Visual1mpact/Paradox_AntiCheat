@@ -1,158 +1,192 @@
 import { system } from "@minecraft/server";
 import type { beforeEvents as BeforeEventsType } from "@minecraft/server-net";
 
-// Declare types for dynamically imported modules
 let beforeEvents: typeof BeforeEventsType;
 
 /**
- * Structure to track individual player's packet timestamps.
+ * Maximum packets allowed in TIME_WINDOW.
  */
-type PlayerPacketTimestamps = number[];
+const SPAM_THRESHOLD = 250;
 
-// Memory stores for packet activity and warning cooldowns
-const packetFrequency: Record<string, Record<string, PlayerPacketTimestamps>> = {};
-const lastWarning: Record<string, number> = {};
+/**
+ * Time window in milliseconds.
+ */
+const TIME_WINDOW = 5000;
 
-// Constants for spam detection and cleanup
-const SPAM_THRESHOLD = 250; // Max allowed packets within TIME_WINDOW
-const TIME_WINDOW = 5000; // 5 seconds in milliseconds
-const CLEANUP_INTERVAL_TICKS = 1200; // 60 seconds at 20 ticks per second
+/**
+ * Cleanup interval in ticks.
+ */
+const CLEANUP_INTERVAL_TICKS = 1200;
 
-// Packets to ignore during monitoring
-const IGNORED_PACKETS = new Set<string>(["PlayerAuthInputPacket", "SubChunkRequestPacket", "ClientCacheBlobStatusPacket"]);
+/**
+ * Packets ignored during monitoring.
+ */
+const IGNORED_PACKETS = new Set(["PlayerAuthInputPacket", "SubChunkRequestPacket", "ClientCacheBlobStatusPacket"]);
 
-// Interval ID for scheduled cleanup
+/**
+ * Fixed buffer size.
+ */
+const BUFFER_SIZE = SPAM_THRESHOLD * 2;
+
+/**
+ * Ring buffer structure for packet timestamps.
+ */
+class TimestampBuffer {
+    private buffer = new Array<number>(BUFFER_SIZE);
+    private start = 0;
+    private count = 0;
+
+    push(timestamp: number) {
+        const index = (this.start + this.count) % BUFFER_SIZE;
+        this.buffer[index] = timestamp;
+
+        if (this.count < BUFFER_SIZE) {
+            this.count++;
+        } else {
+            this.start = (this.start + 1) % BUFFER_SIZE;
+        }
+    }
+
+    prune(now: number) {
+        while (this.count > 0) {
+            const ts = this.buffer[this.start];
+            if (now - ts <= TIME_WINDOW) break;
+
+            this.start = (this.start + 1) % BUFFER_SIZE;
+            this.count--;
+        }
+    }
+
+    size() {
+        return this.count;
+    }
+
+    empty() {
+        return this.count === 0;
+    }
+}
+
+/**
+ * packetId -> playerName -> buffer
+ */
+const packetFrequency = new Map<string, Map<string, TimestampBuffer>>();
+
+/**
+ * Last warning timestamps.
+ */
+const lastWarning = new Map<string, number>();
+
 let cleanupTaskId: number | undefined;
 
 /**
- * Tracks packet timestamps and detects spam using a sliding window.
- *
- * @param packetId - The identifier of the packet being received.
- * @param playerName - The name of the player who sent the packet.
+ * Checks packet spam using ring buffers.
  */
-const checkPacketSpam = (packetId: string, playerName: string): void => {
+function checkPacketSpam(packetId: string, playerName: string) {
     const now = Date.now();
 
-    if (!packetFrequency[packetId]) packetFrequency[packetId] = {};
-    if (!packetFrequency[packetId][playerName]) packetFrequency[packetId][playerName] = [];
-
-    const timestamps = packetFrequency[packetId][playerName];
-
-    // Add current timestamp
-    timestamps.push(now);
-
-    // Remove timestamps outside the TIME_WINDOW
-    while (timestamps.length > 0 && now - timestamps[0] > TIME_WINDOW) {
-        timestamps.shift();
+    let playerMap = packetFrequency.get(packetId);
+    if (!playerMap) {
+        playerMap = new Map();
+        packetFrequency.set(packetId, playerMap);
     }
 
-    // Optional: limit array size to prevent extreme memory usage
-    if (timestamps.length > SPAM_THRESHOLD * 2) {
-        timestamps.splice(0, timestamps.length - SPAM_THRESHOLD * 2);
+    let buffer = playerMap.get(playerName);
+    if (!buffer) {
+        buffer = new TimestampBuffer();
+        playerMap.set(playerName, buffer);
     }
 
-    // Check if the player exceeded the spam threshold
-    if (timestamps.length > SPAM_THRESHOLD) {
-        const key = playerName + packetId;
-        const lastTime = lastWarning[key] ?? 0;
+    buffer.push(now);
+    buffer.prune(now);
 
-        if (now - lastTime > TIME_WINDOW) {
-            console.warn(`[Paradox] Potential spam detected for packet: ${packetId} | Count: ${timestamps.length} | Player: ${playerName}`);
-            lastWarning[key] = now;
+    if (buffer.size() > SPAM_THRESHOLD) {
+        const key = packetId + "|" + playerName;
+
+        const last = lastWarning.get(key) ?? 0;
+
+        if (now - last > TIME_WINDOW) {
+            console.warn(`[Paradox] Potential spam detected | Packet: ${packetId} | Count: ${buffer.size()} | Player: ${playerName}`);
+
+            lastWarning.set(key, now);
         }
     }
-};
+}
 
 /**
- * Callback triggered when a packet is received from a player.
- *
- * @param event - The event containing packet and sender info.
+ * Packet receive callback.
  */
-const packetReceiveCallback = (event: import("@minecraft/server-net").PacketReceivedBeforeEvent): void => {
+const packetReceiveCallback = (event: import("@minecraft/server-net").PacketReceivedBeforeEvent) => {
     const packetId = event.packetId;
-    const playerName = event.sender?.isValid ? event.sender.name : "Unknown";
 
-    // Skip ignored packets
     if (IGNORED_PACKETS.has(packetId)) return;
+
+    const playerName = event.sender?.isValid ? event.sender.name : "Unknown";
 
     checkPacketSpam(packetId, playerName);
 };
 
 /**
- * Periodic memory cleanup to prevent long-term memory growth.
- * Removes stale packet data and old warning timestamps.
+ * Memory cleanup task.
  */
-const runCleanup = (): void => {
+function runCleanup() {
     const now = Date.now();
 
-    for (const packetId in packetFrequency) {
-        for (const playerName in packetFrequency[packetId]) {
-            const timestamps = packetFrequency[packetId][playerName];
+    for (const [packetId, playerMap] of packetFrequency) {
+        for (const [playerName, buffer] of playerMap) {
+            buffer.prune(now);
 
-            // Remove timestamps outside TIME_WINDOW
-            while (timestamps.length > 0 && now - timestamps[0] > TIME_WINDOW) {
-                timestamps.shift();
-            }
-
-            // Remove empty arrays
-            if (timestamps.length === 0) {
-                delete packetFrequency[packetId][playerName];
+            if (buffer.empty()) {
+                playerMap.delete(playerName);
             }
         }
 
-        // Remove empty packetId entries
-        if (Object.keys(packetFrequency[packetId]).length === 0) {
-            delete packetFrequency[packetId];
+        if (playerMap.size === 0) {
+            packetFrequency.delete(packetId);
         }
     }
 
-    // Cleanup old warning timestamps
-    for (const key in lastWarning) {
-        if (now - lastWarning[key] > TIME_WINDOW) {
-            delete lastWarning[key];
+    for (const [key, time] of lastWarning) {
+        if (now - time > TIME_WINDOW) {
+            lastWarning.delete(key);
         }
     }
-};
+}
 
 /**
- * Starts the packet listener and memory cleanup interval.
- *
- * @returns A promise resolving to true if the listener was initialized, false otherwise.
+ * Starts packet monitoring.
  */
 export async function startPacketListener(): Promise<boolean> {
-    const networkModule: typeof import("@minecraft/server-net") | null = await import("@minecraft/server-net").catch((error: Error): null => {
-        console.warn("[Paradox] Failed to load @minecraft/server-net module. Packet spam detection not initialized.", error);
-        return null;
-    });
+    const networkModule: typeof import("@minecraft/server-net") | null = await import("@minecraft/server-net").catch((): null => null);
 
-    if (!networkModule) return false;
+    if (!networkModule) {
+        console.warn("[Paradox] server-net unavailable. Packet monitor disabled.");
+        return false;
+    }
 
     beforeEvents = networkModule.beforeEvents;
 
     beforeEvents.packetReceive.subscribe(packetReceiveCallback);
 
-    // Start cleanup task if not already running
     if (cleanupTaskId === undefined) {
         cleanupTaskId = system.runInterval(runCleanup, CLEANUP_INTERVAL_TICKS);
     }
 
-    console.log("[Paradox] Packet spam detection initialized. Monitoring packets.");
+    console.log("[Paradox] Packet spam detection initialized.");
     return true;
 }
 
 /**
- * Stops the packet listener and clears memory cleanup interval.
+ * Stops packet monitoring.
  */
-export function stopPacketListener(): void {
+export function stopPacketListener() {
     if (beforeEvents) {
         beforeEvents.packetReceive.unsubscribe(packetReceiveCallback);
-        console.log("[Paradox] Packet spam detection stopped.");
-    } else {
-        console.warn("[Paradox] Packet listener was not initialized.");
     }
 
     if (cleanupTaskId !== undefined) {
         system.clearRun(cleanupTaskId);
         cleanupTaskId = undefined;
     }
+
+    console.log("[Paradox] Packet spam detection stopped.");
 }

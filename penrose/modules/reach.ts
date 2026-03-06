@@ -2,186 +2,175 @@ import { world, Player, system, EntityHurtBeforeEvent, GameMode } from "@minecra
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
 
-/**
- * RUNTIME STATE
- */
-let currentRunId: number | null = null; // Interval ID for updating player position history
-let runIdBackup: number | null = null; // Backup for overlapping intervals
+const MAX_REACH = 4.5;
+const MAX_REACH_SQ = MAX_REACH * MAX_REACH;
+
+const HISTORY_SIZE = 6;
 
 /**
- * CONFIGURATION
+ * Stores a player's recent positions for reach detection.
  */
-const MAX_ATTACK_DISTANCE = 4.5; // Maximum allowed distance for a valid attack
-const HISTORY_SIZE = 10; // Number of past positions stored per player
+interface PlayerHistory {
+    /** Array of x-coordinates */
+    x: number[];
+    /** Array of y-coordinates */
+    y: number[];
+    /** Array of z-coordinates */
+    z: number[];
+    /** Current index in the history arrays */
+    index: number;
+}
+
+/** Map of player IDs to their position history */
+const playerHistory = new Map<string, PlayerHistory>();
 
 /**
- * Player position and velocity history storage
+ * Calculates the squared distance between two 3D points.
+ * @param ax - X coordinate of the first point
+ * @param ay - Y coordinate of the first point
+ * @param az - Z coordinate of the first point
+ * @param bx - X coordinate of the second point
+ * @param by - Y coordinate of the second point
+ * @param bz - Z coordinate of the second point
+ * @returns Squared distance between the points
  */
-const playerData = new Map<string, PlayerData>();
-
-/**
- * Represents a 3D position in the world
- */
-interface Position {
-    x: number;
-    y: number;
-    z: number;
+function distSq(ax: number, ay: number, az: number, bx: number, by: number, bz: number) {
+    const dx = ax - bx;
+    const dy = ay - by;
+    const dz = az - bz;
+    return dx * dx + dy * dy + dz * dz;
 }
 
 /**
- * Stores historical movement data for a player
+ * Updates the stored position history for a player.
+ * @param player - Player whose position is being updated
  */
-interface PlayerData {
-    history: PlayerHistoryEntry[];
+function updatePlayer(player: Player) {
+    const id = player.id;
+    const loc = player.location;
+
+    let data = playerHistory.get(id);
+
+    if (!data) {
+        data = {
+            x: new Array(HISTORY_SIZE),
+            y: new Array(HISTORY_SIZE),
+            z: new Array(HISTORY_SIZE),
+            index: 0,
+        };
+
+        playerHistory.set(id, data);
+    }
+
+    const i = data.index;
+
+    data.x[i] = loc.x;
+    data.y[i] = loc.y;
+    data.z[i] = loc.z;
+
+    data.index++;
+
+    if (data.index === HISTORY_SIZE) {
+        data.index = 0;
+    }
 }
 
 /**
- * A single history entry: position, velocity, tick timestamp
+ * Retrieves the last recorded position of a player.
+ * @param player - Player to retrieve position for
+ * @returns The last position as an object {x, y, z} or null if no history exists
  */
-interface PlayerHistoryEntry {
-    position: Position;
-    velocity: Position;
-    timestamp: number;
-}
+function getLastPosition(player: Player) {
+    const data = playerHistory.get(player.id);
+    if (!data) return null;
 
-/**
- * Calculate Euclidean distance between two 3D points
- */
-function calculateDistance(pos1: Position, pos2: Position): number {
-    return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2) + Math.pow(pos1.z - pos2.z, 2));
-}
+    let i = data.index - 1;
+    if (i < 0) i = HISTORY_SIZE - 1;
 
-/**
- * Perform Catmull-Rom cubic interpolation between four positions
- * @param p0 - Control point before start
- * @param p1 - Start point
- * @param p2 - End point
- * @param p3 - Control point after end
- * @param t - Interpolation ratio (0 = p1, 1 = p2)
- */
-function cubicInterpolate(p0: Position, p1: Position, p2: Position, p3: Position, t: number): Position {
-    const t2 = t * t,
-        t3 = t2 * t;
     return {
-        x: 0.5 * (2 * p1.x + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
-        y: 0.5 * (2 * p1.y + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
-        z: 0.5 * (2 * p1.z + (-p0.z + p2.z) * t + (2 * p0.z - 5 * p1.z + 4 * p2.z - p3.z) * t2 + (-p0.z + 3 * p1.z - 3 * p2.z + p3.z) * t3),
+        x: data.x[i],
+        y: data.y[i],
+        z: data.z[i],
     };
 }
 
 /**
- * Record a player's current position, velocity, and tick
- * Maintains a fixed-length history for interpolation
+ * Alerts staff members with security clearance level 4 about a reach violation.
+ * @param attacker - Player who exceeded the reach distance
+ * @param distSqValue - Squared distance of the attack
  */
-function updatePlayerData(player: Player): void {
-    const currentTick = system.currentTick;
-    const currentPosition = player.location;
-    const currentVelocity = player.getVelocity();
-
-    let data = playerData.get(player.name);
-    if (!data) {
-        data = { history: [] };
-        playerData.set(player.name, data);
-    }
-
-    data.history.push({ position: currentPosition, velocity: currentVelocity, timestamp: currentTick });
-
-    // Maintain fixed history length
-    if (data.history.length > HISTORY_SIZE) data.history.shift();
-}
-
-/**
- * Estimate a player's position at a past tick using cubic interpolation
- * Returns undefined if there is not enough history
- */
-function estimatePositionUsingInterpolation(player: Player, hitTime: number): Position | undefined {
-    const data = playerData.get(player.name);
-    if (!data || data.history.length < 4) return undefined;
-
-    const [p0, p1, p2, p3] = data.history;
-    const timeRatio = (hitTime - p1.timestamp) / (p2.timestamp - p1.timestamp);
-
-    if (timeRatio <= 0) return p1.position;
-    if (timeRatio >= 1) return p2.position;
-
-    return cubicInterpolate(p0.position, p1.position, p2.position, p3.position, timeRatio);
-}
-
-/**
- * Notify Level 4 staff that a player exceeded the allowed reach distance
- */
-function alertStaff(attacker: Player, distance: number) {
+function alertStaff(attacker: Player, distSqValue: number) {
     const staff = getSecurityClearanceLevel4Players();
+
+    const distance = Math.sqrt(distSqValue);
+
     for (const s of staff) {
-        if (s.id === attacker.id) continue; // Skip attacker if they are staff
+        if (s.id === attacker.id) continue;
+
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Reach] §f${attacker.name} §7hit too far: §e${distance.toFixed(2)} blocks`);
     }
 }
 
 /**
- * Pre-damage event handler for reach checks
- * Cancels the hit if the attacker is too far and not in Creative mode
+ * Event handler for player vs player damage.
+ * Cancels the attack if the attacker is too far from the victim.
+ * @param event - EntityHurtBeforeEvent provided by Minecraft
  */
-function handleHurtEvent(event: EntityHurtBeforeEvent) {
+function onHit(event: EntityHurtBeforeEvent) {
     const attacker = event.damageSource.damagingEntity;
     const victim = event.hurtEntity;
 
-    // Only track Player vs Player
-    if (!(attacker instanceof Player) || !(victim instanceof Player)) return;
+    if (!(attacker instanceof Player)) return;
+    if (!(victim instanceof Player)) return;
+
     if (attacker.getGameMode() === GameMode.Creative) return;
 
-    const currentTick = system.currentTick;
+    const a = attacker.location;
+    const v = victim.location;
 
-    // Check direct distance first
-    const directDistance = calculateDistance(attacker.location, victim.location);
-    if (directDistance <= MAX_ATTACK_DISTANCE) return;
+    let d = distSq(a.x, a.y, a.z, v.x, v.y, v.z);
 
-    // Estimate positions using historical interpolation for more accurate reach detection
-    const estimatedAttackerPos = estimatePositionUsingInterpolation(attacker, currentTick - 1) ?? attacker.location;
-    const estimatedVictimPos = estimatePositionUsingInterpolation(victim, currentTick - 1) ?? victim.location;
-    const correctedDistance = calculateDistance(estimatedAttackerPos, estimatedVictimPos);
+    if (d <= MAX_REACH_SQ) return;
 
-    // If corrected distance is still too far, cancel the hit and alert staff
-    if (correctedDistance > MAX_ATTACK_DISTANCE) {
+    const ah = getLastPosition(attacker);
+    const vh = getLastPosition(victim);
+
+    if (!ah || !vh) return;
+
+    d = distSq(ah.x, ah.y, ah.z, vh.x, vh.y, vh.z);
+
+    if (d > MAX_REACH_SQ) {
         event.cancel = true;
-        alertStaff(attacker, correctedDistance);
+        alertStaff(attacker, d);
     }
 }
 
+let intervalId: number | undefined;
+
 /**
- * Start the reach check system
- * Continuously updates player position history and subscribes to pre-damage events
+ * Starts the hit reach check system.
+ * Tracks player positions and subscribes to entity hurt events.
  */
-export function startHitReachCheck(): void {
-    if (currentRunId !== null) system.clearRun(currentRunId);
+export function startHitReachCheck() {
+    if (intervalId) system.clearRun(intervalId);
 
-    let isRunning = false;
+    intervalId = system.runInterval(() => {
+        const players = PlayerCache.getPlayers();
 
-    currentRunId = system.runInterval(() => {
-        if (isRunning) {
-            system.clearRun(currentRunId as number);
-            currentRunId = runIdBackup;
-            return;
+        for (const player of players) {
+            updatePlayer(player);
         }
-
-        runIdBackup = currentRunId;
-        isRunning = true;
-
-        // Update all online players' positions for interpolation
-        for (const player of PlayerCache.getPlayers()) updatePlayerData(player);
-
-        isRunning = false;
     }, 1);
 
-    // Subscribe to pre-damage event for reach validation
-    world.beforeEvents.entityHurt.subscribe(handleHurtEvent);
+    world.beforeEvents.entityHurt.subscribe(onHit);
 }
 
 /**
- * Stop the reach check system
- * Clears interval and unsubscribes from pre-damage events
+ * Stops the hit reach check system.
+ * Clears interval and unsubscribes from entity hurt events.
  */
-export function stopHitReachCheck(): void {
-    if (currentRunId !== null) system.clearRun(currentRunId);
-    world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
+export function stopHitReachCheck() {
+    if (intervalId) system.clearRun(intervalId);
+
+    world.beforeEvents.entityHurt.unsubscribe(onHit);
 }
