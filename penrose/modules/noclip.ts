@@ -3,84 +3,25 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 import { PlayerCache } from "../classes/player-cache";
 
 /**
- * Stores per-player data for phase detection
+ * Stores per-player phase detection data
  */
 type PlayerData = {
     lastPos: { x: number; y: number; z: number };
     phaseFlags: number;
+    voxelCache: Set<string>; // blocks currently overlapping
 };
 
 /** Interval (in ticks) between NoClip checks */
 const CHECK_INTERVAL = 10;
 
 /** Number of consecutive phase detections before flagging */
-const PHASE_FLAGS_REQUIRED = 3;
+const PHASE_FLAGS_REQUIRED = 7;
 
 /** Player hitbox dimensions for Bedrock */
 const PLAYER_HITBOX = { width: 0.6, height: 1.8, depth: 0.6 };
 
-/** Number of steps along movement path for voxel sweep */
-const PATH_STEPS = 6;
-
-/** Blocks that can be passed through (non-solid for NoClip detection) */
-const PASSTHROUGH = new Set([
-    "air",
-    "cave_air",
-    "void_air",
-    "water",
-    "flowing_water",
-    "lava",
-    "flowing_lava",
-    "door",
-    "trapdoor",
-    "fence_gate",
-    "sign",
-    "wall_sign",
-    "hanging_sign",
-    "torch",
-    "soul_torch",
-    "redstone_torch",
-    "carpet",
-    "snow_layer",
-    "moss_carpet",
-    "pressure_plate",
-    "button",
-    "lever",
-    "rail",
-    "powered_rail",
-    "detector_rail",
-    "activator_rail",
-    "flower",
-    "sapling",
-    "dead_bush",
-    "fern",
-    "grass",
-    "tallgrass",
-    "tall_grass",
-    "large_fern",
-    "vine",
-    "ladder",
-    "scaffolding",
-    "banner",
-    "standing_banner",
-    "wall_banner",
-    "cobweb",
-    "web",
-    "skull",
-    "head",
-    "end_rod",
-    "chain",
-    "lantern",
-    "soul_lantern",
-    "candle",
-    "cake",
-    "redstone_wire",
-    "tripwire",
-    "string",
-    "structure_void",
-    "barrier",
-    "light_block",
-]);
+/** Fractional voxel grid resolution for slow-phase detection */
+const VOXEL_STEP = 0.32;
 
 /** Tracks per-player data */
 const playerData = new Map<string, PlayerData>();
@@ -95,44 +36,44 @@ let isNoClipActive = false;
 let intervalRef: number | undefined;
 
 /**
+ * Determines whether a block should be treated as pass-through for movement
+ * or noclip detection.
+ *
+ * @param block - The {@link Block} instance to evaluate.
+ * @returns `true` if the block should allow movement through it; otherwise `false`.
+ */
+function isPassThrough(block: Block | undefined | null): boolean {
+    if (!block || !block.isValid) return true;
+    if (block.isAir || block.isLiquid || !block.isSolid) return true;
+
+    const perm = block.permutation;
+    try {
+        if (perm.getState("open_bit") === true) return true; // doors/trapdoors
+    } catch {}
+
+    return false;
+}
+
+/**
  * Sends a NoClip violation alert to all Level 4 staff.
- * @param {Player} offender - Player who triggered the detection
- * @param {number} distance - Distance the player tried to phase through
+ * @param offender - Player who triggered the detection
+ * @param distance - Distance the player tried to phase through
  */
 function alertStaff(offender: Player, distance: number) {
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
-        if (s.id === offender.id) continue; // skip offender if staff
+        if (s.id === offender.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[NoClip] §f${offender.name} §7tried to phase §e${distance.toFixed(1)} blocks§7!`);
     }
 }
 
-/**
- * Returns current timestamp in seconds
- * @returns {number} Current time
- */
-function now() {
+/** Returns current timestamp in seconds */
+function now(): number {
     return Date.now() / 1000;
 }
 
-/**
- * Determines whether a block type is considered solid
- * @param {string} type - Block type string
- * @returns {boolean} True if solid
- */
-function isSolid(type: string) {
-    const name = type.toLowerCase().replace("minecraft:", "");
-    for (const pt of PASSTHROUGH) if (name.includes(pt)) return false;
-    return true;
-}
-
-/**
- * Computes Euclidean distance between two positions
- * @param {any} a - First position
- * @param {any} b - Second position
- * @returns {number} Distance
- */
-function distance(a: any, b: any) {
+/** Computes Euclidean distance between two positions */
+function distance(a: { x: number; y: number; z: number }, b: { x: number; y: number; z: number }): number {
     const dx = a.x - b.x,
         dy = a.y - b.y,
         dz = a.z - b.z;
@@ -140,49 +81,60 @@ function distance(a: any, b: any) {
 }
 
 /**
- * Sweeps the player's hitbox along movement path and checks for solid block collisions
- * @param {Player} player - Player to check
- * @param {any} start - Start position
- * @param {any} end - End position
- * @returns {boolean} True if player intersects a solid block
+ * Fractional voxel sweep for anti-cheat detection.
+ * Uses a 3D grid inside the player's hitbox to detect partial entry into solid blocks.
  */
-function sweepHitbox(player: Player, start: any, end: any): boolean {
-    const dx = (end.x - start.x) / PATH_STEPS;
-    const dy = (end.y - start.y) / PATH_STEPS;
-    const dz = (end.z - start.z) / PATH_STEPS;
+function sweepHitboxVoxel(player: Player, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }, voxelCache: Set<string>): boolean {
+    const dim = player.dimension;
+    const dx = (end.x - start.x) / CHECK_INTERVAL;
+    const dy = (end.y - start.y) / CHECK_INTERVAL;
+    const dz = (end.z - start.z) / CHECK_INTERVAL;
 
-    for (let step = 1; step <= PATH_STEPS; step++) {
-        const px = start.x + dx * step;
-        const py = start.y + dy * step;
-        const pz = start.z + dz * step;
+    let px = start.x;
+    let py = start.y;
+    let pz = start.z;
 
-        const offsets = [
-            { x: -0.3, z: -0.3 },
-            { x: -0.3, z: 0.3 },
-            { x: 0.3, z: -0.3 },
-            { x: 0.3, z: 0.3 },
-        ];
+    const newCache = new Set<string>();
 
-        for (const o of offsets) {
-            for (let h = 0; h <= PLAYER_HITBOX.height; h += 0.5) {
-                const bx = Math.floor(px + o.x);
-                const by = Math.floor(py + h);
-                const bz = Math.floor(pz + o.z);
+    for (let step = 0; step < CHECK_INTERVAL; step++) {
+        px += dx;
+        py += dy;
+        pz += dz;
 
-                try {
-                    const block: Block | undefined = player.dimension.getBlock({ x: bx, y: by, z: bz });
-                    if (block && isSolid(block.typeId)) return true;
-                } catch {}
+        for (let x = px - PLAYER_HITBOX.width / 2; x <= px + PLAYER_HITBOX.width / 2; x += VOXEL_STEP) {
+            for (let y = py; y <= py + PLAYER_HITBOX.height; y += VOXEL_STEP) {
+                for (let z = pz - PLAYER_HITBOX.depth / 2; z <= pz + PLAYER_HITBOX.depth / 2; z += VOXEL_STEP) {
+                    const bx = Math.floor(x);
+                    const by = Math.floor(y);
+                    const bz = Math.floor(z);
+
+                    const voxelId = `${bx},${by},${bz}`;
+                    newCache.add(voxelId);
+
+                    if (!voxelCache.has(voxelId)) {
+                        // new block entered
+                        try {
+                            const block = dim.getBlock({ x: bx, y: by, z: bz });
+                            if (block && !isPassThrough(block)) {
+                                return true;
+                            }
+                        } catch {}
+                    }
+                }
             }
         }
     }
+
+    // update cache for next tick
+    voxelCache.clear();
+    for (const v of newCache) voxelCache.add(v);
 
     return false;
 }
 
 /**
- * Performs a NoClip check on a single player
- * @param {Player} player - Player to check
+ * Performs a NoClip check on a single player.
+ * @param player - Player to check
  */
 function checkPlayer(player: Player) {
     if (player.getGameMode() === GameMode.Creative || player.getGameMode() === GameMode.Spectator) return;
@@ -194,7 +146,7 @@ function checkPlayer(player: Player) {
     let data = playerData.get(uuid);
 
     if (!data) {
-        playerData.set(uuid, { lastPos: { x: loc.x, y: loc.y, z: loc.z }, phaseFlags: 0 });
+        playerData.set(uuid, { lastPos: { x: loc.x, y: loc.y, z: loc.z }, phaseFlags: 0, voxelCache: new Set() });
         return;
     }
 
@@ -202,12 +154,12 @@ function checkPlayer(player: Player) {
     const cur = { x: loc.x, y: loc.y, z: loc.z };
     data.lastPos = cur;
 
-    if (distance(prev, cur) < 0.15) {
+    if (distance(prev, cur) < 0.35) {
         data.phaseFlags = Math.max(0, data.phaseFlags - 1);
         return;
     }
 
-    const detected = sweepHitbox(player, prev, cur);
+    const detected = sweepHitboxVoxel(player, prev, cur, data.voxelCache);
 
     if (detected) {
         data.phaseFlags++;
@@ -220,43 +172,6 @@ function checkPlayer(player: Player) {
     } else {
         data.phaseFlags = Math.max(0, data.phaseFlags - 1);
     }
-}
-
-/**
- * Starts the NoClip detection module.
- * Initializes the interval loop and subscribes to events.
- */
-export function startNoClip() {
-    if (isNoClipActive) return;
-    isNoClipActive = true;
-
-    intervalRef = system.runInterval(() => {
-        for (const player of PlayerCache.getPlayers()) {
-            try {
-                checkPlayer(player);
-            } catch {}
-        }
-    }, CHECK_INTERVAL);
-
-    world.afterEvents.entityHurt.subscribe(trackDamage);
-    world.beforeEvents.playerLeave.subscribe(cleanupPlayerData);
-}
-
-/**
- * Stops the NoClip detection module.
- * Clears interval, unsubscribes events, and resets data.
- */
-export function stopNoClip() {
-    if (!isNoClipActive) return;
-    isNoClipActive = false;
-
-    if (intervalRef) {
-        system.clearRun(intervalRef);
-        intervalRef = undefined;
-    }
-
-    playerData.clear();
-    recentDamage.clear();
 }
 
 /**
@@ -277,4 +192,39 @@ function cleanupPlayerData(ev: any) {
     const player = ev.player;
     playerData.delete(player.id);
     recentDamage.delete(player.id);
+}
+
+/**
+ * Starts the NoClip detection module.
+ */
+export function startNoClip() {
+    if (isNoClipActive) return;
+    isNoClipActive = true;
+
+    intervalRef = system.runInterval(() => {
+        for (const player of PlayerCache.getPlayers()) {
+            try {
+                checkPlayer(player);
+            } catch {}
+        }
+    }, CHECK_INTERVAL);
+
+    world.afterEvents.entityHurt.subscribe(trackDamage);
+    world.beforeEvents.playerLeave.subscribe(cleanupPlayerData);
+}
+
+/**
+ * Stops the NoClip detection module.
+ */
+export function stopNoClip() {
+    if (!isNoClipActive) return;
+    isNoClipActive = false;
+
+    if (intervalRef) {
+        system.clearRun(intervalRef);
+        intervalRef = undefined;
+    }
+
+    playerData.clear();
+    recentDamage.clear();
 }
