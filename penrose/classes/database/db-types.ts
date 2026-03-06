@@ -83,7 +83,8 @@ export type ModuleSettingsMap = {
     hitReachCheck_b: undefined; // This module has no configurable settings
     spamCheck_b: undefined; // This module has no configurable settings
     worldBorderCheck_b: WorldBorderSettings;
-    invSync_b: undefined;
+    invSync_b: undefined; // This module has no configurable settings
+    noClipCheck_b: undefined; // This module has no configurable settings
 };
 
 /**

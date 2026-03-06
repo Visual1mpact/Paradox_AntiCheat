@@ -70,6 +70,8 @@ import { chatSendSubscription } from "penrose/classes/subscriptions/chat-send-su
 import { debugDBCommand } from "penrose/commands/utility/debug-db";
 import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema, InvSyncAudit, InvSyncSnapshots } from "penrose/classes/database/db-types";
 import { scriptureCommand } from "../bible/scriptures";
+import { noClipCommand } from "penrose/commands/settings/noclip";
+import { startNoClip } from "penrose/modules/noclip";
 
 type PlayerID = string;
 
@@ -144,6 +146,7 @@ const allCommands: Command[] = [
     debugDBCommand,
     invSyncCommand,
     scriptureCommand,
+    noClipCommand,
 ];
 
 /**
@@ -296,6 +299,7 @@ async function initializeParadoxModules(): Promise<void> {
         packetMonitorCheck_b: () => startPacketListener(),
         visionCheck_b: () => startVisionCheck(),
         invSync_b: () => startInvSync(),
+        noClipCheck_b: () => startNoClip(),
     };
 
     const runModuleInitializers = () => {

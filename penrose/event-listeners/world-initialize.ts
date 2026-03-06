@@ -69,6 +69,8 @@ import { initializeSecurityClearanceTracking } from "../utility/level-4-security
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
 import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema, InvSyncAudit, InvSyncSnapshots } from "../classes/database/db-types";
+import { noClipCommand } from "../commands/settings/noclip";
+import { startNoClip } from "../modules/noclip";
 
 type PlayerID = string;
 
@@ -142,6 +144,7 @@ const allCommands: Command[] = [
     spoofLogCommand,
     debugDBCommand,
     invSyncCommand,
+    noClipCommand,
 ];
 
 /**
@@ -294,6 +297,7 @@ async function initializeParadoxModules(): Promise<void> {
         packetMonitorCheck_b: () => startPacketListener(),
         visionCheck_b: () => startVisionCheck(),
         invSync_b: () => startInvSync(),
+        noClipCheck_b: () => startNoClip(),
     };
 
     const runModuleInitializers = () => {
