@@ -1,5 +1,6 @@
-import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the kick command.
@@ -98,7 +99,7 @@ export const kickCommand: Command = {
         }
 
         // Find the player object in the world
-        const player: Player | undefined = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+        const player: Player | undefined = PlayerCache.getPlayerByName(playerName);
 
         // If player not found, inform the sender
         if (!player) {
@@ -111,7 +112,7 @@ export const kickCommand: Command = {
             player.runCommand(`kick @s \nYOU ARE KICKED!\n\n[Kicked By]: ${message.sender.name ?? "N/A"}\n[Reason]: ${reason ?? "Farewell"}`);
 
             // Check if the player is still in the world
-            const playerStillExists = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            const playerStillExists = PlayerCache.getPlayerByName(playerName);
 
             // Inform the sender about the action based on whether the player is still in the world
             if (playerStillExists) {

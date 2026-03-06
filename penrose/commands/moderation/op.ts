@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { addPlayerToSecurityClearanceList } from "../../utility/level-4-security-tracker";
+import { PlayerCache } from "../../classes/player-cache";
 
 interface PlayerInfo {
     name: string;
@@ -146,7 +147,7 @@ export const opCommand: Command = {
             const playerName: string = args.join(" ").trim().replace(/[@"]+/g, "");
 
             if (playerName.length > 0) {
-                targetPlayer = world.getAllPlayers().find((playerObject: Player) => playerObject.name === playerName);
+                targetPlayer = PlayerCache.getPlayerByName(playerName);
             }
 
             if (!targetPlayer && playerName.length === 0) {

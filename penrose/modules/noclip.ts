@@ -1,5 +1,6 @@
 import { world, system, Player, GameMode, Block } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { PlayerCache } from "../classes/player-cache";
 
 /**
  * Stores per-player data for phase detection
@@ -230,7 +231,7 @@ export function startNoClip() {
     isNoClipActive = true;
 
     intervalRef = system.runInterval(() => {
-        for (const player of world.getPlayers()) {
+        for (const player of PlayerCache.getPlayers()) {
             try {
                 checkPlayer(player);
             } catch {}

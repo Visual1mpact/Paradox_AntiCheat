@@ -1,6 +1,7 @@
 import { world, system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { PlayerCache } from "../classes/player-cache";
 
 /**
  * CONFIGURATION
@@ -102,7 +103,7 @@ async function processPendingJoins() {
 
     for (const [playerId, scheduledTick] of pendingJoinChecks) {
         if (currentTick >= scheduledTick) {
-            const player = world.getPlayers().find((p) => p.id === playerId);
+            const player = PlayerCache.getPlayerById(playerId);
             if (player) await checkPlayerInventory(player);
             pendingJoinChecks.delete(playerId);
         }
@@ -113,7 +114,7 @@ async function processPendingJoins() {
  * SNAPSHOT MANAGEMENT
  */
 export async function snapshotAllPlayers() {
-    for (const player of world.getPlayers()) {
+    for (const player of PlayerCache.getPlayers()) {
         const counts = getInventoryCounts(player);
         if (!counts) continue;
 
@@ -263,7 +264,7 @@ function getInventoryCounts(player: Player): Record<string, number> | null {
  * COMMAND HELPERS
  */
 export async function forceCheckAll() {
-    for (const player of world.getPlayers()) await checkPlayerInventory(player);
+    for (const player of PlayerCache.getPlayers()) await checkPlayerInventory(player);
 }
 export async function clearAllSnapshots() {
     await invSyncSnapshotsDB.clear();

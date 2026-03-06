@@ -2,6 +2,7 @@ import { ChatSendBeforeEvent, EntityHealthComponent, Player, system, world } fro
 import { Command } from "../../classes/command-handler";
 import { initializePvPSystem, stopPvPSystem, updateCoolDownTicks } from "../../modules/pvp-manager";
 import { MessageFormData } from "@minecraft/server-ui";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Converts a given time in seconds to a more human-readable format (hours, minutes, and seconds).
@@ -301,7 +302,7 @@ export const pvpToggleCommand: Command = {
             } else {
                 // Enable global PvP
                 await setPvP(true);
-                const players = world.getAllPlayers();
+                const players = PlayerCache.getPlayers();
                 for (const player of players) {
                     const healthComponent = player.getComponent("health") as EntityHealthComponent;
                     if (healthComponent) {

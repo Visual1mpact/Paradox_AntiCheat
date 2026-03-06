@@ -72,6 +72,7 @@ import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledC
 import { scriptureCommand } from "../bible/scriptures";
 import { noClipCommand } from "penrose/commands/settings/noclip";
 import { startNoClip } from "penrose/modules/noclip";
+import { PlayerCache } from "penrose/classes/player-cache";
 
 type PlayerID = string;
 
@@ -399,6 +400,7 @@ async function onWorldInitialize(): Promise<void> {
 export function subscribeToWorldInitialize() {
     world.afterEvents.worldLoad.subscribe(async () => {
         await initializeSystems();
+        PlayerCache.init(); // Initialize PlayerCache after systems are set up
         await onWorldInitialize();
     });
 }

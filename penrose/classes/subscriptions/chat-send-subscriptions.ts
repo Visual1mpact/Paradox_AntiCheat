@@ -1,5 +1,6 @@
 import { world, system, ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { commandHandler, paradoxModulesDB, channelsDB } from "../../event-listeners/world-initialize";
+import { PlayerCache } from "../player-cache";
 
 // Configuration for spam detection
 const SPAM_THRESHOLD = 5; // Number of allowed messages
@@ -110,7 +111,6 @@ class ChatSendSubscription {
             const formattedMessage = `${rank} §7${player.name}§7: §r${event.message}`;
 
             // 4️⃣ Determine target players
-            let targetPlayers: Player[];
             if (playerChannel) {
                 const channelData = channelsDB.get(playerChannel);
                 if (channelData) {
@@ -132,16 +132,22 @@ class ChatSendSubscription {
                         this.channelMemberCache.set(playerChannel, { memberSet, lastUpdated: now });
                     }
 
-                    targetPlayers = world.getAllPlayers().filter((p) => memberSet!.has(p.id));
+                    // Broadcast directly with filtered iterator (no array allocations)
+                    for (const p of PlayerCache.filterByIds(memberSet)) {
+                        p.sendMessage(formattedMessage);
+                    }
                 } else {
-                    targetPlayers = world.getPlayers();
+                    // fallback: broadcast to all online players
+                    for (const p of PlayerCache.getPlayers()) {
+                        p.sendMessage(formattedMessage);
+                    }
                 }
             } else {
-                targetPlayers = world.getPlayers();
+                // global message: all online players
+                for (const p of PlayerCache.getPlayers()) {
+                    p.sendMessage(formattedMessage);
+                }
             }
-
-            // 5️⃣ Broadcast message
-            targetPlayers.forEach((p) => p.sendMessage(formattedMessage));
         };
 
         world.beforeEvents.chatSend.subscribe(this.callback);

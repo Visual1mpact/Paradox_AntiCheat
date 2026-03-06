@@ -71,6 +71,7 @@ import { debugDBCommand } from "../commands/utility/debug-db";
 import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema, InvSyncAudit, InvSyncSnapshots } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
+import { PlayerCache } from "../classes/player-cache";
 
 type PlayerID = string;
 
@@ -397,6 +398,7 @@ async function onWorldInitialize(): Promise<void> {
 export function subscribeToWorldInitialize() {
     world.afterEvents.worldLoad.subscribe(async () => {
         await initializeSystems();
+        PlayerCache.init(); // Initialize PlayerCache after systems are set up
         await onWorldInitialize();
     });
 }

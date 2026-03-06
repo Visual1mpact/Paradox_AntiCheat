@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { removePlayerFromSecurityClearanceList } from "../../utility/level-4-security-tracker";
+import { PlayerCache } from "../../classes/player-cache";
 
 interface PlayerInfo {
     name: string;
@@ -82,8 +83,8 @@ export const deopCommand: Command = {
                 const securityClearanceListData: SecurityClearanceData = JSON.parse(securityListObject);
                 const securityClearanceList = securityClearanceListData[securityClearanceListKey];
 
-                // First, check if the player is online
-                const player = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+                // First, check if the player is online using the cached PlayerCache
+                const player = PlayerCache.getPlayerByName(playerName);
 
                 if (player && player.isValid) {
                     // Remove player from the security clearance list

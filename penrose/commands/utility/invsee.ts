@@ -1,5 +1,6 @@
-import { Player, ChatSendBeforeEvent, world } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the invsee command.
@@ -52,7 +53,7 @@ export const invseeCommand: Command = {
          * @returns {Player} The player object corresponding to the provided player name.
          */
         function getPlayerObject(playerName: string): Player | undefined {
-            return world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            return PlayerCache.getPlayerByName(playerName);
         }
 
         // Check if player argument is provided

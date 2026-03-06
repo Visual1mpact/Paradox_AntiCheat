@@ -3,6 +3,7 @@ import { Command, DynamicField, ActionFormButton } from "../../classes/command-h
 import { commandHandler } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoESImport from "../../node_modules/crypto-es";
+import { PlayerCache } from "../../classes/player-cache";
 
 // Import CryptoES library for optional encryption of commands
 const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
@@ -212,7 +213,7 @@ class GUIManager {
                 case "dropdown":
                     // Populate dropdown dynamically for players or entities
                     if (field.sourceType === "players") {
-                        field.options = world.getAllPlayers().map((p) => p.name);
+                        field.options = PlayerCache.getPlayerNames();
                     } else if (field.sourceType === "entities") {
                         field.options = [
                             ...new Set(

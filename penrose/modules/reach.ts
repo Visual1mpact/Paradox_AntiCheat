@@ -1,5 +1,6 @@
 import { world, Player, system, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { PlayerCache } from "../classes/player-cache";
 
 /**
  * RUNTIME STATE
@@ -167,7 +168,7 @@ export function startHitReachCheck(): void {
         isRunning = true;
 
         // Update all online players' positions for interpolation
-        for (const player of world.getPlayers()) updatePlayerData(player);
+        for (const player of PlayerCache.getPlayers()) updatePlayerData(player);
 
         isRunning = false;
     }, 1);

@@ -15,6 +15,7 @@ import {
     world,
 } from "@minecraft/server";
 import { MessageFormData } from "@minecraft/server-ui";
+import { PlayerCache } from "../classes/player-cache";
 
 /** PvP cooldown in ticks (default 2 minutes = 2400 ticks) */
 let cooldownTicks = 2400;
@@ -265,7 +266,7 @@ export function initializePvPSystem() {
         pvpCleanupIntervalId = system.runInterval(() => {
             const tick = system.currentTick;
             for (const [id] of playerDataMap.entries()) {
-                const p = world.getAllPlayers().find((pl) => pl.id === id);
+                const p = PlayerCache.getPlayerById(id);
                 if (!p) playerDataMap.delete(id);
                 else if ((p.getDynamicProperty("pvpCooldown") as number) <= tick) playerDataMap.delete(id);
             }

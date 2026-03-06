@@ -1,5 +1,6 @@
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Updates the player's nameTag based on their chat rank and the global rank setting.
@@ -95,7 +96,7 @@ export const setRankCommand: Command = {
 
             world.setDynamicProperty("globalRankDisabled", disable);
 
-            for (const player of world.getPlayers()) {
+            for (const player of PlayerCache.getPlayers()) {
                 updateNameTag(player);
             }
 
@@ -176,7 +177,7 @@ export const setRankCommand: Command = {
         }
 
         // Find the player object in the world
-        const player = world.getPlayers().find((playerObject) => playerObject.name === playerName);
+        const player = PlayerCache.getPlayerByName(playerName);
 
         // If player not found, inform the sender
         if (!player) {

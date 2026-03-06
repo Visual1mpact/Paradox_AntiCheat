@@ -1,5 +1,6 @@
-import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, world, EquipmentSlot } from "@minecraft/server";
+import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, EquipmentSlot } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the punish command.
@@ -79,7 +80,7 @@ export const punishCommand: Command = {
          * @returns {Player | undefined} The player object corresponding to the provided player name, or undefined if not found.
          */
         function getPlayerObject(playerName: string): Player | undefined {
-            return world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            return PlayerCache.getPlayerByName(playerName);
         }
 
         // Check if player argument is provided

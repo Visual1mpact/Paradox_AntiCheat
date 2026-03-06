@@ -1,4 +1,5 @@
 import { world, GameMode, system, Vector3 } from "@minecraft/server";
+import { PlayerCache } from "../classes/player-cache";
 
 let currentJobId: number | null = null;
 let currentRunId: number | null = null;
@@ -33,10 +34,14 @@ const itemUseCheck = world.beforeEvents.itemUse.subscribe((event) => {
  * @yields {void} Pauses the generator after processing each player.
  */
 function* flyCheckGenerator(): Generator<void, void, unknown> {
-    const gm = { excludeGameModes: [GameMode.Creative, GameMode.Spectator] };
-    const filteredPlayers = world.getPlayers(gm);
+    // Define gamemodes to exclude
+    const excludedGMs = new Set([GameMode.Creative, GameMode.Spectator]);
 
-    for (const player of filteredPlayers) {
+    // Use PlayerCache for zero-allocation iteration
+    for (const player of PlayerCache.getPlayers()) {
+        // Skip excluded gamemodes
+        if (excludedGMs.has(player.getGameMode())) continue;
+
         const tridentUsed = player.getDynamicProperty("tridentUsed") as boolean;
         if (tridentUsed) {
             player.setDynamicProperty("tridentUsed", false);

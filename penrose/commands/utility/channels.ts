@@ -2,6 +2,7 @@ import { Player, ChatSendBeforeEvent, TicksPerSecond, system, world } from "@min
 import { Command } from "../../classes/command-handler";
 import { channelsDB } from "../../event-listeners/world-initialize";
 import { Channel } from "../../classes/database/db-types";
+import { PlayerCache } from "../../classes/player-cache";
 
 interface Invitation {
     sender: Player;
@@ -114,7 +115,7 @@ export const channelCommand: Command = {
 
             // Notify other members of the new player
             for (const memberId in channel.Members) {
-                const member = world.getAllPlayers().find((player) => player.id === memberId);
+                const member = PlayerCache.getPlayerById(memberId);
                 if (member && member.name !== playerName) {
                     member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} has joined channel '${channelName}§7'.`);
                 }
@@ -128,7 +129,7 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function inviteToChannel(channelName: string, receiverName: string): Promise<void> {
-            const receiver = world.getAllPlayers().find((player) => player.name === receiverName);
+            const receiver = PlayerCache.getPlayerByName(receiverName);
             if (!receiver) {
                 msg.sender.sendMessage(`§o§c[Paradox] Player '${receiverName}§c' not found.`);
                 return;
@@ -176,7 +177,7 @@ export const channelCommand: Command = {
                 return;
             }
 
-            const newOwner = world.getAllPlayers().find((player) => player.name === newOwnerName);
+            const newOwner = PlayerCache.getPlayerByName(newOwnerName);
             if (!newOwner) {
                 msg.sender.sendMessage(`§o§c[Paradox] Player '${newOwnerName}§c' not found.`);
                 return;
@@ -213,7 +214,7 @@ export const channelCommand: Command = {
                     channel.Owner = newOwnerName;
 
                     for (const memberId in channel.Members) {
-                        const member = world.getAllPlayers().find((p) => p.id === memberId);
+                        const member = PlayerCache.getPlayerById(memberId);
                         if (member) {
                             member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
                         }
@@ -230,7 +231,7 @@ export const channelCommand: Command = {
                 msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You left channel '${channelName}§7'.`);
 
                 for (const memberId in channel.Members) {
-                    const member = world.getAllPlayers().find((p) => p.id === memberId);
+                    const member = PlayerCache.getPlayerById(memberId);
                     if (member) {
                         member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} has left '${channelName}§7'.`);
                     }

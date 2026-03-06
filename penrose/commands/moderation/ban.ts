@@ -1,6 +1,7 @@
 import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/command-handler";
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
+import { PlayerCache } from "../../classes/player-cache";
 
 // Define the ban command
 export const banCommand: Command = {
@@ -127,7 +128,9 @@ export const banCommand: Command = {
         /**
          * Looks up an online player by name.
          */
-        const getPlayerObject = (name: string) => world.getAllPlayers().find((p) => p.name === name);
+        const getPlayerObject = (name: string): Player | undefined => {
+            return PlayerCache.getPlayerByName(name);
+        };
 
         /**
          * Returns the security clearance level of the player, if known.

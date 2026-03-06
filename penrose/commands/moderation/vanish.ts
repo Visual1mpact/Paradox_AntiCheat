@@ -1,5 +1,6 @@
-import { GameMode, Player, ChatSendBeforeEvent, world } from "@minecraft/server";
+import { GameMode, Player, ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the vanish command.
@@ -54,7 +55,7 @@ export const vanishCommand: Command = {
 
         if (playerName.length > 0) {
             // Find the player object in the world
-            player = world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            player = PlayerCache.getPlayerByName(playerName);
         }
 
         // If no player name is provided or player not found, default to message sender

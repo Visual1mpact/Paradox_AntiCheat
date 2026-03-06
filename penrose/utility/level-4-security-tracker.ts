@@ -1,4 +1,5 @@
 import { Player, world } from "@minecraft/server";
+import { PlayerCache } from "../classes/player-cache";
 
 // This will store players with security clearance level 4
 let securityClearanceLevel4Players: Set<Player> = new Set();
@@ -39,7 +40,7 @@ export const initializeSecurityClearanceTracking = (): void => {
     // Validation is necessary in the case of a reload with the script api
     const initialValidation = getSecurityClearanceLevel4Players();
     if (initialValidation.size === 0) {
-        const players = world.getAllPlayers();
+        const players = PlayerCache.getPlayers();
         for (const player of players) {
             addPlayerToSecurityClearanceList(player);
         }

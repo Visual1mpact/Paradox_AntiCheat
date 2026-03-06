@@ -1,5 +1,6 @@
 import { Player, ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 // Define the dimensions and block type of the prison
 const PRISON_WIDTH = 5;
@@ -160,7 +161,7 @@ export const imprisonCommand: Command = {
         if (!message) return;
         // Find the player object based on the command arguments or use the sender
         const playerName = args.join(" ").trim().replace(/["@]/g, "");
-        let player: Player | undefined = playerName.length > 0 ? world.getAllPlayers().find((p) => p.name === playerName) : message.sender;
+        let player: Player | undefined = playerName.length > 0 ? PlayerCache.getPlayerByName(playerName) : message.sender;
 
         // Inform if the player is not found
         if (!player) {

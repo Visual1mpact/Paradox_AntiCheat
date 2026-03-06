@@ -1,5 +1,6 @@
 import { Player, world, system, Dimension } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
+import { PlayerCache } from "../classes/player-cache";
 
 let worldBorderJobId: number | null = null;
 let worldBorderRunId: number | null = null;
@@ -12,7 +13,7 @@ function* worldBorderGenerator(): Generator<void, void, unknown> {
     if (!module?.enabled || !module?.settings) return;
 
     const { overworld, nether, end } = module.settings;
-    const players = world.getPlayers();
+    const players = PlayerCache.getPlayers();
     const spawnLocation = world.getDefaultSpawnLocation();
     const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
 

@@ -1,5 +1,6 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond, world, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 interface TeleportRequest {
     sender: Player;
@@ -80,7 +81,7 @@ export const tprCommand: Command = {
          * @returns {Player} The player object corresponding to the provided player name.
          */
         function getPlayerObject(playerName: string): Player | undefined {
-            return world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            return PlayerCache.getPlayerByName(playerName);
         }
 
         /**

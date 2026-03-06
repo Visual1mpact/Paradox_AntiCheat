@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, Player, world, system, ItemStack } from "@minecraft/server";
 import { verses } from "../bible/verses";
 import { Command } from "../../../penrose/classes/command-handler";
+import { PlayerCache } from "penrose/classes/player-cache";
 
 // ===== CONFIG =====
 const INTERVAL_TICKS = 30 * 60 * 20; // 30 minutes
@@ -98,7 +99,7 @@ function broadcastScriptureToPlayer(player: Player) {
 
 // ===== INTERVAL LOOP =====
 system.runInterval(() => {
-    for (const player of world.getPlayers()) {
+    for (const player of PlayerCache.getPlayers()) {
         // Treat undefined as enabled by default
         const enabled = player.getDynamicProperty("scriptureEnabled");
         if (enabled === undefined || enabled === true) {
@@ -188,7 +189,7 @@ export const scriptureCommand: Command = {
             return;
         }
 
-        const player = world.getPlayers().find((p) => p.name === playerName);
+        const player = PlayerCache.getPlayerByName(playerName);
         if (!player) {
             message.sender.sendMessage(`§c[Scripture] Player "${playerName}" not found.`);
             return;

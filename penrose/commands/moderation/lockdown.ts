@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import * as CryptoESImport from "../../node_modules/crypto-es";
+import { PlayerCache } from "../../classes/player-cache";
 
 const _default = (CryptoESImport as any).default ?? CryptoESImport;
 
@@ -73,7 +74,7 @@ export const lockdownCommand: Command = {
         }
 
         // Enable lockdown
-        for (const target of world.getAllPlayers()) {
+        for (const target of PlayerCache.getPlayers()) {
             const securityCheck = target.getDynamicProperty("securityClearance") as number;
             if (securityCheck !== 4) {
                 target.runCommand(`kick @s ${reason}`);

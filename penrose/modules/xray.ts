@@ -1,5 +1,6 @@
 import { world, system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { PlayerCache } from "../classes/player-cache";
 
 /* ============================================================
    CONFIGURATION
@@ -44,12 +45,12 @@ const WINDOW_TICKS = 2400; // 2 minutes
 
 // Suspicion decay configuration
 const DECAY_INTERVAL = 600; // 30 seconds
-const DECAY_AMOUNT = 3;     // amount of suspicion to reduce per interval
+const DECAY_AMOUNT = 3; // amount of suspicion to reduce per interval
 
 /* Escalation thresholds for alerting or freezing */
-const ALERT_SCORE = 15;    // low-level alert
+const ALERT_SCORE = 15; // low-level alert
 const PRIORITY_SCORE = 25; // higher-priority alert
-const FREEZE_SCORE = 40;   // freeze player
+const FREEZE_SCORE = 40; // freeze player
 
 /* Safe Zone cooldowns (prevents spamming) */
 const SAFE_ZONE_COOLDOWN = 6000; // 5 minutes (in ticks)
@@ -64,16 +65,16 @@ const awaitingSafeZoneResponse = new Map<string, { x: number; y: number; z: numb
 ============================================================ */
 
 interface MiningProfile {
-    suspicion: number;           // current suspicion score
-    lastDecayTick: number;       // last tick when suspicion decayed
-    totalBlocks: number;         // total blocks mined
-    rareBlocks: number;          // total rare blocks mined
-    windowStart: number;         // start of current time window
-    windowBlocks: number;        // number of blocks mined in window
-    windowRareCount: number;     // rare blocks in current window
+    suspicion: number; // current suspicion score
+    lastDecayTick: number; // last tick when suspicion decayed
+    totalBlocks: number; // total blocks mined
+    rareBlocks: number; // total rare blocks mined
+    windowStart: number; // start of current time window
+    windowBlocks: number; // number of blocks mined in window
+    windowRareCount: number; // rare blocks in current window
     lastOreLocation?: { x: number; y: number; z: number }; // last mined ore location
-    lastOreTick?: number;        // tick of last mined ore
-    veinChain: number;           // consecutive vein-jump count
+    lastOreTick?: number; // tick of last mined ore
+    veinChain: number; // consecutive vein-jump count
 }
 
 // Player mining profiles
@@ -142,14 +143,7 @@ function addSuspicion(playerId: string, profile: MiningProfile, amount: number, 
  * Determines if a mined ore is "hidden" (surrounded by solid blocks).
  */
 function isHiddenOre(block: Block): boolean {
-    const neighbors = [
-        block.north(),
-        block.south(),
-        block.east(),
-        block.west(),
-        block.above(),
-        block.below()
-    ];
+    const neighbors = [block.north(), block.south(), block.east(), block.west(), block.above(), block.below()];
     for (const n of neighbors) {
         if (!n) continue;
         if (n.typeId === "minecraft:air" || n.typeId === "minecraft:cave_air") {
@@ -227,7 +221,7 @@ function checkVeinJump(profile: MiningProfile, playerId: string, location: { x: 
  * Sends alert messages to security staff.
  */
 function alertStaff(playerId: string, profile: MiningProfile, level: string) {
-    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    const player = PlayerCache.getPlayerById(playerId);
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
         if (player && s.id === player.id) continue;
@@ -239,7 +233,7 @@ function alertStaff(playerId: string, profile: MiningProfile, level: string) {
  * Freezes the player by applying extreme slowness and mining fatigue effects.
  */
 function freezePlayer(playerId: string, profile: MiningProfile, reason: string) {
-    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    const player = PlayerCache.getPlayerById(playerId);
     if (!player) return;
 
     const duration = 100;
@@ -263,7 +257,7 @@ function freezePlayer(playerId: string, profile: MiningProfile, reason: string) 
  * Gets current player location.
  */
 function getPlayerLocation(playerId: string) {
-    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    const player = PlayerCache.getPlayerById(playerId);
     return player ? { x: player.location.x, y: player.location.y, z: player.location.z } : { x: 0, y: 0, z: 0 };
 }
 
@@ -282,11 +276,10 @@ function promptSafeZone(playerId: string, location: { x: number; y: number; z: n
     if (!canCreateSafeZone(playerId)) return;
     if (awaitingSafeZoneResponse.has(playerId)) return;
 
-    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    const player = PlayerCache.getPlayerById(playerId);
     if (!player) return;
 
-    player.sendMessage(`§2[§7Paradox§2]§o§7 §eYour mining activity is raising suspicion! §aYou can mark your current location as a Safe Zone for breaking ores.` +
-        ` §a§oType "Yes" to create the Safe Zone`);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 §eYour mining activity is raising suspicion! §aYou can mark your current location as a Safe Zone for breaking ores.` + ` §a§oType "Yes" to create the Safe Zone`);
 
     awaitingSafeZoneResponse.set(playerId, location);
 }
@@ -302,7 +295,7 @@ function createSafeZone(playerId: string, location: { x: number; y: number; z: n
     });
     safeZoneCooldowns.set(playerId, system.currentTick);
 
-    const player = world.getAllPlayers().find((p) => p.id === playerId);
+    const player = PlayerCache.getPlayerById(playerId);
     player?.sendMessage("§2[§7Paradox§2]§o§7 §aSafe Zone created [§720 x 20 x 20§a]! You may safely break ores here without triggering alerts for the next 5 minutes.");
 }
 

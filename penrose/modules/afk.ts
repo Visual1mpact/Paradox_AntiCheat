@@ -1,4 +1,5 @@
 import { world, system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
+import { PlayerCache } from "../classes/player-cache";
 
 let currentRunId: number | null = null;
 let playerLeaveCallback: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
@@ -59,7 +60,7 @@ async function checkAFKStatus(): Promise<void> {
     const currentTick = system.currentTick;
 
     for (const [playerId, lastActiveTick] of Object.entries(playerLastActive)) {
-        const player = world.getPlayers().find((p) => p.id === playerId);
+        const player = PlayerCache.getPlayerById(playerId);
         if (player && !isSecurityClearanceIgnored(player)) {
             if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
                 player.runCommand(`kick @s You have been kicked for being AFK!`);
@@ -73,7 +74,7 @@ async function checkAFKStatus(): Promise<void> {
  * Monitors all players, checking their movement status and updating activity.
  */
 async function monitorPlayers(): Promise<void> {
-    const players = world.getPlayers();
+    const players = PlayerCache.getPlayers();
 
     for (const player of players) {
         const velocity = player.getVelocity();

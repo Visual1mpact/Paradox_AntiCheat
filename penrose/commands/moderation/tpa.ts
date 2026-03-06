@@ -1,5 +1,6 @@
-import { Player, ChatSendBeforeEvent, world } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the tpa command.
@@ -63,7 +64,7 @@ export const tpaCommand: Command = {
          * @returns {Player | undefined} The player object corresponding to the provided player name, or undefined if not found.
          */
         function getPlayerObject(playerName: string): Player | undefined {
-            return world.getAllPlayers().find((playerObject) => playerObject.name === playerName);
+            return PlayerCache.getPlayerByName(playerName);
         }
 
         /**

@@ -1,5 +1,6 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the opsec command.
@@ -71,7 +72,7 @@ export const opsecCommand: Command = {
             return;
         }
 
-        const targetPlayer = world.getAllPlayers().find((player) => player.name === targetPlayerName);
+        const targetPlayer = PlayerCache.getPlayerByName(targetPlayerName);
 
         if (!targetPlayer || !targetPlayer.isValid) {
             message.sender.sendMessage(`§o§c[Paradox] Player "${targetPlayerName}§c" not found or is invalid.`);
