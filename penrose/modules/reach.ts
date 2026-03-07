@@ -4,35 +4,37 @@ import { PlayerCache } from "../classes/player-cache";
 
 const MAX_REACH = 4.5;
 const MAX_REACH_SQ = MAX_REACH * MAX_REACH;
-
 const HISTORY_SIZE = 6;
+const UPDATE_INTERVAL_TICKS = 4; // update every 4 ticks (~200ms)
 
 /**
  * Stores a player's recent positions for reach detection.
  */
 interface PlayerHistory {
-    /** Array of x-coordinates */
-    x: number[];
-    /** Array of y-coordinates */
-    y: number[];
-    /** Array of z-coordinates */
-    z: number[];
-    /** Current index in the history arrays */
+    /** Flattened array of positions [x0,y0,z0, x1,y1,z1,...] */
+    positions: Float32Array;
+    /** Current index in the positions array */
     index: number;
 }
 
 /** Map of player IDs to their position history */
 const playerHistory = new Map<string, PlayerHistory>();
 
+/** Map of player IDs to their cached location per tick */
+const cachedLocations = new Map<string, { x: number; y: number; z: number }>();
+
+let intervalId: number | undefined;
+let hurtSubscription: (event: EntityHurtBeforeEvent) => void;
+
 /**
- * Calculates the squared distance between two 3D points.
- * @param ax - X coordinate of the first point
- * @param ay - Y coordinate of the first point
- * @param az - Z coordinate of the first point
- * @param bx - X coordinate of the second point
- * @param by - Y coordinate of the second point
- * @param bz - Z coordinate of the second point
- * @returns Squared distance between the points
+ * Calculates squared distance between two 3D points.
+ * @param ax - X coordinate of point A
+ * @param ay - Y coordinate of point A
+ * @param az - Z coordinate of point A
+ * @param bx - X coordinate of point B
+ * @param by - Y coordinate of point B
+ * @param bz - Z coordinate of point B
+ * @returns Squared distance between points
  */
 function distSq(ax: number, ay: number, az: number, bx: number, by: number, bz: number) {
     const dx = ax - bx;
@@ -42,127 +44,123 @@ function distSq(ax: number, ay: number, az: number, bx: number, by: number, bz: 
 }
 
 /**
- * Updates the stored position history for a player.
- * @param player - Player whose position is being updated
+ * Updates the position history for a player using a cached location.
+ * Skips update if player hasn't moved since last recorded position.
+ * @param player - Player whose position is being tracked
+ * @param loc - Cached location object for the current tick
  */
-function updatePlayer(player: Player) {
+function updatePlayerWithLoc(player: Player, loc: { x: number; y: number; z: number }) {
     const id = player.id;
-    const loc = player.location;
 
     let data = playerHistory.get(id);
 
     if (!data) {
-        data = {
-            x: new Array(HISTORY_SIZE),
-            y: new Array(HISTORY_SIZE),
-            z: new Array(HISTORY_SIZE),
-            index: 0,
-        };
-
+        data = { positions: new Float32Array(HISTORY_SIZE * 3), index: 0 };
         playerHistory.set(id, data);
+    } else {
+        const lastIndex = ((data.index - 1 + HISTORY_SIZE) % HISTORY_SIZE) * 3;
+        const px = data.positions[lastIndex];
+        const py = data.positions[lastIndex + 1];
+        const pz = data.positions[lastIndex + 2];
+        if (px === loc.x && py === loc.y && pz === loc.z) return;
     }
 
-    const i = data.index;
+    const i = data.index * 3;
+    data.positions[i] = loc.x;
+    data.positions[i + 1] = loc.y;
+    data.positions[i + 2] = loc.z;
 
-    data.x[i] = loc.x;
-    data.y[i] = loc.y;
-    data.z[i] = loc.z;
-
-    data.index++;
-
-    if (data.index === HISTORY_SIZE) {
-        data.index = 0;
-    }
+    data.index = (data.index + 1) % HISTORY_SIZE;
 }
 
 /**
  * Retrieves the last recorded position of a player.
  * @param player - Player to retrieve position for
- * @returns The last position as an object {x, y, z} or null if no history exists
+ * @returns Last position as {x, y, z} or null if none recorded
  */
 function getLastPosition(player: Player) {
     const data = playerHistory.get(player.id);
     if (!data) return null;
 
-    let i = data.index - 1;
-    if (i < 0) i = HISTORY_SIZE - 1;
-
+    const i = ((data.index - 1 + HISTORY_SIZE) % HISTORY_SIZE) * 3;
     return {
-        x: data.x[i],
-        y: data.y[i],
-        z: data.z[i],
+        x: data.positions[i],
+        y: data.positions[i + 1],
+        z: data.positions[i + 2],
     };
 }
 
 /**
- * Alerts staff members with security clearance level 4 about a reach violation.
- * @param attacker - Player who exceeded the reach distance
- * @param distSqValue - Squared distance of the attack
+ * Sends an alert to staff with security clearance level 4 when a player exceeds reach distance.
+ * @param attacker - Player who exceeded reach
+ * @param distSqValue - Squared distance of attack
  */
 function alertStaff(attacker: Player, distSqValue: number) {
     const staff = getSecurityClearanceLevel4Players();
-
     const distance = Math.sqrt(distSqValue);
 
     for (const s of staff) {
         if (s.id === attacker.id) continue;
-
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Reach] §f${attacker.name} §7hit too far: §e${distance.toFixed(2)} blocks`);
     }
 }
 
 /**
- * Event handler for player vs player damage.
- * Cancels the attack if the attacker is too far from the victim.
- * @param event - EntityHurtBeforeEvent provided by Minecraft
+ * Event handler for player vs player damage using cached locations.
+ * Cancels attack if the attacker exceeds max reach.
+ * @param event - EntityHurtBeforeEvent triggered by Minecraft
  */
-function onHit(event: EntityHurtBeforeEvent) {
+function onHitCached(event: EntityHurtBeforeEvent) {
     const attacker = event.damageSource.damagingEntity;
     const victim = event.hurtEntity;
 
-    if (!(attacker instanceof Player)) return;
-    if (!(victim instanceof Player)) return;
-
+    if (!(attacker instanceof Player) || !(victim instanceof Player)) return;
     if (attacker.getGameMode() === GameMode.Creative) return;
 
-    const a = attacker.location;
-    const v = victim.location;
+    const a = cachedLocations.get(attacker.id);
+    const v = cachedLocations.get(victim.id);
+    if (!a || !v) return;
 
     let d = distSq(a.x, a.y, a.z, v.x, v.y, v.z);
-
     if (d <= MAX_REACH_SQ) return;
 
     const ah = getLastPosition(attacker);
     const vh = getLastPosition(victim);
-
     if (!ah || !vh) return;
 
     d = distSq(ah.x, ah.y, ah.z, vh.x, vh.y, vh.z);
-
     if (d > MAX_REACH_SQ) {
         event.cancel = true;
         alertStaff(attacker, d);
     }
 }
 
-let intervalId: number | undefined;
+/**
+ * Updates cached player locations each tick and their history.
+ */
+function tickUpdate() {
+    const players = PlayerCache.getPlayers();
+    cachedLocations.clear();
+
+    for (const player of players) {
+        const loc = player.location;
+        cachedLocations.set(player.id, { x: loc.x, y: loc.y, z: loc.z });
+        updatePlayerWithLoc(player, loc);
+    }
+}
 
 /**
  * Starts the hit reach check system.
- * Tracks player positions and subscribes to entity hurt events.
+ * Updates player positions at a set interval and subscribes once to entity hurt events.
  */
 export function startHitReachCheck() {
     if (intervalId) system.clearRun(intervalId);
+    if (hurtSubscription) world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
 
-    intervalId = system.runInterval(() => {
-        const players = PlayerCache.getPlayers();
+    hurtSubscription = onHitCached;
+    world.beforeEvents.entityHurt.subscribe(hurtSubscription);
 
-        for (const player of players) {
-            updatePlayer(player);
-        }
-    }, 1);
-
-    world.beforeEvents.entityHurt.subscribe(onHit);
+    intervalId = system.runInterval(tickUpdate, UPDATE_INTERVAL_TICKS);
 }
 
 /**
@@ -171,6 +169,10 @@ export function startHitReachCheck() {
  */
 export function stopHitReachCheck() {
     if (intervalId) system.clearRun(intervalId);
+    intervalId = undefined;
 
-    world.beforeEvents.entityHurt.unsubscribe(onHit);
+    if (hurtSubscription) {
+        world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
+        hurtSubscription = undefined;
+    }
 }
