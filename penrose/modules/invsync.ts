@@ -130,7 +130,7 @@ export async function snapshotAllPlayers() {
  * CLEAN EXPIRED SNAPSHOTS
  */
 async function cleanExpiredSnapshots() {
-    await invSyncSnapshotsDB.clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS);
+    await invSyncSnapshotsDB.clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
 }
 
 /**

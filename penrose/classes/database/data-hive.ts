@@ -179,8 +179,17 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             .filter((entry): entry is [keyof T, T[keyof T]] => entry !== null);
     }
 
-    /** Cleans invalid entries */
-    public async clean(validator?: (key: keyof T, value: T[keyof T]) => boolean): Promise<void> {
+    /**
+     * Cleans invalid entries from the database.
+     *
+     * @param validator Optional custom validation function.
+     *                  Should return `true` for valid entries, `false` for invalid.
+     * @param options Optional configuration object:
+     *   - silent: if true, suppresses console logs/warnings.
+     */
+    public async clean(validator?: (key: keyof T, value: T[keyof T]) => boolean, options?: { silent?: boolean }): Promise<void> {
+        const silent = options?.silent ?? false;
+
         await OptimizedDatabase._withLock(this.name, async () => {
             const entries = this.entries();
             let deletedCount = 0;
@@ -199,12 +208,16 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
                 const isValid = validator ? validator(key, value) : defaultValidator(value);
                 if (!isValid) {
                     await this.delete(key);
-                    console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
+                    if (!silent) {
+                        console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
+                    }
                     deletedCount++;
                 }
             }
 
-            console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
+            if (!silent) {
+                console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
+            }
         });
     }
 
