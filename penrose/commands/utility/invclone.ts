@@ -1,23 +1,25 @@
-import { Player, ChatSendBeforeEvent, ItemStack } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, ItemStack, BlockVolume } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the invclone command.
- * Clones a player's inventory into placed shulker boxes for inspection.
+ * Clones a player's inventory into placed chests for inspection,
+ * and allows removal of previously cloned chests via command or GUI.
  */
-export const invcloneCommand: Command = {
+export const invCloneCommand: Command = {
     name: "invclone",
-    description: "Clones the entire inventory of the specified player into shulker boxes for inspection.",
-    usage: "{prefix}invclone <player>",
-    examples: [`{prefix}invclone PlayerName`],
+    description: "Clones the entire inventory of the specified player into chests for inspection or removes cloned chests.",
+    usage: "{prefix}invclone <player>|remove",
+    examples: [`{prefix}invclone PlayerName`, `{prefix}invclone remove`],
     category: "Utility",
     securityClearance: 4,
     icon: "textures/ui/item_cell.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Cloner",
-        description: "Clone a player's inventory into black shulker boxes placed on the ground for inspection.\n\n",
+        description:
+            "Clone a player's inventory into chests placed on the ground for inspection or remove them.\nNote: Cloned chests will have lore indicating their source player.\n\nUse the 'Remove Cloned Chests' action to clear them out after inspection.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -26,6 +28,13 @@ export const invcloneCommand: Command = {
                 requiredFields: ["playerName"],
                 icon: "textures/ui/icon_multiplayer.png",
                 generateModalForm: true,
+            },
+            {
+                name: "Remove Cloned Chests",
+                description: "Remove all cloned inventory chests nearby",
+                command: ["remove"],
+                icon: "textures/ui/icon_trash.png",
+                generateModalForm: false,
             },
         ],
         dynamicFields: [
@@ -40,14 +49,48 @@ export const invcloneCommand: Command = {
 
     /**
      * Executes the invclone command.
+     * @param message The chat event that triggered the command.
+     * @param args Command arguments.
      */
     execute: (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
-        if (!message || !args || !args.length) {
-            message?.sender.sendMessage("§o§c[Paradox] Please provide a player name.");
+        const dimension = message?.sender.dimension;
+        const base = message?.sender.location;
+
+        if (!message || !dimension || !base) return;
+
+        // --- Removal logic if no args or 'remove' keyword ---
+        if (!args?.length || args[0].toLowerCase() === "remove") {
+            let removedCount = 0;
+            const radius = 20; // configurable search radius
+
+            for (let x = Math.floor(base.x - radius); x <= Math.floor(base.x + radius); x++) {
+                for (let y = Math.floor(base.y - 5); y <= Math.floor(base.y + 5); y++) {
+                    for (let z = Math.floor(base.z - radius); z <= Math.floor(base.z + radius); z++) {
+                        const block = dimension.getBlock({ x, y, z });
+                        const chestInv = block?.getComponent("minecraft:inventory")?.container;
+
+                        if (chestInv && block?.typeId === "minecraft:chest") {
+                            const firstItem = chestInv.getItem(0);
+                            if (firstItem?.getLore()?.some((lore) => lore.includes("Source:"))) {
+                                dimension.fillBlocks(new BlockVolume({ x, y, z }, { x, y, z }), "minecraft:air");
+                                removedCount++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (removedCount > 0) {
+                const chestWord = removedCount === 1 ? "chest" : "chests";
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Removed ${removedCount} cloned ${chestWord}.`);
+            } else {
+                message.sender.sendMessage("§o§c[Paradox] No cloned chests found nearby.");
+            }
             return;
         }
 
-        const playerName: string = args.join(" ").trim().replace(/["@]/g, "");
+        // --- Inventory cloning logic ---
+        const playerName: string = args.join(" ").trim().replace(/[@"]/g, "");
         const target: Player | undefined = PlayerCache.getPlayerByName(playerName);
 
         if (!target || !target.isValid) {
@@ -61,25 +104,15 @@ export const invcloneCommand: Command = {
             return;
         }
 
-        /**
-         * Collect all items from the player's inventory
-         */
         const inventoryItems: ItemStack[] = [];
-
         for (let i = 0; i < targetInv.size; i++) {
             const item = targetInv.getItem(i);
             if (item) inventoryItems.push(item.clone());
         }
 
-        const dimension = message.sender.dimension;
-        const base = message.sender.location;
-
-        let shulkerCount = 0;
+        let chestCount = 0;
         let offset = 1;
 
-        /**
-         * Place shulker boxes and fill them
-         */
         while (inventoryItems.length > 0) {
             const location = {
                 x: Math.floor(base.x) + offset,
@@ -87,28 +120,25 @@ export const invcloneCommand: Command = {
                 z: Math.floor(base.z),
             };
 
-            dimension.setBlockType(location, "minecraft:black_shulker_box");
+            dimension.setBlockType(location, "minecraft:chest");
             const block = dimension.getBlock(location);
+            const chestInv = block?.getComponent("minecraft:inventory")?.container;
+            if (!chestInv) break;
 
-            const shulkerInv = block?.getComponent("minecraft:inventory")?.container;
-
-            if (!shulkerInv) break;
-
-            for (let slot = 0; slot < shulkerInv.size && inventoryItems.length > 0; slot++) {
+            for (let slot = 0; slot < chestInv.size && inventoryItems.length > 0; slot++) {
                 const item = inventoryItems.shift();
                 if (!item) continue;
-
                 item.setLore([`§7Source: ${target.name}'s Inventory`]);
-
-                shulkerInv.setItem(slot, item);
+                chestInv.setItem(slot, item);
             }
 
-            shulkerCount++;
+            chestCount++;
             offset += 1;
         }
 
-        if (shulkerCount > 0) {
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Cloned "${target.name}'s" inventory into ${shulkerCount} shulker box(es).`);
+        if (chestCount > 0) {
+            const chestWord = chestCount === 1 ? "chest" : "chests";
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Cloned "${target.name}'s" inventory into ${chestCount} ${chestWord}.`);
         }
     },
 };
