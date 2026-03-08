@@ -72,6 +72,7 @@ import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledC
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
 import { PlayerCache } from "../classes/player-cache";
+import { invcloneCommand } from "../commands/utility/invclone";
 
 type PlayerID = string;
 
@@ -146,6 +147,7 @@ const allCommands: Command[] = [
     debugDBCommand,
     invSyncCommand,
     noClipCommand,
+    invcloneCommand,
 ];
 
 /**

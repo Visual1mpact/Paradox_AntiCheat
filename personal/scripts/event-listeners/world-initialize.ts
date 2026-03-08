@@ -73,6 +73,7 @@ import { scriptureCommand } from "../bible/scriptures";
 import { noClipCommand } from "penrose/commands/settings/noclip";
 import { startNoClip } from "penrose/modules/noclip";
 import { PlayerCache } from "penrose/classes/player-cache";
+import { invcloneCommand } from "penrose/commands/utility/invclone";
 
 type PlayerID = string;
 
@@ -148,6 +149,7 @@ const allCommands: Command[] = [
     invSyncCommand,
     scriptureCommand,
     noClipCommand,
+    invcloneCommand,
 ];
 
 /**
