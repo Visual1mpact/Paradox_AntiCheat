@@ -4,128 +4,311 @@
 
 ## !channels
 ### At A Glance
-The `!channels` command provides players with the ability to manage chat channels, allowing them to create, join, invite, leave, and transfer ownership of channels.
-
-### How It Works
-This command manages player chat channels, including creation, joining, invitations, leaving, and transferring ownership. Channel data is stored, with each channel having an owner and members, and is dynamically updated. The command processes arguments to execute the specified action. Invitations include a timeout and automatically expire. Permissions are checked, and players are updated on any changes to channels, ensuring smooth management of private chat channels.
+The `!channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.
 
 !> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- Each chat channel has an owner and members, with dynamically updated membership data.
+- Players can **create** new channels if they are not already in one.
+- Players can **join** existing channels by name.
+- Owners can **invite** other players; invitations expire after 30 seconds.
+- Players can **leave** channels at any time. Ownership is automatically transferred if the owner leaves.
+- Channel **ownership** can be transferred to another member.
+- All changes notify relevant players to ensure smooth communication.
 
 > ```
 > Usage: "!channel <create | join | invite | leave | transfer | help>"
 > Example: !channel create --room myTeam
 > Example: !channel join --room myTeam
+> Example: !channel invite --room myTeam --target Visual1mpact
+> Example: !channel leave
 > Example: !channel transfer --room myTeam --target Visual1mpact
+> Example: !channel help
 > ```
+
+### **Actions**
+1. **Create Channel** – Create a new chat channel; cannot create if already in another channel.
+2. **Join Channel** – Join an existing channel by name.
+3. **Invite to Channel** – Invite a player to your channel; invitation expires after 30 seconds.
+4. **Leave Channel** – Leave your current channel. If you are the owner, ownership is transferred to the next member, or the channel is deleted if empty.
+5. **Transfer Ownership** – Transfer channel ownership to another member.
+6. **Help** – Displays usage instructions for the command.
+
+### **Notes**
+- Channel names are **case-sensitive**.
+- Players can only be in **one channel at a time**.
+- Invitations are automatically canceled if the invited player does not respond in time.
+- Dynamic updates ensure all members are informed of joins, leaves, and ownership changes.
+
+## !debugdb
+### At A Glance
+The `!debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
+
+- List of database names
+- Individual entry pointers
+- Entry sizes in bytes
+- Chunk counts for chunked entries
+- Total size of each database
+
+!> Required Clearance Level To Execute: `4`
+
+### How It Works
+1. **Security Check**  
+   - The command first verifies that the executor has sufficient clearance.
+   - Users with insufficient clearance are blocked with a warning message.
+
+2. **Database Retrieval**  
+   - All initialized database instances are retrieved.
+   - If no databases exist, a message is sent stating `"No databases have been initialized."`.
+
+3. **Debug GUI Form**  
+   - A message form GUI is displayed showing each database’s:
+     - Name
+     - Entry pointers
+     - Entry size
+     - Chunk count (if applicable)
+     - Total size of the database
+   - The output is truncated if it exceeds Minecraft’s ~32k character limit to prevent errors.
+
+4. **Interactive Display**  
+   - The GUI is shown with two close buttons.
+   - If the user is busy, the GUI is automatically retried.
+
+### Usage
+> ```
+> !debugdb
+> ```
+
+### Examples
+> ```
+> !debugdb
+> ```
+
+### Notes
+- This command is mainly for debugging and inspection purposes.
+- Ensure you close your chat window before executing, as the GUI will appear on screen.
+- Large databases may result in truncated output in the form for readability and performance.
+- Useful for checking database sizes, pointer structure, and detecting chunked entries.
 
 ## !home
 ### At A Glance
-The `!home` command allows players to manage locations, enabling them to save, delete, and teleport to saved locations.
+The `!home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
 
-### How It Works
-The `!home` command provides players with a way to manage personal locations within the game. Players can save specific coordinates as "homes" for later teleportation. Encryption is used to securely store each player's homes. The command supports saving a new home, deleting an existing one, and teleporting directly to a saved home. This feature is useful for accessing frequently visited areas, such as bases or resource-rich zones.
+!> Required Clearance Level To Execute: `1`  
 
-?> There is currently a hard-coded limit of `5` maximum homes that can be saved per player.
+### **How It Works**
+- Players can **set** a home at their current coordinates.
+- **Delete** removes an existing home.
+- **Teleport** moves the player to a saved home.
+- **List** shows all saved homes, including their coordinates and dimension.
+- Homes are **encrypted** per player for security.
+- Maximum of **5 homes per player**.
 
-!> Required Clearance Level To Execute: `1`
+?> Note: Players cannot use `!home` while imprisoned.  
 
 > ```
-> Usage: "!home <set | delete | teleport | list | help> [ homeName ]"
+> Usage: "!home <set | delete | teleport | list | help> [homeName]"
 > Example: !home set MyHome
 > Example: !home delete MyHome
 > Example: !home teleport MyHome
 > Example: !home list
+> Example: !home help
 > ```
 
-## !invsee
+### **Notes**
+- Home names are **case-sensitive**.
+- Teleportation checks the dimension; if invalid, the teleport fails.
+- If the maximum number of homes is reached, players must delete an existing home before adding a new one.
+- All saved locations are secured via per-player encryption to prevent tampering.
+
+## !invclone
 ### At A Glance
-The `!invsee` command allows players with the appropriate security clearance to view another player's entire inventory in the game.
+The `!invclone` command allows admins to clone a player's entire inventory into chests placed in the world for inspection, or to remove previously cloned chests.
 
-### How It Works
-When a player issues the command, followed by a player name, it retrieves and displays detailed information about that player's inventory, including item enchantments and quantities. If the player doesn’t exist or the command isn’t executed properly, an error message is displayed.
-
-!> Required Clearance Level To Execute: `3`
-
-> ```
-> Usage: "!invsee <player>"
-> Example: !invsee Pte9xi
-> Example: !invsee help
-> ```
-
-## !pvp
-### At A Glance
-The `!pvp` command provides players with control over Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
-
-### How It Works
-The PvP system manages status, cooldowns, and penalties for players who log out during PvP. Events such as entity hits, added effects, and player spawns/logouts are monitored. When a player attacks, PvP status is checked, health adjustments are made to prevent unfair attacks, and cooldowns prevent logging out. Players who log out during cooldowns are penalized, which includes inventory loss. When they rejoin, they are alerted and their inventory is cleared.
+- **Clone a player's inventory:** Creates chests near the executor, filling them with the target player's items. Each item has a lore tag indicating its source.
+- **Remove cloned chests:** Deletes previously cloned chests within a nearby area.
 
 !> Required Clearance Level To Execute: `4`
 
+### How It Works
+1. **Inventory Cloning**
+   - When executed with a target player name, the command retrieves the player's inventory.
+   - Chests are placed sequentially near the command executor’s location.
+   - Items are distributed across the chests, and each item gets a lore tag: `Source: <PlayerName>'s Inventory`.
+   - The number of chests depends on how many items are in the inventory.
+
+2. **Removing Cloned Chests**
+   - Executing the command with `remove` (or no arguments) searches a radius around the executor.
+   - Any chest containing items tagged with `Source:` is replaced with air, effectively deleting the cloned inventory.
+   - Provides feedback on how many chests were removed.
+
+### Usage
+> ```
+> !invclone <player>   - Clone the specified player's inventory into chests
+> !invclone remove      - Remove all nearby cloned inventory chests
+> ```
+
+### Examples
+> ```
+> !invclone Pte9xi
+> !invclone remove
+> ```
+
+### Notes
+- Only valid players with an accessible inventory can be cloned.
+- The cloned chests are placed next to the executor’s current position.
+- Items inside cloned chests have lore indicating their original owner.
+- Removing cloned chests only affects those created by this command.
+- The search radius for removal is approximately 20 blocks horizontally and 5 blocks vertically.
+
+## !invsee
+### At A Glance
+The `!invsee` command allows players with sufficient clearance to view another player's inventory in detail, including items, quantities, and enchantments.
+
+!> Required Clearance Level To Execute: `3`
+
+### **How It Works**
+- When executed with a player name, it retrieves the target player's inventory.
+- Displays **all inventory slots**, indicating empty ones.
+- Shows **item type, amount, and enchantments**, including level and max level.
+- If the player is invalid or not found, an error message is returned.
+- Designed for monitoring or moderation purposes.
+
+> ```
+> Usage: "!invsee <player>"
+> Example: !invsee PlayerName
+> Example: !invsee help
+> ```
+
+### **Notes**
+- Player names are **case-sensitive**.
+- Inventory components are retrieved securely; missing or invalid components will trigger an error.
+- Intended for **moderation** or **administrative oversight**.
+
+## !pvp
+### At A Glance
+The `!pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
+
+!> Required Clearance Level To Execute: `4` (for global toggle)
+
+### How It Works
+- **Player PvP Toggle:** Players can enable or disable PvP for themselves. A cooldown prevents frequent toggling.
+- **Global PvP:** Admins can enable or disable PvP for the entire server. Disabling also stops the Paradox PvP management system but the in-game gamerule may need adjustment.
+- **Status Check:** Players can see their PvP status and the server’s global PvP state.
+- **Cooldowns & Penalties:** Logging out during PvP cooldown triggers penalties, including inventory loss. Players are alerted when rejoining.
+
 > ```
 > Usage: "!pvp [ global | status | help ]"
-> Example: !pvp (disables/enables PvP for the player who executed the command)
-> Example: !pvp global
-> Example: !pvp status
+> Example: !pvp               (toggles PvP for yourself)
+> Example: !pvp global        (toggles PvP for the server)
+> Example: !pvp status        (shows PvP status)
 > Example: !pvp help
 > ```
 
-!> The `!pvp global` command disables PvP for the server, halting the built-in PvP module in Paradox. It also disables the gamerule. The owner can re-enable PvP via the gamerule command </gamerule pvp true>
+### Notes
+- **Safe Zones:** To bypass PvP in certain areas, assign players the tag `paradoxBypassPvPCheck`. This is owner-managed.
+- **Global PvP Toggle:** Only players with clearance `4` can toggle global PvP. This will stop the Paradox PvP system and can optionally update the world’s PvP gamerule.
 
-!> To bypass PvP for safe zones, you must assign players a tag: `paradoxBypassPvPCheck`. Paradox does not provide this function; it is up to the owner to implement it.
+---
 
 ## !pvpCooldown
 ### At A Glance
-Admins can use this command to set a custom PvP action cooldown in seconds. The cooldown time can range from `10` to `3600` seconds (1 hour).
+Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown determines how long players must wait between PvP events.
 
 > ```
 > Usage: "!pvpCooldown <time in seconds>"
 > Example: !pvpCooldown 30
 > ```
 
+**Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
+
+---
+
 ## !pvpToggleCooldown
 ### At A Glance
-Admins can use this command to set a custom cooldown for toggling PvP in seconds. This allows adjustments for how frequently players can toggle their personal PvP state, with a range between `10` and `3600` seconds.
+Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. This prevents frequent switching.
 
 > ```
 > Usage: "!pvpToggleCooldown <time in seconds>"
-> Example: pvpToggleCooldown 30
+> Example: !pvpToggleCooldown 30
 > ```
+
+**Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
 ## !setrank
 ### At A Glance
-The `setrank` command allows you to set a player's rank within chat, reset a player's rank, or disable the rank functionality globally.
+The `!setrank` command allows admins to manage chat ranks for players. You can:
+
+- Set a specific rank for a player.
+- Reset a player’s rank to default.
+- Enable or disable the rank system globally.
+
+!> Required Clearance Level To Execute:  
+- `3` – Set or reset individual player ranks.  
+- `4` – Disable or enable ranks globally.
 
 ### How It Works
-The command uses flags to specify the target player (`-t` or `--target`) and the rank (`-r` or `--rank`), or to reset the rank (`--reset`). Additionally, the `--disable` flag can disable rank functionality for the entire server.
+The command uses flags to determine the action:
 
-When executed, the command verifies the provided arguments and ensures the target player exists. If a rank is specified, it updates the player's rank; if the `--reset` flag is used, it removes the player's rank. The `--disable` flag disables the rank system globally, but it can only be executed by users with clearance level `4`. Both the command sender and the target player (if applicable) receive notifications about the rank change.
+- `-t` or `--target <player>` — Specifies the target player.  
+- `-r` or `--rank <rank>` — Sets the chat rank for the target player.  
+- `--reset` — Resets the target player’s rank to default.  
+- `-d` — Disables the rank system globally (requires clearance 4).  
+- `-e` — Enables the rank system globally (requires clearance 4).  
 
-!> Required Clearance Level To Execute: `3` for setting ranks, `4` for disabling ranks globally.
+When executed, the command verifies the provided arguments and checks that the target player exists. Players and the command sender are notified when a rank is set or reset. If ranks are globally disabled, only users with clearance `4` can modify global rank settings.
 
 > ```
-> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ --disable ]"
-> Example: setrank --target PlayerName --rank [Member]
+> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]"
+> Example: !setrank --target PlayerName --rank [Member]
 > Example: !setrank -t PlayerName -r [Admin]
 > Example: !setrank -t PlayerName --reset
 > Example: !setrank --target PlayerName --reset
-> Example: !setrank --disable
+> Example: !setrank -d
+> Example: !setrank -e
 > ```
+
+### Notes
+- When a rank is set, the player’s `nameTag` updates to show the rank before their username.  
+- The system forces a client sync by teleporting the player to their current location.  
+- Global rank changes immediately affect all players.  
+- Players without clearance `4` cannot modify global rank settings if ranks are disabled.  
 
 ## !tpr
 ### At A Glance
-The `!tpr` command allows players to send teleport requests to other players and to accept or deny incoming requests.
+The `!tpr` command allows players to manage teleport requests:
 
-### How It Works
-A player can initiate a teleport request to another player by using the command with the target player's name. The request is stored with a timeout of `60` seconds. The target player is notified about the incoming request.
+- Send a teleport request to another player.
+- Accept or deny incoming requests.
 
-The target player can accept or deny the request by responding in chat with either `!tpr accept` or `!tpr deny`. Denying the request clears it and allows the target player to receive a new request.
+Requests have a `60` second timeout. Players are notified when a request is sent, accepted, or denied.
 
 !> Required Clearance Level To Execute: `1`
 
+### How It Works
+1. **Send a request** – Use `!tpr <player>` to request teleporting to another player.
+2. **Accept a request** – Use `!tpr accept` to accept a pending teleport request.
+3. **Deny a request** – Use `!tpr deny` to deny a pending teleport request.
+4. Requests automatically expire after 60 seconds if no response is given.
+5. Players cannot send requests to themselves.
+6. Players in prison cannot send teleport requests.
+
+### Usage
 > ```
-> Usage: "!tpr <player | accept | deny | help>"
-> Example: !tpr Lucy
-> Example: !tpr Steve
-> Example: !tpr accept
-> Example: !tpr deny
+> !tpr <player>       - Send a teleport request to <player>
+> !tpr accept         - Accept the pending teleport request
+> !tpr deny           - Deny the pending teleport request
+> !tpr help           - Show help for the teleport request system
 > ```
+
+### Examples
+> ```
+> !tpr Lucy
+> !tpr Steve
+> !tpr accept
+> !tpr deny
+> ```
+### Notes
+- Only one teleport request can be pending for a player at a time.
+- Players receive messages about the status of their requests (sent, accepted, denied, or timed out).

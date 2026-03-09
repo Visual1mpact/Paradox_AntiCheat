@@ -4,53 +4,75 @@
 
 ## !afk
 ### At A Glance
-The `AFK` command serves as a toggle that allows users to enable or disable the AFK management module. This module is designed to automatically kick players from the server/realm if they remain inactive for a specified period.
+The `AFK` command toggles the AFK management module, which automatically tracks player activity and kicks inactive players after a specified timeout. This helps maintain active player engagement and prevents inactive accounts from taking up server slots.
 
 ### Default Settings
-By default, the AFK module is set to kick players after 10 minutes of inactivity. However, this duration can be easily customized through the command itself.
+- **Timeout:** 10 minutes (can be customized via command arguments)
+- **Check Frequency:** Every 5 seconds
+- **Exemptions:** Players with Level 4 security clearance are ignored
 
 ### How It Works
-The AFK module operates by periodically checking each player's movement. Specifically, it monitors the player's velocity—if a player’s velocity remains at zero (indicating no movement) for the duration of the set timer, the module flags the player as AFK. Once flagged, if the player remains inactive, they will be kicked from the server/realm.
+- **Activity Tracking:** The module monitors player movement via velocity checks.  
+- **AFK Detection:** If a player's velocity remains below a minimal threshold for the configured timeout, they are flagged as AFK.  
+- **Kicking Inactive Players:** Flagged players who remain AFK past the timeout are automatically kicked.  
+- **Real-Time Updates:** Player activity is updated whenever they move, preventing false positives.  
+- **Player Leave Handling:** Players are removed from tracking upon logout to avoid stale data.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!afk [ hours ] [ minutes ] [ seconds ]",
+> Usage: "!afk [ hours ] [ minutes ] [ seconds ]"
 > Example: !afk 0 10 0
 > ```
 
 ## !autoclicker
 ### At A Glance
-The `autoclicker` command toggles the auto-clicker detection module, a tool designed to identify and prevent players from using auto-clicker hacks that provide an unfair advantage.
+The `autoclicker` command toggles the Auto-Clicker detection module, which monitors player attack speed to prevent the use of automated clicking tools. By enabling this module, administrators can maintain fair combat and prevent players from gaining an unfair advantage.
 
 ### How It Works
-The auto-clicker detection module is designed to monitor and regulate the rate at which players click, ensuring that no one gains an unfair advantage by using auto-clicking software/hacks. The module tracks each player's clicks per second (CPS) and takes corrective action if the CPS exceeds a predefined threshold.
+- **Click Tracking:** Each player’s clicks per second (CPS) are tracked using a tick-based system.  
+- **CPS Threshold:** Players exceeding the maximum CPS (configured at 14 CPS) are flagged.  
+- **Damage Prevention:** If a player is detected exceeding the CPS limit, their attacks are canceled to prevent unfair damage.  
+- **Staff Notification:** Level 4 administrators are automatically notified of suspicious behavior, including player name and CPS.  
+- **Event-Based:** Detection occurs on the `EntityHurtBeforeEvent`, ensuring real-time checks without overloading the server.  
+- **Security Clearance Bypass:** Administrators with Level 4 clearance are excluded from auto-clicker checks.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!autoclicker [ help ]",
+> Usage: "!autoclicker [ help ]"
 > Example: !autoclicker
 > ```
 
 ## !antifly
 ### At A Glance
-The `antifly` command acts as a toggle to enable or disable the anti-fly detection module. This module is designed to monitor player movements and detect unauthorized flying activities, helping to prevent cheating and maintain fair gameplay. By enabling this module, server administrators can ensure that players are not using exploits or hacks to fly in game modes where flying is not allowed.
+The `antifly` command toggles the Anti-Fly detection module, which monitors player movement to detect and prevent unauthorized flying. By enabling this module, server administrators can maintain fair gameplay and prevent exploits that allow players to fly in Survival or Adventure modes without proper permissions.
 
-### How it works
-The anti-fly detection module operates by continuously monitoring the status and movements of players in the server. The module evaluates two key conditions: whether the player is currently falling (`isFalling`) and whether the player is flying (`isFlying`).
-If a player is detected as flying without falling and they are in Survival or Adventure mode, it suggests that they may be using an exploit to fly, as falling is the natural consequence of being airborne in these modes without valid flying mechanics (like using an Elytra).
+### How It Works
+- **Movement Monitoring:** The module continuously tracks players’ airborne status, including whether they are falling (`isFalling`) or flying (`isFlying`), and their vertical and horizontal velocities.  
+- **Gamemode Restrictions:** Only applies to players in **Survival** or **Adventure** mode. Creative and Spectator mode players are excluded.  
+- **Trident & Glide Exclusions:** Players using certain items like tridents, gliding, climbing, or swimming are temporarily ignored to avoid false positives.  
+- **Hover Detection:** If a player hovers in the air unnaturally for more than a threshold, the module teleports them back to a safe “airportLanding” position.  
+- **Security Clearance Bypass:** Level 4 administrators are exempt from anti-fly enforcement.  
+- **Scheduled Checks:** The module runs periodically using a generator to evaluate all players, minimizing server impact.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!antifly [ help ]",
+> Usage: "!antifly [ help ]"
 > Example: !antifly
 > ```
 
 ## !gamemode
 ### At A Glance
-The `gamemode` command provides administrators with the ability to manage and configure allowed game modes on the server. With this command, users can permit or restrict specific game modes, ensuring that players adhere to the intended gameplay experience. Additionally, it can be used to list the current game mode configurations, offering a quick overview of the server's allowed modes.
+The `gamemode` command allows server administrators to manage which game modes are permitted for players. This includes enabling or disabling specific modes—Adventure, Creative, Survival, or Spectator—and enforcing these restrictions in real time. Administrators can also list current configurations to review which modes are allowed.
+
+### How It Works
+- **Enable / Disable Modes:** Administrators can toggle individual game modes, ensuring players cannot switch to disallowed modes.  
+- **Enforce Gamemode Rules:** Changes in player game modes are monitored. If a player attempts to switch to a disallowed mode, they are reverted to a valid mode.  
+- **Fallback Handling:** If a player’s current mode becomes disallowed, the system automatically assigns them an allowed mode, prioritizing Survival, Adventure, Creative, or Spectator in that order.  
+- **Security Clearance Bypass:** Players with Level 4 security clearance are exempt from gamemode restrictions.  
+- **Current Configuration Listing:** Admins can view which game modes are currently allowed and whether gamemode checks are enabled.  
 
 !> Required Clearance Level To Execute: `4`
 
@@ -66,12 +88,54 @@ The `gamemode` command provides administrators with the ability to manage and co
 >   !gamemode --list
 > ```
 
-## !killaura
+## !invsync
 ### At A Glance
-The `Killaura` detection module is designed to identify and mitigate the use of illegal attack automation (commonly known as "killaura") on the server. By analyzing player behavior—such as attack speed, distance, and orientation—this module can detect suspicious activities and prevent unfair gameplay by restoring health to victims of potential cheaters. This ensures a balanced and fair experience for all players on the server.
+The `InvSync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
+
+Administrators can use this module to monitor inventory integrity, force synchronization checks, and investigate suspicious inventory changes.
 
 ### How It Works
-The `Killaura` detection module monitors player attacks to identify and counteract suspicious behavior. It tracks attack frequency, ensuring players don't exceed the maximum allowed rate of 12 attacks per second. It also checks the distance between the attacker and the target, and verifies that the attacker is facing the target within a specified angle. If any of these criteria are breached, the module flags the behavior as suspicious and restores the health of the attacked player to mitigate any unfair advantage, thus promoting fair play on the server.
+When the module is enabled, the system periodically creates **inventory snapshots** for players. These snapshots store the current state of a player's inventory, including item counts and timestamps.
+
+When a player reconnects or when a manual check is triggered, the module compares the player's current inventory with the stored snapshot. If inconsistencies are detected, the system records an **anomaly event** for administrative review.
+
+Administrators can also manually:
+
+- Force a new snapshot of all players
+- Trigger an immediate inventory recheck
+- Clear stored snapshot data
+- View forensic reports for specific players
+
+The forensic report displays:
+- Snapshot timestamps
+- Inventory item counts
+- Suspicious stack sizes
+- Recent anomaly events
+
+This system helps identify potential **duplication exploits or abnormal inventory states**.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!invsync [ help | status | snapshot | check | clear | forensic <player> ]"
+> Example: !invsync
+> Example: !invsync status
+> Example: !invsync snapshot
+> Example: !invsync check
+> Example: !invsync clear
+> Example: !invsync forensic Steve
+> ```
+
+## !killaura
+### At A Glance
+The `Killaura` detection module helps maintain fair combat on the server by detecting illegal attack automation (commonly known as “killaura”). It monitors player attack behavior, including speed, distance, and orientation, to identify suspicious activity and prevent unfair advantages. When a potential exploit is detected, the module can cancel the attack and notify staff for review.
+
+### How It Works
+- **Attack Frequency:** The module tracks the number of attacks per second and ensures players do not exceed the maximum allowed rate (default: 12 attacks/sec).  
+- **Distance & Orientation:** Checks the distance between the attacker and the target, and verifies that the attacker is facing the target within a configurable angle.  
+- **Suspicious Pattern Detection:** Uses dynamic thresholds and historical attack intervals to detect unnatural attack patterns indicative of automation.  
+- **Mitigation:** When suspicious behavior is detected, the attack is cancelled, preventing unfair damage. Staff with Level 4 security clearance are notified with relevant details.  
+- **Continuous Monitoring:** The module subscribes to entity damage events and actively analyzes PvP interactions to maintain fairness.
 
 !> Required Clearance Level To Execute: `4`
 
@@ -82,75 +146,153 @@ The `Killaura` detection module monitors player attacks to identify and countera
 
 ## !lagclear
 ### At A Glance
-The `!lagclear` command is designed to manage server performance by removing excess items and entities through a timed operation. Administrators can specify the duration of the lag-clear process in hours, minutes, and seconds, or use default settings for an immediate action. This command helps maintain server efficiency and reduce lag by periodically clearing unnecessary items and entities.
+The `!lagclear` module helps maintain server performance by clearing excess items and entities. Administrators can schedule a countdown in hours, minutes, and seconds, or use default settings to trigger an immediate cleanup. This reduces lag caused by accumulated entities, dropped items, and unnecessary mobs.
 
 ### How It Works
-The `!lagclear` module initiates a timed process to clear server lag by removing excess items and entities. Administrators set a countdown period, and the command generates a countdown with periodic messages to inform players of the upcoming lag-clear. When the countdown ends, the command clears items and entities from the server to improve performance. This process is continuously monitored, and if the lag-clear functionality is disabled, the operation is halted, and any scheduled tasks are cleared.
+- **Countdown Timer:** When executed, the command starts a timer and notifies players periodically with countdown messages.  
+- **Scheduled Lag Clear:** At the end of the countdown:
+  - All dropped items in the overworld are removed.
+  - Hostile mobs without name tags or exceptions (bosses, tamed animals, or important raid mobs) are removed.
+- **Safety Exceptions:** Certain entities are never removed (e.g., `ender_dragon`, `wither`, `shulker`, `warden`, tamed animals).  
+- **Continuous Monitoring:** The system tracks global timers and job IDs to prevent duplicate runs. If the module is disabled, all scheduled jobs are cleared.  
+- **Dynamic Timing:** Admins can specify a timer via command arguments or toggle the module on/off with defaults.
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
 > Usage: "!lagclear [ hours ] [ minutes ] [ seconds ]"
 > Example: !lagclear 0 15 0
+> Example: !lagclear (uses default 10-minute timer)
 > ```
 
 ## !namespoof
 ### At A Glance
-The `name-spoof` detection module monitors player names to prevent players from impersonating others by using similar-looking names.
+The `Name-Spoof` module protects the server from players attempting to impersonate others using fake or similar-looking names. It automatically detects invalid names, duplicate names, or names that violate server rules.
 
 ### How It Works
-This module helps protect the server by automatically detecting and kicking or banning players with inappropriate or duplicate names. When a player joins, the system checks if their name meets allowed standards, like minimum length and allowed characters. If a name is invalid or has special characters, the player is banned; if it's too similar to an existing player’s name, they’re kicked to avoid confusion.
+- **Name Validation:** When a player joins, their name is checked for:
+  - Minimum and maximum length (3–16 characters).  
+  - Allowed characters (alphanumeric, underscore, space).  
+  - Invalid or special characters (e.g., non-ASCII, `/`, `\`, `*`, `?`, `"`, `<`, `>`, `:`).  
+- **Duplicate Detection:** Names are normalized to a “base name” (suffix numbers removed). If another player is already using the same base name, the joining player is kicked.  
+- **Action Enforcement:**  
+  - Invalid names trigger a **ban and kick**.  
+  - Names that are suspicious but not banned trigger a **kick**.  
+  - Duplicate names trigger a **kick**.  
+- **Event Management:**  
+  - The system subscribes to `playerSpawn` and `playerLeave` events to track active players and prevent collisions.  
+  - Cleans up the tracking map when players leave.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!namespoof [ help ]",
+> Usage: "!namespoof [ help ]"
 > Example: !namespoof
 > Example: !namespoof help
 > ```
 
-## !packetmonitor
-!> This module is only avaiable to the Bedrock Dedicated Server (BDS) software. This due to the @minecraft/server-net module. This must be enabled via `config/default/permissions.json` file.
+## !noclip
 ### At A Glance
-The `packet monitor` detection module, monitors incoming network packets to detect and warn about potential packet spam. This helps prevent exploitative behavior, lag, and unfair advantages
+The `NoClip` detection module prevents players from phasing through solid blocks.  
+This is essential for catching exploits that bypass normal collision mechanics, ensuring fair gameplay. Level 4 staff can toggle it via chat or GUI.
 
 ### How It Works
-When a player sends a packet, the system records:
-- The packet ID (what type of packet it is).
-- The player's name.
-- The timestamp of when it was first detected.
-
-This data is stored in memory and tracked over time. If a player sends more than 50 packets of the same type within 10 seconds, they are flagged as a potential spammer. No action is taken this is simply logged to the server console. 
+- The module tracks player positions at short intervals (`CHECK_INTERVAL = 10` ticks) and monitors the **hitbox** for illegal movement through blocks.
+- Each player has a **voxel cache** representing blocks currently overlapping. The system performs a **fractional voxel sweep** within the player's hitbox to detect partial entry into solid blocks.
+- Players must exceed **7 consecutive phase detections** (`PHASE_FLAGS_REQUIRED`) before being flagged.
+- When flagged:
+  - The player is **teleported back** to their previous location.
+  - Staff with Level 4 clearance are **alerted** with the distance phased.
+  - The player's phase flag count resets.
+- Players in **Creative** or **Spectator** mode, or those recently knocked back (<2 seconds), are exempt from detection.
+- Module automatically cleans up per-player tracking data when players leave the server.
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!packetmonitor [ help ]",
+> Usage: "!noclip"
+> Example: !noclip
+> Example: !noclip help
+> ```
+
+## !packetmonitor
+!> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
+It must be enabled via the `config/default/permissions.json` file.
+
+### At A Glance
+The `Packet Monitor` module monitors incoming network packets to detect potential spam or exploit attempts.  
+It logs suspicious activity for administrative review and helps prevent server overloads caused by malicious or malfunctioning clients.
+
+### How It Works
+- The module tracks incoming packets per player using a **ring buffer**.
+- Each packet type has a **threshold of 250 packets per 5 seconds**. Players exceeding this are flagged as potential spammers.
+- Certain packets are **ignored** because they are common and not indicative of abuse:
+  - `PlayerAuthInputPacket`
+  - `SubChunkRequestPacket`
+  - `ClientCacheBlobStatusPacket`
+- Events exceeding thresholds are **logged to the server console**; no automatic ban or kick occurs.
+- The module includes a **cleanup task** that periodically prunes old timestamps to prevent memory leaks.
+- Administrators with **Level 4 clearance** can toggle the module on/off via chat or the GUI.
+- If `@minecraft/server-net` is unavailable, the module will **fail to enable** and notify the admin.
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!packetmonitor [ help ]"
 > Example: !packetmonitor
 > ```
 
 ## !platformblock
 ### At A Glance
-Blocks players from joining based on their platform or lists current platform restrictions.
+The `PlatformBlock` module manages which player platforms (console, desktop, mobile) are allowed to join the server. Administrators can block specific platforms, preventing unauthorized clients from connecting.
 
 ### How It Works
-When a player joins the server or realm, it will check to see if the player's platform (console, mobile, or PC) is allowed. If the player’s platform matches one marked as blocked in the settings, the check kicks the player with a message explaining that their platform isn’t authorized.
+- **Platform Detection:** When a player joins, the system identifies their platform (console, desktop, or mobile).  
+- **Restriction Enforcement:**  
+  - If the player’s platform is marked as blocked, they are automatically kicked with a message explaining the restriction.  
+  - Admins cannot block all platforms; at least one must remain unblocked to avoid accidental lockout.  
+- **Commands & Options:**  
+  - Enable a platform block: `!platformblock <platform> -e`  
+  - Disable a platform block: `!platformblock <platform> -d`  
+  - List current restrictions: `!platformblock -l`  
+- **Safety Checks:**  
+  - Admins cannot block their own platform.  
+  - Works in tandem with allowlists, banlists, and spoof checks to maintain secure access.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!platformblock <platform> [ -e | -d | -l | --list ]",
-> Example: !platformblock console -e (Enables Console to be blocked)
-> Example: !platformblock console -d (Disables Console to be blocked)
-> Example: !platformblock -l (Lists the current configuration.)
+> Usage: "!platformblock <platform> [ -e | -d | -l | --list ]"
+> Example: !platformblock console -e
+> Example: !platformblock desktop -d
+> Example: !platformblock -l
 > ```
 
 ## !ratelimit
 ### At A Glance
-Toggles the module that protects the server from players attempting to crash it by sending excessive packets in a short time.
+The `RateLimit` module protects the server from players attempting to overwhelm it with excessive packets.  
+It enforces per-player, per-packet, and global packet rate limits, automatically banning or kicking offenders to prevent exploits and server crashes. Only Level 4 staff can toggle this module.
 
 ### How It Works
-It monitors packet activity and enforces a limit of 5 packets within 200 milliseconds. If a player exceeds this limit, their packets are canceled, and they are banned automatically. Specific packets, including CommandRequestPacket and LegacyTelemetryEventPacket are monitored as they are commonly used in exploits. These tracked packets are updated with new releases when necessary.  When a banned player attempts to join, they are instantly kicked with a message explaining their ban. Additionally, when a player leaves, their packet data is cleared to optimize performance.
+- **Packet Tracking:** Each player has a buffer of recent packets. Certain packet types are specifically monitored, including:
+  - `CommandRequestPacket`
+  - `LegacyTelemetryEventPacket`
+  - `MovePlayerPacket`
+  - `TextPacket`
+  - `EmotePacket`
+- **Limits Enforced:**  
+  - Per-packet limits (e.g., 5 `CommandRequestPacket` per 1000 ms).  
+  - Global server-wide limits to detect bursts.  
+- **Detection:**  
+  - If a player exceeds the limit for a packet type, the packet is canceled.  
+  - If a player repeatedly violates limits, they are automatically banned.  
+  - If global packet bursts occur or multiple violators appear in a short window, the server enters **lockdown** mode, notifying players and temporarily blocking new connections.  
+- **Join Protection:**  
+  - Flood protection limits the number of join attempts per 5 seconds.  
+  - Banned players are immediately disconnected with a ban message.  
+- **Cleanup:**  
+  - When a player leaves, their packet data is cleared to optimize performance.  
+  - Lockdown lifts automatically after a short duration.
 
 !> Required Clearance Level To Execute: `4`
 
@@ -159,13 +301,18 @@ It monitors packet activity and enforces a limit of 5 packets within 200 millise
 > Example: !ratelimit
 > ```
 
-
 ## !reach
 ### At A Glance
-Toggles the module that checks if players are hit from a fair distance; this is not block related and has no effect on block placement. 
+Toggles the module that checks if players are hitting others from a fair distance.  
+This is strictly a combat check and does **not** affect block placement or movement.
 
 ### How It Works
-The Reach module provides a combat distance check, which helps prevent players from attacking others from too far away. When enabled, the module continuously tracks each player's recent positions and velocities, storing up to 10 recent movements for accuracy. During an attack event, it checks the distance between the attacker and their target; if the distance exceeds 4.5 blocks, the target’s lost health is restored, effectively nullifying the attack. The module uses cubic interpolation on player positions to account for possible lag, ensuring that only legitimate hits within the allowed range are considered valid.
+- **Player Tracking:** Each player's recent positions are tracked and stored in a short history (up to 6–10 positions).  
+- **Combat Check:** When a player attacks another player:
+  - The distance between attacker and target is calculated using cubic interpolation to account for lag.
+  - If the distance exceeds 4.5 blocks, the attack is canceled, and the target’s health remains unchanged.  
+- **Staff Alerts:** Level 4 staff are notified when a player exceeds the allowed reach distance.  
+- **Performance:** Position histories are updated at a fixed interval (every ~4 ticks) to optimize CPU usage.  
 
 !> Required Clearance Level To Execute: `4`
 
@@ -177,45 +324,64 @@ The Reach module provides a combat distance check, which helps prevent players f
 
 ## !scaffold
 ### At A Glance
-Toggles the scaffold detection module, which looks for players placing blocks at a high rate of speed while walking/running above air or towering up. 
+The `Scaffold` module detects and prevents automated block placement hacks, commonly known as scaffold hacks. It monitors players building above air or towering up to identify unnatural placement patterns that could indicate cheating.
 
 ### How It Works
-The Scaffold module monitors block placements to detect and prevent scaffold hacks. When a player places more than 3 blocks in a short time window (within 20 ticks or 1 second), the module inspects the positions to identify suspicious patterns, like if the blocks are aligned in a straight line. If detected, the module replaces these blocks with air to undo the placement, aiming to prevent unfair advantages from automated building hacks. This system automatically filters out block placements in Creative mode or when the player is sneaking, ensuring legitimate actions are not falsely flagged.
+- **Block Placement Monitoring:** Tracks each block placed by players and the time of placement.  
+- **Suspicious Pattern Detection:**  
+  - If a player places more than 3 blocks within 20 ticks (1 second), the module evaluates their positions.  
+  - A pattern is considered suspicious if at least two axes are constant, suggesting automated straight-line placement.  
+- **Automatic Intervention:**  
+  - Suspicious blocks are replaced with air to prevent unfair advantages.  
+  - Blocks are returned to the player’s inventory when possible.  
+- **False Positive Prevention:**  
+  - Ignores placements in Creative mode, when sneaking, or for excluded blocks (like scaffolding).  
+  - Ignores legitimate placements above solid blocks or farmland.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!scaffold [ help ]",
+> Usage: "!scaffold [ help ]"
 > Example: !scaffold
 > Example: !scaffold help
 > ```
 
 ## !selfattack
 ### At A Glance
-Toggles the module that is  designed to detect and prevent players from using modified clients to attack themselves. This exploit can be used for various cheats, such as bypassing server mechanics or triggering unintended effects.
+The `Self-Attack` module detects and prevents players from using modified clients or exploits to attack themselves. This type of exploit can bypass server mechanics or trigger unintended effects, potentially giving unfair advantages.
 
 ### How It Works
-The system listens for entity hit events, which occur when one entity damages another.
-When a player attacks another entity, the system checks if the attacker and victim are the same player.
-If a player attacks themselves, they are automatically banned and kicked with a warning message:
-Their name is added to the server's banned list.
-The system executes a kick command to remove them from the game.
-
+- **Entity Hit Detection:** Listens for `entity hit` events, which are triggered whenever one entity damages another.  
+- **Self-Attack Check:** When a player attacks themselves, the system identifies the attacker and victim as the same entity.  
+- **Automatic Enforcement:**  
+  - The player is immediately banned, and their name is added to the server’s banned list.  
+  - The system executes a kick command to remove the player from the game with a warning.  
+- **Administrator Oversight:** Ensures exploits are prevented without manual intervention.  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!selfattack [ help ]",
+> Usage: "!selfattack [ help ]"
 > Example: !selfattack
 > Example: !selfattack help
 > ```
 
 ## !antispam
 ### At A Glance
-Toggles the chat spam check module, which monitors players sending a large number of chat messages within a short time.
+Toggles the chat spam detection module, which monitors players sending too many messages in a short period.  
+This helps prevent chat flooding, bot spam, and ensures fair communication.
 
 ### How It Works
-The spam module monitors player messages within the game. If a player sends 6 messages within 3 seconds, which exceeds the threshold of 5 messages, they will be muted for the next 2 minutes, and any messages they try to send during this time will be blocked. Once the mute expires, they can send messages again. This system helps prevent chat flooding and ensures that players who spam excessively are temporarily muted.
+- **Message Tracking:** Each player’s chat messages are tracked over a short window (~5 seconds).  
+- **Threshold:** Sending more than 5 messages within the time window triggers the anti-spam system.  
+- **Mute:** Offending players are muted for 2 minutes (messages sent during this time are blocked).  
+- **Dynamic Updates:** Once the mute expires, players regain normal chat permissions automatically.  
+- **Command Handling:** Commands prefixed with `!` (or server-defined prefix) are intercepted and executed separately, preventing false triggers.  
+- **Channels & Rank Handling:** Messages are routed through channels or globally with proper chat rank formatting.  
+- **Performance Optimizations:**  
+  - Player message times are stored efficiently in memory.  
+  - Channel member caches are used to reduce repeated data lookups.  
+  - Debouncing ensures database updates for channel activity happen at most once per 5 seconds.  
 
 !> Required Clearance Level To Execute: `4`
 
@@ -225,28 +391,56 @@ The spam module monitors player messages within the game. If a player sends 6 me
 > Example: !antispam help
 > ```
 
-!> This module listens to `beforeEvents.chatSend`, meaning commands like `/tellraw`, which are used by external bots, will not be flagged. However, we are hoping to bring this feature soon!
+!> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
 ## !visioncheck
 ### At A Glance
-The `Vision Check` module is designed continuously checks inventory contents of blocks being viewed
-by players with Level 4 security clearance and displays the items on the action bar.
+Toggles the `Vision Check` module, which continuously monitors the contents of containers or player inventories that Level 4 security personnel are looking at, displaying the contents on their action bar in real-time.
 
 ### How It Works
-When a Level 4 player targets a block within a 10-block range, the module checks if the block has an inventory, retrieves its items, and displays a formatted summary on the player's action bar. If the container is empty, a warning message is shown instead. This system provides a quick, non-intrusive way to view inventories. 
+- **Inventory Detection:** When a Level 4 player looks at a block or another player within 10 blocks, the module checks if the target has an inventory.  
+- **Action Bar Display:** The items are summarized and displayed on the player’s action bar with item counts.  
+- **Pagination & Rotation:**  
+  - Up to 6 items are shown per page.  
+  - Pages rotate automatically every 3 checks for containers with more than 6 items.  
+- **Empty Inventory Handling:** If the target inventory is empty, a warning is shown instead.  
+- **Player-State Tracking:** The module stores per-player state to manage page rotation, cooldowns, and last-target tracking.  
+- **Real-Time Updates:** Checks run every 30 ticks (~1.5 seconds) and update dynamically as the player looks around.  
+- **Security Compliance:** Only players with Level 4 security clearance can use this feature.  
+
+!> Required Clearance Level To Execute: `4`
+
+> ```
+> Usage: "!visioncheck [ help ]",
+> Example: !visioncheck
+> Example: !visioncheck help
+> ```
 
 ## !worldborder
 ### At A Glance
-The `World Border` module is designed to restrict players from going beyond specific boundaries in each dimension based on coordinates relative to the world's origin (0,0,0), not the world spawn.
+Toggles the `World Border` module, which restricts players from exceeding configurable boundaries in each dimension (Overworld, Nether, End) relative to the world origin (0,0,0), rather than the spawn point. Players with Level 4 security clearance are exempt.
 
 ### How It Works
-The `World Border` module automatically monitors player positions across different dimensions (Overworld, Nether, End) and ensures they remain within specified borders. When a player exceeds the set border in any dimension, the system teleports them back inside the boundary to a safe location, ensuring they don't fall or suffocate by adjusting their Y-coordinate. Players with security clearance 4 are exempt from the border restrictions. If a player reaches the border, they receive a message informing them of the teleportation.
+- **Border Enforcement:** Continuously monitors player positions in all dimensions and teleports them back inside the boundary if they exceed the set size.  
+- **Safe Teleportation:** When returning a player to the border, their Y-coordinate is adjusted to avoid suffocation or falling, using an optimized search for safe blocks. Slow Falling is applied as a fallback if no safe spot is found.  
+- **Notifications:** Players receive messages when they reach or exceed a border.  
+- **Dimension-Specific:** Each dimension can have a separate border size.  
+- **Commands & Options:**  
+  - `--overworld | -o <size>`: Set Overworld border  
+  - `--nether | -n <size>`: Set Nether border  
+  - `--end | -e <size>`: Set End border  
+  - `--disable | -d`: Disable all borders  
+  - `--list | -l`: Display current border settings  
+- **Performance Optimizations:**  
+  - Uses generators to iterate over players efficiently.  
+  - Teleport nudges are debounced to avoid spamming the player with messages.  
+  - Runs checks every 20 ticks (1 second).  
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
 > Usage: "!worldborder [ --overworld | -o <size> ] [ --nether | -n <size> ]
-            [ --end | -e <size> ] [ -d | --disable ] [ -l | --list ]",
+>        [ --end | -e <size> ] [ -d | --disable ] [ -l | --list ]",
 > Example: !worldborder -o 10000 -n 5000 -e 10000
 > Example: !worldborder --overworld 10000 --nether 5000
 > Example: !worldborder --overworld 10000
@@ -259,22 +453,24 @@ The `World Border` module automatically monitors player positions across differe
 
 ## !xray
 ### At A Glance
-The `Xray` module detects and reports suspicious mining activity that may indicate the use of an Xray client or cheats. It monitors players who mine high-value ores at an unusual rate and alerts administrators with Level 4 Security Clearance when suspicious activity is detected.
+The `Xray` module detects and reports suspicious mining activity that may indicate the use of Xray cheats. It monitors players mining high-value ores (e.g., diamonds, emeralds, ancient debris) at unusual rates or in patterns inconsistent with normal gameplay. Administrators with Level 4 Security Clearance are alerted when suspicious activity is detected.
 
 ### How It Works
-The system monitors block-breaking events and tracks when players mine valuable ores like diamonds, ancient debris, and emeralds.
-Each tracked ore has a threshold.
-If a player mines ores too quickly beyond the threshold, an alert is sent to high-security administrators detailing:
-- The player’s name
-- The type and amount of ore mined
-- The exact coordinates (X, Y, Z) where the ore was found.
-
-Player data is reset every 60 seconds to avoid false positives.
-When a player leaves the game, their tracking data is cleared to optimize performance.
+- **Tracking Mining Behavior:** Monitors mined ores and counts rare blocks versus total mined blocks over a 2-minute rolling window.  
+- **Suspicion Score:** Each ore has a suspicion weight; rare ores contribute more. The system calculates a suspicion score for each player.  
+- **Alert Thresholds:**  
+  - Low-level alert: suspicion ≥ 15  
+  - Priority alert: suspicion ≥ 25  
+  - Freeze player: suspicion ≥ 40 (applies slowness and mining fatigue)  
+- **Vein-Jumping Detection:** Tracks consecutive mining of ores in unusual distances (indicative of Xray usage).  
+- **Hidden Ore Detection:** Detects when players mine ores that are fully surrounded by solid blocks.  
+- **Safe Zones:** Players can create temporary “Safe Zones” to prevent false positives when mining known resource areas. Safe Zones last 5 minutes and have cooldowns.  
+- **Automatic Reset:** Player data is reset every 60 seconds and cleared when they leave the server to optimize performance.  
+- **Administrator Notifications:** High-security staff are alerted with player name, ore type, count, and coordinates of suspicious mining activity.
 
 !> Required Clearance Level To Execute: `4`
 
 > ```
-> Usage: "!xray [ -Help ]
+> Usage: "!xray [ -Help ]"
 > Example: !xray
 > ```
