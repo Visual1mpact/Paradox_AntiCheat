@@ -17,7 +17,7 @@ The `!channels` command allows players to manage private chat channels. Players 
 - Channel **ownership** can be transferred to another member.
 - All changes notify relevant players to ensure smooth communication.
 
-```
+
 > Usage: "!channel <create | join | invite | leave | transfer | help>"
 > Example: !channel create --room myTeam
 > Example: !channel join --room myTeam
@@ -25,7 +25,7 @@ The `!channels` command allows players to manage private chat channels. Players 
 > Example: !channel leave
 > Example: !channel transfer --room myTeam --target Visual1mpact
 > Example: !channel help
-```
+
 
 ### **Actions**
 1. **Create Channel** – Create a new chat channel; cannot create if already in another channel.
@@ -76,14 +76,14 @@ The `!debugdb` command allows admins to inspect all initialized database entries
    - If the user is busy, the GUI is automatically retried.
 
 ### Usage
-```
+
 > !debugdb
-```
+
 
 ### Examples
-```
+
 > !debugdb
-```
+
 
 ### Notes
 - This command is mainly for debugging and inspection purposes.
@@ -107,14 +107,12 @@ The `!home` command allows players to manage personal locations. Players can sav
 
 ?> Note: Players cannot use `!home` while imprisoned.  
 
-```
-> Usage: "!home <set | delete | teleport | list | help> [homeName]"
-> Example: !home set MyHome
-> Example: !home delete MyHome
-> Example: !home teleport MyHome
-> Example: !home list
-> Example: !home help
-```
+> Usage: "!home <set | delete | teleport | list | help> [homeName]"  
+> Example: !home set MyHome  
+> Example: !home delete MyHome  
+> Example: !home teleport MyHome  
+> Example: !home list  
+> Example: !home help  
 
 ### **Notes**
 - Home names are **case-sensitive**.
@@ -144,16 +142,16 @@ The `!invclone` command allows admins to clone a player's entire inventory into 
    - Provides feedback on how many chests were removed.
 
 ### Usage
-```
-> !invclone <player>   - Clone the specified player's inventory into chests
-> !invclone remove      - Remove all nearby cloned inventory chests
-```
+
+> !invclone <player>   - Clone the specified player's inventory into chests  
+> !invclone remove      - Remove all nearby cloned inventory chests  
+
 
 ### Examples
-```
-> !invclone Pte9xi
-> !invclone remove
-```
+
+> !invclone Pte9xi  
+> !invclone remove  
+
 
 ### Notes
 - Only valid players with an accessible inventory can be cloned.
@@ -175,11 +173,11 @@ The `!invsee` command allows players with sufficient clearance to view another p
 - If the player is invalid or not found, an error message is returned.
 - Designed for monitoring or moderation purposes.
 
-```
-> Usage: "!invsee <player>"
-> Example: !invsee PlayerName
-> Example: !invsee help
-```
+
+> Usage: "!invsee <player>"  
+> Example: !invsee PlayerName  
+> Example: !invsee help  
+
 
 ### **Notes**
 - Player names are **case-sensitive**.
@@ -198,13 +196,13 @@ The `!pvp` command allows players to control Player vs. Player (PvP) settings. P
 - **Status Check:** Players can see their PvP status and the server’s global PvP state.
 - **Cooldowns & Penalties:** Logging out during PvP cooldown triggers penalties, including inventory loss. Players are alerted when rejoining.
 
-```
-> Usage: "!pvp [ global | status | help ]"
-> Example: !pvp               (toggles PvP for yourself)
-> Example: !pvp global        (toggles PvP for the server)
-> Example: !pvp status        (shows PvP status)
-> Example: !pvp help
-```
+
+> Usage: "!pvp [ global | status | help ]"  
+> Example: !pvp               (toggles PvP for yourself)  
+> Example: !pvp global        (toggles PvP for the server)  
+> Example: !pvp status        (shows PvP status)  
+> Example: !pvp help  
+
 
 ### Notes
 - **Safe Zones:** To bypass PvP in certain areas, assign players the tag `paradoxBypassPvPCheck`. This is owner-managed.
@@ -216,10 +214,10 @@ The `!pvp` command allows players to control Player vs. Player (PvP) settings. P
 ### At A Glance
 Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown determines how long players must wait between PvP events.
 
-```
-> Usage: "!pvpCooldown <time in seconds>"
-> Example: !pvpCooldown 30
-```
+
+> Usage: "!pvpCooldown <time in seconds>"  
+> Example: !pvpCooldown 30  
+
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
@@ -229,10 +227,10 @@ Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown dete
 ### At A Glance
 Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. This prevents frequent switching.
 
-```
-> Usage: "!pvpToggleCooldown <time in seconds>"
-> Example: !pvpToggleCooldown 30
-```
+
+> Usage: "!pvpToggleCooldown <time in seconds>"  
+> Example: !pvpToggleCooldown 30  
+
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
@@ -259,15 +257,15 @@ The command uses flags to determine the action:
 
 When executed, the command verifies the provided arguments and checks that the target player exists. Players and the command sender are notified when a rank is set or reset. If ranks are globally disabled, only users with clearance `4` can modify global rank settings.
 
-```
-> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]"
-> Example: !setrank --target PlayerName --rank [Member]
-> Example: !setrank -t PlayerName -r [Admin]
-> Example: !setrank -t PlayerName --reset
-> Example: !setrank --target PlayerName --reset
-> Example: !setrank -d
-> Example: !setrank -e
-```
+
+> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]"  
+> Example: !setrank --target PlayerName --rank [Member]  
+> Example: !setrank -t PlayerName -r [Admin]  
+> Example: !setrank -t PlayerName --reset  
+> Example: !setrank --target PlayerName --reset  
+> Example: !setrank -d  
+> Example: !setrank -e  
+
 
 ### Notes
 - When a rank is set, the player’s `nameTag` updates to show the rank before their username.  
@@ -295,20 +293,20 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 6. Players in prison cannot send teleport requests.
 
 ### Usage
-```
-> !tpr <player>       - Send a teleport request to <player>
-> !tpr accept         - Accept the pending teleport request
-> !tpr deny           - Deny the pending teleport request
-> !tpr help           - Show help for the teleport request system
-```
+
+> !tpr <player>       - Send a teleport request to <player>  
+> !tpr accept         - Accept the pending teleport request  
+> !tpr deny           - Deny the pending teleport request  
+> !tpr help           - Show help for the teleport request system  
+
 
 ### Examples
-```
-> !tpr Lucy
-> !tpr Steve
-> !tpr accept
-> !tpr deny
-```
+
+> !tpr Lucy  
+> !tpr Steve  
+> !tpr accept  
+> !tpr deny  
+
 ### Notes
 - Only one teleport request can be pending for a player at a time.
 - Players receive messages about the status of their requests (sent, accepted, denied, or timed out).
