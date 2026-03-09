@@ -256,13 +256,28 @@ function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEv
     const { player, initialSpawn } = event;
     if (!initialSpawn) return;
 
-    if (typeof world.getDynamicProperty(DYNAMIC_PROPERTY_NAME) === "undefined") {
+    // Ensure the encrypted world token exists
+    if (world.getDynamicProperty(DYNAMIC_PROPERTY_NAME) === undefined) {
         const token = generateEncryptedToken();
         world.setDynamicProperty(DYNAMIC_PROPERTY_NAME, token);
     }
 
     const info = player.clientSystemInfo;
-    if (info.maxRenderDistance <= 0 || (info.platformType === "Desktop" && info.memoryTier === 0) || (info.platformType === "Console" && info.memoryTier <= 1)) {
+
+    // If client info is missing, treat as invalid
+    if (!info) {
+        banish(player);
+        logDenied(player.name);
+        return;
+    }
+
+    const { maxRenderDistance, platformType, memoryTier } = info;
+
+    const invalidRenderDistance = maxRenderDistance == null || Number.isNaN(maxRenderDistance) || maxRenderDistance < 6 || maxRenderDistance > 96;
+
+    const invalidMemory = (platformType === "Desktop" && memoryTier === 0) || (platformType === "Console" && memoryTier <= 1);
+
+    if (invalidRenderDistance || invalidMemory) {
         banish(player);
         logDenied(player.name);
     }

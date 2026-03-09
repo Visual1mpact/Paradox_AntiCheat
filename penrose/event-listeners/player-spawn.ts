@@ -191,15 +191,20 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
         return;
     }
 
-    const { maxRenderDistance } = player.clientSystemInfo;
+    const { maxRenderDistance, platformType, memoryTier } = player.clientSystemInfo;
 
-    if (maxRenderDistance < 6 || maxRenderDistance > 96 || isNaN(maxRenderDistance)) {
-        if (!(playerName in bannedPlayers)) {
+    const invalidRenderDistance = maxRenderDistance == null || Number.isNaN(maxRenderDistance) || maxRenderDistance < 6 || maxRenderDistance > 96;
+
+    const invalidMemory = (platformType === "Desktop" && memoryTier === 0) || (platformType === "Console" && memoryTier <= 1);
+
+    if (invalidRenderDistance || invalidMemory) {
+        if (!bannedPlayers[playerName]) {
             bannedPlayers[playerName] = {
                 reason: "Invalid device specifications (render distance)",
                 bannedBy: "System",
                 timestamp: Date.now(),
             };
+
             await banlistDB.set("players", bannedPlayers);
         }
 
