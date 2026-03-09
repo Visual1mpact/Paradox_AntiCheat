@@ -6,7 +6,7 @@ import * as CryptoESImport from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/player-cache";
 
 // Import CryptoES library for optional encryption of commands
-const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
+const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
  * GUIManager handles all GUI interactions for a player, including:

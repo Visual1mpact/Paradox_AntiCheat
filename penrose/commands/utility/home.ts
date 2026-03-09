@@ -2,7 +2,7 @@ import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import * as CryptoESImport from "../../node_modules/crypto-es";
 
-const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
+const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
  * Represents the home command.

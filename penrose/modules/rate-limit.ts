@@ -4,13 +4,12 @@ import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 import * as CryptoESImport from "../node_modules/crypto-es";
 
-const CryptoES = (CryptoESImport as any).default ?? CryptoESImport;
+const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
  * Ring buffer for timestamps used in rate-limiting.
  * This data structure efficiently stores a fixed-size sliding window of timestamps,
  * automatically overwriting oldest entries when full.
- * @since 1.0.0
  */
 class TimestampBuffer {
     /** Internal array storage for timestamps */
@@ -69,18 +68,91 @@ class TimestampBuffer {
 
 /* ---------------- CRYPTO CONFIG ---------------- */
 
-/** Secret key for AES encryption of server token (128-bit random key) */
-const AES_SECRET = CryptoES.WordArray.random(16); // 128-bit
+/**
+ * Dynamic property key used to persist the AES encryption key in the world.
+ * This allows the encryption key to survive server restarts so previously
+ * generated encrypted tokens remain valid.
+ */
+const AES_KEY_PROPERTY = "paradox_aes_key";
 
 /**
- * Generates a dynamic property name for storing the encrypted server token.
- * Creates a unique property name using random bytes to avoid conflicts.
- * @returns A unique dynamic property name string prefixed with "proxy_token_"
- * @example "proxy_token_1a2b3c4d5e6f7890"
+ * Dynamic property key used to store the encrypted proxy validation token.
+ * This property is persistent and shared across server restarts.
  */
-function generateDynamicPropertyName(): string {
-    const rawBytes = CryptoES.WordArray.random(16);
-    return `proxy_token_${rawBytes.toString(CryptoES.Hex)}`;
+const TOKEN_PROPERTY = "paradox_proxy_token";
+
+/**
+ * Retrieves the encrypted server proxy token from world dynamic properties.
+ * If no token exists yet, a new encrypted token is generated and stored.
+ *
+ * This token persists across server restarts.
+ */
+function getOrCreateProxyToken(): string {
+    let token = world.getDynamicProperty(TOKEN_PROPERTY) as string | undefined;
+
+    if (!token) {
+        token = generateEncryptedToken();
+        world.setDynamicProperty(TOKEN_PROPERTY, token);
+    }
+
+    return token;
+}
+
+/**
+ * Generates a safe, unique kick tag for use with Minecraft selector commands.
+ *
+ * This function takes the server's persistent proxy token, hashes it using SHA-256,
+ * and converts it to a hexadecimal string. The result is truncated to 16 characters
+ * to ensure it is safe for use as a player tag in Minecraft commands.
+ *
+ * @returns {string} A 16-character hexadecimal string that can be safely used as a temporary player tag.
+ *
+ * @remarks
+ * Minecraft player tags cannot safely contain certain characters (e.g., '+', '/', '=')
+ * that may appear in Base64-encoded data. This function hashes the token to avoid
+ * invalid characters and ensures consistent tag length.
+ *
+ * @example
+ * const tag = getKickTag();
+ * player.addTag(tag);
+ * runCommand(`kick @a[tag=${tag}] You have been kicked.`);
+ */
+function getKickTag(): string {
+    const token = getOrCreateProxyToken();
+    return CryptoES.SHA256(token).toString(CryptoES.Hex).slice(0, 16);
+}
+
+/**
+ * Retrieves the server AES encryption key from world dynamic properties,
+ * or generates and stores a new key if one does not yet exist.
+ *
+ * The AES key is persisted using a world dynamic property so that encrypted
+ * server tokens remain valid across server restarts. If the key is missing,
+ * a new 128-bit cryptographically secure key is generated and saved.
+ *
+ * @returns {CryptoESImport.WordArray} The AES encryption key used for token encryption.
+ *
+ * @remarks
+ * The key is stored as a hexadecimal string inside the world dynamic property
+ * defined by {@link AES_KEY_PROPERTY}. When retrieved, the stored hex string
+ * is parsed back into a CryptoES `WordArray` instance.
+ *
+ * @example
+ * const key = getOrCreateAESKey();
+ * const encrypted = CryptoES.AES.encrypt("data", key);
+ */
+function getOrCreateAESKey(): CryptoESImport.WordArray {
+    let stored = world.getDynamicProperty(AES_KEY_PROPERTY) as string | undefined;
+
+    if (!stored) {
+        const key = CryptoES.WordArray.random(16);
+        stored = key.toString(CryptoES.Hex);
+
+        world.setDynamicProperty(AES_KEY_PROPERTY, stored);
+        return key;
+    }
+
+    return CryptoES.Hex.parse(stored);
 }
 
 /**
@@ -89,13 +161,11 @@ function generateDynamicPropertyName(): string {
  * @returns A Base64-encoded encrypted string representing the server token
  */
 function generateEncryptedToken(): string {
+    const AES_SECRET = getOrCreateAESKey();
     const randomData = CryptoES.WordArray.random(32); // 256-bit
     const encrypted = CryptoES.AES.encrypt(randomData, AES_SECRET);
     return encrypted.toString(); // Base64 encoded
 }
-
-/** Dynamic property name used to store the server's encrypted token in world properties */
-const DYNAMIC_PROPERTY_NAME = generateDynamicPropertyName();
 
 /* ---------------- CONFIG ---------------- */
 
@@ -167,19 +237,11 @@ let serverAdmin: typeof import("@minecraft/server-admin").beforeEvents;
  * @param player - The player object to banish (kick) from the server
  */
 function banish(player: import("@minecraft/server").Player) {
-    const token = world.getDynamicProperty(DYNAMIC_PROPERTY_NAME);
+    const token = getOrCreateProxyToken();
     if (!token) return;
-    player.addTag(token as string);
-    world.getDimension("overworld").runCommand(`kick @a[tag=${token}] ${token}`);
-}
-
-/**
- * Logs denied proxy connections to server chat with formatting.
- * Sends a formatted message indicating a connection was denied.
- * @param name - The name of the player or entity whose connection was denied
- */
-function logDenied(name: string) {
-    world.sendMessage(`§o§c[Paradox] Connection denied: §e${name}`);
+    const tag = getKickTag();
+    player.addTag(tag);
+    world.getDimension("overworld").runCommand(`kick @a[tag=${token}] You have been kicked.`);
 }
 
 /* ----------------- LOCKDOWN ----------------- */
@@ -224,7 +286,6 @@ async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent) {
         (world.getAllPlayers().length > 0 && event.persistentId.length === 0)
     ) {
         event.disconnect();
-        if (event.name) logDenied(event.name);
         return;
     }
 
@@ -257,9 +318,9 @@ function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEv
     if (!initialSpawn) return;
 
     // Ensure the encrypted world token exists
-    if (world.getDynamicProperty(DYNAMIC_PROPERTY_NAME) === undefined) {
+    if (world.getDynamicProperty(TOKEN_PROPERTY) === undefined) {
         const token = generateEncryptedToken();
-        world.setDynamicProperty(DYNAMIC_PROPERTY_NAME, token);
+        world.setDynamicProperty(TOKEN_PROPERTY, token);
     }
 
     const info = player.clientSystemInfo;
@@ -267,7 +328,6 @@ function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEv
     // If client info is missing, treat as invalid
     if (!info) {
         banish(player);
-        logDenied(player.name);
         return;
     }
 
@@ -279,7 +339,6 @@ function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEv
 
     if (invalidRenderDistance || invalidMemory) {
         banish(player);
-        logDenied(player.name);
     }
 }
 
@@ -288,7 +347,6 @@ function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEv
  * Sets up event subscriptions for async player join, packet receive, and player leave events.
  * Configures monitored packet IDs and initializes required module references.
  * @returns A promise that resolves to false if module imports fail, otherwise void
- * @since 1.0.0
  */
 async function initializePacketHandler(): Promise<boolean | void> {
     try {

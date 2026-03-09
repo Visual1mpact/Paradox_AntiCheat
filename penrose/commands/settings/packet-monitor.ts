@@ -2,6 +2,9 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startPacketListener, stopPacketListener } from "../../modules/packet-monitor";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
+import * as CryptoESImport from "../../node_modules/crypto-es";
+
+const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
  * Represents the packet monitoring command.
@@ -29,16 +32,12 @@ export const packetMonitorCommand: Command = {
 
     /**
      * Executes the packet monitoring command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object (may be undefined when invoked by a monitor).
-     * @param {string[]} [_] - The command arguments.
-     * @returns {Promise<void>}
+     * @param message - Optional chat message event (may be undefined if called by monitor)
+     * @param args - Optional array of command arguments
+     * @param cryptoES - Optional reference to CryptoES
+     * @param returnMonitorFunction - Optional flag indicating monitor invocation
      */
-    execute: async (
-        message?: ChatSendBeforeEvent,
-        _?: string[],
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        returnMonitorFunction?: boolean
-    ): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, _args?: string[], _cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean): Promise<void> => {
         // read the optional parameter to avoid "declared but its value is never read" compiler warning
         void returnMonitorFunction;
 
