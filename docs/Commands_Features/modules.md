@@ -20,10 +20,10 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!afk [ hours ] [ minutes ] [ seconds ]"
 > Example: !afk 0 10 0
-> ```
+```
 
 ## !autoclicker
 ### At A Glance
@@ -39,10 +39,10 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!autoclicker [ help ]"
 > Example: !autoclicker
-> ```
+```
 
 ## !antifly
 ### At A Glance
@@ -58,10 +58,10 @@ The `antifly` command toggles the Anti-Fly detection module, which monitors play
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!antifly [ help ]"
 > Example: !antifly
-> ```
+```
 
 ## !gamemode
 ### At A Glance
@@ -76,7 +76,7 @@ The `gamemode` command allows server administrators to manage which game modes a
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"
 > Examples:
 >   !gamemode -a
@@ -86,7 +86,7 @@ The `gamemode` command allows server administrators to manage which game modes a
 >   !gamemode --disable
 >   !gamemode -l
 >   !gamemode --list
-> ```
+```
 
 ## !invsync
 ### At A Glance
@@ -116,7 +116,7 @@ This system helps identify potential **duplication exploits or abnormal inventor
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!invsync [ help | status | snapshot | check | clear | forensic <player> ]"
 > Example: !invsync
 > Example: !invsync status
@@ -124,7 +124,7 @@ This system helps identify potential **duplication exploits or abnormal inventor
 > Example: !invsync check
 > Example: !invsync clear
 > Example: !invsync forensic Steve
-> ```
+```
 
 ## !killaura
 ### At A Glance
@@ -139,10 +139,10 @@ The `Killaura` detection module helps maintain fair combat on the server by dete
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!killaura [ help ]"
 > Example: !killaura
-> ```
+```
 
 ## !lagclear
 ### At A Glance
@@ -159,11 +159,11 @@ The `!lagclear` module helps maintain server performance by clearing excess item
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!lagclear [ hours ] [ minutes ] [ seconds ]"
 > Example: !lagclear 0 15 0
 > Example: !lagclear (uses default 10-minute timer)
-> ```
+```
 
 ## !namespoof
 ### At A Glance
@@ -185,11 +185,11 @@ The `Name-Spoof` module protects the server from players attempting to impersona
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!namespoof [ help ]"
 > Example: !namespoof
 > Example: !namespoof help
-> ```
+```
 
 ## !noclip
 ### At A Glance
@@ -209,11 +209,11 @@ This is essential for catching exploits that bypass normal collision mechanics, 
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!noclip"
 > Example: !noclip
 > Example: !noclip help
-> ```
+```
 
 ## !packetmonitor
 !> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
@@ -237,10 +237,10 @@ It logs suspicious activity for administrative review and helps prevent server o
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!packetmonitor [ help ]"
 > Example: !packetmonitor
-> ```
+```
 
 ## !platformblock
 ### At A Glance
@@ -261,12 +261,12 @@ The `PlatformBlock` module manages which player platforms (console, desktop, mob
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!platformblock <platform> [ -e | -d | -l | --list ]"
 > Example: !platformblock console -e
 > Example: !platformblock desktop -d
 > Example: !platformblock -l
-> ```
+```
 
 ## !ratelimit
 ### At A Glance
@@ -296,10 +296,10 @@ It enforces per-player, per-packet, and global packet rate limits, automatically
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!ratelimit [ help ]",
 > Example: !ratelimit
-> ```
+```
 
 ## !reach
 ### At A Glance
@@ -316,11 +316,11 @@ This is strictly a combat check and does **not** affect block placement or movem
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!reach [ help ]",
 > Example: !reach
 > Example: !reach help
-> ```
+```
 
 ## !scaffold
 ### At A Glance
@@ -340,11 +340,11 @@ The `Scaffold` module detects and prevents automated block placement hacks, comm
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!scaffold [ help ]"
 > Example: !scaffold
 > Example: !scaffold help
-> ```
+```
 
 ## !selfattack
 ### At A Glance
@@ -360,11 +360,11 @@ The `Self-Attack` module detects and prevents players from using modified client
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!selfattack [ help ]"
 > Example: !selfattack
 > Example: !selfattack help
-> ```
+```
 
 ## !antispam
 ### At A Glance
@@ -385,11 +385,11 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!antispam [ help ]",
 > Example: !antispam
 > Example: !antispam help
-> ```
+```
 
 !> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
@@ -410,11 +410,11 @@ Toggles the `Vision Check` module, which continuously monitors the contents of c
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!visioncheck [ help ]",
 > Example: !visioncheck
 > Example: !visioncheck help
-> ```
+```
 
 ## !worldborder
 ### At A Glance
@@ -438,7 +438,7 @@ Toggles the `World Border` module, which restricts players from exceeding config
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!worldborder [ --overworld | -o <size> ] [ --nether | -n <size> ]
 >        [ --end | -e <size> ] [ -d | --disable ] [ -l | --list ]",
 > Example: !worldborder -o 10000 -n 5000 -e 10000
@@ -449,7 +449,7 @@ Toggles the `World Border` module, which restricts players from exceeding config
 > Example: !worldborder disable
 > Example: !worldborder -l
 > Example: !worldborder --list
-> ```
+```
 
 ## !xray
 ### At A Glance
@@ -470,7 +470,7 @@ The `Xray` module detects and reports suspicious mining activity that may indica
 
 !> Required Clearance Level To Execute: `4`
 
-> ```
+```
 > Usage: "!xray [ -Help ]"
 > Example: !xray
-> ```
+```
