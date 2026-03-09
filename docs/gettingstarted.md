@@ -12,54 +12,115 @@ Make sure these are enabled in your world settings before loading Paradox.
 
 ---
 
-# Granting OP Access
+# OP & Security Clearance Overview
 
-All security and OP management is handled **in-game** via the `!op` command.
+Paradox uses a two-layer administrative system to manage permissions:
 
-### How it Works
+1. **OP (Level 4)** – The highest clearance, required for critical management tasks.
+2. **Security Clearance Levels (1–4)** – Define access to commands and modules.
 
-* The first player to run `!op` in the world automatically becomes the **host**.
-* The host has full security clearance (**level 4**) and can grant OP to other players.
-* Use the following command in chat:
+All OP and clearance changes are handled **in-game** via the `!op` and `!opsec` commands. Changes are persistent and tracked automatically.
 
-```
-!op
-```
+---
 
-* Running `!op` without arguments grants OP if you are the first player (host).
-* Running `!op <playerName>` grants OP to another player.
-* Running `!op list` displays all players with OP (security clearance level 4) along with the host.
+## OP (Level 4)
 
-**Example Commands:**
+Level 4 is the **highest security clearance**. It allows full management of Paradox modules and the ability to grant OP to other players.
 
-```
+### How OP Works
+
+1. **Host Initialization**
+
+   * If no host exists, any player with **server operator privileges** (BDS operator, Realm host, LAN host) can initialize the host by running:
+
+   ```text
+   !op
+   ```
+
+   * The player becomes the **host** and is automatically granted **Level 4 clearance**.
+   * Host information is saved in the world’s dynamic properties for persistence.
+
+2. **Granting OP to Other Players**
+
+   * Only the **host** can grant Level 4 clearance to others.
+   * Use:
+
+   ```text
+   !op <playerName>
+   ```
+
+   * The target player is granted Level 4 clearance and receives a notification.
+
+3. **Listing OP Players**
+
+   * Any Level 4 user can view all Level 4 players, including the host:
+
+   ```text
+   !op list
+   ```
+
+### Example Commands
+
+```text
 !op
 !op Alice
 !op "Player Name"
 !op list
 ```
 
-All OP grants are tracked automatically.
-
 ---
 
-# Security Clearance Levels
+## Security Clearance Levels
 
-* Level 4: Highest clearance, can manage OP and modules.
-* Players granted OP by the host are automatically given level 4 clearance.
-* Only players with level 4 clearance or the host can grant OP.
+Paradox defines access through **Level 1–4 security clearances**:
 
----
+| Level | Description                                      |
+| ----- | ------------------------------------------------ |
+| 4     | Full OP access; can manage modules and grant OP. |
+| 3     | High-level admin commands, cannot grant OP.      |
+| 2     | Limited staff commands.                          |
+| 1     | Basic commands; general permissions.             |
 
-# Next Steps
+### Changing Clearance Levels
 
-Once Paradox is loaded and OP is assigned:
+* Use the `!opsec` command to change Levels 1–3:
 
-* Check available commands in chat:
-
+```text
+!opsec <playerName> <clearanceLevel>
 ```
+
+* **Restrictions:**
+
+  * Level 4 cannot be assigned via `!opsec`. Only the `!op` command can assign Level 4.
+  * Only Level 4 users (host or OP) can run `!opsec`.
+
+### Example Commands
+
+```text
+!opsec Bob 3
+!opsec "Player Name" 2
+```
+
+---
+
+## Important Notes
+
+* **Host Authority:** Only the host can grant Level 4 to other players.
+* **Persistence:** All OP and clearance changes are saved automatically in world properties.
+* **Notifications:** Players are notified whenever their security clearance changes.
+* **No first-player limitation:** OP assignment no longer depends on being the first player; it depends on server operator privileges for initialization.
+
+---
+
+## Next Steps
+
+Once the host and OP are assigned:
+
+* Check available commands:
+
+```text
 !help
 ```
 
-* Enable the modules you want to use for your world.
+* Configure and enable Paradox modules for your world.
 * Paradox is now fully running and ready to monitor and manage your world.
