@@ -181,6 +181,13 @@ const GLOBAL_WINDOW = 1000;
 const JOIN_WINDOW = 5000;
 /** Maximum number of join attempts allowed per JOIN_WINDOW before rejecting new connections */
 const JOIN_LIMIT = 30;
+/** Maximum packets a player may send within the global packet window */
+const PLAYER_PACKET_LIMIT = 80;
+/** Time window (ms) used to evaluate {@link PLAYER_PACKET_LIMIT} */
+const PLAYER_PACKET_WINDOW = 1000;
+/** Minimum time (ms) allowed between consecutive packets from the same player */
+const MIN_PACKET_INTERVAL = 5;
+
 /**
  * Packet rate limits configuration per packet type.
  * Each entry specifies the maximum number of packets allowed (limit)
@@ -195,6 +202,12 @@ const PACKET_LIMITS: Record<string, { limit: number; window: number }> = {
 
 /* ----------------- TRACKING ----------------- */
 
+/** Per-player buffers tracking total packet timestamps for burst detection */
+const playerGlobalBuffers = new Map<string, TimestampBuffer>();
+/** Stores the timestamp of the last packet received from each player */
+const lastPacketTime = new Map<string, number>();
+/** Per-player buffers tracking recent command packets to detect command spam */
+const commandBurst = new Map<string, TimestampBuffer>();
 /**
  * Stores per-player per-packet timestamp buffers for rate limiting.
  * Outer Map key: player name, Inner Map key: packet ID
@@ -237,11 +250,9 @@ let serverAdmin: typeof import("@minecraft/server-admin").beforeEvents;
  * @param player - The player object to banish (kick) from the server
  */
 function banish(player: import("@minecraft/server").Player) {
-    const token = getOrCreateProxyToken();
-    if (!token) return;
     const tag = getKickTag();
     player.addTag(tag);
-    world.getDimension("overworld").runCommand(`kick @a[tag=${token}] You have been kicked.`);
+    world.getDimension("overworld").runCommand(`kick @a[tag=${tag}] You have been kicked.`);
 }
 
 /* ----------------- LOCKDOWN ----------------- */
@@ -275,6 +286,8 @@ async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent) {
     const now = Date.now();
 
     // Early proxy name checks
+    const normalized = event.name.normalize("NFKD").toLowerCase();
+    if (normalized.includes("discord.gg")) event.disconnect();
     if (
         !event.name ||
         event.name.trim() === "" ||
@@ -374,12 +387,63 @@ async function initializePacketHandler(): Promise<boolean | void> {
         const packetId = data.packetId;
         const now = Date.now();
 
-        // Global burst detection
+        /** Command burst protection */
+
+        if (packetId === PacketId.CommandRequestPacket) {
+            let cmdBuffer = commandBurst.get(playerName);
+
+            if (!cmdBuffer) {
+                cmdBuffer = new TimestampBuffer(20);
+                commandBurst.set(playerName, cmdBuffer);
+            }
+
+            cmdBuffer.push(now);
+            cmdBuffer.prune(now, 2000);
+
+            if (cmdBuffer.size() > 8) {
+                data.cancel = true;
+                banish(player);
+                return;
+            }
+        }
+
+        /** Minimum packet timing detection */
+
+        const lastTime = lastPacketTime.get(playerName);
+
+        if (lastTime && now - lastTime < MIN_PACKET_INTERVAL) {
+            data.cancel = true;
+            return;
+        }
+
+        lastPacketTime.set(playerName, now);
+
+        /** Global burst detection */
+
         globalBuffer.push(now);
         globalBuffer.prune(now, GLOBAL_WINDOW);
         if (globalBuffer.size() > GLOBAL_PACKET_LIMIT) triggerLockdown();
 
-        // Per-packet limits
+        /** Per-player global packet limit */
+
+        let playerGlobal = playerGlobalBuffers.get(playerName);
+
+        if (!playerGlobal) {
+            playerGlobal = new TimestampBuffer(PLAYER_PACKET_LIMIT * 2);
+            playerGlobalBuffers.set(playerName, playerGlobal);
+        }
+
+        playerGlobal.push(now);
+        playerGlobal.prune(now, PLAYER_PACKET_WINDOW);
+
+        if (playerGlobal.size() > PLAYER_PACKET_LIMIT) {
+            data.cancel = true;
+            banish(player);
+            return;
+        }
+
+        /** Per-packet limits */
+
         const config = PACKET_LIMITS[packetId];
         if (!config) return;
 
@@ -397,8 +461,6 @@ async function initializePacketHandler(): Promise<boolean | void> {
         buffer.push(now);
         buffer.prune(now, config.window);
 
-        const last = lastPacketType.get(playerName);
-        if (last === packetId && buffer.size() > config.limit) data.cancel = true;
         lastPacketType.set(playerName, packetId);
 
         if (buffer.size() > config.limit) {
@@ -423,8 +485,12 @@ async function initializePacketHandler(): Promise<boolean | void> {
     };
 
     playerLeaveRef = (event) => {
-        packetLimits.delete(event.player.name);
-        lastPacketType.delete(event.player.name);
+        const name = event.player.name;
+        packetLimits.delete(name);
+        lastPacketType.delete(name);
+        playerGlobalBuffers.delete(name);
+        lastPacketTime.delete(name);
+        commandBurst.delete(name);
     };
 
     serverNet.packetReceive.subscribe(packetHandlerRef, {
@@ -461,7 +527,10 @@ export function stopPacketHandler(): void {
     if (playerLeaveRef) world.beforeEvents.playerLeave.unsubscribe(playerLeaveRef);
 
     packetLimits.clear();
+    playerGlobalBuffers.clear();
     lastPacketType.clear();
+    lastPacketTime.clear();
+    commandBurst.clear();
     recentViolators.length = 0;
     joinAttempts.length = 0;
 
