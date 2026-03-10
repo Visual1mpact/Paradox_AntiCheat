@@ -5,7 +5,7 @@ import { PlayerCache } from "../classes/player-cache";
 const MAX_REACH = 4.5;
 const MAX_REACH_SQ = MAX_REACH * MAX_REACH;
 const HISTORY_SIZE = 6;
-const UPDATE_INTERVAL_TICKS = 4; // update every 4 ticks (~200ms)
+const UPDATE_INTERVAL_TICKS = 6; // update every 6 ticks (~300ms)
 
 /**
  * Stores a player's recent positions for reach detection.
@@ -78,16 +78,10 @@ function updatePlayerWithLoc(player: Player, loc: { x: number; y: number; z: num
  * @param player - Player to retrieve position for
  * @returns Last position as {x, y, z} or null if none recorded
  */
-function getLastPosition(player: Player) {
+function getLastPositionIndex(player: Player) {
     const data = playerHistory.get(player.id);
-    if (!data) return null;
-
-    const i = ((data.index - 1 + HISTORY_SIZE) % HISTORY_SIZE) * 3;
-    return {
-        x: data.positions[i],
-        y: data.positions[i + 1],
-        z: data.positions[i + 2],
-    };
+    if (!data) return -1;
+    return ((data.index - 1 + HISTORY_SIZE) % HISTORY_SIZE) * 3;
 }
 
 /**
@@ -124,11 +118,15 @@ function onHitCached(event: EntityHurtBeforeEvent) {
     let d = distSq(a.x, a.y, a.z, v.x, v.y, v.z);
     if (d <= MAX_REACH_SQ) return;
 
-    const ah = getLastPosition(attacker);
-    const vh = getLastPosition(victim);
-    if (!ah || !vh) return;
+    const ai = getLastPositionIndex(attacker);
+    const vi = getLastPositionIndex(victim);
 
-    d = distSq(ah.x, ah.y, ah.z, vh.x, vh.y, vh.z);
+    if (ai === -1 || vi === -1) return;
+
+    const ah = playerHistory.get(attacker.id)!.positions;
+    const vh = playerHistory.get(victim.id)!.positions;
+
+    d = distSq(ah[ai], ah[ai + 1], ah[ai + 2], vh[vi], vh[vi + 1], vh[vi + 2]);
     if (d > MAX_REACH_SQ) {
         event.cancel = true;
         alertStaff(attacker, d);
