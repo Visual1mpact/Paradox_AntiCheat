@@ -10,12 +10,12 @@ const CHECK_INTERVAL = 2;
 /**
  * Number of detections required before action is taken.
  */
-const PHASE_FLAGS_REQUIRED = 3;
+const PHASE_FLAGS_REQUIRED = 5;
 
 /**
  * Collision tolerance in blocks to prevent false positives from minor clipping.
  */
-const COLLISION_TOLERANCE = 0.05;
+const COLLISION_TOLERANCE = 0.15;
 
 /**
  * Tracks players' movement history.
@@ -237,7 +237,7 @@ function checkPlayer(player: Player) {
     const cur = { x: loc.x, y: loc.y, z: loc.z };
     data.lastPos = cur;
 
-    if (distance(prev, cur) < 0.35) {
+    if (distance(prev, cur) < 0.75) {
         data.phaseFlags = Math.max(0, data.phaseFlags - 1);
         return;
     }
