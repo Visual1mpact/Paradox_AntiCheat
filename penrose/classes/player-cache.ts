@@ -1,9 +1,9 @@
-import { world, Player, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
+import { world, Player, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, system } from "@minecraft/server";
 
 /**
  * Centralized cache of online players.
  * Eliminates repeated calls to `world.getPlayers()` across scripts.
- * Provides high-performance iteration and filtered access.
+ * Provides high-performance iteration, filtered access, and auto-cleanup of ghost players.
  */
 export class PlayerCache {
     /** Map of player ID -> Player object */
@@ -17,6 +17,12 @@ export class PlayerCache {
     /** Event subscriptions */
     private static spawnSubscription?: (ev: PlayerSpawnAfterEvent) => void;
     private static leaveSubscription?: (ev: PlayerLeaveBeforeEvent) => void;
+
+    /** Periodic cleanup interval ID */
+    private static cleanupInterval?: number;
+
+    /** Interval in ticks to reconcile ghost players */
+    private static readonly CLEANUP_INTERVAL_TICKS = 1200; // 1 minute at 20 ticks/second
 
     /**
      * Initializes the player cache.
@@ -48,6 +54,23 @@ export class PlayerCache {
             this.playersById.delete(ev.player.id);
         };
         world.beforeEvents.playerLeave.subscribe(this.leaveSubscription);
+
+        // Start periodic cleanup of ghost players
+        this.cleanupInterval = system.runInterval(() => this.reconcileCache(), this.CLEANUP_INTERVAL_TICKS);
+    }
+
+    /**
+     * Removes any cached players that are no longer online.
+     * Ensures the cache doesn't retain "ghost" players if leave events fail.
+     */
+    private static reconcileCache() {
+        const onlineIds = new Set(world.getPlayers().map((p) => p.id));
+        for (const [id, player] of this.playersById.entries()) {
+            if (!onlineIds.has(id)) {
+                this.playersById.delete(id);
+                this.playersByName.delete(player.name);
+            }
+        }
     }
 
     /** Returns an array of all currently cached player names */
@@ -87,7 +110,7 @@ export class PlayerCache {
         return this.playersById.size;
     }
 
-    /** Clears the cache and unsubscribes from all events */
+    /** Clears the cache, unsubscribes from events, and stops auto-cleanup */
     public static destroy() {
         this.playersById.clear();
         this.playersByName.clear();
@@ -99,6 +122,11 @@ export class PlayerCache {
         if (this.leaveSubscription) {
             world.beforeEvents.playerLeave.unsubscribe(this.leaveSubscription);
             this.leaveSubscription = undefined;
+        }
+
+        if (this.cleanupInterval) {
+            system.clearRun(this.cleanupInterval);
+            this.cleanupInterval = undefined;
         }
 
         this.initialized = false;
