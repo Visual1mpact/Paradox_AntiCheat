@@ -41,16 +41,21 @@ export class PlayerCache {
 
         // Subscribe to player join
         this.spawnSubscription = (ev: PlayerSpawnAfterEvent) => {
-            if (!ev.initialSpawn) return;
-            this.playersById.set(ev.player.id, ev.player);
-            this.playersByName.set(ev.player.name, ev.player);
+            const p = ev.player;
+
+            if (!this.playersById.has(p.id)) {
+                this.playersById.set(p.id, p);
+                this.playersByName.set(p.name, p);
+            }
         };
         world.afterEvents.playerSpawn.subscribe(this.spawnSubscription);
 
         // Subscribe to player leave
         this.leaveSubscription = (ev: PlayerLeaveBeforeEvent) => {
             const player = this.playersById.get(ev.player.id);
-            if (player) this.playersByName.delete(player.name);
+            if (!player) return;
+
+            this.playersByName.delete(player.name);
             this.playersById.delete(ev.player.id);
         };
         world.beforeEvents.playerLeave.subscribe(this.leaveSubscription);
@@ -64,18 +69,32 @@ export class PlayerCache {
      * Ensures the cache doesn't retain "ghost" players if leave events fail.
      */
     private static reconcileCache() {
-        const onlineIds = new Set(world.getPlayers().map((p) => p.id));
-        for (const [id, player] of this.playersById.entries()) {
+        const onlineIds = new Set<string>();
+        for (const [id, player] of this.playersById) {
             if (!onlineIds.has(id)) {
                 this.playersById.delete(id);
                 this.playersByName.delete(player.name);
+                continue;
+            }
+
+            // Ensure name cache stays accurate
+            const cached = this.playersByName.get(player.name);
+            if (cached !== player) {
+                // Remove any old entry pointing to this player
+                for (const [name, p] of this.playersByName) {
+                    if (p === player) {
+                        this.playersByName.delete(name);
+                        break;
+                    }
+                }
+                this.playersByName.set(player.name, player);
             }
         }
     }
 
-    /** Returns an array of all currently cached player names */
-    public static getPlayerNames(): string[] {
-        return Array.from(this.playersByName.keys());
+    /** Returns an iterator of all currently cached player names */
+    public static *getPlayerNames(): IterableIterator<string> {
+        yield* this.playersByName.keys();
     }
 
     /** Returns a cached player by their unique ID */
@@ -100,8 +119,9 @@ export class PlayerCache {
 
     /** Iterator over players whose IDs exist in the provided Set */
     public static *filterByIds(ids: Set<string>): IterableIterator<Player> {
-        for (const [id, player] of this.playersById.entries()) {
-            if (ids.has(id)) yield player;
+        for (const id of ids) {
+            const player = this.playersById.get(id);
+            if (player) yield player;
         }
     }
 
@@ -124,7 +144,7 @@ export class PlayerCache {
             this.leaveSubscription = undefined;
         }
 
-        if (this.cleanupInterval) {
+        if (this.cleanupInterval !== undefined) {
             system.clearRun(this.cleanupInterval);
             this.cleanupInterval = undefined;
         }
