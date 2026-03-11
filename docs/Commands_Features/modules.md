@@ -194,18 +194,21 @@ The `Name-Spoof` module protects the server from players attempting to impersona
 ## !noclip
 ### At A Glance
 The `NoClip` detection module prevents players from phasing through solid blocks.  
-This is essential for catching exploits that bypass normal collision mechanics, ensuring fair gameplay. Level 4 staff can toggle it via chat or GUI.
+It is essential for catching exploits that bypass normal collision mechanics, ensuring fair gameplay. Level 4 staff can monitor it via chat or GUI alerts.
 
 ### How It Works
-- The module tracks player positions at short intervals (`CHECK_INTERVAL = 10` ticks) and monitors the **hitbox** for illegal movement through blocks.
-- Each player has a **voxel cache** representing blocks currently overlapping. The system performs a **fractional voxel sweep** within the player's hitbox to detect partial entry into solid blocks.
-- Players must exceed **7 consecutive phase detections** (`PHASE_FLAGS_REQUIRED`) before being flagged.
+- The module tracks player positions at short intervals (`CHECK_INTERVAL = 2` ticks) and monitors the **hitbox** for illegal movement through blocks.
+- Each player’s **bounding box (AABB)** is checked against the world using a **tolerance-aware swept AABB** method:
+  - **Corners:** All 8 corners of the swept bounding box are checked with `COLLISION_TOLERANCE` to reduce false positives.
+  - **Interior:** If corners intersect solid blocks, the interior voxels are scanned.
+  - **Ray-march:** A small fractional ray-step along the movement path detects diagonal clipping that the swept AABB may miss.
+- Players must exceed **3 consecutive phase detections** (`PHASE_FLAGS_REQUIRED`) before being flagged.
 - When flagged:
   - The player is **teleported back** to their previous location.
   - Staff with Level 4 clearance are **alerted** with the distance phased.
   - The player's phase flag count resets.
-- Players in **Creative** or **Spectator** mode, or those recently knocked back (<2 seconds), are exempt from detection.
-- Module automatically cleans up per-player tracking data when players leave the server.
+- Players in **Creative** or **Spectator** mode, or those recently damaged/knocked back (<2 seconds), are exempt from detection.
+- Module automatically **cleans up tracking data** when players leave the server.
 
 !> Required Clearance Level To Execute: `4`
 
