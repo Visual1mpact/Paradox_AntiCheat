@@ -248,7 +248,7 @@ function checkPlayer(player: Player) {
         data.phaseFlags++;
 
         if (data.phaseFlags >= PHASE_FLAGS_REQUIRED) {
-            player.sendMessage("§cYou have been detected phasing through blocks!");
+            player.sendMessage("§o§c[Paradox] You have been detected phasing through blocks!");
             alertStaff(player, distance(prev, cur));
             player.teleport(prev, { dimension: player.dimension });
             data.phaseFlags = 0;
