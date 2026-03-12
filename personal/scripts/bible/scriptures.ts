@@ -173,7 +173,7 @@ export const scriptureCommand: Command = {
             while (args.length > 0 && !validFlags.has(args[0])) {
                 result += (result ? " " : "") + args.shift();
             }
-            return result.replace(/[@"]/g, "");
+            return result.replace(/["@]/g, "");
         }
 
         while (args.length > 0) {

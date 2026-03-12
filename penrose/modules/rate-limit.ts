@@ -539,4 +539,8 @@ export function stopPacketHandler(): void {
         lockdownTimeout = undefined;
     }
     isLockedDown = false;
+
+    packetHandlerRef = null;
+    asyncJoinRef = null;
+    playerLeaveRef = null;
 }

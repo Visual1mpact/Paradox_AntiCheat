@@ -64,7 +64,7 @@ export const spoofLogCommand: Command = {
             .filter((arg) => !arg.startsWith("--"))
             .join(" ")
             .trim()
-            .replace(/[@"]/g, "")
+            .replace(/["@]/g, "")
             .toLowerCase();
 
         const spoofData = spoofDB.get("players") ?? {};

@@ -213,7 +213,7 @@ class GUIManager {
                 case "dropdown":
                     // Populate dropdown dynamically for players or entities
                     if (field.sourceType === "players") {
-                        field.options = PlayerCache.getPlayerNames();
+                        field.options = [...PlayerCache.getPlayerNames()];
                     } else if (field.sourceType === "entities") {
                         field.options = [
                             ...new Set(
@@ -267,7 +267,8 @@ class GUIManager {
                         break;
                     case "dropdown":
                         const selectedIndex = response.formValues[index++] as number;
-                        value = field.options?.[selectedIndex]?.trim() ?? "0";
+                        value = field.options?.[selectedIndex]?.trim();
+                        if (!value) continue;
                         break;
                     case "toggle":
                         const toggle = response.formValues[index++] as boolean;

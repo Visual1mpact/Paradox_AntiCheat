@@ -50,7 +50,7 @@ export const despawnCommand: Command = {
      */
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
-        const parameter = args.join(" ").trim().replace(/["@]/g, "");
+        const parameter = args.join(" ").replace(/["@]/g, "");
 
         const filter: EntityQueryOptions = { excludeTypes: ["player"] };
         const filteredEntities = world.getDimension(message.sender.dimension.id).getEntities(filter);

@@ -188,5 +188,8 @@ export function stopPacketListener() {
         cleanupTaskId = undefined;
     }
 
+    packetFrequency.clear();
+    lastWarning.clear();
+
     console.log("[Paradox] Packet spam detection stopped.");
 }

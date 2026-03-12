@@ -73,7 +73,7 @@ export const tpaCommand: Command = {
          * @returns {string} The cleaned player name.
          */
         function cleanName(name: string): string {
-            return name.replace(/[@"]/g, "").trim();
+            return name.trim().replace(/["@]/g, "");
         }
 
         /**

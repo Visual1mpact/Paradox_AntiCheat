@@ -363,6 +363,9 @@ export function stopPvPSystem() {
     if (projectileHitEntitySubscription) world.afterEvents.projectileHitEntity.unsubscribe(projectileHitEntitySubscription);
     if (effectAddSubscription) world.beforeEvents.effectAdd.unsubscribe(effectAddSubscription);
 
+    playerMessageTimestamps.clear();
+    playerDataMap.clear();
+
     pvpCleanupIntervalId = undefined;
     entityHurtSubscription = undefined;
     playerLeaveSubscription = undefined;

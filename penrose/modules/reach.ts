@@ -173,4 +173,7 @@ export function stopHitReachCheck() {
         world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
         hurtSubscription = undefined;
     }
+
+    playerHistory.clear();
+    cachedLocations.clear();
 }

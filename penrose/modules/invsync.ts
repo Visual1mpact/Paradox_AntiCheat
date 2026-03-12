@@ -57,6 +57,7 @@ export function stopInvSync() {
     if (intervalId) system.clearRun(intervalId);
 
     joinSub = leaveSub = respawnSub = intervalId = null;
+    pendingJoinChecks.clear();
     alertStaffSystem("§2[§7Paradox§2]§o§7 §cInvSync module stopped.");
 }
 

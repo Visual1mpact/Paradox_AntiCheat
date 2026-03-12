@@ -90,7 +90,7 @@ export const invCloneCommand: Command = {
         }
 
         // --- Inventory cloning logic ---
-        const playerName: string = args.join(" ").trim().replace(/[@"]/g, "");
+        const playerName: string = args.join(" ").trim().replace(/["@]/g, "");
         const target: Player | undefined = PlayerCache.getPlayerByName(playerName);
 
         if (!target || !target.isValid) {

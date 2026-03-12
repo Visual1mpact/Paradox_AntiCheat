@@ -39,8 +39,9 @@ export class PlayerCache {
             this.playersByName.set(player.name, player);
         }
 
-        // Subscribe to player join
+        // Subscribe to player spawn
         this.spawnSubscription = (ev: PlayerSpawnAfterEvent) => {
+            if (!ev.initialSpawn) return;
             const p = ev.player;
 
             if (!this.playersById.has(p.id)) {
@@ -69,25 +70,14 @@ export class PlayerCache {
      * Ensures the cache doesn't retain "ghost" players if leave events fail.
      */
     private static reconcileCache() {
-        const onlineIds = new Set<string>();
+        const onlinePlayers = world.getPlayers();
+
+        const onlineIds = new Set(onlinePlayers.map((p) => p.id));
+
         for (const [id, player] of this.playersById) {
             if (!onlineIds.has(id)) {
                 this.playersById.delete(id);
                 this.playersByName.delete(player.name);
-                continue;
-            }
-
-            // Ensure name cache stays accurate
-            const cached = this.playersByName.get(player.name);
-            if (cached !== player) {
-                // Remove any old entry pointing to this player
-                for (const [name, p] of this.playersByName) {
-                    if (p === player) {
-                        this.playersByName.delete(name);
-                        break;
-                    }
-                }
-                this.playersByName.set(player.name, player);
             }
         }
     }

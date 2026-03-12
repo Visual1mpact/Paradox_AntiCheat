@@ -144,4 +144,5 @@ export function startKillAuraCheck() {
 export function stopKillAuraCheck() {
     world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
     world.afterEvents.playerLeave.unsubscribe(handlePlayerLeave);
+    playerAttackData.clear();
 }
