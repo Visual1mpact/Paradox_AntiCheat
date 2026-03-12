@@ -1,6 +1,7 @@
 const { Vector3Builder, Vector3Utils } = await import("../node_modules/@minecraft/math/dist/minecraft-math");
 import { world, Player, system, EntityHurtBeforeEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { PlayerCache } from "../classes/player-cache";
 
 // CONFIGURATION CONSTANTS
 const MAX_ATTACKS_PER_SECOND = 14; // Maximum allowed attacks per second
@@ -87,6 +88,12 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     // Only track Player vs Player
     if (!(attacker instanceof Player) || !(target instanceof Player)) return;
 
+    const attackerId = attacker.id;
+
+    // Resolve live player from PlayerCache
+    const cachedAttacker = PlayerCache.getPlayerById(attackerId);
+    if (!cachedAttacker) return; // attacker is gone, skip
+
     const attackerLocation = new Vector3Builder(attacker.location.x, attacker.location.y, attacker.location.z);
     const targetLocation = new Vector3Builder(target.location.x, target.location.y, target.location.z);
     const distance = Vector3Utils.distance(attackerLocation, targetLocation);
@@ -94,7 +101,6 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     if (distance < 2) return;
 
     const currentTick = system.currentTick;
-    const attackerId = attacker.id;
 
     if (!playerAttackData.has(attackerId)) playerAttackData.set(attackerId, []);
     const attackTimes = playerAttackData.get(attackerId)!;
@@ -112,10 +118,24 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
 }
 
 /**
+ * Cleans up stored attack data when a player leaves the world.
+ *
+ * Without this cleanup, `playerAttackData` would retain entries for
+ * players that have disconnected, causing the Map to grow indefinitely
+ * over time on long-running servers.
+ *
+ * @param event - The playerLeave event containing the leaving player's ID.
+ */
+function handlePlayerLeave(event: { playerId: string }) {
+    playerAttackData.delete(event.playerId);
+}
+
+/**
  * Starts the killaura/reach detection system.
  */
 export function startKillAuraCheck() {
     world.beforeEvents.entityHurt.subscribe(handleHurtEvent);
+    world.afterEvents.playerLeave.subscribe(handlePlayerLeave);
 }
 
 /**
@@ -123,4 +143,5 @@ export function startKillAuraCheck() {
  */
 export function stopKillAuraCheck() {
     world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
+    world.afterEvents.playerLeave.unsubscribe(handlePlayerLeave);
 }
