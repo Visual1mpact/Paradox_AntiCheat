@@ -76,6 +76,21 @@ export const invseeCommand: Command = {
                 return;
             }
             const container = inv.container;
+
+            // --- Efficient early exit if inventory is empty ---
+            let hasItems = false;
+            for (let i = 0; i < container.size; i++) {
+                if (container.getItem(i)) {
+                    hasItems = true;
+                    break; // Stop immediately on first found item
+                }
+            }
+
+            if (!hasItems) {
+                message.sender.sendMessage(`§o§c[Paradox] Player "${member.name}" has an empty inventory. Nothing to view.`);
+                return;
+            }
+
             // Display the player's inventory
             const inventoryMessage = [
                 ` `,

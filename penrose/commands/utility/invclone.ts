@@ -110,6 +110,12 @@ export const invCloneCommand: Command = {
             if (item) inventoryItems.push(item.clone());
         }
 
+        // --- Early return if the inventory is empty ---
+        if (inventoryItems.length === 0) {
+            message.sender.sendMessage(`§o§c[Paradox] Player "${target.name}" has an empty inventory. Nothing to clone.`);
+            return;
+        }
+
         let chestCount = 0;
         let offset = 1;
 
