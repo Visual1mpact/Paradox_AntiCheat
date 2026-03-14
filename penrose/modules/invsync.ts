@@ -44,7 +44,7 @@ export async function startInvSync() {
     intervalId = system.runInterval(tickLoop, 100); // cleanup expired snapshots
 
     await snapshotAllPlayers();
-    alertStaffSystem("§2[§7Paradox§2]§o§7 §aInvSync module started.");
+    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync module §astarted§7.");
 }
 
 export function stopInvSync() {

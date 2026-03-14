@@ -82,7 +82,7 @@ export const invSyncCommand: Command = {
 
         // Display current module state.
         if (sub === "status") {
-            player.sendMessage(`§2[§7Paradox§2]§o§7 InvSync is currently ${enabled ? "§aENABLED" : "§4DISABLED"}§7.`);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 InvSync is currently ${enabled ? "§aenabled" : "§4disabled"}§7.`);
             return;
         }
 
@@ -91,7 +91,7 @@ export const invSyncCommand: Command = {
             if (!enabled) return player.sendMessage("§2[§7Paradox§2]§o§7 §c§oInvSync must be enabled first.");
 
             await forceSnapshotAll();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §a[InvSync] Snapshot forced for all online players.");
+            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Snapshot forced for all online players.");
             return;
         }
 
@@ -100,14 +100,14 @@ export const invSyncCommand: Command = {
             if (!enabled) return player.sendMessage("§2[§7Paradox§2]§o§7 §cInvSync must be enabled first.");
 
             await forceCheckAll();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §a[InvSync] Rejoin check forced for all online players.");
+            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Rejoin check forced for all online players.");
             return;
         }
 
         // Clear all stored snapshots and audit history.
         if (sub === "clear") {
             await clearAllSnapshots();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §6[InvSync] All stored snapshots cleared.");
+            player.sendMessage("§2[§7Paradox§2]§o§7 §§a[§7InvSync§a]§7 All stored snapshots cleared.");
             return;
         }
 

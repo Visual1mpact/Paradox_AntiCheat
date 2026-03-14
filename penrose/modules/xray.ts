@@ -279,7 +279,7 @@ function promptSafeZone(playerId: string, location: { x: number; y: number; z: n
     const player = PlayerCache.getPlayerById(playerId);
     if (!player) return;
 
-    player.sendMessage(`§2[§7Paradox§2]§o§7 §eYour mining activity is raising suspicion! §aYou can mark your current location as a Safe Zone for breaking ores.` + ` §a§oType "Yes" to create the Safe Zone`);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 §eYour mining activity is raising suspicion! §7You can mark your current location as a Safe Zone for breaking ores.` + ` §7§oType "§aYes§7" to create the Safe Zone`);
 
     awaitingSafeZoneResponse.set(playerId, location);
 }
@@ -296,7 +296,7 @@ function createSafeZone(playerId: string, location: { x: number; y: number; z: n
     safeZoneCooldowns.set(playerId, system.currentTick);
 
     const player = PlayerCache.getPlayerById(playerId);
-    player?.sendMessage("§2[§7Paradox§2]§o§7 §aSafe Zone created [§720 x 20 x 20§a]! You may safely break ores here without triggering alerts for the next 5 minutes.");
+    player?.sendMessage("§2[§7Paradox§2]§o§7 Safe Zone created §a[§720 §ax§7 20 §ax§7 20§a]§7! You may safely break ores here without triggering alerts for the next §a5 minutes§7.");
 }
 
 /* ============================================================
