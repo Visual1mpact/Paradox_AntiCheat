@@ -230,7 +230,7 @@ function allowList(event: PlayerSpawnAfterEvent): void {
 
     // Always allow the host
     if (opsecData.host?.id === player.id) {
-        player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and bypass the allowlist. Welcome back!");
+        player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and bypass the allow list. Welcome back!");
         return;
     }
 
