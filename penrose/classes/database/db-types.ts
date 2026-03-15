@@ -130,7 +130,7 @@ export type DisabledCommandsSchema = {
 export type TrustedPlayersSchema = {
     players: {
         [playerId: PlayerID]: {
-            Name: PlayerName;
+            name: PlayerName;
             knownNames: PlayerName[];
             firstSeen: number;
             lastSeen: number;

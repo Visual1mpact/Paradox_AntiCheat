@@ -41,7 +41,7 @@ function initializeEventHandlers() {
 async function handleSpoofCheck(player: Player): Promise<void> {
     const now = Date.now();
     const idKey = player.id;
-    const name = player.name;
+    const playerName = player.name;
     const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000;
 
     const allPlayers = spoofDB.get("players") ?? {};
@@ -68,8 +68,8 @@ async function handleSpoofCheck(player: Player): Promise<void> {
     // New player record
     if (!existing) {
         allPlayers[idKey] = {
-            Name: name,
-            knownNames: [name],
+            name: playerName, // store with lowercase property
+            knownNames: [playerName],
             firstSeen: now,
             lastSeen: now,
         };
@@ -78,8 +78,8 @@ async function handleSpoofCheck(player: Player): Promise<void> {
     }
 
     // Update existing player record
-    if (!existing.knownNames.includes(name)) {
-        existing.knownNames.push(name);
+    if (!existing.knownNames.includes(playerName)) {
+        existing.knownNames.push(playerName);
     }
     existing.lastSeen = now;
 
@@ -87,9 +87,9 @@ async function handleSpoofCheck(player: Player): Promise<void> {
     for (const [otherID, record] of Object.entries(allPlayers)) {
         if (otherID === idKey) continue;
 
-        if (record.knownNames.includes(name)) {
+        if (record.knownNames.includes(playerName)) {
             record.spoofAttempts ??= [];
-            record.spoofAttempts.push({ name, timestamp: now });
+            record.spoofAttempts.push({ name: playerName, timestamp: now });
 
             await spoofDB.set("players", allPlayers);
 

@@ -85,7 +85,7 @@ export const spoofLogCommand: Command = {
 
         // Find matching entry
         const matched = Object.entries(spoofData).find(([id, record]) => {
-            const nameMatch = record.Name.toLowerCase().includes(nameQuery);
+            const nameMatch = record.name.toLowerCase().includes(nameQuery);
             const knownMatch = record.knownNames.some((n) => n.toLowerCase().includes(nameQuery));
             const idMatch = id.toLowerCase().includes(nameQuery);
             return idMatch || nameMatch || knownMatch;
@@ -101,14 +101,14 @@ export const spoofLogCommand: Command = {
         if (clearRecord) {
             delete spoofData[matchedId];
             await spoofDB.set("players", spoofData);
-            sender.sendMessage(`§o§c[Paradox] Record for "${matchedRecord.Name}" (ID: ${matchedId}) has been cleared.`);
+            sender.sendMessage(`§o§c[Paradox] Record for "${matchedRecord.name}" (ID: ${matchedId}) has been cleared.`);
             return;
         }
 
         const formatTimestamp = (ms: number): string => new Date(ms).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
 
         const lines: string[] = [
-            `§2[§7Paradox§2] §fSpoof Info for: §6${matchedRecord.Name}`,
+            `§2[§7Paradox§2] §fSpoof Info for: §6${matchedRecord.name}`,
             `§7Known Aliases: §f${matchedRecord.knownNames.join(", ")}`,
             `§7First Seen: §f${formatTimestamp(matchedRecord.firstSeen)}`,
             `§7Last Seen: §f${formatTimestamp(matchedRecord.lastSeen)}`,
