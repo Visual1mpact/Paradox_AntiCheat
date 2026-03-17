@@ -129,12 +129,24 @@ function cachePlayerInventory(player: Player) {
  */
 function startCombat(player: Player) {
     const currentTick = system.currentTick;
-    player.setDynamicProperty("pvpCooldown", currentTick + cooldownTicks);
+    const cooldownEnd = currentTick + cooldownTicks;
+
+    player.setDynamicProperty("pvpCooldown", cooldownEnd);
 
     if (canSendMessage(player.id)) {
         const remainingTime = formatTime(Math.floor(cooldownTicks / 20));
         player.sendMessage(`§2[§7Paradox§2]§o§7 You are in PvP combat! Logging out is disabled for ${remainingTime}.`);
     }
+
+    system.runTimeout(() => {
+        const p = PlayerCache.getPlayerById(player.id);
+        if (!p) return;
+
+        const storedCooldown = p.getDynamicProperty("pvpCooldown") as number;
+        if (storedCooldown === cooldownEnd) {
+            p.sendMessage("§2[§7Paradox§2]§o§7 Your PvP combat timer has expired. You may now safely log out.");
+        }
+    }, cooldownTicks);
 }
 
 /**
