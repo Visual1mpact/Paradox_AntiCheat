@@ -19,7 +19,9 @@ export const invCloneCommand: Command = {
         formType: "ActionFormData",
         title: "Inventory Cloner",
         description:
-            "Clone a player's inventory into chests for inspection, or remove previously cloned chests.\n\n" + "§7• Cloned chests include lore indicating the source player.\n" + "§7• Use 'Remove Cloned Chests' after inspection to clear them safely.",
+            "Clone a player's inventory into chests for inspection, or remove previously cloned chests.\n\n" +
+            "§7• Cloned chests include lore indicating the source player.\n" +
+            "§7• Use 'Remove Cloned Chests' after inspection to clear them safely.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

@@ -49,7 +49,7 @@ export const pvpToggleCooldownCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Toggle Cooldown",
-        description: "Set a custom cooldown time (in seconds) for toggling PvP.\n\n" + "§7• Minimum: 10 seconds\n" + "§7• Maximum: 3600 seconds (1 hour)\n",
+        description: "Set a custom cooldown time (in seconds) for toggling PvP.\n\n" + "§7• Minimum: 10 seconds\n" + "§7• Maximum: 3600 seconds (1 hour)\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -119,7 +119,7 @@ export const pvpCooldownCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Action Cooldown",
-        description: "Set a custom cooldown time (in seconds) for PvP actions.\n\n" + "§7• Minimum: 10 seconds\n" + "§7• Maximum: 3600 seconds (1 hour)\n",
+        description: "Set a custom cooldown time (in seconds) for PvP actions.\n\n" + "§7• Minimum: 10 seconds\n" + "§7• Maximum: 3600 seconds (1 hour)\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -190,7 +190,7 @@ export const pvpToggleCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Settings",
-        description: "Choose an action to manage your PvP settings or check the server status.\n\n" + "§7• Toggle your own PvP status.\n" + "§7• Toggle global PvP (requires admin clearance).\n" + "§7• Check current PvP status.\n",
+        description: "Choose an action to manage your PvP settings or check the server status.\n\n" + "§7• Toggle your own PvP status.\n" + "§7• Toggle global PvP (requires admin clearance).\n" + "§7• Check current PvP status.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

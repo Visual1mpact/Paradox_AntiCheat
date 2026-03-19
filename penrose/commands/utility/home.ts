@@ -18,7 +18,7 @@ export const homeCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Home Management",
-        description: "Manage your home locations.\n\n" + "§7• Set a new home at your current location.\n" + "§7• Delete an existing home.\n" + "§7• Teleport to a saved home.\n" + "§7• List all your saved homes.",
+        description: "Manage your home locations.\n\n" + "§7• Set a new home at your current location.\n" + "§7• Delete an existing home.\n" + "§7• Teleport to a saved home.\n" + "§7• List all your saved homes.\n\n",
         commandOrder: "command-arg",
         actions: [
             { name: "Set Home", command: ["set"], description: "Set a new home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },

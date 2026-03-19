@@ -14,7 +14,7 @@ export const whitelistCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Whitelist Management",
-        description: "Manage the server whitelist.\n\n" + "§7• Add a player to grant them access.\n" + "§7• Remove a player to revoke access.\n" + "§7• List all whitelisted players currently on the server.\n" + "§7• Player names are case-sensitive.",
+        description: "Manage the server whitelist.\n\n" + "§7• Add a player to grant them access.\n" + "§7• Remove a player to revoke access.\n" + "§7• List all whitelisted players currently on the server.\n" + "§7• Player names are case-sensitive.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

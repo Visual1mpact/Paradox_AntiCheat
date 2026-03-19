@@ -35,7 +35,7 @@ export const channelCommand: Command = {
             "§7• Join an existing channel to participate.\n" +
             "§7• Invite players to your channel.\n" +
             "§7• Leave a channel you are in.\n" +
-            "§7• Transfer ownership of a channel to another player.",
+            "§7• Transfer ownership of a channel to another player.\n\n",
         commandOrder: "command-arg",
         actions: [
             { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
