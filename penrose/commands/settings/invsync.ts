@@ -27,7 +27,19 @@ export const invSyncCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Sync Settings",
-        description: "Manage the InvSync module to prevent rejoin-based duplication exploits and investigate anomalies.\n\n",
+        description:
+            "Manage the Inventory Synchronization (InvSync) module to prevent duplication exploits and investigate anomalies.\n\n" +
+            "§7• §fEnable / Disable Module§7: Toggle InvSync to start or stop inventory tracking.\n" +
+            "§7• §fForce Snapshot§7: Capture the current inventory state of all online players.\n" +
+            "§7• §fForce Recheck§7: Immediately run anomaly detection across all players.\n" +
+            "§7• §fClear Snapshots§7: Remove all stored inventory snapshots and audit history.\n" +
+            "§7• §fStatus§7: Display whether InvSync is currently enabled or disabled.\n" +
+            "§7• §fForensic Report§7: View detailed inventory and anomaly history for a specific player.\n\n" +
+            "§7InvSync Rules:\n" +
+            "§7• Always enable InvSync to track player inventories properly.\n" +
+            "§7• Forensic reports highlight items exceeding normal stack sizes (§c>64§7).\n" +
+            "§7• Only administrators with clearance level 4 can modify or access forensic tools.\n\n" +
+            "§7All interactions are logged for administrative review.\n\n",
         commandOrder: "command-arg",
         actions: [
             { name: "Enable / Disable", icon: "textures/ui/toggle_on.png" },

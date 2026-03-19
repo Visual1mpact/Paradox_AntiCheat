@@ -14,7 +14,11 @@ export const unbanCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Unban Player",
-        description: "Unban a player from the local or global ban list.\n\n",
+        description:
+            "Unban a player from the local or global ban list.\n\n" +
+            "§7• Enter the name of the player to remove from the ban list.\n" +
+            "§7• Toggle 'Global Unban' to remove the player from all worlds.\n" +
+            "§7• Only administrators with sufficient clearance can perform this action.",
         commandOrder: "arg-command",
         actions: [
             {

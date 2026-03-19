@@ -14,7 +14,16 @@ export const allowlistCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Allowlist Management",
-        description: "Manage the server allowlist. You can add, remove, list players, or disable.\n\n",
+        description:
+            "Manage the server allowlist to control which players can join.\n\n" +
+            "§7• §fAdd Player§7: Add a player to the allowlist so they can join the server.\n" +
+            "§7• §fRemove Player§7: Remove a player from the allowlist, preventing them from joining.\n" +
+            "§7• §fList Players§7: View all players currently on the allowlist.\n" +
+            "§7• §fDisable Allowlist§7: Turn off the allowlist and clear all entries.\n\n" +
+            "§7Allowlist Rules:\n" +
+            "§7• Only administrators with sufficient clearance can manage the allowlist.\n" +
+            "§7• Player names are case sensitive and must be entered accurately.\n" +
+            "§7• All allowlist actions are logged for administrative review.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

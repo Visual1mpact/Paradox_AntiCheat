@@ -32,7 +32,14 @@ export const punishCommand: Command = {
         actions: [
             {
                 name: "Select Punishments",
-                description: "Choose the punishment to apply (Inventory, Equipment, Ender Chest).",
+                description:
+                    "Remove items from a player's inventory, equipment, and/or ender chest.\n\n" +
+                    "§7• §fInventory§7: Clears all items from the player's inventory.\n" +
+                    "§7• §fEquipment§7: Removes all equipped items (armor, held items).\n" +
+                    "§7• §fEnder Chest§7: Clears all items in the player's ender chest.\n\n" +
+                    "§7Notes:\n" +
+                    "§7• If no option is selected, all containers will be cleared.\n" +
+                    "§7• Only administrators with security clearance 4 can use this command.\n",
                 requiredFields: ["punishmentType"],
                 generateModalForm: true,
                 icon: "textures/ui/warning_sad_steve.png",

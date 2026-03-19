@@ -16,8 +16,13 @@ export const opsecCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "OpSec Command",
-        description: "Change a player's security clearance level.\n\n",
-        commandOrder: "command-arg",
+        description:
+            "Modify a player's security clearance level.\n\n" +
+            "§7• §fChange Clearance§7: Select a player and assign them a clearance level (1-3).\n" +
+            "§7• §fRestrictions§7: Level 4 clearance cannot be set using this command; use the OP command instead.\n\n" +
+            "§7Notes:\n" +
+            "§7• Player names are case-sensitive.\n" +
+            "§7• Only administrators with security clearance 4 can use this command.\n\n",
         actions: [
             {
                 name: "Change Clearance",

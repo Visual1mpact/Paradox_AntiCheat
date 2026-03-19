@@ -15,7 +15,15 @@ export const banCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Ban Player",
-        description: "Manage banned players by adding new bans or listing existing ones.\n\n",
+        description:
+            "Manage banned players on the server. You can ban players with optional reasons or view the current banned list.\n\n" +
+            "§7• §fBan Player§7: Add a player to the banlist with an optional reason.\n" +
+            "§7• §fList Banned Players§7: View all players currently banned and their reasons.\n\n" +
+            "§7Ban Rules:\n" +
+            "§7• Players with the highest security clearance cannot be banned.\n" +
+            "§7• Whitelisted players are immune from bans.\n" +
+            "§7• Multi-word names and reasons are supported.\n" +
+            "§7• All bans are logged for administrative review.\n\n",
         commandOrder: "arg-command",
         actions: [
             {

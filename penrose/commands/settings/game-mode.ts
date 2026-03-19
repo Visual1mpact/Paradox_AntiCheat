@@ -30,7 +30,15 @@ export const gameModeCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Configure Game Modes",
-        description: "Toggle game modes and enable or disable gamemode checks.\n\n",
+        description:
+            "Manage which game modes are allowed on the server and control gamemode checks.\n\n" +
+            "§7• §fToggle Game Modes§7: Enable or disable Adventure, Creative, Survival, or Spectator modes.\n" +
+            "§7• §fEnable/Disable Gamemode Check§7: Turn the gamemode enforcement system on or off.\n" +
+            "§7• §fList Current Configurations§7: See the current status of all game modes and the gamemode check.\n\n" +
+            "§7Game Mode Rules:\n" +
+            "§7• At least one game mode must remain enabled.\n" +
+            "§7• Disabled modes cannot be entered by players until re-enabled.\n" +
+            "§7• Gamemode checks automatically enforce allowed modes for all players.\n\n",
         commandOrder: "command-arg",
         actions: [
             // Single button to generate modal form with toggles for game modes

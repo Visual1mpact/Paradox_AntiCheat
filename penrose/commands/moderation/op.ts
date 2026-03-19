@@ -230,7 +230,14 @@ export const opCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Grant OP Command",
-        description: "Grant OP to a player or see who has OP.\n\n",
+        description:
+            "Grant Paradox-OP to a player or view the current administrators.\n\n" +
+            "§7• §fGrant OP§7: Select a player to grant security clearance level 4.\n" +
+            "§7• §fList OP Players§7: View all players who currently have Paradox-OP.\n\n" +
+            "§7Notes:\n" +
+            "§7• Only the host can grant OP to others.\n" +
+            "§7• First-time OP initialization requires a server operator.\n" +
+            "§7• Player names are case-sensitive.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

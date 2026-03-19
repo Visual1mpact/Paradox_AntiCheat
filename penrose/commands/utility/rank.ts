@@ -30,7 +30,7 @@ export const setRankCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Set or Reset Rank",
-        description: "Set or reset a player's chat rank, or toggle rank functionality globally.\n\n",
+        description: "Manage chat ranks for players.\n\n" + "§7• Set a player's rank.\n" + "§7• Reset a player's rank.\n" + "§7• Enable or disable ranks globally (admin only).\n",
         commandOrder: "command-arg",
         actions: [
             {

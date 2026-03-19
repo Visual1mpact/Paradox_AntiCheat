@@ -22,7 +22,14 @@ export const kickCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Kick Command",
-        description: "Kick a player from the server with a specified reason.\n\n",
+        description:
+            "Kick a player from the server with an optional reason.\n\n" +
+            "§7• §fTarget Player§7: Choose the player to kick.\n" +
+            "§7• §fReason§7: Optional message explaining why the player was kicked.\n\n" +
+            "§7Notes:\n" +
+            "§7• Multi-word reasons are supported.\n" +
+            "§7• Player names are case-sensitive.\n" +
+            "§7• If no reason is provided, a default message 'Farewell' will be used.\n\n",
         commandOrder: "arg-command",
         actions: [
             {

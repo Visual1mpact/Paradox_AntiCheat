@@ -27,7 +27,15 @@ export const deopCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Deop Player",
-        description: "Remove Paradox-Op permissions from a player.\n\n",
+        description:
+            "Remove Paradox-Op permissions from a player.\n\n" +
+            "§7• §fSelect Online Player§7: Remove permissions from a currently online player.\n" +
+            "§7• §fInput Player Name§7: Manually input a player name to remove permissions.\n\n" +
+            "§7Rules & Notes:\n" +
+            "§7• The host of the server cannot be removed.\n" +
+            "§7• Player names are case-sensitive; use exact spelling.\n" +
+            "§7• Offline players can also be removed if they exist in the security clearance list.\n" +
+            "§7• Removed players will have their security clearance reset to level 1.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

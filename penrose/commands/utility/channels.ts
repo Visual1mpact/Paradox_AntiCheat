@@ -29,7 +29,13 @@ export const channelCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Channel Management",
-        description: "Select an action to manage channels.\n\n",
+        description:
+            "Manage chat channels.\n\n" +
+            "§7• Create a channel to host private conversations.\n" +
+            "§7• Join an existing channel to participate.\n" +
+            "§7• Invite players to your channel.\n" +
+            "§7• Leave a channel you are in.\n" +
+            "§7• Transfer ownership of a channel to another player.",
         commandOrder: "command-arg",
         actions: [
             { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },

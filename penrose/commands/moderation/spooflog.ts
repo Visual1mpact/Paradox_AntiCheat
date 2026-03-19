@@ -16,7 +16,12 @@ export const spoofLogCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Check or Clear Spoof Logs",
-        description: "Enter the name of the player to view or clear spoofing attempts, or clear all logs.",
+        description:
+            "Inspect or clear spoofing history for a player.\n\n" +
+            "§7• Enter a player's name to view their spoof history.\n" +
+            "§7• Check 'Clear Spoof Logs' to remove that player's record.\n" +
+            "§7• Click 'Clear All Spoof Logs' to wipe the entire spoof database.\n" +
+            "§7• Only administrators with security clearance 4 can perform these actions.",
         commandOrder: "command-arg",
         actions: [
             {

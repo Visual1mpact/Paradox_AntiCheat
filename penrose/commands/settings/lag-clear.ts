@@ -17,7 +17,14 @@ export const lagClearCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Lag Clear Module Settings",
-        description: "Configure the Lag Clear module to automatically clear items and entities with a custom timer. Specify hours, minutes, and seconds to set the delay for the clearing operation.\n\n",
+        description:
+            "Manage the Lag Clear module to automatically remove excess items and entities from the world.\n\n" +
+            "§7• §fSet LagClear Timer§7: Define the interval for automatic clearing by specifying hours, minutes, and seconds.\n" +
+            "§7• §fEnable / Disable Module§7: Turn the Lag Clear system on or off.\n\n" +
+            "§7Lag Clear Rules:\n" +
+            "§7• Default timer is 10 minutes if no arguments are provided.\n" +
+            "§7• Timer settings persist across server restarts.\n" +
+            "§7• Only administrators with clearance level 4 can modify or execute LagClear commands.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

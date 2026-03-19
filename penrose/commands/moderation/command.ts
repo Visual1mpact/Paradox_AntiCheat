@@ -17,7 +17,16 @@ export const command: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Command Management",
-        description: "Select an action to enable, disable, or list commands.\n\n",
+        description:
+            "Manage server commands dynamically. You can enable, disable, or view the status of commands.\n\n" +
+            "§7• §fEnable Command§7: Reactivate one or more commands that are currently disabled.\n" +
+            "§7• §fDisable Command§7: Temporarily deactivate commands to prevent their use.\n" +
+            "§7• §fList Commands§7: View which commands are currently enabled or disabled.\n\n" +
+            "§7Command Rules:\n" +
+            "§7• The `command` command itself cannot be disabled.\n" +
+            "§7• Only valid commands in the registry can be enabled or disabled.\n" +
+            "§7• Disabled commands record metadata including who disabled them and when.\n" +
+            "§7• All results are displayed in a tree-style structured message.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

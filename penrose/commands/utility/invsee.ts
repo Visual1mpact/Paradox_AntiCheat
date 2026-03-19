@@ -16,7 +16,7 @@ export const invseeCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Viewer",
-        description: "View another player's inventory.\n\n",
+        description: "View the inventory of another player.\n\n" + "§7• Select a player from the dropdown to display their items.\n" + "§7• You can see item type, quantity, and enchantments if present.",
         commandOrder: "command-arg",
         actions: [
             {

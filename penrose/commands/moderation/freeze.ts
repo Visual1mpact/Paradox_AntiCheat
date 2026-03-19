@@ -131,7 +131,15 @@ export const imprisonCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Imprison Command",
-        description: "Imprison or release a player with moderation-level control.\n\n",
+        description:
+            "Imprison or release a player with moderation-level control.\n\n" +
+            "§7• §fImprison Player§7: Freezes the player, applies weakness effect, and builds a prison around them.\n" +
+            "§7• §fRelease Player§7: Removes prison, restores movement and camera control, and returns the player to their original location and dimension.\n\n" +
+            "§7Rules & Notes:\n" +
+            "§7• Players who are already imprisoned will be released.\n" +
+            "§7• Bots or NPCs may not fully respond to freezing/unfreezing.\n" +
+            "§7• Prison location is dynamically calculated based on current player position.\n" +
+            "§7• Original location and dimension are restored upon release.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

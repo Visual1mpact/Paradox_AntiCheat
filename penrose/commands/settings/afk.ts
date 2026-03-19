@@ -17,7 +17,14 @@ export const afkCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "AFK Module Settings",
-        description: "Configure the AFK check module to automatically kick players who are AFK.\n\n",
+        description:
+            "Configure the AFK check module to automatically monitor and kick idle players.\n\n" +
+            "§7• §fSet AFK Timer§7: Define the timeout duration (hours, minutes, seconds) before a player is considered AFK.\n" +
+            "§7• §fEnable / Disable§7: Toggle the AFK module on or off.\n\n" +
+            "§7AFK Module Rules:\n" +
+            "§7• Only administrators with clearance level 4 can modify AFK settings.\n" +
+            "§7• The module automatically kicks players who exceed the configured idle time.\n" +
+            "§7• Changes to the timer take effect immediately upon updating the settings.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

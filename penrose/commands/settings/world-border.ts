@@ -27,7 +27,18 @@ export const worldBorderCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "World Border Management",
-        description: "Manage the world border settings for each dimension.\n\n",
+        description:
+            "Configure the world border sizes for each dimension and restrict player movement outside the set borders.\n\n" +
+            "§7• §fSet Overworld Border§7: Define the size limit for the Overworld.\n" +
+            "§7• §fSet Nether Border§7: Define the size limit for the Nether.\n" +
+            "§7• §fSet End Border§7: Define the size limit for the End.\n" +
+            "§7• §fSet Multiple Borders§7: Adjust two or all three dimension borders at once.\n" +
+            "§7• §fDisable World Border§7: Turn off border restrictions entirely.\n" +
+            "§7• §fList Current Settings§7: Display the current border sizes and enabled status.\n\n" +
+            "§7World Border Rules:\n" +
+            "§7• Borders prevent players from moving beyond the configured limits.\n" +
+            "§7• Only administrators with clearance level 4 can modify borders.\n" +
+            "§7• Changes take effect immediately upon updating the settings.\n\n",
         commandOrder: "command-arg",
         actions: [
             {

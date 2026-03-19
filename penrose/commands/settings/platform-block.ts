@@ -16,7 +16,16 @@ export const platformBlockCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Platform Block Settings",
-        description: "Select a platform to manage blocking/allowing players.\n\n",
+        description:
+            "Control which platforms are allowed to join the server and view current restrictions.\n\n" +
+            "§7• §fConsole Platform§7: Block or allow players connecting via consoles (Xbox, PlayStation, etc.).\n" +
+            "§7• §fDesktop Platform§7: Block or allow players connecting via desktop clients.\n" +
+            "§7• §fMobile Platform§7: Block or allow players connecting via mobile devices.\n" +
+            "§7• §fList Current Restrictions§7: View the current blocked/allowed status for all platforms.\n\n" +
+            "§7Platform Rules:\n" +
+            "§7• You cannot block your own platform while issuing the command.\n" +
+            "§7• At least one platform must remain unblocked at all times.\n" +
+            "§7• Only administrators with clearance level 4 can modify platform restrictions.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
