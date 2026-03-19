@@ -34,7 +34,7 @@ export const punishCommand: Command = {
             "§7• §fEnder Chest§7: Clears all items in the player's ender chest.\n\n" +
             "§7Notes:\n" +
             "§7• If no option is selected, all containers will be cleared.\n" +
-            "§7• Only administrators with security clearance 4 can use this command.\n",
+            "§7• Only administrators with security clearance 4 can use this command.\n\n",
         commandOrder: "arg-command",
         actions: [
             {
