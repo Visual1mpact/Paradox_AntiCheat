@@ -24,6 +24,22 @@ type LagClearCheckSettings = {
     seconds: number;
 };
 
+/**
+ * Schema for the chestLocks database.
+ * Each key is a unique block location key (dimension + X_Y_Z).
+ * Value stores the player who owns/locked the chest.
+ */
+export type ChestLocksSchema = {
+    [blockLocationKey: string]: {
+        /** The player name who owns/locked this chest */
+        owner: PlayerName;
+        /** Optional: track last access timestamp (ms) */
+        lastAccessed?: number;
+        /** Optional: access log of {player, time} */
+        accessLog?: { player: PlayerName; time: number }[];
+    };
+};
+
 // Settings schema for game mode enforcement
 export type GamemodeCheckSettings = {
     Adventure: boolean;
@@ -85,6 +101,7 @@ export type ModuleSettingsMap = {
     worldBorderCheck_b: WorldBorderSettings;
     invSync_b: undefined; // This module has no configurable settings
     noClipCheck_b: undefined; // This module has no configurable settings
+    chestLock_b: undefined; // This module has no configurable settings
 };
 
 /**

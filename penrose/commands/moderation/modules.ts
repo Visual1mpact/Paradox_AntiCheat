@@ -64,6 +64,7 @@ export const modulesStatusCommand: Command = {
             visionCheck_b: "visioncheck",
             worldBorderCheck_b: "worldborder",
             xrayDetection_b: "xray",
+            chestLock_b: "chestforensic",
         };
 
         const entries = paradoxModulesDB.entries();

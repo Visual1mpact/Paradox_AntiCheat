@@ -70,8 +70,8 @@ export interface DynamicField {
     /** Dropdown options */
     options?: string[];
 
-    /** Automatically populate dropdown with players or entities */
-    sourceType?: "players" | "entities";
+    /** Automatically populate dropdown with players or entities or chests */
+    sourceType?: "players" | "entities" | "chests";
 
     /** Required fields that must be filled before execution */
     requiredFields?: string[];

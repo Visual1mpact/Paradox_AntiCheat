@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
-import { commandHandler } from "../../event-listeners/world-initialize";
+import { chestLockDB, commandHandler } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoESImport from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/player-cache";
@@ -211,7 +211,7 @@ class GUIManager {
                     form.textField(formattedName, formattedPlaceholder);
                     break;
                 case "dropdown":
-                    // Populate dropdown dynamically for players or entities
+                    // Populate dropdown dynamically based on sourceType
                     if (field.sourceType === "players") {
                         field.options = [...PlayerCache.getPlayerNames()];
                     } else if (field.sourceType === "entities") {
@@ -223,7 +223,14 @@ class GUIManager {
                                     .map((e) => e.typeId.replace("minecraft:", ""))
                             ),
                         ];
+                    } else if (field.sourceType === "chests") {
+                        // Pull all locked chest keys from chestLockDB
+                        field.options = [...chestLockDB.listPointers()].map((ptr) => {
+                            const key = ptr.split("/").pop() ?? "";
+                            return key.replace(/^minecraft:/, ""); // remove prefix for display
+                        });
                     }
+
                     form.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });
                     break;
                 case "toggle":
@@ -269,6 +276,11 @@ class GUIManager {
                         const selectedIndex = response.formValues[index++] as number;
                         value = field.options?.[selectedIndex]?.trim();
                         if (!value) continue;
+
+                        // Re-append minecraft: for chest keys
+                        if (field.sourceType === "chests" && !value.startsWith("minecraft:")) {
+                            value = `minecraft:${value}`;
+                        }
                         break;
                     case "toggle":
                         const toggle = response.formValues[index++] as boolean;
