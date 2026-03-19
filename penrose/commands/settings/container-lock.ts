@@ -30,7 +30,7 @@ export const chestForensicCommand: Command = {
             "§7• Use a §fstick§7 on a chest to lock it to yourself.\n" +
             "§7• Use a §fstick§7 again to unlock it (owner or admins only).\n" +
             "§7• Locked chests prevent access and breaking by other players.\n\n" +
-            "§7All interactions are logged for administrative review.\n",
+            "§7All interactions are logged for administrative review.\n\n",
         commandOrder: "command-arg",
 
         actions: [
