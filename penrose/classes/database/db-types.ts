@@ -32,7 +32,9 @@ type LagClearCheckSettings = {
 export type ChestLocksSchema = {
     [blockLocationKey: string]: {
         /** The player name who owns/locked this chest */
-        owner: PlayerName;
+        owner?: PlayerName;
+        /** The player name who placed the block in the world */
+        placedBy?: PlayerName;
         /** Optional: track last access timestamp (ms) */
         lastAccessed?: number;
         /** Optional: access log of {player, time} */

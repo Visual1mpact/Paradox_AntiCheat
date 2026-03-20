@@ -1,4 +1,4 @@
-import { Block, Dimension, Player, PlayerBreakBlockBeforeEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server";
+import { Block, Dimension, Player, PlayerBreakBlockAfterEvent, PlayerBreakBlockBeforeEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { chestLockDB } from "../event-listeners/world-initialize";
 
@@ -88,7 +88,7 @@ function hasLevel4Clearance(player: Player): boolean {
  *
  * @param {string} message - The message to send.
  */
-function notifyLevel4Players(message: string) {
+function notifyLevel4Players(message: string): void {
     getSecurityClearanceLevel4Players().forEach((p) => p.sendMessage(message));
 }
 
@@ -112,7 +112,7 @@ function getChestOwner(block: Block): string | null {
  * @param {Block} block - The chest block.
  * @param {string} playerName - The player accessing the chest.
  */
-async function logChestAccess(block: Block, playerName: string) {
+async function logChestAccess(block: Block, playerName: string): Promise<void> {
     const key = getCanonicalChestKey(block);
     const timestamp = Date.now();
     const entry = chestLockDB.get(key);
@@ -122,6 +122,7 @@ async function logChestAccess(block: Block, playerName: string) {
     if (entry) {
         const updated = {
             ...entry,
+            placedBy: entry.placedBy,
             lastAccessed: timestamp,
             accessLog: entry.accessLog ? [...entry.accessLog, logEntry] : [logEntry],
         };
@@ -140,7 +141,7 @@ async function logChestAccess(block: Block, playerName: string) {
  *
  * @param {number} retentionDays - Number of days to keep logs (default: 30).
  */
-async function pruneOldLogs(retentionDays = 30) {
+async function pruneOldLogs(retentionDays = 30): Promise<void> {
     const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
 
     for (const [key, value] of chestLockDB.entries()) {
@@ -162,7 +163,7 @@ async function pruneOldLogs(retentionDays = 30) {
  *
  * @param {PlayerInteractWithBlockBeforeEvent} event
  */
-async function chestLockBefore(event: PlayerInteractWithBlockBeforeEvent) {
+async function chestLockBefore(event: PlayerInteractWithBlockBeforeEvent): Promise<void> {
     const { block, player } = event;
     if (!isStorageBlock(block)) return;
 
@@ -189,18 +190,28 @@ async function chestLockBefore(event: PlayerInteractWithBlockBeforeEvent) {
  *
  * @param {PlayerInteractWithBlockAfterEvent} event
  */
-async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent) {
+async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent): Promise<void> {
     const { block, player, itemStack } = event;
     if (!isStorageBlock(block)) return;
     if (!itemStack || itemStack.typeId !== "minecraft:stick") return;
 
     const key = getCanonicalChestKey(block);
-    const owner = getChestOwner(block);
+    const entry = chestLockDB.get(key);
+    const owner = entry?.owner ?? null;
+    const placer = entry?.placedBy ?? null;
     const timestamp = Date.now();
 
     if (!owner) {
+        // Enforce placement ownership
+        if (placer && placer !== player.name && !hasLevel4Clearance(player)) {
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Only the player who placed this can lock it.`);
+            return;
+        }
+
         await chestLockDB.set(key, {
+            ...entry,
             owner: player.name,
+            placedBy: placer ?? player.name, // fallback if unknown
             lastAccessed: timestamp,
             accessLog: [{ player: player.name, time: timestamp }],
         });
@@ -224,7 +235,7 @@ async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent) {
  *
  * @param {PlayerBreakBlockBeforeEvent} event
  */
-async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent) {
+async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent): Promise<void> {
     const { block, player } = event;
     if (!isStorageBlock(block)) return;
 
@@ -240,6 +251,47 @@ async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent) {
     }
 }
 
+/**
+ * Handles cleanup AFTER a storage block is successfully broken.
+ * Removes all associated data including ownership, placement, and access logs.
+ *
+ * @param {PlayerBreakBlockAfterEvent} event - The block break event data.
+ */
+async function chestLockBreakAfter(event: PlayerBreakBlockAfterEvent): Promise<void> {
+    const { block } = event;
+
+    if (!isStorageBlock(block)) return;
+
+    const key = getCanonicalChestKey(block);
+
+    // Completely remove all data (owner + placedBy + logs)
+    await chestLockDB.delete(key);
+}
+
+/**
+ * Handles storage block placement AFTER it occurs.
+ * Records the player who placed the block if no existing record is found.
+ *
+ * @param {PlayerPlaceBlockAfterEvent} event - The block placement event data.
+ */
+async function chestLockPlaceAfter(event: PlayerPlaceBlockAfterEvent): Promise<void> {
+    const { block, player } = event;
+
+    if (!isStorageBlock(block)) return;
+
+    const key = getCanonicalChestKey(block);
+    const existing = chestLockDB.get(key);
+
+    // Don't overwrite if already tracked (important for double chests / reloads)
+    if (!existing) {
+        await chestLockDB.set(key, {
+            placedBy: player.name,
+            lastAccessed: Date.now(),
+            accessLog: [],
+        });
+    }
+}
+
 /** ------------------- MODULE CONTROL ------------------- */
 
 /**
@@ -248,6 +300,8 @@ async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent) {
 let beforeSub: ((event: PlayerInteractWithBlockBeforeEvent) => void) | null = null;
 let afterSub: ((event: PlayerInteractWithBlockAfterEvent) => void) | null = null;
 let breakSub: ((event: PlayerBreakBlockBeforeEvent) => void) | null = null;
+let afterBreakSub: ((event: PlayerBreakBlockAfterEvent) => void) | null = null;
+let afterPlaceSub: ((event: PlayerPlaceBlockAfterEvent) => void) | null = null;
 let intervalHandle: number | null = null;
 
 /**
@@ -259,10 +313,14 @@ function startChestLock() {
     beforeSub = (event) => chestLockBefore(event);
     afterSub = (event) => chestLockAfter(event);
     breakSub = (event) => chestLockBreakBefore(event);
+    afterBreakSub = (event) => chestLockBreakAfter(event);
+    afterPlaceSub = (event) => chestLockPlaceAfter(event);
 
     world.beforeEvents.playerInteractWithBlock.subscribe(beforeSub);
     world.afterEvents.playerInteractWithBlock.subscribe(afterSub);
     world.beforeEvents.playerBreakBlock.subscribe(breakSub);
+    world.afterEvents.playerBreakBlock.subscribe(afterBreakSub);
+    world.afterEvents.playerPlaceBlock.subscribe(afterPlaceSub);
 
     intervalHandle = system.runInterval(() => pruneOldLogs(30), 72000);
 }
@@ -274,10 +332,12 @@ function stopChestLock() {
     if (beforeSub) world.beforeEvents.playerInteractWithBlock.unsubscribe(beforeSub);
     if (afterSub) world.afterEvents.playerInteractWithBlock.unsubscribe(afterSub);
     if (breakSub) world.beforeEvents.playerBreakBlock.unsubscribe(breakSub);
+    if (afterBreakSub) world.afterEvents.playerBreakBlock.unsubscribe(afterBreakSub);
+    if (afterPlaceSub) world.afterEvents.playerPlaceBlock.unsubscribe(afterPlaceSub);
 
     if (intervalHandle !== null) system.clearRun(intervalHandle);
 
-    beforeSub = afterSub = breakSub = null;
+    beforeSub = afterSub = breakSub = afterBreakSub = afterPlaceSub = null;
     intervalHandle = null;
 }
 
