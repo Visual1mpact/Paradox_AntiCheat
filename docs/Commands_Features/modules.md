@@ -25,6 +25,53 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 > Example: !afk 0 10 0  
 
 
+## !antifly
+### At A Glance
+The `antifly` command toggles the Anti-Fly detection module, which monitors player movement to detect and prevent unauthorized flying. By enabling this module, server administrators can maintain fair gameplay and prevent exploits that allow players to fly in Survival or Adventure modes without proper permissions.
+
+### How It Works
+- **Movement Monitoring:** The module continuously tracks players’ airborne status, including whether they are falling (`isFalling`) or flying (`isFlying`), and their vertical and horizontal velocities.  
+- **Gamemode Restrictions:** Only applies to players in **Survival** or **Adventure** mode. Creative and Spectator mode players are excluded.  
+- **Trident & Glide Exclusions:** Players using certain items like tridents, gliding, climbing, or swimming are temporarily ignored to avoid false positives.  
+- **Hover Detection:** If a player hovers in the air unnaturally for more than a threshold, the module teleports them back to a safe “airportLanding” position.  
+- **Security Clearance Bypass:** Level 4 administrators are exempt from anti-fly enforcement.  
+- **Scheduled Checks:** The module runs periodically using a generator to evaluate all players, minimizing server impact.  
+
+!> Required Clearance Level To Execute: `4`
+
+
+> Usage: "!antifly [ help ]"  
+> Example: !antifly  
+
+
+## !antispam
+### At A Glance
+Toggles the chat spam detection module, which monitors players sending too many messages in a short period.  
+This helps prevent chat flooding, bot spam, and ensures fair communication.
+
+### How It Works
+- **Message Tracking:** Each player’s chat messages are tracked over a short window (~5 seconds).  
+- **Threshold:** Sending more than 5 messages within the time window triggers the anti-spam system.  
+- **Mute:** Offending players are muted for 2 minutes (messages sent during this time are blocked).  
+- **Dynamic Updates:** Once the mute expires, players regain normal chat permissions automatically.  
+- **Command Handling:** Commands prefixed with `!` (or server-defined prefix) are intercepted and executed separately, preventing false triggers.  
+- **Channels & Rank Handling:** Messages are routed through channels or globally with proper chat rank formatting.  
+- **Performance Optimizations:**  
+  - Player message times are stored efficiently in memory.  
+  - Channel member caches are used to reduce repeated data lookups.  
+  - Debouncing ensures database updates for channel activity happen at most once per 5 seconds.  
+
+!> Required Clearance Level To Execute: `4`
+
+
+> Usage: "!antispam [ help ]",  
+> Example: !antispam  
+> Example: !antispam help  
+
+
+!> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
+
+
 ## !autoclicker
 ### At A Glance
 The `autoclicker` command toggles the Auto-Clicker detection module, which monitors player attack speed to prevent the use of automated clicking tools. By enabling this module, administrators can maintain fair combat and prevent players from gaining an unfair advantage.
@@ -44,23 +91,110 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 > Example: !autoclicker  
 
 
-## !antifly
+## !chestforensic
 ### At A Glance
-The `antifly` command toggles the Anti-Fly detection module, which monitors player movement to detect and prevent unauthorized flying. By enabling this module, server administrators can maintain fair gameplay and prevent exploits that allow players to fly in Survival or Adventure modes without proper permissions.
+The `Chest Forensic` module provides a **secure chest locking system with full audit logging**.  
+Players can lock containers, while administrators can investigate **ownership, access history, and suspicious activity**.
+
+This module is both a **protection system** and a **forensic tool**, allowing Level 4 staff to trace exactly who interacted with any storage block.
 
 ### How It Works
-- **Movement Monitoring:** The module continuously tracks players’ airborne status, including whether they are falling (`isFalling`) or flying (`isFlying`), and their vertical and horizontal velocities.  
-- **Gamemode Restrictions:** Only applies to players in **Survival** or **Adventure** mode. Creative and Spectator mode players are excluded.  
-- **Trident & Glide Exclusions:** Players using certain items like tridents, gliding, climbing, or swimming are temporarily ignored to avoid false positives.  
-- **Hover Detection:** If a player hovers in the air unnaturally for more than a threshold, the module teleports them back to a safe “airportLanding” position.  
-- **Security Clearance Bypass:** Level 4 administrators are exempt from anti-fly enforcement.  
-- **Scheduled Checks:** The module runs periodically using a generator to evaluate all players, minimizing server impact.  
+- **Chest Locking:**
+  - Players can **lock a chest using a stick**.
+  - Only the **owner** (or Level 4 staff) can unlock it.
+  - Locked chests **cannot be opened or broken** by other players.
 
-!> Required Clearance Level To Execute: `4`
+- **Double Chest Support:**
+  - Adjacent chests are treated as a **single container**.
+  - Both sides share the same owner and logs.
 
+- **Access Logging:**
+  - Every interaction is recorded:
+    - Successful access
+    - Denied access attempts
+    - Break attempts
+  - Logs include:
+    - Player name
+    - Timestamp
+    - Chest location key
 
-> Usage: "!antifly [ help ]"  
-> Example: !antifly  
+- **Placement Tracking:**
+  - The system tracks **who placed the chest**.
+  - Only the placer (or Level 4 staff) can lock it initially.
+
+- **Admin Overrides:**
+  - Level 4 staff can:
+    - Open locked chests
+    - Unlock any chest
+    - View all logs
+  - All overrides are **logged and broadcast to staff**.
+
+- **Automatic Log Cleanup:**
+  - Logs are retained for **30 days**.
+  - Older entries are automatically pruned to optimize performance.
+
+- **Real-Time Alerts:**
+  - Staff are notified when:
+    - A locked chest is accessed
+    - Someone attempts unauthorized access
+    - A chest is locked/unlocked
+
+### Chest Key Format
+Each chest is identified by a unique key:
+
+```
+dimension_x_y_z
+```
+
+Example:
+```
+overworld_0_64_0
+```
+
+### Forensic Features
+Administrators can investigate:
+
+- **Chest Ownership**
+- **Last Access Time**
+- **Recent Access Logs (last 10 events)**
+- **Player Activity Across Multiple Chests**
+
+This makes it easy to detect:
+- Theft attempts
+- Griefing
+- Suspicious player behavior
+
+### Commands & Options
+- **Lookup Chest**
+  - Displays owner and access logs
+- **Lookup Player (Online/Offline)**
+  - Shows all chest interactions by a player
+- **Enable Module**
+  - Starts chest locking system
+- **Disable Module**
+  - Stops all chest lock enforcement
+
+### GUI Features
+The module includes a full GUI with:
+- Chest selector dropdown
+- Online player selector
+- Offline player input
+- Toggle buttons for enabling/disabling the system
+
+### Examples
+> Usage: "!chestforensic < chestKey | playerName | on | off >"  
+> Example: !chestforensic overworld_0_64_0  
+> Example: !chestforensic Player123  
+> Example: !chestforensic on  
+> Example: !chestforensic off  
+
+### Staff Notes
+- Access logs are **global and persistent** via `chestLockDB`
+- Double chests use a **canonical key system** to prevent duplication
+- All enforcement occurs in:
+  - `beforeEvents` (for prevention)
+  - `afterEvents` (for logging & state updates)
+- Module can be safely toggled at runtime without restart
 
 
 ## !gamemode
@@ -368,33 +502,6 @@ The `Self-Attack` module detects and prevents players from using modified client
 > Example: !selfattack  
 > Example: !selfattack help  
 
-
-## !antispam
-### At A Glance
-Toggles the chat spam detection module, which monitors players sending too many messages in a short period.  
-This helps prevent chat flooding, bot spam, and ensures fair communication.
-
-### How It Works
-- **Message Tracking:** Each player’s chat messages are tracked over a short window (~5 seconds).  
-- **Threshold:** Sending more than 5 messages within the time window triggers the anti-spam system.  
-- **Mute:** Offending players are muted for 2 minutes (messages sent during this time are blocked).  
-- **Dynamic Updates:** Once the mute expires, players regain normal chat permissions automatically.  
-- **Command Handling:** Commands prefixed with `!` (or server-defined prefix) are intercepted and executed separately, preventing false triggers.  
-- **Channels & Rank Handling:** Messages are routed through channels or globally with proper chat rank formatting.  
-- **Performance Optimizations:**  
-  - Player message times are stored efficiently in memory.  
-  - Channel member caches are used to reduce repeated data lookups.  
-  - Debouncing ensures database updates for channel activity happen at most once per 5 seconds.  
-
-!> Required Clearance Level To Execute: `4`
-
-
-> Usage: "!antispam [ help ]",  
-> Example: !antispam  
-> Example: !antispam help  
-
-
-!> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
 ## !visioncheck
 ### At A Glance
