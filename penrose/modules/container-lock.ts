@@ -141,7 +141,7 @@ async function logChestAccess(block: Block, playerName: string): Promise<void> {
  *
  * @param {number} retentionDays - Number of days to keep logs (default: 30).
  */
-async function pruneOldLogs(retentionDays = 30): Promise<void> {
+async function pruneOldLogs(retentionDays: number = 30): Promise<void> {
     const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
 
     for (const [key, value] of chestLockDB.entries()) {
