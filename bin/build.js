@@ -2,9 +2,10 @@ import path from "path";
 import fs from "fs-extra";
 import { spawnSync, spawn } from "child_process";
 import { fileURLToPath } from "url";
-import { path7za } from "7zip-bin";
+import pkg from "7zip-bin-full";
 import os from "os";
 import { glob } from "glob";
+const { path7z } = pkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BUILD_DIR = "build";
@@ -36,17 +37,18 @@ function cleanBuildDir() {
 }
 
 function get7zaPath() {
-    const platform = os.platform();
-    if (platform === "win32") return path7za;
-    if (platform === "linux") {
-        if (spawnSync("which", ["7z"]).status === 0) return "7z";
-        if (spawnSync("which", ["7za"]).status === 0) return "7za";
-        try {
-            fs.chmodSync(path7za, 0o755);
-        } catch {}
-        return path7za;
+    // If user wants system 7z
+    if (process.env.USE_SYSTEM_7Z) {
+        console.log("Using system 7z from PATH...");
+        return process.platform === "win32" ? "7z" : "7z";
     }
-    throw new Error(`Unsupported platform: ${platform}`);
+
+    // Otherwise use bundled binary
+    try {
+        fs.chmodSync(path7z, 0o755); // ensure executable on unix
+    } catch {}
+
+    return path7z;
 }
 
 function getArchiveTypes() {
