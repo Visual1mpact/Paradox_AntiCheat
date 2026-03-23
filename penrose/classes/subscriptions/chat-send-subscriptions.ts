@@ -7,11 +7,6 @@ const SPAM_THRESHOLD = 5; // Number of allowed messages
 const TIME_WINDOW = 100; // Time window in ticks (5 seconds at 20 ticks per second)
 const MUTE_DURATION = 2400; // Mute duration in ticks (2 minutes)
 
-interface PlayerSpamData {
-    messageTimes: number[];
-    mutedUntil: number | null;
-}
-
 type PlayerID = string;
 
 interface Channel {
@@ -21,11 +16,66 @@ interface Channel {
 }
 
 /**
+ * Zero-allocation spam tracker using a circular buffer.
+ */
+class SpamTracker {
+    private buffer: Uint32Array;
+    private index = 0;
+    private count = 0;
+    mutedUntil: number | null = null;
+
+    constructor() {
+        this.buffer = new Uint32Array(SPAM_THRESHOLD + 1);
+    }
+
+    recordMessage(currentTick: number): boolean {
+        // still muted
+        if (this.mutedUntil && currentTick < this.mutedUntil) {
+            return true;
+        }
+
+        // mute expired
+        if (this.mutedUntil && currentTick >= this.mutedUntil) {
+            this.mutedUntil = null;
+            this.count = 0;
+        }
+
+        // insert tick
+        this.buffer[this.index] = currentTick;
+
+        if (++this.index === this.buffer.length) {
+            this.index = 0;
+        }
+
+        if (this.count < this.buffer.length) {
+            this.count++;
+        }
+
+        // only check when enough messages exist
+        if (this.count > SPAM_THRESHOLD) {
+            const oldestIndex = this.index;
+            const oldestTick = this.buffer[oldestIndex];
+
+            if (currentTick - oldestTick <= TIME_WINDOW) {
+                this.mutedUntil = currentTick + MUTE_DURATION;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isFullyInactive(): boolean {
+        return this.mutedUntil === null && this.count === 0;
+    }
+}
+
+/**
  * Handles chat send events, including spam detection and command processing.
  */
 class ChatSendSubscription {
     private callback: ((event: ChatSendBeforeEvent) => void) | null;
-    private spamData: Map<string, PlayerSpamData>;
+    private spamData: Map<string, SpamTracker>;
     private channelMemberCache: Map<string, { memberSet: Set<string>; lastUpdated: number }>;
 
     constructor() {
@@ -62,39 +112,53 @@ class ChatSendSubscription {
 
             // 1️⃣ Spam detection
             if (this.isSpamCheckEnabled() && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
-                const storedMutedUntil = player.getDynamicProperty("mutedUntil") as number | null;
-                const spamData = this.spamData.get(playerId) ?? { messageTimes: [], mutedUntil: storedMutedUntil };
+                let tracker = this.spamData.get(playerId);
 
-                if (spamData.mutedUntil && currentTick < spamData.mutedUntil) {
+                if (!tracker) {
+                    tracker = new SpamTracker();
+                    tracker.mutedUntil = player.getDynamicProperty("mutedUntil") as number | null;
+                    this.spamData.set(playerId, tracker);
+                }
+
+                // actively muted
+                if (tracker.mutedUntil && currentTick < tracker.mutedUntil) {
                     event.cancel = true;
-                    const remainingSec = Math.ceil((spamData.mutedUntil - currentTick) / 20);
+
+                    const remainingSec = Math.ceil((tracker.mutedUntil - currentTick) / 20);
+
                     player.sendMessage(`§o§c[Paradox] You are muted for spamming. Wait ${remainingSec}s.`);
+
                     return;
                 }
 
-                if (spamData.mutedUntil && currentTick >= spamData.mutedUntil) {
-                    spamData.mutedUntil = null;
-                    player.setDynamicProperty("mutedUntil");
-                }
+                const isSpam = tracker.recordMessage(currentTick);
 
-                // Remove old message times
-                spamData.messageTimes = spamData.messageTimes.filter((t) => currentTick - t <= TIME_WINDOW);
-                spamData.messageTimes.push(currentTick);
-
-                if (spamData.messageTimes.length > SPAM_THRESHOLD) {
-                    spamData.mutedUntil = currentTick + MUTE_DURATION;
-                    player.setDynamicProperty("mutedUntil", spamData.mutedUntil);
+                if (isSpam) {
                     event.cancel = true;
+
+                    player.setDynamicProperty("mutedUntil", tracker.mutedUntil);
+
                     const muteSec = Math.ceil(MUTE_DURATION / 20);
+
                     player.sendMessage(`§o§c[Paradox] You have been muted for spamming. Wait ${muteSec}s.`);
+
                     return;
                 }
 
-                this.spamData.set(playerId, spamData);
+                // clear stored mute once expired
+                if (!tracker.mutedUntil) {
+                    player.setDynamicProperty("mutedUntil", undefined);
+                }
+
+                // cleanup once fully inactive
+                if (tracker.isFullyInactive()) {
+                    this.spamData.delete(playerId);
+                }
             }
 
             // 2️⃣ Command handling
             const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+
             if (event.message.startsWith(prefix)) {
                 event.cancel = true;
                 commandHandler.handleCommand(event, player, prefix);
@@ -103,47 +167,60 @@ class ChatSendSubscription {
 
             // 3️⃣ Chat rank/global handling
             const isRankDisabled = world.getDynamicProperty("globalRankDisabled");
-            if (isRankDisabled && !playerChannel) return; // allow normal message
+
+            if (isRankDisabled && !playerChannel) return;
 
             event.cancel = true;
+
             const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+
             const rank = playerChannel ?? playerRank;
+
             const formattedMessage = `${rank} §7${player.name}§7: §r${event.message}`;
 
             // 4️⃣ Determine target players
             if (playerChannel) {
                 const channelData = channelsDB.get(playerChannel);
+
                 if (channelData) {
                     const now = Date.now();
                     const DEBOUNCE_INTERVAL = 5000;
 
-                    // Debounce lastActive update
+                    // debounce lastActive writes
                     if (!channelData.lastActive || now - channelData.lastActive > DEBOUNCE_INTERVAL) {
                         channelData.lastActive = now;
-                        await channelsDB.set(playerChannel, channelData);
+
+                        system.run(() => {
+                            channelsDB.set(playerChannel, channelData);
+                        });
                     }
 
-                    // Use cached member set
+                    // cached member set
                     const cacheEntry = this.channelMemberCache.get(playerChannel);
+
                     let memberSet = cacheEntry?.memberSet;
 
-                    if (!cacheEntry || now - (cacheEntry.lastUpdated ?? 0) > DEBOUNCE_INTERVAL) {
+                    if (!cacheEntry || now - cacheEntry.lastUpdated > DEBOUNCE_INTERVAL) {
                         memberSet = new Set(Object.keys(channelData.Members));
-                        this.channelMemberCache.set(playerChannel, { memberSet, lastUpdated: now });
+
+                        this.channelMemberCache.set(playerChannel, {
+                            memberSet,
+                            lastUpdated: now,
+                        });
                     }
 
-                    // Broadcast directly with filtered iterator (no array allocations)
+                    // direct iteration (no allocations)
                     for (const p of PlayerCache.filterByIds(memberSet)) {
                         p.sendMessage(formattedMessage);
                     }
                 } else {
-                    // fallback: broadcast to all online players
+                    // fallback global broadcast
                     for (const p of PlayerCache.getPlayers()) {
                         p.sendMessage(formattedMessage);
                     }
                 }
             } else {
-                // global message: all online players
+                // global broadcast
                 for (const p of PlayerCache.getPlayers()) {
                     p.sendMessage(formattedMessage);
                 }
@@ -155,7 +232,9 @@ class ChatSendSubscription {
 
     unsubscribe() {
         if (!this.callback) return;
+
         world.beforeEvents.chatSend.unsubscribe(this.callback);
+
         this.callback = null;
     }
 }
