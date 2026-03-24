@@ -22,25 +22,22 @@ class SpamTracker {
     private buffer: Uint32Array;
     private index = 0;
     private count = 0;
-    mutedUntil: number | null = null;
+    mutedUntil: number | undefined = undefined;
 
     constructor() {
         this.buffer = new Uint32Array(SPAM_THRESHOLD + 1);
     }
 
     recordMessage(currentTick: number): boolean {
-        // still muted
-        if (this.mutedUntil && currentTick < this.mutedUntil) {
+        if (this.mutedUntil !== undefined && currentTick < this.mutedUntil) {
             return true;
         }
 
-        // mute expired
-        if (this.mutedUntil && currentTick >= this.mutedUntil) {
-            this.mutedUntil = null;
+        if (this.mutedUntil !== undefined && currentTick >= this.mutedUntil) {
+            this.mutedUntil = undefined;
             this.count = 0;
         }
 
-        // insert tick
         this.buffer[this.index] = currentTick;
 
         if (++this.index === this.buffer.length) {
@@ -51,10 +48,8 @@ class SpamTracker {
             this.count++;
         }
 
-        // only check when enough messages exist
         if (this.count > SPAM_THRESHOLD) {
-            const oldestIndex = this.index;
-            const oldestTick = this.buffer[oldestIndex];
+            const oldestTick = this.buffer[this.index];
 
             if (currentTick - oldestTick <= TIME_WINDOW) {
                 this.mutedUntil = currentTick + MUTE_DURATION;
@@ -66,7 +61,7 @@ class SpamTracker {
     }
 
     isFullyInactive(): boolean {
-        return this.mutedUntil === null && this.count === 0;
+        return this.mutedUntil === undefined && this.count === 0;
     }
 }
 
@@ -89,16 +84,16 @@ class ChatSendSubscription {
     }
 
     private isPlayerPropertyEqual(player: Player, propertyKey: string, expectedValue: number): boolean {
-        const value = player.isValid ? (player.getDynamicProperty(propertyKey) as number | null) : null;
+        const value = player.isValid ? (player.getDynamicProperty(propertyKey) as number | undefined) : undefined;
         return value === expectedValue;
     }
 
-    private getPlayerChannel(player: Player): string | null {
+    private getPlayerChannel(player: Player): string | undefined {
         const channels = channelsDB.entries() as [string, Channel][];
         for (const [channelName, channelData] of channels) {
             if (channelData.Members[player.id]) return channelName;
         }
-        return null;
+        return undefined;
     }
 
     subscribe() {
@@ -116,7 +111,7 @@ class ChatSendSubscription {
 
                 if (!tracker) {
                     tracker = new SpamTracker();
-                    tracker.mutedUntil = player.getDynamicProperty("mutedUntil") as number | null;
+                    tracker.mutedUntil = player.getDynamicProperty("mutedUntil") as number | undefined;
                     this.spamData.set(playerId, tracker);
                 }
 
@@ -146,7 +141,7 @@ class ChatSendSubscription {
                 }
 
                 // clear stored mute once expired
-                if (!tracker.mutedUntil) {
+                if (tracker.mutedUntil === undefined) {
                     player.setDynamicProperty("mutedUntil", undefined);
                 }
 
@@ -198,7 +193,7 @@ class ChatSendSubscription {
                     // cached member set
                     const cacheEntry = this.channelMemberCache.get(playerChannel);
 
-                    let memberSet = cacheEntry?.memberSet;
+                    let memberSet: Set<string>;
 
                     if (!cacheEntry || now - cacheEntry.lastUpdated > DEBOUNCE_INTERVAL) {
                         memberSet = new Set(Object.keys(channelData.Members));
@@ -207,9 +202,10 @@ class ChatSendSubscription {
                             memberSet,
                             lastUpdated: now,
                         });
+                    } else {
+                        memberSet = cacheEntry.memberSet;
                     }
 
-                    // direct iteration (no allocations)
                     for (const p of PlayerCache.filterByIds(memberSet)) {
                         p.sendMessage(formattedMessage);
                     }

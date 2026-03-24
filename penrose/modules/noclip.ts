@@ -36,7 +36,7 @@ let intervalRef: number | undefined;
  * @param block - Block to evaluate
  * @returns True if block should be ignored for collision checks
  */
-function isPassThrough(block: Block) {
+function isPassThrough(block: Block | undefined) {
     if (!block || !block.isValid) return true;
     if (block.isAir || block.isLiquid || !block.isSolid) return true;
 

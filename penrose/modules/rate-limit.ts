@@ -229,11 +229,11 @@ let isLockedDown = false;
 /** Timeout ID reference used to automatically lift lockdown after a delay */
 let lockdownTimeout: number | undefined;
 /** Reference to the packet receive event handler function for unsubscribing */
-let packetHandlerRef: (data: PacketReceivedBeforeEvent) => void;
+let packetHandlerRef: ((data: PacketReceivedBeforeEvent) => void) | null = null;
 /** Reference to the async player join event handler for unsubscribing */
-let asyncJoinRef: (event: AsyncPlayerJoinBeforeEvent) => Promise<void>;
+let asyncJoinRef: ((event: AsyncPlayerJoinBeforeEvent) => Promise<void>) | null = null;
 /** Reference to the player leave event handler for cleanup on disconnect */
-let playerLeaveRef: (event: PlayerLeaveBeforeEvent) => void;
+let playerLeaveRef: ((event: PlayerLeaveBeforeEvent) => void) | null = null;
 /** Reference to the server-net module's beforeEvents API for packet handling */
 let serverNet: typeof import("@minecraft/server-net").beforeEvents;
 /** Reference to the PacketId enum from server-net for filtering monitored packets */

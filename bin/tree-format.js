@@ -10,7 +10,7 @@ const kebabCasePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const pascalCasePattern = /^[A-Z][a-zA-Z0-9]*$/;
 
 // List of file extensions to ignore (e.g., package.json, package-lock.json, .md, .json files, etc.)
-const ignoreFileExtensions = new Set([".json", ".md"]);
+const ignoreFileExtensions = new Set([".json", ".md", ".d.ts", ".d.ts.map"]);
 // List of files to explicitly ignore (e.g., package.json, package-lock.json)
 const ignoreFiles = new Set(["package.json", "package-lock.json"]);
 // List of directories to ignore (e.g., node_modules)
@@ -34,22 +34,29 @@ function checkNamingConventions(directory, depth = 0) {
         const fullPath = path.join(directory, item);
         const isDirectory = fs.statSync(fullPath).isDirectory();
 
-        // Skip specific files and directories that don't need naming checks
+        // Skip specific files
         if (ignoreFiles.has(item)) {
             console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Configuration file)")}`);
             return;
         }
 
-        // Skip files with extensions that are generally not part of source code
-        const fileExtension = path.extname(item);
-        if (ignoreFileExtensions.has(fileExtension)) {
-            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Non-source file extension)")}`);
+        // Skip directories
+        if (ignoreDirs.has(item)) {
+            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Directory)")}`);
             return;
         }
 
-        // Skip directories listed in the ignoreDirs set
-        if (ignoreDirs.has(item)) {
-            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Directory)")}`);
+        const fileExtension = path.extname(item);
+
+        // Skip declaration files (.d.ts) and their maps
+        if (item.endsWith(".d.ts") || item.endsWith(".d.ts.map")) {
+            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: TypeScript declaration file)")}`);
+            return;
+        }
+
+        // Skip other non-source file extensions
+        if (ignoreFileExtensions.has(fileExtension)) {
+            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Non-source file extension)")}`);
             return;
         }
 

@@ -1,23 +1,24 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "penrose/*": ["penrose/*"]
+      "penrose/*": ["./penrose/*"]
     },
 
+    "rootDir": "./penrose",
+    "outDir": "./build/scripts",
+
     "typeRoots": [
-      "node_modules/@minecraft",
-      "node_modules/@types"
+      "./node_modules/@minecraft",
+      "./node_modules/@types"
     ],
 
     "types": ["node", "server", "server-ui", "server-admin"],
 
-    "lib": ["esnext"],
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "ESNext",
 
-    "outDir": "build/scripts",
+    "moduleResolution": "bundler",
 
     "declaration": true,
     "declarationMap": true,
@@ -25,7 +26,9 @@
 
     "allowJs": false,
     "checkJs": false,
+
     "useDefineForClassFields": true,
+
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noImplicitAny": true,
@@ -35,6 +38,6 @@
     "noUnusedParameters": true
   },
 
-  "include": ["penrose"],
+  "include": ["penrose/**/*"],
   "exclude": ["node_modules", "personal"]
 }

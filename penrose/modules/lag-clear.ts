@@ -85,8 +85,8 @@ async function clearEntities() {
     ];
 
     for (const entity of allMonsters) {
-        const hasTameable = entity.hasComponent("tameable");
-        const isTamed = hasTameable ? entity.getComponent("tameable").isTamed : false;
+        const tameable = entity.getComponent("tameable");
+        const isTamed = tameable?.isTamed ?? false;
 
         if (!entityException.includes(entity.typeId) && !isTamed && !entity.nameTag) {
             entity.remove();

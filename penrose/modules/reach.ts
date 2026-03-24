@@ -24,7 +24,7 @@ const playerHistory = new Map<string, PlayerHistory>();
 const cachedLocations = new Map<string, { x: number; y: number; z: number }>();
 
 let intervalId: number | undefined;
-let hurtSubscription: (event: EntityHurtBeforeEvent) => void;
+let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
 
 /**
  * Calculates squared distance between two 3D points.
