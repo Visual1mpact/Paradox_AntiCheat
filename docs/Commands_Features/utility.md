@@ -234,6 +234,43 @@ Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. Th
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
+## !scripture
+### At A Glance
+The `!scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
+
+!> Required Clearance Level To Execute: `3`
+
+### **How It Works**
+- Each player can **enable or disable** scripture mode using the command.
+- When scripture mode is **enabled**, the player will receive a verse every **30 minutes** (configurable in code).
+- Verses are displayed **on-screen** with the reference as a title and the verse text as a subtitle.
+- Players receive **1 reward item per verse** (up to 10 per day), randomly chosen between **diamonds** and **netherite ingots**.
+- Daily reward counters reset at **midnight** server time.
+- The system tracks which verses have already been shown, ensuring **variety without repetition**.
+
+### Usage
+
+> !scripture -t <player> [-e | -d]  
+> Example: !scripture -t PlayerName -e  – Enable scripture mode for PlayerName  
+> Example: !scripture -t PlayerName -d  – Disable scripture mode for PlayerName  
+
+### **Actions**
+1. **Enable Scripture** – Turns on scripture verse notifications and daily rewards for the target player.
+2. **Disable Scripture** – Turns off scripture verse notifications and daily rewards for the target player.
+
+### **GUI Integration**
+- The command can also be executed via an **in-game GUI form**, allowing selection of a player and toggling enable/disable options.
+- The form includes:
+  - Dropdown of all players.
+  - Toggle buttons to enable or disable scripture mode.
+
+### Notes
+- Scripture mode is **per-player**; enabling for one player does not affect others.
+- Rewards are **limited to 10 per player per day** to prevent abuse.
+- Verses are selected from a **shuffled queue** to avoid immediate repetition.
+- Players can manually disable scripture mode at any time.
+- On server restart, the **interval automatically resumes**, applying only to players who have scripture mode enabled.
+
 ## !setrank
 ### At A Glance
 The `!setrank` command allows admins to manage chat ranks for players. You can:

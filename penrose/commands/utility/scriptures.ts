@@ -141,7 +141,20 @@ export const scriptureCommand: Command = {
         formType: "ActionFormData",
         commandOrder: "arg-command",
         title: "Scripture",
-        description: "Select a player and choose whether to Enable or Disable Scripture mode.\n\n",
+        description:
+            "Manage automated scripture verses and daily rewards.\n\n" +
+            "§7Scripture Mode:\n" +
+            "§7• §fEnable Scripture§7: Player receives a scripture verse every 30 minutes.\n" +
+            "§7• §fDisable Scripture§7: Stops verses and daily rewards for the player.\n\n" +
+            "§7Rewards:\n" +
+            "§7• Players receive §f1 reward§7 per verse.\n" +
+            "§7• Rewards are usually §fdiamonds§7, with a small chance of §fnetherite ingots§7.\n" +
+            "§7• Maximum of §f10 rewards per day§7 per player.\n\n" +
+            "§7Display:\n" +
+            "§7• Scripture reference appears as the §ftitle§7.\n" +
+            "§7• Verse text appears as the §fsubtitle§7.\n" +
+            "§7• Verses are automatically shuffled to avoid repetition.\n\n" +
+            "§7Changes apply immediately and persist through server restarts.\n\n",
         actions: [
             {
                 name: "Apply Changes",
