@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, Player, world, system, ItemStack } from "@minecraft/server";
-import { verses } from "../bible/verses";
-import { Command } from "../../../penrose/classes/command-handler";
-import { PlayerCache } from "penrose/classes/player-cache";
+import { verses } from "../../data/verses";
+import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 // ===== CONFIG =====
 const INTERVAL_TICKS = 30 * 60 * 20; // 30 minutes

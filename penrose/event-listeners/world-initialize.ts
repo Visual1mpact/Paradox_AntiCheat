@@ -75,6 +75,7 @@ import { PlayerCache } from "../classes/player-cache";
 import { invCloneCommand } from "../commands/utility/invclone";
 import { chestForensicCommand } from "../commands/settings/container-lock";
 import { startChestLock } from "../modules/container-lock";
+import { scriptureCommand } from "../commands/utility/scriptures";
 
 type PlayerID = string;
 
@@ -152,6 +153,7 @@ const allCommands: Command[] = [
     noClipCommand,
     invCloneCommand,
     chestForensicCommand,
+    scriptureCommand,
 ];
 
 /**

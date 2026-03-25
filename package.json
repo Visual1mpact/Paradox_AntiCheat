@@ -59,12 +59,8 @@
         "git-tree": "node bin/git-tree.js",
         "docs": "node bin/server.js",
         "test": "node bin/build.js --server",
-        "personal-test": "node bin/build.js --personal --server",
         "check-naming": "node bin/tree-format.js",
         "build": "npm run check-naming && node bin/build.js",
-        "dist": "npm run check-naming && node bin/build.js --mcpack --zip",
-        "personal-build": "npm run check-naming && node bin/build.js --personal",
-        "personal-dist": "npm run check-naming && node bin/build.js --personal --mcpack --zip",
-        "pete9xi-build": "npm run check-naming && node bin/build-package.js && node bin/pete9xi-build-package.js"
+        "dist": "npm run check-naming && node bin/build.js --mcpack --zip"
     }
 }

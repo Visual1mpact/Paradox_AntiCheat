@@ -9,11 +9,9 @@ const { path7z } = pkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BUILD_DIR = "build";
-const PERSONAL_DIR = "personal";
 const TSC_ALIAS = path.join("./node_modules", ".bin", process.platform === "win32" ? "tsc-alias.cmd" : "tsc-alias");
 
 // ---------------- Flags ----------------
-const isPersonal = process.argv.includes("--personal");
 const wantMcpack = process.argv.includes("--mcpack");
 const wantZip = process.argv.includes("--zip");
 const skipArchive = process.argv.includes("--server");
@@ -83,28 +81,6 @@ function resolveAliases(tsconfigPath) {
     const args = ["--resolve-full-paths", "--project", tsconfigPath];
     if (process.platform === "win32") run("cmd.exe", ["/c", TSC_ALIAS, ...args]);
     else run(`./${TSC_ALIAS}`, args);
-}
-
-function overlayPersonalRoot() {
-    console.log("Overlaying personal root files...");
-    fs.copySync(PERSONAL_DIR, BUILD_DIR, {
-        overwrite: true,
-        filter: (src) => {
-            const excludedDirs = ["scripts", "penrose"];
-            const excludedFiles = ["tsconfig.json"];
-            return !excludedDirs.some((dir) => src.includes(dir)) && !excludedFiles.includes(path.basename(src));
-        },
-    });
-}
-
-function flattenPersonalScripts() {
-    const nested = path.join(BUILD_DIR, "scripts", "personal", "scripts");
-    const target = path.join(BUILD_DIR, "scripts");
-    if (!fs.existsSync(nested)) exitWithError("Personal build failed: expected nested scripts directory not found.");
-    console.log("Flattening personal scripts...");
-    fs.copySync(nested, target, { overwrite: true });
-    fs.removeSync(path.join(BUILD_DIR, "scripts", "personal"));
-    fs.removeSync(path.join(BUILD_DIR, "scripts", "penrose"));
 }
 
 function createArchive(type = "zip") {
@@ -209,7 +185,7 @@ async function runServerTest() {
 async function main() {
     syncVersion();
 
-    console.log(`Starting build | personal=${isPersonal} | mcpack=${wantMcpack} | zip=${wantZip}\n`);
+    console.log(`Starting build | mcpack=${wantMcpack} | zip=${wantZip}\n`);
 
     cleanBuildDir();
 
@@ -222,17 +198,6 @@ async function main() {
 
     // Compile penrose first
     compile("./tsconfig.json");
-
-    // Compile personal overlay
-    if (isPersonal) {
-        compile(`./${PERSONAL_DIR}/tsconfig.json`);
-
-        overlayPersonalRoot(); // copy root-level personal files
-        flattenPersonalScripts(); // flatten nested scripts
-
-        // Rewrite all imports to relative paths after flattening
-        resolveAliases(`./${PERSONAL_DIR}/tsconfig.json`);
-    }
 
     // Final alias resolution for penrose imports
     resolveAliases("./tsconfig.json");

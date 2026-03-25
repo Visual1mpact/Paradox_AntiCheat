@@ -39,5 +39,5 @@
   },
 
   "include": ["penrose/**/*"],
-  "exclude": ["node_modules", "personal"]
+  "exclude": ["node_modules"]
 }
