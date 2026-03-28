@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { chestLockDB } from "../../event-listeners/world-initialize";
+import { chestLockDB, paradoxModulesDB } from "../../event-listeners/world-initialize";
 import { startChestLock, stopChestLock } from "../../modules/container-lock";
 
 /**
@@ -121,12 +121,18 @@ export const chestForensicCommand: Command = {
 
         // Toggle module
         if (inputArg.toLowerCase() === "on") {
+            await paradoxModulesDB.set("chestLock_b", {
+                enabled: true,
+            });
             startChestLock();
             player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §aenabled§7.");
             return;
         }
 
         if (inputArg.toLowerCase() === "off") {
+            await paradoxModulesDB.set("chestLock_b", {
+                enabled: false,
+            });
             stopChestLock();
             player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §cdisabled§7.");
             return;

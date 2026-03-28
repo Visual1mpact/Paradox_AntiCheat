@@ -258,13 +258,26 @@ async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent): Promise
  * @param {PlayerBreakBlockAfterEvent} event - The block break event data.
  */
 async function chestLockBreakAfter(event: PlayerBreakBlockAfterEvent): Promise<void> {
-    const { block } = event;
+    const { block, brokenBlockPermutation } = event;
 
-    if (!isStorageBlock(block)) return;
+    const typeId = brokenBlockPermutation.type.id;
 
-    const key = getCanonicalChestKey(block);
+    if (!STORAGE_BLOCKS.has(typeId) && !/^minecraft:.*_shulker_box$/.test(typeId)) {
+        return;
+    }
 
-    // Completely remove all data (owner + placedBy + logs)
+    // recreate minimal Block-like object
+    const virtualBlock = {
+        typeId: typeId,
+        location: block.location,
+        dimension: block.dimension,
+        x: block.x,
+        y: block.y,
+        z: block.z,
+    } as Block;
+
+    const key = getCanonicalChestKey(virtualBlock);
+
     await chestLockDB.delete(key);
 }
 

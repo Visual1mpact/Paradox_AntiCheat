@@ -176,13 +176,27 @@ class GUIManager {
     private async handleActionSelection(action: ActionFormButton, dynamicFields: DynamicField[], title: string, command: Command, commandOrder?: string): Promise<void> {
         const { requiredFields = [], crypto } = action;
 
+        // EARLY GUARD
+        if (requiredFields.includes("chestKey")) {
+            const hasChests = chestLockDB.listPointers().length > 0;
+
+            if (!hasChests) {
+                this.player.sendMessage("§2[§7Paradox§2]§o§7 No locked chests exist yet.");
+                return;
+            }
+        }
+
         if (requiredFields.length > 0) {
-            // Filter dynamic fields that are required for this action
             const fields = dynamicFields.filter((f) => requiredFields.some((rf) => f.requiredFields?.includes(rf)));
+
             await this.showModalForm(fields, title, command, action.command ?? [], crypto, commandOrder, requiredFields);
         } else {
-            // Execute static command directly
-            const chatSendBeforeEvent = { cancel: false, message: "", sender: this.player };
+            const chatSendBeforeEvent = {
+                cancel: false,
+                message: "",
+                sender: this.player,
+            };
+
             command.execute(chatSendBeforeEvent, action.command ?? [], crypto ? CryptoES : undefined);
         }
     }
