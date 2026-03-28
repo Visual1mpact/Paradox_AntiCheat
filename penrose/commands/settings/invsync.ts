@@ -83,9 +83,13 @@ export const invSyncCommand: Command = {
             await paradoxModulesDB.set(key, moduleData);
 
             if (!enabled) {
+                moduleData.enabled = true;
+                await paradoxModulesDB.set("invSync_b", moduleData);
                 startInvSync();
                 player.sendMessage("§2[§7Paradox§2]§o§7 InvSync has been §aenabled§7.");
             } else {
+                moduleData.enabled = false;
+                await paradoxModulesDB.set("invSync_b", moduleData);
                 stopInvSync();
                 player.sendMessage("§2[§7Paradox§2]§o§7 InvSync has been §4disabled§7.");
             }
