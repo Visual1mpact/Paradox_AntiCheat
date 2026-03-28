@@ -170,15 +170,29 @@ async function chestLockBefore(event: PlayerInteractWithBlockBeforeEvent): Promi
     const owner = getChestOwner(block);
     if (!owner) return;
 
-    if (player.name === owner || hasLevel4Clearance(player)) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 This chest is locked by ${owner}. You can override it.`);
-        notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} accessed locked chest by ${owner} at ${getCanonicalChestKey(block)}`);
+    const isOwner = player.name === owner;
+    const hasOverride = hasLevel4Clearance(player);
+
+    // OWNER (with or without level 4) → silent but logged
+    if (isOwner) {
         await logChestAccess(block, player.name);
         return;
     }
 
+    // LEVEL 4 accessing someone else's chest → allowed but logged + notified
+    if (hasOverride) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 This chest is locked by ${owner}. You can override it.`);
+        notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} accessed locked chest by ${owner} at ${getCanonicalChestKey(block)}`);
+
+        await logChestAccess(block, player.name);
+        return;
+    }
+
+    // UNAUTHORIZED ACCESS → blocked + logged + notified
     player.sendMessage(`§2[§7Paradox§2]§o§7 This chest is locked by ${owner}. You cannot access it.`);
+
     notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} tried to access locked chest by ${owner} at ${getCanonicalChestKey(block)}`);
+
     event.cancel = true;
 
     await logChestAccess(block, player.name);
