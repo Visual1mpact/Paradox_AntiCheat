@@ -91,18 +91,29 @@ function* lagClearGenerator(endTick: number): Generator<void, void, unknown> {
 // ------------------- ENTITY CLEAR -------------------
 
 /**
- * Removes item entities in the overworld that match registered ItemTypes.
+ * Removes item entities in all standard dimensions that match registered ItemTypes.
+ * Uses Promise.all to batch the work for multiple dimensions concurrently.
  */
 async function clearEntityItems() {
-    const items = world.getDimension("overworld").getEntities({ type: "item" });
     const allTypes = ItemTypes.getAll();
+    const dimensionIds = ["overworld", "nether", "the_end"];
 
-    for (const entity of items) {
-        const itemComp = entity.getComponent("item");
-        if (itemComp && allTypes.includes(itemComp.itemStack.type)) {
-            entity.remove();
-        }
-    }
+    await Promise.all(
+        dimensionIds.map(async (id) => {
+            try {
+                const dim = world.getDimension(id);
+                const items = dim.getEntities({ type: "item" });
+                for (const entity of items) {
+                    const itemComp = entity.getComponent("item");
+                    if (itemComp && allTypes.includes(itemComp.itemStack.type)) {
+                        entity.remove();
+                    }
+                }
+            } catch (e) {
+                console.warn(`[Paradox] Failed to get dimension ${id}: ${e}`);
+            }
+        })
+    );
 }
 
 /**
