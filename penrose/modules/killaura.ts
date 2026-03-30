@@ -50,7 +50,9 @@ function checkIfFacingEntity(attacker: Player, target: Player): boolean {
     const targetVector = new Vector3Builder(target.location.x - attacker.location.x, target.location.y - attacker.location.y, target.location.z - attacker.location.z).normalize();
 
     const dot = Vector3Utils.dot(attackerVector, targetVector);
-    const angle = Math.acos(dot) * (180 / Math.PI);
+    // clamp to valid acos domain
+    const clampedDot = Math.min(1, Math.max(-1, dot));
+    const angle = Math.acos(clampedDot) * (180 / Math.PI);
     return angle <= MAX_ORIENTATION_DIFFERENCE;
 }
 
@@ -98,8 +100,6 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const targetLocation = new Vector3Builder(target.location.x, target.location.y, target.location.z);
     const distance = Vector3Utils.distance(attackerLocation, targetLocation);
 
-    if (distance < 2) return;
-
     const currentTick = system.currentTick;
 
     if (!playerAttackData.has(attackerId)) playerAttackData.set(attackerId, []);
@@ -108,10 +108,12 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     if (attackTimes.length > BUFFER_SIZE) attackTimes.shift();
 
     const recentAttacks = attackTimes.filter((t) => currentTick - t <= 20);
-    const facing = checkIfFacingEntity(attacker, target);
 
-    if (!facing || distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes)) {
-        // Cancel the attack instead of restoring health manually
+    const isCloseRange = distance < 2;
+
+    const facing = isCloseRange || checkIfFacingEntity(attacker, target);
+
+    if (distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes) || !facing) {
         event.cancel = true;
         alertStaff(attacker, distance, recentAttacks.length);
     }
