@@ -69,7 +69,7 @@ export const paradoxInfoCommand: Command = {
                 "§2============================";
 
             // Create and show the form to the player
-            const form = new MessageFormData().title("Paradox Info").body(infoText).button1("Close With This").button2("Close With That");
+            const form = new MessageFormData().title("                Paradox Info").body(infoText).button1("Close With This").button2("Close With That");
 
             form.show(sender)
                 .then((response) => {
