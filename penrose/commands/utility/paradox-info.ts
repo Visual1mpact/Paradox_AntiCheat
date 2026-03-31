@@ -37,10 +37,10 @@ export const paradoxInfoCommand: Command = {
             const version = `${paradoxVersion}`;
             const author = "Visual1mpact";
             const coAuthor = "Pete9xi";
-            const github = "https://github.com/Visual1mpact/Paradox_AntiCheat";
+            const github = "github.com/Visual1mpact/Paradox_AntiCheat";
             const license = "GPL-3.0";
-            const discordFull = "https://discord.gg/7Nh7UnkbdU";
-            const wiki = "https://visual1mpact.github.io/Paradox_AntiCheat/#/";
+            const discordFull = "discord.gg/7Nh7UnkbdU";
+            const wiki = "visual1mpact.github.io/Paradox_AntiCheat/#/";
 
             const descriptionText =
                 `Paradox AntiCheat is a high-performance anti-cheat system for Minecraft Bedrock. ` +
