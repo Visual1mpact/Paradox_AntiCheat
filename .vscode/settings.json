@@ -11,8 +11,10 @@
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+
     "git.ignoreLimitWarning": true,
     "editor.formatOnSave": true,
+
     "search.exclude": {
         "**/.git": true,
         "**/node_modules": true
@@ -21,10 +23,14 @@
         "**/.git": true,
         "**/node_modules": true
     },
+
     "files.eol": "\n",
+    "files.encoding": "utf8",
+
     "editor.codeActionsOnSave": {
-        "source.fixAll.ts": "explicit",
+        "source.fixAll.ts": "explicit"
     },
-    "files.autoGuessEncoding": true,
-    "files.insertFinalNewline": true,
+
+    "files.autoGuessEncoding": false,
+    "files.insertFinalNewline": true
 }
