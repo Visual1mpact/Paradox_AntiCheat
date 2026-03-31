@@ -184,6 +184,31 @@ The `!invsee` command allows players with sufficient clearance to view another p
 - Inventory components are retrieved securely; missing or invalid components will trigger an error.
 - Intended for **moderation** or **administrative oversight**.
 
+## !info
+### At A Glance
+The `!info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
+
+!> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- Shows a **MessageFormData GUI** with all relevant information for the server.
+- Information includes:
+  - **Version** – Current Paradox AC version.
+  - **License** – License type (GPL-3.0).
+  - **Authors** – Main and co-authors.
+  - **Links** – GitHub, Discord, and Wiki.
+  - **Description** – Brief explanation of the project and design philosophy.
+- The GUI **automatically retries** if the player is busy.
+- Players are prompted to **close their chat window** before the form is displayed.
+
+> Usage: "!info"  
+> Example: !info
+
+### Notes
+- The command is **available to all players** (security clearance 1).
+- The displayed GUI is **read-only**; players cannot modify content through this form.
+- Designed for quick access to Paradox AC information without needing console access.
+
 ## !pvp
 ### At A Glance
 The `!pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
