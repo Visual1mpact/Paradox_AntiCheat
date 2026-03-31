@@ -1,5 +1,9 @@
 # Changelog
 
+## [v5.14.2](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.14.2) (2026-03-31)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.14.1...v5.14.2)
+
 ## [v5.14.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.14.1) (2026-03-28)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.14.0...v5.14.1)
