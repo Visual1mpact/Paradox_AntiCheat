@@ -144,6 +144,9 @@ class GUIManager {
      * Displays an ActionFormData form for a set of command actions.
      */
     private async showActionForm(actions: ActionFormButton[], title: string, description: string, command: Command, dynamicFields: DynamicField[], commandOrder?: string): Promise<void> {
+        // Filter actions so the player only sees allowed buttons
+        actions = commandHandler.filterButtonsBySecurity(actions, this.playerSecurityClearance);
+
         const form = new ActionFormData().title(title).body(description);
 
         // Add buttons for each action and a "Back" button

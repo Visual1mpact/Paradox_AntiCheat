@@ -39,6 +39,11 @@ export type ChestLocksSchema = {
         lastAccessed?: number;
         /** Optional: access log of {player, time} */
         accessLog?: { player: PlayerName; time: number }[];
+        /**
+         * Players that are allowed to access ALL containers
+         * owned by this owner.
+         */
+        sharedWith?: PlayerName[];
     };
 };
 

@@ -95,14 +95,25 @@ function notifyLevel4Players(message: string): void {
 /** ------------------- CHEST DATABASE HELPERS ------------------- */
 
 /**
- * Retrieves the owner of a locked chest.
+ * Retrieves information about a locked chest.
  *
- * @param {Block} block - The chest block.
- * @returns {string | null} The owner's name, or null if unlocked.
+ * @param {Block} block - The chest block to query.
+ * @returns {Object|null} An object containing chest info, or `null` if the chest is not locked.
+ * @property {string} [owner] - The player who owns the chest.
+ * @property {string} [placedBy] - The player who placed the chest.
+ * @property {number} [lastAccessed] - Timestamp of the last access.
+ * @property {{ player: string; time: number }[]} [accessLog] - Array of past access events.
+ * @property {string[]} [sharedWith] - Players allowed to access this chest in addition to the owner.
  */
-function getChestOwner(block: Block): string | null {
+function getChestInfo(block: Block): {
+    owner?: string;
+    placedBy?: string;
+    lastAccessed?: number;
+    accessLog?: { player: string; time: number }[];
+    sharedWith?: string[];
+} | null {
     const key = getCanonicalChestKey(block);
-    return chestLockDB.get(key)?.owner ?? null;
+    return chestLockDB.get(key) ?? null;
 }
 
 /**
@@ -167,23 +178,17 @@ async function chestLockBefore(event: PlayerInteractWithBlockBeforeEvent): Promi
     const { block, player } = event;
     if (!isStorageBlock(block)) return;
 
-    const owner = getChestOwner(block);
+    const chestInfo = getChestInfo(block);
+    const owner = chestInfo?.owner;
+    const sharedWith = chestInfo?.sharedWith ?? [];
     if (!owner) return;
 
     const isOwner = player.name === owner;
     const hasOverride = hasLevel4Clearance(player);
+    const validated = sharedWith.includes(player.name);
 
-    // OWNER (with or without level 4) → silent but logged
-    if (isOwner) {
-        await logChestAccess(block, player.name);
-        return;
-    }
-
-    // LEVEL 4 accessing someone else's chest → allowed but logged + notified
-    if (hasOverride) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 This chest is locked by ${owner}. You can override it.`);
-        notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} accessed locked chest by ${owner} at ${getCanonicalChestKey(block)}`);
-
+    // OWNER or SHARED (with or without level 4 access) → silent but logged
+    if (isOwner || hasOverride || validated) {
         await logChestAccess(block, player.name);
         return;
     }
@@ -231,7 +236,6 @@ async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent): Promise
         });
 
         player.sendMessage(`§2[§7Paradox§2]§o§7 You have locked this chest.`);
-        notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} locked chest at ${key}`);
         return;
     }
 
@@ -239,7 +243,6 @@ async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent): Promise
         await chestLockDB.delete(key);
 
         player.sendMessage(`§2[§7Paradox§2]§o§7 You have unlocked this chest.`);
-        notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} unlocked chest at ${key}`);
         player.playSound("open.iron_door", { location: block.location });
     }
 }
@@ -253,7 +256,8 @@ async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent): Promise
     const { block, player } = event;
     if (!isStorageBlock(block)) return;
 
-    const owner = getChestOwner(block);
+    const chestInfo = getChestInfo(block);
+    const owner = chestInfo?.owner;
     if (!owner) return;
 
     if (player.name !== owner && !hasLevel4Clearance(player)) {

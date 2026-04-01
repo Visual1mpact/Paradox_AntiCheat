@@ -49,6 +49,9 @@ export interface ActionFormButton {
 
     /** Optional array of sub-action buttons */
     subActions?: ActionFormButton[];
+
+    /** Optional security clearance adjustment */
+    securityClearance?: SecurityClearance;
 }
 
 /**
@@ -75,6 +78,9 @@ export interface DynamicField {
 
     /** Required fields that must be filled before execution */
     requiredFields?: string[];
+
+    /** Optional security clearance adjustment */
+    securityClearance?: SecurityClearance;
 }
 
 /**
@@ -124,6 +130,8 @@ export interface Command {
 
     /** Required security clearance to execute */
     securityClearance: SecurityClearance;
+
+    argSecurity?: Record<string, SecurityClearance>;
 
     /** Optional GUI icon */
     icon?: string;
@@ -298,7 +306,17 @@ export class CommandHandler {
         }
 
         const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
-        const requiredClearance = command?.securityClearance ?? SecurityClearance.Level1;
+
+        /**
+         * Determine security requirement.
+         * Priority:
+         * 1. arg-specific security
+         * 2. command-level security
+         */
+        const argKey = args[0]?.toLowerCase();
+
+        const requiredClearance = command?.argSecurity?.[argKey ?? ""] ?? command?.securityClearance ?? SecurityClearance.Level1;
+
         const hasPermission = (playerSecurityClearance >= requiredClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op";
 
         if (!hasPermission) {
@@ -357,6 +375,20 @@ export class CommandHandler {
      */
     private formatUsage(usage: string): string {
         return usage.replace(/[\[\]<>\|]/g, (m) => `§2${m}§f`);
+    }
+
+    /**
+     * Filters GUI buttons based on player security clearance.
+     * Used when generating ActionFormData menus.
+     */
+    public filterButtonsBySecurity(buttons: ActionFormButton[], playerSecurityClearance: number): ActionFormButton[] {
+        return buttons
+            .filter((button) => (button.securityClearance ?? SecurityClearance.Level1) <= playerSecurityClearance)
+            .map((button) => ({
+                ...button,
+
+                subActions: button.subActions ? this.filterButtonsBySecurity(button.subActions, playerSecurityClearance) : undefined,
+            }));
     }
 
     /**
