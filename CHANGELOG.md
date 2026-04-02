@@ -1,5 +1,9 @@
 # Changelog
 
+## [v5.14.3](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.14.3) (2026-04-02)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.14.2...v5.14.3)
+
 ## [v5.14.2](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v5.14.2) (2026-03-31)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v5.14.1...v5.14.2)
@@ -334,10 +338,6 @@ If you are expecting the function to accept certain arguments, you should explic
 ## [v3.0.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v3.0.0) (2022-07-04)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.19.54...v3.0.0)
-
-**Closed issues:**
-
-- like every command throws an error if you dont give args [\#41](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/41)
 
 ## [v2.19.54](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.19.54) (2022-06-26)
 
