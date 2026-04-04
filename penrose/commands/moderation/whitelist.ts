@@ -14,11 +14,13 @@ export const whitelistCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Whitelist Management",
-        description: "Manage the server whitelist.\n\n" + "§7• Add a player to grant them access.\n" + "§7• Remove a player to revoke access.\n" + "§7• List all whitelisted players currently on the server.\n" + "§7• Player names are case-sensitive.\n\n",
+        description:
+            "Manage the server whitelist.\n\n" + "§7• Add a player to grant them access.\n" + "§7• Remove a player to revoke access.\n" + "§7• List all whitelisted players currently on the server.\n" + "§7• Player names are case-sensitive.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Add Player",
+                securityClearance: 4,
                 command: ["add"],
                 description: "Add a player to the whitelist.",
                 requiredFields: ["playerName"],
@@ -27,6 +29,7 @@ export const whitelistCommand: Command = {
             },
             {
                 name: "Remove Player",
+                securityClearance: 4,
                 command: ["remove"],
                 description: "Remove a player from the whitelist.",
                 requiredFields: ["playerName"],
@@ -35,6 +38,7 @@ export const whitelistCommand: Command = {
             },
             {
                 name: "List Whitelisted Players",
+                securityClearance: 3,
                 command: ["list"],
                 description: "View all players currently on the whitelist.",
                 icon: "textures/ui/multiselection.png",

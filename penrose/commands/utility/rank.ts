@@ -27,6 +27,7 @@ export const setRankCommand: Command = {
     usage: "{prefix}setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]",
     examples: [`{prefix}setrank -t PlayerName -r [Admin]`, `{prefix}setrank -r [Member] -t PlayerName`, `{prefix}setrank -t PlayerName --reset`, `{prefix}setrank -d`, `{prefix}setrank -e`],
     icon: "textures/items/book_portfolio.png",
+    securityClearance: 3,
     guiInstructions: {
         formType: "ActionFormData",
         title: "Set or Reset Rank",
@@ -35,22 +36,26 @@ export const setRankCommand: Command = {
         actions: [
             {
                 name: "Set Rank",
+                securityClearance: 3,
                 requiredFields: ["PlayerName", "Rank"],
                 generateModalForm: true,
             },
             {
                 name: "Reset Rank",
+                securityClearance: 3,
                 command: ["--reset"],
                 requiredFields: ["PlayerName"],
                 generateModalForm: true,
             },
             {
                 name: "Disable Ranks Globally",
+                securityClearance: 4,
                 command: ["-d"],
                 generateModalForm: false,
             },
             {
                 name: "Enable Ranks Globally",
+                securityClearance: 4,
                 command: ["-e"],
                 generateModalForm: false,
             },
@@ -73,7 +78,6 @@ export const setRankCommand: Command = {
         ],
     },
     category: "Utility",
-    securityClearance: 3,
 
     /**
      * Executes the setrank command.

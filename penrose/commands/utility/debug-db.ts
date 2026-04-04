@@ -18,6 +18,7 @@ export const debugDBCommand: Command = {
     usage: "{prefix}debugdb",
     examples: ["{prefix}debugdb"],
     icon: "textures/ui/infobulb.png",
+    securityClearance: 4,
     guiInstructions: {
         formType: "ActionFormData",
         title: "Database Debug Info",
@@ -31,7 +32,6 @@ export const debugDBCommand: Command = {
         ],
     },
     category: "Utility",
-    securityClearance: 4,
 
     /**
      * Executes the debugDB command.

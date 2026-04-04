@@ -28,6 +28,7 @@ export const allowlistCommand: Command = {
         actions: [
             {
                 name: "Add Player",
+                securityClearance: 4,
                 command: ["add"],
                 description: "Add a player to the allowlist.",
                 requiredFields: ["playerName"],
@@ -36,6 +37,7 @@ export const allowlistCommand: Command = {
             },
             {
                 name: "Remove Player",
+                securityClearance: 4,
                 command: ["remove"],
                 description: "Remove a player from the allowlist.",
                 requiredFields: ["playerName"],
@@ -43,13 +45,15 @@ export const allowlistCommand: Command = {
                 icon: "textures/ui/friend_glyph_desaturated.png",
             },
             {
-                name: "List allowlisted Players",
+                name: "List allowed Players",
+                securityClearance: 3,
                 command: ["list"],
                 description: "View all players currently on the allowlist.",
                 icon: "textures/ui/multiselection.png",
             },
             {
                 name: "Disable the allowlist",
+                securityClearance: 4,
                 command: ["disable"],
                 description: "Disables the allow list and clears all configured players.",
                 icon: "textures/blocks/barrier.png",

@@ -195,16 +195,19 @@ export const pvpToggleCommand: Command = {
         actions: [
             {
                 name: "Toggle Global PvP",
+                securityClearance: 4,
                 command: ["global"],
                 description: "Enable or disable PvP for the entire server.",
             },
             {
                 name: "Check PvP Status",
+                securityClearance: 1,
                 command: ["status"],
                 description: "View the current PvP status for yourself and the server.",
             },
             {
                 name: "Toggle Your PvP",
+                securityClearance: 1,
                 description: "Enable or disable PvP for yourself only.",
             },
         ],
