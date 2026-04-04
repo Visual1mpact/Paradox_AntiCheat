@@ -389,7 +389,7 @@ The `!transfer` command allows players to connect to another **Minecraft Bedrock
 
 > Usage: "!transfer -h <hostname> -p <port>"  
 > Example: !transfer -h play.example.com -p 19132  
-> Example: !transfer -h 45.132.89.197 -p 25806  
+> Example: !transfer -h 25.777.25.777 -p 25806  
 
 
 ### GUI Integration
