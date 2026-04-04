@@ -77,6 +77,7 @@ import { chestForensicCommand } from "../commands/settings/container-lock";
 import { startChestLock } from "../modules/container-lock";
 import { scriptureCommand } from "../commands/utility/scriptures";
 import { paradoxInfoCommand } from "../commands/utility/paradox-info";
+import { transferCommand } from "../commands/utility/transfer";
 
 type PlayerID = string;
 
@@ -156,6 +157,7 @@ const allCommands: Command[] = [
     chestForensicCommand,
     scriptureCommand,
     paradoxInfoCommand,
+    transferCommand,
 ];
 
 /**

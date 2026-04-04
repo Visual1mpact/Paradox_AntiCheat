@@ -372,3 +372,47 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 ### Notes
 - Only one teleport request can be pending for a player at a time.
 - Players receive messages about the status of their requests (sent, accepted, denied, or timed out).
+
+## !transfer
+### At A Glance
+The `!transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
+
+!> Required Clearance Level To Execute: `1`
+
+### How It Works
+- Players can manually input a **hostname** and **port** to connect to another server.
+- The command supports both **chat usage** and **GUI form input**.
+- The most recently used server details are saved for potential future use.
+- The command automatically verifies whether the server environment supports transfers.
+- If executed on platforms that do not support server transfers (such as **Realms**), the command safely disables itself.
+- Provides feedback if the connection fails or input is invalid.
+
+> Usage: "!transfer -h <hostname> -p <port>"  
+> Example: !transfer -h play.example.com -p 19132  
+> Example: !transfer -h 45.132.89.197 -p 25806  
+
+
+### GUI Integration
+- The command can be executed via an **in-game modal form**.
+- Players are prompted to enter:
+  - Hostname (IP address or domain)
+  - Port number
+- The form automatically retries if the player is busy to ensure it appears correctly.
+
+### Actions
+1. **Enter Hostname** – Specify the server IP or domain name.
+2. **Enter Port** – Specify the server port number.
+3. **Transfer** – Attempts to connect to the specified server.
+
+### Notes
+- Hostnames may be either:
+  - IPv4 address (example: `25.777.25.777`)
+  - Domain name (example: `play.example.com`)
+- Ports must be valid numbers (example: `19132`).
+- The command will not function on platforms that do not support server transfer functionality.
+- Failed transfers typically indicate:
+  - Incorrect hostname
+  - Incorrect port
+  - Target server offline
+  - Network restrictions
+- Intended for use on **BDS**, proxy networks, or server hubs, not for Realms.
