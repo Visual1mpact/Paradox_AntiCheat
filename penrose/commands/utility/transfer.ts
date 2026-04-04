@@ -46,7 +46,7 @@ export const transferCommand: Command = {
     icon: "textures/items/ender_pearl.png",
     securityClearance: 1,
     guiInstructions: {
-        formType: "ModalFormData",
+        formType: "ActionFormData",
         title: "Server Transfer",
         description: "Enter the destination server information.\n\n" + "§7• Hostname can be IP or domain\n" + "§7• Port must be a number\n\n",
         commandOrder: "command-arg",
