@@ -120,7 +120,7 @@ function broadcastScriptureToPlayer(player: Player) {
 system.runInterval(() => {
     for (const player of PlayerCache.getPlayers()) {
         const enabled = player.getDynamicProperty("scriptureEnabled");
-        if (enabled === undefined || enabled === true) {
+        if (enabled === true) {
             broadcastScriptureToPlayer(player);
         }
     }
