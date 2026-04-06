@@ -89,7 +89,7 @@ export const lagClearCommand: Command = {
          * @param {string[]} args - Input arguments.
          * @returns {{ hours: number, minutes: number, seconds: number }}
          */
-        const getTimeout = (args: string[]) => {
+        const getTimeout = (args: string[]): { hours: number; minutes: number; seconds: number } => {
             const hours = parseNumber(args[0]);
             const minutes = parseNumber(args[1]);
             const seconds = parseNumber(args[2]);
