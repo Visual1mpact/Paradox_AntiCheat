@@ -196,7 +196,7 @@ export const chestForensicCommand: Command = {
         if (inputArg.toLowerCase() === "off") {
             await paradoxModulesDB.set("chestLock_b", { enabled: false });
             stopChestLock();
-            player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §cdisabled§7.");
+            player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §4disabled§7.");
             return;
         }
 
