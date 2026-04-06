@@ -123,9 +123,9 @@ export const kickCommand: Command = {
 
             // Inform the sender about the action based on whether the player is still in the world
             if (playerStillExists) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 has been kicked from the server.`);
-            } else {
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 has not been kicked from the server.`);
+            } else {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${player.name}§7 has been kicked from the server.`);
             }
         }
     },
