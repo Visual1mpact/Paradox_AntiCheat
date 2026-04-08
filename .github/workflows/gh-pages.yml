@@ -1,45 +1,47 @@
-# Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["rewrite"]
     paths:
-      - 'docs/**' # Trigger only when files in the docs directory change
-
-  # Allows you to run this workflow manually from the Actions tab
+      - 'docs/**'
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Opt into Node.js 24 early to avoid deprecation warnings and future breakage
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        # Latest major release of checkout with Node 24 support
+        uses: actions/checkout@v6  # supports Node.js 24 and runner improvements :contentReference[oaicite:1]{index=1}
+
       - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        # Use latest major tag for configure-pages
+        uses: actions/configure-pages@v6  # (if available) otherwise stick to v5 and test Node24 :contentReference[oaicite:2]{index=2}
+
+      - name: Upload Pages Artifact
+        # Latest version for artifact upload for Pages
+        uses: actions/upload-pages-artifact@v4  # Latest v4 release :contentReference[oaicite:3]{index=3}
         with:
-          # Upload entire repository
           path: 'docs'
+
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4  # Latest major for deploy-pages :contentReference[oaicite:4]{index=4}
