@@ -278,6 +278,44 @@ The `!modules` command displays the status of all registered modules, including 
     │ └─KickOnIdle: true
     └─AutoClicker: DISABLED
     
+## !mute
+### At A Glance
+The `!mute` command allows administrators to toggle a player's ability to send chat messages. This is a crucial tool for managing disruptive chat behavior without resorting to more severe actions like kicking or banning. Muted players can still execute commands but are prevented from sending public chat messages.
+
+!> Required Clearance Level To Execute: `3`
+
+
+> Usage: "{prefix}mute <player>"
+> Example: `{prefix}mute Steve`
+> Example: `{prefix}mute "Steve Bob"`
+> Example: `{prefix}mute help`
+
+
+### **Behavior & Notes**
+- **Toggle Functionality:**
+  - Executing `!mute` on a player who is not currently muted will mute them.
+  - Executing `!mute` on a player who is already muted will unmute them.
+- **Chat Restriction:**
+  - Muted players will have their chat messages cancelled and will receive a notification that they are muted when they attempt to speak.
+  - They can still use commands.
+- **Security Protection:**
+  - Players with **Level 4 security clearance** cannot be muted by other players, nor can they mute themselves. This prevents accidental self-silencing and maintains the integrity of high-level administrative roles.
+- **Feedback Messages:**
+  - The command sender receives confirmation of the mute/unmute action.
+  - The target player receives a message informing them of their mute status change.
+- **Player Lookup:**
+  - Supports single or multi-word player names. Quotes are optional for names containing spaces.
+  - If the target player is not found or is invalid, the sender is notified.
+- **GUI Integration:**
+  - The command is accessible via the in-game GUI, allowing for easy selection of a target player to toggle their mute status.
+
+### **Examples**
+- Mute a player:
+  `!mute PlayerName`
+- Unmute a player:
+  `!mute PlayerName`
+- Mute a player with spaces in their name:
+  `!mute "Another Player"`
 
 ## !op
 ### At A Glance
