@@ -14,44 +14,92 @@ export const warnCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Warning System",
-        description: "Manage player conduct. 3 warnings result in an automatic kick.\n\n",
+        description:
+            "Manage player conduct and infractions. 3 warnings result in an automatic kick and suspension.\n\n" +
+            "§7• §fOnline Selection§7: Quickly warn players currently in the world.\n" +
+            "§7• §fOffline/Manual§7: Warn players by name (even if offline).\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Add Warning",
-                command: ["add"],
-                requiredFields: ["playerName", "reason"],
-                generateModalForm: true,
                 icon: "textures/ui/warning_sad_steve.png",
+                generateSubActions: true,
+                subActions: [
+                    {
+                        name: "Online Player",
+                        command: ["add"],
+                        requiredFields: ["onlinePlayerName", "reason"],
+                        generateModalForm: true,
+                        icon: "textures/ui/player_online_icon.png",
+                    },
+                    {
+                        name: "Offline Player",
+                        command: ["add"],
+                        requiredFields: ["offlinePlayerName", "reason"],
+                        generateModalForm: true,
+                        icon: "textures/ui/player_offline_icon.png",
+                    },
+                ],
             },
             {
                 name: "List Warnings",
-                command: ["list"],
-                requiredFields: ["playerName"],
-                generateModalForm: true,
                 icon: "textures/ui/icon_book_writable.png",
+                generateSubActions: true,
+                subActions: [
+                    {
+                        name: "Online Player",
+                        command: ["list"],
+                        requiredFields: ["onlinePlayerName"],
+                        generateModalForm: true,
+                        icon: "textures/ui/player_online_icon.png",
+                    },
+                    {
+                        name: "Offline Player",
+                        command: ["list"],
+                        requiredFields: ["offlinePlayerName"],
+                        generateModalForm: true,
+                        icon: "textures/ui/player_offline_icon.png",
+                    },
+                ],
             },
             {
                 name: "Clear Warnings",
-                command: ["clear"],
-                requiredFields: ["playerName"],
-                generateModalForm: true,
                 icon: "textures/ui/trash_default.png",
+                securityClearance: 4,
+                generateSubActions: true,
+                subActions: [
+                    {
+                        name: "Online Player",
+                        command: ["clear"],
+                        requiredFields: ["onlinePlayerName"],
+                        generateModalForm: true,
+                        icon: "textures/ui/player_online_icon.png",
+                    },
+                    {
+                        name: "Offline Player",
+                        command: ["clear"],
+                        requiredFields: ["offlinePlayerName"],
+                        generateModalForm: true,
+                        icon: "textures/ui/player_offline_icon.png",
+                    },
+                ],
             },
         ],
         dynamicFields: [
-            { name: "Target Player:", type: "dropdown", sourceType: "players", requiredFields: ["playerName"] },
+            { name: "\nSelect Online Player:", type: "dropdown", sourceType: "players", requiredFields: ["onlinePlayerName"] },
+            { name: "\nEnter Player Name:", type: "text", placeholder: "Case-sensitive name", requiredFields: ["offlinePlayerName"] },
             { name: "Reason:", type: "text", placeholder: "Reason for warning", requiredFields: ["reason"] },
         ],
     },
 
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []) => {
         if (!message) return;
+
         const action = args.shift()?.toLowerCase();
         const playerName = args.shift()?.replace(/["@]/g, "");
         const reason = args.join(" ") || "No reason provided.";
 
-        if (!action || !playerName) {
+        if (!action || !playerName || playerName.trim().length === 0) {
             message.sender.sendMessage("§o§c[Paradox] Usage: !warn <add|list|clear> <player> [reason]");
             return;
         }
@@ -60,8 +108,7 @@ export const warnCommand: Command = {
         const playerWarns = allWarns[playerName] ?? [];
 
         if (action === "add") {
-            const target = PlayerCache.getPlayerByName(playerName);
-
+            const target = PlayerCache.getPlayerByName(playerName); // Try to get online player for immediate feedback
             playerWarns.push({
                 reason,
                 staff: message.sender.name,
@@ -74,6 +121,7 @@ export const warnCommand: Command = {
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Warned §f${playerName}§7. Total: §6${playerWarns.length}§7.`);
 
             if (target) {
+                // Only send message and kick if player is online
                 target.sendMessage(`§o§c[Paradox] You have been warned: ${reason} (Total: ${playerWarns.length})`);
 
                 // Automated Escalation: Kick on 3rd warning

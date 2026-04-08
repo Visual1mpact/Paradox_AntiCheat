@@ -598,6 +598,8 @@ The `!warn` command is used to track player infractions. It serves as a middle g
 - **Clearance Restrictions:**
   - Level 3 moderators can add and list warnings.
   - Only Level 4 administrators can use the `clear` action to reset a player's warning count.
+- **GUI Selection:**
+  - The GUI supports separate workflows for **Online Players** (dropdown selection) and **Offline Players** (manual text input) to ensure reliable UI interaction.
 
 ### **Actions**
 1. **add** – Records a new warning against the player.
