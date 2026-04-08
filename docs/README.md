@@ -34,10 +34,9 @@
     <li><strong>Install Dependencies</strong>: In the project root, run the following command:
       <pre><code>npm install</code></pre>
     </li>
-    <li><strong>Optional Setup Scripts</strong>: For Linux or Windows, you may use the included setup scripts to automatically install Node.js LTS and configure your environment:
+    <li><strong>Optional Setup Scripts</strong>: For Linux, you may use the included setup scripts to automatically install Node.js LTS and configure your environment:
       <ul>
         <li>Linux: <code>./bin/setup-node-linux.sh</code> (ensure executable: <code>chmod +x ./bin/setup-node-linux.sh</code>)</li>
-        <li>Windows (PowerShell): <code>bin\\setup-node-windows.ps1</code></li>
       </ul>
     </li>
   </ol>

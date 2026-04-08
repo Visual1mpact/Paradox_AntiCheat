@@ -9,7 +9,7 @@ const { path7z } = pkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BUILD_DIR = "build";
-const TSC_ALIAS = path.join("./node_modules", ".bin", process.platform === "win32" ? "tsc-alias.cmd" : "tsc-alias");
+const TSC_ALIAS = path.join("./node_modules", ".bin", "tsc-alias");
 
 // ---------------- Flags ----------------
 const wantMcpack = process.argv.includes("--mcpack");
@@ -38,7 +38,7 @@ function get7zaPath() {
     // If user wants system 7z
     if (process.env.USE_SYSTEM_7Z) {
         console.log("Using system 7z from PATH...");
-        return process.platform === "win32" ? "7z" : "7z";
+        return "7z";
     }
 
     // Otherwise use bundled binary
@@ -73,14 +73,13 @@ function syncVersion() {
 // ---------------- Build Steps ----------------
 function compile(tsconfigPath) {
     console.log(`Compiling TypeScript: ${tsconfigPath}`);
-    run(process.platform === "win32" ? "npx.cmd" : "npx", ["tsc", "-p", tsconfigPath], { cwd: process.cwd() });
+    run("npx", ["tsc", "-p", tsconfigPath], { cwd: process.cwd() });
 }
 
 function resolveAliases(tsconfigPath) {
     console.log("Resolving TypeScript paths...");
     const args = ["--resolve-full-paths", "--project", tsconfigPath];
-    if (process.platform === "win32") run("cmd.exe", ["/c", TSC_ALIAS, ...args]);
-    else run(`./${TSC_ALIAS}`, args);
+    run(`./${TSC_ALIAS}`, args);
 }
 
 function createArchive(type = "zip") {
@@ -166,12 +165,6 @@ async function runServerTest() {
             stdio: "inherit",
             cwd: bedrockServerDir,
         });
-        serverProcess.on("exit", (code) => {
-            console.log(`\nServer exited with code ${code}.`);
-            process.exit(code);
-        });
-    } else if (osType === "Windows_NT") {
-        const serverProcess = spawn("cmd", ["/c", serverPath], { stdio: "inherit", cwd: bedrockServerDir });
         serverProcess.on("exit", (code) => {
             console.log(`\nServer exited with code ${code}.`);
             process.exit(code);
