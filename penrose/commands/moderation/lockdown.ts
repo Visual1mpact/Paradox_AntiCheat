@@ -1,9 +1,6 @@
 import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import * as CryptoESImport from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/player-cache";
-
-const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 let lockdownMonitorFn: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 
@@ -39,7 +36,7 @@ export const lockdownCommand: Command = {
      * @param {boolean} [returnMonitorFunction=false] - If true, returns the lockDownMonitor function.
      * @returns {void | (function(PlayerSpawnAfterEvent): void)} - The lockDownMonitor function if returnMonitorFunction is true, otherwise void.
      */
-    execute: (message?: ChatSendBeforeEvent, _: string[] = [], __?: typeof CryptoES, returnMonitorFunction: boolean = false): void | ((event: PlayerSpawnAfterEvent) => void) => {
+    execute: (message?: ChatSendBeforeEvent, _: string[] = [], __?: any, returnMonitorFunction: boolean = false): void | ((event: PlayerSpawnAfterEvent) => void) => {
         if (!message) return;
         const reason = "Under Maintenance! Sorry for the inconvenience.";
 

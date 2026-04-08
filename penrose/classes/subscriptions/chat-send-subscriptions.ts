@@ -105,6 +105,14 @@ class ChatSendSubscription {
             const playerChannel = this.getPlayerChannel(player);
             const currentTick = system.currentTick;
 
+            // Mute check - If the player is muted, cancel the event and inform them.
+            const isMuted = player.getDynamicProperty("isMuted") as boolean;
+            if (isMuted) {
+                event.cancel = true;
+                player.sendMessage("§o§c[Paradox] You are currently muted and cannot send messages.");
+                return; // Stop further processing for muted players
+            }
+
             // 1️⃣ Spam detection
             if (this.isSpamCheckEnabled() && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
                 let tracker = this.spamData.get(playerId);

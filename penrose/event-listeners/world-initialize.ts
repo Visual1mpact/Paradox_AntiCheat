@@ -78,6 +78,7 @@ import { startChestLock } from "../modules/container-lock";
 import { scriptureCommand } from "../commands/utility/scriptures";
 import { paradoxInfoCommand } from "../commands/utility/paradox-info";
 import { transferCommand } from "../commands/utility/transfer";
+import { muteCommand } from "../commands/moderation/mute";
 
 type PlayerID = string;
 
@@ -158,6 +159,7 @@ const allCommands: Command[] = [
     scriptureCommand,
     paradoxInfoCommand,
     transferCommand,
+    muteCommand,
 ];
 
 /**
