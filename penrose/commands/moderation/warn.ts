@@ -95,11 +95,19 @@ export const warnCommand: Command = {
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []) => {
         if (!message) return;
 
-        const action = args.shift()?.toLowerCase();
-        const playerName = args.shift()?.replace(/["@]/g, "");
-        const reason = args.join(" ") || "No reason provided.";
+        if (args.length < 2) {
+            message.sender.sendMessage("§o§c[Paradox] Usage: !warn <add|list|clear> <player> [reason]");
+            return;
+        }
 
-        if (!action || !playerName || playerName.trim().length === 0) {
+        const action = args.shift()?.toLowerCase();
+
+        // If the action is list/clear and we have exactly one arg left, it's the name.
+        // If it's 'add', we take the next arg as the name and the rest as reason.
+        const playerName = args.shift()?.replace(/["@]/g, "");
+        const reason = args.join(" ").trim() || "No reason provided.";
+
+        if (!action || !playerName) {
             message.sender.sendMessage("§o§c[Paradox] Usage: !warn <add|list|clear> <player> [reason]");
             return;
         }
@@ -137,7 +145,8 @@ export const warnCommand: Command = {
 
             message.sender.sendMessage(`\n§2[§7Paradox§2]§o§7 Warnings for §f${playerName}§7:`);
             playerWarns.forEach((w: { reason: string; staff: string; timestamp: number }, i: number) => {
-                message.sender.sendMessage(` §7${i + 1}. §f${w.reason} §8- By: ${w.staff}`);
+                const date = new Date(w.timestamp).toLocaleDateString();
+                message.sender.sendMessage(` §7${i + 1}. §f${w.reason} §8- By: ${w.staff} (${date})`);
             });
         } else if (action === "clear") {
             if ((message.sender.getDynamicProperty("securityClearance") as number) < 4) {
