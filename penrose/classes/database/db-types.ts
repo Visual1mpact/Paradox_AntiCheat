@@ -167,6 +167,20 @@ export type TrustedPlayersSchema = {
 };
 
 /**
+ * Schema for the warns database.
+ * Each key is a player name, mapped to an array of warning objects.
+ */
+export type WarnsSchema = {
+    players: {
+        [playerName: PlayerName]: {
+            reason: string;
+            staff: string;
+            timestamp: number;
+        }[];
+    };
+};
+
+/**
  * Schema for the whitelist database.
  * Each key is a player name, optionally storing their persistent ID.
  */

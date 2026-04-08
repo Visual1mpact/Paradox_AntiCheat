@@ -581,6 +581,29 @@ The `!vanish` command allows a player to become invisible, enabling them to moni
   - Success (disabled): `Vanish disabled!`
   - Failure (player not found): `Player "<PlayerName>" not found.`
 
+## !warn
+### At A Glance
+The `!warn` command is used to track player infractions. It serves as a middle ground between verbal warnings and formal bans.
+
+!> Required Clearance Level To Execute: `3` (Level 4 to clear)
+
+> Usage: "!warn <add|list|clear> <player> [reason]"
+> Example: `!warn add Steve Spamming`
+
+### **Behavior & Notes**
+- **Automated Escalation:** 
+  - If a player receives **3 warnings**, the system will automatically kick them and prevent them from rejoining until their warnings are cleared by a Level 4 admin.
+- **Persistence:**
+  - Warnings are stored in the Paradox database and persist even if the player leaves and rejoins.
+- **Clearance Restrictions:**
+  - Level 3 moderators can add and list warnings.
+  - Only Level 4 administrators can use the `clear` action to reset a player's warning count.
+
+### **Actions**
+1. **add** – Records a new warning against the player.
+2. **list** – Displays the history of warnings for the specified player.
+3. **clear** – Deletes all warnings for the player.
+
 ## !whitelist
 ### At A Glance
 The `!whitelist` command allows administrators to manage the server whitelist by adding or removing players, or viewing all whitelisted players.

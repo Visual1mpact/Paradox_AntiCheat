@@ -68,7 +68,19 @@ import { onPlayerSpawn } from "./player-spawn";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
-import { AllowlistPlayersSchema, BanlistPlayersSchema, ChannelsSchema, DisabledCommandsSchema, ParadoxModulesSchema, TrustedPlayersSchema, WhitelistPlayersSchema, InvSyncAudit, InvSyncSnapshots, ChestLocksSchema } from "../classes/database/db-types";
+import {
+    AllowlistPlayersSchema,
+    BanlistPlayersSchema,
+    ChannelsSchema,
+    DisabledCommandsSchema,
+    ParadoxModulesSchema,
+    TrustedPlayersSchema,
+    WhitelistPlayersSchema,
+    InvSyncAudit,
+    InvSyncSnapshots,
+    ChestLocksSchema,
+    WarnsSchema,
+} from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
 import { PlayerCache } from "../classes/player-cache";
@@ -79,6 +91,7 @@ import { scriptureCommand } from "../commands/utility/scriptures";
 import { paradoxInfoCommand } from "../commands/utility/paradox-info";
 import { transferCommand } from "../commands/utility/transfer";
 import { muteCommand } from "../commands/moderation/mute";
+import { warnCommand } from "../commands/moderation/warn";
 
 type PlayerID = string;
 
@@ -100,6 +113,7 @@ let spoofDB: OptimizedDatabase<TrustedPlayersSchema>;
 let whitelistDB: OptimizedDatabase<WhitelistPlayersSchema>;
 let allowlistDB: OptimizedDatabase<AllowlistPlayersSchema>;
 let banlistDB: OptimizedDatabase<BanlistPlayersSchema>;
+let warnsDB: OptimizedDatabase<WarnsSchema>;
 let invSyncSnapshotsDB: OptimizedDatabase<InvSyncSnapshots>;
 let invSyncAuditDB: OptimizedDatabase<InvSyncAudit>;
 let chestLockDB: OptimizedDatabase<ChestLocksSchema>;
@@ -160,6 +174,7 @@ const allCommands: Command[] = [
     paradoxInfoCommand,
     transferCommand,
     muteCommand,
+    warnCommand,
 ];
 
 /**
@@ -174,12 +189,13 @@ async function initializeSystems() {
     whitelistDB = new OptimizedDatabase("whitelist");
     allowlistDB = new OptimizedDatabase("allowlist");
     banlistDB = new OptimizedDatabase("banlist");
+    warnsDB = new OptimizedDatabase("warns");
     invSyncSnapshotsDB = new OptimizedDatabase("invSyncSnapshots");
     invSyncAuditDB = new OptimizedDatabase("invSyncAudit");
     chestLockDB = new OptimizedDatabase("chestLocks");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB];
 
     const results = await Promise.allSettled(dbs.map((db) => db.clean()));
     results.forEach((result, i) => {
@@ -420,4 +436,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB };

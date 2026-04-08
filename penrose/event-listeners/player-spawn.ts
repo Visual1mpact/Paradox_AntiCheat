@@ -1,5 +1,5 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
-import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB } from "../event-listeners/world-initialize";
+import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB, warnsDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
 
@@ -117,6 +117,7 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
         await checkMemoryAndRenderDistance(event);
         isPlatformBlocked(event);
         await handleBanCheck(event);
+        await handleWarnCheck(event);
         handleSecurityClearance(event);
         allowList(event);
 
@@ -323,6 +324,27 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
             // Otherwise, kick the player
             player.runCommand(`kick @s You are banned. Please contact an admin for more information.`);
         }
+    }
+}
+
+/**
+ * Checks if a player has reached the warning threshold and kicks them if they have.
+ * This enforces the 3-warning limit upon rejoining, effectively suspending the player.
+ * @param {PlayerSpawnAfterEvent} event - The event object.
+ */
+async function handleWarnCheck(event: PlayerSpawnAfterEvent): Promise<void> {
+    const player = event.player;
+    const playerName = player.name;
+
+    // Level 4 administrators are exempt from automated warning kicks
+    const clearance = player.getDynamicProperty("securityClearance") as number;
+    if (clearance === 4) return;
+
+    const allWarns = warnsDB.get("players") ?? {};
+    const playerWarns = allWarns[playerName] ?? [];
+
+    if (playerWarns.length >= 3) {
+        player.runCommand(`kick @s Automatic Kick: Too many warnings (${playerWarns.length}/3). Appeal to an admin.`);
     }
 }
 
