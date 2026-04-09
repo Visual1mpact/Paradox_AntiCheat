@@ -22,23 +22,24 @@ function exitWithError(message) {
     process.exit(1);
 }
 
+function quoteWinArg(arg) {
+    if (/[\s"]/g.test(arg)) {
+        return `"${arg.replace(/"/g, '\\"')}"`;
+    }
+    return arg;
+}
+
 function run(command, args, options = {}) {
     const isWin = process.platform === "win32";
 
-    const result = spawnSync(command, args, {
+    const cmdString = isWin ? [command, ...args.map(quoteWinArg)].join(" ") : command;
+
+    const result = spawnSync(cmdString, isWin ? [] : args, {
         stdio: "pipe",
         encoding: "utf-8",
         shell: isWin,
         ...options,
     });
-
-    console.log("----- COMMAND DEBUG -----");
-    console.log("Command:", command, args.join(" "));
-    console.log("Exit code:", result.status);
-    console.log("Error:", result.error);
-    console.log("STDOUT:\n", result.stdout);
-    console.log("STDERR:\n", result.stderr);
-    console.log("-------------------------");
 
     if (result.status !== 0) {
         exitWithError(`Command failed: ${command} ${args.join(" ")}`);
