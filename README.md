@@ -83,6 +83,33 @@
     </ul>
   </li>
 </ol>
+
+<h2>Development Environment Setup for Windows</h2>
+<ol>
+  <li>
+    <strong>Install Node.js (Latest LTS Automatically):</strong>
+    <ul>
+      <li>
+        This project includes a setup script that installs:
+        <ul>
+          <li>The latest <strong>Node.js LTS</strong> (no nvm on Windows)</li>
+          <li>Updates your PATH so Node and npm are available</li>
+        </ul>
+      </li>
+      <li>
+        From the project root, run the Windows setup script in PowerShell:
+        <pre><code>bin\setup-node-windows.ps1</code></pre>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>Install Project Dependencies:</strong>
+    <ul>
+      <li>After Node.js is installed, run:</li>
+      <pre><code>npm install</code></pre>
+    </ul>
+  </li>
+</ol>
   <li><strong>Install Visual Studio Code (VS Code):</strong>
     <ul>
       <li>Download and install VS Code from <a href="https://code.visualstudio.com/">the official website</a>.</li>

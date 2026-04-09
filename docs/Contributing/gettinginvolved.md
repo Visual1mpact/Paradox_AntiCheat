@@ -61,6 +61,14 @@ chmod +x ./bin/setup-node-linux.sh
 ./bin/setup-node-linux.sh
 ```
 
+### Windows (PowerShell)
+
+From the project root:
+
+```powershell
+bin\setup-node-windows.ps1
+```
+
 ---
 
 ## 3️⃣ Install Project Dependencies

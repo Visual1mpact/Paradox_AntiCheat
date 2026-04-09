@@ -52,8 +52,10 @@ function downloadBDS(version) {
 
     if (osType === "linux") {
         downloadURL = `https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-${version}.zip`;
+    } else if (osType === "win32") {
+        downloadURL = `https://www.minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-${version}.zip`;
     } else {
-        return Promise.reject("> Only Linux is supported for building Paradox.");
+        return Promise.reject("> Unsupported operating system: " + osType);
     }
 
     const downloadLocation = `bedrock-server-${version}.zip`;
