@@ -71,3 +71,4 @@ if ($UserPath -notlike "*$NodeBin*") {
 Write-Host "Node installed: $(node -v)" -ForegroundColor Green
 Write-Host "NPM installed: $(npm -v)" -ForegroundColor Green
 Write-Host "Bootstrap complete!" -ForegroundColor Green
+Write-Host "Now you can run 'npm install' to install all dependencies." -ForegroundColor Green
