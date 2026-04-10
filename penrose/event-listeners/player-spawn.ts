@@ -237,7 +237,7 @@ function allowList(event: PlayerSpawnAfterEvent): void {
 
     // If the player is on the allowlist, welcome them
     if (playerName in allowListedPlayers) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 You are on the allow list, welcome ${player.name}!.`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 You are on the allow list, welcome ${player.name}!`);
         return;
     }
 
