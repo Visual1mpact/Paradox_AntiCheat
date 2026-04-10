@@ -26,73 +26,81 @@ function containsClassDefinition(filePath) {
     return /\bclass\s+[A-Z][a-zA-Z0-9]*\b/.test(fileContent);
 }
 
-function checkNamingConventions(directory, depth = 0) {
-    const items = fs.readdirSync(directory);
+function checkNamingConventions(directory, depth = 0, parentHasMore = []) {
+    let items = fs.readdirSync(directory);
+
+    // filter ignored items first so they don't affect tree structure
+    items = items.filter((item) => {
+        if (ignoreFiles.has(item)) return false;
+        if (ignoreDirs.has(item)) return false;
+
+        const ext = path.extname(item);
+        if (item.endsWith(".d.ts") || item.endsWith(".d.ts.map")) return false;
+        if (ignoreFileExtensions.has(ext)) return false;
+
+        return true;
+    });
+
+    // sort: directories first, then files alphabetically
+    items.sort((a, b) => {
+        const aIsDir = fs.statSync(path.join(directory, a)).isDirectory();
+        const bIsDir = fs.statSync(path.join(directory, b)).isDirectory();
+
+        if (aIsDir && !bIsDir) return -1;
+        if (!aIsDir && bIsDir) return 1;
+
+        return a.localeCompare(b);
+    });
+
     let hasDiscrepancies = false;
 
-    items.forEach((item) => {
+    items.forEach((item, index) => {
         const fullPath = path.join(directory, item);
         const isDirectory = fs.statSync(fullPath).isDirectory();
 
-        // Skip specific files
-        if (ignoreFiles.has(item)) {
-            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Configuration file)")}`);
-            return;
-        }
+        const isLast = index === items.length - 1;
 
-        // Skip directories
-        if (ignoreDirs.has(item)) {
-            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Directory)")}`);
-            return;
-        }
+        // build indentation from parent levels
+        const indentation = parentHasMore.map((hasMore) => (hasMore ? "│   " : "    ")).join("");
 
-        const fileExtension = path.extname(item);
-
-        // Skip declaration files (.d.ts) and their maps
-        if (item.endsWith(".d.ts") || item.endsWith(".d.ts.map")) {
-            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: TypeScript declaration file)")}`);
-            return;
-        }
-
-        // Skip other non-source file extensions
-        if (ignoreFileExtensions.has(fileExtension)) {
-            console.log(`${"│   ".repeat(depth)}└── ${chalk.gray(item)} ${chalk.gray("(Ignored: Non-source file extension)")}`);
-            return;
-        }
-
-        const indentation = "│   ".repeat(depth);
-        const treeBranch = isDirectory ? "├── " : "└── ";
+        const branch = isLast ? "└── " : "├── ";
 
         if (isDirectory) {
-            console.log(`${indentation}${treeBranch}${chalk.blue(item)}`);
-            const result = checkNamingConventions(fullPath, depth + 1);
+            console.log(`${indentation}${branch}${chalk.blue(item)}`);
+
+            const result = checkNamingConventions(fullPath, depth + 1, [...parentHasMore, !isLast]);
+
             hasDiscrepancies = hasDiscrepancies || result;
-        } else {
-            const fileNameWithoutExtension = path.basename(item, fileExtension);
+            return;
+        }
 
-            const isKebabCase = kebabCasePattern.test(fileNameWithoutExtension);
-            const isPascalCase = pascalCasePattern.test(toPascalCase(fileNameWithoutExtension.replace(/-([a-z])/g, (g) => g[1].toUpperCase())));
+        const ext = path.extname(item);
+        const fileNameWithoutExtension = path.basename(item, ext);
 
-            if (fileExtension === ".ts" || fileExtension === ".js") {
-                if (!isKebabCase) {
-                    console.log(`${indentation}${treeBranch}${chalk.red(item)} ${chalk.red("(Error: Does not follow kebab-case)")}`);
-                    console.log(`${indentation}    ${chalk.yellow("Reason:")} The file name "${chalk.red(fileNameWithoutExtension)}" should be in kebab-case (e.g., "${chalk.green("command-handler.ts")}").`);
-                    hasDiscrepancies = true;
-                } else {
-                    console.log(`${indentation}${treeBranch}${chalk.green(item)}`);
-                }
+        const isKebabCase = kebabCasePattern.test(fileNameWithoutExtension);
 
-                if (fileExtension === ".ts" && containsClassDefinition(fullPath)) {
-                    const className = toPascalCase(fileNameWithoutExtension.replace(/-([a-z])/g, (g) => g[1].toUpperCase()));
-                    if (!isPascalCase && fileNameWithoutExtension !== "index") {
-                        console.log(`${indentation}${treeBranch}${chalk.red(className)} ${chalk.red("(Error: Does not follow PascalCase)")}`);
-                        console.log(`${indentation}    ${chalk.yellow("Reason:")} Class names should be in PascalCase (e.g., "${chalk.green("CommandHandler")}").`);
-                        hasDiscrepancies = true;
-                    }
-                }
+        if (ext === ".ts" || ext === ".js") {
+            if (!isKebabCase) {
+                console.log(`${indentation}${branch}${chalk.red(item)} ${chalk.red("(Error: Does not follow kebab-case)")}`);
+
+                console.log(`${indentation}    ${chalk.yellow("Reason:")} "${chalk.red(fileNameWithoutExtension)}" should be kebab-case (e.g. "${chalk.green("command-handler.ts")}")`);
+
+                hasDiscrepancies = true;
             } else {
-                console.log(`${indentation}${treeBranch}${chalk.yellow(item)} ${chalk.yellow("(Warning: Unexpected file extension)")}`);
+                console.log(`${indentation}${branch}${chalk.green(item)}`);
             }
+
+            if (ext === ".ts" && containsClassDefinition(fullPath)) {
+                const className = toPascalCase(fileNameWithoutExtension.replace(/-([a-z])/g, (_, c) => c.toUpperCase()));
+
+                if (!pascalCasePattern.test(className) && fileNameWithoutExtension !== "index") {
+                    console.log(`${indentation}    ${chalk.red("Class naming issue:")} ${chalk.yellow(className)} should be PascalCase`);
+
+                    hasDiscrepancies = true;
+                }
+            }
+        } else {
+            console.log(`${indentation}${branch}${chalk.yellow(item)} ${chalk.yellow("(Warning: unexpected extension)")}`);
         }
     });
 
