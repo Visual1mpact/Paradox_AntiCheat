@@ -92,6 +92,7 @@ import { paradoxInfoCommand } from "../commands/utility/paradox-info";
 import { transferCommand } from "../commands/utility/transfer";
 import { muteCommand } from "../commands/moderation/mute";
 import { warnCommand } from "../commands/moderation/warn";
+import { renameCommand } from "../commands/moderation/rename";
 
 type PlayerID = string;
 
@@ -175,6 +176,7 @@ const allCommands: Command[] = [
     transferCommand,
     muteCommand,
     warnCommand,
+    renameCommand,
 ];
 
 /**

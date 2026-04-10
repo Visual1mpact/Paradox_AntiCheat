@@ -442,6 +442,32 @@ The `!punish` command removes items from a player’s inventory, equipment, and/
   - Success: `Punished "<PlayerName>"!`  
   - Failure: `Failed to punish "<PlayerName>"! Please try again.`
 
+## !rename
+### At A Glance
+The `!rename` command allows administrators to assign a custom alias to a player. This alias overrides the player's name in chat and can optionally be displayed in their overhead nametag.
+
+!> Required Clearance Level To Execute: `4`
+
+
+> Usage: "!rename <player> <newName> [--ui | -u] [--reset]"  
+> Example: !rename Steve CaptainSteve --ui  
+> Example: !rename Steve OrdinarySteve  
+> Example: !rename Steve --reset  
+
+
+### **Options**
+- `<player>`: Specifies the target player.
+- `<newName>`: The alias to be assigned.
+- `--ui | -u`: Toggles whether the alias should appear in the overhead nametag.
+- `--reset`: Clears the alias and restores the player's original identity.
+
+### **Behavior & Notes**
+- **Chat Priority**: Paradox chat channels prioritize the alias over the player's native name once set.
+- **UI Display**: If the UI flag is used, the alias is shown above the player's head, integrated with their current chat rank.
+- **Persistence**: Aliases are stored as dynamic properties on the player and persist across sessions until reset.
+- **Administrative Control**: Only Level 4 administrators can modify player identities to prevent abuse.
+- **Identity Integrity**: Internal moderation logs and spoof checks continue to track the player's unique ID, ensuring accountability even when an alias is active.
+
 ## !spooflog
 ### At A Glance
 The `!spooflog` command allows administrators to **inspect or clear player spoofing records** stored by the Paradox identity monitoring system.

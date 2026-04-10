@@ -179,7 +179,11 @@ class ChatSendSubscription {
 
             const rank = playerChannel ?? playerRank;
 
-            const formattedMessage = `${rank} §7${player.name}§7: §r${event.message}`;
+            // Support for Rename/Alias system
+            const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
+            const displayName = alias ?? player.name;
+
+            const formattedMessage = `${rank} §7${displayName}§7: §r${event.message}`;
 
             // 4️⃣ Determine target players
             if (playerChannel) {

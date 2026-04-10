@@ -123,8 +123,14 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
 
         // Logic for setting the nameTag with chat rank
         const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-        const rankedTag = `${rank}§r ${player.name}`;
-        const plainTag = player.name;
+
+        // Check for Alias override
+        const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
+        const showAliasInUI = (player.getDynamicProperty("showAliasInUI") as boolean) ?? false;
+        const displayName = alias && showAliasInUI ? alias : player.name;
+
+        const rankedTag = `${rank}§r ${displayName}`;
+        const plainTag = displayName;
 
         const ranksDisabled = !!world.getDynamicProperty("globalRankDisabled");
 
