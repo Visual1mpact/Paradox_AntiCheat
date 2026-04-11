@@ -33,7 +33,7 @@ Level 4 is the **highest security clearance**. It allows full management of Para
 
    * If no host exists, any player with **server operator privileges** (BDS operator, Realm host, LAN host) can initialize the host by running:
 
-   ```text
+   ```
    !op
    ```
 
@@ -45,7 +45,7 @@ Level 4 is the **highest security clearance**. It allows full management of Para
    * Only the **host** can grant Level 4 clearance to others.
    * Use:
 
-   ```text
+   ```
    !op <playerName>
    ```
 
@@ -55,13 +55,13 @@ Level 4 is the **highest security clearance**. It allows full management of Para
 
    * Any Level 4 user can view all Level 4 players, including the host:
 
-   ```text
+   ```
    !op list
    ```
 
 ### Example Commands
 
-```text
+```
 !op
 !op Alice
 !op "Player Name"
@@ -74,18 +74,34 @@ Level 4 is the **highest security clearance**. It allows full management of Para
 
 Paradox defines access through **Level 1–4 security clearances**:
 
-| Level | Description                                      |
-| ----- | ------------------------------------------------ |
-| 4     | Full OP access; can manage modules and grant OP. |
-| 3     | High-level admin commands, cannot grant OP.      |
-| 2     | Limited staff commands.                          |
-| 1     | Basic commands; general permissions.             |
+<div class="clearance-matrix">
+  <div class="clearance-level">
+    <span class="level-num">4</span>
+    <h4>Paradox OP</h4>
+    <p>Full system access. Manage all modules, grant OP, and modify identity records.</p>
+  </div>
+  <div class="clearance-level">
+    <span class="level-num">3</span>
+    <h4>Administrator</h4>
+    <p>High-level moderation. Access to bans, unbans, and advanced forensic tools.</p>
+  </div>
+  <div class="clearance-level">
+    <span class="level-num">2</span>
+    <h4>Moderator</h4>
+    <p>Standard field operations. Access to vanish, muting, and basic player tracking.</p>
+  </div>
+  <div class="clearance-level">
+    <span class="level-num">1</span>
+    <h4>Member</h4>
+    <p>Default access. Use channels, teleport requests, and view project info.</p>
+  </div>
+</div>
 
 ### Changing Clearance Levels
 
 * Use the `!opsec` command to change Levels 1–3:
 
-```text
+```
 !opsec <playerName> <clearanceLevel>
 ```
 
@@ -96,7 +112,7 @@ Paradox defines access through **Level 1–4 security clearances**:
 
 ### Example Commands
 
-```text
+```
 !opsec Bob 3
 !opsec "Player Name" 2
 ```
@@ -118,7 +134,7 @@ Once the host and OP are assigned:
 
 * Check available commands:
 
-```text
+```
 !help
 ```
 

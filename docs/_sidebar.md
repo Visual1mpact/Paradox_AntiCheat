@@ -1,18 +1,19 @@
--   <a href="#/documentation.md" title="Introduction" style="color: white; font-size: larger; font-weight: bolder">Introduction</a>
+<!-- docs/_sidebar.md -->
 
--   <a href="#" onclick="return false;" title="Getting Started" style="color: white; font-size: larger; font-weight: bolder">Getting Started</a>
+* **Getting Started**
+    * [Home](README.md)
+    * [Installation](gettingstarted.md)
+    * [Contributing](Contributing/gettinginvolved.md)
 
-    -   [Overview](gettingstarted.md "Overview")
+* **Moderation Suite**
+    * [Overview](Commands_Features/moderation.md)
+    * [Identity (!rename)](Commands_Features/moderation.md#rename)
 
--   <a href="#" onclick="return false;" title="Commands & Features" style="color: white; font-size: larger; font-weight: bolder">Modules Documentation</a>
+* **Utility Systems**
+    * [General Utilities](Commands_Features/utility.md)
 
-    -   [Moderation](Commands_Features/moderation.md "Moderation")
-    -   [Settings](Commands_Features/modules.md "Settings")
-    -   [Utility](Commands_Features/utility.md "Utility")
+* **Security Modules**
+    * [Anti-Cheat Modules](Commands_Features/modules.md)
 
-
--   <a href="#" onclick="return false;" title="Contributing" style="color: white; font-size: larger; font-weight: bolder">Contributing</a>
-
-    -   [Getting involved](Contributing/gettinginvolved.md "Getting involved")
-
-[<img src="./Media/Discord-logo.png" alt="Join our Discord server" width="140">](Support/support.md "Support")
+* **Support & Community**
+    * [Get Support](Support/support.md)

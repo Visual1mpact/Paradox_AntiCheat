@@ -1,4 +1,4 @@
-!> This documentation could change with any version. So be sure to check it once in a while.
+?> This documentation could change with any version. So be sure to check it once in a while.
 
 <div align="center">
   <img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo">

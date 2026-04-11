@@ -1,12 +1,12 @@
 <img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo"> </img>
 
-!> This documentation could change with any version. Be sure to check it periodically.
+?> This documentation could change with any version. Be sure to check it periodically.
 
 ## !channels
 ### At A Glance
 The `!channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.
 
-!> Required Clearance Level To Execute: `1`
+?> Required Clearance Level To Execute: `1`
 
 ### **How It Works**
 - Each chat channel has an owner and members, with dynamically updated membership data.
@@ -51,7 +51,7 @@ The `!debugdb` command allows admins to inspect all initialized database entries
 - Chunk counts for chunked entries
 - Total size of each database
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 ### How It Works
 1. **Security Check**  
@@ -95,7 +95,7 @@ The `!debugdb` command allows admins to inspect all initialized database entries
 ### At A Glance
 The `!home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
 
-!> Required Clearance Level To Execute: `1`  
+?> Required Clearance Level To Execute: `1`  
 
 ### **How It Works**
 - Players can **set** a home at their current coordinates.
@@ -127,7 +127,7 @@ The `!invclone` command allows admins to clone a player's entire inventory into 
 - **Clone a player's inventory:** Creates chests near the executor, filling them with the target player's items. Each item has a lore tag indicating its source.
 - **Remove cloned chests:** Deletes previously cloned chests within a nearby area.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 ### How It Works
 1. **Inventory Cloning**
@@ -164,7 +164,7 @@ The `!invclone` command allows admins to clone a player's entire inventory into 
 ### At A Glance
 The `!invsee` command allows players with sufficient clearance to view another player's inventory in detail, including items, quantities, and enchantments.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 ### **How It Works**
 - When executed with a player name, it retrieves the target player's inventory.
@@ -188,7 +188,7 @@ The `!invsee` command allows players with sufficient clearance to view another p
 ### At A Glance
 The `!info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
 
-!> Required Clearance Level To Execute: `1`
+?> Required Clearance Level To Execute: `1`
 
 ### **How It Works**
 - Shows a **MessageFormData GUI** with all relevant information for the server.
@@ -213,7 +213,7 @@ The `!info` command displays a GUI-based overview of the **Paradox AntiCheat** p
 ### At A Glance
 The `!pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
 
-!> Required Clearance Level To Execute: `4` (for global toggle)
+?> Required Clearance Level To Execute: `4` (for global toggle)
 
 ### How It Works
 - **Player PvP Toggle:** Players can enable or disable PvP for themselves. A cooldown prevents frequent toggling.
@@ -263,7 +263,7 @@ Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. Th
 ### At A Glance
 The `!scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 ### **How It Works**
 - Each player can **enable or disable** scripture mode using the command.
@@ -304,7 +304,7 @@ The `!setrank` command allows admins to manage chat ranks for players. You can:
 - Reset a player’s rank to default.
 - Enable or disable the rank system globally.
 
-!> Required Clearance Level To Execute:  
+?> Required Clearance Level To Execute:  
 - `3` – Set or reset individual player ranks.  
 - `4` – Disable or enable ranks globally.
 
@@ -344,7 +344,7 @@ The `!tpr` command allows players to manage teleport requests:
 
 Requests have a `60` second timeout. Players are notified when a request is sent, accepted, or denied.
 
-!> Required Clearance Level To Execute: `1`
+?> Required Clearance Level To Execute: `1`
 
 ### How It Works
 1. **Send a request** – Use `!tpr <player>` to request teleporting to another player.
@@ -377,7 +377,7 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 ### At A Glance
 The `!transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
 
-!> Required Clearance Level To Execute: `1`
+?> Required Clearance Level To Execute: `1`
 
 ### How It Works
 - Players can manually input a **hostname** and **port** to connect to another server.

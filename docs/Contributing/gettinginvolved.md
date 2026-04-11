@@ -37,7 +37,7 @@ Download and install VS Code:
 
 Alternatively, on Linux you can install via your package manager:
 
-```bash
+```
 sudo apt update
 sudo apt install code
 ```
@@ -56,7 +56,7 @@ This project includes automated setup scripts that install:
 
 From the project root:
 
-```bash
+```
 chmod +x ./bin/setup-node-linux.sh
 ./bin/setup-node-linux.sh
 ```
@@ -65,7 +65,7 @@ chmod +x ./bin/setup-node-linux.sh
 
 From the project root:
 
-```powershell
+```
 bin\setup-node-windows.ps1
 ```
 
@@ -75,7 +75,7 @@ bin\setup-node-windows.ps1
 
 After Node.js is installed, run:
 
-```bash
+```
 npm install
 ```
 
@@ -86,7 +86,7 @@ npm install
 1. Fork the repository on GitHub.
 2. Clone your fork:
 
-```bash
+```
 git clone https://github.com/<your-github-username>/Paradox_AntiCheat.git
 cd Paradox_AntiCheat
 ```
@@ -95,7 +95,7 @@ cd Paradox_AntiCheat
 
 ## 5️⃣ Open the Project in VS Code
 
-```bash
+```
 code .
 ```
 
@@ -112,13 +112,13 @@ code .
 
 Stage your changes:
 
-```bash
+```
 git add .
 ```
 
 Commit with a meaningful message:
 
-```bash
+```
 git commit -m "Your commit message here"
 ```
 
@@ -126,7 +126,7 @@ git commit -m "Your commit message here"
 
 # Pushing Changes to Your Fork
 
-```bash
+```
 git push origin main
 ```
 

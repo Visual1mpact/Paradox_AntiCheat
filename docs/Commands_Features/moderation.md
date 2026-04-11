@@ -1,12 +1,12 @@
 <img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo"> </img>
 
-!> This documentation could change with any version. Be sure to check it periodically for updates.
+?> This documentation could change with any version. Be sure to check it periodically for updates.
 
 ## !allowlist
 ### At A Glance
 The `!allowlist` command allows administrators to manage a list of players who are permitted to join the server. Players on the allowlist bypass certain automated protections and can be explicitly permitted to connect.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!allowlist <add|remove|list|disable> <player>"  
@@ -40,7 +40,7 @@ The `!allowlist` command allows administrators to manage a list of players who a
 ### At A Glance
 The `!ban` command is used to ban a player from the server, with an optional reason. It can also list all currently banned players. This command is vital for maintaining server security and enforcing rules.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!ban [ -t | --target <player> ] [ -r | --reason <reason> ] [ -l | --list ]"  
@@ -76,7 +76,7 @@ The `!ban` command is used to ban a player from the server, with an optional rea
 ### At A Glance
 The `!command` command enables or disables other commands dynamically. This allows administrators to manage active commands without restarting the server.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!command [ enable | disable ] <commandName1> [commandName2] ..."  
@@ -98,7 +98,7 @@ The `!command` command enables or disables other commands dynamically. This allo
 ### At A Glance
 The `!deop` command revokes **Paradox-Op (Level-4)** permissions from a player, reducing their security clearance to **Level 1**. This allows administrators to manage who has full administrative access on the server.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!deop <player>"  
@@ -122,7 +122,7 @@ The `!deop` command revokes **Paradox-Op (Level-4)** permissions from a player, 
 ### At A Glance
 The `!despawn` command removes entities from the world, either **all entities** or a **specific entity type**, helping to manage entity populations and improve server performance.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!despawn <entity_type | all>"  
@@ -144,7 +144,7 @@ The `!despawn` command removes entities from the world, either **all entities** 
 ### At A Glance
 The `!freeze` command allows administrators to **lock a player in place** by imprisoning them in a temporary structure and applying status effects. This is useful for investigating potential issues, controlling disruptive players, or handling suspicious activity. The command acts as a **toggle**, allowing the player to be released later.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!freeze <player>"  
@@ -174,7 +174,7 @@ The `!freeze` command allows administrators to **lock a player in place** by imp
 ### At A Glance
 The `!kick` command removes a player from the server, optionally providing a reason. It is useful for addressing disruptive behavior or enforcing server rules.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!kick [ -t | --target <player> ] [ -r | --reason <reason> ]"  
@@ -200,7 +200,7 @@ The `!kick` command removes a player from the server, optionally providing a rea
 ### At A Glance
 The `!gui` command opens an interactive administrative menu for the player, filtered according to their security clearance. It simplifies server management by providing a visual interface for commands, actions, and dynamic input forms.
 
-!> Required Clearance Level To Execute: `1`
+?> Required Clearance Level To Execute: `1`
 
 
 > Usage: "!gui"  
@@ -229,7 +229,7 @@ The `!gui` command opens an interactive administrative menu for the player, filt
 ### At A Glance
 The `!lockdown` command toggles server lockdown, preventing players without a security clearance of 4 from joining. It is useful during maintenance or security incidents.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!lockdown [optional]"  
@@ -254,7 +254,7 @@ The `!lockdown` command toggles server lockdown, preventing players without a se
 ### At A Glance
 The `!modules` command displays the status of all registered modules, including whether they are enabled or disabled, and lists the specific settings for each module.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!modules [optional]"  
@@ -282,7 +282,7 @@ The `!modules` command displays the status of all registered modules, including 
 ### At A Glance
 The `!mute` command allows administrators to toggle a player's ability to send chat messages. This is a crucial tool for managing disruptive chat behavior without resorting to more severe actions like kicking or banning. Muted players can still execute commands but are prevented from sending public chat messages.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "{prefix}mute <player>"
@@ -321,7 +321,7 @@ The `!mute` command allows administrators to toggle a player's ability to send c
 ### At A Glance
 The `!op` command manages **Paradox Level-4 Security Clearance**, granting administrative privileges within the Paradox security system.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 ### Initial Setup and Security
 When Paradox is first installed, no host exists.  
@@ -347,7 +347,7 @@ If no host exists yet, and the executing player has **server operator privileges
 ### `!op <player>`
 Grants Level-4 Paradox security clearance to the specified player.
 
-!> Only the **Paradox Host** may grant additional Level-4 administrators.
+?> Only the **Paradox Host** may grant additional Level-4 administrators.
 
 
 > Usage: "!op <player>"  
@@ -372,7 +372,7 @@ Displays all players who currently have **Level-4 Paradox security clearance**, 
 ### At A Glance
 The `!opsec` command allows administrators to modify a player's security clearance level, adjusting their permissions and access rights.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 ### **Levels of Clearance**
 - **Level 1**: Basic permissions (regular players).
@@ -389,7 +389,7 @@ The `!opsec` command allows administrators to modify a player's security clearan
 ### At A Glance
 The `!prefix` command allows administrators to change the command prefix used on the server. This prefix is what players type before any command to execute it.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!prefix [new_prefix]"  
@@ -413,7 +413,7 @@ The `!prefix` command allows administrators to change the command prefix used on
 ### At A Glance
 The `!punish` command removes items from a player’s inventory, equipment, and/or ender chest. This command acts as a disciplinary tool for administrators to enforce rules or correct behavior.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!punish <player> [ --inventory | -i ] [ --equipment | -e ] [ --enderchest | -ec ]"  
@@ -446,7 +446,7 @@ The `!punish` command removes items from a player’s inventory, equipment, and/
 ### At A Glance
 The `!rename` command allows administrators to assign a custom alias to a player. This alias overrides the player's name in chat and can optionally be displayed in their overhead nametag.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!rename <player> <newName> [--ui | -u] [--reset]"  
@@ -474,7 +474,7 @@ The `!spooflog` command allows administrators to **inspect or clear player spoof
 
 These records help detect players attempting to **impersonate others by using similar or identical names**.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 ### `!spooflog <playerName|id>`
 Displays stored spoofing information for a player.
@@ -501,7 +501,7 @@ Clears the spoofing record associated with the specified player.
 ### `!spooflog --clearall`
 Removes **all stored spoofing records** from the database.
 
-!> This action cannot be undone.
+?> This action cannot be undone.
 
 
 > Usage: "!spooflog --clearall"  
@@ -527,7 +527,7 @@ When viewing a spoof record, the command will display:
 ### At A Glance
 The `!tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!tpa <player> <player>"  
@@ -553,7 +553,7 @@ The `!tpa` command allows players to teleport to one another, streamlining coord
 ### At A Glance
 The `!unban` command lifts a ban from a player, allowing them to rejoin the server. Supports both local and global bans.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 
 > Usage: "!unban <player> [ --global | -g ]"  
@@ -580,7 +580,7 @@ The `!unban` command lifts a ban from a player, allowing them to rejoin the serv
 ### At A Glance
 The `!vanish` command allows a player to become invisible, enabling them to monitor the server discreetly.
 
-!> Required Clearance Level To Execute: `2`
+?> Required Clearance Level To Execute: `2`
 
 ### **How It Works**
 - Sets the player’s **game mode to Spectator**, making them invisible to others.
@@ -611,7 +611,7 @@ The `!vanish` command allows a player to become invisible, enabling them to moni
 ### At A Glance
 The `!warn` command is used to track player infractions. It serves as a middle ground between verbal warnings and formal bans.
 
-!> Required Clearance Level To Execute: `3` (Level 4 to clear)
+?> Required Clearance Level To Execute: `3` (Level 4 to clear)
 
 > Usage: "!warn <add|list|clear> <player> [reason]"
 > Example: `!warn add Steve Spamming`
@@ -636,7 +636,7 @@ The `!warn` command is used to track player infractions. It serves as a middle g
 ### At A Glance
 The `!whitelist` command allows administrators to manage the server whitelist by adding or removing players, or viewing all whitelisted players.
 
-!> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `3`
 
 ### **How It Works**
 - Automatically checks a player’s device when they join to ensure it meets minimum requirements.

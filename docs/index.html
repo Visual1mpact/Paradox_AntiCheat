@@ -2,85 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-  <!-- Primary Meta Tags -->
-  <title>Paradox AntiCheat - Minecraft Bedrock</title>
-  <meta name="description" content="Paradox AntiCheat protects Minecraft Bedrock servers with advanced anti-cheat detection, configuration guides, and tutorials.">
-  <link rel="canonical" href="https://visual1mpact.github.io/Paradox_AntiCheat/">
-  <meta name="theme-color" content="#07ff03">
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://visual1mpact.github.io/Paradox_AntiCheat/">
-  <meta property="og:title" content="Paradox AntiCheat - Minecraft Bedrock">
-  <meta property="og:description" content="Protect Minecraft Bedrock servers with advanced anti-cheat detection, configuration guides, and tutorials.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/Visual1mpact/Paradox_AntiCheat/rewrite/docs/Media/paradox_wiki.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:site_name" content="Paradox AntiCheat Docs">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Paradox AntiCheat - Minecraft Bedrock">
-  <meta name="twitter:description" content="Protect Minecraft Bedrock servers with advanced anti-cheat detection, configuration guides, and tutorials.">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/Visual1mpact/Paradox_AntiCheat/rewrite/docs/Media/paradox_wiki.png">
-
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0.9.0/dist/css/theme-simple-dark.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.css">
-
-  <!-- Custom Styles -->
-  <style>
-    :root {
-      --sidebar-nav-pagelink-background-image: none;
-      --sidebar-nav-link-before-content: '';
-      --sidebar-width: 20rem;
-      --content-max-width: 80rem;
-      --cover-max-width: 80em;
-      --theme-color: #07ff03;
-      --cover-button-primary-background: #07ff0386;
-    }
-    .sidebar-nav ul > li.folder {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11.2' viewBox='0 0 7 11.2'%3E%3Cpath d='M1.5 1.5l4 4.1 -4 4.1' stroke-width='1.5' stroke='rgb%28179, 179, 179%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: left calc(1em - 8px);
-      padding-left: 16px;
-    }
-    .sidebar-nav ul > li.folder.open {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11.2' height='7' viewBox='0 0 11.2 7'%3E%3Cpath d='M1.5 1.5l4.1 4 4.1-4' stroke-width='1.5' stroke='rgb%2811, 135, 218%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
-      background-position: left calc(1em - 6px);
-    }
-    .sidebar-nav li.folder > ul { margin-left: 16px; }
-    .sidebar-nav li.folder li.file > a { padding-left: 16px; }
-    .sidebar-nav>ul>li>ul>li>ul>li>a:before { content: "" !important; }
-  </style>
+  <title>Paradox AntiCheat | Documentation</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app"></div>
-
+  <div id="app">
+    <div class="loader">
+      <div class="spinner"></div>
+      <span>Initializing Paradox Neural Link...</span>
+    </div>
+  </div>
   <script>
     window.$docsify = {
       name: 'Paradox AntiCheat',
-      repo: 'https://github.com/Visual1mpact/Paradox_AntiCheat/',
-      logo: './Media/paradox-rewrite.png',
+      repo: 'https://github.com/visual1mpact/Paradox_AntiCheat',
       loadSidebar: true,
-      coverpage: "cover.md",
-      onlyCover: true,
-      subMaxLevel: 2,
+      coverpage: true,
+      onlyCover: false,
+      alias: { '/.*_sidebar.md': '/_sidebar.md' },
+      subMaxLevel: 3,
+      sidebarDisplayLevel: 1,
+      auto2top: true,
+      executeScript: true,
+      mergeNavbar: true,
+      el: '#app',
       search: {
+        maxAge: 86400000,
         paths: 'auto',
-        noData: 'No Results!',
-        placeholder: "Search",
-        depth: 6,
-        hideOtherSidebarContent: false
+        placeholder: 'Search Paradox Systems...',
+        noData: 'No results found.',
+        depth: 6
       },
+      tabs: {
+        persist: true,
+        sync: true,
+        theme: 'dark',
+        tabComments: true,
+        tabHeadings: true
+      },
+      pagination: {
+        previousText: 'PREV',
+        nextText: 'NEXT',
+        crossChapter: true,
+        crossChapterText: true,
+      }
     }
   </script>
-
-  <!-- Docsify scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/plugins/search.min.js"></script>
+  <!-- Docsify v4 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
 </body>
 </html>

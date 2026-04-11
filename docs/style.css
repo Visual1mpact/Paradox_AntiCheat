@@ -1,0 +1,294 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap');
+
+:root {
+    --sidebar-width: 300px;
+    --theme-color: #00ffa3;
+    --bg-main: #0a0c10;
+    --bg-sidebar: rgba(10, 12, 16, 0.85);
+    --text-main: #e2e8f0;
+    --text-header: #ffffff;
+    --text-muted: #94a3b8;
+    --accent-glow: rgba(0, 255, 136, 0.2);
+    --warn-border: #ff4757;
+    --tip-border: #00ffa3;
+    --code-bg: #161b223a;
+    --alert-bg: rgba(30, 41, 59, 0.5);
+    --border-color: #30363d;
+}
+
+/* Smooth transition for all elements */
+* { transition: background-color 0.3s ease, border-color 0.3s ease; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main) !important;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+}
+
+/* Sidebar Modernization */
+.sidebar {
+    background-color: var(--bg-sidebar) !important;
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+}
+
+/* Progress Bar */
+.progress {
+    background-color: var(--theme-color) !important;
+    height: 3px !important;
+}
+
+.sidebar-nav li a {
+    font-weight: 400;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav li a:hover {
+    color: var(--theme-color) !important;
+    text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.sidebar-nav li.active > a {
+    border-right: 2px solid var(--theme-color);
+    font-weight: 600;
+    color: var(--theme-color) !important;
+}
+
+/* Content & Typography Styling */
+.markdown-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 4rem;
+}
+
+.markdown-section h1, .markdown-section h2 {
+    border-bottom: none;
+    color: var(--text-header);
+    letter-spacing: -0.5px;
+    margin-top: 2.5rem;
+}
+
+.markdown-section h1 { font-weight: 800; font-size: 2.8rem; margin-bottom: 1.5rem; }
+.markdown-section h2 { font-weight: 700; font-size: 2rem; border-left: 4px solid var(--theme-color); padding-left: 1.25rem; }
+
+/* FIXING !> and ?> ALERT BOXES */
+.markdown-section blockquote {
+    background: #111827 !important; /* Solid dark background to kill the white box */
+    border-left: 4px solid var(--text-muted) !important;
+    color: #ffffff !important; /* Force white text */
+    margin: 2.5em 0 !important;
+    padding: 1.5em 2em !important;
+    border-radius: 8px !important;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.markdown-section blockquote::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.02), transparent);
+    pointer-events: none;
+}
+
+/* WARNINGS (!>) */
+.markdown-section blockquote.warn {
+    border-left: 4px solid var(--warn-border) !important;
+    background: #1a0b0c !important; /* Solid deep red-black */
+    box-shadow: inset 0 0 20px rgba(255, 71, 87, 0.05), 0 0 15px rgba(255, 71, 87, 0.05);
+    border-top: 1px solid rgba(255, 71, 87, 0.1);
+    border-right: 1px solid rgba(255, 71, 87, 0.1);
+    border-bottom: 1px solid rgba(255, 71, 87, 0.1);
+}
+
+.markdown-section blockquote.warn p {
+    color: #ffffff !important; /* Lighter text for warnings */
+    font-weight: 600;
+    margin: 0;
+}
+
+/* TIPS (?>) */
+.markdown-section blockquote.tip {
+    border-left: 4px solid var(--tip-border) !important;
+    background: #0b1a15 !important; /* Solid deep green-black */
+    box-shadow: inset 0 0 20px rgba(0, 255, 163, 0.05), 0 0 15px rgba(0, 255, 163, 0.05);
+    border-top: 1px solid rgba(0, 255, 163, 0.1);
+    border-right: 1px solid rgba(0, 255, 163, 0.1);
+    border-bottom: 1px solid rgba(0, 255, 163, 0.1);
+}
+
+/* GLOBAL TABLE FIX - KILLS WHITE BOXES */
+.markdown-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background: #0f1115 !important;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color) !important;
+}
+
+.markdown-section table thead {
+    background: rgba(0, 255, 163, 0.1) !important;
+}
+
+.markdown-section table th {
+    color: var(--theme-color) !important;
+    text-align: left;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    border: none !important;
+}
+
+.markdown-section table tr {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.markdown-section table tr:nth-child(2n) {
+    background-color: rgba(255, 255, 255, 0.02) !important; /* Extremely subtle dark stripe */
+}
+
+.markdown-section table td {
+    padding: 15px;
+    color: var(--text-main) !important;
+    border: none !important;
+}
+
+/* CLEARANCE MATRIX REDESIGN */
+.clearance-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.clearance-level {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.clearance-level:hover { border-color: var(--theme-color); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+.clearance-level h4 { margin: 0 0 0.5rem 0; color: var(--theme-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+.clearance-level .level-num { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; font-weight: 900; opacity: 0.1; color: var(--theme-color); }
+.clearance-level p { margin: 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.4; }
+
+.markdown-section blockquote.tip p {
+    color: #ffffff !important; /* Lighter text for tips */
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Bold text contrast boost */
+.markdown-section strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.markdown-section code {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--theme-color);
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Code Blocks */
+.markdown-section pre {
+    background-color: #0f1115 !important;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* Search Box Customization */
+.search input {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 20px !important;
+    color: white !important;
+    padding: 10px 15px !important;
+    backdrop-filter: blur(5px);
+}
+
+/* Cover Page Styling */
+section.cover { background: #000 !important; }
+section.cover::before {
+    content: '';
+    position: absolute;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 50%, #111827 0%, #000000 100%);
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 1;
+}
+
+section.cover .cover-main {
+    z-index: 2;
+    transform: translateY(-20px);
+}
+
+section.cover .cover-main h1 { text-shadow: 0 0 30px rgba(0, 255, 163, 0.3); font-weight: 900; }
+
+section.cover a {
+    border: 1px solid var(--theme-color) !important;
+    color: var(--theme-color) !important;
+    border-radius: 30px !important;
+    padding: 0.8rem 2.5rem !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+section.cover a:hover {
+    background: var(--theme-color) !important;
+    color: #000 !important;
+    box-shadow: 0 0 20px var(--accent-glow) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--theme-color); }
+
+/* Loader Styling */
+.loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: var(--bg-main);
+    color: var(--theme-color);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 255, 136, 0.1);
+    border-top: 3px solid var(--theme-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }

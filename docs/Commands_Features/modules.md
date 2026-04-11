@@ -1,6 +1,6 @@
 <img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo"> </img>
 
-!> This documentation could change with any version. So be sure to check it once in a while.
+?> This documentation could change with any version. So be sure to check it once in a while.
 
 ## !afk
 ### At A Glance
@@ -18,7 +18,7 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 - **Real-Time Updates:** Player activity is updated whenever they move, preventing false positives.  
 - **Player Leave Handling:** Players are removed from tracking upon logout to avoid stale data.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!afk [ hours ] [ minutes ] [ seconds ]"  
@@ -37,7 +37,7 @@ The `antifly` command toggles the Anti-Fly detection module, which monitors play
 - **Security Clearance Bypass:** Level 4 administrators are exempt from anti-fly enforcement.  
 - **Scheduled Checks:** The module runs periodically using a generator to evaluate all players, minimizing server impact.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!antifly [ help ]"  
@@ -61,7 +61,7 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
   - Channel member caches are used to reduce repeated data lookups.  
   - Debouncing ensures database updates for channel activity happen at most once per 5 seconds.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!antispam [ help ]",  
@@ -69,7 +69,7 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
 > Example: !antispam help  
 
 
-!> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
+?> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
 
 ## !autoclicker
@@ -84,7 +84,7 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 - **Event-Based:** Detection occurs on the `EntityHurtBeforeEvent`, ensuring real-time checks without overloading the server.  
 - **Security Clearance Bypass:** Administrators with Level 4 clearance are excluded from auto-clicker checks.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!autoclicker [ help ]"  
@@ -208,7 +208,7 @@ The `gamemode` command allows server administrators to manage which game modes a
 - **Security Clearance Bypass:** Players with Level 4 security clearance are exempt from gamemode restrictions.  
 - **Current Configuration Listing:** Admins can view which game modes are currently allowed and whether gamemode checks are enabled.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"  
@@ -248,7 +248,7 @@ The forensic report displays:
 
 This system helps identify potential **duplication exploits or abnormal inventory states**.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!invsync [ help | status | snapshot | check | clear | forensic <player> ]"  
@@ -271,7 +271,7 @@ The `Killaura` detection module helps maintain fair combat on the server by dete
 - **Mitigation:** When suspicious behavior is detected, the attack is cancelled, preventing unfair damage. Staff with Level 4 security clearance are notified with relevant details.  
 - **Continuous Monitoring:** The module subscribes to entity damage events and actively analyzes PvP interactions to maintain fairness.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!killaura [ help ]"  
@@ -291,7 +291,7 @@ The `!lagclear` module helps maintain server performance by clearing excess item
 - **Continuous Monitoring:** The system tracks global timers and job IDs to prevent duplicate runs. If the module is disabled, all scheduled jobs are cleared.  
 - **Dynamic Timing:** Admins can specify a timer via command arguments or toggle the module on/off with defaults.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!lagclear [ hours ] [ minutes ] [ seconds ]"  
@@ -317,7 +317,7 @@ The `Name-Spoof` module protects the server from players attempting to impersona
   - The system subscribes to `playerSpawn` and `playerLeave` events to track active players and prevent collisions.  
   - Cleans up the tracking map when players leave.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!namespoof [ help ]"  
@@ -344,7 +344,7 @@ It is essential for catching exploits that bypass normal collision mechanics, en
 - Players in **Creative** or **Spectator** mode, or those recently damaged/knocked back (<2 seconds), are exempt from detection.
 - Module automatically **cleans up tracking data** when players leave the server.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!noclip"  
@@ -353,7 +353,7 @@ It is essential for catching exploits that bypass normal collision mechanics, en
 
 
 ## !packetmonitor
-!> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
+?> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
 It must be enabled via the `config/default/permissions.json` file.
 
 ### At A Glance
@@ -372,7 +372,7 @@ It logs suspicious activity for administrative review and helps prevent server o
 - Administrators with **Level 4 clearance** can toggle the module on/off via chat or the GUI.
 - If `@minecraft/server-net` is unavailable, the module will **fail to enable** and notify the admin.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!packetmonitor [ help ]"  
@@ -396,7 +396,7 @@ The `PlatformBlock` module manages which player platforms (console, desktop, mob
   - Admins cannot block their own platform.  
   - Works in tandem with allowlists, banlists, and spoof checks to maintain secure access.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!platformblock <platform> [ -e | -d | -l | --list ]"  
@@ -431,7 +431,7 @@ It enforces per-player, per-packet, and global packet rate limits, automatically
   - When a player leaves, their packet data is cleared to optimize performance.  
   - Lockdown lifts automatically after a short duration.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!ratelimit [ help ]",  
@@ -451,7 +451,7 @@ This is strictly a combat check and does **not** affect block placement or movem
 - **Staff Alerts:** Level 4 staff are notified when a player exceeds the allowed reach distance.  
 - **Performance:** Position histories are updated at a fixed interval (every ~4 ticks) to optimize CPU usage.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!reach [ help ]",  
@@ -475,7 +475,7 @@ The `Scaffold` module detects and prevents automated block placement hacks, comm
   - Ignores placements in Creative mode, when sneaking, or for excluded blocks (like scaffolding).  
   - Ignores legitimate placements above solid blocks or farmland.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!scaffold [ help ]"  
@@ -495,7 +495,7 @@ The `Self-Attack` module detects and prevents players from using modified client
   - The system executes a kick command to remove the player from the game with a warning.  
 - **Administrator Oversight:** Ensures exploits are prevented without manual intervention.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!selfattack [ help ]"  
@@ -518,7 +518,7 @@ Toggles the `Vision Check` module, which continuously monitors the contents of c
 - **Real-Time Updates:** Checks run every 30 ticks (~1.5 seconds) and update dynamically as the player looks around.  
 - **Security Compliance:** Only players with Level 4 security clearance can use this feature.  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!visioncheck [ help ]",  
@@ -546,7 +546,7 @@ Toggles the `World Border` module, which restricts players from exceeding config
   - Teleport nudges are debounced to avoid spamming the player with messages.  
   - Runs checks every 20 ticks (1 second).  
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!worldborder [ --overworld | -o <size> ] [ --nether | -n <size> ]  
@@ -578,7 +578,7 @@ The `Xray` module detects and reports suspicious mining activity that may indica
 - **Automatic Reset:** Player data is reset every 60 seconds and cleared when they leave the server to optimize performance.  
 - **Administrator Notifications:** High-security staff are alerted with player name, ore type, count, and coordinates of suspicious mining activity.
 
-!> Required Clearance Level To Execute: `4`
+?> Required Clearance Level To Execute: `4`
 
 
 > Usage: "!xray [ -Help ]"  
