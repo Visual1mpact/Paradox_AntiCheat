@@ -331,6 +331,16 @@ class GUIManager {
 }
 
 /**
+ * Helper function to open a specific command's GUI directly, bypassing the main menu.
+ * Useful for item-based shortcuts or automated UI triggers.
+ * @param player The player to show the GUI to.
+ * @param command The Command object containing guiInstructions.
+ */
+export function openCommandGui(player: Player, command: Command): Promise<void> {
+    return new GUIManager(player)["buildCommandMenu"](command);
+}
+
+/**
  * Command registration for opening the main GUI.
  */
 export const guiCommand: Command = {
