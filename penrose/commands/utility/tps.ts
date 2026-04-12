@@ -106,7 +106,7 @@ export const tpsCommand: Command = {
 
         if (activeMonitors.has(sender.id)) {
             activeMonitors.delete(sender.id);
-            sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring: §cDisabled");
+            sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring: §4Disabled");
         } else {
             activeMonitors.add(sender.id);
             sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring: §aEnabled");
