@@ -159,6 +159,7 @@ export const scriptureCommand: Command = {
             {
                 name: "Apply Changes",
                 description: "Enable or Disable Scripture mode for the selected player.",
+                icon: "textures/ui/confirm.png",
                 generateModalForm: true,
                 requiredFields: ["scriptureAction"],
             },
