@@ -85,7 +85,14 @@ export const tpsCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Server Performance",
-        description: "Toggle a real-time on-screen HUD of the server Ticks Per Second (TPS) and performance status.",
+        description:
+            "Toggle a real-time on-screen HUD of the server Ticks Per Second (TPS).\n\n" +
+            "§7Status Levels:\n" +
+            "§7• §aHealthy§7: 18.0 - 20.0 TPS\n" +
+            "§7• §eWarning§7: 15.0 - 18.0 TPS\n" +
+            "§7• §6Struggling§7: 10.0 - 15.0 TPS\n" +
+            "§7• §cCritical§7: < 10.0 TPS\n\n" +
+            "§7• Display persists until toggled off or you leave the server.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
