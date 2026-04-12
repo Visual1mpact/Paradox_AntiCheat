@@ -36,12 +36,16 @@ export const setRankCommand: Command = {
         actions: [
             {
                 name: "Set Rank",
+                icon: "textures/ui/confirm.png",
+                description: "Set a player's chat rank.",
                 securityClearance: 3,
                 requiredFields: ["PlayerName", "Rank"],
                 generateModalForm: true,
             },
             {
                 name: "Reset Rank",
+                icon: "textures/ui/backup_replace.png",
+                description: "Reset a player's chat rank.",
                 securityClearance: 3,
                 command: ["--reset"],
                 requiredFields: ["PlayerName"],
@@ -49,12 +53,16 @@ export const setRankCommand: Command = {
             },
             {
                 name: "Disable Ranks Globally",
+                icon: "textures/ui/Ping_Offline_Red.png",
+                description: "Disable all chat ranks globally (admin only).",
                 securityClearance: 4,
                 command: ["-d"],
                 generateModalForm: false,
             },
             {
                 name: "Enable Ranks Globally",
+                icon: "textures/ui/player_online_icon.png",
+                description: "Enable chat ranks globally (admin only).",
                 securityClearance: 4,
                 command: ["-e"],
                 generateModalForm: false,
