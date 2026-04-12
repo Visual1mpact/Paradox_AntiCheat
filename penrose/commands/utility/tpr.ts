@@ -26,23 +26,31 @@ export const tprCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Teleport Request",
-        description: "Send a teleport request to another player, or accept/deny incoming requests.\n\n",
+        description:
+            "Manage teleport requests between players.\n\n" +
+            "§7• Send a request to teleport to another player.\n" +
+            "§7• Accept or deny incoming teleport requests.\n" +
+            "§7• Requests automatically expire after 60 seconds.\n" +
+            "§7• Cannot be used while imprisoned.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Send Teleport Request",
                 description: "Send a request to a player",
+                icon: "textures/ui/send_icon.png",
                 requiredFields: ["PlayerName"],
                 generateModalForm: true,
             },
             {
                 name: "Accept Teleport Request",
                 command: ["accept"],
+                icon: "textures/ui/onlineLight.png",
                 description: "Accept received request",
             },
             {
                 name: "Deny Teleport Request",
                 command: ["deny"],
+                icon: "textures/gui/newgui/offlineLight.png",
                 description: "Deny received request",
             },
         ],
