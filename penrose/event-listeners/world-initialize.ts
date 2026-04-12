@@ -93,6 +93,7 @@ import { transferCommand } from "../commands/utility/transfer";
 import { muteCommand } from "../commands/moderation/mute";
 import { warnCommand } from "../commands/moderation/warn";
 import { renameCommand } from "../commands/moderation/rename";
+import { tpsCommand } from "../commands/utility/tps";
 
 type PlayerID = string;
 
@@ -177,6 +178,7 @@ const allCommands: Command[] = [
     muteCommand,
     warnCommand,
     renameCommand,
+    tpsCommand,
 ];
 
 /**

@@ -291,4 +291,31 @@ section.cover a:hover {
     margin-bottom: 20px;
 }
 
+/**
+ * TPS Monitor Status Colors
+ * These classes are used in the utility documentation to provide 
+ * high-visibility color coding for server performance metrics.
+ */
+
+.tps-healthy {
+    color: #55FF55 !important;
+    font-weight: bold;
+}
+
+.tps-warning {
+    color: #FFFF55 !important;
+    font-weight: bold;
+}
+
+.tps-struggling {
+    color: #FFAA00 !important;
+    font-weight: bold;
+}
+
+.tps-critical {
+    color: #FF5555 !important;
+    font-weight: bold;
+}
+
+
 @keyframes spin { 100% { transform: rotate(360deg); } }

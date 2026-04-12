@@ -373,6 +373,32 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 - Only one teleport request can be pending for a player at a time.
 - Players receive messages about the status of their requests (sent, accepted, denied, or timed out).
 
+## !tps
+### At A Glance
+The `!tps` command toggles a real-time, on-screen performance monitor. It allows administrators to track the server's Ticks Per Second (TPS) and overall health status directly on their HUD without opening menus or checking logs.
+
+?> Required Clearance Level To Execute: `4`
+
+### **How It Works**
+- **Calculation:** The system measures the time elapsed between ticks. Since Minecraft Bedrock targets 20 TPS, any dip below this indicates server-side lag.
+- **Real-Time HUD:** When enabled, a Title and Subtitle appear on the center of the screen, updating every second (20 ticks).
+- **Color-Coded Status:**
+  - <span class="tps-healthy">Healthy</span> (18.0 - 20.0 TPS): The server is running optimally.
+  - <span class="tps-warning">Warning</span> (15.0 - 18.0 TPS): Minor lag detected.
+  - <span class="tps-struggling">Struggling</span> (10.0 - 15.0 TPS): Significant lag; anti-cheat detections may be less reliable.
+  - <span class="tps-critical">Critical</span> (< 10.0 TPS): Severe lag; high risk of false-positive detections.
+- **Toggle Mechanism:** Running the command once enables the monitor; running it again disables it.
+- **Persistence:** The monitor remains active until the player toggles it off or leaves the server.
+
+> Usage: "!tps"  
+> Example: !tps  
+
+### **Notes**
+- **Anti-Cheat Correlation:** This tool is vital for moderators. If a player is flagged for "Reach" or "NoClip" while the TPS is in the <span class="tps-struggling">Struggling</span> or <span class="tps-critical">Critical</span> range, the detection should be treated with caution.
+- **Non-Intrusive:** The HUD uses a 0-tick fade-in to ensure the text remains static and readable without flickering during updates.
+- **Automatic Cleanup:** To prevent memory leaks, the system automatically stops monitoring for any player who disconnects or crashes.
+- **GUI Integration:** The monitor can also be toggled via the `!gui` menu under the Utility category.
+
 ## !transfer
 ### At A Glance
 The `!transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
