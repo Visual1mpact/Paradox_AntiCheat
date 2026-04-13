@@ -43,6 +43,7 @@ export const worldBorderCommand: Command = {
         actions: [
             {
                 name: "Set Overworld Border",
+                icon: "textures/blocks/grass_carried.png",
                 description: "Set the border size for the Overworld.",
                 requiredFields: ["overworldSize"],
                 crypto: false,
@@ -50,6 +51,7 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Set Nether Border",
+                icon: "textures/blocks/netherrack.png",
                 description: "Set the border size for the Nether.",
                 requiredFields: ["netherSize"],
                 crypto: false,
@@ -57,6 +59,7 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Set End Border",
+                icon: "textures/blocks/end_stone.png",
                 description: "Set the border size for the End.",
                 requiredFields: ["endSize"],
                 crypto: false,
@@ -64,6 +67,7 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Set Overworld and Nether Borders",
+                icon: "textures/ui/multiselection.png",
                 description: "Set the border sizes for both the Overworld and Nether.",
                 requiredFields: ["overworldSize", "netherSize"],
                 crypto: false,
@@ -71,6 +75,7 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Set Overworld and End Borders",
+                icon: "textures/ui/multiselection.png",
                 description: "Set the border sizes for both the Overworld and End.",
                 requiredFields: ["overworldSize", "endSize"],
                 crypto: false,
@@ -78,6 +83,7 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Set Nether and End Borders",
+                icon: "textures/ui/multiselection.png",
                 description: "Set the border sizes for both the Nether and End.",
                 requiredFields: ["netherSize", "endSize"],
                 crypto: false,
@@ -85,6 +91,7 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Set All Borders",
+                icon: "textures/ui/mashup_world.png",
                 description: "Set the border sizes for the Overworld, Nether, and End.",
                 requiredFields: ["overworldSize", "netherSize", "endSize"],
                 crypto: false,
@@ -92,12 +99,14 @@ export const worldBorderCommand: Command = {
             },
             {
                 name: "Disable World Border",
+                icon: "textures/ui/realms_red_x.png",
                 command: ["--disable"],
                 description: "Disable all world borders.",
                 requiredFields: [],
                 crypto: false,
             },
             {
+                icon: "textures/ui/icon_sign.png",
                 name: "List World Border Settings",
                 command: ["--list"],
                 description: "View the current world border settings.",
