@@ -17,12 +17,17 @@ export const flyCheckCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Anti-Fly Detection Settings",
-        description: "Enable or disable checks for illegal flying to prevent players from exploiting flight mechanics.\n\n",
+        description:
+            "Enforce legitimate movement mechanics and restrict unauthorized flight capabilities.\n\n" +
+            "§7• Monitors vertical velocity and airborne duration for illegal suspension.\n" +
+            "§7• Accounts for tridents, riptide, and standard vanilla knockback.\n" +
+            "§7• Reverts players to safe locations upon detection of sustained flight.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/items/elytra.png",
+                description: "Toggle the Anti-Fly detection module on or off.",
             },
         ],
     },
