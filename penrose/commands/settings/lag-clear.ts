@@ -32,10 +32,12 @@ export const lagClearCommand: Command = {
                 requiredFields: ["lagClearSettings"],
                 generateModalForm: true,
                 icon: "textures/ui/multiselection.png",
+                description: "Configure the Lag Clear timer by specifying hours, minutes, and seconds.",
             },
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/clock.png",
+                description: "Toggle the Lag Clear module on or off.",
             },
         ],
         dynamicFields: [
