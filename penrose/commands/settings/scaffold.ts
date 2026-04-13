@@ -17,12 +17,17 @@ export const scaffoldCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Scaffold Detection Settings",
-        description: "Enable or disable the scaffold detection module to prevent players from using illegal scaffold hacks.\n\n",
+        description:
+            "Monitor and prevent the use of automated block placement hacks, commonly known as scaffolding.\n\n" +
+            "§7• Detects impossible placement angles and excessive bridging speeds.\n" +
+            "§7• Analyzes player movement packets to identify non-human rhythmic placement patterns.\n" +
+            "§7• Helps maintain fair gameplay during building or traversing.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/Scaffolding.png",
+                description: "Toggle the scaffold detection module on or off.",
             },
         ],
     },
