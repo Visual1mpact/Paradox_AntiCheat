@@ -18,12 +18,14 @@ export const paradoxInfoCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Paradox AC Info",
-        description: "View version, author, license, support links, and project description.\n\n",
+        description:
+            "View detailed information about the Paradox AntiCheat project.\n\n" + "§7• See the current version and license.\n" + "§7• Access official GitHub, Discord, and Wiki links.\n" + "§7• Learn about the project's goals and authors.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "View Paradox Info",
                 icon: "textures/ui/infobulb_darkborder_small.png",
+                description: "Open a detailed info form about Paradox AntiCheat.",
             },
         ],
     },
