@@ -18,12 +18,19 @@ export const lockdownCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Server Lockdown Command",
-        description: "Toggle server lockdown for maintenance. Lockdown kicks all non-administrator players and prevents them from rejoining.\n\n",
+        description:
+            "Securely restrict server access during maintenance or emergency incidents.\n\n" +
+            "§7• Immediately disconnect all players below security clearance level 4.\n" +
+            "§7• Block all incoming join attempts from non-administrative accounts.\n" +
+            "§7• Create a controlled environment for system updates or forensics.\n\n" +
+            "§7Lockdown Rules:\n" +
+            "§7• System host and Level 4 staff are entirely exempt from restrictions.\n" +
+            "§7• Status persists until manually deactivated by an authorized admin.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Toggle Lockdown",
-                description: "Enable or disable server lockdown.",
+                description: "Toggle the global lockdown state to manage server accessibility.\n\n",
                 icon: "textures/ui/icon_lock.png",
             },
         ],
