@@ -21,6 +21,7 @@ export const invseeCommand: Command = {
         actions: [
             {
                 name: "View Inventory",
+                icon: "textures/ui/inventory_icon.png",
                 description: "Displays the inventory of a specified player",
                 requiredFields: ["playerName"],
                 generateModalForm: true,
