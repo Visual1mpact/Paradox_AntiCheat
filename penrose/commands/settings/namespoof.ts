@@ -17,12 +17,17 @@ export const nameSpoofCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Name-Spoof Detection Settings",
-        description: "Enable or disable the Name-Spoof detection module to prevent players from using fake usernames to impersonate others.\n\n",
+        description:
+            "Verify identity authenticity and prevent administrative impersonation.\n\n" +
+            "§7• Validates usernames against character and length restrictions.\n" +
+            "§7• Identifies and blocks 'Look-alike' character spoofing attempts.\n" +
+            "§7• Maintains a unique identity mapping to prevent account theft.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/items/name_tag.png",
+                description: "Toggle the Name-Spoof detection module on or off.",
             },
         ],
     },
