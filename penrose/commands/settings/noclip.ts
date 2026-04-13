@@ -24,12 +24,17 @@ export const noClipCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "NoClip Detection Settings",
-        description: "Enable or disable the NoClip detection module to prevent players from phasing through blocks.\n\n",
+        description:
+            "Prevent players from bypassing physical collisions or phasing through solid blocks.\n\n" +
+            "§7• Utilizes swept-AABB checks to detect illegal coordinate transitions.\n" +
+            "§7• Tracks movement history to distinguish between lag and exploits.\n" +
+            "§7• Automatically reverts suspicious position packets to maintain server integrity.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/absorption_effect.png",
+                description: "Toggle the NoClip detection module on or off.",
             },
         ],
     },
