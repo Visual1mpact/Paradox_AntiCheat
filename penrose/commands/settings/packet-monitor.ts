@@ -20,12 +20,17 @@ export const packetMonitorCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Packet Monitoring Settings",
-        description: "Enable or disable the packet monitoring module to log suspicious packet activity and potential exploits [BDS Only].",
+        description:
+            "Audit network traffic to identify potential flooding and remote exploits [BDS Only].\n\n" +
+            "§7• Monitors packet frequency per-player to ensure bandwidth stability.\n" +
+            "§7• Identifies malformed or out-of-sequence packet signatures.\n" +
+            "§7• Logs suspicious network telemetry for forensic analysis.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/items/repeater.png",
+                description: "Toggle the packet monitoring module on or off.",
             },
         ],
     },
