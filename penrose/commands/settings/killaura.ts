@@ -17,12 +17,17 @@ export const killauraCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Killaura Detection Settings",
-        description: "Enable or disable the Killaura detection module to prevent players from using a form of aimbots or other combat-related cheats.\n\n",
+        description:
+            "Identify and neutralize combat-automated aimbots and illegal rotation scripts.\n\n" +
+            "§7• Analyzes attack frequency and target orientation accuracy.\n" +
+            "§7• Monitors suspicious 'vein-locked' combat patterns.\n" +
+            "§7• Intercepts and cancels attacks originating from impossible view angles.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/resistance_effect.png",
+                description: "Toggle the Killaura detection module on or off.",
             },
         ],
     },
