@@ -22,12 +22,17 @@ export const debugDBCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Database Debug Info",
-        description: "View a breakdown of stored database entries, their sizes, chunk counts, and overall size.",
+        description:
+            "Inspect the internal state and storage metrics of all initialized databases.\n\n" +
+            "§7• View individual entry pointers and their specific byte sizes.\n" +
+            "§7• Identify chunked data segments and monitor total storage footprint.\n" +
+            "§7• Output is automatically optimized for Minecraft UI stability.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "View Debug Info",
                 icon: "textures/ui/debug_glyph_color.png",
+                description: "Open a GUI displaying detailed debug information about the databases.",
             },
         ],
     },
