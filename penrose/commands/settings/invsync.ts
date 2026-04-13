@@ -42,12 +42,12 @@ export const invSyncCommand: Command = {
             "§7All interactions are logged for administrative review.\n\n",
         commandOrder: "command-arg",
         actions: [
-            { name: "Enable / Disable", icon: "textures/ui/toggle_on.png" },
-            { name: "Force Snapshot", icon: "textures/ui/icon_import.png", command: ["snapshot"] },
-            { name: "Force Recheck", icon: "textures/ui/refresh.png", command: ["check"] },
-            { name: "Clear Snapshots", icon: "textures/ui/icon_trash.png", command: ["clear"] },
-            { name: "Status", icon: "textures/ui/check.png", command: ["status"] },
-            { name: "Forensic: View Player", icon: "textures/ui/dressing_room_skins.png", requiredFields: ["playerName"], command: ["forensic"] },
+            { name: "Enable / Disable", icon: "textures/ui/toggle_on.png", description: "Toggle the InvSync module on or off." },
+            { name: "Force Snapshot", icon: "textures/ui/icon_import.png", command: ["snapshot"], description: "Capture the current inventory state of all online players." },
+            { name: "Force Recheck", icon: "textures/ui/refresh.png", command: ["check"], description: "Immediately run anomaly detection across all players." },
+            { name: "Clear Snapshots", icon: "textures/ui/icon_trash.png", command: ["clear"], description: "Remove all stored inventory snapshots and audit history." },
+            { name: "Status", icon: "textures/ui/check.png", command: ["status"], description: "Display whether InvSync is currently enabled or disabled." },
+            { name: "Forensic: View Player", icon: "textures/ui/dressing_room_skins.png", requiredFields: ["playerName"], command: ["forensic"], description: "View detailed inventory and anomaly history for a specific player." },
         ],
         dynamicFields: [
             {
