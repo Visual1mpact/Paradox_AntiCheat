@@ -32,10 +32,12 @@ export const afkCommand: Command = {
                 requiredFields: ["afkSettings"],
                 generateModalForm: true,
                 icon: "textures/ui/multiselection.png",
+                description: "Configure the AFK timer by specifying hours, minutes, and seconds.",
             },
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/clock.png",
+                description: "Toggle the AFK module on or off.",
             },
         ],
         dynamicFields: [
