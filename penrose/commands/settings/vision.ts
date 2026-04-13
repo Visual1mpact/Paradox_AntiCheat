@@ -17,12 +17,17 @@ export const visionCheckCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Vision Check Settings",
-        description: "Enable or disable the Vision Check module to allow security personnel to inspect container contents remotely.\n\n",
+        description:
+            "Enable or disable the Vision Check module to allow security personnel to inspect container contents remotely.\n\n" +
+            "§7• Peer into containers from a distance without physical interaction.\n" +
+            "§7• Useful for verifying suspected illegal items or distribution patterns.\n" +
+            "§7• All remote access events are logged for administrative transparency.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/items/spyglass.png",
+                description: "Toggle the Vision Check module on or off.",
             },
         ],
     },
