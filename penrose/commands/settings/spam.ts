@@ -16,11 +16,16 @@ export const antispamCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "AntiSpam Settings",
-        description: "Enable or disable the AntiSpam feature to prevent excessive chat messages within a short period (default: 2 minutes).\n\n",
+        description:
+            "Regulate chat frequency to prevent automated spam and maintain clear communication channels.\n\n" +
+            "§7• Automatically restricts users who send messages too rapidly.\n" +
+            "§7• Enforcement window is active for 2 minutes after a violation is detected.\n" +
+            "§7• Helps mitigate chat-based lag and promotional bot interference.\n\n",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/Feedback.png",
+                description: "Toggle the AntiSpam feature on or off.",
             },
         ],
     },
