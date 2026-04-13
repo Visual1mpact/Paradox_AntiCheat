@@ -105,7 +105,16 @@ class ChatSendSubscription {
             const playerChannel = this.getPlayerChannel(player);
             const currentTick = system.currentTick;
 
-            // Mute check - If the player is muted, cancel the event and inform them.
+            // 1️⃣ Command handling (Intercept first so muted players can still use commands)
+            const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+
+            if (event.message.startsWith(prefix)) {
+                event.cancel = true;
+                commandHandler.handleCommand(event, player, prefix);
+                return;
+            }
+
+            // 2️⃣ Mute check - If the player is muted, cancel the event and inform them.
             const isMuted = player.getDynamicProperty("isMuted") as boolean;
             if (isMuted) {
                 event.cancel = true;
@@ -113,7 +122,7 @@ class ChatSendSubscription {
                 return; // Stop further processing for muted players
             }
 
-            // 1️⃣ Spam detection
+            // 3️⃣ Spam detection
             if (this.isSpamCheckEnabled() && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
                 let tracker = this.spamData.get(playerId);
 
@@ -159,16 +168,7 @@ class ChatSendSubscription {
                 }
             }
 
-            // 2️⃣ Command handling
-            const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
-
-            if (event.message.startsWith(prefix)) {
-                event.cancel = true;
-                commandHandler.handleCommand(event, player, prefix);
-                return;
-            }
-
-            // 3️⃣ Chat rank/global handling
+            // 4️⃣ Chat rank/global handling
             const isRankDisabled = world.getDynamicProperty("globalRankDisabled");
 
             if (isRankDisabled && !playerChannel) return;
@@ -185,7 +185,7 @@ class ChatSendSubscription {
 
             const formattedMessage = `${rank} §7${displayName}§7: §r${event.message}`;
 
-            // 4️⃣ Determine target players
+            // 5️⃣ Determine target players
             if (playerChannel) {
                 const channelData = channelsDB.get(playerChannel);
 

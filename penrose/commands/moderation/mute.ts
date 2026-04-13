@@ -17,7 +17,11 @@ export const muteCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Mute Management",
-        description: "Toggle a player's ability to chat. Muted players can still run commands but cannot send public chat messages.\n\n",
+        description:
+            "Administratively control a player's ability to transmit public chat messages.\n\n" +
+            "§7• Toggle the active mute status for any player below clearance level 4.\n" +
+            "§7• Muted users are restricted from global chat but can still use commands.\n" +
+            "§7• Changes are applied instantly and persist via dynamic player properties.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
