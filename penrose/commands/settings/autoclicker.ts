@@ -17,12 +17,17 @@ export const autoClickerCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "AutoClicker Detection Settings",
-        description: "Enable or disable the auto-clicker detection module to prevent players from using automated clicking tools.\n\n",
+        description:
+            "Monitor and mitigate unauthorized high-frequency interaction tools.\n\n" +
+            "§7• Detects automated attack sequences exceeding human limits.\n" +
+            "§7• Blocks unfair damage during high-CPS combat encounters.\n" +
+            "§7• Alerts administrators to suspicious interaction metadata.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
+                description: "Toggle the auto-clicker detection module on or off.",
             },
         ],
     },
