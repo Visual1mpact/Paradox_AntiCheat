@@ -109,6 +109,7 @@ export type ModuleSettingsMap = {
     invSync_b: undefined; // This module has no configurable settings
     noClipCheck_b: undefined; // This module has no configurable settings
     chestLock_b: undefined; // This module has no configurable settings
+    deathCoords_b: undefined; // This module has no configurable settings
 };
 
 /**

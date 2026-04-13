@@ -70,6 +70,7 @@ export const modulesStatusCommand: Command = {
             worldBorderCheck_b: "worldborder",
             xrayDetection_b: "xray",
             chestLock_b: "chestforensic",
+            deathCoords_b: "deathcoords",
         };
 
         const entries = paradoxModulesDB.entries();

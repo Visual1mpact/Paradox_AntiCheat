@@ -94,6 +94,8 @@ import { muteCommand } from "../commands/moderation/mute";
 import { warnCommand } from "../commands/moderation/warn";
 import { renameCommand } from "../commands/moderation/rename";
 import { tpsCommand } from "../commands/utility/tps";
+import { deathCoordsCommand } from "../commands/settings/death-coords";
+import { startDeathCoords } from "../modules/death-coords";
 
 type PlayerID = string;
 
@@ -179,6 +181,7 @@ const allCommands: Command[] = [
     warnCommand,
     renameCommand,
     tpsCommand,
+    deathCoordsCommand,
 ];
 
 /**
@@ -335,6 +338,7 @@ async function initializeParadoxModules(): Promise<void> {
         invSync_b: () => startInvSync(),
         noClipCheck_b: () => startNoClip(),
         chestLock_b: () => startChestLock(),
+        deathCoords_b: () => startDeathCoords(),
     };
 
     const runModuleInitializers = () => {

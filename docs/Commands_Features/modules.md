@@ -197,6 +197,24 @@ The module includes a full GUI with:
 - Module can be safely toggled at runtime without restart
 
 
+## !deathcoords
+### At A Glance
+The `deathcoords` command toggles the Death Coordinates module. When enabled, this feature automatically sends a private message to players upon death, providing their exact coordinates and the dimension where they died. This helps players navigate back to their death location to retrieve lost items.
+
+### How It Works
+- **Event Detection**: The module monitors the `EntityDieAfterEvent` to trigger specifically when a player dies.
+- **Data Capture**: Upon death, the system retrieves the player's current X, Y, and Z coordinates and identifies the dimension (Overworld, Nether, or End).
+- **Private Notification**: A message is sent directly to the deceased player in the format: `[Paradox] You died at: X, Y, Z in Dimension.`
+- **Administrative Control**: Level 4 administrators can toggle this module on or off globally using the command or through the administrative GUI.
+- **Persistence**: The enabled/disabled state is saved in the Paradox database (`deathCoords_b`) and persists across server restarts.
+
+?> Required Clearance Level To Execute: `4`
+
+
+> Usage: "!deathcoords"  
+> Example: !deathcoords  
+
+
 ## !gamemode
 ### At A Glance
 The `gamemode` command allows server administrators to manage which game modes are permitted for players. This includes enabling or disabling specific modes—Adventure, Creative, Survival, or Spectator—and enforcing these restrictions in real time. Administrators can also list current configurations to review which modes are allowed.
@@ -583,4 +601,3 @@ The `Xray` module detects and reports suspicious mining activity that may indica
 
 > Usage: "!xray [ -Help ]"  
 > Example: !xray  
-
