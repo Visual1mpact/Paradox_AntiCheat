@@ -18,13 +18,20 @@ export const homeCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Home Management",
-        description: "Manage your home locations.\n\n" + "§7• Set a new home at your current location.\n" + "§7• Delete an existing home.\n" + "§7• Teleport to a saved home.\n" + "§7• List all your saved homes.\n\n",
+        description:
+            "Securely manage personal warp points for quick travel across dimensions.\n\n" +
+            "§7Management:\n" +
+            "§7• Save up to 5 unique locations with custom names.\n" +
+            "§7• Teleport instantly to any saved home point.\n" +
+            "§7• All location data is encrypted for your security.\n\n" +
+            "§7Restrictions:\n" +
+            "§7• Access is restricted while serving a prison sentence.\n\n",
         commandOrder: "command-arg",
         actions: [
-            { name: "Set Home", command: ["set"], description: "Set a new home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
-            { name: "Delete Home", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
-            { name: "Teleport to Home", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
-            { name: "List Homes", command: ["list"], description: "List all saved home locations", requiredFields: [], crypto: true },
+            { name: "Set Home", icon: "textures/ui/store_home_icon.png", command: ["set"], description: "Set a new home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
+            { name: "Delete Home", icon: "textures/ui/icon_trash.png", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
+            { name: "Teleport to Home", icon: "textures/ui/NetherPortalMirror.png", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
+            { name: "List Homes", icon: "textures/ui/icon_map.png", command: ["list"], description: "List all saved home locations", requiredFields: [], crypto: true },
         ],
         dynamicFields: [{ name: "\nName of Home:", type: "text", placeholder: "Enter Home Name", requiredFields: ["homeName"] }],
     },
