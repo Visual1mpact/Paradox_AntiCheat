@@ -16,7 +16,12 @@ export const modulesStatusCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Modules Status Command",
-        description: "Displays the status of all registered modules, including whether they are enabled or disabled, and the settings for each module.\n\n",
+        description:
+            "View and manage the operational status of all registered Paradox AntiCheat modules.\n\n" +
+            "§7• Monitor which protection systems are currently active or deactivated.\n" +
+            "§7• Inspect specific configuration settings for each module (timers, thresholds, etc.).\n" +
+            "§7• Only displays modules with registered commands to ensure UI clarity.\n" +
+            "§7• Requires Level 4 security clearance for full system visibility.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
