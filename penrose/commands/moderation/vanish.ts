@@ -16,7 +16,11 @@ export const vanishCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Vanish Command",
-        description: "Toggle vanish mode for yourself or another player.\n\n",
+        description:
+            "Enable administrative invisibility to monitor player activity without detection.\n\n" +
+            "§7• Toggles Spectator mode to hide your character model and nametag.\n" +
+            "§7• Automatically backups and restores your previous game mode.\n" +
+            "§7• Can be applied to yourself or other authorized personnel.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
