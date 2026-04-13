@@ -17,12 +17,17 @@ export const xrayCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Xray Detection Settings",
-        description: "Enable or disable the Xray detection module to prevent players from using Xray cheats.\n\n",
+        description:
+            "Monitor and mitigate suspicious mining patterns to identify potential Xray usage.\n\n" +
+            "§7• Tracks ore-to-stone ratios and identifies 'vein-jumping' behavior.\n" +
+            "§7• Automatically alerts staff or applies penalties based on suspicion scores.\n" +
+            "§7• Includes 'Safe Zone' mechanics to minimize false positives during legitimate mining.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/xyz_axis.png",
+                description: "Toggle the Xray detection module on or off.",
             },
         ],
     },
