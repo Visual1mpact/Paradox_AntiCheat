@@ -1,74 +1,116 @@
 $ErrorActionPreference = "Stop"
 
-Write-Host "Checking for Node..." -ForegroundColor Cyan
+Write-Host "=== SYSTEM NODE INSTALLER ===" -ForegroundColor Cyan
 
-# Fetch latest LTS version once
+# Self-elevate to Administrator if not already running as admin
+$IsAdmin = ([Security.Principal.WindowsPrincipal] `
+    [Security.Principal.WindowsIdentity]::GetCurrent()
+).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if (-not $IsAdmin) {
+    Write-Host "Restarting as Administrator..." -ForegroundColor Yellow
+
+    Start-Process powershell -Verb RunAs -ArgumentList @(
+        "-NoProfile",
+        "-ExecutionPolicy Bypass",
+        "-File `"$PSCommandPath`""
+    )
+
+    exit
+}
+
+# Fetch latest LTS
 $IndexJson = Invoke-RestMethod "https://nodejs.org/download/release/index.json"
-$LatestLTS = ($IndexJson | Where-Object { $_.lts } | Select-Object -First 1).version
-Write-Host "Latest Node LTS: $LatestLTS" -ForegroundColor Green
 
-$InstallNode = $true
+$LatestLTS = (
+    $IndexJson |
+    Where-Object { $_.lts } |
+    Sort-Object { [version]$_.version.TrimStart("v") } -Descending |
+    Select-Object -First 1
+).version
 
-if (Get-Command node -ErrorAction SilentlyContinue) {
-    $CurrentVersion = (node -v).Trim()
-    Write-Host "Current installed Node: $CurrentVersion" -ForegroundColor Yellow
+Write-Host "Latest LTS: $LatestLTS" -ForegroundColor Green
 
-    if ([version]$CurrentVersion.TrimStart("v") -ge [version]$LatestLTS.TrimStart("v")) {
-        Write-Host "Node is already latest LTS or newer." -ForegroundColor Green
-        $InstallNode = $false
-    }
-    else {
-        Write-Host "Updating Node to latest LTS..." -ForegroundColor Yellow
-    }
-}
-else {
-    Write-Host "Node not found. Installing latest LTS..." -ForegroundColor Red
-}
-
-if (-not $InstallNode) {
-    exit 0
-}
-
-# Determine architecture
+# Detect architecture
 $Arch = if ([Environment]::Is64BitOperatingSystem) { "x64" } else { "x86" }
 
-# Installation directory
-$InstallDir = "$env:USERPROFILE\nodejs"
-if (-not (Test-Path $InstallDir)) {
-    New-Item -ItemType Directory -Path $InstallDir | Out-Null
-}
+# SYSTEM install location
+$InstallDir = "C:\Program Files\nodejs"
+New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
 
-# Download Node zip
+# Download
 $ZipUrl = "https://nodejs.org/download/release/$LatestLTS/node-$LatestLTS-win-$Arch.zip"
-$ZipPath = "$InstallDir\node.zip"
+$ZipPath = "$env:TEMP\node.zip"
 
-Write-Host "Downloading Node from $ZipUrl..." -ForegroundColor Cyan
+Write-Host "Downloading Node..." -ForegroundColor Cyan
 Invoke-WebRequest $ZipUrl -OutFile $ZipPath
 
-# Remove old extracted versions
-Get-ChildItem $InstallDir -Directory -Filter "node-v*" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+# Clean old system Node install
+Write-Host "Cleaning old system Node install..." -ForegroundColor Yellow
+Get-ChildItem $InstallDir -ErrorAction SilentlyContinue |
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
-# Extract Node
-Write-Host "Extracting Node..." -ForegroundColor Cyan
+# Extract
+Write-Host "Installing to Program Files..." -ForegroundColor Cyan
 Expand-Archive $ZipPath -DestinationPath $InstallDir -Force
 Remove-Item $ZipPath
 
-# Get extracted folder
-$NodeFolder = Get-ChildItem $InstallDir -Directory -Filter "node-v*" | Select-Object -First 1
+# Get extracted folder (Node ZIP contains versioned folder)
+$NodeFolder = Get-ChildItem $InstallDir -Directory |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
+
 $NodeBin = $NodeFolder.FullName
 
-# Update PATH for current session
-$env:PATH = "$NodeBin;$env:PATH"
+Write-Host "Installed Node path: $NodeBin" -ForegroundColor Green
 
-# Update user PATH permanently
-$UserPath = [Environment]::GetEnvironmentVariable("PATH", "User")
-if ($UserPath -notlike "*$NodeBin*") {
-    Write-Host "Updating user PATH permanently..."
-    [Environment]::SetEnvironmentVariable("PATH", "$NodeBin;$UserPath", "User")
+# -----------------------------
+# SYSTEM PATH UPDATE (CRITICAL)
+# -----------------------------
+
+Write-Host "Updating SYSTEM PATH..." -ForegroundColor Cyan
+
+$MachinePath = [Environment]::GetEnvironmentVariable("PATH", "Machine") -split ";"
+
+# Remove old Node entries
+$CleanMachinePath = $MachinePath | Where-Object {
+    $_ -and ($_ -notmatch "nodejs") -and ($_ -notmatch "node-v")
 }
 
-# Verify installation
-Write-Host "Node installed: $(node -v)" -ForegroundColor Green
-Write-Host "NPM installed: $(npm -v)" -ForegroundColor Green
-Write-Host "Bootstrap complete!" -ForegroundColor Green
-Write-Host "Now you can run 'npm install' to install all dependencies." -ForegroundColor Green
+# Ensure new Node is first
+$NewMachinePath = @($NodeBin) + $CleanMachinePath
+
+[Environment]::SetEnvironmentVariable(
+    "PATH",
+    ($NewMachinePath -join ";"),
+    "Machine"
+)
+
+# Also update session PATH immediately
+$env:PATH = "$NodeBin;" + ($CleanMachinePath -join ";")
+
+# -----------------------------
+# VERIFY SYSTEM RESOLUTION
+# -----------------------------
+
+Write-Host "`nVerifying installation..." -ForegroundColor Cyan
+
+$NodePaths = where.exe node
+
+Write-Host "Node resolution order:"
+$NodePaths | ForEach-Object { Write-Host " - $_" }
+
+$Expected = Join-Path $NodeBin "node.exe"
+
+if ($NodePaths[0] -ne $Expected) {
+    Write-Host "ERROR: Wrong Node is still being resolved!" -ForegroundColor Red
+    Write-Host "Expected: $Expected"
+    Write-Host "Actual:   $($NodePaths[0])"
+    exit 1
+}
+
+Write-Host "`nNode version: $(node -v)" -ForegroundColor Green
+Write-Host "npm version : $(npm -v)" -ForegroundColor Green
+
+Write-Host "`nSYSTEM NODE INSTALL COMPLETE" -ForegroundColor Green
+Write-Host "Restart VS Code and terminals for full effect." -ForegroundColor Yellow
