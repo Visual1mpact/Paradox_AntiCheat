@@ -16,7 +16,11 @@ export const tpaCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Teleport Assistance (TPA)",
-        description: "Teleport to a player or assist them in teleporting.\n\n",
+        description:
+            "Administratively relocate one player directly to the location of another.\n\n" +
+            "§7• Transfers the 'From' player to the exact coordinates of the 'To' player.\n" +
+            "§7• Synchronizes dimension, rotation, and view direction for a seamless transition.\n" +
+            "§7• Includes safety checks to prevent teleporting into solid blocks.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
