@@ -54,6 +54,8 @@ export const pvpToggleCooldownCommand: Command = {
         actions: [
             {
                 name: "Continue",
+                icon: "textures/ui/check.png",
+                description: "Proceed to set the PvP toggle cooldown.",
                 requiredFields: ["ptc"],
                 generateModalForm: true,
             },
@@ -124,6 +126,8 @@ export const pvpCooldownCommand: Command = {
         actions: [
             {
                 name: "Continue",
+                icon: "textures/ui/check.png",
+                description: "Proceed to set the PvP action cooldown.",
                 requiredFields: ["pac"],
                 generateModalForm: true,
             },
@@ -195,18 +199,21 @@ export const pvpToggleCommand: Command = {
         actions: [
             {
                 name: "Toggle Global PvP",
+                icon: "textures/ui/icon_multiplayer.png",
                 securityClearance: 4,
                 command: ["global"],
                 description: "Enable or disable PvP for the entire server.",
             },
             {
                 name: "Check PvP Status",
+                icon: "textures/ui/realms_slot_check.png",
                 securityClearance: 1,
                 command: ["status"],
                 description: "View the current PvP status for yourself and the server.",
             },
             {
                 name: "Toggle Your PvP",
+                icon: "textures/ui/icon_steve.png",
                 securityClearance: 1,
                 description: "Enable or disable PvP for yourself only.",
             },
