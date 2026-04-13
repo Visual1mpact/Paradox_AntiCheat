@@ -17,12 +17,17 @@ export const rateLimitCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "RateLimit Detection Settings",
-        description: "Enable or disable the rate-limit detection module to prevent players from sending too many packets [BDS Only].\n\n",
+        description:
+            "Monitor and regulate network packet flow to prevent server-side lag and exploitation [BDS Only].\n\n" +
+            "§7• Enforces per-player and global limits on specific packet types.\n" +
+            "§7• Automatically mitigates flooding attempts by canceling packets or applying bans.\n" +
+            "§7• Triggers server-wide lockdown during severe bursts to ensure stability.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
+                description: "Toggle the rate-limit detection module on or off.",
             },
         ],
     },
