@@ -30,19 +30,21 @@ export const channelCommand: Command = {
         formType: "ActionFormData",
         title: "Channel Management",
         description:
-            "Manage chat channels.\n\n" +
-            "§7• Create a channel to host private conversations.\n" +
-            "§7• Join an existing channel to participate.\n" +
-            "§7• Invite players to your channel.\n" +
-            "§7• Leave a channel you are in.\n" +
-            "§7• Transfer ownership of a channel to another player.\n\n",
+            "Organize and participate in private, moderated chat rooms.\n\n" +
+            "§7Management:\n" +
+            "§7• Create unique channels for private group communication.\n" +
+            "§7• Invite others with secure, 30-second invitations.\n" +
+            "§7• Transfer room ownership or join existing channels.\n\n" +
+            "§7Notes:\n" +
+            "§7• Channels are automatically deleted when empty.\n" +
+            "§7• You can only be a member of one channel at a time.\n\n",
         commandOrder: "command-arg",
         actions: [
-            { name: "Create Channel", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
-            { name: "Join Channel", command: ["join"], description: "Join an existing chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
-            { name: "Invite to Channel", command: ["invite"], description: "Invite a player to a chat channel", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
-            { name: "Leave Channel", command: ["leave"], description: "Leave a chat channel", requiredFields: [], crypto: false, generateModalForm: false },
-            { name: "Transfer Ownership", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
+            { name: "Create Channel", icon: "textures/ui/color_plus.png", command: ["create"], description: "Create a new chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
+            { name: "Join Channel", icon: "textures/ui/plus.png", command: ["join"], description: "Join an existing chat channel", requiredFields: ["roomName"], crypto: false, generateModalForm: true },
+            { name: "Invite to Channel", icon: "textures/ui/send_icon.png", command: ["invite"], description: "Invite a player to a chat channel", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
+            { name: "Leave Channel", icon: "textures/ui/cancel.png", command: ["leave"], description: "Leave a chat channel", requiredFields: [], crypto: false, generateModalForm: false },
+            { name: "Transfer Ownership", icon: "textures/ui/refresh_light.png", command: ["transfer"], description: "Transfer channel ownership", requiredFields: ["roomName", "targetName"], crypto: false, generateModalForm: true },
         ],
         dynamicFields: [
             { name: "\nName of Room:", arg: "--room", type: "text", placeholder: "Enter Channel Name", requiredFields: ["roomName"] },
