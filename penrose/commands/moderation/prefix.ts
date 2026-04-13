@@ -15,7 +15,14 @@ export const prefixCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Prefix Command",
-        description: "Change the command prefix. Max is two characters.\n\n",
+        description:
+            "Configure the global command trigger symbol used to invoke Paradox functionality.\n\n" +
+            "§7• Define a custom prefix string up to 2 characters in length.\n" +
+            "§7• Reserved characters like forward slash or section sign are prohibited for stability.\n" +
+            "§7• Updating the prefix affects all administrative and utility commands.\n\n" +
+            "§7Prefix Rules:\n" +
+            "§7• Changes apply instantly and persist across server restarts.\n" +
+            "§7• Only administrators with clearance level 4 can modify this configuration.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
