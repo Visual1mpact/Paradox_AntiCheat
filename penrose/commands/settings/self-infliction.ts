@@ -17,12 +17,17 @@ export const selfAttackCheckCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Self-Attack Detection Settings",
-        description: "Enable or disable the self-attack detection module to prevent players from attacking themselves.\n\n",
+        description:
+            "Monitor and prevent players from inflicting damage upon themselves to gain unfair advantages.\n\n" +
+            "§7• Identifies 'damage-boosting' exploits used to manipulate velocity.\n" +
+            "§7• Blocks self-harm attempts designed to reset combat timers or knockback.\n" +
+            "§7• Ensures consistent and fair physics during PvP engagements.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/attack_pressed.png",
+                description: "Toggle the self-attack detection module on or off.",
             },
         ],
     },
