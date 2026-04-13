@@ -17,12 +17,17 @@ export const hitReachCheckCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Hit Reach Detection Settings",
-        description: "Enable or disable the reach detection module to prevent players from hitting others from an unfair distance.\n\n",
+        description:
+            "Monitor and enforce fair combat distances between players during PvP engagements.\n\n" +
+            "§7• Utilizes cubic interpolation to account for latency and movement lag.\n" +
+            "§7• Automatically cancels attacks that exceed the 4.5 block reach threshold.\n" +
+            "§7• Sends real-time alerts to administrative staff when violations occur.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
                 name: "Enable / Disable",
                 icon: "textures/ui/permissions_visitor_hand.png",
+                description: "Toggle the hit reach detection module on or off.",
             },
         ],
     },
