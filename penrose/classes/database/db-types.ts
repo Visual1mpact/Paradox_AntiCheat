@@ -110,6 +110,7 @@ export type ModuleSettingsMap = {
     noClipCheck_b: undefined; // This module has no configurable settings
     chestLock_b: undefined; // This module has no configurable settings
     deathCoords_b: undefined; // This module has no configurable settings
+    aimbotMonitorCheck_b: undefined; // This module has no configurable settings
 };
 
 /**

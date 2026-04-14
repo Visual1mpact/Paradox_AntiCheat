@@ -96,6 +96,8 @@ import { renameCommand } from "../commands/moderation/rename";
 import { tpsCommand } from "../commands/utility/tps";
 import { deathCoordsCommand } from "../commands/settings/death-coords";
 import { startDeathCoords } from "../modules/death-coords";
+import { startAimbotMonitor } from "../modules/aimbot-monitor";
+import { aimbotMonitorCommand } from "../commands/settings/aimbot-monitor";
 
 type PlayerID = string;
 
@@ -182,6 +184,7 @@ const allCommands: Command[] = [
     renameCommand,
     tpsCommand,
     deathCoordsCommand,
+    aimbotMonitorCommand,
 ];
 
 /**
@@ -339,6 +342,7 @@ async function initializeParadoxModules(): Promise<void> {
         noClipCheck_b: () => startNoClip(),
         chestLock_b: () => startChestLock(),
         deathCoords_b: () => startDeathCoords(),
+        aimbotMonitorCheck_b: () => startAimbotMonitor(),
     };
 
     const runModuleInitializers = () => {

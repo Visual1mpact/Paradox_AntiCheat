@@ -24,6 +24,20 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 > Usage: "!afk [ hours ] [ minutes ] [ seconds ]"  
 > Example: !afk 0 10 0  
 
+## !aimbotmonitor
+### At A Glance
+The `!aimbotmonitor` command toggles a detection module that analyzes player rotation patterns to identify external aim-assist and smoothing software.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "!aimbotmonitor"
+> Example: !aimbotmonitor
+
+### **Behavior & Notes**
+- **Signature Detection:** Identifies the mathematical consistency produced by external smoothing loops (like those using `SendInput`).
+- **Combat Analysis:** Evaluates how a player's crosshair tracks entities during combat.
+- **Heuristic Strikes:** Uses a strike system to avoid false positives from erratic human movement.
+- **Logging:** Alerts administrators when a player exhibits suspicious rotation signatures.
 
 ## !antifly
 ### At A Glance
