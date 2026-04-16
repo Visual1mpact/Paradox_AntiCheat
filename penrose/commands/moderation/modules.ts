@@ -72,6 +72,7 @@ export const modulesStatusCommand: Command = {
             chestLock_b: "chestforensic",
             deathCoords_b: "deathcoords",
             aimbotMonitorCheck_b: "aimbotmonitor",
+            criticalsCheck_b: "criticals",
         };
 
         const entries = paradoxModulesDB.entries();

@@ -210,6 +210,20 @@ The module includes a full GUI with:
   - `afterEvents` (for logging & state updates)
 - Module can be safely toggled at runtime without restart
 
+## !criticals
+### At A Glance
+The `criticals` command toggles a detection module designed to stop "Packet Criticals." These are exploits that allow a player to deal critical hit damage while standing on the ground by sending fake packets to the server.
+
+### How It Works
+- **Ground Proximity Check:** Detects if a player claims to be airborne but is actually within a tiny distance (under 0.55 blocks) of a solid floor.
+- **Velocity Validation:** Legitimate critical hits only happen when falling (negative Y velocity). This module flags players dealing criticals while having positive or zero vertical velocity.
+- **Anti-Loop Teleport:** When a packet crit is detected, the attack is cancelled, and the player is teleported to their current location to reset their movement state and break the cheat's automation loop.
+- **Gamemode Aware:** Automatically ignores players in Creative or Spectator modes.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "!criticals"
+> Example: !criticals
 
 ## !deathcoords
 ### At A Glance
