@@ -1,4 +1,4 @@
-import { system, Player, EquipmentSlot, EntityEquippableComponent } from "@minecraft/server";
+import { system, Player, EquipmentSlot, EntityEquippableComponent, world, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/player-cache";
@@ -19,6 +19,9 @@ const playerTotemData = new Map<string, { lastPopTick: number; lastOffhandState:
 
 /** Stores the active background job ID for the detection loop */
 let autoTotemJobId: number | null = null;
+
+/** Reference to the player leave event subscription */
+let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
 
 /**
  * Generator loop that scans players for suspicious totem replenishment.
@@ -107,6 +110,16 @@ async function executeAutoTotemCheck(): Promise<void> {
 }
 
 /**
+ * Cleans up player-specific data when a player leaves the world.
+ * Without this cleanup, `playerTotemData` would retain entries for
+ * players that have disconnected, causing the Map to grow indefinitely.
+ * @param event - The playerLeave event containing the leaving player's ID.
+ */
+function handlePlayerLeave(event: PlayerLeaveAfterEvent): void {
+    playerTotemData.delete(event.playerId);
+}
+
+/**
  * Sends a formatted alert to level 4 staff about a violation.
  */
 function alertStaff(player: Player, ticks: number) {
@@ -126,6 +139,9 @@ let intervalId: number | undefined;
  */
 export function startAutoTotemCheck() {
     if (intervalId !== undefined) return;
+
+    // Subscribe to player leave event for cleanup
+    playerLeaveSubscription = world.afterEvents.playerLeave.subscribe(handlePlayerLeave);
 
     let isRunning = false;
     let runIdBackup: number | undefined;
@@ -152,6 +168,12 @@ export function stopAutoTotemCheck() {
     if (intervalId !== undefined) {
         system.clearRun(intervalId);
         intervalId = undefined;
+    }
+
+    // Unsubscribe from player leave event
+    if (playerLeaveSubscription) {
+        world.afterEvents.playerLeave.unsubscribe(playerLeaveSubscription);
+        playerLeaveSubscription = undefined;
     }
     if (autoTotemJobId !== null) {
         system.clearJob(autoTotemJobId);
