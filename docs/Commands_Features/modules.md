@@ -104,6 +104,18 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 > Usage: "!autoclicker [ help ]"  
 > Example: !autoclicker  
 
+## !autototem
+### At A Glance
+The `autototem` command toggles a detection module that identifies automated inventory interactions used to replenish Totems of Undying.
+
+### How It Works
+- **Equip Speed Validation:** Monitors the time between a player's offhand becoming empty (totem pop) and a new totem being equipped.
+- **Mitigation:** If a totem appears in the offhand faster than humanly possible (under 250ms), the totem is automatically removed, and staff are alerted.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "!autototem"
+> Example: !autototem
 
 ## !chestforensic
 ### At A Glance

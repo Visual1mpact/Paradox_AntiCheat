@@ -112,6 +112,7 @@ export type ModuleSettingsMap = {
     deathCoords_b: undefined; // This module has no configurable settings
     aimbotMonitorCheck_b: undefined; // This module has no configurable settings
     criticalsCheck_b: undefined; // This module has no configurable settings
+    autoTotemCheck_b: undefined; // This module has no configurable settings
 };
 
 /**

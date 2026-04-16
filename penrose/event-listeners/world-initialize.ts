@@ -100,6 +100,8 @@ import { startAimbotMonitor } from "../modules/aimbot-monitor";
 import { aimbotMonitorCommand } from "../commands/settings/aimbot-monitor";
 import { criticalsCommand } from "../commands/settings/criticals";
 import { startCriticalsCheck } from "../modules/criticals";
+import { autoTotemCommand } from "../commands/settings/autototem";
+import { startAutoTotemCheck } from "../modules/autototem";
 
 type PlayerID = string;
 
@@ -188,6 +190,7 @@ const allCommands: Command[] = [
     deathCoordsCommand,
     aimbotMonitorCommand,
     criticalsCommand,
+    autoTotemCommand,
 ];
 
 /**
@@ -347,6 +350,7 @@ async function initializeParadoxModules(): Promise<void> {
         deathCoords_b: () => startDeathCoords(),
         aimbotMonitorCheck_b: () => startAimbotMonitor(),
         criticalsCheck_b: () => startCriticalsCheck(),
+        autoTotemCheck_b: () => startAutoTotemCheck(),
     };
 
     const runModuleInitializers = () => {

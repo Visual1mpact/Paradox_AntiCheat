@@ -73,6 +73,7 @@ export const modulesStatusCommand: Command = {
             deathCoords_b: "deathcoords",
             aimbotMonitorCheck_b: "aimbotmonitor",
             criticalsCheck_b: "criticals",
+            autoTotemCheck_b: "autototem",
         };
 
         const entries = paradoxModulesDB.entries();
