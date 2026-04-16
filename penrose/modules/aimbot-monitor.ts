@@ -1,9 +1,10 @@
-import { system, world, Player, EntityHurtBeforeEvent } from "@minecraft/server";
+import { system, world, Player, EntityHurtBeforeEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 let aimbotRunId: number | undefined;
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
+let leaveSubscription: ((event: PlayerLeaveAfterEvent) => void) | undefined;
 let aimbotJobId: number | null = null;
 
 /**
@@ -103,6 +104,14 @@ async function executeAimbotCheck(): Promise<void> {
 }
 
 /**
+ * Cleans up tracking data when a player leaves.
+ * @param event - The player leave event.
+ */
+function handlePlayerLeave(event: PlayerLeaveAfterEvent) {
+    track.delete(event.playerId);
+}
+
+/**
  * Handles incoming damage events. If the attacker is flagged for
  * unnatural smoothing, the damage is cancelled.
  */
@@ -127,6 +136,9 @@ export async function startAimbotMonitor(): Promise<boolean> {
     hurtSubscription = handleHurtEvent;
     world.beforeEvents.entityHurt.subscribe(hurtSubscription);
 
+    leaveSubscription = handlePlayerLeave;
+    world.afterEvents.playerLeave.subscribe(leaveSubscription);
+
     aimbotRunId = system.runInterval(async () => {
         await executeAimbotCheck();
     }, 1); // Maintain 1-tick granularity while spreading player load
@@ -145,6 +157,10 @@ export function stopAimbotMonitor(): void {
     if (hurtSubscription) {
         world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
         hurtSubscription = undefined;
+    }
+    if (leaveSubscription) {
+        world.afterEvents.playerLeave.unsubscribe(leaveSubscription);
+        leaveSubscription = undefined;
     }
     if (aimbotJobId !== null) {
         system.clearJob(aimbotJobId);
