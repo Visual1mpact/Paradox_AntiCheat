@@ -11,6 +11,12 @@ const BUFFER_SIZE = 20; // Buffer size for storing recent attack ticks
 
 // PLAYER ATTACK TRACKING
 const playerAttackData: Map<string, number[]> = new Map();
+/** Tracks the last target ID to detect rapid switching (Multi-Aura) */
+const lastTargetTracker: Map<string, { id: string; tick: number }> = new Map();
+
+// ADDITIONAL CONSTANTS
+/** Minimum ticks between switching targets (prevents rapid multi-aura snapping) */
+const MIN_SWITCH_TICKS = 2;
 
 /**
  * Calculates the average of an array of numbers.
@@ -86,6 +92,7 @@ function alertStaff(attacker: Player, distance: number, recentAttacks: number) {
 function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const attacker = event.damageSource.damagingEntity;
     const target = event.hurtEntity;
+    const currentTick = system.currentTick;
 
     // Only track Player vs Player
     if (!(attacker instanceof Player) || !(target instanceof Player)) return;
@@ -100,20 +107,27 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const targetLocation = new Vector3Builder(target.location.x, target.location.y, target.location.z);
     const distance = Vector3Utils.distance(attackerLocation, targetLocation);
 
-    const currentTick = system.currentTick;
-
     if (!playerAttackData.has(attackerId)) playerAttackData.set(attackerId, []);
     const attackTimes = playerAttackData.get(attackerId)!;
     attackTimes.push(currentTick);
     if (attackTimes.length > BUFFER_SIZE) attackTimes.shift();
 
+    // Multi-Target / Snap Detection
+    const lastTarget = lastTargetTracker.get(attackerId);
+    let isRapidSwitch = false;
+    if (lastTarget && lastTarget.id !== target.id) {
+        if (currentTick - lastTarget.tick < MIN_SWITCH_TICKS) {
+            isRapidSwitch = true;
+        }
+    }
+    lastTargetTracker.set(attackerId, { id: target.id, tick: currentTick });
+
     const recentAttacks = attackTimes.filter((t) => currentTick - t <= 20);
 
     const isCloseRange = distance < 2;
-
     const facing = isCloseRange || checkIfFacingEntity(attacker, target);
 
-    if (distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes) || !facing) {
+    if (distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes) || !facing || isRapidSwitch) {
         event.cancel = true;
         alertStaff(attacker, distance, recentAttacks.length);
     }
@@ -130,6 +144,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
  */
 function handlePlayerLeave(event: { playerId: string }) {
     playerAttackData.delete(event.playerId);
+    lastTargetTracker.delete(event.playerId);
 }
 
 /**
@@ -147,4 +162,5 @@ export function stopKillAuraCheck() {
     world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
     world.afterEvents.playerLeave.unsubscribe(handlePlayerLeave);
     playerAttackData.clear();
+    lastTargetTracker.clear();
 }
