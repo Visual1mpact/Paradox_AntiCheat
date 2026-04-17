@@ -434,8 +434,21 @@ It logs suspicious activity for administrative review and helps prevent server o
 
 
 > Usage: "!packetmonitor [ help ]"  
-> Example: !packetmonitor  
+> Example: !packetmonitor
 
+## !pathing
+### At A Glance
+The `!pathing` command toggles a detection module that identifies automated movement and navigation scripts (often referred to as "Baritone" or "Navigator").
+
+?> Required Clearance Level To Execute: `4`
+
+### **How It Works**
+- **Robotic Rotation:** Detects perfectly constant yaw precision, which is a hallmark of automated pathfinding.
+- **Speed Validation:** Identifies horizontal movement speeds that exceed vanilla sprinting limits while maintaining robotic precision.
+- **Mitigation:** If a player is flagged, their velocity is reset, and they are teleported back to their last valid location to disrupt the navigation loop.
+
+> Usage: "!pathing"
+> Example: !pathing
 
 ## !platformblock
 ### At A Glance
