@@ -31,4 +31,5 @@ nvm --version
 node -v
 npm -v
 
+echo "💡 Execute 'nvm use --lts' to switch to the latest LTS version."
 echo "💡 Now you can run 'npm install' to install all dependencies."
