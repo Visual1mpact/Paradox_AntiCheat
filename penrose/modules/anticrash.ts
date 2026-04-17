@@ -1,5 +1,6 @@
 import { world, system } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 
 /**
@@ -44,8 +45,12 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
                 await banlistDB.set("players", bannedPlayers);
             }
 
+            const staff = getSecurityClearanceLevel4Players();
+            for (const s of staff) {
+                s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Anti-Crash]§7 Blocked crash attempt from §f${playerName} §e[${sizeKB}KB]§7.`);
+            }
+
             world.getDimension("overworld").runCommand(`kick @s [Paradox] Crasher exploit detected.`);
-            world.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} was banned for attempting a Sub-Chunk Crash.`);
         });
     }
 }
