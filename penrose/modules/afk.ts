@@ -3,6 +3,7 @@ import { PlayerCache } from "../classes/player-cache";
 
 let currentRunId: number | null = null;
 let playerLeaveCallback: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
+let afkJobId: number | null = null;
 
 // Initial AFK time in ticks; this will be updated based on the user's input.
 let AFK_TIME_TICKS = 12000; // Default: 10 minutes in ticks (20 ticks per second * 60 seconds * 10 minutes)
@@ -44,46 +45,53 @@ function isSecurityClearanceIgnored(player: Player): boolean {
 }
 
 /**
- * Updates the last active tick for a player.
- *
- * @param {string} playerId - The ID of the player.
- */
-async function updatePlayerActivity(playerId: string): Promise<void> {
-    playerLastActive[playerId] = system.currentTick;
-}
-
-/**
  * Checks the AFK status of all players.
  * Kicks players who have been AFK longer than the configured time.
  */
-async function checkAFKStatus(): Promise<void> {
+function* afkCheckGenerator(): Generator<void, void, unknown> {
     const currentTick = system.currentTick;
 
-    for (const [playerId, lastActiveTick] of Object.entries(playerLastActive)) {
-        const player = PlayerCache.getPlayerById(playerId);
-        if (player && !isSecurityClearanceIgnored(player)) {
-            if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
-                player.runCommand(`kick @s You have been kicked for being AFK!`);
-                delete playerLastActive[playerId];
-            }
+    for (const player of PlayerCache.getPlayers()) {
+        if (player.isValid) {
+            try {
+                const velocity = player.getVelocity();
+
+                // Update only if the player is moving and should not be ignored
+                if (!isSecurityClearanceIgnored(player)) {
+                    if (!playerLastActive[player.id] || !isPlayerAFK(velocity)) {
+                        playerLastActive[player.id] = currentTick;
+                    } else {
+                        const lastActiveTick = playerLastActive[player.id];
+                        if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
+                            player.runCommand(`kick @s You have been kicked for being AFK!`);
+                            delete playerLastActive[player.id];
+                        }
+                    }
+                }
+            } catch (e) {}
         }
+        yield;
     }
 }
 
 /**
- * Monitors all players, checking their movement status and updating activity.
+ * Executes the AFK check as a background job.
  */
-async function monitorPlayers(): Promise<void> {
-    const players = PlayerCache.getPlayers();
+async function executeAfkCheck(): Promise<void> {
+    if (afkJobId !== null) system.clearJob(afkJobId);
 
-    for (const player of players) {
-        const velocity = player.getVelocity();
-
-        // Update only if the player is moving and should not be ignored
-        if (!isSecurityClearanceIgnored(player) && (!playerLastActive[player.id] || !isPlayerAFK(velocity))) {
-            await updatePlayerActivity(player.id);
+    const jobPromise = new Promise<void>((resolve) => {
+        function* runner() {
+            try {
+                yield* afkCheckGenerator();
+            } finally {
+                resolve();
+            }
         }
-    }
+        afkJobId = system.runJob(runner());
+    });
+
+    await jobPromise;
 }
 
 /**
@@ -133,8 +141,7 @@ export function startAFKChecker(hours: number = 0, minutes: number = 10, seconds
         runIdBackup = currentRunId;
         isRunning = true;
 
-        await monitorPlayers();
-        await checkAFKStatus();
+        await executeAfkCheck();
         isRunning = false;
     }, 100); // Check every 5 seconds (100 ticks)
 }
@@ -146,6 +153,11 @@ export function stopAFKChecker(): void {
     if (currentRunId !== null) {
         system.clearRun(currentRunId);
         currentRunId = null;
+    }
+
+    if (afkJobId !== null) {
+        system.clearJob(afkJobId);
+        afkJobId = null;
     }
 
     if (playerLeaveCallback !== undefined) {

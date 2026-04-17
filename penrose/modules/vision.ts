@@ -10,6 +10,8 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 let visionEnabled = false;
 /** Interval ID for periodic vision checks */
 let visionCheckInterval: number | null = null;
+/** Job ID for the vision background task */
+let visionJobId: number | null = null;
 
 /** Number of items to show per page */
 const ITEMS_PER_PAGE = 6;
@@ -113,13 +115,15 @@ function getContainerCounts(container: Container): Record<string, number> {
 }
 
 /**
- * Performs a single vision check for all level-4 players, showing container or player inventories.
+ * Generator that iterates over staff members to perform vision checks.
  */
-function runVisionCheck(): void {
+function* visionCheckGenerator(): Generator<void, void, unknown> {
     const players = getSecurityClearanceLevel4Players();
     if (players.size === 0) return;
 
     for (const player of players) {
+        if (!player.isValid) continue;
+
         const state = getPlayerState(player.id);
 
         // Raycast for blocks and entities separately
@@ -177,7 +181,28 @@ function runVisionCheck(): void {
         }
 
         renderInventory(player, counts);
+        yield;
     }
+}
+
+/**
+ * Executes the vision check as a background job.
+ */
+async function executeVisionCheck(): Promise<void> {
+    if (visionJobId !== null) system.clearJob(visionJobId);
+
+    const jobPromise = new Promise<void>((resolve) => {
+        function* runner() {
+            try {
+                yield* visionCheckGenerator();
+            } finally {
+                resolve();
+            }
+        }
+        visionJobId = system.runJob(runner());
+    });
+
+    await jobPromise;
 }
 
 /**
@@ -187,13 +212,25 @@ function runVisionCheck(): void {
 export function startVisionCheck(): void {
     if (visionCheckInterval !== null) stopVisionCheck();
 
+    let isRunning = false;
+    let runIdBackup: number | null = null;
+
     visionEnabled = true;
-    visionCheckInterval = system.runInterval(() => {
+    visionCheckInterval = system.runInterval(async () => {
         if (!visionEnabled || paradoxModulesDB.get("visionCheck_b")?.enabled === false) {
             stopVisionCheck();
             return;
         }
-        runVisionCheck();
+
+        if (isRunning) {
+            system.clearRun(visionCheckInterval as number);
+            visionCheckInterval = runIdBackup;
+            return;
+        }
+        runIdBackup = visionCheckInterval;
+        isRunning = true;
+        await executeVisionCheck();
+        isRunning = false;
     }, 30);
 }
 
@@ -205,6 +242,12 @@ export function stopVisionCheck(): void {
         system.clearRun(visionCheckInterval);
         visionCheckInterval = null;
     }
+
+    if (visionJobId !== null) {
+        system.clearJob(visionJobId);
+        visionJobId = null;
+    }
+
     visionEnabled = false;
     playerStates.clear();
 }

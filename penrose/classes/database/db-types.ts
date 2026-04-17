@@ -113,6 +113,7 @@ export type ModuleSettingsMap = {
     aimbotMonitorCheck_b: undefined; // This module has no configurable settings
     criticalsCheck_b: undefined; // This module has no configurable settings
     autoTotemCheck_b: undefined; // This module has no configurable settings
+    pathingCheck_b: undefined; // This module has no configurable settings
 };
 
 /**

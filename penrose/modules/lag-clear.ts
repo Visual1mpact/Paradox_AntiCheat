@@ -160,8 +160,11 @@ async function executeLagClear(clockSettings: { hours: number; minutes: number; 
 
     const jobPromise = new Promise<void>((resolve) => {
         function* jobRunner() {
-            yield* lagClearGenerator(globalEndTick!);
-            resolve();
+            try {
+                yield* lagClearGenerator(globalEndTick!);
+            } finally {
+                resolve();
+            }
         }
         lagClearJobId = system.runJob(jobRunner());
     });
@@ -185,9 +188,16 @@ export async function startLagClear(hours: number = 0, minutes: number = 5, seco
     globalEndTick = system.currentTick + timeToTicks(hours, minutes, seconds);
 
     let isRunning = false;
+    let runIdBackup: number | null = null;
 
     lagClearRunId = system.runInterval(async () => {
-        if (isRunning) return; // prevent overlapping executions
+        if (isRunning) {
+            if (lagClearRunId !== null) system.clearRun(lagClearRunId);
+            lagClearRunId = runIdBackup;
+            return;
+        }
+
+        runIdBackup = lagClearRunId;
         isRunning = true;
         await executeLagClear(clockSettings);
         isRunning = false;

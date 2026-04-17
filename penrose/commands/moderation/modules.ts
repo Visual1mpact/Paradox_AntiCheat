@@ -74,6 +74,7 @@ export const modulesStatusCommand: Command = {
             aimbotMonitorCheck_b: "aimbotmonitor",
             criticalsCheck_b: "criticals",
             autoTotemCheck_b: "autototem",
+            pathingCheck_b: "pathing",
         };
 
         const entries = paradoxModulesDB.entries();

@@ -29,6 +29,7 @@ const recentDamage = new Map<string, number>();
 
 let isNoClipActive = false;
 let intervalRef: number | undefined;
+let noclipJobId: number | null = null;
 
 /**
  * Determines if a block should allow movement through it.
@@ -259,6 +260,42 @@ function checkPlayer(player: Player) {
 }
 
 /**
+ * Generator that iterates over players to perform NoClip checks.
+ */
+function* noclipCheckGenerator(): Generator<void, void, unknown> {
+    for (const player of PlayerCache.getPlayers()) {
+        if (player.isValid) {
+            try {
+                checkPlayer(player);
+            } catch (e) {
+                // Ignore transient errors
+            }
+        }
+        yield;
+    }
+}
+
+/**
+ * Executes the NoClip check as a background job.
+ */
+async function executeNoClipCheck(): Promise<void> {
+    if (noclipJobId !== null) system.clearJob(noclipJobId);
+
+    const jobPromise = new Promise<void>((resolve) => {
+        function* runner() {
+            try {
+                yield* noclipCheckGenerator();
+            } finally {
+                resolve();
+            }
+        }
+        noclipJobId = system.runJob(runner());
+    });
+
+    await jobPromise;
+}
+
+/**
  * Tracks player damage for knockback exemptions.
  */
 function trackDamage(ev: EntityHurtAfterEvent) {
@@ -281,12 +318,20 @@ export function startNoClip() {
     if (isNoClipActive) return;
     isNoClipActive = true;
 
-    intervalRef = system.runInterval(() => {
-        for (const player of PlayerCache.getPlayers()) {
-            try {
-                checkPlayer(player);
-            } catch {}
+    let isRunning = false;
+    let runIdBackup: number | undefined;
+
+    intervalRef = system.runInterval(async () => {
+        if (isRunning) {
+            system.clearRun(intervalRef as number);
+            intervalRef = runIdBackup;
+            return;
         }
+
+        runIdBackup = intervalRef;
+        isRunning = true;
+        await executeNoClipCheck();
+        isRunning = false;
     }, CHECK_INTERVAL);
 
     world.afterEvents.entityHurt.subscribe(trackDamage);
@@ -303,6 +348,11 @@ export function stopNoClip() {
     if (intervalRef !== undefined) {
         system.clearRun(intervalRef);
         intervalRef = undefined;
+    }
+
+    if (noclipJobId !== null) {
+        system.clearJob(noclipJobId);
+        noclipJobId = null;
     }
 
     playerData.clear();

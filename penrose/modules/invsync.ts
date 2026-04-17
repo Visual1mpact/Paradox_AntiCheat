@@ -15,10 +15,12 @@ const ITEM_TOLERANCE = 0; // tolerance per item type
  * RUNTIME STATE
  */
 let running = false;
-let joinSub: any = null;
-let leaveSub: any = null;
-let respawnSub: any = null;
-let intervalId: any = null;
+let joinSub: ((arg: PlayerJoinAfterEvent) => void) | undefined;
+let leaveSub: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
+let respawnSub: ((arg: PlayerSpawnAfterEvent) => void) | undefined;
+let intervalId: number | null = null;
+/** Job ID for inventory operations */
+let invSyncJobId: number | null = null;
 const pendingJoinChecks = new Map<string, number>();
 
 /**
@@ -41,7 +43,20 @@ export async function startInvSync() {
     leaveSub = world.beforeEvents.playerLeave.subscribe(onPlayerLeave);
     respawnSub = world.afterEvents.playerSpawn.subscribe(onPlayerRespawn);
 
-    intervalId = system.runInterval(tickLoop, 100); // cleanup expired snapshots
+    let isRunning = false;
+    let runIdBackup: number | null = null;
+
+    intervalId = system.runInterval(async () => {
+        if (isRunning) {
+            system.clearRun(intervalId as number);
+            intervalId = runIdBackup;
+            return;
+        }
+        runIdBackup = intervalId;
+        isRunning = true;
+        await tickLoop();
+        isRunning = false;
+    }, 100); // cleanup expired snapshots
 
     await snapshotAllPlayers();
     alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync module §astarted§7.");
@@ -56,7 +71,14 @@ export function stopInvSync() {
     if (respawnSub) world.afterEvents.playerSpawn.unsubscribe(respawnSub);
     if (intervalId) system.clearRun(intervalId);
 
-    joinSub = leaveSub = respawnSub = intervalId = null;
+    joinSub = leaveSub = respawnSub = undefined;
+    intervalId = null;
+
+    if (invSyncJobId !== null) {
+        system.clearJob(invSyncJobId);
+        invSyncJobId = null;
+    }
+
     pendingJoinChecks.clear();
     alertStaffSystem("§2[§7Paradox§2]§o§7 §cInvSync module stopped.");
 }
@@ -66,8 +88,25 @@ export function stopInvSync() {
  */
 async function tickLoop() {
     if (!running) return;
-    await processPendingJoins();
+    await executePendingJoins();
     await cleanExpiredSnapshots();
+}
+
+/**
+ * Runs a generator task as a background job.
+ */
+async function runInvSyncJob(generator: () => Generator<void, void, unknown>): Promise<void> {
+    if (invSyncJobId !== null) system.clearJob(invSyncJobId);
+    return new Promise((resolve) => {
+        function* runner() {
+            try {
+                yield* generator();
+            } finally {
+                resolve();
+            }
+        }
+        invSyncJobId = system.runJob(runner());
+    });
 }
 
 /**
@@ -99,32 +138,48 @@ async function onPlayerRespawn(event: PlayerSpawnAfterEvent) {
 /**
  * PROCESS DELAYED JOIN CHECKS
  */
-async function processPendingJoins() {
+function* pendingJoinsGenerator(): Generator<void, void, unknown> {
     const currentTick = system.currentTick;
 
     for (const [playerId, scheduledTick] of pendingJoinChecks) {
         if (currentTick >= scheduledTick) {
             const player = PlayerCache.getPlayerById(playerId);
-            if (player) await checkPlayerInventory(player);
+            if (player?.isValid) {
+                system.run(() => checkPlayerInventory(player));
+            }
             pendingJoinChecks.delete(playerId);
         }
+        yield;
     }
+}
+
+async function executePendingJoins() {
+    await runInvSyncJob(pendingJoinsGenerator);
 }
 
 /**
  * SNAPSHOT MANAGEMENT
  */
-export async function snapshotAllPlayers() {
+function* snapshotAllPlayersGenerator(): Generator<void, void, unknown> {
     for (const player of PlayerCache.getPlayers()) {
-        const counts = getInventoryCounts(player);
-        if (!counts) continue;
-
-        await invSyncSnapshotsDB.set(player.id, {
-            counts,
-            time: Date.now(),
-            name: player.name,
-        });
+        if (player.isValid) {
+            const counts = getInventoryCounts(player);
+            if (counts) {
+                system.run(() =>
+                    invSyncSnapshotsDB.set(player.id, {
+                        counts,
+                        time: Date.now(),
+                        name: player.name,
+                    })
+                );
+            }
+        }
+        yield;
     }
+}
+
+export async function snapshotAllPlayers() {
+    await runInvSyncJob(snapshotAllPlayersGenerator);
 }
 
 /**

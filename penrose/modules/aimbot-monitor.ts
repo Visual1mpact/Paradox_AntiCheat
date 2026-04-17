@@ -25,63 +25,66 @@ const track = new Map<
  */
 function* aimbotCheckGenerator(): Generator<void, void, unknown> {
     for (const player of PlayerCache.getPlayers()) {
-        if (!player.isValid) continue;
+        if (player.isValid) {
+            try {
+                // Bypass for high-security users
+                if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
 
-        // Bypass for high-security users
-        if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
+                const rot = player.getRotation();
+                const yaw = rot.y;
+                const pitch = rot.x;
 
-        const rot = player.getRotation();
-        const yaw = rot.y;
-        const pitch = rot.x;
-
-        let data = track.get(player.id);
-        if (!data) {
-            data = { lastYaw: yaw, lastPitch: pitch, deltas: [], violations: 0 };
-            track.set(player.id, data);
-            continue;
-        }
-
-        const dy = Math.abs(yaw - data.lastYaw);
-        const dp = Math.abs(pitch - data.lastPitch);
-        const totalDelta = dy + dp;
-
-        // Only track when there is active movement and looking at an entity
-        const ray = player.getEntitiesFromViewDirection({ maxDistance: 8 });
-
-        if (totalDelta > 0.01 && ray.length > 0) {
-            data.deltas.push(totalDelta);
-            if (data.deltas.length > 15) data.deltas.shift();
-
-            if (data.deltas.length === 15) {
-                const avg = data.deltas.reduce((a, b) => a + b, 0) / 15;
-                const variance = data.deltas.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / 15;
-
-                // Heuristic: External smoothers produce high-precision
-                // movement with near-zero acceleration variance.
-                if (variance < 0.0001) {
-                    data.violations++;
-                } else {
-                    data.violations = Math.max(0, data.violations - 0.2);
+                let data = track.get(player.id);
+                if (!data) {
+                    data = { lastYaw: yaw, lastPitch: pitch, deltas: [], violations: 0 };
+                    track.set(player.id, data);
+                    continue;
                 }
+
+                const dy = Math.abs(yaw - data.lastYaw);
+                const dp = Math.abs(pitch - data.lastPitch);
+                const totalDelta = dy + dp;
+
+                // Only track when there is active movement and looking at an entity
+                const ray = player.getEntitiesFromViewDirection({ maxDistance: 8 });
+
+                if (totalDelta > 0.01 && ray.length > 0) {
+                    data.deltas.push(totalDelta);
+                    if (data.deltas.length > 15) data.deltas.shift();
+
+                    if (data.deltas.length === 15) {
+                        const avg = data.deltas.reduce((a, b) => a + b, 0) / 15;
+                        const variance = data.deltas.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / 15;
+
+                        // Heuristic: External smoothers produce high-precision
+                        // movement with near-zero acceleration variance.
+                        if (variance < 0.0001) {
+                            data.violations++;
+                        } else {
+                            data.violations = Math.max(0, data.violations - 0.2);
+                        }
+                    }
+                } else {
+                    data.violations = Math.max(0, data.violations - 0.5);
+                }
+
+                if (data.violations >= 25) {
+                    // Notify Level 4 staff members about the suspicious behavior
+                    const staff = getSecurityClearanceLevel4Players();
+                    for (const s of staff) {
+                        if (s.id === player.id) continue;
+                        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Aimbot] §f${player.name} §7is flagged for unnatural rotation smoothing.`);
+                    }
+
+                    data.violations = 0;
+                }
+
+                data.lastYaw = yaw;
+                data.lastPitch = pitch;
+            } catch (e) {
+                // Fail silently for transient entity errors
             }
-        } else {
-            data.violations = Math.max(0, data.violations - 0.5);
         }
-
-        if (data.violations >= 25) {
-            // Notify Level 4 staff members about the suspicious behavior
-            const staff = getSecurityClearanceLevel4Players();
-            for (const s of staff) {
-                if (s.id === player.id) continue;
-                s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Aimbot] §f${player.name} §7is flagged for unnatural rotation smoothing.`);
-            }
-
-            data.violations = 0;
-        }
-
-        data.lastYaw = yaw;
-        data.lastPitch = pitch;
-
         yield;
     }
 }
@@ -94,8 +97,11 @@ async function executeAimbotCheck(): Promise<void> {
 
     const jobPromise = new Promise<void>((resolve) => {
         function* runner() {
-            yield* aimbotCheckGenerator();
-            resolve();
+            try {
+                yield* aimbotCheckGenerator();
+            } finally {
+                resolve();
+            }
         }
         aimbotJobId = system.runJob(runner());
     });
@@ -139,8 +145,19 @@ export async function startAimbotMonitor(): Promise<boolean> {
     leaveSubscription = handlePlayerLeave;
     world.afterEvents.playerLeave.subscribe(leaveSubscription);
 
+    let isRunning = false;
+    let runIdBackup: number | undefined;
+
     aimbotRunId = system.runInterval(async () => {
+        if (isRunning) {
+            system.clearRun(aimbotRunId as number);
+            aimbotRunId = runIdBackup;
+            return;
+        }
+        runIdBackup = aimbotRunId;
+        isRunning = true;
         await executeAimbotCheck();
+        isRunning = false;
     }, 1); // Maintain 1-tick granularity while spreading player load
 
     return true;

@@ -25,6 +25,7 @@ const cachedLocations = new Map<string, { x: number; y: number; z: number }>();
 
 let intervalId: number | undefined;
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
+let reachJobId: number | null = null;
 
 /**
  * Calculates squared distance between two 3D points.
@@ -136,15 +137,39 @@ function onHitCached(event: EntityHurtBeforeEvent) {
 /**
  * Updates cached player locations each tick and their history.
  */
-function tickUpdate() {
-    const players = PlayerCache.getPlayers();
+function* reachUpdateGenerator(): Generator<void, void, unknown> {
     cachedLocations.clear();
 
-    for (const player of players) {
-        const loc = player.location;
-        cachedLocations.set(player.id, { x: loc.x, y: loc.y, z: loc.z });
-        updatePlayerWithLoc(player, loc);
+    for (const player of PlayerCache.getPlayers()) {
+        if (player.isValid) {
+            try {
+                const loc = player.location;
+                cachedLocations.set(player.id, { x: loc.x, y: loc.y, z: loc.z });
+                updatePlayerWithLoc(player, loc);
+            } catch (e) {}
+        }
+        yield;
     }
+}
+
+/**
+ * Executes the reach update as a background job.
+ */
+async function executeReachUpdate(): Promise<void> {
+    if (reachJobId !== null) system.clearJob(reachJobId);
+
+    const jobPromise = new Promise<void>((resolve) => {
+        function* runner() {
+            try {
+                yield* reachUpdateGenerator();
+            } finally {
+                resolve();
+            }
+        }
+        reachJobId = system.runJob(runner());
+    });
+
+    await jobPromise;
 }
 
 /**
@@ -158,7 +183,20 @@ export function startHitReachCheck() {
     hurtSubscription = onHitCached;
     world.beforeEvents.entityHurt.subscribe(hurtSubscription);
 
-    intervalId = system.runInterval(tickUpdate, UPDATE_INTERVAL_TICKS);
+    let isRunning = false;
+    let runIdBackup: number | undefined;
+
+    intervalId = system.runInterval(async () => {
+        if (isRunning) {
+            system.clearRun(intervalId as number);
+            intervalId = runIdBackup;
+            return;
+        }
+        runIdBackup = intervalId;
+        isRunning = true;
+        await executeReachUpdate();
+        isRunning = false;
+    }, UPDATE_INTERVAL_TICKS);
 }
 
 /**
@@ -172,6 +210,11 @@ export function stopHitReachCheck() {
     if (hurtSubscription) {
         world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
         hurtSubscription = undefined;
+    }
+
+    if (reachJobId !== null) {
+        system.clearJob(reachJobId);
+        reachJobId = null;
     }
 
     playerHistory.clear();

@@ -18,20 +18,22 @@ function* worldBorderGenerator(): Generator<void, void, unknown> {
     const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
 
     for (const player of players) {
-        if (!player.isValid) continue;
-        if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
+        if (player.isValid) {
+            try {
+                if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
 
-        const { x, y, z } = player.location;
-        const dimId = player.dimension.id;
+                const { x, y, z } = player.location;
+                const dimId = player.dimension.id;
 
-        if (dimId === "minecraft:overworld" && overworld > 0) {
-            checkAndTeleportPlayer(player, x, y, z, overworld, "Overworld");
-        } else if (dimId === "minecraft:nether" && nether > 0) {
-            checkAndTeleportPlayer(player, x, y, z, nether, "Nether");
-        } else if (dimId === "minecraft:the_end" && end > 0) {
-            checkAndTeleportPlayer(player, x, y, z, end, "End");
+                if (dimId === "minecraft:overworld" && overworld > 0) {
+                    checkAndTeleportPlayer(player, x, y, z, overworld, "Overworld");
+                } else if (dimId === "minecraft:nether" && nether > 0) {
+                    checkAndTeleportPlayer(player, x, y, z, nether, "Nether");
+                } else if (dimId === "minecraft:the_end" && end > 0) {
+                    checkAndTeleportPlayer(player, x, y, z, end, "End");
+                }
+            } catch (e) {}
         }
-
         yield;
     }
 }
@@ -142,8 +144,11 @@ async function executeWorldBorderCheck(): Promise<void> {
 
     const jobPromise = new Promise<void>((resolve) => {
         function* runner() {
-            yield* worldBorderGenerator();
-            resolve();
+            try {
+                yield* worldBorderGenerator();
+            } finally {
+                resolve();
+            }
         }
         worldBorderJobId = system.runJob(runner());
     });

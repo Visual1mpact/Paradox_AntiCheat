@@ -32,61 +32,63 @@ function* autoTotemCheckGenerator(): Generator<void, void, unknown> {
     if (!isEnabled) return;
 
     for (const player of PlayerCache.getPlayers()) {
-        if (!player.isValid) continue;
+        if (player.isValid) {
+            try {
+                // Exempt high-security staff
+                if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
 
-        // Exempt high-security staff
-        if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
+                const equippable = player.getComponent("minecraft:equippable") as EntityEquippableComponent;
+                if (!equippable) continue;
 
-        const equippable = player.getComponent("minecraft:equippable") as EntityEquippableComponent;
-        if (!equippable) continue;
+                const offhand = equippable.getEquipment(EquipmentSlot.Offhand);
+                const hasTotem = offhand?.typeId === TOTEM_ID;
 
-        const offhand = equippable.getEquipment(EquipmentSlot.Offhand);
-        const hasTotem = offhand?.typeId === TOTEM_ID;
-
-        let data = playerTotemData.get(player.id);
-        if (!data) {
-            data = { lastPopTick: 0, lastOffhandState: hasTotem };
-            playerTotemData.set(player.id, data);
-            continue;
-        }
-
-        /**
-         * DETECTION:
-         * Detects instant totem replenishment (Empty -> Totem too quickly),
-         * which is typical of auto-totem cheats.
-         */
-        if (!data.lastOffhandState && hasTotem) {
-            const ticksSinceChange = system.currentTick - data.lastPopTick;
-
-            // If replenished instantly (usually 1-2 ticks for cheats)
-            if (ticksSinceChange < MIN_SWAP_TICKS && data.lastPopTick !== 0) {
-                alertStaff(player, ticksSinceChange);
+                let data = playerTotemData.get(player.id);
+                if (!data) {
+                    data = { lastPopTick: 0, lastOffhandState: hasTotem };
+                    playerTotemData.set(player.id, data);
+                    continue;
+                }
 
                 /**
-                 * MITIGATION:
-                 * Removes the illegitimately equipped totem to prevent abuse.
+                 * DETECTION:
+                 * Detects instant totem replenishment (Empty -> Totem too quickly),
+                 * which is typical of auto-totem cheats.
                  */
-                const pId = player.id;
-                system.run(() => {
-                    const target = PlayerCache.getPlayerById(pId);
-                    if (target?.isValid) {
-                        const inv = target.getComponent("minecraft:equippable") as EntityEquippableComponent;
-                        inv?.setEquipment(EquipmentSlot.Offhand, undefined);
+                if (!data.lastOffhandState && hasTotem) {
+                    const ticksSinceChange = system.currentTick - data.lastPopTick;
+
+                    // If replenished instantly (usually 1-2 ticks for cheats)
+                    if (ticksSinceChange < MIN_SWAP_TICKS && data.lastPopTick !== 0) {
+                        alertStaff(player, ticksSinceChange);
+
+                        /**
+                         * MITIGATION:
+                         * Removes the illegitimately equipped totem to prevent abuse.
+                         */
+                        const pId = player.id;
+                        system.run(() => {
+                            const target = PlayerCache.getPlayerById(pId);
+                            if (target?.isValid) {
+                                const inv = target.getComponent("minecraft:equippable") as EntityEquippableComponent;
+                                inv?.setEquipment(EquipmentSlot.Offhand, undefined);
+                            }
+                        });
                     }
-                });
-            }
-        }
+                }
 
-        /**
-         * TRACKING:
-         * Detects when a totem is consumed (Totem -> Empty/Other).
-         * Stores the tick for future replenishment timing checks.
-         */
-        if (data.lastOffhandState && !hasTotem) {
-            data.lastPopTick = system.currentTick;
-        }
+                /**
+                 * TRACKING:
+                 * Detects when a totem is consumed (Totem -> Empty/Other).
+                 * Stores the tick for future replenishment timing checks.
+                 */
+                if (data.lastOffhandState && !hasTotem) {
+                    data.lastPopTick = system.currentTick;
+                }
 
-        data.lastOffhandState = hasTotem;
+                data.lastOffhandState = hasTotem;
+            } catch (e) {}
+        }
         yield;
     }
 }
@@ -100,8 +102,11 @@ async function executeAutoTotemCheck(): Promise<void> {
 
     const jobPromise = new Promise<void>((resolve) => {
         function* runner() {
-            yield* autoTotemCheckGenerator();
-            resolve();
+            try {
+                yield* autoTotemCheckGenerator();
+            } finally {
+                resolve();
+            }
         }
         autoTotemJobId = system.runJob(runner());
     });
