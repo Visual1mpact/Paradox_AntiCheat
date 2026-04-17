@@ -42,7 +42,8 @@ function getFilesChangedInCommit(hash, gitRoot) {
 function isReleasedFile(files, gitRoot, lastTag) {
     if (files.length === 0) return false;
     const releasedFiles = runGit(["ls-tree", "-r", "--name-only", lastTag], gitRoot).split("\n");
-    return files.every((f) => releasedFiles.includes(f));
+    // If ANY of the changed files were in the previous release, it's a released-impact change
+    return files.some((f) => releasedFiles.includes(f));
 }
 
 /** Analyze impact of a commit */
@@ -57,9 +58,9 @@ function analyzeCommitImpact(commit, gitRoot, lastTag) {
         patch = false;
     let breakingExplanation = "";
 
-    // Documentation-only commits
-    if (/^docs?:/i.test(subject) || /documentation/i.test(text)) {
-        reasons.push(`Ignored documentation commit ${hash}`);
+    // Documentation-only commits (only if the subject starts with docs:)
+    if (/^docs:/i.test(subject)) {
+        reasons.push(`Ignored documentation-only commit ${hash}`);
         return { major, minor, patch, reasons, breakingExplanation };
     }
 
@@ -67,7 +68,7 @@ function analyzeCommitImpact(commit, gitRoot, lastTag) {
     const breakingMatch = body.match(/BREAKING CHANGE:\s*(.+)/i);
 
     // Major: breaking changes
-    if (released && (/BREAKING CHANGE|!:/.test(subject) || breakingMatch)) {
+    if (/BREAKING CHANGE|!:/.test(subject) || breakingMatch) {
         major = true;
         if (breakingMatch) {
             breakingExplanation = breakingMatch[1].trim();
@@ -78,7 +79,7 @@ function analyzeCommitImpact(commit, gitRoot, lastTag) {
     }
 
     // Minor: features or enhancements
-    if (/^feat:|add|new feature|enhancement|update/i.test(subject) || /api change/i.test(text)) {
+    if (/^feat:/i.test(subject) || /api change/i.test(text)) {
         minor = true;
         reasons.push(`Minor: feature or enhancement ${hash}`);
     }
