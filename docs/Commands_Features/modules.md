@@ -24,6 +24,20 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 > Usage: "!afk [ hours ] [ minutes ] [ seconds ]"  
 > Example: !afk 0 10 0  
 
+## !anticrash
+### At A Glance
+The `anticrash` command toggles a specialized defense module that monitors for packet-based exploits intended to crash the server.
+
+### How It Works
+- **Signature Detection:** Specifically looks for malformed `SubChunkRequestPacket` payloads.
+- **Array Validation:** The module checks the length of position offset arrays within incoming packets. If a packet exceeds the safe threshold (designed to catch 2.5m+ entries), it is immediately dropped.
+- **Auto-Ban:** Because these attacks are strictly intentional and impossible to trigger with a vanilla client, the system automatically bans the sender to maintain server stability.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "!anticrash"
+> Example: !anticrash
+
 ## !aimbotmonitor
 ### At A Glance
 The `!aimbotmonitor` command toggles a detection module that analyzes player rotation patterns to identify external aim-assist and smoothing software.

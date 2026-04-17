@@ -104,6 +104,8 @@ import { autoTotemCommand } from "../commands/settings/autototem";
 import { startAutoTotemCheck } from "../modules/autototem";
 import { pathingCommand } from "../commands/settings/pathing-monitor";
 import { startPathingMonitor } from "../modules/pathing-monitor";
+import { anticrashCommand } from "../commands/settings/anticrash";
+import { startAntiCrash } from "../modules/anticrash";
 
 type PlayerID = string;
 
@@ -194,6 +196,7 @@ const allCommands: Command[] = [
     criticalsCommand,
     autoTotemCommand,
     pathingCommand,
+    anticrashCommand,
 ];
 
 /**
@@ -355,6 +358,7 @@ async function initializeParadoxModules(): Promise<void> {
         criticalsCheck_b: () => startCriticalsCheck(),
         autoTotemCheck_b: () => startAutoTotemCheck(),
         pathingCheck_b: () => startPathingMonitor(),
+        antiCrashCheck_b: () => startAntiCrash(),
     };
 
     const runModuleInitializers = () => {

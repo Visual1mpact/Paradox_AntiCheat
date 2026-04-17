@@ -114,6 +114,7 @@ export type ModuleSettingsMap = {
     criticalsCheck_b: undefined; // This module has no configurable settings
     autoTotemCheck_b: undefined; // This module has no configurable settings
     pathingCheck_b: undefined; // This module has no configurable settings
+    antiCrashCheck_b: undefined; // This module has no configurable settings
 };
 
 /**

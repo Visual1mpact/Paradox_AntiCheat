@@ -75,6 +75,7 @@ export const modulesStatusCommand: Command = {
             criticalsCheck_b: "criticals",
             autoTotemCheck_b: "autototem",
             pathingCheck_b: "pathing",
+            antiCrashCheck_b: "anticrash",
         };
 
         const entries = paradoxModulesDB.entries();
