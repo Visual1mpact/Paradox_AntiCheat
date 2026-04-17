@@ -50,7 +50,7 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
                 s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Anti-Crash]§7 Blocked crash attempt from §f${playerName} §e[${sizeKB}KB]§7.`);
             }
 
-            world.getDimension("overworld").runCommand(`kick @s [Paradox] Crasher exploit detected.`);
+            player.runCommand(`kick @s [Paradox] Crasher exploit detected.`);
         });
     }
 }
