@@ -1,6 +1,7 @@
-import { system, world, Player, EntityHurtBeforeEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { system, Player, EntityHurtBeforeEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 let aimbotRunId: number | undefined;
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
@@ -140,10 +141,10 @@ export async function startAimbotMonitor(): Promise<boolean> {
     if (aimbotRunId) return true;
 
     hurtSubscription = handleHurtEvent;
-    world.beforeEvents.entityHurt.subscribe(hurtSubscription);
-
     leaveSubscription = handlePlayerLeave;
-    world.afterEvents.playerLeave.subscribe(leaveSubscription);
+
+    EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
+    EventCoordinator.subscribeAfter("playerLeave", leaveSubscription);
 
     let isRunning = false;
     let runIdBackup: number | undefined;
@@ -172,11 +173,11 @@ export function stopAimbotMonitor(): void {
         aimbotRunId = undefined;
     }
     if (hurtSubscription) {
-        world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
+        EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
         hurtSubscription = undefined;
     }
     if (leaveSubscription) {
-        world.afterEvents.playerLeave.unsubscribe(leaveSubscription);
+        EventCoordinator.unsubscribeAfter("playerLeave", leaveSubscription);
         leaveSubscription = undefined;
     }
     if (aimbotJobId !== null) {

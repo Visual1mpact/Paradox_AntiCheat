@@ -1,6 +1,7 @@
-import { system, ChatSendBeforeEvent, Player, world } from "@minecraft/server";
+import { system, ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
+import { EventCoordinator } from "../../classes/event-coordinator";
 
 /**
  * Server Ticks Per Second (TPS) monitor.
@@ -18,9 +19,8 @@ const activeMonitors = new Set<string>();
 
 /**
  * Explicitly clean up the monitor set when a player leaves the server.
- * This prevents memory leaks from players who crash or disconnect.
  */
-world.afterEvents.playerLeave.subscribe((event) => {
+EventCoordinator.subscribeAfter("playerLeave", (event) => {
     activeMonitors.delete(event.playerId);
 });
 

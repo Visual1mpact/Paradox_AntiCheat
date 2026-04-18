@@ -106,6 +106,7 @@ import { pathingCommand } from "../commands/settings/pathing-monitor";
 import { startPathingMonitor } from "../modules/pathing-monitor";
 import { anticrashCommand } from "../commands/settings/anticrash";
 import { startAntiCrash } from "../modules/anticrash";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 type PlayerID = string;
 
@@ -389,7 +390,7 @@ function subscribeToLockDown() {
                 lockDownMonitor(event); // Call the original lockDownMonitor
             }
         };
-        world.afterEvents.playerSpawn.subscribe(wrappedLockDownMonitor);
+        EventCoordinator.subscribeAfter("playerSpawn", wrappedLockDownMonitor);
     }
 }
 
@@ -400,11 +401,11 @@ function subscribeToLockDown() {
 function unsubscribeFromLockDown() {
     const cleanupLockdownState = () => {
         if (wrappedLockDownMonitor) {
-            world.afterEvents.playerSpawn.unsubscribe(wrappedLockDownMonitor);
+            EventCoordinator.unsubscribeAfter("playerSpawn", wrappedLockDownMonitor);
             wrappedLockDownMonitor = undefined; // Clear the reference
         }
         lockDownMonitor = undefined; // Clear the reference to the original function
-        world.afterEvents.worldLoad.unsubscribe(onWorldInitialize);
+        EventCoordinator.unsubscribeAfter("worldLoad", onWorldInitialize); // Unsubscribe from world load to prevent re-initialization
     };
 
     system.run(cleanupLockdownState);
@@ -456,7 +457,7 @@ async function onWorldInitialize(): Promise<void> {
  * Sets up paradoxModules and handles lockdown when the world initializes.
  */
 export function subscribeToWorldInitialize() {
-    world.afterEvents.worldLoad.subscribe(async () => {
+    EventCoordinator.subscribeAfter("worldLoad", async () => {
         await initializeSystems();
         PlayerCache.init(); // Initialize PlayerCache after systems are set up
         await onWorldInitialize();

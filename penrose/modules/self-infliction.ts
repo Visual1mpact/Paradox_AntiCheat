@@ -1,5 +1,6 @@
-import { world, Player, EntityHitEntityAfterEvent } from "@minecraft/server";
+import { Player, EntityHitEntityAfterEvent } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Handle the entity hit event to check if the attacker attacked themselves.
@@ -34,7 +35,7 @@ async function handleSelfAttack(eventData: EntityHitEntityAfterEvent): Promise<v
  */
 export function startSelfAttackCheck(): void {
     // Process the entity hit events
-    world.afterEvents.entityHitEntity.subscribe(handleSelfAttack);
+    EventCoordinator.subscribeAfter("entityHitEntity", handleSelfAttack);
 }
 
 /**
@@ -42,5 +43,5 @@ export function startSelfAttackCheck(): void {
  */
 export function stopSelfAttackCheck(): void {
     // Process the entity hit events
-    world.afterEvents.entityHitEntity.unsubscribe(handleSelfAttack);
+    EventCoordinator.unsubscribeAfter("entityHitEntity", handleSelfAttack);
 }

@@ -1,5 +1,6 @@
-import { world, system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
+import { system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 let currentRunId: number | null = null;
 let playerLeaveCallback: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
@@ -114,7 +115,7 @@ export function startAFKChecker(hours: number = 0, minutes: number = 10, seconds
     // If an AFK checker is already running, clear it
     if (currentRunId !== null) {
         if (playerLeaveCallback !== undefined) {
-            world.afterEvents.playerLeave.unsubscribe(playerLeaveCallback);
+            EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveCallback);
         }
         system.clearRun(currentRunId);
         currentRunId = null;
@@ -125,7 +126,7 @@ export function startAFKChecker(hours: number = 0, minutes: number = 10, seconds
 
     // Set up the player leave callback
     playerLeaveCallback = (event: PlayerLeaveAfterEvent) => onPlayerLogout(event);
-    world.afterEvents.playerLeave.subscribe(playerLeaveCallback);
+    EventCoordinator.subscribeAfter("playerLeave", playerLeaveCallback);
 
     let isRunning = false;
     let runIdBackup: number | null = null;
@@ -161,7 +162,7 @@ export function stopAFKChecker(): void {
     }
 
     if (playerLeaveCallback !== undefined) {
-        world.afterEvents.playerLeave.unsubscribe(playerLeaveCallback);
+        EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveCallback);
         playerLeaveCallback = undefined;
     }
 }

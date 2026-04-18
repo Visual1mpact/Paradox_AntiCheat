@@ -1,7 +1,8 @@
-import { world, system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
+import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * CONFIGURATION
@@ -39,9 +40,13 @@ export async function startInvSync() {
     if (running) return;
     running = true;
 
-    joinSub = world.afterEvents.playerJoin.subscribe(onPlayerJoin);
-    leaveSub = world.beforeEvents.playerLeave.subscribe(onPlayerLeave);
-    respawnSub = world.afterEvents.playerSpawn.subscribe(onPlayerRespawn);
+    joinSub = onPlayerJoin;
+    leaveSub = onPlayerLeave;
+    respawnSub = onPlayerRespawn;
+
+    EventCoordinator.subscribeAfter("playerJoin", joinSub);
+    EventCoordinator.subscribeBefore("playerLeave", leaveSub);
+    EventCoordinator.subscribeAfter("playerSpawn", respawnSub);
 
     let isRunning = false;
     let runIdBackup: number | null = null;
@@ -66,9 +71,9 @@ export function stopInvSync() {
     if (!running) return;
     running = false;
 
-    if (joinSub) world.afterEvents.playerJoin.unsubscribe(joinSub);
-    if (leaveSub) world.beforeEvents.playerLeave.unsubscribe(leaveSub);
-    if (respawnSub) world.afterEvents.playerSpawn.unsubscribe(respawnSub);
+    if (joinSub) EventCoordinator.unsubscribeAfter("playerJoin", joinSub);
+    if (leaveSub) EventCoordinator.unsubscribeBefore("playerLeave", leaveSub);
+    if (respawnSub) EventCoordinator.unsubscribeAfter("playerSpawn", respawnSub);
     if (intervalId) system.clearRun(intervalId);
 
     joinSub = leaveSub = respawnSub = undefined;

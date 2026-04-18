@@ -1,6 +1,7 @@
-import { Block, Dimension, Player, PlayerBreakBlockAfterEvent, PlayerBreakBlockBeforeEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server";
+import { Block, Dimension, Player, PlayerBreakBlockAfterEvent, PlayerBreakBlockBeforeEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { chestLockDB } from "../event-listeners/world-initialize";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /** ------------------- CONFIG & HELPERS ------------------- */
 
@@ -347,11 +348,12 @@ function startChestLock() {
     afterBreakSub = (event) => chestLockBreakAfter(event);
     afterPlaceSub = (event) => chestLockPlaceAfter(event);
 
-    world.beforeEvents.playerInteractWithBlock.subscribe(beforeSub);
-    world.afterEvents.playerInteractWithBlock.subscribe(afterSub);
-    world.beforeEvents.playerBreakBlock.subscribe(breakSub);
-    world.afterEvents.playerBreakBlock.subscribe(afterBreakSub);
-    world.afterEvents.playerPlaceBlock.subscribe(afterPlaceSub);
+    // Subscribe to relevant events for chest locking functionality
+    EventCoordinator.subscribeBefore("playerInteractWithBlock", beforeSub);
+    EventCoordinator.subscribeAfter("playerInteractWithBlock", afterSub);
+    EventCoordinator.subscribeBefore("playerBreakBlock", breakSub);
+    EventCoordinator.subscribeAfter("playerBreakBlock", afterBreakSub);
+    EventCoordinator.subscribeAfter("playerPlaceBlock", afterPlaceSub);
 
     intervalHandle = system.runInterval(() => pruneOldLogs(30), 72000);
 }
@@ -360,11 +362,11 @@ function startChestLock() {
  * Stops the chest lock system and unsubscribes all listeners.
  */
 function stopChestLock() {
-    if (beforeSub) world.beforeEvents.playerInteractWithBlock.unsubscribe(beforeSub);
-    if (afterSub) world.afterEvents.playerInteractWithBlock.unsubscribe(afterSub);
-    if (breakSub) world.beforeEvents.playerBreakBlock.unsubscribe(breakSub);
-    if (afterBreakSub) world.afterEvents.playerBreakBlock.unsubscribe(afterBreakSub);
-    if (afterPlaceSub) world.afterEvents.playerPlaceBlock.unsubscribe(afterPlaceSub);
+    if (beforeSub) EventCoordinator.unsubscribeBefore("playerInteractWithBlock", beforeSub);
+    if (afterSub) EventCoordinator.unsubscribeAfter("playerInteractWithBlock", afterSub);
+    if (breakSub) EventCoordinator.unsubscribeBefore("playerBreakBlock", breakSub);
+    if (afterBreakSub) EventCoordinator.unsubscribeAfter("playerBreakBlock", afterBreakSub);
+    if (afterPlaceSub) EventCoordinator.unsubscribeAfter("playerPlaceBlock", afterPlaceSub);
 
     if (intervalHandle !== null) system.clearRun(intervalHandle);
 

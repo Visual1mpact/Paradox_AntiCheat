@@ -1,7 +1,8 @@
-import { ChatSendBeforeEvent, Player, world, system, ItemStack } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, ItemStack } from "@minecraft/server";
 import { verses } from "../../data/verses";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
+import { EventCoordinator } from "../../classes/event-coordinator";
 
 // ===== CONFIG =====
 const INTERVAL_TICKS = 30 * 60 * 20; // 30 minutes
@@ -15,7 +16,7 @@ const playerData = new Map<string, { verseQueue: string[]; lastDay: string }>();
 /**
  * Cleans up player data when they leave the server.
  */
-world.afterEvents.playerLeave.subscribe((event) => {
+EventCoordinator.subscribeAfter("playerLeave", (event) => {
     playerData.delete(event.playerId);
 });
 

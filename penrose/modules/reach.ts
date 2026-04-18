@@ -1,6 +1,7 @@
-import { world, Player, system, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
+import { Player, system, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 const MAX_REACH = 4.5;
 const MAX_REACH_SQ = MAX_REACH * MAX_REACH;
@@ -178,10 +179,10 @@ async function executeReachUpdate(): Promise<void> {
  */
 export function startHitReachCheck() {
     if (intervalId) system.clearRun(intervalId);
-    if (hurtSubscription) world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
+    if (hurtSubscription) EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
 
     hurtSubscription = onHitCached;
-    world.beforeEvents.entityHurt.subscribe(hurtSubscription);
+    EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
 
     let isRunning = false;
     let runIdBackup: number | undefined;
@@ -208,7 +209,7 @@ export function stopHitReachCheck() {
     intervalId = undefined;
 
     if (hurtSubscription) {
-        world.beforeEvents.entityHurt.unsubscribe(hurtSubscription);
+        EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
         hurtSubscription = undefined;
     }
 

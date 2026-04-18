@@ -1,4 +1,5 @@
-import { world, Player, EntityHealthChangedAfterEvent, EntityDieAfterEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
+import { Player, EntityHealthChangedAfterEvent, EntityDieAfterEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Synchronize the player's dynamic property "paradoxCurrentHealth" when their health changes.
@@ -81,7 +82,7 @@ export const healthChangeListener = {
             };
 
             // Subscribe to player spawn events
-            world.afterEvents.playerSpawn.subscribe(this.playerSpawnCallback);
+            EventCoordinator.subscribeAfter("playerSpawn", this.playerSpawnCallback);
 
             // Create and store the callback for health changes
             this.healthChangeCallback = handleHealthChange;
@@ -90,10 +91,13 @@ export const healthChangeListener = {
             this.healthChangeAfterDeathCallback = healthChangeAfterDeath;
 
             // Subscribe to health change events
-            world.afterEvents.entityHealthChanged.subscribe(this.healthChangeCallback);
+            EventCoordinator.subscribeAfter("entityHealthChanged", this.healthChangeCallback);
 
             // Subscribe to death events
-            world.afterEvents.entityDie.subscribe(this.healthChangeAfterDeathCallback);
+            EventCoordinator.subscribeAfter("entityHealthChanged", this.healthChangeCallback);
+
+            // Subscribe to death events
+            EventCoordinator.subscribeAfter("entityDie", this.healthChangeAfterDeathCallback);
 
             this.isActive = true;
         }
@@ -106,19 +110,19 @@ export const healthChangeListener = {
         if (this.isActive) {
             // Unsubscribe from player spawn events
             if (this.playerSpawnCallback) {
-                world.afterEvents.playerSpawn.unsubscribe(this.playerSpawnCallback);
+                EventCoordinator.unsubscribeAfter("playerSpawn", this.playerSpawnCallback);
                 this.playerSpawnCallback = null;
             }
 
             // Unsubscribe from health change events
             if (this.healthChangeCallback) {
-                world.afterEvents.entityHealthChanged.unsubscribe(this.healthChangeCallback);
+                EventCoordinator.unsubscribeAfter("entityHealthChanged", this.healthChangeCallback);
                 this.healthChangeCallback = null;
             }
 
             // Unsubscribe from death events
             if (this.healthChangeAfterDeathCallback) {
-                world.afterEvents.entityDie.unsubscribe(this.healthChangeAfterDeathCallback);
+                EventCoordinator.unsubscribeAfter("entityDie", this.healthChangeAfterDeathCallback);
                 this.healthChangeAfterDeathCallback = null;
             }
 

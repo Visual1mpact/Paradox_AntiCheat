@@ -1,5 +1,6 @@
-import { world, Player, EntityHurtBeforeEvent, system } from "@minecraft/server";
+import { Player, EntityHurtBeforeEvent, system } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 // CONFIGURATION
 const MAX_CPS = 14; // Maximum allowed clicks per second
@@ -69,9 +70,9 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
  * START / STOP
  */
 export function startAutoClicker(): void {
-    world.beforeEvents.entityHurt.subscribe(handleHurtEvent);
+    EventCoordinator.subscribeBefore("entityHurt", handleHurtEvent);
 }
 
 export function stopAutoClicker(): void {
-    world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
+    EventCoordinator.unsubscribeBefore("entityHurt", handleHurtEvent);
 }

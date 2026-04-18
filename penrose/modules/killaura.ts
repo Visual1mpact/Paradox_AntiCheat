@@ -1,7 +1,8 @@
 const { Vector3Builder, Vector3Utils } = await import("../node_modules/@minecraft/math/dist/minecraft-math");
-import { world, Player, system, EntityHurtBeforeEvent } from "@minecraft/server";
+import { Player, system, EntityHurtBeforeEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 // CONFIGURATION CONSTANTS
 const MAX_ATTACKS_PER_SECOND = 14; // Maximum allowed attacks per second
@@ -151,16 +152,16 @@ function handlePlayerLeave(event: { playerId: string }) {
  * Starts the killaura/reach detection system.
  */
 export function startKillAuraCheck() {
-    world.beforeEvents.entityHurt.subscribe(handleHurtEvent);
-    world.afterEvents.playerLeave.subscribe(handlePlayerLeave);
+    EventCoordinator.subscribeBefore("entityHurt", handleHurtEvent);
+    EventCoordinator.subscribeAfter("playerLeave", handlePlayerLeave);
 }
 
 /**
  * Stops the killaura/reach detection system.
  */
 export function stopKillAuraCheck() {
-    world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
-    world.afterEvents.playerLeave.unsubscribe(handlePlayerLeave);
+    EventCoordinator.unsubscribeBefore("entityHurt", handleHurtEvent);
+    EventCoordinator.unsubscribeAfter("playerLeave", handlePlayerLeave);
     playerAttackData.clear();
     lastTargetTracker.clear();
 }

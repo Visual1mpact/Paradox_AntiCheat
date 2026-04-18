@@ -1,6 +1,7 @@
-import { world, system, Player, GameMode, Block, AABB, EntityHurtAfterEvent, PlayerLeaveBeforeEvent } from "@minecraft/server";
+import { system, Player, GameMode, Block, AABB, EntityHurtAfterEvent, PlayerLeaveBeforeEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Number of ticks between checks.
@@ -334,8 +335,8 @@ export function startNoClip() {
         isRunning = false;
     }, CHECK_INTERVAL);
 
-    world.afterEvents.entityHurt.subscribe(trackDamage);
-    world.beforeEvents.playerLeave.subscribe(cleanupPlayerData);
+    EventCoordinator.subscribeAfter("entityHurt", trackDamage);
+    EventCoordinator.subscribeBefore("playerLeave", cleanupPlayerData);
 }
 
 /**

@@ -1,6 +1,7 @@
-import { GameMode, PlayerGameModeChangeAfterEvent, world } from "@minecraft/server";
+import { GameMode, PlayerGameModeChangeAfterEvent } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { GamemodeCheckSettings } from "../classes/database/db-types";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Handles game mode change events and enforces allowed game modes.
@@ -44,12 +45,12 @@ function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
  * Subscribes to game mode changes and enforces restrictions.
  */
 export function startGameModeCheck() {
-    world.afterEvents.playerGameModeChange.subscribe(handleGameModeChange);
+    EventCoordinator.subscribeAfter("playerGameModeChange", handleGameModeChange);
 }
 
 /**
  * Unsubscribes from game mode change enforcement.
  */
 export function stopGameModeCheck() {
-    world.afterEvents.playerGameModeChange.unsubscribe(handleGameModeChange);
+    EventCoordinator.unsubscribeAfter("playerGameModeChange", handleGameModeChange);
 }

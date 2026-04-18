@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
+import { EventCoordinator } from "../../classes/event-coordinator";
 
 let lockdownMonitorFn: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 
@@ -70,7 +71,7 @@ export const lockdownCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been §4disabled§7!`);
 
             if (lockdownMonitorFn) {
-                world.afterEvents.playerSpawn.unsubscribe(lockdownMonitorFn);
+                EventCoordinator.unsubscribeAfter("playerSpawn", lockdownMonitorFn);
                 lockdownMonitorFn = undefined;
             }
 
@@ -89,6 +90,6 @@ export const lockdownCommand: Command = {
         player.sendMessage(`§2[§7Paradox§2]§o§7 Server lockdown has been §aenabled§7!`);
 
         lockdownMonitorFn = createLockDownMonitor(reason);
-        world.afterEvents.playerSpawn.subscribe(lockdownMonitorFn);
+        EventCoordinator.subscribeAfter("playerSpawn", lockdownMonitorFn);
     },
 };

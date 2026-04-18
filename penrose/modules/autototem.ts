@@ -1,7 +1,8 @@
-import { system, Player, EquipmentSlot, EntityEquippableComponent, world, PlayerLeaveAfterEvent } from "@minecraft/server";
+import { system, Player, EquipmentSlot, EntityEquippableComponent, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 const TOTEM_ID = "minecraft:totem_of_undying";
 /**
@@ -146,7 +147,8 @@ export function startAutoTotemCheck() {
     if (intervalId !== undefined) return;
 
     // Subscribe to player leave event for cleanup
-    playerLeaveSubscription = world.afterEvents.playerLeave.subscribe(handlePlayerLeave);
+    playerLeaveSubscription = handlePlayerLeave;
+    EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
 
     let isRunning = false;
     let runIdBackup: number | undefined;
@@ -177,7 +179,7 @@ export function stopAutoTotemCheck() {
 
     // Unsubscribe from player leave event
     if (playerLeaveSubscription) {
-        world.afterEvents.playerLeave.unsubscribe(playerLeaveSubscription);
+        EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveSubscription);
         playerLeaveSubscription = undefined;
     }
     if (autoTotemJobId !== null) {

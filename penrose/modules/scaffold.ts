@@ -1,4 +1,5 @@
-import { system, world, Block, PlayerLeaveBeforeEvent, PlayerPlaceBlockBeforeEvent, Vector3, GameMode } from "@minecraft/server";
+import { system, Block, PlayerLeaveBeforeEvent, PlayerPlaceBlockBeforeEvent, Vector3, GameMode } from "@minecraft/server";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 // Configuration Constants
 const SCAFFOLD_THRESHOLD = 3; // Number of blocks placed in quick succession
@@ -17,11 +18,11 @@ let playerLeaveCallback: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
  */
 export function stopScaffoldCheck() {
     if (blockPlacementCallback) {
-        world.beforeEvents.playerPlaceBlock.unsubscribe(blockPlacementCallback);
+        EventCoordinator.unsubscribeBefore("playerPlaceBlock", blockPlacementCallback);
         blockPlacementCallback = undefined;
     }
     if (playerLeaveCallback) {
-        world.beforeEvents.playerLeave.unsubscribe(playerLeaveCallback);
+        EventCoordinator.unsubscribeBefore("playerLeave", playerLeaveCallback);
         playerLeaveCallback = undefined;
     }
     playerBlockPlacements.clear();
@@ -135,6 +136,6 @@ export function startScaffoldCheck() {
     };
 
     // Subscribe to events
-    world.beforeEvents.playerPlaceBlock.subscribe(blockPlacementCallback);
-    world.beforeEvents.playerLeave.subscribe(playerLeaveCallback);
+    EventCoordinator.subscribeBefore("playerPlaceBlock", blockPlacementCallback);
+    EventCoordinator.subscribeBefore("playerLeave", playerLeaveCallback);
 }

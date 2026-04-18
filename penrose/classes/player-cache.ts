@@ -1,4 +1,5 @@
 import { world, Player, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, system } from "@minecraft/server";
+import { EventCoordinator } from "./event-coordinator";
 
 /**
  * Centralized cache of online players.
@@ -49,7 +50,7 @@ export class PlayerCache {
                 this.playersByName.set(p.name, p);
             }
         };
-        world.afterEvents.playerSpawn.subscribe(this.spawnSubscription);
+        EventCoordinator.subscribeAfter("playerSpawn", this.spawnSubscription);
 
         // Subscribe to player leave
         this.leaveSubscription = (ev: PlayerLeaveBeforeEvent) => {
@@ -59,7 +60,7 @@ export class PlayerCache {
             this.playersByName.delete(player.name);
             this.playersById.delete(ev.player.id);
         };
-        world.beforeEvents.playerLeave.subscribe(this.leaveSubscription);
+        EventCoordinator.subscribeBefore("playerLeave", this.leaveSubscription);
 
         // Start periodic cleanup of ghost players
         this.cleanupInterval = system.runInterval(() => this.reconcileCache(), this.CLEANUP_INTERVAL_TICKS);
@@ -126,11 +127,11 @@ export class PlayerCache {
         this.playersByName.clear();
 
         if (this.spawnSubscription) {
-            world.afterEvents.playerSpawn.unsubscribe(this.spawnSubscription);
+            EventCoordinator.unsubscribeAfter("playerSpawn", this.spawnSubscription);
             this.spawnSubscription = undefined;
         }
         if (this.leaveSubscription) {
-            world.beforeEvents.playerLeave.unsubscribe(this.leaveSubscription);
+            EventCoordinator.unsubscribeBefore("playerLeave", this.leaveSubscription);
             this.leaveSubscription = undefined;
         }
 

@@ -1,5 +1,6 @@
-import { Player, world } from "@minecraft/server";
+import { Player } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 // This will store players with security clearance level 4
 let securityClearanceLevel4Players: Set<Player> = new Set();
@@ -46,7 +47,7 @@ export const initializeSecurityClearanceTracking = (): void => {
         }
     }
     // Listen for players joining and add them if they have security clearance level 4
-    world.afterEvents.playerSpawn.subscribe((event) => {
+    EventCoordinator.subscribeAfter("playerSpawn", (event) => {
         if (!event.initialSpawn) {
             return;
         }
@@ -55,7 +56,7 @@ export const initializeSecurityClearanceTracking = (): void => {
     });
 
     // Listen for players leaving and remove them from the list
-    world.beforeEvents.playerLeave.subscribe((event) => {
+    EventCoordinator.subscribeBefore("playerLeave", (event) => {
         const player = event.player;
         removePlayerFromSecurityClearanceList(player);
     });

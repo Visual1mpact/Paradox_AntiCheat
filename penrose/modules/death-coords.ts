@@ -1,4 +1,5 @@
-import { world, Player, EntityDieAfterEvent } from "@minecraft/server";
+import { Player, EntityDieAfterEvent } from "@minecraft/server";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Reference to the death event subscription.
@@ -12,7 +13,7 @@ let deathSubscription: ((event: EntityDieAfterEvent) => void) | undefined;
 export function startDeathCoords(): void {
     if (deathSubscription) return;
 
-    deathSubscription = world.afterEvents.entityDie.subscribe((event) => {
+    deathSubscription = (event) => {
         const deadEntity = event.deadEntity;
 
         // Ensure the entity that died is a player
@@ -23,7 +24,8 @@ export function startDeathCoords(): void {
             // Send the formatted coordinate message to the player
             deadEntity.sendMessage(`§2[§7Paradox§2]§o§7 You died at: §f${Math.floor(x)}, ${Math.floor(y)}, ${Math.floor(z)} §7in §f${dimension}§7.`);
         }
-    });
+    };
+    EventCoordinator.subscribeAfter("entityDie", deathSubscription);
 }
 
 /**
@@ -32,6 +34,6 @@ export function startDeathCoords(): void {
  */
 export function stopDeathCoords(): void {
     if (!deathSubscription) return;
-    world.afterEvents.entityDie.unsubscribe(deathSubscription);
+    EventCoordinator.unsubscribeAfter("entityDie", deathSubscription);
     deathSubscription = undefined;
 }

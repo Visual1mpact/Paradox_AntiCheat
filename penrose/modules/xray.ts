@@ -1,6 +1,7 @@
-import { world, system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent } from "@minecraft/server";
+import { system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /* ============================================================
    CONFIGURATION
@@ -397,18 +398,18 @@ function onLeave(event: PlayerLeaveAfterEvent) {
  * Starts X-ray detection system.
  */
 export function startXrayDetection() {
-    world.afterEvents.playerBreakBlock.subscribe(handleBlockBreak);
-    world.afterEvents.playerLeave.subscribe(onLeave);
-    world.beforeEvents.chatSend.subscribe(handleSafeZoneChat);
+    EventCoordinator.subscribeAfter("playerBreakBlock", handleBlockBreak);
+    EventCoordinator.subscribeAfter("playerLeave", onLeave);
+    EventCoordinator.subscribeBefore("chatSend", handleSafeZoneChat);
 }
 
 /**
  * Stops X-ray detection system and clears all data.
  */
 export function stopXrayDetection() {
-    world.afterEvents.playerBreakBlock.unsubscribe(handleBlockBreak);
-    world.afterEvents.playerLeave.unsubscribe(onLeave);
-    world.beforeEvents.chatSend.unsubscribe(handleSafeZoneChat);
+    EventCoordinator.unsubscribeAfter("playerBreakBlock", handleBlockBreak);
+    EventCoordinator.unsubscribeAfter("playerLeave", onLeave);
+    EventCoordinator.unsubscribeBefore("chatSend", handleSafeZoneChat);
 
     profiles.clear();
     safeZones.clear();

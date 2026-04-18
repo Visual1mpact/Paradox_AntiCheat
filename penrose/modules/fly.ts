@@ -1,5 +1,6 @@
-import { world, GameMode, system, Vector3 } from "@minecraft/server";
+import { GameMode, system, Vector3 } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 let currentJobId: number | null = null;
 let currentRunId: number | null = null;
@@ -147,8 +148,14 @@ export async function startFlyCheck(): Promise<void> {
     let isRunning = false;
     let runIdBackup: number | null = null;
 
-    if (!itemUseSub) itemUseSub = world.beforeEvents.itemUse.subscribe(onItemUseCheck);
-    if (!resetSub) resetSub = world.beforeEvents.playerLeave.subscribe(onPlayerLeaveReset);
+    if (!itemUseSub) {
+        itemUseSub = onItemUseCheck;
+        EventCoordinator.subscribeBefore("itemUse", itemUseSub);
+    }
+    if (!resetSub) {
+        resetSub = onPlayerLeaveReset;
+        EventCoordinator.subscribeBefore("playerLeave", resetSub);
+    }
 
     currentRunId = system.runInterval(async () => {
         if (isRunning) {
@@ -178,11 +185,11 @@ export function stopFlyCheck(): void {
         currentRunId = null;
     }
     if (itemUseSub) {
-        world.beforeEvents.itemUse.unsubscribe(itemUseSub);
+        EventCoordinator.unsubscribeBefore("itemUse", onItemUseCheck);
         itemUseSub = undefined;
     }
     if (resetSub) {
-        world.beforeEvents.playerLeave.unsubscribe(resetSub);
+        EventCoordinator.unsubscribeBefore("playerLeave", onPlayerLeaveReset);
         resetSub = undefined;
     }
 }

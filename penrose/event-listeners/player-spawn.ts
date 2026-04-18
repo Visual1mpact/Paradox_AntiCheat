@@ -2,6 +2,7 @@ import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraf
 import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB, warnsDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 // Define a type for player information
 interface PlayerInfo {
@@ -28,7 +29,7 @@ export function onPlayerSpawn() {
  * Subscribes to the player spawn event to handle additional logic.
  */
 function initializeEventHandlers() {
-    world.afterEvents.playerSpawn.subscribe(handlePlayerSpawn);
+    EventCoordinator.unsubscribeAfter("playerSpawn", handlePlayerSpawn);
 }
 
 /**

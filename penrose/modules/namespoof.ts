@@ -1,5 +1,6 @@
-import { PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, world, Player } from "@minecraft/server";
+import { PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, Player } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 // Subscription holders for enabling/disabling
 let playerSpawnSubscription: ((arg: PlayerSpawnAfterEvent) => void) | null = null;
@@ -97,18 +98,20 @@ async function banPlayer(player: Player, reason: string): Promise<void> {
  */
 export function startNamespoofDetection() {
     if (!playerSpawnSubscription) {
-        playerSpawnSubscription = world.afterEvents.playerSpawn.subscribe(async (event) => {
+        playerSpawnSubscription = async (event) => {
             if (event.initialSpawn) {
                 await checkNamespoof(event.player);
             }
-        });
+        };
+        EventCoordinator.subscribeAfter("playerSpawn", playerSpawnSubscription);
     }
 
     if (!playerLeaveSubscription) {
-        playerLeaveSubscription = world.afterEvents.playerLeave.subscribe((event) => {
+        playerLeaveSubscription = (event) => {
             const baseName = getBaseName(event.playerName);
             playerNameMap.delete(baseName); // Remove player from map when they leave
-        });
+        };
+        EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
     }
 }
 
@@ -117,11 +120,11 @@ export function startNamespoofDetection() {
  */
 export function stopNamespoofDetection() {
     if (playerSpawnSubscription) {
-        world.afterEvents.playerSpawn.unsubscribe(playerSpawnSubscription);
+        EventCoordinator.unsubscribeAfter("playerSpawn", playerSpawnSubscription);
         playerSpawnSubscription = null;
     }
     if (playerLeaveSubscription) {
-        world.afterEvents.playerLeave.unsubscribe(playerLeaveSubscription);
+        EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveSubscription);
         playerLeaveSubscription = null;
     }
     playerNameMap.clear();

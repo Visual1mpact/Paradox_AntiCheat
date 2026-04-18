@@ -1,6 +1,7 @@
-import { Player, ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, Vector3, world, PlayerDimensionChangeAfterEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
+import { EventCoordinator } from "../../classes/event-coordinator";
 
 // Define the dimensions and block type of the prison
 const PRISON_WIDTH = 5;
@@ -58,12 +59,13 @@ export function buildPrison(player: Player) {
 
     // Helper function to handle dimension changes
     function handleDimensionChange(prisonLocation: Vector3) {
-        const dimensionChangeEvent = world.afterEvents.playerDimensionChange.subscribe((event) => {
+        let dimensionChangeEvent = (event: PlayerDimensionChangeAfterEvent) => {
             if (player.id === event.player.id) {
                 buildingPermit(prisonLocation);
-                world.afterEvents.playerDimensionChange.unsubscribe(dimensionChangeEvent);
+                EventCoordinator.unsubscribeAfter("playerDimensionChange", dimensionChangeEvent);
             }
-        });
+        };
+        EventCoordinator.subscribeAfter("playerDimensionChange", dimensionChangeEvent);
 
         // Teleport player to prison
         teleportPlayerToPrison(prisonLocation);
@@ -71,7 +73,7 @@ export function buildPrison(player: Player) {
         // If the player did not change dimensions, build the prison immediately
         if (player.dimension.id === currentDimension) {
             buildingPermit(prisonLocation);
-            world.afterEvents.playerDimensionChange.unsubscribe(dimensionChangeEvent);
+            EventCoordinator.unsubscribeAfter("playerDimensionChange", dimensionChangeEvent);
         }
     }
 

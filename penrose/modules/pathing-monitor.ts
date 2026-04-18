@@ -1,7 +1,8 @@
-import { system, world, Player, PlayerLeaveAfterEvent, Vector3, GameMode } from "@minecraft/server";
+import { system, Player, PlayerLeaveAfterEvent, Vector3, GameMode } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Movement constants for Bedrock Edition.
@@ -155,7 +156,8 @@ async function executePathingCheck(): Promise<void> {
 export function startPathingMonitor() {
     if (monitorIntervalId) return;
 
-    playerLeaveSubscription = world.afterEvents.playerLeave.subscribe(handleLeave);
+    playerLeaveSubscription = handleLeave;
+    EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
 
     let isRunning = false;
     let runIdBackup: number | undefined;
@@ -189,7 +191,7 @@ export function stopPathingMonitor() {
     }
 
     if (playerLeaveSubscription) {
-        world.afterEvents.playerLeave.unsubscribe(playerLeaveSubscription);
+        EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveSubscription);
         playerLeaveSubscription = undefined;
     }
 

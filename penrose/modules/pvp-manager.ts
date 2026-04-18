@@ -16,6 +16,7 @@ import {
 } from "@minecraft/server";
 import { MessageFormData } from "@minecraft/server-ui";
 import { PlayerCache } from "../classes/player-cache";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /** PvP cooldown in ticks (default 2 minutes = 2400 ticks) */
 let cooldownTicks = 2400;
@@ -286,14 +287,15 @@ export function initializePvPSystem() {
     }
 
     // Track effects for PvP-disabled players
-    effectAddSubscription = world.beforeEvents.effectAdd.subscribe((e) => {
-        const ent = e.entity;
+    effectAddSubscription = (event) => {
+        const ent = event.entity;
         if (!(ent instanceof Player)) return;
         ent.setDynamicProperty("storedEffects", JSON.stringify(ent.getEffects()));
-    });
+    };
+    EventCoordinator.subscribeBefore("effectAdd", effectAddSubscription);
 
     // PvP before-hurt handling
-    entityHurtSubscription = world.beforeEvents.entityHurt.subscribe((event) => {
+    entityHurtSubscription = (event) => {
         const victim = event.hurtEntity;
         const attacker = event.damageSource.damagingEntity;
         if (!(victim instanceof Player) || !(attacker instanceof Player)) return;
@@ -317,10 +319,11 @@ export function initializePvPSystem() {
         cachePlayerInventory(victim);
         startCombat(attacker);
         startCombat(victim);
-    });
+    };
+    EventCoordinator.subscribeBefore("entityHurt", entityHurtSubscription);
 
     // Player leaves
-    playerLeaveSubscription = world.beforeEvents.playerLeave.subscribe((event) => {
+    playerLeaveSubscription = (event) => {
         const player = event.player;
         playerMessageTimestamps.delete(player.id);
 
@@ -336,10 +339,11 @@ export function initializePvPSystem() {
         } else {
             playerDataMap.delete(player.id);
         }
-    });
+    };
+    EventCoordinator.subscribeBefore("playerLeave", playerLeaveSubscription);
 
     // Player spawns
-    playerSpawnSubscription = world.afterEvents.playerSpawn.subscribe((event) => {
+    playerSpawnSubscription = (event) => {
         const player = event.player;
         if (player.hasTag("paradoxBypassPvPCheck")) return;
 
@@ -350,17 +354,19 @@ export function initializePvPSystem() {
             const alert = new MessageFormData();
             alert.title("               PvP Punishment").body("You have been punished for logging out during PvP! Your inventory and equipment has been wiped out!").button1("Quit").button2("Confirm").show(player);
         }
-    });
+    };
+    EventCoordinator.subscribeAfter("playerSpawn", playerSpawnSubscription);
 
     // Projectile hits
-    projectileHitEntitySubscription = world.afterEvents.projectileHitEntity.subscribe((event) => {
+    projectileHitEntitySubscription = (event) => {
         const attacker = event.source;
         const victim = event.getEntityHit().entity as Player;
         const type = event.projectile.typeId;
 
         if (victim instanceof Player && type === "minecraft:arrow") handleArrowHit(victim);
         if (attacker instanceof Player && victim instanceof Player) handlePvP(attacker, victim);
-    });
+    };
+    EventCoordinator.subscribeAfter("projectileHitEntity", projectileHitEntitySubscription);
 }
 
 /**
@@ -369,11 +375,11 @@ export function initializePvPSystem() {
 export function stopPvPSystem() {
     if (pvpCleanupIntervalId !== undefined) system.clearRun(pvpCleanupIntervalId);
 
-    if (entityHurtSubscription) world.beforeEvents.entityHurt.unsubscribe(entityHurtSubscription);
-    if (playerLeaveSubscription) world.beforeEvents.playerLeave.unsubscribe(playerLeaveSubscription);
-    if (playerSpawnSubscription) world.afterEvents.playerSpawn.unsubscribe(playerSpawnSubscription);
-    if (projectileHitEntitySubscription) world.afterEvents.projectileHitEntity.unsubscribe(projectileHitEntitySubscription);
-    if (effectAddSubscription) world.beforeEvents.effectAdd.unsubscribe(effectAddSubscription);
+    if (entityHurtSubscription) EventCoordinator.unsubscribeBefore("entityHurt", entityHurtSubscription);
+    if (playerLeaveSubscription) EventCoordinator.unsubscribeBefore("playerLeave", playerLeaveSubscription);
+    if (playerSpawnSubscription) EventCoordinator.unsubscribeAfter("playerSpawn", playerSpawnSubscription);
+    if (projectileHitEntitySubscription) EventCoordinator.unsubscribeAfter("projectileHitEntity", projectileHitEntitySubscription);
+    if (effectAddSubscription) EventCoordinator.unsubscribeBefore("effectAdd", effectAddSubscription);
 
     playerMessageTimestamps.clear();
     playerDataMap.clear();

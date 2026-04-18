@@ -1,6 +1,7 @@
-import { world, Player, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
+import { Player, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
  * Minimum height a player should be off the ground to be considered
@@ -74,12 +75,12 @@ function alertStaff(attacker: Player, yVelocity: number) {
  * Starts the Criticals detection module.
  */
 export function startCriticalsCheck(): void {
-    world.beforeEvents.entityHurt.subscribe(handleHurtEvent);
+    EventCoordinator.subscribeBefore("entityHurt", handleHurtEvent);
 }
 
 /**
  * Stops the Criticals detection module.
  */
 export function stopCriticalsCheck(): void {
-    world.beforeEvents.entityHurt.unsubscribe(handleHurtEvent);
+    EventCoordinator.unsubscribeBefore("entityHurt", handleHurtEvent);
 }

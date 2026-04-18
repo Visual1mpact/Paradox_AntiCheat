@@ -3,6 +3,7 @@ import { banlistDB } from "../event-listeners/world-initialize";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 import * as CryptoESImport from "../node_modules/crypto-es";
+import { EventCoordinator } from "../classes/event-coordinator";
 
 const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
@@ -374,7 +375,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
 
     asyncJoinRef = async (event) => handleAsyncJoin(event);
     serverAdmin.asyncPlayerJoin.subscribe(asyncJoinRef);
-    world.afterEvents.playerSpawn.subscribe(handlePlayerSpawn);
+    EventCoordinator.subscribeAfter("playerSpawn", handlePlayerSpawn);
 
     // Existing packet handler
     packetHandlerRef = async (data) => {
@@ -497,7 +498,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
         monitoredPacketIds: [PacketId.CommandRequestPacket, PacketId.LegacyTelemetryEventPacket, PacketId.TextPacket, PacketId.EmotePacket, PacketId.MovePlayerPacket],
     });
 
-    world.beforeEvents.playerLeave.subscribe(playerLeaveRef);
+    EventCoordinator.subscribeBefore("playerLeave", playerLeaveRef);
 }
 
 /* ----------------- START / STOP ----------------- */
@@ -524,7 +525,7 @@ export async function startPacketHandler(): Promise<boolean> {
 export function stopPacketHandler(): void {
     if (serverNet && packetHandlerRef) serverNet.packetReceive.unsubscribe(packetHandlerRef);
     if (serverAdmin && asyncJoinRef) serverAdmin.asyncPlayerJoin.unsubscribe(asyncJoinRef);
-    if (playerLeaveRef) world.beforeEvents.playerLeave.unsubscribe(playerLeaveRef);
+    if (playerLeaveRef) EventCoordinator.unsubscribeBefore("playerLeave", playerLeaveRef);
 
     packetLimits.clear();
     playerGlobalBuffers.clear();
