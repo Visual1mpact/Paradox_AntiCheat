@@ -91,6 +91,28 @@ The `!debugdb` command allows admins to inspect all initialized database entries
 - Large databases may result in truncated output in the form for readability and performance.
 - Useful for checking database sizes, pointer structure, and detecting chunked entries.
 
+## !doublejump
+### At A Glance
+The `!doublejump` command toggles a utility that allows players to perform an additional jump while in mid-air. This feature is designed for high performance and includes safety checks to prevent fall damage associated with its use.
+
+?> Required Clearance Level To Execute: `4`
+
+### **How It Works**
+- **Activation:** Players can trigger a double jump by double-tapping the jump button while in mid-air.
+- **Vertical Boost:** Upon activation, the player receives a vertical impulse, propelling them upwards.
+- **Charge System:** Players are granted a specific number of air jumps (defaulting to 1 extra jump).
+- **Ground Reset:** Jump charges are automatically replenished when the player touches the ground.
+- **Fall Damage Protection:** To ensure a smooth experience, the utility automatically cancels fall damage if it was caused by a double jump.
+- **Persistence:** The enabled state is saved and will persist across server restarts.
+
+> Usage: "!doublejump"  
+> Example: !doublejump  
+
+### **Notes**
+- **Performance:** Uses a generator-based ground check system to minimize impact on server ticks.
+- **Staff Control:** Only administrators with Level 4 security clearance can enable or disable this feature globally.
+- **GUI Integration:** The toggle is available in the Paradox GUI menu for easy access.
+
 ## !home
 ### At A Glance
 The `!home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.

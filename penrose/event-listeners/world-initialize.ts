@@ -7,6 +7,7 @@ import { startFlyCheck } from "../modules/fly";
 import { startAFKChecker } from "../modules/afk";
 import { initializePvPSystem } from "../modules/pvp-manager";
 import { startHitReachCheck } from "../modules/reach";
+import { startDoubleJump, doubleJumpCommand } from "../commands/utility/double-jump";
 import { startAutoClicker } from "../modules/autoclicker";
 import { startKillAuraCheck } from "../modules/killaura";
 import { startScaffoldCheck } from "../modules/scaffold";
@@ -179,6 +180,7 @@ const allCommands: Command[] = [
     packetMonitorCommand,
     allowlistCommand,
     visionCheckCommand,
+    doubleJumpCommand,
     spoofLogCommand,
     debugDBCommand,
     invSyncCommand,
@@ -438,6 +440,16 @@ function handlePvP() {
 }
 
 /**
+ * Checks if Double Jump is enabled and initializes the system if so.
+ */
+function handleDoubleJump() {
+    const isDoubleJumpEnabled = world.getDynamicProperty("doubleJumpEnabled") ?? false;
+    if (isDoubleJumpEnabled) {
+        startDoubleJump();
+    }
+}
+
+/**
  * Initializes paradoxModules and handles lockdown on world load.
  * @returns {Promise<void>}
  */
@@ -448,6 +460,7 @@ async function onWorldInitialize(): Promise<void> {
     await initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
     handleLockDown(); // Handle lockdown if it's active
     handlePvP(); // Handle PvP if it's enabled
+    handleDoubleJump(); // Handle Double Jump persistence
     onPlayerSpawn(); // Subscribe to player spawn events
     healthChangeListener.start(); // Synchronize health
 }
