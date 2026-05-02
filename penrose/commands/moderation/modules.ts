@@ -76,6 +76,7 @@ export const modulesStatusCommand: Command = {
             autoTotemCheck_b: "autototem",
             pathingCheck_b: "pathing",
             antiCrashCheck_b: "anticrash",
+            dimensionLock_b: "dimensionlock",
         };
 
         const entries = paradoxModulesDB.entries();

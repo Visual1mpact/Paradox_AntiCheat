@@ -268,6 +268,26 @@ The `deathcoords` command toggles the Death Coordinates module. When enabled, th
 > Usage: "!deathcoords"  
 > Example: !deathcoords  
 
+## !dimensionlock
+### At A Glance
+The `dimensionlock` command toggles a restriction on specific dimensions, preventing non-administrative players from entering the Nether or The End.
+
+### How It Works
+- **Enforcement**: Monitors for dimension change events. If a player attempts to enter a locked dimension while enforcement is active, they are immediately teleported back to the spawn point of their original dimension.
+- **Exemptions**: Players with Level 4 security clearance are exempt from these restrictions.
+- **Global Toggle**: The entire module can be enabled or disabled globally. Disabling it stops all dimension enforcement without losing your specific lock settings.
+- **Individual Locking**: Administrators can independently lock or unlock the Nether (`nether`) and The End (`end`). Locking a dimension automatically enables the module if it was disabled.
+- **Status Listing**: Admins can view the current module state and specific dimension lock status using the list flag.
+- **Persistence**: The locked status of each dimension is saved and persists across server restarts.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "!dimensionlock < nether | end | on | off | --list > [ on | off ]"  
+> Example: !dimensionlock nether on  
+> Example: !dimensionlock end off  
+> Example: !dimensionlock on  
+> Example: !dimensionlock off  
+> Example: !dimensionlock --list  
 
 ## !gamemode
 ### At A Glance

@@ -108,6 +108,8 @@ import { startPathingMonitor } from "../modules/pathing-monitor";
 import { anticrashCommand } from "../commands/settings/anticrash";
 import { startAntiCrash } from "../modules/anticrash";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { dimensionLockCommand } from "../commands/settings/dimension-lock";
+import { startDimensionLock } from "../modules/dimension-lock";
 
 type PlayerID = string;
 
@@ -200,6 +202,7 @@ const allCommands: Command[] = [
     autoTotemCommand,
     pathingCommand,
     anticrashCommand,
+    dimensionLockCommand,
 ];
 
 /**
@@ -362,6 +365,7 @@ async function initializeParadoxModules(): Promise<void> {
         autoTotemCheck_b: () => startAutoTotemCheck(),
         pathingCheck_b: () => startPathingMonitor(),
         antiCrashCheck_b: () => startAntiCrash(),
+        dimensionLock_b: () => startDimensionLock(),
     };
 
     const runModuleInitializers = () => {

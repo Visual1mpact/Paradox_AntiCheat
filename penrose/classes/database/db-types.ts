@@ -69,6 +69,12 @@ type WorldBorderSettings = {
     end: number;
 };
 
+// Settings schema for dimension lock enforcement
+type DimensionLockSettings = {
+    nether: boolean;
+    theEnd: boolean;
+};
+
 export type InvSyncSnapshots = {
     [playerId: string]: {
         counts: Record<string, number>;
@@ -115,6 +121,7 @@ export type ModuleSettingsMap = {
     autoTotemCheck_b: undefined; // This module has no configurable settings
     pathingCheck_b: undefined; // This module has no configurable settings
     antiCrashCheck_b: undefined; // This module has no configurable settings
+    dimensionLock_b: DimensionLockSettings;
 };
 
 /**
