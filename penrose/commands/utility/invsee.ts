@@ -1,4 +1,4 @@
-import { Player, ChatSendBeforeEvent } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, EntityEnderInventoryComponent, EntityInventoryComponent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
 
@@ -8,15 +8,19 @@ import { PlayerCache } from "../../classes/player-cache";
 export const invseeCommand: Command = {
     name: "invsee",
     description: "Shows the entire inventory of the specified player.",
-    usage: "{prefix}invsee <player>",
-    examples: [`{prefix}invsee PlayerName`, `{prefix}invsee help`],
+    usage: "{prefix}invsee <player> [--enderchest | -ec]",
+    examples: [`{prefix}invsee PlayerName`, `{prefix}invsee PlayerName --enderchest`, `{prefix}invsee help`],
     category: "Utility",
     securityClearance: 3,
     icon: "textures/items/minecart_chest.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Viewer",
-        description: "View the inventory of another player.\n\n" + "§7• Select a player from the dropdown to display their items.\n" + "§7• You can see item type, quantity, and enchantments if present.\n\n",
+        description:
+            "View the inventory or ender chest of another player.\n\n" +
+            "§7• Select a player from the dropdown to display their items.\n" +
+            "§7• Toggle 'View Ender Chest' to see their ender chest contents.\n" +
+            "§7• You can see item type, quantity, and enchantments if present.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -32,6 +36,12 @@ export const invseeCommand: Command = {
                 name: "\nSelect Players Name:",
                 type: "dropdown",
                 sourceType: "players",
+                requiredFields: ["playerName"],
+            },
+            {
+                name: "\nView Ender Chest:",
+                arg: "--enderchest",
+                type: "toggle",
                 requiredFields: ["playerName"],
             },
         ],
@@ -63,17 +73,28 @@ export const invseeCommand: Command = {
             return;
         }
 
-        // Join args to get the player name
-        const playerName: string = args.join(" ").trim().replace(/["@]/g, "");
+        // Parse arguments for name and flags
+        let playerName = "";
+        let isEnderChest = false;
+        const validFlags = new Set(["--enderchest", "-ec"]);
+
+        for (let i = 0; i < args.length; i++) {
+            const arg = args[i].replace(/["@]/g, "");
+            if (validFlags.has(arg.toLowerCase())) {
+                isEnderChest = true;
+            } else {
+                playerName += `${arg} `;
+            }
+        }
+        playerName = playerName.trim();
 
         // Retrieve the player object
         const member: Player | undefined = getPlayerObject(playerName);
 
         // Retrieve the player's inventory
         if (member && member.isValid) {
-            const inv = member.getComponent("inventory");
+            const inv = member.getComponent(isEnderChest ? "minecraft:ender_inventory" : "minecraft:inventory") as EntityEnderInventoryComponent | EntityInventoryComponent;
             if (!inv || !inv.container) {
-                message.sender.sendMessage(`§o§c[Paradox] Failed to view inventory of "${member.name}§c"! Please try again.`);
                 return;
             }
             const container = inv.container;
@@ -88,14 +109,14 @@ export const invseeCommand: Command = {
             }
 
             if (!hasItems) {
-                message.sender.sendMessage(`§o§c[Paradox] Player "${member.name}" has an empty inventory. Nothing to view.`);
+                message.sender.sendMessage(`§o§c[Paradox] Player "${member.name}" has an empty ${isEnderChest ? "ender chest" : "inventory"}. Nothing to view.`);
                 return;
             }
 
             // Display the player's inventory
             const inventoryMessage = [
                 ` `,
-                `§2[§7Paradox§2]§o§7 ${member.name}'s inventory:`,
+                `§2[§7Paradox§2]§o§7 ${member.name}'s ${isEnderChest ? "ender chest" : "inventory"}:`,
                 ...Array.from(Array(container.size), (_a, i) => {
                     let enchantmentInfo = "";
                     const item = container.getItem(i);

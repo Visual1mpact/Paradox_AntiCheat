@@ -184,20 +184,22 @@ The `!invclone` command allows admins to clone a player's entire inventory into 
 
 ## !invsee
 ### At A Glance
-The `!invsee` command allows players with sufficient clearance to view another player's inventory in detail, including items, quantities, and enchantments.
+The `!invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
 
 ?> Required Clearance Level To Execute: `3`
 
 ### **How It Works**
-- When executed with a player name, it retrieves the target player's inventory.
+- When executed with a player name, it retrieves the target player's inventory by default.
+- **Ender Chest Support:** By adding the `--enderchest` or `-ec` flag, administrators can inspect the contents of a player's ender chest.
 - Displays **all inventory slots**, indicating empty ones.
 - Shows **item type, amount, and enchantments**, including level and max level.
 - If the player is invalid or not found, an error message is returned.
 - Designed for monitoring or moderation purposes.
 
 
-> Usage: "!invsee <player>"  
+> Usage: "!invsee <player> [--enderchest | -ec]"  
 > Example: !invsee PlayerName  
+> Example: !invsee PlayerName --enderchest  
 > Example: !invsee help  
 
 
