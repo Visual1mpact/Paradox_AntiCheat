@@ -1,4 +1,4 @@
-import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, EquipmentSlot } from "@minecraft/server";
+import { EntityEquippableComponent, EntityInventoryComponent, Player, ChatSendBeforeEvent, EquipmentSlot, EntityEnderInventoryComponent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
 
@@ -164,10 +164,9 @@ export const punishCommand: Command = {
 
             // Wipe their ender chest
             if (wipeEnderChest) {
-                // There are 30 slots ranging from 0 to 29
-                for (let slot = 0; slot < 30; slot++) {
-                    target.runCommand(`replaceitem entity @s slot.enderchest ${slot} air`);
-                }
+                const enderInventoryContainer: EntityEnderInventoryComponent = target.getComponent("minecraft:ender_inventory") as EntityEnderInventoryComponent;
+                const enderInventory = enderInventoryContainer.container;
+                enderInventory.clearAll();
             }
 
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Punished "${target.name}§7"!`);
