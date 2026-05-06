@@ -140,20 +140,19 @@ function findSafeY(player: Player, x: number, y: number, z: number): number {
  * Executes the world border generator as a job.
  */
 async function executeWorldBorderCheck(): Promise<void> {
-    if (worldBorderJobId !== null) system.clearJob(worldBorderJobId);
+    if (worldBorderJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* worldBorderGenerator();
             } finally {
+                worldBorderJobId = null;
                 resolve();
             }
         }
         worldBorderJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

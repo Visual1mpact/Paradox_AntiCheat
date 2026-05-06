@@ -101,12 +101,14 @@ async function tickLoop() {
  * Runs a generator task as a background job.
  */
 async function runInvSyncJob(generator: () => Generator<void, void, unknown>): Promise<void> {
-    if (invSyncJobId !== null) system.clearJob(invSyncJobId);
+    if (invSyncJobId !== null) return;
+
     return new Promise((resolve) => {
         function* runner() {
             try {
                 yield* generator();
             } finally {
+                invSyncJobId = null;
                 resolve();
             }
         }

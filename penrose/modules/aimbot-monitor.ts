@@ -94,20 +94,19 @@ function* aimbotCheckGenerator(): Generator<void, void, unknown> {
  * Executes the aimbot check as a background job.
  */
 async function executeAimbotCheck(): Promise<void> {
-    if (aimbotJobId !== null) system.clearJob(aimbotJobId);
+    if (aimbotJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* aimbotCheckGenerator();
             } finally {
+                aimbotJobId = null;
                 resolve();
             }
         }
         aimbotJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

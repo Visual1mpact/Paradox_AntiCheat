@@ -280,20 +280,19 @@ function* noclipCheckGenerator(): Generator<void, void, unknown> {
  * Executes the NoClip check as a background job.
  */
 async function executeNoClipCheck(): Promise<void> {
-    if (noclipJobId !== null) system.clearJob(noclipJobId);
+    if (noclipJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* noclipCheckGenerator();
             } finally {
+                noclipJobId = null;
                 resolve();
             }
         }
         noclipJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

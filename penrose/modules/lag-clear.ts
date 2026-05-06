@@ -150,26 +150,23 @@ async function clearEntities(batchSize: number = 50) {
  * @param {number} clockSettings.seconds
  */
 async function executeLagClear(clockSettings: { hours: number; minutes: number; seconds: number }) {
-    if (lagClearJobId !== null) {
-        system.clearJob(lagClearJobId);
-    }
+    if (lagClearJobId !== null) return;
 
     if (globalEndTick === null) {
         globalEndTick = system.currentTick + timeToTicks(clockSettings.hours, clockSettings.minutes, clockSettings.seconds);
     }
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* jobRunner() {
             try {
                 yield* lagClearGenerator(globalEndTick!);
             } finally {
+                lagClearJobId = null;
                 resolve();
             }
         }
         lagClearJobId = system.runJob(jobRunner());
     });
-
-    await jobPromise;
 }
 
 // ------------------- START / STOP -------------------

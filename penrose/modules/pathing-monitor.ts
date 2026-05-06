@@ -134,20 +134,19 @@ function* pathingCheckGenerator(): Generator<void, void, unknown> {
  * Executes the pathing check as a background job.
  */
 async function executePathingCheck(): Promise<void> {
-    if (pathingJobId !== null) system.clearJob(pathingJobId);
+    if (pathingJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* pathingCheckGenerator();
             } finally {
+                pathingJobId = null;
                 resolve();
             }
         }
         pathingJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

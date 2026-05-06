@@ -179,6 +179,7 @@ export async function startFlyCheck(): Promise<void> {
 export function stopFlyCheck(): void {
     if (currentJobId !== null) {
         system.clearJob(currentJobId);
+        currentJobId = null;
     }
     if (currentRunId !== null) {
         system.clearRun(currentRunId);

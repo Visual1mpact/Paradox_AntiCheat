@@ -79,20 +79,19 @@ function* afkCheckGenerator(): Generator<void, void, unknown> {
  * Executes the AFK check as a background job.
  */
 async function executeAfkCheck(): Promise<void> {
-    if (afkJobId !== null) system.clearJob(afkJobId);
+    if (afkJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* afkCheckGenerator();
             } finally {
+                afkJobId = null;
                 resolve();
             }
         }
         afkJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

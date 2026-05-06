@@ -42,20 +42,19 @@ function* groundCheckGenerator(): Generator<void, void, unknown> {
  * Executes the ground check logic as a background job.
  */
 async function executeGroundCheck(): Promise<void> {
-    if (jobId !== null) system.clearJob(jobId);
+    if (jobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* groundCheckGenerator();
             } finally {
+                jobId = null;
                 resolve();
             }
         }
         jobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

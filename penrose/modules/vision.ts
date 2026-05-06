@@ -189,20 +189,19 @@ function* visionCheckGenerator(): Generator<void, void, unknown> {
  * Executes the vision check as a background job.
  */
 async function executeVisionCheck(): Promise<void> {
-    if (visionJobId !== null) system.clearJob(visionJobId);
+    if (visionJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* visionCheckGenerator();
             } finally {
+                visionJobId = null;
                 resolve();
             }
         }
         visionJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

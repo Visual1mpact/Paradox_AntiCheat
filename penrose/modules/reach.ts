@@ -157,20 +157,19 @@ function* reachUpdateGenerator(): Generator<void, void, unknown> {
  * Executes the reach update as a background job.
  */
 async function executeReachUpdate(): Promise<void> {
-    if (reachJobId !== null) system.clearJob(reachJobId);
+    if (reachJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* reachUpdateGenerator();
             } finally {
+                reachJobId = null;
                 resolve();
             }
         }
         reachJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**

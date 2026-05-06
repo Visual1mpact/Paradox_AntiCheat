@@ -99,20 +99,19 @@ function* autoTotemCheckGenerator(): Generator<void, void, unknown> {
  * Ensures completion before resolving.
  */
 async function executeAutoTotemCheck(): Promise<void> {
-    if (autoTotemJobId !== null) system.clearJob(autoTotemJobId);
+    if (autoTotemJobId !== null) return;
 
-    const jobPromise = new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
         function* runner() {
             try {
                 yield* autoTotemCheckGenerator();
             } finally {
+                autoTotemJobId = null;
                 resolve();
             }
         }
         autoTotemJobId = system.runJob(runner());
     });
-
-    await jobPromise;
 }
 
 /**
