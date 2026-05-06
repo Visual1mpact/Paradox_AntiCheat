@@ -144,18 +144,18 @@ The `!home` command allows players to manage personal locations. Players can sav
 
 ## !invclone
 ### At A Glance
-The `!invclone` command allows admins to clone a player's entire inventory into chests placed in the world for inspection, or to remove previously cloned chests.
+The `!invclone` command allows admins to clone a player's entire inventory or ender chest into chests placed in the world for inspection, or to remove previously cloned chests.
 
-- **Clone a player's inventory:** Creates chests near the executor, filling them with the target player's items. Each item has a lore tag indicating its source.
+- **Clone a player's inventory or ender chest:** Creates chests near the executor, filling them with the target player's items. Each item has a lore tag indicating its source.
 - **Remove cloned chests:** Deletes previously cloned chests within a nearby area.
 
 ?> Required Clearance Level To Execute: `4`
 
 ### How It Works
 1. **Inventory Cloning**
-   - When executed with a target player name, the command retrieves the player's inventory.
+   - When executed with a target player name, the command retrieves the player's inventory by default. By adding the `--enderchest` or `-ec` flag, administrators can clone the player's ender chest instead.
    - Chests are placed sequentially near the command executor’s location.
-   - Items are distributed across the chests, and each item gets a lore tag: `Source: <PlayerName>'s Inventory`.
+   - Items are distributed across the chests, and each item gets a lore tag: `Source: <PlayerName>'s Inventory` or `Source: <PlayerName>'s Ender Chest`.
    - The number of chests depends on how many items are in the inventory.
 
 2. **Removing Cloned Chests**
@@ -165,13 +165,14 @@ The `!invclone` command allows admins to clone a player's entire inventory into 
 
 ### Usage
 
-> !invclone <player>   - Clone the specified player's inventory into chests  
+> !invclone <player> [--enderchest | -ec] - Clone the specified player's inventory or ender chest into chests  
 > !invclone remove      - Remove all nearby cloned inventory chests  
 
 
 ### Examples
 
-> !invclone Pte9xi  
+> !invclone Pete9xi  
+> !invclone Pete9xi --enderchest  
 > !invclone remove  
 
 

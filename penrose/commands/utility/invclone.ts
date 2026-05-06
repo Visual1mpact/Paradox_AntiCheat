@@ -1,4 +1,4 @@
-import { Player, ChatSendBeforeEvent, ItemStack, BlockVolume } from "@minecraft/server";
+import { Player, ChatSendBeforeEvent, ItemStack, BlockVolume, EntityEnderInventoryComponent, EntityInventoryComponent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
 
@@ -9,9 +9,9 @@ import { PlayerCache } from "../../classes/player-cache";
  */
 export const invCloneCommand: Command = {
     name: "invclone",
-    description: "Clones the entire inventory of the specified player into chests for inspection or removes cloned chests.",
-    usage: "{prefix}invclone <player>|remove",
-    examples: [`{prefix}invclone PlayerName`, `{prefix}invclone remove`],
+    description: "Clones the entire inventory or ender chest of the specified player into chests for inspection or removes cloned chests.",
+    usage: "{prefix}invclone <player> [--enderchest | -ec] | remove",
+    examples: [`{prefix}invclone PlayerName`, `{prefix}invclone PlayerName --enderchest`, `{prefix}invclone remove`],
     category: "Utility",
     securityClearance: 4,
     icon: "textures/ui/item_cell.png",
@@ -19,8 +19,8 @@ export const invCloneCommand: Command = {
         formType: "ActionFormData",
         title: "Inventory Cloner",
         description:
-            "Manage physical clones of player inventories for forensic inspection.\n\n" +
-            "§7• Spawn chests at your location containing a player's full inventory.\n" +
+            "Manage physical clones of player inventories or ender chests for forensic inspection.\n\n" +
+            "§7• Spawn chests at your location containing a player's full inventory or ender chest.\n" +
             "§7• Items are tagged with source metadata to identify the owner.\n" +
             "§7• Easily clear the area of cloned blocks after your review.\n\n",
         commandOrder: "command-arg",
@@ -45,6 +45,12 @@ export const invCloneCommand: Command = {
                 name: "\nSelect Players Name:",
                 type: "dropdown",
                 sourceType: "players",
+                requiredFields: ["playerName"],
+            },
+            {
+                name: "\nClone Ender Chest:",
+                arg: "--enderchest",
+                type: "toggle",
                 requiredFields: ["playerName"],
             },
         ],
@@ -93,20 +99,32 @@ export const invCloneCommand: Command = {
         }
 
         // --- Inventory cloning logic ---
-        const playerName: string = args.join(" ").trim().replace(/["@]/g, "");
+        let playerName = "";
+        let isEnderChest = false;
+        const validFlags = new Set(["--enderchest", "-ec"]);
+
+        for (const arg of args) {
+            const sanitized = arg.replace(/["@]/g, "");
+            if (validFlags.has(sanitized.toLowerCase())) {
+                isEnderChest = true;
+            } else {
+                playerName += sanitized + " ";
+            }
+        }
+        playerName = playerName.trim();
+
         const target: Player | undefined = PlayerCache.getPlayerByName(playerName);
 
         if (!target || !target.isValid) {
             message.sender.sendMessage(`§o§c[Paradox] Failed to find player "${playerName}"!`);
             return;
         }
-
-        const targetInv = target.getComponent("minecraft:inventory")?.container;
+        const invComp = target.getComponent(isEnderChest ? "minecraft:ender_inventory" : "minecraft:inventory") as EntityEnderInventoryComponent | EntityInventoryComponent;
+        const targetInv = invComp?.container;
         if (!targetInv) {
-            message.sender.sendMessage(`§o§c[Paradox] Cannot access ${target.name}'s inventory.`);
+            message.sender.sendMessage(`§o§c[Paradox] Cannot access ${target.name}'s ${isEnderChest ? "ender chest" : "inventory"}.`);
             return;
         }
-
         const inventoryItems: ItemStack[] = [];
         for (let i = 0; i < targetInv.size; i++) {
             const item = targetInv.getItem(i);
@@ -115,7 +133,7 @@ export const invCloneCommand: Command = {
 
         // --- Early return if the inventory is empty ---
         if (inventoryItems.length === 0) {
-            message.sender.sendMessage(`§o§c[Paradox] Player "${target.name}" has an empty inventory. Nothing to clone.`);
+            message.sender.sendMessage(`§o§c[Paradox] Player "${target.name}" has an empty ${isEnderChest ? "ender chest" : "inventory"}. Nothing to clone.`);
             return;
         }
 
@@ -137,7 +155,7 @@ export const invCloneCommand: Command = {
             for (let slot = 0; slot < chestInv.size && inventoryItems.length > 0; slot++) {
                 const item = inventoryItems.shift();
                 if (!item) continue;
-                item.setLore([`§7Source: ${target.name}'s Inventory`]);
+                item.setLore([`§7Source: ${target.name}'s ${isEnderChest ? "Ender Chest" : "Inventory"}`]);
                 chestInv.setItem(slot, item);
             }
 
@@ -147,7 +165,7 @@ export const invCloneCommand: Command = {
 
         if (chestCount > 0) {
             const chestWord = chestCount === 1 ? "chest" : "chests";
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Cloned "${target.name}'s" inventory into ${chestCount} ${chestWord}.`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Cloned "${target.name}'s" ${isEnderChest ? "ender chest" : "inventory"} into ${chestCount} ${chestWord}.`);
         }
     },
 };
