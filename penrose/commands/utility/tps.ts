@@ -17,25 +17,56 @@ let lastTickTimestamp = Date.now();
 /** Players currently monitoring TPS in real-time */
 const activeMonitors = new Set<string>();
 
+/** Reference to the background interval */
+let tpsIntervalId: number | undefined;
+
+/** Guard to prevent multiple event/interval registrations */
+let isTpsInitialized = false;
+
 /**
- * Explicitly clean up the monitor set when a player leaves the server.
+ * Initializes the TPS background tasks and event listeners.
  */
-EventCoordinator.subscribeAfter("playerLeave", (event) => {
-    activeMonitors.delete(event.playerId);
-});
+function initializeTpsSystem() {
+    if (isTpsInitialized) return;
+
+    // Explicitly clean up the monitor set when a player leaves
+    EventCoordinator.subscribeAfter("playerLeave", (event) => {
+        activeMonitors.delete(event.playerId);
+        if (activeMonitors.size === 0) stopTpsInterval();
+    });
+    isTpsInitialized = true;
+}
+
+/**
+ * Starts the TPS calculation interval.
+ */
+function startTpsInterval() {
+    if (tpsIntervalId !== undefined) return;
+    // Reset timestamp so the first calculation isn't based on an old value
+    lastTickTimestamp = Date.now();
+    tpsIntervalId = system.runInterval(updateTpsHud, 20);
+}
+
+/**
+ * Stops the TPS calculation interval to save resources.
+ */
+function stopTpsInterval() {
+    if (tpsIntervalId === undefined) return;
+    system.clearRun(tpsIntervalId);
+    tpsIntervalId = undefined;
+}
 
 /**
  * Interval to update the TPS calculation and refresh the HUD for active monitors.
  */
-system.runInterval(() => {
+function updateTpsHud() {
     const now = Date.now();
     const timeElapsed = (now - lastTickTimestamp) / 1000;
 
     currentTPS = Math.min(20, 20 / timeElapsed);
     lastTickTimestamp = now;
 
-    if (activeMonitors.size === 0) return;
-
+    // Generate strings ONCE per interval, not per player
     let color = "§a"; // Healthy (18-20)
     let status = "Healthy";
 
@@ -59,6 +90,7 @@ system.runInterval(() => {
         const player = PlayerCache.getPlayerById(playerId);
         if (!player || !player.isValid) {
             activeMonitors.delete(playerId);
+            if (activeMonitors.size === 0) stopTpsInterval();
             continue;
         }
 
@@ -69,7 +101,9 @@ system.runInterval(() => {
             fadeOutDuration: 5,
         });
     }
-}, 20);
+}
+
+initializeTpsSystem();
 
 /**
  * Command to display server performance (TPS).
@@ -113,10 +147,12 @@ export const tpsCommand: Command = {
 
         if (activeMonitors.has(sender.id)) {
             activeMonitors.delete(sender.id);
-            sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring: §4Disabled");
+            if (activeMonitors.size === 0) stopTpsInterval();
+            sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring is now §4Disabled");
         } else {
             activeMonitors.add(sender.id);
-            sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring: §aEnabled");
+            startTpsInterval();
+            sender.sendMessage("§2[§7Paradox§2]§o§7 TPS Monitoring is now §aEnabled");
             sender.playSound("random.orb", { volume: 0.5, pitch: 1 });
         }
     },
