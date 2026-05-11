@@ -3,6 +3,7 @@ import { Command } from "../../classes/command-handler";
 import { channelsDB } from "../../event-listeners/world-initialize";
 import { Channel } from "../../classes/database/db-types";
 import { PlayerCache } from "../../classes/player-cache";
+import { EventCoordinator } from "../../classes/event-coordinator";
 
 interface Invitation {
     sender: Player;
@@ -10,9 +11,37 @@ interface Invitation {
     timeoutId: number;
 }
 
+/** Maps receiver ID to the Invitation object */
 const pendingInvitations = new Map<string, Invitation>();
 const TIMEOUT_SECONDS = 30;
 const TPS = TicksPerSecond;
+
+/** Prevents duplicate event registration if the module is re-evaluated. */
+let isCleanupRegistered = false;
+
+/**
+ * Registers the playerLeave cleanup logic for the Channel system.
+ */
+function registerChannelsCleanup() {
+    if (isCleanupRegistered) return;
+
+    // Cleanup invitations on leave
+    EventCoordinator.subscribeAfter("playerLeave", (event) => {
+        pendingInvitations.delete(event.playerId);
+    });
+
+    // Lazy validation: Clear stale channel properties when a player joins
+    EventCoordinator.subscribeAfter("playerSpawn", (event) => {
+        const { player, initialSpawn } = event;
+        if (!initialSpawn) return;
+        const channelName = player.getDynamicProperty("currentChannel") as string;
+        if (channelName && !channelsDB.get(channelName)) player.setDynamicProperty("currentChannel", undefined);
+    });
+
+    isCleanupRegistered = true;
+}
+
+registerChannelsCleanup();
 
 /**
  * Represents the channel command.
@@ -69,6 +98,12 @@ export const channelCommand: Command = {
         const playerName = msg.sender.name;
         const playerId = msg.sender.id; // Get the player's ID
 
+        // Global Sanity Check: If the player thinks they are in a channel that doesn't exist, clear it.
+        const storedChannelName = msg.sender.getDynamicProperty("currentChannel") as string;
+        if (storedChannelName && !channelsDB.get(storedChannelName)) {
+            msg.sender.setDynamicProperty("currentChannel", undefined);
+        }
+
         /**
          * Retrieves a channel by its name.
          * @param {string} channelName - The name of the channel.
@@ -90,11 +125,11 @@ export const channelCommand: Command = {
          * Cancels an invitation if it exists.
          * @param {string} receiverName - The name of the player who received the invitation.
          */
-        function cancelInvitation(receiverName: string): void {
-            const invitation = pendingInvitations.get(receiverName);
+        function cancelInvitation(receiverId: string): void {
+            const invitation = pendingInvitations.get(receiverId);
             if (invitation) {
                 system.clearRun(invitation.timeoutId);
-                pendingInvitations.delete(receiverName);
+                pendingInvitations.delete(receiverId);
             }
         }
 
@@ -104,8 +139,8 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function joinChannel(channelName: string): Promise<void> {
-            const channels = getChannel(channelName);
-            if (channels && channels.Members[playerId]) {
+            const currentChannel = msg.sender.getDynamicProperty("currentChannel");
+            if (currentChannel) {
                 msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel.`);
                 return;
             }
@@ -118,13 +153,14 @@ export const channelCommand: Command = {
 
             channel.Members[playerId] = playerName;
             channel.lastActive = Date.now();
+            msg.sender.setDynamicProperty("currentChannel", channelName);
             await saveChannels(channelName, channel);
             msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You have joined channel '${channelName}§7'.`);
 
             // Notify other members of the new player
             for (const memberId in channel.Members) {
                 const member = PlayerCache.getPlayerById(memberId);
-                if (member && member.name !== playerName) {
+                if (member && member.isValid && member.id !== playerId) {
                     member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} has joined channel '${channelName}§7'.`);
                 }
             }
@@ -143,24 +179,28 @@ export const channelCommand: Command = {
                 return;
             }
 
-            if (pendingInvitations.has(receiverName)) {
+            if (receiver.id === playerId) {
+                msg.sender.sendMessage("§o§c[Paradox] You cannot invite yourself.");
+                return;
+            }
+
+            if (pendingInvitations.has(receiver.id)) {
                 msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 is already handling an invitation.`);
                 return;
             }
 
-            const channel = getChannel(channelName);
-            if (!channel) {
+            if (!getChannel(channelName)) {
                 msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
 
             const timeoutId = system.runTimeout(() => {
-                cancelInvitation(receiverName);
-                msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 did not respond in time. Invitation canceled.`);
-                receiver.sendMessage(`§2[§7Paradox§2]§o§7 You did not respond to the channel invitation in time. Invitation canceled.`);
+                if (msg.sender.isValid) msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${receiverName}§7 did not respond in time. Invitation canceled.`);
+                if (receiver.isValid) receiver.sendMessage(`§2[§7Paradox§2]§o§7 You did not respond to the channel invitation in time. Invitation canceled.`);
+                cancelInvitation(receiver.id);
             }, TIMEOUT_SECONDS * TPS);
 
-            pendingInvitations.set(receiverName, { sender: msg.sender, channel: channelName, timeoutId });
+            pendingInvitations.set(receiver.id, { sender: msg.sender, channel: channelName, timeoutId });
             receiver.sendMessage(
                 `§2[§7Paradox§2]§o§7 ${msg.sender.name}§7 invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") ?? "!"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") ?? "!"}channel leave --room ${channelName}§7 to decline.`
             );
@@ -203,17 +243,22 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function leaveChannel(): Promise<void> {
-            const allChannels = channelsDB.entries();
-            const entry = allChannels.find(([, channel]) => channel.Members[playerId]);
+            const channelName = msg.sender.getDynamicProperty("currentChannel") as string;
+            const channel = channelName ? getChannel(channelName) : undefined;
 
-            if (!entry) {
+            if (!channelName) {
                 msg.sender.sendMessage(`§o§c[Paradox] You are not in any channel to leave.`);
                 return;
             }
 
-            const [channelName, channel] = entry;
+            if (!channel) {
+                msg.sender.setDynamicProperty("currentChannel", undefined);
+                msg.sender.sendMessage(`§o§c[Paradox] The channel you were in has been deleted.`);
+                return;
+            }
 
             delete channel.Members[playerId];
+            msg.sender.setDynamicProperty("currentChannel", undefined);
 
             if (channel.Owner === playerName) {
                 if (Object.keys(channel.Members).length > 0) {
@@ -223,7 +268,7 @@ export const channelCommand: Command = {
 
                     for (const memberId in channel.Members) {
                         const member = PlayerCache.getPlayerById(memberId);
-                        if (member) {
+                        if (member && member.isValid) {
                             member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} left '${channelName}§7'. Ownership transferred to ${newOwnerName}§7.`);
                         }
                     }
@@ -240,7 +285,7 @@ export const channelCommand: Command = {
 
                 for (const memberId in channel.Members) {
                     const member = PlayerCache.getPlayerById(memberId);
-                    if (member) {
+                    if (member && member.isValid) {
                         member.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} has left '${channelName}§7'.`);
                     }
                 }
@@ -253,17 +298,17 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function createChannel(channelName: string): Promise<void> {
-            const channels = channelsDB.entries();
-            if (channels.some(([, channel]) => channel.Members?.[playerId])) {
+            if (msg.sender.getDynamicProperty("currentChannel")) {
                 msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 You are already in a channel. Please leave your current channel before creating a new one.`);
                 return;
             }
 
-            const channel = channelsDB.get(channelName); // Ensure the type of the channel
+            const channel = getChannel(channelName);
             if (channel) {
                 msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
             } else {
                 await saveChannels(channelName, { Owner: playerName, Members: { [playerId]: playerName }, lastActive: Date.now() });
+                msg.sender.setDynamicProperty("currentChannel", channelName);
                 msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 Channel '${channelName}§7' created.`);
             }
         }
