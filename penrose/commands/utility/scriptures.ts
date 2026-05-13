@@ -208,7 +208,7 @@ export const scriptureCommand: Command = {
         }
 
         if (!playerName) {
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${message.sender.getDynamicProperty("__prefix") ?? "!"}scripture -t <player> [-e | -d]`);
+            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${message.sender.getDynamicProperty("__prefix") ?? ":"}scripture -t <player> [-e | -d]`);
             return;
         }
 

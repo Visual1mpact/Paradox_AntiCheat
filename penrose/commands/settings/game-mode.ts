@@ -135,7 +135,7 @@ export const gameModeCommand: Command = {
                     modeStates.gamemodeCheck = false;
                     break;
                 default:
-                    const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
+                    const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
                     player.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§cgamemode help.`);
                     return;
             }

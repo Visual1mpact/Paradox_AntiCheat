@@ -91,7 +91,7 @@ export const transferCommand: Command = {
         if (!message || !args) return;
 
         const sender = message.sender;
-        const prefix = world.getDynamicProperty("__prefix") ?? "!";
+        const prefix = world.getDynamicProperty("__prefix") ?? ":";
 
         /**
          * Verify server-admin module availability.

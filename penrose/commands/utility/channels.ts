@@ -202,7 +202,7 @@ export const channelCommand: Command = {
 
             pendingInvitations.set(receiver.id, { sender: msg.sender, channel: channelName, timeoutId });
             receiver.sendMessage(
-                `§2[§7Paradox§2]§o§7 ${msg.sender.name}§7 invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") ?? "!"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") ?? "!"}channel leave --room ${channelName}§7 to decline.`
+                `§2[§7Paradox§2]§o§7 ${msg.sender.name}§7 invited you to join channel '${channelName}§7'. Type ${world.getDynamicProperty("__prefix") ?? ":"}channel join --room ${channelName}§7 to join or ${world.getDynamicProperty("__prefix") ?? ":"}channel leave --room ${channelName}§7 to decline.`
             );
             msg.sender.sendMessage(`§2[§7Paradox§2]§o§7 Invitation sent to ${receiverName}§7 to join channel '${channelName}§7'.`);
         }

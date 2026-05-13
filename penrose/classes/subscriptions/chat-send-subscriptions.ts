@@ -107,7 +107,7 @@ class ChatSendSubscription {
             const currentTick = system.currentTick;
 
             // 1️⃣ Command handling (Intercept first so muted players can still use commands)
-            const prefix = (world.getDynamicProperty("__prefix") as string) || "!";
+            const prefix = (world.getDynamicProperty("__prefix") as string) || ":";
 
             if (event.message.startsWith(prefix)) {
                 event.cancel = true;

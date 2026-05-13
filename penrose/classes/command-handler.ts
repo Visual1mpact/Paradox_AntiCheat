@@ -184,7 +184,7 @@ export class CommandHandler {
      * Initializes a new CommandHandler and sets the prefix.
      */
     constructor() {
-        this.prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
+        this.prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
     }
 
     /**

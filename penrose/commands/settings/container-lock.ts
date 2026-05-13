@@ -170,7 +170,7 @@ export const chestForensicCommand: Command = {
         if (!message) return;
 
         const player = message.sender;
-        const currentPrefix = world.getDynamicProperty("__prefix") as string;
+        const currentPrefix = (world.getDynamicProperty("__prefix") as string) || ":";
         const inputArg = args[0]?.trim();
 
         const isChestKeyFormat = /^[a-zA-Z]+_-?\d+_-?\d+_-?\d+$/.test(inputArg);

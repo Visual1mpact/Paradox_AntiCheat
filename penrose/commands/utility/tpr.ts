@@ -101,7 +101,7 @@ export const tprCommand: Command = {
         const sender = message.sender;
 
         // Retrieve the current prefix from dynamic properties
-        const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
+        const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
 
         // Prevent command if player is imprisoned
         const isImprisoned = sender.getDynamicProperty("prisonLocation"); // matches PRISON_LOCATION_PROPERTY

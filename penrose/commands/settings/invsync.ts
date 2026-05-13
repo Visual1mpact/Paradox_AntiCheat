@@ -74,7 +74,7 @@ export const invSyncCommand: Command = {
         const moduleData = paradoxModulesDB.get(key) ?? { enabled: false };
         const enabled = moduleData.enabled ?? false;
 
-        const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
+        const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
         const sub = args[0]?.toLowerCase();
 
         // Toggle module when no subcommand is provided.
