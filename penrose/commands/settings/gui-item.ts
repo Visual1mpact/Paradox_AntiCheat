@@ -74,6 +74,6 @@ export const guiItemCommand: Command = {
         commandHandler.setGuiItem(input);
         itemUseSubscription.subscribe();
         player.sendMessage(`§2[§7Paradox§2]§o§7 GUI trigger item set to: §f${input}`);
-        player.sendMessage(`§o§7Any player using this item will now open the Paradox GUI.`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Any player using this item will now open the Paradox GUI.`);
     },
 };
