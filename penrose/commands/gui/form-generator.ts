@@ -331,6 +331,14 @@ class GUIManager {
 }
 
 /**
+ * Opens the main Paradox GUI for a player.
+ * @param player The player to open the GUI for.
+ */
+export function openMainGui(player: Player): void {
+    system.run(() => new GUIManager(player).openMainGui());
+}
+
+/**
  * Helper function to open a specific command's GUI directly, bypassing the main menu.
  * Useful for item-based shortcuts or automated UI triggers.
  * @param player The player to show the GUI to.
@@ -356,7 +364,6 @@ export const guiCommand: Command = {
         const player = message.sender;
         // Inform the player to close chat for the GUI
         player.sendMessage("§2[§7Paradox§2]§o§7 Please close your chat window to view the GUI.");
-        // Schedule GUI opening asynchronously
-        system.run(() => new GUIManager(player).openMainGui());
+        openMainGui(player);
     },
 };

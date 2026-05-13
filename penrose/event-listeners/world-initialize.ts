@@ -110,6 +110,8 @@ import { startAntiCrash } from "../modules/anticrash";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { dimensionLockCommand } from "../commands/settings/dimension-lock";
 import { startDimensionLock } from "../modules/dimension-lock";
+import { itemUseSubscription } from "../classes/subscriptions/item-use-subscriptions";
+import { guiItemCommand } from "../commands/settings/gui-item";
 
 type PlayerID = string;
 
@@ -203,6 +205,7 @@ const allCommands: Command[] = [
     pathingCommand,
     anticrashCommand,
     dimensionLockCommand,
+    guiItemCommand,
 ];
 
 /**
@@ -458,6 +461,7 @@ function handleDoubleJump() {
  * @returns {Promise<void>}
  */
 async function onWorldInitialize(): Promise<void> {
+    if (commandHandler.getGuiItem()) itemUseSubscription.subscribe(); // Only subscribe if a GUI item is configured
     chatSendSubscription.subscribe(); // Subscribe to chat send events
     initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
     initializeGlobalBanList(); // Ensure the global banned player list is initialized

@@ -162,6 +162,9 @@ export class CommandHandler {
     /** Current command prefix */
     private prefix: string;
 
+    /** Item ID that opens the GUI when used */
+    private guiItem: string | undefined;
+
     /** Lock to serialize command execution */
     private prefixLock = false;
 
@@ -185,6 +188,7 @@ export class CommandHandler {
      */
     constructor() {
         this.prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
+        this.guiItem = world.getDynamicProperty("__guiItem") as string | undefined;
     }
 
     /**
@@ -240,6 +244,22 @@ export class CommandHandler {
         }
 
         return true;
+    }
+
+    /**
+     * Returns the current GUI trigger item ID.
+     */
+    getGuiItem(): string | undefined {
+        return this.guiItem;
+    }
+
+    /**
+     * Sets the GUI trigger item ID.
+     * @param itemId - Minecraft item ID (e.g. 'minecraft:compass')
+     */
+    setGuiItem(itemId: string | undefined) {
+        this.guiItem = itemId;
+        world.setDynamicProperty("__guiItem", itemId);
     }
 
     /**
