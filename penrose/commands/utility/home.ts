@@ -118,11 +118,6 @@ export const homeCommand: Command = {
          * @returns {boolean} Returns true if a home with the same name already exists, false otherwise.
          */
         function saveHomeLocation(homeName: string, location: Vector3, dimension: string): boolean {
-            const totalHomes = countHomes();
-            if (totalHomes >= MAX_HOMES) {
-                player.sendMessage(`§o§c[Paradox] You have reached the maximum number of homes (${MAX_HOMES})!`);
-                return true;
-            }
             const existingHome = player.getTags().find((tag) => {
                 if (tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX)) {
                     const decryptedTag = decryptData(tag.replace(ENCRYPTED_HOME_TAG_PREFIX, ""));
@@ -218,6 +213,10 @@ export const homeCommand: Command = {
 
         switch (subCommand) {
             case "set": {
+                if (countHomes() >= MAX_HOMES) {
+                    player.sendMessage(`§o§c[Paradox] You have reached the maximum number of homes (${MAX_HOMES})!`);
+                    return;
+                }
                 const location = player.location; // Get the player's current location
                 const dimension = player.dimension.id; // Get the name of the player's current dimension
                 const existingHome = saveHomeLocation(homeName, location, dimension);
