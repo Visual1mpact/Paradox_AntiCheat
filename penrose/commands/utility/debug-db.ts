@@ -2,6 +2,7 @@ import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { OptimizedDatabase } from "../../classes/database/data-hive";
 import { MessageFormData } from "@minecraft/server-ui";
+import { openMainGui } from "../gui/form-generator";
 
 /**
  * Displays debug information about the database entries.
@@ -109,11 +110,17 @@ export const debugDBCommand: Command = {
             }
 
             // Create and show the form to the player
-            const form = new MessageFormData().title("           Database Debug Info").body(debugInfoText).button1("Close With This").button2("Close With That");
+            const form = new MessageFormData().title("           Database Debug Info").body(debugInfoText).button1("Close").button2("Back");
 
             form.show(sender).then((response) => {
-                if (response.cancelationReason === "UserBusy") {
-                    showDebugForm(sender);
+                if (response.canceled) {
+                    if (response.cancelationReason === "UserBusy") {
+                        showDebugForm(sender);
+                    }
+                    return;
+                }
+                if (response.selection === 1) {
+                    openMainGui(sender);
                 }
             });
         };

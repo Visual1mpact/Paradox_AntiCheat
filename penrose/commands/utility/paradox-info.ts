@@ -2,6 +2,7 @@ import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { MessageFormData } from "@minecraft/server-ui";
 import { paradoxVersion } from "../../data/versioning";
+import { openMainGui } from "../gui/form-generator";
 
 /**
  * Displays Paradox AntiCheat info in a GUI-friendly form.
@@ -71,13 +72,18 @@ export const paradoxInfoCommand: Command = {
                 "§2============================";
 
             // Create and show the form to the player
-            const form = new MessageFormData().title("                Paradox Info").body(infoText).button1("Close With This").button2("Close With That");
+            const form = new MessageFormData().title("                Paradox Info").body(infoText).button1("Close").button2("Back");
 
             form.show(sender)
                 .then((response) => {
-                    if (response.cancelationReason === "UserBusy") {
-                        // Retry automatically if player is busy
-                        showInfoForm(sender);
+                    if (response.canceled) {
+                        if (response.cancelationReason === "UserBusy") {
+                            showInfoForm(sender);
+                        }
+                        return;
+                    }
+                    if (response.selection === 1) {
+                        openMainGui(sender);
                     }
                 })
                 .catch((err) => console.error(err));
