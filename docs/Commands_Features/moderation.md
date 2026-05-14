@@ -2,18 +2,18 @@
 
 ?> This documentation could change with any version. Be sure to check it periodically for updates.
 
-## !allowlist
+## :allowlist
 ### At A Glance
-The `!allowlist` command allows administrators to manage a list of players who are permitted to join the server. Players on the allowlist bypass certain automated protections and can be explicitly permitted to connect.
+The `:allowlist` command allows administrators to manage a list of players who are permitted to join the server. Players on the allowlist bypass certain automated protections and can be explicitly permitted to connect.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!allowlist <add|remove|list|disable> <player>"  
-> Example: !allowlist add Steve  
-> Example: !allowlist remove Steve  
-> Example: !allowlist list  
-> Example: !allowlist disable  
+> Usage: ":allowlist <add|remove|list|disable> <player>"  
+> Example: :allowlist add Steve  
+> Example: :allowlist remove Steve  
+> Example: :allowlist list  
+> Example: :allowlist disable  
 
 
 ### **Options**
@@ -36,16 +36,16 @@ The `!allowlist` command allows administrators to manage a list of players who a
   - Disabling or clearing the allowlist.
 - Input player names are sanitized to remove `@` symbols automatically.
 
-## !ban
+## :ban
 ### At A Glance
-The `!ban` command is used to ban a player from the server, with an optional reason. It can also list all currently banned players. This command is vital for maintaining server security and enforcing rules.
+The `:ban` command is used to ban a player from the server, with an optional reason. It can also list all currently banned players. This command is vital for maintaining server security and enforcing rules.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!ban [ -t | --target <player> ] [ -r | --reason <reason> ] [ -l | --list ]"  
-> Example: !ban -t Steve Bob -r Inappropriate Behavior  
-> Example: !ban -l  
+> Usage: ":ban [ -t | --target <player> ] [ -r | --reason <reason> ] [ -l | --list ]"  
+> Example: :ban -t Steve Bob -r Inappropriate Behavior  
+> Example: :ban -l  
 
 
 ### **Options**
@@ -64,24 +64,24 @@ The `!ban` command is used to ban a player from the server, with an optional rea
 
 ### **Examples**
 - Ban a single player with a reason:  
-  `!ban -t Steve -r Griefing`  
+  `:ban -t Steve -r Griefing`  
 
 - Ban multiple players at once:  
-  `!ban -t "Steve Bob" -r Inappropriate Behavior`  
+  `:ban -t "Steve Bob" -r Inappropriate Behavior`  
 
 - List all banned players:  
-  `!ban -l`
+  `:ban -l`
 
-## !command
+## :command
 ### At A Glance
-The `!command` command enables or disables other commands dynamically. This allows administrators to manage active commands without restarting the server.
+The `:command` command enables or disables other commands dynamically. This allows administrators to manage active commands without restarting the server.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!command [ enable | disable ] <commandName1> [commandName2] ..."  
-> Example: !command disable kick ban  
-> Example: !command enable kick ban  
+> Usage: ":command [ enable | disable ] <commandName1> [commandName2] ..."  
+> Example: :command disable kick ban  
+> Example: :command enable kick ban  
 
 
 ### **Options**
@@ -90,19 +90,19 @@ The `!command` command enables or disables other commands dynamically. This allo
 - `<commandName(s)>`: Specifies the commands to enable or disable, space-separated.
 
 ### **Notes**
-- The `!command` command itself cannot be disabled.
+- The `:command` command itself cannot be disabled.
 - Use the `disable` option with caution to avoid disabling critical commands.
 - The command registry updates dynamically, reflecting real-time changes.
 
-## !deop
+## :deop
 ### At A Glance
-The `!deop` command revokes **Paradox-Op (Level-4)** permissions from a player, reducing their security clearance to **Level 1**. This allows administrators to manage who has full administrative access on the server.
+The `:deop` command revokes **Paradox-Op (Level-4)** permissions from a player, reducing their security clearance to **Level 1**. This allows administrators to manage who has full administrative access on the server.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!deop <player>"  
-> Example: !deop Peye9xi  
+> Usage: ":deop <player>"  
+> Example: :deop Pete9xi  
 
 
 ### **Behavior & Notes**
@@ -118,17 +118,17 @@ The `!deop` command revokes **Paradox-Op (Level-4)** permissions from a player, 
 - **Input Sanitization:** Player names are automatically cleaned to remove `@` symbols.
 - **Use Cases:** This command is useful for revoking full administrative privileges, especially when an administrator should no longer have high-level access.
 
-## !despawn
+## :despawn
 ### At A Glance
-The `!despawn` command removes entities from the world, either **all entities** or a **specific entity type**, helping to manage entity populations and improve server performance.
+The `:despawn` command removes entities from the world, either **all entities** or a **specific entity type**, helping to manage entity populations and improve server performance.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!despawn <entity_type | all>"  
-> Example: !despawn all  
-> Example: !despawn iron_golem  
-> Example: !despawn help  
+> Usage: ":despawn <entity_type | all>"  
+> Example: :despawn all  
+> Example: :despawn iron_golem  
+> Example: :despawn help  
 
 
 ### **Behavior & Notes**
@@ -140,15 +140,15 @@ The `!despawn` command removes entities from the world, either **all entities** 
 - **Reporting:** The command reports the **type and count** of entities that were successfully removed.  
 - **Input Sanitization:** Player-supplied entity type names are cleaned of `@` symbols.
 
-## !freeze
+## :freeze
 ### At A Glance
-The `!freeze` command allows administrators to **lock a player in place** by imprisoning them in a temporary structure and applying status effects. This is useful for investigating potential issues, controlling disruptive players, or handling suspicious activity. The command acts as a **toggle**, allowing the player to be released later.
+The `:freeze` command allows administrators to **lock a player in place** by imprisoning them in a temporary structure and applying status effects. This is useful for investigating potential issues, controlling disruptive players, or handling suspicious activity. The command acts as a **toggle**, allowing the player to be released later.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!freeze <player>"  
-> Example: !freeze Pete9xi  
+> Usage: ":freeze <player>"  
+> Example: :freeze Pete9xi  
 
 
 ### **Behavior & Notes**
@@ -170,16 +170,40 @@ The `!freeze` command allows administrators to **lock a player in place** by imp
   - Only the executing administrator can freeze/unfreeze players.  
   - Player name input is sanitized by removing `@` characters.
 
-## !kick
+## :guiitem
 ### At A Glance
-The `!kick` command removes a player from the server, optionally providing a reason. It is useful for addressing disruptive behavior or enforcing server rules.
+The `:guiitem` command allows administrators to set or clear a specific item used to open the Paradox GUI. When a player uses (right-clicks or long-presses) the configured item, the administrative GUI will open.
+
+?> Required Clearance Level To Execute: `4`
+
+### **How It Works**
+- **Set Item:** Define a specific Minecraft item ID (e.g., `minecraft:compass`) to trigger the GUI.
+- **Clear Item:** Disable the item-based GUI trigger.
+- **Usage:** Once set, any player holding and using the item will trigger the GUI opening process.
+
+> Usage: ":guiitem [itemId | clear]"
+> Example: :guiitem minecraft:compass
+> Example: :guiitem clear
+
+### **Actions**
+1. **Set Trigger Item** – Configure the item ID.
+2. **Clear Trigger Item** – Remove the item-based trigger.
+
+### **Notes**
+- The item ID must include a valid namespace (e.g., `minecraft:`).
+- Standard Bedrock item IDs use lowercase.
+- This trigger is active for any player using the item, though the GUI itself remains protected by security clearance.
+
+## :kick
+### At A Glance
+The `:kick` command removes a player from the server, optionally providing a reason. It is useful for addressing disruptive behavior or enforcing server rules.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!kick [ -t | --target <player> ] [ -r | --reason <reason> ]"  
-> Example: !kick -t Pete9xi -r Spamming Chat!  
-> Example: !kick --target "Some Player" --reason "Griefing"  
+> Usage: ":kick [ -t | --target <player> ] [ -r | --reason <reason> ]"  
+> Example: :kick -t Pete9xi -r Spamming Chat
+> Example: :kick --target "Some Player" --reason "Griefing"  
 
 
 ### **Behavior & Notes**
@@ -196,15 +220,15 @@ The `!kick` command removes a player from the server, optionally providing a rea
 - **Message Feedback:**  
   - Confirms to the administrator whether the player was successfully kicked.
 
-## !gui
+## :gui
 ### At A Glance
-The `!gui` command opens an interactive administrative menu for the player, filtered according to their security clearance. It simplifies server management by providing a visual interface for commands, actions, and dynamic input forms.
+The `:gui` command opens an interactive administrative menu for the player, filtered according to their security clearance. It simplifies server management by providing a visual interface for commands, actions, and dynamic input forms.
 
 ?> Required Clearance Level To Execute: `1`
 
 
-> Usage: "!gui"  
-> Example: !gui  
+> Usage: ":gui"  
+> Example: :gui  
 
 
 ### **Behavior & Notes**
@@ -225,15 +249,15 @@ The `!gui` command opens an interactive administrative menu for the player, filt
   - "Back" buttons are provided to return to previous menus.
   - Canceled or busy interactions reopen the main menu.
 
-## !lockdown
+## :lockdown
 ### At A Glance
-The `!lockdown` command toggles server lockdown, preventing players without a security clearance of 4 from joining. It is useful during maintenance or security incidents.
+The `:lockdown` command toggles server lockdown, preventing players without a security clearance of 4 from joining. It is useful during maintenance or security incidents.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!lockdown [optional]"  
-> Example: !lockdown  
+> Usage: ":lockdown [optional]"  
+> Example: :lockdown  
 
 
 ### **Behavior & Notes**
@@ -246,19 +270,19 @@ The `!lockdown` command toggles server lockdown, preventing players without a se
   - Unsubscribes the monitor function from the `playerSpawn` event.
   - Sends a confirmation message to the executor.
 - **Kick Reason:**  
-  - Players are informed: `"Under Maintenance! Sorry for the inconvenience."`
+  - Players are informed: `"Under Maintenance: Sorry for the inconvenience."`
 - **Security Check:**  
   - Only players with `securityClearance === 4` are allowed to remain or join during lockdown.
 
-## !modules
+## :modules
 ### At A Glance
-The `!modules` command displays the status of all registered modules, including whether they are enabled or disabled, and lists the specific settings for each module.
+The `:modules` command displays the status of all registered modules, including whether they are enabled or disabled, and lists the specific settings for each module.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!modules [optional]"  
-> Example: !modules  
+> Usage: ":modules [optional]"  
+> Example: :modules  
 
 
 ### **Behavior & Notes**
@@ -278,9 +302,9 @@ The `!modules` command displays the status of all registered modules, including 
     │ └─KickOnIdle: true
     └─AutoClicker: DISABLED
     
-## !mute
+## :mute
 ### At A Glance
-The `!mute` command allows administrators to toggle a player's ability to send chat messages. This is a crucial tool for managing disruptive chat behavior without resorting to more severe actions like kicking or banning. Muted players can still execute commands but are prevented from sending public chat messages.
+The `:mute` command allows administrators to toggle a player's ability to send chat messages. This is a crucial tool for managing disruptive chat behavior without resorting to more severe actions like kicking or banning. Muted players can still execute commands but are prevented from sending public chat messages.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -293,8 +317,8 @@ The `!mute` command allows administrators to toggle a player's ability to send c
 
 ### **Behavior & Notes**
 - **Toggle Functionality:**
-  - Executing `!mute` on a player who is not currently muted will mute them.
-  - Executing `!mute` on a player who is already muted will unmute them.
+  - Executing `:mute` on a player who is not currently muted will mute them.
+  - Executing `:mute` on a player who is already muted will unmute them.
 - **Chat Restriction:**
   - Muted players will have their chat messages cancelled and will receive a notification that they are muted when they attempt to speak.
   - They can still use commands.
@@ -311,55 +335,55 @@ The `!mute` command allows administrators to toggle a player's ability to send c
 
 ### **Examples**
 - Mute a player:
-  `!mute PlayerName`
+  `:mute PlayerName`
 - Unmute a player:
-  `!mute PlayerName`
+  `:mute PlayerName`
 - Mute a player with spaces in their name:
-  `!mute "Another Player"`
+  `:mute "Another Player"`
 
-## !op
+## :op
 ### At A Glance
-The `!op` command manages **Paradox Level-4 Security Clearance**, granting administrative privileges within the Paradox security system.
+The `:op` command manages **Paradox Level-4 Security Clearance**, granting administrative privileges within the Paradox security system.
 
 ?> Required Clearance Level To Execute: `4`
 
 ### Initial Setup and Security
 When Paradox is first installed, no host exists.  
-The **first player with server operator privileges** who executes `!op` initializes the Paradox system and becomes the **Paradox Host**.
+The **first player with server operator privileges** who executes `:op` initializes the Paradox system and becomes the **Paradox Host**.
 
-If a player without server operator privileges attempts to run `!op` before a host exists, the command will be denied.
+If a player without server operator privileges attempts to run `:op` before a host exists, the command will be denied.
 
 Once the host is established, **only the host can grant additional Level-4 administrators**.
 
 ### Security Clearance Levels
 - **Level 4**: Paradox-Op status, granting full administrative control.
 
-### `!op`
-Running `!op` without arguments attempts to grant **Level-4 security clearance to yourself**.
+### `:op`
+Running `:op` without arguments attempts to grant **Level-4 security clearance to yourself**.
 
 If no host exists yet, and the executing player has **server operator privileges**, they will become the **Paradox Host**.
 
 
-> Usage: "!op"  
-> Example: !op  
+> Usage: ":op"  
+> Example: :op  
 
 
-### `!op <player>`
+### `:op <player>`
 Grants Level-4 Paradox security clearance to the specified player.
 
 ?> Only the **Paradox Host** may grant additional Level-4 administrators.
 
 
-> Usage: "!op <player>"  
-> Example: !op Pete9xi  
+> Usage: ":op <player>"  
+> Example: :op Pete9xi  
 
 
-### `!op list`
+### `:op list`
 Displays all players who currently have **Level-4 Paradox security clearance**, including the current host.
 
 
-> Usage: "!op list"  
-> Example: !op list  
+> Usage: ":op list"  
+> Example: :op list  
 
 
 ### Notes
@@ -368,9 +392,9 @@ Displays all players who currently have **Level-4 Paradox security clearance**, 
 - Player names may contain spaces and may be quoted when necessary.
 - Level-4 administrators are stored using their **player runtime IDs** to prevent impersonation.
 
-## !opsec
+## :opsec
 ### At A Glance
-The `!opsec` command allows administrators to modify a player's security clearance level, adjusting their permissions and access rights.
+The `:opsec` command allows administrators to modify a player's security clearance level, adjusting their permissions and access rights.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -381,21 +405,21 @@ The `!opsec` command allows administrators to modify a player's security clearan
 - **Level 4**: Paradox-Op status (full administrative privileges).
 
 
-> Usage: "!opsec <player> <clearance>"  
-> Example: !opsec tim123 3  
+> Usage: ":opsec <player> <clearance>"  
+> Example: :opsec tim123 3  
 
 
-## !prefix
+## :prefix
 ### At A Glance
-The `!prefix` command allows administrators to change the command prefix used on the server. This prefix is what players type before any command to execute it.
+The `:prefix` command allows administrators to change the command prefix used on the server. This prefix is what players type before any command to execute it.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!prefix [new_prefix]"  
-> Example: !prefix @@  
-> Example: !prefix $  
-> Example: !prefix !!  
+> Usage: ":prefix [new_prefix]"  
+> Example: :prefix @@  
+> Example: :prefix $  
+> Example: :prefix ::  
 
 
 ### **Behavior & Rules**
@@ -409,24 +433,24 @@ The `!prefix` command allows administrators to change the command prefix used on
   - If invalid characters: `Prefix cannot include the forward slash or section sign characters.`
   - If no prefix provided: `No new prefix provided.`
 
-## !punish
+## :punish
 ### At A Glance
-The `!punish` command removes items from a player’s inventory, equipment, and/or ender chest. This command acts as a disciplinary tool for administrators to enforce rules or correct behavior.
+The `:punish` command removes items from a player’s inventory, equipment, and/or ender chest. This command acts as a disciplinary tool for administrators to enforce rules or correct behavior.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!punish <player> [ --inventory | -i ] [ --equipment | -e ] [ --enderchest | -ec ]"  
-> Example: !punish PlayerName  
-> Example: !punish "Player Name" --inventory  
-> Example: !punish PlayerName -i  
-> Example: !punish PlayerName --equipment  
-> Example: !punish PlayerName -e  
-> Example: !punish PlayerName --enderchest  
-> Example: !punish PlayerName -ec  
-> Example: !punish "Player Name" --inventory --equipment --enderchest  
-> Example: !punish "Player Name" -i -e -ec  
-> Example: !punish help  
+> Usage: ":punish <player> [ --inventory | -i ] [ --equipment | -e ] [ --enderchest | -ec ]"  
+> Example: :punish PlayerName  
+> Example: :punish "Player Name" --inventory  
+> Example: :punish PlayerName -i  
+> Example: :punish PlayerName --equipment  
+> Example: :punish PlayerName -e  
+> Example: :punish PlayerName --enderchest  
+> Example: :punish PlayerName -ec  
+> Example: :punish "Player Name" --inventory --equipment --enderchest  
+> Example: :punish "Player Name" -i -e -ec  
+> Example: :punish help  
 
 
 ### **Behavior & Rules**
@@ -442,17 +466,17 @@ The `!punish` command removes items from a player’s inventory, equipment, and/
   - Success: `Punished "<PlayerName>"!`  
   - Failure: `Failed to punish "<PlayerName>"! Please try again.`
 
-## !rename
+## :rename
 ### At A Glance
-The `!rename` command allows administrators to assign a custom alias to a player. This alias overrides the player's name in chat and can optionally be displayed in their overhead nametag.
+The `:rename` command allows administrators to assign a custom alias to a player. This alias overrides the player's name in chat and can optionally be displayed in their overhead nametag.
 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!rename <player> <newName> [--ui | -u] [--reset]"  
-> Example: !rename Steve CaptainSteve --ui  
-> Example: !rename Steve OrdinarySteve  
-> Example: !rename Steve --reset  
+> Usage: ":rename <player> <newName> [--ui | -u] [--reset]"  
+> Example: :rename Steve CaptainSteve --ui  
+> Example: :rename Steve OrdinarySteve  
+> Example: :rename Steve --reset  
 
 
 ### **Options**
@@ -468,15 +492,15 @@ The `!rename` command allows administrators to assign a custom alias to a player
 - **Administrative Control**: Only Level 4 administrators can modify player identities to prevent abuse.
 - **Identity Integrity**: Internal moderation logs and spoof checks continue to track the player's unique ID, ensuring accountability even when an alias is active.
 
-## !spooflog
+## :spooflog
 ### At A Glance
-The `!spooflog` command allows administrators to **inspect or clear player spoofing records** stored by the Paradox identity monitoring system.
+The `:spooflog` command allows administrators to **inspect or clear player spoofing records** stored by the Paradox identity monitoring system.
 
 These records help detect players attempting to **impersonate others by using similar or identical names**.
 
 ?> Required Clearance Level To Execute: `4`
 
-### `!spooflog <playerName|id>`
+### `:spooflog <playerName|id>`
 Displays stored spoofing information for a player.
 
 The search can match:
@@ -485,27 +509,27 @@ The search can match:
 - Stored player ID
 
 
-> Usage: "!spooflog <playerName|id>"  
-> Example: !spooflog Bob  
-> Example: !spooflog "Some Player"  
+> Usage: ":spooflog <playerName|id>"  
+> Example: :spooflog Bob  
+> Example: :spooflog "Some Player"  
 
 
-### `!spooflog <playerName|id> --clear`
+### `:spooflog <playerName|id> --clear`
 Clears the spoofing record associated with the specified player.
 
 
-> Usage: "!spooflog <playerName|id> --clear"  
-> Example: !spooflog Bob --clear  
+> Usage: ":spooflog <playerName|id> --clear"  
+> Example: :spooflog Bob --clear  
 
 
-### `!spooflog --clearall`
+### `:spooflog --clearall`
 Removes **all stored spoofing records** from the database.
 
 ?> This action cannot be undone.
 
 
-> Usage: "!spooflog --clearall"  
-> Example: !spooflog --clearall  
+> Usage: ":spooflog --clearall"  
+> Example: :spooflog --clearall  
 
 
 ### Information Displayed
@@ -523,16 +547,16 @@ When viewing a spoof record, the command will display:
 - Alias matches are also considered when searching.
 - Spoof logs are stored internally in the Paradox spoof database.
 
-## !tpa
+## :tpa
 ### At A Glance
-The `!tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.
+The `:tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!tpa <player> <player>"  
-> Example: !tpa Lucy Steve  
-> Example: !tpa @Steve @Lucy  
+> Usage: ":tpa <player> <player>"  
+> Example: :tpa Lucy Steve  
+> Example: :tpa @Steve @Lucy  
 
 
 ### **Behavior & Rules**
@@ -549,16 +573,16 @@ The `!tpa` command allows players to teleport to one another, streamlining coord
   - Failure: `Unable to teleport. Please try again.`
   - Invalid player: `Player '<PlayerName>' not found or not valid.`
 
-## !unban
+## :unban
 ### At A Glance
-The `!unban` command lifts a ban from a player, allowing them to rejoin the server. Supports both local and global bans.
+The `:unban` command lifts a ban from a player, allowing them to rejoin the server. Supports both local and global bans.
 
 ?> Required Clearance Level To Execute: `3`
 
 
-> Usage: "!unban <player> [ --global | -g ]"  
-> Example: !unban Steve  
-> Example: !unban Steve --global  
+> Usage: ":unban <player> [ --global | -g ]"  
+> Example: :unban Steve  
+> Example: :unban Steve --global  
 
 
 ### **Behavior & Rules**
@@ -576,9 +600,9 @@ The `!unban` command lifts a ban from a player, allowing them to rejoin the serv
   - Invalid input: `Please provide a valid player name.`
   - Retrieval errors: `Failed to retrieve the ban list. Please contact an admin.`
 
-## !vanish
+## :vanish
 ### At A Glance
-The `!vanish` command allows a player to become invisible, enabling them to monitor the server discreetly.
+The `:vanish` command allows a player to become invisible, enabling them to monitor the server discreetly.
 
 ?> Required Clearance Level To Execute: `2`
 
@@ -588,10 +612,10 @@ The `!vanish` command allows a player to become invisible, enabling them to moni
 - Can be applied to yourself or another player (with proper clearance).
 
 
-> Usage: "!vanish <player>"  
-> Example: !vanish Pete9xi  
-> Example: !vanish "Player Name"  
-> Example: !vanish  
+> Usage: ":vanish <player>"  
+> Example: :vanish Pete9xi  
+> Example: :vanish "Player Name"  
+> Example: :vanish  
 
 
 ### **Behavior & Rules**
@@ -607,14 +631,14 @@ The `!vanish` command allows a player to become invisible, enabling them to moni
   - Success (disabled): `Vanish disabled!`
   - Failure (player not found): `Player "<PlayerName>" not found.`
 
-## !warn
+## :warn
 ### At A Glance
-The `!warn` command is used to track player infractions. It serves as a middle ground between verbal warnings and formal bans.
+The `:warn` command is used to track player infractions. It serves as a middle ground between verbal warnings and formal bans.
 
 ?> Required Clearance Level To Execute: `3` (Level 4 to clear)
 
-> Usage: "!warn <add|list|clear> <player> [reason]"
-> Example: `!warn add Steve Spamming`
+> Usage: ":warn <add|list|clear> <player> [reason]"
+> Example: `:warn add Steve Spamming`
 
 ### **Behavior & Notes**
 - **Automated Escalation:** 
@@ -632,9 +656,9 @@ The `!warn` command is used to track player infractions. It serves as a middle g
 2. **list** – Displays the history of warnings for the specified player.
 3. **clear** – Deletes all warnings for the player.
 
-## !whitelist
+## :whitelist
 ### At A Glance
-The `!whitelist` command allows administrators to manage the server whitelist by adding or removing players, or viewing all whitelisted players.
+The `:whitelist` command allows administrators to manage the server whitelist by adding or removing players, or viewing all whitelisted players.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -645,10 +669,10 @@ The `!whitelist` command allows administrators to manage the server whitelist by
 - Works with bots (like ThirdEye on Discord) if explicitly whitelisted.
 
 
-> Usage: "!whitelist <add|remove|list> <player>"  
-> Example: !whitelist add Pete9xi  
-> Example: !whitelist remove Pete9xi  
-> Example: !whitelist list  
+> Usage: ":whitelist <add|remove|list> <player>"  
+> Example: :whitelist add Pete9xi  
+> Example: :whitelist remove Pete9xi  
+> Example: :whitelist list  
 
 
 ### **Actions**

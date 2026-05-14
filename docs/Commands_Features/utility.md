@@ -2,9 +2,9 @@
 
 ?> This documentation could change with any version. Be sure to check it periodically.
 
-## !channels
+## :channels
 ### At A Glance
-The `!channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.
+The `:channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.
 
 ?> Required Clearance Level To Execute: `1`
 
@@ -18,13 +18,13 @@ The `!channels` command allows players to manage private chat channels. Players 
 - All changes notify relevant players to ensure smooth communication.
 
 
-> Usage: "!channel <create | join | invite | leave | transfer | help>"
-> Example: !channel create --room myTeam
-> Example: !channel join --room myTeam
-> Example: !channel invite --room myTeam --target Visual1mpact
-> Example: !channel leave
-> Example: !channel transfer --room myTeam --target Visual1mpact
-> Example: !channel help
+> Usage: ":channel <create | join | invite | leave | transfer | help>"
+> Example: :channel create --room myTeam
+> Example: :channel join --room myTeam
+> Example: :channel invite --room myTeam --target Visual1mpact
+> Example: :channel leave
+> Example: :channel transfer --room myTeam --target Visual1mpact
+> Example: :channel help
 
 
 ### **Actions**
@@ -41,9 +41,9 @@ The `!channels` command allows players to manage private chat channels. Players 
 - Invitations are automatically canceled if the invited player does not respond in time.
 - Dynamic updates ensure all members are informed of joins, leaves, and ownership changes.
 
-## !debugdb
+## :debugdb
 ### At A Glance
-The `!debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
+The `:debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
 
 - List of database names
 - Individual entry pointers
@@ -77,12 +77,12 @@ The `!debugdb` command allows admins to inspect all initialized database entries
 
 ### Usage
 
-> !debugdb
+> :debugdb
 
 
 ### Examples
 
-> !debugdb
+> :debugdb
 
 
 ### Notes
@@ -91,9 +91,9 @@ The `!debugdb` command allows admins to inspect all initialized database entries
 - Large databases may result in truncated output in the form for readability and performance.
 - Useful for checking database sizes, pointer structure, and detecting chunked entries.
 
-## !doublejump
+## :doublejump
 ### At A Glance
-The `!doublejump` command toggles a utility that allows players to perform an additional jump while in mid-air. This feature is designed for high performance and includes safety checks to prevent fall damage associated with its use.
+The `:doublejump` command toggles a utility that allows players to perform an additional jump while in mid-air. This feature is designed for high performance and includes safety checks to prevent fall damage associated with its use.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -105,17 +105,17 @@ The `!doublejump` command toggles a utility that allows players to perform an ad
 - **Fall Damage Protection:** To ensure a smooth experience, the utility automatically cancels fall damage if it was caused by a double jump.
 - **Persistence:** The enabled state is saved and will persist across server restarts.
 
-> Usage: "!doublejump"  
-> Example: !doublejump  
+> Usage: ":doublejump"  
+> Example: :doublejump  
 
 ### **Notes**
 - **Performance:** Uses a generator-based ground check system to minimize impact on server ticks.
 - **Staff Control:** Only administrators with Level 4 security clearance can enable or disable this feature globally.
 - **GUI Integration:** The toggle is available in the Paradox GUI menu for easy access.
 
-## !home
+## :home
 ### At A Glance
-The `!home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
+The `:home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
 
 ?> Required Clearance Level To Execute: `1`  
 
@@ -127,14 +127,14 @@ The `!home` command allows players to manage personal locations. Players can sav
 - Homes are **encrypted** per player for security.
 - Maximum of **5 homes per player**.
 
-?> Note: Players cannot use `!home` while imprisoned.  
+?> Note: Players cannot use `:home` while imprisoned.  
 
-> Usage: "!home <set | delete | teleport | list | help> [homeName]"  
-> Example: !home set MyHome  
-> Example: !home delete MyHome  
-> Example: !home teleport MyHome  
-> Example: !home list  
-> Example: !home help  
+> Usage: ":home <set | delete | teleport | list | help> [homeName]"  
+> Example: :home set MyHome  
+> Example: :home delete MyHome  
+> Example: :home teleport MyHome  
+> Example: :home list  
+> Example: :home help  
 
 ### **Notes**
 - Home names are **case-sensitive**.
@@ -142,9 +142,9 @@ The `!home` command allows players to manage personal locations. Players can sav
 - If the maximum number of homes is reached, players must delete an existing home before adding a new one.
 - All saved locations are secured via per-player encryption to prevent tampering.
 
-## !invclone
+## :invclone
 ### At A Glance
-The `!invclone` command allows admins to clone a player's entire inventory or ender chest into chests placed in the world for inspection, or to remove previously cloned chests.
+The `:invclone` command allows admins to clone a player's entire inventory or ender chest into chests placed in the world for inspection, or to remove previously cloned chests.
 
 - **Clone a player's inventory or ender chest:** Creates chests near the executor, filling them with the target player's items. Each item has a lore tag indicating its source.
 - **Remove cloned chests:** Deletes previously cloned chests within a nearby area.
@@ -165,15 +165,15 @@ The `!invclone` command allows admins to clone a player's entire inventory or en
 
 ### Usage
 
-> !invclone <player> [--enderchest | -ec] - Clone the specified player's inventory or ender chest into chests  
-> !invclone remove      - Remove all nearby cloned inventory chests  
+> :invclone <player> [--enderchest | -ec] - Clone the specified player's inventory or ender chest into chests  
+> :invclone remove      - Remove all nearby cloned inventory chests  
 
 
 ### Examples
 
-> !invclone Pete9xi  
-> !invclone Pete9xi --enderchest  
-> !invclone remove  
+> :invclone Pete9xi  
+> :invclone Pete9xi --enderchest  
+> :invclone remove  
 
 
 ### Notes
@@ -183,9 +183,9 @@ The `!invclone` command allows admins to clone a player's entire inventory or en
 - Removing cloned chests only affects those created by this command.
 - The search radius for removal is approximately 20 blocks horizontally and 5 blocks vertically.
 
-## !invsee
+## :invsee
 ### At A Glance
-The `!invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
+The `:invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -198,10 +198,10 @@ The `!invsee` command allows players with sufficient clearance to view another p
 - Designed for monitoring or moderation purposes.
 
 
-> Usage: "!invsee <player> [--enderchest | -ec]"  
-> Example: !invsee PlayerName  
-> Example: !invsee PlayerName --enderchest  
-> Example: !invsee help  
+> Usage: ":invsee <player> [--enderchest | -ec]"  
+> Example: :invsee PlayerName  
+> Example: :invsee PlayerName --enderchest  
+> Example: :invsee help  
 
 
 ### **Notes**
@@ -209,9 +209,9 @@ The `!invsee` command allows players with sufficient clearance to view another p
 - Inventory components are retrieved securely; missing or invalid components will trigger an error.
 - Intended for **moderation** or **administrative oversight**.
 
-## !info
+## :info
 ### At A Glance
-The `!info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
+The `:info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
 
 ?> Required Clearance Level To Execute: `1`
 
@@ -226,17 +226,17 @@ The `!info` command displays a GUI-based overview of the **Paradox AntiCheat** p
 - The GUI **automatically retries** if the player is busy.
 - Players are prompted to **close their chat window** before the form is displayed.
 
-> Usage: "!info"  
-> Example: !info
+> Usage: ":info"  
+> Example: :info
 
 ### Notes
 - The command is **available to all players** (security clearance 1).
 - The displayed GUI is **read-only**; players cannot modify content through this form.
 - Designed for quick access to Paradox AC information without needing console access.
 
-## !pvp
+## :pvp
 ### At A Glance
-The `!pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
+The `:pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
 
 ?> Required Clearance Level To Execute: `4` (for global toggle)
 
@@ -247,11 +247,11 @@ The `!pvp` command allows players to control Player vs. Player (PvP) settings. P
 - **Cooldowns & Penalties:** Logging out during PvP cooldown triggers penalties, including inventory loss. Players are alerted when rejoining.
 
 
-> Usage: "!pvp [ global | status | help ]"  
-> Example: !pvp               (toggles PvP for yourself)  
-> Example: !pvp global        (toggles PvP for the server)  
-> Example: !pvp status        (shows PvP status)  
-> Example: !pvp help  
+> Usage: ":pvp [ global | status | help ]"  
+> Example: :pvp               (toggles PvP for yourself)  
+> Example: :pvp global        (toggles PvP for the server)  
+> Example: :pvp status        (shows PvP status)  
+> Example: :pvp help  
 
 
 ### Notes
@@ -260,33 +260,33 @@ The `!pvp` command allows players to control Player vs. Player (PvP) settings. P
 
 ---
 
-## !pvpCooldown
+## :pvpCooldown
 ### At A Glance
 Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown determines how long players must wait between PvP events.
 
 
-> Usage: "!pvpCooldown <time in seconds>"  
-> Example: !pvpCooldown 30  
+> Usage: ":pvpCooldown <time in seconds>"  
+> Example: :pvpCooldown 30  
 
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
 ---
 
-## !pvpToggleCooldown
+## :pvpToggleCooldown
 ### At A Glance
 Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. This prevents frequent switching.
 
 
-> Usage: "!pvpToggleCooldown <time in seconds>"  
-> Example: !pvpToggleCooldown 30  
+> Usage: ":pvpToggleCooldown <time in seconds>"  
+> Example: :pvpToggleCooldown 30  
 
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
-## !scripture
+## :scripture
 ### At A Glance
-The `!scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
+The `:scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -300,9 +300,9 @@ The `!scripture` command allows players to enable or disable receiving **scriptu
 
 ### Usage
 
-> !scripture -t <player> [-e | -d]  
-> Example: !scripture -t PlayerName -e  – Enable scripture mode for PlayerName  
-> Example: !scripture -t PlayerName -d  – Disable scripture mode for PlayerName  
+> :scripture -t <player> [-e | -d]  
+> Example: :scripture -t PlayerName -e  – Enable scripture mode for PlayerName  
+> Example: :scripture -t PlayerName -d  – Disable scripture mode for PlayerName  
 
 ### **Actions**
 1. **Enable Scripture** – Turns on scripture verse notifications and daily rewards for the target player.
@@ -321,9 +321,9 @@ The `!scripture` command allows players to enable or disable receiving **scriptu
 - Players can manually disable scripture mode at any time.
 - On server restart, the **interval automatically resumes**, applying only to players who have scripture mode enabled.
 
-## !setrank
+## :setrank
 ### At A Glance
-The `!setrank` command allows admins to manage chat ranks for players. You can:
+The `:setrank` command allows admins to manage chat ranks for players. You can:
 
 - Set a specific rank for a player.
 - Reset a player’s rank to default.
@@ -345,13 +345,13 @@ The command uses flags to determine the action:
 When executed, the command verifies the provided arguments and checks that the target player exists. Players and the command sender are notified when a rank is set or reset. If ranks are globally disabled, only users with clearance `4` can modify global rank settings.
 
 
-> Usage: "!setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]"  
-> Example: !setrank --target PlayerName --rank [Member]  
-> Example: !setrank -t PlayerName -r [Admin]  
-> Example: !setrank -t PlayerName --reset  
-> Example: !setrank --target PlayerName --reset  
-> Example: !setrank -d  
-> Example: !setrank -e  
+> Usage: ":setrank [ -t | --target <player> ] [ -r | --rank <rank> ] [ --reset ] [ -d | -e ]"  
+> Example: :setrank --target PlayerName --rank [Member]  
+> Example: :setrank -t PlayerName -r [Admin]  
+> Example: :setrank -t PlayerName --reset  
+> Example: :setrank --target PlayerName --reset  
+> Example: :setrank -d  
+> Example: :setrank -e  
 
 
 ### Notes
@@ -360,9 +360,9 @@ When executed, the command verifies the provided arguments and checks that the t
 - Global rank changes immediately affect all players.  
 - Players without clearance `4` cannot modify global rank settings if ranks are disabled.  
 
-## !tpr
+## :tpr
 ### At A Glance
-The `!tpr` command allows players to manage teleport requests:
+The `:tpr` command allows players to manage teleport requests:
 
 - Send a teleport request to another player.
 - Accept or deny incoming requests.
@@ -372,35 +372,35 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 ?> Required Clearance Level To Execute: `1`
 
 ### How It Works
-1. **Send a request** – Use `!tpr <player>` to request teleporting to another player.
-2. **Accept a request** – Use `!tpr accept` to accept a pending teleport request.
-3. **Deny a request** – Use `!tpr deny` to deny a pending teleport request.
+1. **Send a request** – Use `:tpr <player>` to request teleporting to another player.
+2. **Accept a request** – Use `:tpr accept` to accept a pending teleport request.
+3. **Deny a request** – Use `:tpr deny` to deny a pending teleport request.
 4. Requests automatically expire after 60 seconds if no response is given.
 5. Players cannot send requests to themselves.
 6. Players in prison cannot send teleport requests.
 
 ### Usage
 
-> !tpr <player>       - Send a teleport request to <player>  
-> !tpr accept         - Accept the pending teleport request  
-> !tpr deny           - Deny the pending teleport request  
-> !tpr help           - Show help for the teleport request system  
+> :tpr <player>       - Send a teleport request to <player>  
+> :tpr accept         - Accept the pending teleport request  
+> :tpr deny           - Deny the pending teleport request  
+> :tpr help           - Show help for the teleport request system  
 
 
 ### Examples
 
-> !tpr Lucy  
-> !tpr Steve  
-> !tpr accept  
-> !tpr deny  
+> :tpr Lucy  
+> :tpr Steve  
+> :tpr accept  
+> :tpr deny  
 
 ### Notes
 - Only one teleport request can be pending for a player at a time.
 - Players receive messages about the status of their requests (sent, accepted, denied, or timed out).
 
-## !tps
+## :tps
 ### At A Glance
-The `!tps` command toggles a real-time, on-screen performance monitor. It allows administrators to track the server's Ticks Per Second (TPS) and overall health status directly on their HUD without opening menus or checking logs.
+The `:tps` command toggles a real-time, on-screen performance monitor. It allows administrators to track the server's Ticks Per Second (TPS) and overall health status directly on their HUD without opening menus or checking logs.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -415,18 +415,18 @@ The `!tps` command toggles a real-time, on-screen performance monitor. It allows
 - **Toggle Mechanism:** Running the command once enables the monitor; running it again disables it.
 - **Persistence:** The monitor remains active until the player toggles it off or leaves the server.
 
-> Usage: "!tps"  
-> Example: !tps  
+> Usage: ":tps"  
+> Example: :tps  
 
 ### **Notes**
 - **Anti-Cheat Correlation:** This tool is vital for moderators. If a player is flagged for "Reach" or "NoClip" while the TPS is in the <span class="tps-struggling">Struggling</span> or <span class="tps-critical">Critical</span> range, the detection should be treated with caution.
 - **Non-Intrusive:** The HUD uses a 0-tick fade-in to ensure the text remains static and readable without flickering during updates.
 - **Automatic Cleanup:** To prevent memory leaks, the system automatically stops monitoring for any player who disconnects or crashes.
-- **GUI Integration:** The monitor can also be toggled via the `!gui` menu under the Utility category.
+- **GUI Integration:** The monitor can also be toggled via the `:gui` menu under the Utility category.
 
-## !transfer
+## :transfer
 ### At A Glance
-The `!transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
+The `:transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
 
 ?> Required Clearance Level To Execute: `1`
 
@@ -438,9 +438,9 @@ The `!transfer` command allows players to connect to another **Minecraft Bedrock
 - If executed on platforms that do not support server transfers (such as **Realms**), the command safely disables itself.
 - Provides feedback if the connection fails or input is invalid.
 
-> Usage: "!transfer -h <hostname> -p <port>"  
-> Example: !transfer -h play.example.com -p 19132  
-> Example: !transfer -h 25.777.25.777 -p 25806  
+> Usage: ":transfer -h <hostname> -p <port>"  
+> Example: :transfer -h play.example.com -p 19132  
+> Example: :transfer -h 25.777.25.777 -p 25806  
 
 
 ### GUI Integration

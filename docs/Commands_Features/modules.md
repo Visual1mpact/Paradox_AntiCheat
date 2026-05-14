@@ -2,7 +2,7 @@
 
 ?> This documentation could change with any version. So be sure to check it once in a while.
 
-## !afk
+## :afk
 ### At A Glance
 The `AFK` command toggles the AFK management module, which automatically tracks player activity and kicks inactive players after a specified timeout. This helps maintain active player engagement and prevents inactive accounts from taking up server slots.
 
@@ -21,10 +21,10 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!afk [ hours ] [ minutes ] [ seconds ]"  
-> Example: !afk 0 10 0  
+> Usage: ":afk [ hours ] [ minutes ] [ seconds ]"  
+> Example: :afk 0 10 0  
 
-## !anticrash
+## :anticrash
 ### At A Glance
 The `anticrash` command toggles a specialized defense module that monitors for packet-based exploits intended to crash the server.
 
@@ -35,17 +35,17 @@ The `anticrash` command toggles a specialized defense module that monitors for p
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: "!anticrash"
-> Example: !anticrash
+> Usage: ":anticrash"
+> Example: :anticrash
 
-## !aimbotmonitor
+## :aimbotmonitor
 ### At A Glance
-The `!aimbotmonitor` command toggles a detection module that analyzes player rotation patterns to identify external aim-assist and smoothing software.
+The `:aimbotmonitor` command toggles a detection module that analyzes player rotation patterns to identify external aim-assist and smoothing software.
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: "!aimbotmonitor"
-> Example: !aimbotmonitor
+> Usage: ":aimbotmonitor"
+> Example: :aimbotmonitor
 
 ### **Behavior & Notes**
 - **Signature Detection:** Identifies the mathematical consistency produced by external smoothing loops (like those using `SendInput`).
@@ -53,7 +53,7 @@ The `!aimbotmonitor` command toggles a detection module that analyzes player rot
 - **Heuristic Strikes:** Uses a strike system to avoid false positives from erratic human movement.
 - **Logging:** Alerts administrators when a player exhibits suspicious rotation signatures.
 
-## !antifly
+## :antifly
 ### At A Glance
 The `antifly` command toggles the Anti-Fly detection module, which monitors player movement to detect and prevent unauthorized flying. By enabling this module, server administrators can maintain fair gameplay and prevent exploits that allow players to fly in Survival or Adventure modes without proper permissions.
 
@@ -68,11 +68,11 @@ The `antifly` command toggles the Anti-Fly detection module, which monitors play
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!antifly [ help ]"  
-> Example: !antifly  
+> Usage: ":antifly [ help ]"  
+> Example: :antifly  
 
 
-## !antispam
+## :antispam
 ### At A Glance
 Toggles the chat spam detection module, which monitors players sending too many messages in a short period.  
 This helps prevent chat flooding, bot spam, and ensures fair communication.
@@ -82,7 +82,7 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
 - **Threshold:** Sending more than 5 messages within the time window triggers the anti-spam system.  
 - **Mute:** Offending players are muted for 2 minutes (messages sent during this time are blocked).  
 - **Dynamic Updates:** Once the mute expires, players regain normal chat permissions automatically.  
-- **Command Handling:** Commands prefixed with `!` (or server-defined prefix) are intercepted and executed separately, preventing false triggers.  
+- **Command Handling:** Commands prefixed with `:` (or server-defined prefix) are intercepted and executed separately, preventing false triggers.  
 - **Channels & Rank Handling:** Messages are routed through channels or globally with proper chat rank formatting.  
 - **Performance Optimizations:**  
   - Player message times are stored efficiently in memory.  
@@ -92,15 +92,15 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!antispam [ help ]",  
-> Example: !antispam  
-> Example: !antispam help  
+> Usage: ":antispam [ help ]",  
+> Example: :antispam  
+> Example: :antispam help  
 
 
 ?> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
 
-## !autoclicker
+## :autoclicker
 ### At A Glance
 The `autoclicker` command toggles the Auto-Clicker detection module, which monitors player attack speed to prevent the use of automated clicking tools. By enabling this module, administrators can maintain fair combat and prevent players from gaining an unfair advantage.
 
@@ -115,10 +115,10 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!autoclicker [ help ]"  
-> Example: !autoclicker  
+> Usage: ":autoclicker [ help ]"  
+> Example: :autoclicker  
 
-## !autototem
+## :autototem
 ### At A Glance
 The `autototem` command toggles a detection module that identifies automated inventory interactions used to replenish Totems of Undying.
 
@@ -128,10 +128,10 @@ The `autototem` command toggles a detection module that identifies automated inv
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: "!autototem"
-> Example: !autototem
+> Usage: ":autototem"
+> Example: :autototem
 
-## !chestforensic
+## :chestforensic
 ### At A Glance
 The `Chest Forensic` module provides a **secure chest locking system with full audit logging**.  
 Players can lock containers, while administrators can investigate **ownership, access history, and suspicious activity**.
@@ -222,11 +222,11 @@ The module includes a full GUI with:
 - Toggle buttons for enabling/disabling the system
 
 ### Examples
-> Usage: "!chestforensic < chestKey | playerName | on | off >"  
-> Example: !chestforensic overworld_0_64_0  
-> Example: !chestforensic Player123  
-> Example: !chestforensic on  
-> Example: !chestforensic off  
+> Usage: ":chestforensic < chestKey | playerName | on | off >"  
+> Example: :chestforensic overworld_0_64_0  
+> Example: :chestforensic Player123  
+> Example: :chestforensic on  
+> Example: :chestforensic off  
 
 ### Staff Notes
 - Access logs are **global and persistent** via `chestLockDB`
@@ -236,7 +236,7 @@ The module includes a full GUI with:
   - `afterEvents` (for logging & state updates)
 - Module can be safely toggled at runtime without restart
 
-## !criticals
+## :criticals
 ### At A Glance
 The `criticals` command toggles a detection module designed to stop "Packet Criticals." These are exploits that allow a player to deal critical hit damage while standing on the ground by sending fake packets to the server.
 
@@ -248,10 +248,10 @@ The `criticals` command toggles a detection module designed to stop "Packet Crit
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: "!criticals"
-> Example: !criticals
+> Usage: ":criticals"
+> Example: :criticals
 
-## !deathcoords
+## :deathcoords
 ### At A Glance
 The `deathcoords` command toggles the Death Coordinates module. When enabled, this feature automatically sends a private message to players upon death, providing their exact coordinates and the dimension where they died. This helps players navigate back to their death location to retrieve lost items.
 
@@ -265,10 +265,10 @@ The `deathcoords` command toggles the Death Coordinates module. When enabled, th
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!deathcoords"  
-> Example: !deathcoords  
+> Usage: ":deathcoords"  
+> Example: :deathcoords  
 
-## !dimensionlock
+## :dimensionlock
 ### At A Glance
 The `dimensionlock` command toggles a restriction on specific dimensions, preventing non-administrative players from entering the Nether or The End.
 
@@ -282,14 +282,14 @@ The `dimensionlock` command toggles a restriction on specific dimensions, preven
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: "!dimensionlock < nether | end | on | off | --list > [ on | off ]"  
-> Example: !dimensionlock nether on  
-> Example: !dimensionlock end off  
-> Example: !dimensionlock on  
-> Example: !dimensionlock off  
-> Example: !dimensionlock --list  
+> Usage: ":dimensionlock < nether | end | on | off | --list > [ on | off ]"  
+> Example: :dimensionlock nether on  
+> Example: :dimensionlock end off  
+> Example: :dimensionlock on  
+> Example: :dimensionlock off  
+> Example: :dimensionlock --list  
 
-## !gamemode
+## :gamemode
 ### At A Glance
 The `gamemode` command allows server administrators to manage which game modes are permitted for players. This includes enabling or disabling specific modes—Adventure, Creative, Survival, or Spectator—and enforcing these restrictions in real time. Administrators can also list current configurations to review which modes are allowed.
 
@@ -303,18 +303,18 @@ The `gamemode` command allows server administrators to manage which game modes a
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"  
+> Usage: ":gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"  
 > Examples:  
->   !gamemode -a  
->   !gamemode -c -s  
->   !gamemode -a -c -sp  
->   !gamemode --enable  
->   !gamemode --disable  
->   !gamemode -l  
->   !gamemode --list  
+>   :gamemode -a  
+>   :gamemode -c -s  
+>   :gamemode -a -c -sp  
+>   :gamemode --enable  
+>   :gamemode --disable  
+>   :gamemode -l  
+>   :gamemode --list  
 
 
-## !invsync
+## :invsync
 ### At A Glance
 The `InvSync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
 
@@ -343,16 +343,16 @@ This system helps identify potential **duplication exploits or abnormal inventor
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!invsync [ help | status | snapshot | check | clear | forensic <player> ]"  
-> Example: !invsync  
-> Example: !invsync status  
-> Example: !invsync snapshot  
-> Example: !invsync check  
-> Example: !invsync clear  
-> Example: !invsync forensic Steve  
+> Usage: ":invsync [ help | status | snapshot | check | clear | forensic <player> ]"  
+> Example: :invsync  
+> Example: :invsync status  
+> Example: :invsync snapshot  
+> Example: :invsync check  
+> Example: :invsync clear  
+> Example: :invsync forensic Steve  
 
 
-## !killaura
+## :killaura
 ### At A Glance
 The `Killaura` detection module helps maintain fair combat on the server by detecting illegal attack automation (commonly known as “killaura”). It monitors player attack behavior, including speed, distance, and orientation, to identify suspicious activity and prevent unfair advantages. When a potential exploit is detected, the module can cancel the attack and notify staff for review.
 
@@ -366,13 +366,13 @@ The `Killaura` detection module helps maintain fair combat on the server by dete
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!killaura [ help ]"  
-> Example: !killaura  
+> Usage: ":killaura [ help ]"  
+> Example: :killaura  
 
 
-## !lagclear
+## :lagclear
 ### At A Glance
-The `!lagclear` module helps maintain server performance by clearing excess items and entities. Administrators can schedule a countdown in hours, minutes, and seconds, or use default settings to trigger an immediate cleanup. This reduces lag caused by accumulated entities, dropped items, and unnecessary mobs.
+The `:lagclear` module helps maintain server performance by clearing excess items and entities. Administrators can schedule a countdown in hours, minutes, and seconds, or use default settings to trigger an immediate cleanup. This reduces lag caused by accumulated entities, dropped items, and unnecessary mobs.
 
 ### How It Works
 - **Countdown Timer:** When executed, the command starts a timer and notifies players periodically with countdown messages.  
@@ -386,12 +386,12 @@ The `!lagclear` module helps maintain server performance by clearing excess item
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!lagclear [ hours ] [ minutes ] [ seconds ]"  
-> Example: !lagclear 0 15 0  
-> Example: !lagclear (uses default 10-minute timer)  
+> Usage: ":lagclear [ hours ] [ minutes ] [ seconds ]"  
+> Example: :lagclear 0 15 0  
+> Example: :lagclear (uses default 10-minute timer)  
 
 
-## !namespoof
+## :namespoof
 ### At A Glance
 The `Name-Spoof` module protects the server from players attempting to impersonate others using fake or similar-looking names. It automatically detects invalid names, duplicate names, or names that violate server rules.
 
@@ -412,12 +412,12 @@ The `Name-Spoof` module protects the server from players attempting to impersona
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!namespoof [ help ]"  
-> Example: !namespoof  
-> Example: !namespoof help  
+> Usage: ":namespoof [ help ]"  
+> Example: :namespoof  
+> Example: :namespoof help  
 
 
-## !noclip
+## :noclip
 ### At A Glance
 The `NoClip` detection module prevents players from phasing through solid blocks.  
 It is essential for catching exploits that bypass normal collision mechanics, ensuring fair gameplay. Level 4 staff can monitor it via chat or GUI alerts.
@@ -439,12 +439,12 @@ It is essential for catching exploits that bypass normal collision mechanics, en
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!noclip"  
-> Example: !noclip  
-> Example: !noclip help  
+> Usage: ":noclip"  
+> Example: :noclip  
+> Example: :noclip help  
 
 
-## !packetmonitor
+## :packetmonitor
 ?> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
 It must be enabled via the `config/default/permissions.json` file.
 
@@ -467,12 +467,12 @@ It logs suspicious activity for administrative review and helps prevent server o
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!packetmonitor [ help ]"  
-> Example: !packetmonitor
+> Usage: ":packetmonitor [ help ]"  
+> Example: :packetmonitor
 
-## !pathing
+## :pathing
 ### At A Glance
-The `!pathing` command toggles a detection module that identifies automated movement and navigation scripts (often referred to as "Baritone" or "Navigator").
+The `:pathing` command toggles a detection module that identifies automated movement and navigation scripts (often referred to as "Baritone" or "Navigator").
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -481,10 +481,10 @@ The `!pathing` command toggles a detection module that identifies automated move
 - **Speed Validation:** Identifies horizontal movement speeds that exceed vanilla sprinting limits while maintaining robotic precision.
 - **Mitigation:** If a player is flagged, their velocity is reset, and they are teleported back to their last valid location to disrupt the navigation loop.
 
-> Usage: "!pathing"
-> Example: !pathing
+> Usage: ":pathing"
+> Example: :pathing
 
-## !platformblock
+## :platformblock
 ### At A Glance
 The `PlatformBlock` module manages which player platforms (console, desktop, mobile) are allowed to join the server. Administrators can block specific platforms, preventing unauthorized clients from connecting.
 
@@ -494,9 +494,9 @@ The `PlatformBlock` module manages which player platforms (console, desktop, mob
   - If the player’s platform is marked as blocked, they are automatically kicked with a message explaining the restriction.  
   - Admins cannot block all platforms; at least one must remain unblocked to avoid accidental lockout.  
 - **Commands & Options:**  
-  - Enable a platform block: `!platformblock <platform> -e`  
-  - Disable a platform block: `!platformblock <platform> -d`  
-  - List current restrictions: `!platformblock -l`  
+  - Enable a platform block: `:platformblock <platform> -e`  
+  - Disable a platform block: `:platformblock <platform> -d`  
+  - List current restrictions: `:platformblock -l`  
 - **Safety Checks:**  
   - Admins cannot block their own platform.  
   - Works in tandem with allowlists, banlists, and spoof checks to maintain secure access.  
@@ -504,13 +504,13 @@ The `PlatformBlock` module manages which player platforms (console, desktop, mob
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!platformblock <platform> [ -e | -d | -l | --list ]"  
-> Example: !platformblock console -e  
-> Example: !platformblock desktop -d  
-> Example: !platformblock -l  
+> Usage: ":platformblock <platform> [ -e | -d | -l | --list ]"  
+> Example: :platformblock console -e  
+> Example: :platformblock desktop -d  
+> Example: :platformblock -l  
 
 
-## !ratelimit
+## :ratelimit
 ### At A Glance
 The `RateLimit` module protects the server from players attempting to overwhelm it with excessive packets.  
 It enforces per-player, per-packet, and global packet rate limits, automatically banning or kicking offenders to prevent exploits and server crashes. Only Level 4 staff can toggle this module.
@@ -539,11 +539,11 @@ It enforces per-player, per-packet, and global packet rate limits, automatically
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!ratelimit [ help ]",  
-> Example: !ratelimit  
+> Usage: ":ratelimit [ help ]",  
+> Example: :ratelimit  
 
 
-## !reach
+## :reach
 ### At A Glance
 Toggles the module that checks if players are hitting others from a fair distance.  
 This is strictly a combat check and does **not** affect block placement or movement.
@@ -559,12 +559,12 @@ This is strictly a combat check and does **not** affect block placement or movem
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!reach [ help ]",  
-> Example: !reach  
-> Example: !reach help  
+> Usage: ":reach [ help ]",  
+> Example: :reach  
+> Example: :reach help  
 
 
-## !scaffold
+## :scaffold
 ### At A Glance
 The `Scaffold` module detects and prevents automated block placement hacks, commonly known as scaffold hacks. It monitors players building above air or towering up to identify unnatural placement patterns that could indicate cheating.
 
@@ -583,12 +583,12 @@ The `Scaffold` module detects and prevents automated block placement hacks, comm
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!scaffold [ help ]"  
-> Example: !scaffold  
-> Example: !scaffold help  
+> Usage: ":scaffold [ help ]"  
+> Example: :scaffold  
+> Example: :scaffold help  
 
 
-## !selfattack
+## :selfattack
 ### At A Glance
 The `Self-Attack` module detects and prevents players from using modified clients or exploits to attack themselves. This type of exploit can bypass server mechanics or trigger unintended effects, potentially giving unfair advantages.
 
@@ -603,12 +603,12 @@ The `Self-Attack` module detects and prevents players from using modified client
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!selfattack [ help ]"  
-> Example: !selfattack  
-> Example: !selfattack help  
+> Usage: ":selfattack [ help ]"  
+> Example: :selfattack  
+> Example: :selfattack help  
 
 
-## !visioncheck
+## :visioncheck
 ### At A Glance
 Toggles the `Vision Check` module, which continuously monitors the contents of containers or player inventories that Level 4 security personnel are looking at, displaying the contents on their action bar in real-time.
 
@@ -626,12 +626,12 @@ Toggles the `Vision Check` module, which continuously monitors the contents of c
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!visioncheck [ help ]",  
-> Example: !visioncheck  
-> Example: !visioncheck help  
+> Usage: ":visioncheck [ help ]",  
+> Example: :visioncheck  
+> Example: :visioncheck help  
 
 
-## !worldborder
+## :worldborder
 ### At A Glance
 Toggles the `World Border` module, which restricts players from exceeding configurable boundaries in each dimension (Overworld, Nether, End) relative to the world origin (0,0,0), rather than the spawn point. Players with Level 4 security clearance are exempt.
 
@@ -654,19 +654,19 @@ Toggles the `World Border` module, which restricts players from exceeding config
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!worldborder [ --overworld | -o <size> ] [ --nether | -n <size> ]  
+> Usage: ":worldborder [ --overworld | -o <size> ] [ --nether | -n <size> ]  
 >        [ --end | -e <size> ] [ -d | --disable ] [ -l | --list ]",  
-> Example: !worldborder -o 10000 -n 5000 -e 10000  
-> Example: !worldborder --overworld 10000 --nether 5000  
-> Example: !worldborder --overworld 10000  
-> Example: !worldborder --nether 5000  
-> Example: !worldborder -n 5000  
-> Example: !worldborder disable  
-> Example: !worldborder -l  
-> Example: !worldborder --list  
+> Example: :worldborder -o 10000 -n 5000 -e 10000  
+> Example: :worldborder --overworld 10000 --nether 5000  
+> Example: :worldborder --overworld 10000  
+> Example: :worldborder --nether 5000  
+> Example: :worldborder -n 5000  
+> Example: :worldborder disable  
+> Example: :worldborder -l  
+> Example: :worldborder --list  
 
 
-## !xray
+## :xray
 ### At A Glance
 The `Xray` module detects and reports suspicious mining activity that may indicate the use of Xray cheats. It monitors players mining high-value ores (e.g., diamonds, emeralds, ancient debris) at unusual rates or in patterns inconsistent with normal gameplay. Administrators with Level 4 Security Clearance are alerted when suspicious activity is detected.
 
@@ -686,5 +686,5 @@ The `Xray` module detects and reports suspicious mining activity that may indica
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: "!xray [ -Help ]"  
-> Example: !xray  
+> Usage: ":xray [ -Help ]"  
+> Example: :xray  
