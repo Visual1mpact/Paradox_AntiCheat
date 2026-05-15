@@ -1,34 +1,28 @@
-import { Player, EntityHurtBeforeEvent, system } from "@minecraft/server";
+import { Player, EntityHurtBeforeEvent, system, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 // CONFIGURATION
-const MAX_CPS = 14; // Maximum allowed clicks per second
+const MAX_CPS = 5; // Maximum allowed clicks per second
 const TICKS_PER_SECOND = 20; // Number of ticks in one second
 const CLICK_HISTORY_SIZE = 100; // Maximum click history stored
 
 // PLAYER CLICK TRACKING
-interface Click {
-    tick: number;
-}
-
-interface PlayerWithClicks extends Player {
-    clicks?: Click[];
-}
+/** Maps player IDs to an array of click timestamps (ticks) */
+const playerClickData = new Map<string, number[]>();
 
 /**
  * Calculate CPS for a player over the last second
  */
-function calculateClicksPerSecond(player: PlayerWithClicks): number {
+function calculateClicksPerSecond(clicks: number[]): number {
     const currentTick = system.currentTick;
-    const clicks = player.clicks ?? [];
-    return clicks.filter((c) => currentTick - c.tick < TICKS_PER_SECOND).length;
+    return clicks.filter((tick) => currentTick - tick < TICKS_PER_SECOND).length;
 }
 
 /**
  * Notify Level 4 staff of an autoclicker violation
  */
-function alertStaff(attacker: PlayerWithClicks, cps: number) {
+function alertStaff(attacker: Player, cps: number) {
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
         if (s.id === attacker.id) continue; // skip attacker if they are staff
@@ -43,21 +37,27 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const { damageSource, hurtEntity: victim } = event;
 
     if (!(damageSource.damagingEntity instanceof Player) || !(victim instanceof Player)) return;
+    const attacker = damageSource.damagingEntity;
 
-    const attacker = damageSource.damagingEntity as PlayerWithClicks;
+    // Exempt high-security staff
+    if ((attacker.getDynamicProperty("securityClearance") as number) === 4) return;
 
     // Update attacker's click history
     const currentTick = system.currentTick;
-    if (!attacker.clicks) attacker.clicks = [];
-    attacker.clicks.unshift({ tick: currentTick });
+    if (!playerClickData.has(attacker.id)) {
+        playerClickData.set(attacker.id, []);
+    }
+
+    const clicks = playerClickData.get(attacker.id)!;
+    clicks.unshift(currentTick);
 
     // Trim history
-    if (attacker.clicks.length > CLICK_HISTORY_SIZE) attacker.clicks.pop();
+    if (clicks.length > CLICK_HISTORY_SIZE) clicks.pop();
 
     // Calculate CPS
-    const cps = calculateClicksPerSecond(attacker);
+    const cps = calculateClicksPerSecond(clicks);
 
-    if (cps > MAX_CPS) {
+    if (cps >= MAX_CPS) {
         // Cancel damage
         event.cancel = true;
 
@@ -67,12 +67,22 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
 }
 
 /**
+ * Cleans up stored click data when a player leaves the world.
+ */
+function handlePlayerLeave(event: PlayerLeaveAfterEvent) {
+    playerClickData.delete(event.playerId);
+}
+
+/**
  * START / STOP
  */
 export function startAutoClicker(): void {
     EventCoordinator.subscribeBefore("entityHurt", handleHurtEvent);
+    EventCoordinator.subscribeAfter("playerLeave", handlePlayerLeave);
 }
 
 export function stopAutoClicker(): void {
     EventCoordinator.unsubscribeBefore("entityHurt", handleHurtEvent);
+    EventCoordinator.unsubscribeAfter("playerLeave", handlePlayerLeave);
+    playerClickData.clear();
 }

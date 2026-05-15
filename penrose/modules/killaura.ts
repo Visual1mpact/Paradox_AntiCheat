@@ -5,7 +5,7 @@ import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 // CONFIGURATION CONSTANTS
-const MAX_ATTACKS_PER_SECOND = 14; // Maximum allowed attacks per second
+const MAX_ATTACKS_PER_SECOND = 5; // Maximum allowed clicks per second
 const MAX_ATTACK_DISTANCE = 4.5; // Maximum attack distance (in blocks)
 const MAX_ORIENTATION_DIFFERENCE = 60; // Maximum allowed angle difference (in degrees)
 const BUFFER_SIZE = 20; // Buffer size for storing recent attack ticks
