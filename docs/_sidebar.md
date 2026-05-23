@@ -7,7 +7,6 @@
 
 * **Moderation Suite**
     * [Overview](Commands_Features/moderation.md)
-    * [Identity (!rename)](Commands_Features/moderation.md#rename)
 
 * **Utility Systems**
     * [General Utilities](Commands_Features/utility.md)

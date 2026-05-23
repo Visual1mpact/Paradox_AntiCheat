@@ -2,9 +2,9 @@
 
 ?> This documentation could change with any version. Be sure to check it periodically for updates.
 
-## :allowlist
+## allowlist
 ### At A Glance
-The `:allowlist` command allows administrators to manage a list of players who are permitted to join the server. Players on the allowlist bypass certain automated protections and can be explicitly permitted to connect.
+The `allowlist` command allows administrators to manage a list of players who are permitted to join the server. Players on the allowlist bypass certain automated protections and can be explicitly permitted to connect.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -36,9 +36,9 @@ The `:allowlist` command allows administrators to manage a list of players who a
   - Disabling or clearing the allowlist.
 - Input player names are sanitized to remove `@` symbols automatically.
 
-## :ban
+## ban
 ### At A Glance
-The `:ban` command is used to ban a player from the server, with an optional reason. It can also list all currently banned players. This command is vital for maintaining server security and enforcing rules.
+The `ban` command is used to ban a player from the server, with an optional reason. It can also list all currently banned players. This command is vital for maintaining server security and enforcing rules.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -72,9 +72,9 @@ The `:ban` command is used to ban a player from the server, with an optional rea
 - List all banned players:  
   `:ban -l`
 
-## :command
+## command
 ### At A Glance
-The `:command` command enables or disables other commands dynamically. This allows administrators to manage active commands without restarting the server.
+The `command` command enables or disables other commands dynamically. This allows administrators to manage active commands without restarting the server.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -94,9 +94,9 @@ The `:command` command enables or disables other commands dynamically. This allo
 - Use the `disable` option with caution to avoid disabling critical commands.
 - The command registry updates dynamically, reflecting real-time changes.
 
-## :deop
+## deop
 ### At A Glance
-The `:deop` command revokes **Paradox-Op (Level-4)** permissions from a player, reducing their security clearance to **Level 1**. This allows administrators to manage who has full administrative access on the server.
+The `deop` command revokes **Paradox-Op (Level-4)** permissions from a player, reducing their security clearance to **Level 1**. This allows administrators to manage who has full administrative access on the server.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -118,9 +118,9 @@ The `:deop` command revokes **Paradox-Op (Level-4)** permissions from a player, 
 - **Input Sanitization:** Player names are automatically cleaned to remove `@` symbols.
 - **Use Cases:** This command is useful for revoking full administrative privileges, especially when an administrator should no longer have high-level access.
 
-## :despawn
+## despawn
 ### At A Glance
-The `:despawn` command removes entities from the world, either **all entities** or a **specific entity type**, helping to manage entity populations and improve server performance.
+The `despawn` command removes entities from the world, either **all entities** or a **specific entity type**, helping to manage entity populations and improve server performance.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -140,9 +140,9 @@ The `:despawn` command removes entities from the world, either **all entities** 
 - **Reporting:** The command reports the **type and count** of entities that were successfully removed.  
 - **Input Sanitization:** Player-supplied entity type names are cleaned of `@` symbols.
 
-## :freeze
+## freeze
 ### At A Glance
-The `:freeze` command allows administrators to **lock a player in place** by imprisoning them in a temporary structure and applying status effects. This is useful for investigating potential issues, controlling disruptive players, or handling suspicious activity. The command acts as a **toggle**, allowing the player to be released later.
+The `freeze` command allows administrators to **lock a player in place** by imprisoning them in a temporary structure and applying status effects. This is useful for investigating potential issues, controlling disruptive players, or handling suspicious activity. The command acts as a **toggle**, allowing the player to be released later.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -170,9 +170,9 @@ The `:freeze` command allows administrators to **lock a player in place** by imp
   - Only the executing administrator can freeze/unfreeze players.  
   - Player name input is sanitized by removing `@` characters.
 
-## :guiitem
+## guiitem
 ### At A Glance
-The `:guiitem` command allows administrators to set or clear a specific item used to open the Paradox GUI. When a player uses (right-clicks or long-presses) the configured item, the administrative GUI will open.
+The `guiitem` command allows administrators to set or clear a specific item used to open the Paradox GUI. When a player uses (right-clicks or long-presses) the configured item, the administrative GUI will open.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -194,9 +194,9 @@ The `:guiitem` command allows administrators to set or clear a specific item use
 - Standard Bedrock item IDs use lowercase.
 - This trigger is active for any player using the item, though the GUI itself remains protected by security clearance.
 
-## :kick
+## kick
 ### At A Glance
-The `:kick` command removes a player from the server, optionally providing a reason. It is useful for addressing disruptive behavior or enforcing server rules.
+The `kick` command removes a player from the server, optionally providing a reason. It is useful for addressing disruptive behavior or enforcing server rules.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -220,9 +220,9 @@ The `:kick` command removes a player from the server, optionally providing a rea
 - **Message Feedback:**  
   - Confirms to the administrator whether the player was successfully kicked.
 
-## :gui
+## gui
 ### At A Glance
-The `:gui` command opens an interactive administrative menu for the player, filtered according to their security clearance. It simplifies server management by providing a visual interface for commands, actions, and dynamic input forms.
+The `gui` command opens an interactive administrative menu for the player, filtered according to their security clearance. It simplifies server management by providing a visual interface for commands, actions, and dynamic input forms.
 
 ?> Required Clearance Level To Execute: `1`
 
@@ -249,9 +249,9 @@ The `:gui` command opens an interactive administrative menu for the player, filt
   - "Back" buttons are provided to return to previous menus.
   - Canceled or busy interactions reopen the main menu.
 
-## :lockdown
+## lockdown
 ### At A Glance
-The `:lockdown` command toggles server lockdown, preventing players without a security clearance of 4 from joining. It is useful during maintenance or security incidents.
+The `lockdown` command toggles server lockdown, preventing players without a security clearance of 4 from joining. It is useful during maintenance or security incidents.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -274,9 +274,9 @@ The `:lockdown` command toggles server lockdown, preventing players without a se
 - **Security Check:**  
   - Only players with `securityClearance === 4` are allowed to remain or join during lockdown.
 
-## :modules
+## modules
 ### At A Glance
-The `:modules` command displays the status of all registered modules, including whether they are enabled or disabled, and lists the specific settings for each module.
+The `modules` command displays the status of all registered modules, including whether they are enabled or disabled, and lists the specific settings for each module.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -302,9 +302,9 @@ The `:modules` command displays the status of all registered modules, including 
     │ └─KickOnIdle: true
     └─AutoClicker: DISABLED
     
-## :mute
+## mute
 ### At A Glance
-The `:mute` command allows administrators to toggle a player's ability to send chat messages. This is a crucial tool for managing disruptive chat behavior without resorting to more severe actions like kicking or banning. Muted players can still execute commands but are prevented from sending public chat messages.
+The `mute` command allows administrators to toggle a player's ability to send chat messages. This is a crucial tool for managing disruptive chat behavior without resorting to more severe actions like kicking or banning. Muted players can still execute commands but are prevented from sending public chat messages.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -341,9 +341,9 @@ The `:mute` command allows administrators to toggle a player's ability to send c
 - Mute a player with spaces in their name:
   `:mute "Another Player"`
 
-## :op
+## op
 ### At A Glance
-The `:op` command manages **Paradox Level-4 Security Clearance**, granting administrative privileges within the Paradox security system.
+The `op` command manages **Paradox Level-4 Security Clearance**, granting administrative privileges within the Paradox security system.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -392,9 +392,9 @@ Displays all players who currently have **Level-4 Paradox security clearance**, 
 - Player names may contain spaces and may be quoted when necessary.
 - Level-4 administrators are stored using their **player runtime IDs** to prevent impersonation.
 
-## :opsec
+## opsec
 ### At A Glance
-The `:opsec` command allows administrators to modify a player's security clearance level, adjusting their permissions and access rights.
+The `opsec` command allows administrators to modify a player's security clearance level, adjusting their permissions and access rights.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -409,9 +409,9 @@ The `:opsec` command allows administrators to modify a player's security clearan
 > Example: :opsec tim123 3  
 
 
-## :prefix
+## prefix
 ### At A Glance
-The `:prefix` command allows administrators to change the command prefix used on the server. This prefix is what players type before any command to execute it.
+The `prefix` command allows administrators to change the command prefix used on the server. This prefix is what players type before any command to execute it.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -433,9 +433,9 @@ The `:prefix` command allows administrators to change the command prefix used on
   - If invalid characters: `Prefix cannot include the forward slash or section sign characters.`
   - If no prefix provided: `No new prefix provided.`
 
-## :punish
+## punish
 ### At A Glance
-The `:punish` command removes items from a player’s inventory, equipment, and/or ender chest. This command acts as a disciplinary tool for administrators to enforce rules or correct behavior.
+The `punish` command removes items from a player’s inventory, equipment, and/or ender chest. This command acts as a disciplinary tool for administrators to enforce rules or correct behavior.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -466,9 +466,9 @@ The `:punish` command removes items from a player’s inventory, equipment, and/
   - Success: `Punished "<PlayerName>"!`  
   - Failure: `Failed to punish "<PlayerName>"! Please try again.`
 
-## :rename
+## rename
 ### At A Glance
-The `:rename` command allows administrators to assign a custom alias to a player. This alias overrides the player's name in chat and can optionally be displayed in their overhead nametag.
+The `rename` command allows administrators to assign a custom alias to a player. This alias overrides the player's name in chat and can optionally be displayed in their overhead nametag.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -492,9 +492,9 @@ The `:rename` command allows administrators to assign a custom alias to a player
 - **Administrative Control**: Only Level 4 administrators can modify player identities to prevent abuse.
 - **Identity Integrity**: Internal moderation logs and spoof checks continue to track the player's unique ID, ensuring accountability even when an alias is active.
 
-## :spooflog
+## spooflog
 ### At A Glance
-The `:spooflog` command allows administrators to **inspect or clear player spoofing records** stored by the Paradox identity monitoring system.
+The `spooflog` command allows administrators to **inspect or clear player spoofing records** stored by the Paradox identity monitoring system.
 
 These records help detect players attempting to **impersonate others by using similar or identical names**.
 
@@ -547,9 +547,9 @@ When viewing a spoof record, the command will display:
 - Alias matches are also considered when searching.
 - Spoof logs are stored internally in the Paradox spoof database.
 
-## :tpa
+## tpa
 ### At A Glance
-The `:tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.
+The `tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -573,9 +573,9 @@ The `:tpa` command allows players to teleport to one another, streamlining coord
   - Failure: `Unable to teleport. Please try again.`
   - Invalid player: `Player '<PlayerName>' not found or not valid.`
 
-## :unban
+## unban
 ### At A Glance
-The `:unban` command lifts a ban from a player, allowing them to rejoin the server. Supports both local and global bans.
+The `unban` command lifts a ban from a player, allowing them to rejoin the server. Supports both local and global bans.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -600,9 +600,9 @@ The `:unban` command lifts a ban from a player, allowing them to rejoin the serv
   - Invalid input: `Please provide a valid player name.`
   - Retrieval errors: `Failed to retrieve the ban list. Please contact an admin.`
 
-## :vanish
+## vanish
 ### At A Glance
-The `:vanish` command allows a player to become invisible, enabling them to monitor the server discreetly.
+The `vanish` command allows a player to become invisible, enabling them to monitor the server discreetly.
 
 ?> Required Clearance Level To Execute: `2`
 
@@ -631,9 +631,9 @@ The `:vanish` command allows a player to become invisible, enabling them to moni
   - Success (disabled): `Vanish disabled!`
   - Failure (player not found): `Player "<PlayerName>" not found.`
 
-## :warn
+## warn
 ### At A Glance
-The `:warn` command is used to track player infractions. It serves as a middle ground between verbal warnings and formal bans.
+The `warn` command is used to track player infractions. It serves as a middle ground between verbal warnings and formal bans.
 
 ?> Required Clearance Level To Execute: `3` (Level 4 to clear)
 
@@ -656,9 +656,9 @@ The `:warn` command is used to track player infractions. It serves as a middle g
 2. **list** – Displays the history of warnings for the specified player.
 3. **clear** – Deletes all warnings for the player.
 
-## :whitelist
+## whitelist
 ### At A Glance
-The `:whitelist` command allows administrators to manage the server whitelist by adding or removing players, or viewing all whitelisted players.
+The `whitelist` command allows administrators to manage the server whitelist by adding or removing players, or viewing all whitelisted players.
 
 ?> Required Clearance Level To Execute: `3`
 

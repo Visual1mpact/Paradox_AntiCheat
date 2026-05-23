@@ -2,9 +2,9 @@
 
 ?> This documentation could change with any version. Be sure to check it periodically.
 
-## :channels
+## channels
 ### At A Glance
-The `:channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.
+The `channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.
 
 ?> Required Clearance Level To Execute: `1`
 
@@ -41,9 +41,9 @@ The `:channels` command allows players to manage private chat channels. Players 
 - Invitations are automatically canceled if the invited player does not respond in time.
 - Dynamic updates ensure all members are informed of joins, leaves, and ownership changes.
 
-## :debugdb
+## debugdb
 ### At A Glance
-The `:debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
+The `debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
 
 - List of database names
 - Individual entry pointers
@@ -91,9 +91,9 @@ The `:debugdb` command allows admins to inspect all initialized database entries
 - Large databases may result in truncated output in the form for readability and performance.
 - Useful for checking database sizes, pointer structure, and detecting chunked entries.
 
-## :doublejump
+## doublejump
 ### At A Glance
-The `:doublejump` command toggles a utility that allows players to perform an additional jump while in mid-air. This feature is designed for high performance and includes safety checks to prevent fall damage associated with its use.
+The `doublejump` command toggles a utility that allows players to perform an additional jump while in mid-air. This feature is designed for high performance and includes safety checks to prevent fall damage associated with its use.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -113,9 +113,9 @@ The `:doublejump` command toggles a utility that allows players to perform an ad
 - **Staff Control:** Only administrators with Level 4 security clearance can enable or disable this feature globally.
 - **GUI Integration:** The toggle is available in the Paradox GUI menu for easy access.
 
-## :home
+## home
 ### At A Glance
-The `:home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
+The `home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
 
 ?> Required Clearance Level To Execute: `1`  
 
@@ -142,9 +142,9 @@ The `:home` command allows players to manage personal locations. Players can sav
 - If the maximum number of homes is reached, players must delete an existing home before adding a new one.
 - All saved locations are secured via per-player encryption to prevent tampering.
 
-## :invclone
+## invclone
 ### At A Glance
-The `:invclone` command allows admins to clone a player's entire inventory or ender chest into chests placed in the world for inspection, or to remove previously cloned chests.
+The `invclone` command allows admins to clone a player's entire inventory or ender chest into chests placed in the world for inspection, or to remove previously cloned chests.
 
 - **Clone a player's inventory or ender chest:** Creates chests near the executor, filling them with the target player's items. Each item has a lore tag indicating its source.
 - **Remove cloned chests:** Deletes previously cloned chests within a nearby area.
@@ -183,9 +183,9 @@ The `:invclone` command allows admins to clone a player's entire inventory or en
 - Removing cloned chests only affects those created by this command.
 - The search radius for removal is approximately 20 blocks horizontally and 5 blocks vertically.
 
-## :invsee
+## invsee
 ### At A Glance
-The `:invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
+The `invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -209,9 +209,9 @@ The `:invsee` command allows players with sufficient clearance to view another p
 - Inventory components are retrieved securely; missing or invalid components will trigger an error.
 - Intended for **moderation** or **administrative oversight**.
 
-## :info
+## info
 ### At A Glance
-The `:info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
+The `info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
 
 ?> Required Clearance Level To Execute: `1`
 
@@ -234,9 +234,9 @@ The `:info` command displays a GUI-based overview of the **Paradox AntiCheat** p
 - The displayed GUI is **read-only**; players cannot modify content through this form.
 - Designed for quick access to Paradox AC information without needing console access.
 
-## :pvp
+## pvp
 ### At A Glance
-The `:pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
+The `pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
 
 ?> Required Clearance Level To Execute: `4` (for global toggle)
 
@@ -260,7 +260,7 @@ The `:pvp` command allows players to control Player vs. Player (PvP) settings. P
 
 ---
 
-## :pvpCooldown
+## pvpCooldown
 ### At A Glance
 Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown determines how long players must wait between PvP events.
 
@@ -273,7 +273,7 @@ Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown dete
 
 ---
 
-## :pvpToggleCooldown
+## pvpToggleCooldown
 ### At A Glance
 Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. This prevents frequent switching.
 
@@ -284,9 +284,9 @@ Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. Th
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
-## :scripture
+## scripture
 ### At A Glance
-The `:scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
+The `scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
 
 ?> Required Clearance Level To Execute: `3`
 
@@ -321,9 +321,9 @@ The `:scripture` command allows players to enable or disable receiving **scriptu
 - Players can manually disable scripture mode at any time.
 - On server restart, the **interval automatically resumes**, applying only to players who have scripture mode enabled.
 
-## :setrank
+## setrank
 ### At A Glance
-The `:setrank` command allows admins to manage chat ranks for players. You can:
+The `setrank` command allows admins to manage chat ranks for players. You can:
 
 - Set a specific rank for a player.
 - Reset a player’s rank to default.
@@ -360,9 +360,9 @@ When executed, the command verifies the provided arguments and checks that the t
 - Global rank changes immediately affect all players.  
 - Players without clearance `4` cannot modify global rank settings if ranks are disabled.  
 
-## :tpr
+## tpr
 ### At A Glance
-The `:tpr` command allows players to manage teleport requests:
+The `tpr` command allows players to manage teleport requests:
 
 - Send a teleport request to another player.
 - Accept or deny incoming requests.
@@ -398,9 +398,9 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 - Only one teleport request can be pending for a player at a time.
 - Players receive messages about the status of their requests (sent, accepted, denied, or timed out).
 
-## :tps
+## tps
 ### At A Glance
-The `:tps` command toggles a real-time, on-screen performance monitor. It allows administrators to track the server's Ticks Per Second (TPS) and overall health status directly on their HUD without opening menus or checking logs.
+The `tps` command toggles a real-time, on-screen performance monitor. It allows administrators to track the server's Ticks Per Second (TPS) and overall health status directly on their HUD without opening menus or checking logs.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -424,9 +424,9 @@ The `:tps` command toggles a real-time, on-screen performance monitor. It allows
 - **Automatic Cleanup:** To prevent memory leaks, the system automatically stops monitoring for any player who disconnects or crashes.
 - **GUI Integration:** The monitor can also be toggled via the `:gui` menu under the Utility category.
 
-## :transfer
+## transfer
 ### At A Glance
-The `:transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
+The `transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
 
 ?> Required Clearance Level To Execute: `1`
 

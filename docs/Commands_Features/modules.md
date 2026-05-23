@@ -2,9 +2,9 @@
 
 ?> This documentation could change with any version. So be sure to check it once in a while.
 
-## :afk
+## afk
 ### At A Glance
-The `AFK` command toggles the AFK management module, which automatically tracks player activity and kicks inactive players after a specified timeout. This helps maintain active player engagement and prevents inactive accounts from taking up server slots.
+The `afk` command toggles the AFK management module, which automatically tracks player activity and kicks inactive players after a specified timeout. This helps maintain active player engagement and prevents inactive accounts from taking up server slots.
 
 ### Default Settings
 - **Timeout:** 10 minutes (can be customized via command arguments)
@@ -24,7 +24,7 @@ The `AFK` command toggles the AFK management module, which automatically tracks 
 > Usage: ":afk [ hours ] [ minutes ] [ seconds ]"  
 > Example: :afk 0 10 0  
 
-## :anticrash
+## anticrash
 ### At A Glance
 The `anticrash` command toggles a specialized defense module that monitors for packet-based exploits intended to crash the server.
 
@@ -38,9 +38,9 @@ The `anticrash` command toggles a specialized defense module that monitors for p
 > Usage: ":anticrash"
 > Example: :anticrash
 
-## :aimbotmonitor
+## aimbotmonitor
 ### At A Glance
-The `:aimbotmonitor` command toggles a detection module that analyzes player rotation patterns to identify external aim-assist and smoothing software.
+The `aimbotmonitor` command toggles a detection module that analyzes player rotation patterns to identify external aim-assist and smoothing software.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -53,7 +53,7 @@ The `:aimbotmonitor` command toggles a detection module that analyzes player rot
 - **Heuristic Strikes:** Uses a strike system to avoid false positives from erratic human movement.
 - **Logging:** Alerts administrators when a player exhibits suspicious rotation signatures.
 
-## :antifly
+## antifly
 ### At A Glance
 The `antifly` command toggles the Anti-Fly detection module, which monitors player movement to detect and prevent unauthorized flying. By enabling this module, server administrators can maintain fair gameplay and prevent exploits that allow players to fly in Survival or Adventure modes without proper permissions.
 
@@ -72,9 +72,9 @@ The `antifly` command toggles the Anti-Fly detection module, which monitors play
 > Example: :antifly  
 
 
-## :antispam
+## antispam
 ### At A Glance
-Toggles the chat spam detection module, which monitors players sending too many messages in a short period.  
+The `antispam` command toggles the chat spam detection module, which monitors players sending too many messages in a short period.  
 This helps prevent chat flooding, bot spam, and ensures fair communication.
 
 ### How It Works
@@ -100,7 +100,7 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
 ?> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
 
-## :autoclicker
+## autoclicker
 ### At A Glance
 The `autoclicker` command toggles the Auto-Clicker detection module, which monitors player attack speed to prevent the use of automated clicking tools. By enabling this module, administrators can maintain fair combat and prevent players from gaining an unfair advantage.
 
@@ -118,7 +118,7 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 > Usage: ":autoclicker [ help ]"  
 > Example: :autoclicker  
 
-## :autototem
+## autototem
 ### At A Glance
 The `autototem` command toggles a detection module that identifies automated inventory interactions used to replenish Totems of Undying.
 
@@ -131,9 +131,9 @@ The `autototem` command toggles a detection module that identifies automated inv
 > Usage: ":autototem"
 > Example: :autototem
 
-## :chestforensic
+## chestforensic
 ### At A Glance
-The `Chest Forensic` module provides a **secure chest locking system with full audit logging**.  
+The `chestforensic` module provides a **secure chest locking system with full audit logging**.  
 Players can lock containers, while administrators can investigate **ownership, access history, and suspicious activity**.
 
 This module is both a **protection system** and a **forensic tool**, allowing Level 4 staff to trace exactly who interacted with any storage block.
@@ -236,7 +236,7 @@ The module includes a full GUI with:
   - `afterEvents` (for logging & state updates)
 - Module can be safely toggled at runtime without restart
 
-## :criticals
+## criticals
 ### At A Glance
 The `criticals` command toggles a detection module designed to stop "Packet Criticals." These are exploits that allow a player to deal critical hit damage while standing on the ground by sending fake packets to the server.
 
@@ -251,7 +251,7 @@ The `criticals` command toggles a detection module designed to stop "Packet Crit
 > Usage: ":criticals"
 > Example: :criticals
 
-## :deathcoords
+## deathcoords
 ### At A Glance
 The `deathcoords` command toggles the Death Coordinates module. When enabled, this feature automatically sends a private message to players upon death, providing their exact coordinates and the dimension where they died. This helps players navigate back to their death location to retrieve lost items.
 
@@ -268,7 +268,7 @@ The `deathcoords` command toggles the Death Coordinates module. When enabled, th
 > Usage: ":deathcoords"  
 > Example: :deathcoords  
 
-## :dimensionlock
+## dimensionlock
 ### At A Glance
 The `dimensionlock` command toggles a restriction on specific dimensions, preventing non-administrative players from entering the Nether or The End.
 
@@ -289,7 +289,7 @@ The `dimensionlock` command toggles a restriction on specific dimensions, preven
 > Example: :dimensionlock off  
 > Example: :dimensionlock --list  
 
-## :gamemode
+## gamemode
 ### At A Glance
 The `gamemode` command allows server administrators to manage which game modes are permitted for players. This includes enabling or disabling specific modes—Adventure, Creative, Survival, or Spectator—and enforcing these restrictions in real time. Administrators can also list current configurations to review which modes are allowed.
 
@@ -314,9 +314,9 @@ The `gamemode` command allows server administrators to manage which game modes a
 >   :gamemode --list  
 
 
-## :invsync
+## invsync
 ### At A Glance
-The `InvSync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
+The `invsync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
 
 Administrators can use this module to monitor inventory integrity, force synchronization checks, and investigate suspicious inventory changes.
 
@@ -352,9 +352,9 @@ This system helps identify potential **duplication exploits or abnormal inventor
 > Example: :invsync forensic Steve  
 
 
-## :killaura
+## killaura
 ### At A Glance
-The `Killaura` detection module helps maintain fair combat on the server by detecting illegal attack automation (commonly known as “killaura”). It monitors player attack behavior, including speed, distance, and orientation, to identify suspicious activity and prevent unfair advantages. When a potential exploit is detected, the module can cancel the attack and notify staff for review.
+The `killaura` detection module helps maintain fair combat on the server by detecting illegal attack automation (commonly known as “killaura”). It monitors player attack behavior, including speed, distance, and orientation, to identify suspicious activity and prevent unfair advantages. When a potential exploit is detected, the module can cancel the attack and notify staff for review.
 
 ### How It Works
 - **Attack Frequency:** The module tracks the number of attacks per second and ensures players do not exceed the maximum allowed rate (default: 12 attacks/sec).  
@@ -370,9 +370,9 @@ The `Killaura` detection module helps maintain fair combat on the server by dete
 > Example: :killaura  
 
 
-## :lagclear
+## lagclear
 ### At A Glance
-The `:lagclear` module helps maintain server performance by clearing excess items and entities. Administrators can schedule a countdown in hours, minutes, and seconds, or use default settings to trigger an immediate cleanup. This reduces lag caused by accumulated entities, dropped items, and unnecessary mobs.
+The `lagclear` module helps maintain server performance by clearing excess items and entities. Administrators can schedule a countdown in hours, minutes, and seconds, or use default settings to trigger an immediate cleanup. This reduces lag caused by accumulated entities, dropped items, and unnecessary mobs.
 
 ### How It Works
 - **Countdown Timer:** When executed, the command starts a timer and notifies players periodically with countdown messages.  
@@ -391,9 +391,9 @@ The `:lagclear` module helps maintain server performance by clearing excess item
 > Example: :lagclear (uses default 10-minute timer)  
 
 
-## :namespoof
+## namespoof
 ### At A Glance
-The `Name-Spoof` module protects the server from players attempting to impersonate others using fake or similar-looking names. It automatically detects invalid names, duplicate names, or names that violate server rules.
+The `namespoof` module protects the server from players attempting to impersonate others using fake or similar-looking names. It automatically detects invalid names, duplicate names, or names that violate server rules.
 
 ### How It Works
 - **Name Validation:** When a player joins, their name is checked for:
@@ -417,9 +417,9 @@ The `Name-Spoof` module protects the server from players attempting to impersona
 > Example: :namespoof help  
 
 
-## :noclip
+## noclip
 ### At A Glance
-The `NoClip` detection module prevents players from phasing through solid blocks.  
+The `noclip` detection module prevents players from phasing through solid blocks.  
 It is essential for catching exploits that bypass normal collision mechanics, ensuring fair gameplay. Level 4 staff can monitor it via chat or GUI alerts.
 
 ### How It Works
@@ -444,12 +444,12 @@ It is essential for catching exploits that bypass normal collision mechanics, en
 > Example: :noclip help  
 
 
-## :packetmonitor
+## packetmonitor
 ?> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
 It must be enabled via the `config/default/permissions.json` file.
 
 ### At A Glance
-The `Packet Monitor` module monitors incoming network packets to detect potential spam or exploit attempts.  
+The `packetmonitor` module monitors incoming network packets to detect potential spam or exploit attempts.  
 It logs suspicious activity for administrative review and helps prevent server overloads caused by malicious or malfunctioning clients.
 
 ### How It Works
@@ -470,9 +470,9 @@ It logs suspicious activity for administrative review and helps prevent server o
 > Usage: ":packetmonitor [ help ]"  
 > Example: :packetmonitor
 
-## :pathing
+## pathing
 ### At A Glance
-The `:pathing` command toggles a detection module that identifies automated movement and navigation scripts (often referred to as "Baritone" or "Navigator").
+The `pathing` command toggles a detection module that identifies automated movement and navigation scripts (often referred to as "Baritone" or "Navigator").
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -484,9 +484,9 @@ The `:pathing` command toggles a detection module that identifies automated move
 > Usage: ":pathing"
 > Example: :pathing
 
-## :platformblock
+## platformblock
 ### At A Glance
-The `PlatformBlock` module manages which player platforms (console, desktop, mobile) are allowed to join the server. Administrators can block specific platforms, preventing unauthorized clients from connecting.
+The `platformblock` module manages which player platforms (console, desktop, mobile) are allowed to join the server. Administrators can block specific platforms, preventing unauthorized clients from connecting.
 
 ### How It Works
 - **Platform Detection:** When a player joins, the system identifies their platform (console, desktop, or mobile).  
@@ -510,9 +510,9 @@ The `PlatformBlock` module manages which player platforms (console, desktop, mob
 > Example: :platformblock -l  
 
 
-## :ratelimit
+## ratelimit
 ### At A Glance
-The `RateLimit` module protects the server from players attempting to overwhelm it with excessive packets.  
+The `ratelimit` module protects the server from players attempting to overwhelm it with excessive packets.  
 It enforces per-player, per-packet, and global packet rate limits, automatically banning or kicking offenders to prevent exploits and server crashes. Only Level 4 staff can toggle this module.
 
 ### How It Works
@@ -543,7 +543,7 @@ It enforces per-player, per-packet, and global packet rate limits, automatically
 > Example: :ratelimit  
 
 
-## :reach
+## reach
 ### At A Glance
 Toggles the module that checks if players are hitting others from a fair distance.  
 This is strictly a combat check and does **not** affect block placement or movement.
@@ -564,9 +564,9 @@ This is strictly a combat check and does **not** affect block placement or movem
 > Example: :reach help  
 
 
-## :scaffold
+## scaffold
 ### At A Glance
-The `Scaffold` module detects and prevents automated block placement hacks, commonly known as scaffold hacks. It monitors players building above air or towering up to identify unnatural placement patterns that could indicate cheating.
+The `scaffold` module detects and prevents automated block placement hacks, commonly known as scaffold hacks. It monitors players building above air or towering up to identify unnatural placement patterns that could indicate cheating.
 
 ### How It Works
 - **Block Placement Monitoring:** Tracks each block placed by players and the time of placement.  
@@ -588,9 +588,9 @@ The `Scaffold` module detects and prevents automated block placement hacks, comm
 > Example: :scaffold help  
 
 
-## :selfattack
+## selfattack
 ### At A Glance
-The `Self-Attack` module detects and prevents players from using modified clients or exploits to attack themselves. This type of exploit can bypass server mechanics or trigger unintended effects, potentially giving unfair advantages.
+The `selfattack` module detects and prevents players from using modified clients or exploits to attack themselves. This type of exploit can bypass server mechanics or trigger unintended effects, potentially giving unfair advantages.
 
 ### How It Works
 - **Entity Hit Detection:** Listens for `entity hit` events, which are triggered whenever one entity damages another.  
@@ -608,9 +608,9 @@ The `Self-Attack` module detects and prevents players from using modified client
 > Example: :selfattack help  
 
 
-## :visioncheck
+## visioncheck
 ### At A Glance
-Toggles the `Vision Check` module, which continuously monitors the contents of containers or player inventories that Level 4 security personnel are looking at, displaying the contents on their action bar in real-time.
+Toggles the `visioncheck` module, which continuously monitors the contents of containers or player inventories that Level 4 security personnel are looking at, displaying the contents on their action bar in real-time.
 
 ### How It Works
 - **Inventory Detection:** When a Level 4 player looks at a block or another player within 10 blocks, the module checks if the target has an inventory.  
@@ -631,9 +631,9 @@ Toggles the `Vision Check` module, which continuously monitors the contents of c
 > Example: :visioncheck help  
 
 
-## :worldborder
+## worldborder
 ### At A Glance
-Toggles the `World Border` module, which restricts players from exceeding configurable boundaries in each dimension (Overworld, Nether, End) relative to the world origin (0,0,0), rather than the spawn point. Players with Level 4 security clearance are exempt.
+Toggles the `worldborder` module, which restricts players from exceeding configurable boundaries in each dimension (Overworld, Nether, End) relative to the world origin (0,0,0), rather than the spawn point. Players with Level 4 security clearance are exempt.
 
 ### How It Works
 - **Border Enforcement:** Continuously monitors player positions in all dimensions and teleports them back inside the boundary if they exceed the set size.  
@@ -666,9 +666,9 @@ Toggles the `World Border` module, which restricts players from exceeding config
 > Example: :worldborder --list  
 
 
-## :xray
+## xray
 ### At A Glance
-The `Xray` module detects and reports suspicious mining activity that may indicate the use of Xray cheats. It monitors players mining high-value ores (e.g., diamonds, emeralds, ancient debris) at unusual rates or in patterns inconsistent with normal gameplay. Administrators with Level 4 Security Clearance are alerted when suspicious activity is detected.
+The `xray` module detects and reports suspicious mining activity that may indicate the use of Xray cheats. It monitors players mining high-value ores (e.g., diamonds, emeralds, ancient debris) at unusual rates or in patterns inconsistent with normal gameplay. Administrators with Level 4 Security Clearance are alerted when suspicious activity is detected.
 
 ### How It Works
 - **Tracking Mining Behavior:** Monitors mined ores and counts rare blocks versus total mined blocks over a 2-minute rolling window.  
