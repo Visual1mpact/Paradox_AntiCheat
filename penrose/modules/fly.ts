@@ -62,19 +62,19 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
                 }
 
                 const blockAtLocation = player.dimension.getBlock(location);
-                if (!blockAtLocation) {
-                    continue;
-                }
+                if (!blockAtLocation) continue;
 
-                if (player.isOnGround) {
+                const blockBelow = blockAtLocation.below();
+                if (!blockBelow) continue;
+
+                // Verify ground state to prevent spoofing.
+                // We check directly below the feet and slightly deeper to account for block types like fences and walls.
+                const physicallyGrounded = (blockBelow && (blockBelow.isSolid || blockBelow.isLiquid)) || player.dimension.getBlock({ x: location.x, y: location.y - 0.7, z: location.z })?.isSolid;
+
+                if (player.isOnGround && physicallyGrounded) {
                     player.setDynamicProperty("airportLanding", player.location);
                 }
 
-                const blockBelow = blockAtLocation.below(); // Block directly beneath the player
-                if (!blockBelow) {
-                    // if there's no block below, skip this player
-                    continue;
-                }
                 const surroundingBlocksBelow = [blockBelow, blockBelow.north(), blockBelow.north()?.east(), blockBelow.east(), blockBelow.south()?.east(), blockBelow.south(), blockBelow.south()?.west(), blockBelow.west(), blockBelow.north()?.west()];
 
                 const airBlockCountBelow = surroundingBlocksBelow.filter((block) => block?.isAir).length;
@@ -87,7 +87,12 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
                 const hoverTimeThreshold = 2;
                 let hoverTime = (player.getDynamicProperty("hoverTime") as number) ?? 0;
 
-                if ((!player.isFalling && player.isFlying) || (majorityAreAir && (Math.abs(velocity.y) >= verticalVelocityThreshold || horizontalVelocity >= horizontalVelocityThreshold) && !player.isJumping && !player.isOnGround)) {
+                // Anti-Fly Detection:
+                // 1. Standard isFlying check (if not falling).
+                // 2. Movement check: We ignore players with downward velocity (y < -0.1) to prevent false flags for falling.
+                // 3. Spoof check: We flag if they are not grounded OR if they claim ground but aren't physically supported.
+                const isFloating = !player.isOnGround || !physicallyGrounded;
+                if ((!player.isFalling && player.isFlying) || (velocity.y >= -0.1 && majorityAreAir && (Math.abs(velocity.y) >= verticalVelocityThreshold || horizontalVelocity >= horizontalVelocityThreshold) && !player.isJumping && isFloating)) {
                     hoverTime += 1;
                     player.setDynamicProperty("hoverTime", hoverTime);
 
