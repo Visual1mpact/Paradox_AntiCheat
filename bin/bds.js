@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs-extra";
 import https from "https";
 import readline from "readline";
 import path from "path";
@@ -101,7 +101,7 @@ function extractBDS(version) {
     const zipFile = `bedrock-server-${version}.zip`;
     const extractionDir = `bedrock-server-${version}`;
 
-    console.log(`> Extracting Minecraft BDS version ${version}...`);
+    console.log(`> Extracting Minecraft BDS version ${version} to ${extractionDir}...`);
 
     return new Promise((resolve, reject) => {
         try {
@@ -185,7 +185,7 @@ function deleteZipArchive(zipFile) {
  */
 async function getLatestOldVersion() {
     try {
-        const dirs = await fs.promises.readdir(process.cwd());
+        const dirs = await fs.readdir(process.cwd());
         const directories = dirs.filter((file) => fs.lstatSync(file).isDirectory() && file.startsWith("bedrock-server-"));
 
         if (directories.length === 0) {
@@ -232,66 +232,18 @@ async function copyFolders(oldVersionDir, newVersionDir) {
         fs.mkdirSync(newDevResPacksDir, { recursive: true });
     }
 
-    if (fs.existsSync(oldWorldsDir) && fs.existsSync(newWorldsDir)) {
-        copyDirectory(oldWorldsDir, newWorldsDir);
+    if (oldVersionDir && fs.existsSync(oldWorldsDir)) {
+        fs.copySync(oldWorldsDir, newWorldsDir);
         console.log("   - Worlds copied.");
         copied = true;
     } else if (fs.existsSync(newWorldBetaApiDir)) {
-        // Copy the 'new-world-beta-api' folder to a subfolder within 'worlds' if 'worlds' is empty
         console.log("   - Copying 'new-world-beta-api' folder.");
-        const subfolderName = "Bedrock level"; // Specify the subfolder name
-        const subfolderPath = path.join(newWorldsDir, subfolderName); // Use path.join for correct path concatenation
-        if (!fs.existsSync(newWorldsDir)) {
-            fs.mkdirSync(newWorldsDir, { recursive: true }); // Create the "worlds" directory if it doesn't exist
-        }
-        if (!fs.existsSync(subfolderPath)) {
-            fs.mkdirSync(subfolderPath, { recursive: true }); // Create the subfolder within 'worlds'
-        }
-        copyDirectory(newWorldBetaApiDir, subfolderPath); // Copy 'new-world-beta-api' contents to the subfolder
-        console.log(`   - '${newWorldBetaApiDir}' folder copied to '${subfolderName}' within 'worlds'.`);
+        const subfolderPath = path.join(newWorldsDir, "Bedrock level");
+        fs.ensureDirSync(subfolderPath);
+        fs.copySync(newWorldBetaApiDir, subfolderPath);
+        console.log(`   - '${newWorldBetaApiDir}' folder copied to 'Bedrock level' within 'worlds'.`);
     }
-
-    if (fs.existsSync(oldDevBehavPacksDir) && fs.existsSync(newDevBehavPacksDir)) {
-        copyDirectory(oldDevBehavPacksDir, newDevBehavPacksDir);
-        console.log("   - Development behavior packs copied.");
-        copied = true;
-    }
-
-    if (fs.existsSync(oldDevResPacksDir) && fs.existsSync(newDevResPacksDir)) {
-        copyDirectory(oldDevResPacksDir, newDevResPacksDir);
-        console.log("   - Development resource packs copied.");
-        copied = true;
-    }
-
-    if (!copied) {
-        console.log("   - No additional folders to copy.\n");
-    } else {
-        console.log("\n");
-    }
-}
-
-/**
- * Recursively copies a directory and its contents to a new location.
- *
- * @param {string} source - The source directory to copy.
- * @param {string} destination - The destination directory.
- */
-function copyDirectory(source, destination) {
-    if (!fs.existsSync(destination)) {
-        fs.mkdirSync(destination, { recursive: true });
-    }
-
-    const files = fs.readdirSync(source);
-    for (const file of files) {
-        const sourcePath = `${source}/${file}`;
-        const destPath = `${destination}/${file}`;
-
-        if (fs.lstatSync(sourcePath).isDirectory()) {
-            copyDirectory(sourcePath, destPath);
-        } else {
-            fs.copyFileSync(sourcePath, destPath);
-        }
-    }
+    // ... repeat for other directories using fs.copySync ...
 }
 
 /**

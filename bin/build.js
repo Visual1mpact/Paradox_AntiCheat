@@ -179,7 +179,8 @@ async function runServerTest() {
 
     if (osType === "Linux") {
         fs.chmodSync(serverPath, 0o755);
-        const serverProcess = spawn("sh", ["-c", `sudo LD_LIBRARY_PATH=. ${serverPath}`], {
+        const useSudo = process.env.USE_SUDO === "true";
+        const serverProcess = spawn("sh", ["-c", `${useSudo ? "sudo " : ""}LD_LIBRARY_PATH=. ${serverPath}`], {
             stdio: "inherit",
             cwd: bedrockServerDir,
         });
