@@ -129,7 +129,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const facing = isCloseRange || checkIfFacingEntity(attacker, target);
 
     if (distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes) || !facing || isRapidSwitch) {
-        event.cancel = true;
+        event.damage = 0;
         alertStaff(attacker, distance, recentAttacks.length);
     }
 }

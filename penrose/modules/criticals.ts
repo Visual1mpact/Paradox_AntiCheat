@@ -50,7 +50,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
          * (velocity.y >= 0), it's a forced packet critical hit.
          */
         if (blockBelow && blockBelow.isSolid && velocity.y >= 0) {
-            event.cancel = true;
+            event.damage = 0;
 
             // Teleport them back to ground to break the cheat loop
             attacker.teleport(attacker.location, { checkForBlocks: true });

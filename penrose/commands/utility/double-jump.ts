@@ -108,7 +108,7 @@ function handleHurt(event: EntityHurtBeforeEvent) {
     if (event.damageSource.cause !== EntityDamageCause.fall) return;
 
     if (activeDoubleJumpers.has(event.hurtEntity.id)) {
-        event.cancel = true;
+        event.damage = 0;
     }
 }
 

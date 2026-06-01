@@ -304,7 +304,7 @@ export function initializePvPSystem() {
         const pvpEnabled = victim.getDynamicProperty(pvpStatusProperty) ?? world.gameRules.pvp;
 
         if (bypass || !pvpEnabled) {
-            event.cancel = true;
+            event.damage = 0;
             cachePlayerInventory(attacker);
             startCombat(attacker);
 

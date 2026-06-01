@@ -130,7 +130,7 @@ function onHitCached(event: EntityHurtBeforeEvent) {
 
     d = distSq(ah[ai], ah[ai + 1], ah[ai + 2], vh[vi], vh[vi + 1], vh[vi + 2]);
     if (d > MAX_REACH_SQ) {
-        event.cancel = true;
+        event.damage = 0;
         alertStaff(attacker, d);
     }
 }

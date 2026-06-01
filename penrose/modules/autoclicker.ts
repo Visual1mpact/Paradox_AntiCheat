@@ -59,7 +59,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
 
     if (cps >= MAX_CPS) {
         // Cancel damage
-        event.cancel = true;
+        event.damage = 0;
 
         // Notify staff only
         alertStaff(attacker, cps);

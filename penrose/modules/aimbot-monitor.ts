@@ -129,7 +129,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent): void {
 
     // If violations are accumulating (Threshold: 10), cancel the damage.
     if (data && data.violations >= 10) {
-        event.cancel = true;
+        event.damage = 0;
     }
 }
 
