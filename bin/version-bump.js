@@ -69,13 +69,23 @@ function analyzeCommitImpact(commit, gitRoot, lastTag) {
 
     // Major: breaking changes
     if (/BREAKING CHANGE|!:/.test(subject) || breakingMatch) {
-        major = true;
+        minor = true;
         if (breakingMatch) {
             breakingExplanation = breakingMatch[1].trim();
-            reasons.push(`Major: breaking change in released files ${hash} - Reason: ${breakingExplanation}`);
+            reasons.push(`Minor: breaking change detected ${hash} - Reason: ${breakingExplanation}`);
         } else {
-            reasons.push(`Major: breaking change in released files ${hash}`);
+            reasons.push(`Minor: breaking change detected ${hash}`);
         }
+    }
+
+    // Major: Minecraft or Script API updates
+    // Verified by checking if manifest.json was modified alongside keyword detection
+    const hasPlatformKeywords = /(?:minecraft|bedrock) (?:version|update)|script api/i.test(text);
+    const manifestChanged = filesChanged.includes("manifest.json");
+
+    if (hasPlatformKeywords && manifestChanged) {
+        major = true;
+        reasons.push(`Major: Minecraft or Script API update verified in manifest.json ${hash}`);
     }
 
     // Minor: features or enhancements
@@ -98,8 +108,8 @@ function analyzeCommitImpact(commit, gitRoot, lastTag) {
 
     // Risk keywords
     if (/critical|urgent|security|hotfix/i.test(text) && released) {
-        major = true;
-        reasons.push(`Major: high-risk keywords in released commit ${hash}`);
+        minor = true;
+        reasons.push(`Minor: high-risk keywords in released commit ${hash}`);
     }
 
     if (filesChanged.length > 0) {
