@@ -29,7 +29,7 @@ export function onPlayerSpawn() {
  * Subscribes to the player spawn event to handle additional logic.
  */
 function initializeEventHandlers() {
-    EventCoordinator.unsubscribeAfter("playerSpawn", handlePlayerSpawn);
+    EventCoordinator.subscribeAfter("playerSpawn", handlePlayerSpawn);
 }
 
 /**
