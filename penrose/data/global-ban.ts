@@ -1,4 +1,4 @@
-export const globalBanPlayers = [
+const banList = [
     "123yuuki",
     "a0marun",
     "A4471",
@@ -394,3 +394,6 @@ export const globalBanPlayers = [
     "bad6boyz07",
     "iepatomic",
 ];
+
+// Use a Set for O(1) lookup performance
+export const globalBanPlayers = new Set(banList.map((name) => name.toLowerCase()));

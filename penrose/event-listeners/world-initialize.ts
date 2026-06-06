@@ -66,6 +66,7 @@ import { spoofLogCommand } from "../commands/moderation/spooflog";
 import { invSyncCommand } from "../commands/settings/invsync";
 import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
+import { initializeGlobalBanCheck } from "./global-ban-listener";
 import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
@@ -306,7 +307,7 @@ function initializeGlobalBanList() {
         // Update the current world version
         world.setDynamicProperty("paradoxVersion", paradoxVersion);
         // Update global ban list for new version
-        world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify(globalBanPlayers));
+        world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify([...globalBanPlayers]));
         return;
     }
 
@@ -315,7 +316,7 @@ function initializeGlobalBanList() {
 
     if (!existingBanList) {
         // If it doesn't exist, initialize it with the globalBanPlayers array
-        world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify(globalBanPlayers));
+        world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify([...globalBanPlayers]));
     }
 }
 
@@ -465,6 +466,7 @@ async function onWorldInitialize(): Promise<void> {
     chatSendSubscription.subscribe(); // Subscribe to chat send events
     initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
     initializeGlobalBanList(); // Ensure the global banned player list is initialized
+    initializeGlobalBanCheck(); // Initialize the global ban listener
     await initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
     handleLockDown(); // Handle lockdown if it's active
     handlePvP(); // Handle PvP if it's enabled

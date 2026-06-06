@@ -1,6 +1,7 @@
 import { banlistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { refreshGlobalBanCache } from "../../event-listeners/global-ban-listener";
 
 // Define the unban command
 export const unbanCommand: Command = {
@@ -93,6 +94,8 @@ export const unbanCommand: Command = {
             // Save as array again
             const newList = Object.keys(bannedPlayers);
             world.setDynamicProperty("globalBannedPlayers", JSON.stringify(newList));
+            // Invalidate the cache so the change is reflected immediately
+            refreshGlobalBanCache();
         } else {
             await banlistDB.set("players", bannedPlayers);
         }
