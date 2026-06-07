@@ -284,6 +284,7 @@ const banList = [
     "NRedPhoenix",
     "Nun Souls",
     "nUs188",
+    "NutHacker5393",
     "NXXYV7883",
     "nyanko4519",
     "Nyx7320",
@@ -292,7 +293,8 @@ const banList = [
     "Olanh fm",
     "otosan2857",
     "Overtkerr",
-    "PandaExpress885",
+    "PandaExpress885"'
+    "Parrot3442",
     "Patrick9455",
     "PeakAttic816794",
     "Pepegamessk",
@@ -373,6 +375,8 @@ const banList = [
     "WeareHomeless6547",
     "Wilcofidel51",
     "Wolfmoon183",
+    "Xdv9
+    "XDVoid12",
     "XPLG4",
     "xtaxman7000",
     "Yocrafter_",
