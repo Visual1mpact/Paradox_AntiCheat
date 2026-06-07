@@ -375,7 +375,7 @@ const banList = [
     "WeareHomeless6547",
     "Wilcofidel51",
     "Wolfmoon183",
-    "Xdv9
+    "Xdv9",
     "XDVoid12",
     "XPLG4",
     "xtaxman7000",
