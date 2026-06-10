@@ -113,7 +113,7 @@ function createArchive(type = "zip") {
         console.log("Modifying manifest.json for Realms build...");
         const manifest = fs.readJsonSync(manifestPath);
         if (manifest.dependencies) {
-            manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net");
+            manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net" && dep.module_name !== "@minecraft/server-admin");
             fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
         }
     }

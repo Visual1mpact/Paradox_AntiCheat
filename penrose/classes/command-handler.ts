@@ -316,7 +316,7 @@ export class CommandHandler {
      * @param defaultPrefix - Current command prefix
      */
     private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
-        const helpAliases = ["help", "--help", "-h"];
+        const helpAliases = ["help", "--help"];
         const isHelpRequest = helpAliases.includes(commandName) || helpAliases.includes(args[0]?.toLowerCase());
         const command = this.commands.get(commandName);
 
