@@ -293,7 +293,7 @@ const banList = [
     "Olanh fm",
     "otosan2857",
     "Overtkerr",
-    "PandaExpress885"'
+    "PandaExpress885",
     "Parrot3442",
     "Patrick9455",
     "PeakAttic816794",
