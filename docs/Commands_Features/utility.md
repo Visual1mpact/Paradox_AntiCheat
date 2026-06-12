@@ -494,6 +494,38 @@ The `transfer` command allows players to connect to another **Minecraft Bedrock 
 - Failed transfers typically indicate:
   - Incorrect hostname
   - Incorrect port
+
+---
+
+## whois
+### At A Glance
+The `whois` command provides moderators with a quick "dossier" of a specific online player. It displays non-sensitive forensic data and real-time status information.
+
+?> Required Clearance Level To Execute: `3`
+
+### **How It Works**
+- It aggregates data from the player's session and the Paradox database.
+- **Clearance Level**: Shows the player's current Paradox security level.
+- **Current Platform**: Identifies the player's current device platform (Mobile, Desktop, Console).
+- **First Platform**: Records the platform the player first joined from.
+- **Aliases**: Pulls known previous names from the identity database to detect alternate accounts.
+- **Location**: Displays current coordinates and dimension.
+- **First Joined**: Shows the date the player first joined the server.
+- **Last Seen**: Displays the last date and time the player was online.
+- **Security Flags**: Highlights players with recorded spoofing history.
+- **Administrative Oversight (Level 4)**: Paradox-Ops can view internal runtime IDs and detailed spoof logs.
+
+> Usage: ":whois <player|id> [ --clear ] | :whois --clearall"
+> Example: :whois Pete9xi
+> Example: :whois Pete9xi --clear
+> Example: :whois --clearall
+
+### **GUI Integration**
+- Available under the **Utility** category for Level 2+ staff.
+- Features a player dropdown for quick selection without typing.
+
+### **Notes**
+- The command only works on players who are currently online.
   - Target server offline
   - Network restrictions
 - Intended for use on **BDS**, proxy networks, or server hubs, not for Realms.

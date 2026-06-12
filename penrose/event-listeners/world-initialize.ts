@@ -62,7 +62,6 @@ import { rateLimitCommand } from "../commands/settings/rate-limit";
 import { packetMonitorCommand } from "../commands/settings/packet-monitor";
 import { allowlistCommand } from "../commands/moderation/allowlist";
 import { visionCheckCommand } from "../commands/settings/vision";
-import { spoofLogCommand } from "../commands/moderation/spooflog";
 import { invSyncCommand } from "../commands/settings/invsync";
 import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
@@ -82,6 +81,7 @@ import {
     InvSyncSnapshots,
     ChestLocksSchema,
     WarnsSchema,
+    PlayerMetadataSchema,
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
@@ -114,6 +114,7 @@ import { startDimensionLock } from "../modules/dimension-lock";
 import { itemUseSubscription } from "../classes/subscriptions/item-use-subscriptions";
 import { guiItemCommand } from "../commands/settings/gui-item";
 import { broadcastCommand } from "../commands/utility/broadcast";
+import { whoisCommand } from "../commands/utility/whois";
 
 type PlayerID = string;
 
@@ -139,6 +140,7 @@ let warnsDB: OptimizedDatabase<WarnsSchema>;
 let invSyncSnapshotsDB: OptimizedDatabase<InvSyncSnapshots>;
 let invSyncAuditDB: OptimizedDatabase<InvSyncAudit>;
 let chestLockDB: OptimizedDatabase<ChestLocksSchema>;
+let playerMetadataDB: OptimizedDatabase<PlayerMetadataSchema>;
 let commandHandler: CommandHandler;
 
 // Define all available commands
@@ -187,7 +189,6 @@ const allCommands: Command[] = [
     allowlistCommand,
     visionCheckCommand,
     doubleJumpCommand,
-    spoofLogCommand,
     debugDBCommand,
     invSyncCommand,
     noClipCommand,
@@ -209,6 +210,7 @@ const allCommands: Command[] = [
     dimensionLockCommand,
     guiItemCommand,
     broadcastCommand,
+    whoisCommand,
 ];
 
 /**
@@ -227,9 +229,10 @@ async function initializeSystems() {
     invSyncSnapshotsDB = new OptimizedDatabase("invSyncSnapshots");
     invSyncAuditDB = new OptimizedDatabase("invSyncAudit");
     chestLockDB = new OptimizedDatabase("chestLocks");
+    playerMetadataDB = new OptimizedDatabase("playerMetadata");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB];
 
     const results = await Promise.allSettled(dbs.map((db) => db.clean()));
     results.forEach((result, i) => {
@@ -490,4 +493,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB };

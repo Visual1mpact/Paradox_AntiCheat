@@ -218,6 +218,20 @@ export type AllowlistPlayersSchema = {
 };
 
 /**
+ * Schema for the playerMetadata database.
+ * Stores long-term forensic data and session history for players.
+ */
+export type PlayerMetadataSchema = {
+    [playerId: PlayerID]: {
+        joinDate: string;
+        firstPlatform: string;
+        firstJoined: number;
+        lastPlatform: string;
+        lastSeen: number;
+    };
+};
+
+/**
  * Schema for the banlist database.
  * Each key is a player name, optionally storing their persistent ID.
  */

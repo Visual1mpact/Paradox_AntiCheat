@@ -1,5 +1,5 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
-import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB, warnsDB } from "../event-listeners/world-initialize";
+import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/event-coordinator";
@@ -106,6 +106,35 @@ async function handleSpoofCheck(player: Player): Promise<void> {
 }
 
 /**
+ * Captures and persists player metadata (Platform, Join Date) to the database.
+ * Hot-loads these values into dynamic properties for low-latency command access.
+ *
+ * @param {Player} player - The player to update.
+ */
+async function handleMetadataUpdate(player: Player): Promise<void> {
+    const id = player.id;
+    const platform: string = player.clientSystemInfo.platformType ?? "Unknown";
+    const now = Date.now();
+
+    const metadata = playerMetadataDB.get(id) ?? {
+        joinDate: new Date(now).toLocaleDateString("en-GB", { dateStyle: "medium" }),
+        firstPlatform: platform,
+        firstJoined: now,
+        lastPlatform: platform,
+        lastSeen: now,
+    };
+
+    metadata.lastPlatform = platform;
+    metadata.lastSeen = now;
+
+    await playerMetadataDB.set(id, metadata);
+
+    // Sync to dynamic properties for the :whois command
+    player.setDynamicProperty("platform", platform);
+    player.setDynamicProperty("joinDate", metadata.joinDate);
+}
+
+/**
  * Handles player spawn events.
  * This function is triggered when a player spawns in the world.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
@@ -121,6 +150,7 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
         await handleWarnCheck(event);
         handleSecurityClearance(event);
         allowList(event);
+        await handleMetadataUpdate(player);
 
         // Logic for setting the nameTag with chat rank
         const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
@@ -365,10 +395,10 @@ function handleSecurityClearance(event: PlayerSpawnAfterEvent) {
     const DEFAULT_CLEARANCE = 1;
     const MAX_CLEARANCE = 4;
 
-    let playerClearance = player.getDynamicProperty("securityClearance") as number;
+    let playerClearance = player.getDynamicProperty("securityClearance") as number | undefined;
 
-    // Ensure player clearance is valid
-    if (!playerClearance || playerClearance < DEFAULT_CLEARANCE || playerClearance > MAX_CLEARANCE) {
+    // If clearance is missing or out of bounds, default to Level 1
+    if (playerClearance === undefined || playerClearance < DEFAULT_CLEARANCE || playerClearance > MAX_CLEARANCE) {
         player.setDynamicProperty("securityClearance", DEFAULT_CLEARANCE);
         playerClearance = DEFAULT_CLEARANCE;
     }
