@@ -19,7 +19,7 @@ Paradox uses a two-layer administrative system to manage permissions:
 1. **OP (Level 4)** – The highest clearance, required for critical management tasks.
 2. **Security Clearance Levels (1–4)** – Define access to commands and modules.
 
-All OP and clearance changes are handled **in-game** via the `!op` and `!opsec` commands. Changes are persistent and tracked automatically.
+All OP and clearance changes are handled **in-game** via the `:op` and `:opsec` commands. Changes are persistent and tracked automatically.
 
 ---
 
@@ -34,7 +34,7 @@ Level 4 is the **highest security clearance**. It allows full management of Para
    * If no host exists, any player with **server operator privileges** (BDS operator, Realm host, LAN host) can initialize the host by running:
 
    ```
-   !op
+   :op
    ```
 
    * The player becomes the **host** and is automatically granted **Level 4 clearance**.
@@ -46,7 +46,7 @@ Level 4 is the **highest security clearance**. It allows full management of Para
    * Use:
 
    ```
-   !op <playerName>
+   :op <playerName>
    ```
 
    * The target player is granted Level 4 clearance and receives a notification.
@@ -56,16 +56,16 @@ Level 4 is the **highest security clearance**. It allows full management of Para
    * Any Level 4 user can view all Level 4 players, including the host:
 
    ```
-   !op list
+   :op list
    ```
 
 ### Example Commands
 
 ```
-!op
-!op Alice
-!op "Player Name"
-!op list
+:op
+:op Alice
+:op "Player Name"
+:op list
 ```
 
 ---
@@ -99,22 +99,22 @@ Paradox defines access through **Level 1–4 security clearances**:
 
 ### Changing Clearance Levels
 
-* Use the `!opsec` command to change Levels 1–3:
+* Use the `:opsec` command to change Levels 1–3:
 
 ```
-!opsec <playerName> <clearanceLevel>
+:opsec <playerName> <clearanceLevel>
 ```
 
 * **Restrictions:**
 
-  * Level 4 cannot be assigned via `!opsec`. Only the `!op` command can assign Level 4.
-  * Only Level 4 users (host or OP) can run `!opsec`.
+  * Level 4 cannot be assigned via `:opsec`. Only the `:op` command can assign Level 4.
+  * Only Level 4 users (host or OP) can run `:opsec`.
 
 ### Example Commands
 
 ```
-!opsec Bob 3
-!opsec "Player Name" 2
+:opsec Bob 3
+:opsec "Player Name" 2
 ```
 
 ---
@@ -135,7 +135,7 @@ Once the host and OP are assigned:
 * Check available commands:
 
 ```
-!help
+:help
 ```
 
 * Configure and enable Paradox modules for your world.
