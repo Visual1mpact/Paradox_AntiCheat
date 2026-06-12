@@ -497,6 +497,31 @@ The `transfer` command allows players to connect to another **Minecraft Bedrock 
 
 ---
 
+## waypoint
+### At A Glance
+The `waypoint` command provides players with a personal navigation GPS. It allows you to save multiple destinations, activate navigation to any of them, and provides a real-time directional HUD on your screen.
+
+?> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- **Set Waypoint**: Saves your current location as a named navigation target and activates its HUD.
+- **Go To Waypoint**: Activates the directional HUD for a previously saved waypoint.
+- **Clear Waypoint**: Removes a specific named waypoint. If no name is provided, it stops the currently active navigation.
+- **List Waypoints**: Displays all your saved waypoints and indicates which one is currently active.
+- **Directional HUD**: An arrow appears on your action bar pointing toward the active target, along with the distance.
+- **Dimension Check**: Notifies you if you are in a different dimension than your active waypoint.
+- **Auto-Arrival**: Automatically stops navigation once you are within 3 blocks of the active target.
+
+> Usage: ":waypoint <set [name] | goto [name] | clear [name] | list>"
+> Example: :waypoint set MyHouse
+> Example: :waypoint goto MyHouse
+> Example: :waypoint clear MyHouse
+> Example: :waypoint clear
+> Example: :waypoint list
+
+
+---
+
 ## whois
 ### At A Glance
 The `whois` command provides moderators with a quick "dossier" of a specific online player. It displays non-sensitive forensic data and real-time status information.

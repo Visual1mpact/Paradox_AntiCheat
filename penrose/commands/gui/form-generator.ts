@@ -246,6 +246,18 @@ class GUIManager {
                             const key = ptr.split("/").pop() ?? "";
                             return key.replace(/^minecraft:/, ""); // remove prefix for display
                         });
+                    } else if (field.sourceType === "playerWaypoints") {
+                        // Pull saved waypoint names from the player's dynamic property
+                        const raw = this.player.getDynamicProperty("paradox:waypoint_data") as string | undefined;
+                        if (raw) {
+                            try {
+                                const data = JSON.parse(raw);
+                                field.options = Object.keys(data.savedWaypoints || {});
+                            } catch {
+                                field.options = [];
+                            }
+                        }
+                        if (!field.options || field.options.length === 0) field.options = ["No Waypoints Saved"];
                     }
 
                     form.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });

@@ -115,6 +115,7 @@ import { itemUseSubscription } from "../classes/subscriptions/item-use-subscript
 import { guiItemCommand } from "../commands/settings/gui-item";
 import { broadcastCommand } from "../commands/utility/broadcast";
 import { whoisCommand } from "../commands/utility/whois";
+import { waypointCommand, startWaypointHUD } from "../commands/utility/waypoint";
 
 type PlayerID = string;
 
@@ -211,6 +212,7 @@ const allCommands: Command[] = [
     guiItemCommand,
     broadcastCommand,
     whoisCommand,
+    waypointCommand,
 ];
 
 /**
@@ -477,6 +479,7 @@ async function onWorldInitialize(): Promise<void> {
     handlePvP(); // Handle PvP if it's enabled
     handleDoubleJump(); // Handle Double Jump persistence
     onPlayerSpawn(); // Subscribe to player spawn events
+    startWaypointHUD(); // Initialize the Waypoint navigation HUD
     healthChangeListener.start(); // Synchronize health
 }
 
