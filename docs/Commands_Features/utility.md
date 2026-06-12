@@ -2,6 +2,36 @@
 
 ?> This documentation could change with any version. Be sure to check it periodically.
 
+## broadcast
+### At A Glance
+The `broadcast` command allows Administrators to send server-wide announcements using prominent on-screen UI elements. This ensures that important messages are seen by every player, even if they aren't looking at the chat.
+
+?> Required Clearance Level To Execute: `3`
+
+### **How It Works**
+- Broadcasts use the Minecraft title system to display messages in three distinct areas:
+    - **Title**: Large text in the center of the screen.
+    - **Subtitle**: Smaller text displayed directly beneath the main title.
+    - **Action Bar**: Text displayed just above the player's hotbar.
+- The command supports flags to target specific UI elements. You must provide at least one field for the broadcast to be valid.
+- Subtitles are displayed alongside titles. If only a subtitle is provided, a blank title is used to maintain visibility.
+
+> Usage: ":broadcast [ -t | --title <text> ] [ -s | --subtitle <text> ] [ -a | --actionbar <text> ]"
+> Example: :broadcast -t "Event Starting!" -s "Meet at Spawn"
+> Example: :broadcast -a "Maintenance in 5 minutes"
+
+### **GUI Integration**
+- Found under the **Utility** category in the administrative GUI.
+- **Global Broadcaster**: Selecting this action opens a configuration form where you can input text for the Title, Subtitle, and Action Bar simultaneously.
+
+### **Notes**
+- Supports standard Minecraft color codes (e.g., `§a`, `§e`).
+- Broadcasts include built-in timing for fade-in, stay duration, and fade-out to ensure readability.
+- Sending a new title broadcast will overwrite any currently active title/subtitle on the player's screen.
+- Input sanitization automatically removes restricted symbols like `@` to prevent execution injections.
+
+---
+
 ## channels
 ### At A Glance
 The `channels` command allows players to manage private chat channels. Players can create, join, invite, leave, and transfer ownership of channels in a controlled environment.

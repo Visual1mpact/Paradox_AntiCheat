@@ -113,6 +113,7 @@ import { dimensionLockCommand } from "../commands/settings/dimension-lock";
 import { startDimensionLock } from "../modules/dimension-lock";
 import { itemUseSubscription } from "../classes/subscriptions/item-use-subscriptions";
 import { guiItemCommand } from "../commands/settings/gui-item";
+import { broadcastCommand } from "../commands/utility/broadcast";
 
 type PlayerID = string;
 
@@ -207,6 +208,7 @@ const allCommands: Command[] = [
     anticrashCommand,
     dimensionLockCommand,
     guiItemCommand,
+    broadcastCommand,
 ];
 
 /**
