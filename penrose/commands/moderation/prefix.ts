@@ -7,8 +7,8 @@ import { Command } from "../../classes/command-handler";
 export const prefixCommand: Command = {
     name: "prefix",
     description: "Changes the prefix for commands. Max is two characters.",
-    usage: "{prefix}prefix [ optional ]",
-    examples: [`{prefix}prefix !!`, `{prefix}prefix @@`, `{prefix}prefix !@`, `{prefix}prefix help`],
+    usage: "{prefix}prefix [ <newPrefix> | --reset ]",
+    examples: [`{prefix}prefix !!`, `{prefix}prefix @@`, `{prefix}prefix --reset`, `{prefix}prefix help`],
     category: "Moderation",
     securityClearance: 4,
     icon: "textures/ui/update.png",
@@ -22,6 +22,7 @@ export const prefixCommand: Command = {
             "§7• Updating the prefix affects all administrative and utility commands.\n\n" +
             "§7Prefix Rules:\n" +
             "§7• Changes apply instantly and persist across server restarts.\n" +
+            "§7• Use `--reset` to restore the default prefix (`:`).\n" +
             "§7• Only administrators with clearance level 4 can modify this configuration.\n\n",
         commandOrder: "command-arg",
         actions: [
@@ -31,6 +32,13 @@ export const prefixCommand: Command = {
                 requiredFields: ["prefix"],
                 generateModalForm: true,
                 icon: "textures/ui/WarningGlyph.png",
+            },
+            {
+                name: "Reset to Default",
+                command: ["--reset"],
+                description: "Reset the command prefix to the default ':'.",
+                generateModalForm: false,
+                icon: "textures/ui/wysiwyg_reset.png",
             },
         ],
         dynamicFields: [
@@ -51,38 +59,44 @@ export const prefixCommand: Command = {
      */
     execute: (message?: ChatSendBeforeEvent, args: string[] = []): Promise<boolean> => {
         if (!message) return Promise.resolve(false);
-        return new Promise<boolean>((resolve) => {
-            // Check if a new prefix is provided
-            if (args.length > 0) {
-                // Limit the prefix to two characters
-                const newPrefix: string = args[0].slice(0, 2);
+        const DEFAULT_PREFIX = ":";
 
-                // Check if the new prefix contains '/' or '§'
-                if (/[\/§]/.test(newPrefix)) {
-                    message.sender.sendMessage("§o§c[Paradox] Prefix cannot include the forward slash or section sign characters.");
-                    resolve(false); // Return false indicating failure
+        return new Promise<boolean>((resolve) => {
+            const input = args[0]?.trim();
+
+            // Check for the reset flag
+            if (args.includes("--reset")) {
+                world.setDynamicProperty("__prefix", DEFAULT_PREFIX);
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix has been reset to default: ${DEFAULT_PREFIX}§7`);
+                return resolve(true);
+            }
+
+            if (input && input.length > 0) {
+                // Limit the prefix to two characters
+                const newPrefix: string = input.slice(0, 2);
+
+                // Tightened validation: Prohibit /, §, whitespace, and alphanumeric characters
+                const isIllegal = newPrefix.includes("/") || newPrefix.includes("§") || /\s/.test(newPrefix) || /[a-zA-Z0-9]/.test(newPrefix);
+
+                if (isIllegal) {
+                    message.sender.sendMessage("§o§c[Paradox] Illegal prefix. Use 1-2 symbols (no /, whitespace, or alphanumeric characters).");
+                    return resolve(false);
                 }
 
                 // Retrieve the current prefix from dynamic properties
                 const currentPrefix: string = world.getDynamicProperty("__prefix") as string;
 
-                // Check if the new prefix is different from the current one
                 if (newPrefix !== currentPrefix) {
-                    // Save the new prefix to a dynamic property
                     world.setDynamicProperty("__prefix", newPrefix);
-
-                    // Send confirmation message
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix updated to: ${newPrefix}§7`);
-                    resolve(true); // Return true indicating success
+                    return resolve(true);
                 } else {
-                    // Send message indicating the prefix hasn't changed
                     message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Prefix is already "${newPrefix}§7".`);
-                    resolve(false); // Return false indicating failure
+                    return resolve(false);
                 }
             } else {
-                // Send message indicating no prefix provided
-                message.sender.sendMessage("§2[§7Paradox§2]§o§7 No new prefix provided.");
-                resolve(false); // Return false indicating failure
+                message.sender.sendMessage("§2[§7Paradox§2]§o§7 Please provide a valid 1-2 character symbol as a prefix.");
+                return resolve(false);
             }
         });
     },

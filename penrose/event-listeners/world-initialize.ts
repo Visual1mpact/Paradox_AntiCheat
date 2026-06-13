@@ -300,6 +300,26 @@ function compareVersions(version1: string, version2: string): number {
 }
 
 /**
+ * Validates the stored command prefix and resets it to default if it violates safety rules.
+ */
+function initializePrefix() {
+    const DEFAULT_PREFIX = ":";
+    const currentPrefix = world.getDynamicProperty("__prefix") as string | undefined;
+
+    if (currentPrefix === undefined) {
+        world.setDynamicProperty("__prefix", DEFAULT_PREFIX);
+        return;
+    }
+
+    const isIllegal = currentPrefix.length === 0 || currentPrefix.length > 2 || currentPrefix.includes("/") || currentPrefix.includes("§") || /\s/.test(currentPrefix) || /[a-zA-Z0-9]/.test(currentPrefix);
+
+    if (isIllegal) {
+        console.warn(`[Paradox] Invalid prefix "${currentPrefix}" detected during initialization. Resetting to "${DEFAULT_PREFIX}".`);
+        world.setDynamicProperty("__prefix", DEFAULT_PREFIX);
+    }
+}
+
+/**
  * Initializes the global banned players list if it does not exist.
  * If it doesn't exist, create it and store the `globalBanPlayers` list as a stringified JSON object.
  */
@@ -474,6 +494,7 @@ async function onWorldInitialize(): Promise<void> {
     initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
     initializeGlobalBanList(); // Ensure the global banned player list is initialized
     initializeGlobalBanCheck(); // Initialize the global ban listener
+    initializePrefix(); // Validate and initialize the command prefix
     await initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
     handleLockDown(); // Handle lockdown if it's active
     handlePvP(); // Handle PvP if it's enabled
