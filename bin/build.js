@@ -108,15 +108,16 @@ function createArchive(type = "zip") {
     if (fs.existsSync(outputFilePath)) fs.unlinkSync(outputFilePath);
 
     // Modify manifest.json for mcpack
+    const manifest = fs.readJsonSync("manifest.json");
     const manifestPath = path.join(BUILD_DIR, "manifest.json");
-    if (type === "mcpack" && fs.existsSync(manifestPath)) {
+
+    if (type === "mcpack") {
         console.log("Modifying manifest.json for Realms build...");
-        const manifest = fs.readJsonSync(manifestPath);
         if (manifest.dependencies) {
             manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net" && dep.module_name !== "@minecraft/server-admin");
-            fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
         }
     }
+    fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
 
     console.log(`Creating archive: ${archiveName}`);
     run(get7zaPath(), ["a", "-tzip", archiveName, "-xr!*.d.ts", "-xr!*.d.ts.map", "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"], { cwd: BUILD_DIR });
