@@ -1,5 +1,9 @@
 # Changelog
 
+## [v6.2.3](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v6.2.3) (2026-06-13)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v6.2.2...v6.2.3)
+
 ## [v6.2.2](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v6.2.2) (2026-06-06)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v6.2.1...v6.2.2)
@@ -530,10 +534,6 @@ If you are expecting the function to accept certain arguments, you should explic
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.5.25...v2.6.26)
 
-**Closed issues:**
-
-- anti xray toggle [\#19](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/19)
-
 ## [v2.5.25](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.5.25) (2022-03-08)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.5.24...v2.5.25)
@@ -545,7 +545,6 @@ If you are expecting the function to accept certain arguments, you should explic
 **Closed issues:**
 
 - Flag Report \(broken\) // Commands Not Working [\#21](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/21)
-- you should lower the aura check [\#20](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/20)
 
 ## [v2.4.23](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.4.23) (2022-02-27)
 
@@ -555,17 +554,12 @@ If you are expecting the function to accept certain arguments, you should explic
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.3.21...v2.4.22)
 
-**Closed issues:**
-
-- killaura check b flags [\#18](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/18)
-
 ## [v2.3.21](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.21) (2022-02-24)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v2.3.20...v2.3.21)
 
 **Closed issues:**
 
-- meme [\#17](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/17)
 - Make chat filter optional [\#16](https://github.com/Visual1mpact/Paradox_AntiCheat/issues/16)
 
 ## [v2.3.20](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.3.20) (2022-02-20)
