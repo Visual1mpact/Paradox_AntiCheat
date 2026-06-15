@@ -29,12 +29,21 @@ export const homeCommand: Command = {
             "§7• Access is restricted while serving a prison sentence.\n\n",
         commandOrder: "command-arg",
         actions: [
-            { name: "Set Home", icon: "textures/ui/store_home_icon.png", command: ["set"], description: "Set a new home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
-            { name: "Delete Home", icon: "textures/ui/icon_trash.png", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
-            { name: "Teleport to Home", icon: "textures/ui/NetherPortalMirror.png", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeName"], crypto: true, generateModalForm: true },
+            { name: "Set Home", icon: "textures/ui/store_home_icon.png", command: ["set"], description: "Set a new home location", requiredFields: ["homeNameText"], crypto: true, generateModalForm: true },
+            { name: "Delete Home", icon: "textures/ui/icon_trash.png", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeNameDropdown"], crypto: true, generateModalForm: true },
+            { name: "Teleport to Home", icon: "textures/ui/NetherPortalMirror.png", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeNameDropdown"], crypto: true, generateModalForm: true },
             { name: "List Homes", icon: "textures/ui/icon_map.png", command: ["list"], description: "List all saved home locations", requiredFields: [], crypto: true },
         ],
-        dynamicFields: [{ name: "\nName of Home:", type: "text", placeholder: "Enter Home Name", requiredFields: ["homeName"] }],
+        dynamicFields: [
+            { name: "\nName of Home:", type: "text", placeholder: "Enter Home Name", requiredFields: ["homeNameText"] },
+            {
+                name: "\nSelect Home:",
+                type: "dropdown",
+                sourceType: "playerHomes",
+                arg: "",
+                requiredFields: ["homeNameDropdown"],
+            },
+        ],
     },
 
     /**

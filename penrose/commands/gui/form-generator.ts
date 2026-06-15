@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
-import { chestLockDB, commandHandler } from "../../event-listeners/world-initialize";
+import { chestLockDB, commandHandler, homesDB } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoESImport from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/player-cache";
@@ -258,6 +258,21 @@ class GUIManager {
                             }
                         }
                         if (!field.options || field.options.length === 0) field.options = ["No Waypoints Saved"];
+                    } else if (field.sourceType === "playerHomes") {
+                        // Pull saved homes from database and decrypt names for display
+                        const dbEntry = homesDB.get(this.player.id);
+                        const locations = dbEntry?.locations ?? [];
+                        const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
+                        field.options = locations.map((enc) => {
+                            try {
+                                const bytes = CryptoES.AES.decrypt(enc, obfuscatedKey);
+                                const decrypted = bytes.toString(CryptoES.Utf8);
+                                return decrypted.split(":")[1] ?? "Unknown";
+                            } catch {
+                                return "Corrupted Data";
+                            }
+                        });
+                        if (field.options.length === 0) field.options = ["No Homes Saved"];
                     }
 
                     form.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });
