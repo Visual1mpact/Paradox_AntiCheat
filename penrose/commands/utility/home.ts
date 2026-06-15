@@ -1,6 +1,7 @@
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import * as CryptoESImport from "../../node_modules/crypto-es";
+import { homesDB } from "../../event-listeners/world-initialize";
 
 const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
@@ -42,7 +43,7 @@ export const homeCommand: Command = {
      * @param {string[]} args - The command arguments.
      * @param {typeof CryptoES} cryptoES - The CryptoES namespace for encryption/decryption.
      */
-    execute: (message?: ChatSendBeforeEvent, args?: string[], cryptoParam?: typeof CryptoES): void | Promise<boolean | void> | ((object: any) => void) => {
+    execute: async (message?: ChatSendBeforeEvent, args?: string[], cryptoParam?: typeof CryptoES): Promise<void> => {
         if (!message || !message.sender) return;
         const player = message.sender;
         const cryptoES = (cryptoParam ?? CryptoES) as typeof CryptoES;
@@ -66,6 +67,25 @@ export const homeCommand: Command = {
         // Transform the player ID to generate a unique key
         const obfuscatedKey = cryptoES.SHA256(message.sender.id).toString();
 
+        // Load homes from database
+        const dbEntry = homesDB.get(player.id);
+        let playerHomes = Array.isArray(dbEntry?.locations) ? dbEntry!.locations : [];
+
+        // Migration logic: move legacy tags to database
+        const legacyTags = player.getTags().filter((tag) => tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX));
+        if (legacyTags.length > 0) {
+            let migrated = false;
+            for (const tag of legacyTags) {
+                const encryptedContent = tag.replace(ENCRYPTED_HOME_TAG_PREFIX, "");
+                if (!playerHomes.includes(encryptedContent)) {
+                    playerHomes.push(encryptedContent);
+                    migrated = true;
+                }
+                player.removeTag(tag);
+            }
+            if (migrated) await homesDB.set(player.id, { locations: playerHomes });
+        }
+
         /**
          * Helper function to encrypt data.
          * @param {string} data - The data to encrypt.
@@ -81,8 +101,12 @@ export const homeCommand: Command = {
          * @returns {string} The decrypted data.
          */
         function decryptData(encryptedData: string): string {
-            const bytes = cryptoES.AES.decrypt(encryptedData, obfuscatedKey);
-            return cryptoES.Utf8.stringify(bytes);
+            try {
+                const bytes = cryptoES.AES.decrypt(encryptedData, obfuscatedKey);
+                return bytes.toString(cryptoES.Utf8);
+            } catch {
+                return "";
+            }
         }
 
         /**
@@ -91,15 +115,12 @@ export const homeCommand: Command = {
          * @returns {string} The formatted dimension string.
          */
         function formatDimension(dimension: string): string {
-            // Capitalize the first letter of each word
-            const formattedDimension = dimension.replace(/(^|_)(\w)/g, (_, __, letter) => letter.toUpperCase());
-
-            // Replace "TheEnd" with "The End"
-            if (formattedDimension === "TheEnd") {
-                return "The End";
-            }
-
-            return formattedDimension;
+            if (!dimension) return "Unknown";
+            return dimension
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")
+                .replace("The End", "The End"); // Consistency check for The End
         }
 
         /**
@@ -107,7 +128,7 @@ export const homeCommand: Command = {
          * @returns {number} The number of saved homes.
          */
         function countHomes(): number {
-            return player.getTags().filter((tag) => tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX)).length;
+            return playerHomes.length;
         }
 
         /**
@@ -117,14 +138,13 @@ export const homeCommand: Command = {
          * @param {string} dimension - The dimension of the location.
          * @returns {boolean} Returns true if a home with the same name already exists, false otherwise.
          */
-        function saveHomeLocation(homeName: string, location: Vector3, dimension: string): boolean {
-            const existingHome = player.getTags().find((tag) => {
-                if (tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX)) {
-                    const decryptedTag = decryptData(tag.replace(ENCRYPTED_HOME_TAG_PREFIX, ""));
-                    const [, existingHomeName] = decryptedTag.split(":");
-                    return existingHomeName === homeName;
-                }
-                return false; // Skip non-encrypted tags
+        async function saveHomeLocation(homeName: string, location: Vector3, dimension: string): Promise<boolean> {
+            const existingHome = playerHomes.some((encryptedContent) => {
+                const decryptedTag = decryptData(encryptedContent);
+                if (!decryptedTag) return false;
+                const parts = decryptedTag.split(":");
+                const existingHomeName = parts[1];
+                return existingHomeName === homeName;
             });
 
             if (existingHome) {
@@ -132,8 +152,9 @@ export const homeCommand: Command = {
             }
 
             const unencryptedTag = `${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:${Math.floor(location.x)},${Math.floor(location.y)},${Math.floor(location.z)}:${dimension.replace("minecraft:", "")}`;
-            const encryptedTag = `${ENCRYPTED_HOME_TAG_PREFIX}${encryptData(unencryptedTag)}`;
-            player.addTag(encryptedTag);
+            const encryptedContent = encryptData(unencryptedTag);
+            playerHomes.push(encryptedContent);
+            await homesDB.set(player.id, { locations: playerHomes });
             return false;
         }
 
@@ -142,14 +163,18 @@ export const homeCommand: Command = {
          * @param {string} homeName - The name of the home location to delete.
          * @returns {boolean} Returns true if the home location was deleted successfully, false if the home was not found.
          */
-        function deleteHomeLocation(homeName: string): boolean {
-            const encryptedTags = player.getTags().filter((tag) => tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX));
-            for (const encryptedTag of encryptedTags) {
-                const decryptedTag = decryptData(encryptedTag.replace(ENCRYPTED_HOME_TAG_PREFIX, ""));
-                if (decryptedTag.startsWith(`${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:`)) {
-                    player.removeTag(encryptedTag);
-                    return true; // Home deleted successfully
-                }
+        async function deleteHomeLocation(homeName: string): Promise<boolean> {
+            const index = playerHomes.findIndex((encryptedContent) => {
+                const decryptedTag = decryptData(encryptedContent);
+                if (!decryptedTag) return false;
+                const parts = decryptedTag.split(":");
+                return parts[1] === homeName;
+            });
+
+            if (index !== -1) {
+                playerHomes.splice(index, 1);
+                await homesDB.set(player.id, { locations: playerHomes });
+                return true; // Home deleted successfully
             }
             return false; // Home not found
         }
@@ -158,12 +183,14 @@ export const homeCommand: Command = {
          * Helper function to list all home locations.
          */
         function listHomeLocations(): void {
-            const encryptedTags = player.getTags().filter((tag) => tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX));
-            if (encryptedTags.length > 0) {
+            if (playerHomes.length > 0) {
                 player.sendMessage("§2[§7Paradox§2]§o§7 Your saved home locations:");
-                encryptedTags.forEach((encryptedTag) => {
-                    const decryptedTag = decryptData(encryptedTag.replace(ENCRYPTED_HOME_TAG_PREFIX, ""));
-                    const [, homeName, location, dimension] = decryptedTag.split(":");
+                playerHomes.forEach((encryptedContent) => {
+                    const decryptedTag = decryptData(encryptedContent);
+                    if (!decryptedTag) return;
+                    const parts = decryptedTag.split(":");
+                    if (parts.length < 4) return;
+                    const [, homeName, location, dimension] = parts;
                     const [x, y, z] = location.split(",");
                     const formattedDimension = formatDimension(dimension);
                     player.sendMessage(` §o§7| [§f${homeName}§7] Dimension: §2${formattedDimension}§f, §7Location:§f ${x}, ${y}, ${z}`);
@@ -178,33 +205,41 @@ export const homeCommand: Command = {
          * @param {string} homeName - The name of the home location to teleport to.
          */
         function teleportToHomeLocation(homeName: string): void {
-            const encryptedTags = player.getTags().filter((tag) => tag.startsWith(ENCRYPTED_HOME_TAG_PREFIX));
-            for (const encryptedTag of encryptedTags) {
-                const decryptedTag = decryptData(encryptedTag.replace(ENCRYPTED_HOME_TAG_PREFIX, ""));
-                if (decryptedTag.startsWith(`${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:`)) {
-                    const [, , location, dimension] = decryptedTag.split(":");
-                    const [x, y, z] = location.split(",");
-                    const teleportLocation = { x: parseFloat(x), y: parseFloat(y), z: parseFloat(z) };
-                    const dimensionType = world.getDimension(dimension);
-                    if (!dimensionType) {
-                        player.sendMessage("§o§c[Paradox] Dimension not found. Teleport failed!");
-                        return;
-                    }
-                    const teleportOptions = { dimension: dimensionType };
-                    const success = player.tryTeleport(teleportLocation, teleportOptions);
-                    if (success) {
-                        player.sendMessage(`§2[§7Paradox§2]§o§7 Welcome to "${homeName}§7" ${player.name}§7!`);
-                    } else {
-                        player.sendMessage(`§o§c[Paradox] Failed to teleport to "${homeName}§c"! Please try again.`);
-                    }
+            const encryptedContent = playerHomes.find((content) => {
+                const decryptedTag = decryptData(content);
+                return decryptedTag.startsWith(`${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:`);
+            });
+
+            if (encryptedContent) {
+                const decryptedTag = decryptData(encryptedContent);
+                const parts = decryptedTag ? decryptedTag.split(":") : [];
+                if (!decryptedTag || parts.length < 4) {
+                    player.sendMessage("§o§c[Paradox] Corrupted home data detected.");
                     return;
                 }
+                const [, , location, dimension] = parts;
+                const [x, y, z] = location.split(",");
+                const teleportLocation = { x: parseFloat(x), y: parseFloat(y), z: parseFloat(z) };
+
+                const fullDimensionId = dimension.includes(":") ? dimension : `minecraft:${dimension}`;
+                const dimensionType = world.getDimension(fullDimensionId);
+                if (!dimensionType) {
+                    player.sendMessage("§o§c[Paradox] Dimension not found. Teleport failed!");
+                    return;
+                }
+                const success = player.tryTeleport(teleportLocation, { dimension: dimensionType });
+                if (success) {
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 Welcome to "${homeName}§7" ${player.name}§7!`);
+                } else {
+                    player.sendMessage(`§o§c[Paradox] Failed to teleport to "${homeName}§c"! Please try again.`);
+                }
+                return;
             }
             player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" not found!`);
         }
 
         const subCommand = args?.[0]?.toLowerCase();
-        const homeName = args?.slice(1).join(" ") ?? "";
+        const homeName = args?.slice(1).join(" ")?.replace(/[:"@]/g, "").trim() ?? "";
 
         if (!homeName && subCommand && ["set", "delete", "teleport"].includes(subCommand)) {
             player.sendMessage(`§o§c[Paradox] Please provide a home name.`);
@@ -219,7 +254,7 @@ export const homeCommand: Command = {
                 }
                 const location = player.location; // Get the player's current location
                 const dimension = player.dimension.id; // Get the name of the player's current dimension
-                const existingHome = saveHomeLocation(homeName, location, dimension);
+                const existingHome = await saveHomeLocation(homeName, location, dimension);
                 if (existingHome) {
                     player.sendMessage(`§2[§7Paradox§2]§o§7 A home named "${homeName}§7" already exists!`);
                     return;
@@ -228,7 +263,7 @@ export const homeCommand: Command = {
                 break;
             }
             case "delete": {
-                const homeDeleted = deleteHomeLocation(homeName);
+                const homeDeleted = await deleteHomeLocation(homeName);
                 if (homeDeleted) {
                     player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" deleted successfully!`);
                 } else {

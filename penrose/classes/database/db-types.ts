@@ -244,3 +244,13 @@ export type BanlistPlayersSchema = {
         };
     };
 };
+
+/**
+ * Schema for the homes database.
+ * Maps a player's unique ID to an array of encrypted home location strings.
+ */
+export type HomesSchema = {
+    [playerId: PlayerID]: {
+        locations: string[];
+    };
+};

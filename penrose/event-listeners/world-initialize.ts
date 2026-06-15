@@ -82,6 +82,7 @@ import {
     ChestLocksSchema,
     WarnsSchema,
     PlayerMetadataSchema,
+    HomesSchema,
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
@@ -143,6 +144,7 @@ let invSyncSnapshotsDB: OptimizedDatabase<InvSyncSnapshots>;
 let invSyncAuditDB: OptimizedDatabase<InvSyncAudit>;
 let chestLockDB: OptimizedDatabase<ChestLocksSchema>;
 let playerMetadataDB: OptimizedDatabase<PlayerMetadataSchema>;
+let homesDB: OptimizedDatabase<HomesSchema>;
 let commandHandler: CommandHandler;
 
 // Define all available commands
@@ -234,9 +236,10 @@ async function initializeSystems() {
     invSyncAuditDB = new OptimizedDatabase("invSyncAudit");
     chestLockDB = new OptimizedDatabase("chestLocks");
     playerMetadataDB = new OptimizedDatabase("playerMetadata");
+    homesDB = new OptimizedDatabase("homes");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB];
 
     const results = await Promise.allSettled(dbs.map((db) => db.clean()));
     results.forEach((result, i) => {
@@ -519,4 +522,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB };
