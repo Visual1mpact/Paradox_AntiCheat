@@ -21,8 +21,8 @@ interface PlayerWaypoints {
 export const waypointCommand: Command = {
     name: "waypoint",
     description: "Manages personal navigation waypoints with a directional HUD.",
-    usage: "{prefix}waypoint <set [name] | goto [name] | clear [name] | list>",
-    examples: ["{prefix}waypoint set Base", "{prefix}waypoint goto Base", "{prefix}waypoint clear Base", "{prefix}waypoint clear", "{prefix}waypoint list"],
+    usage: "{prefix}waypoint <set [name] [--no-gps] | goto [name] | clear [name] | list | rename <old> --to <new>>",
+    examples: ["{prefix}waypoint set Base", "{prefix}waypoint set Secret --no-gps", "{prefix}waypoint rename Base --to HQ", "{prefix}waypoint goto Base", "{prefix}waypoint list"],
     category: "Utility",
     securityClearance: 1,
     icon: "textures/ui/icon_recipe_nature.png",
@@ -40,10 +40,18 @@ export const waypointCommand: Command = {
             {
                 name: "Set New Waypoint",
                 command: ["set"],
-                description: "Set a new marker at your current location and activate navigation.",
-                requiredFields: ["newWaypointNameInput"],
+                description: "Set a marker at your current location.",
+                requiredFields: ["waypointNameText", "noGpsToggle"],
                 generateModalForm: true,
                 icon: "textures/ui/color_plus.png",
+            },
+            {
+                name: "Rename Waypoint",
+                command: ["rename"],
+                description: "Change the name of a saved waypoint.",
+                requiredFields: ["savedWaypointDropdown", "renameToText"],
+                generateModalForm: true,
+                icon: "textures/ui/sidebar_icons/realms.png",
             },
             {
                 name: "Go To Saved Waypoint",
@@ -78,16 +86,30 @@ export const waypointCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "New Waypoint Name:",
+                name: "Waypoint Name:",
                 type: "text",
                 placeholder: "e.g. Home",
-                requiredFields: ["newWaypointNameInput"],
+                arg: "",
+                requiredFields: ["waypointNameText"],
             },
             {
                 name: "Select Waypoint:",
                 type: "dropdown",
                 sourceType: "playerWaypoints", // Custom source type for dynamic waypoint names
+                arg: "",
                 requiredFields: ["savedWaypointDropdown"],
+            },
+            {
+                name: "Rename To:",
+                type: "text",
+                arg: "--to",
+                requiredFields: ["renameToText"],
+            },
+            {
+                name: "Create Without GPS:",
+                type: "toggle",
+                arg: "--no-gps",
+                requiredFields: ["noGpsToggle"],
             },
         ],
     },
@@ -106,8 +128,14 @@ export const waypointCommand: Command = {
 
         const action = args[0].toLowerCase();
 
-        // Clean and join remaining arguments to form the waypoint name
-        const waypointNameArg = args.slice(1).join(" ").replace(/["@]/g, "").trim();
+        // Clean flags and join remaining arguments to form the waypoint name for standard actions
+        const noGps = args.includes("--no-gps");
+        const waypointNameArg = args
+            .slice(1)
+            .filter((a) => a.toLowerCase() !== "--no-gps")
+            .join(" ")
+            .replace(/["@]/g, "")
+            .trim();
 
         switch (action) {
             case "set": {
@@ -119,9 +147,10 @@ export const waypointCommand: Command = {
                     timestamp: Date.now(),
                 };
                 playerWaypoints.savedWaypoints[name] = newWaypoint;
-                playerWaypoints.activeWaypointName = name; // Make it active immediately
+                if (!noGps) playerWaypoints.activeWaypointName = name;
+
                 setPlayerWaypoints(player, playerWaypoints);
-                player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${name}§7" set and activated! Navigation active.`);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${name}§7" set! ${!noGps ? "Navigation active." : ""}`);
                 break;
             }
             case "goto": {
@@ -137,6 +166,40 @@ export const waypointCommand: Command = {
                 playerWaypoints.activeWaypointName = waypointNameArg;
                 setPlayerWaypoints(player, playerWaypoints);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Navigation activated for "§f${waypointNameArg}§7".`);
+                break;
+            }
+            case "rename": {
+                const toIndex = args.indexOf("--to");
+                if (toIndex === -1) {
+                    player.sendMessage(`§o§c[Paradox] Usage: ${prefix}waypoint rename <old> --to <new>`);
+                    return;
+                }
+                const oldName = args.slice(1, toIndex).join(" ").replace(/["@]/g, "").trim();
+                const newName = args
+                    .slice(toIndex + 1)
+                    .join(" ")
+                    .replace(/["@]/g, "")
+                    .trim();
+
+                if (!oldName || !newName) {
+                    player.sendMessage("§o§c[Paradox] Please provide both the current name and the new name.");
+                    return;
+                }
+
+                if (!playerWaypoints.savedWaypoints[oldName]) {
+                    player.sendMessage(`§o§c[Paradox] Waypoint "§f${oldName}§c" not found.`);
+                    return;
+                }
+
+                const wpData = playerWaypoints.savedWaypoints[oldName];
+                wpData.name = newName;
+                playerWaypoints.savedWaypoints[newName] = wpData;
+                delete playerWaypoints.savedWaypoints[oldName];
+
+                if (playerWaypoints.activeWaypointName === oldName) playerWaypoints.activeWaypointName = newName;
+
+                setPlayerWaypoints(player, playerWaypoints);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${oldName}§7" renamed to "§f${newName}§7".`);
                 break;
             }
             case "clear": {
@@ -171,15 +234,22 @@ export const waypointCommand: Command = {
             case "status": {
                 const savedNames = Object.keys(playerWaypoints.savedWaypoints);
                 if (savedNames.length === 0) {
-                    player.sendMessage("§o§c[Paradox] You have no saved waypoints.");
+                    player.sendMessage("§o§c[Paradox] §7You currently have no saved waypoints.");
                     return;
                 }
-                player.sendMessage("§2[§7Paradox§2]§o§7 Your Saved Waypoints:");
+
+                const listOutput = [`§l§2--- Your Waypoint Directory ---`];
+
                 for (const name of savedNames) {
                     const wp = playerWaypoints.savedWaypoints[name];
-                    const isActive = playerWaypoints.activeWaypointName === name ? " §a(Active)" : "";
-                    player.sendMessage(` §o§7| §f${wp.name}§7 (@ ${wp.location.x}, ${wp.location.y}, ${wp.location.z} in ${wp.dimension})${isActive}`);
+                    const activeTag = playerWaypoints.activeWaypointName === name ? " §l§a[ACTIVE]§r" : "";
+                    const dimLabel = wp.dimension.replace("minecraft:", "").toUpperCase();
+
+                    listOutput.push(`§7• §f${wp.name}${activeTag}`);
+                    listOutput.push(`  §8└─ §7Pos: §f${wp.location.x}§7, §f${wp.location.y}§7, §f${wp.location.z} §8| §e${dimLabel}`);
                 }
+                listOutput.push(`§2------------------------------`);
+                player.sendMessage(listOutput.join("\n"));
                 break;
             }
             default:
