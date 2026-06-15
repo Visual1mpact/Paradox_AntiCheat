@@ -143,6 +143,34 @@ The `doublejump` command toggles a utility that allows players to perform an add
 - **Staff Control:** Only administrators with Level 4 security clearance can enable or disable this feature globally.
 - **GUI Integration:** The toggle is available in the Paradox GUI menu for easy access.
 
+
+## environment
+### At A Glance
+The `environment` command allows administrators to control the world's time and weather conditions. This provides a streamlined way to manage environmental states without needing to remember specific Minecraft tick values or native syntax.
+
+?> Required Clearance Level To Execute: `4`
+
+### **How It Works**
+- **Time Manipulation**: Instantly shift the sun or moon to specific presets like Sunrise, Noon, or Midnight.
+- **Weather Control**: Change the atmospheric state to Clear, Rain, or Thunder.
+- **Dimension Specific**: Weather changes take effect in the dimension where the command is executed.
+
+> Usage: ":environment <time | weather> <value>"  
+> Example: :environment time day  
+> Example: :environment weather thunder  
+
+### **GUI Integration**
+- Located under the **Utility** category.
+- **Set Time**: Opens a selection for preset times (Sunrise, Day, Noon, Sunset, Night, Midnight).
+- **Set Weather**: Provides options to switch between Clear, Rain, and Thunder states.
+
+### **Presets**
+- **Time**: 
+  - `sunrise` (0), `day` (1000), `noon` (6000), `sunset` (12000), `night` (13000), `midnight` (18000)
+- **Weather**: 
+  - `clear`, `rain`, `thunder`
+
+
 ## home
 ### At A Glance
 The `home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
