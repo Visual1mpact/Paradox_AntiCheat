@@ -117,6 +117,7 @@ import { guiItemCommand } from "../commands/settings/gui-item";
 import { broadcastCommand } from "../commands/utility/broadcast";
 import { whoisCommand } from "../commands/utility/whois";
 import { waypointCommand, startWaypointHUD } from "../commands/utility/waypoint";
+import { historyCommand } from "../commands/utility/history";
 import { environmentCommand } from "../commands/utility/environment";
 
 type PlayerID = string;
@@ -216,6 +217,7 @@ const allCommands: Command[] = [
     broadcastCommand,
     whoisCommand,
     waypointCommand,
+    historyCommand,
     environmentCommand,
 ];
 

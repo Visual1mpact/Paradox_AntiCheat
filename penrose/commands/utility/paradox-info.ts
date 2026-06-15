@@ -67,7 +67,7 @@ export const paradoxInfoCommand: Command = {
                 `§f• GitHub: ${github}\n` +
                 `§f• Discord: ${discordFull}\n` +
                 `§f• Wiki: ${wiki}\n\n` +
-                "§6Description\n" +
+                "§6Project Philosophy\n" +
                 `§f${descriptionText.replace(/\n/g, "\n§f")}\n` +
                 "§2============================";
 
