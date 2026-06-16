@@ -1,5 +1,6 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 /**
  * Represents the broadcast command.
@@ -95,7 +96,7 @@ export const broadcastCommand: Command = {
             return;
         }
 
-        for (const player of world.getAllPlayers()) {
+        for (const player of PlayerCache.getPlayers()) {
             if (title || subtitle) {
                 player.onScreenDisplay.setTitle(title || " ", {
                     subtitle: subtitle,

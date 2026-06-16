@@ -1,5 +1,6 @@
 import { ChatSendBeforeEvent, Player, system, world, Vector3 } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
+import { PlayerCache } from "../../classes/player-cache";
 
 const WAYPOINT_PROP = "paradox:waypoint_data";
 
@@ -290,7 +291,7 @@ function getDirectionArrow(player: Player, target: Vector3): string {
  */
 export function startWaypointHUD() {
     system.runInterval(() => {
-        for (const player of world.getAllPlayers()) {
+        for (const player of PlayerCache.getPlayers()) {
             try {
                 const playerWaypoints = getPlayerWaypoints(player);
                 const activeWaypointName = playerWaypoints.activeWaypointName;
