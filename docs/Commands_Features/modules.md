@@ -24,6 +24,8 @@ The `afk` command toggles the AFK management module, which automatically tracks 
 > Usage: ":afk [ hours ] [ minutes ] [ seconds ]"  
 > Example: :afk 0 10 0  
 
+---
+
 ## anticrash
 ### At A Glance
 The `anticrash` command toggles a specialized defense module that monitors for packet-based exploits intended to crash the server.
@@ -37,6 +39,8 @@ The `anticrash` command toggles a specialized defense module that monitors for p
 
 > Usage: ":anticrash"
 > Example: :anticrash
+
+---
 
 ## aimbotmonitor
 ### At A Glance
@@ -52,6 +56,8 @@ The `aimbotmonitor` command toggles a detection module that analyzes player rota
 - **Combat Analysis:** Evaluates how a player's crosshair tracks entities during combat.
 - **Heuristic Strikes:** Uses a strike system to avoid false positives from erratic human movement.
 - **Logging:** Alerts administrators when a player exhibits suspicious rotation signatures.
+
+---
 
 ## antifly
 ### At A Glance
@@ -71,6 +77,7 @@ The `antifly` command toggles the Anti-Fly detection module, which monitors play
 > Usage: ":antifly [ help ]"  
 > Example: :antifly  
 
+---
 
 ## antispam
 ### At A Glance
@@ -99,6 +106,7 @@ This helps prevent chat flooding, bot spam, and ensures fair communication.
 
 ?> Note: The module listens to `beforeEvents.chatSend`. Commands like `/tellraw` used by external bots will not be flagged, though future updates may improve this coverage.
 
+---
 
 ## autoclicker
 ### At A Glance
@@ -118,6 +126,8 @@ The `autoclicker` command toggles the Auto-Clicker detection module, which monit
 > Usage: ":autoclicker [ help ]"  
 > Example: :autoclicker  
 
+---
+
 ## autototem
 ### At A Glance
 The `autototem` command toggles a detection module that identifies automated inventory interactions used to replenish Totems of Undying.
@@ -130,6 +140,8 @@ The `autototem` command toggles a detection module that identifies automated inv
 
 > Usage: ":autototem"
 > Example: :autototem
+
+---
 
 ## chestforensic
 ### At A Glance
@@ -236,6 +248,8 @@ The module includes a full GUI with:
   - `afterEvents` (for logging & state updates)
 - Module can be safely toggled at runtime without restart
 
+---
+
 ## criticals
 ### At A Glance
 The `criticals` command toggles a detection module designed to stop "Packet Criticals." These are exploits that allow a player to deal critical hit damage while standing on the ground by sending fake packets to the server.
@@ -251,6 +265,8 @@ The `criticals` command toggles a detection module designed to stop "Packet Crit
 > Usage: ":criticals"
 > Example: :criticals
 
+---
+
 ## deathcoords
 ### At A Glance
 The `deathcoords` command toggles the Death Coordinates module. When enabled, this feature automatically sends a private message to players upon death, providing their exact coordinates and the dimension where they died. This helps players navigate back to their death location to retrieve lost items.
@@ -264,9 +280,10 @@ The `deathcoords` command toggles the Death Coordinates module. When enabled, th
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":deathcoords"  
 > Example: :deathcoords  
+
+---
 
 ## dimensionlock
 ### At A Glance
@@ -288,6 +305,8 @@ The `dimensionlock` command toggles a restriction on specific dimensions, preven
 > Example: :dimensionlock on  
 > Example: :dimensionlock off  
 > Example: :dimensionlock --list  
+
+---
 
 ## gamemode
 ### At A Glance
@@ -313,6 +332,7 @@ The `gamemode` command allows server administrators to manage which game modes a
 >   :gamemode -l  
 >   :gamemode --list  
 
+---
 
 ## invsync
 ### At A Glance
@@ -342,7 +362,6 @@ This system helps identify potential **duplication exploits or abnormal inventor
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":invsync [ help | status | snapshot | check | clear | forensic <player> ]"  
 > Example: :invsync  
 > Example: :invsync status  
@@ -351,6 +370,7 @@ This system helps identify potential **duplication exploits or abnormal inventor
 > Example: :invsync clear  
 > Example: :invsync forensic Steve  
 
+---
 
 ## killaura
 ### At A Glance
@@ -365,10 +385,10 @@ The `killaura` detection module helps maintain fair combat on the server by dete
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":killaura [ help ]"  
 > Example: :killaura  
 
+---
 
 ## lagclear
 ### At A Glance
@@ -385,11 +405,11 @@ The `lagclear` module helps maintain server performance by clearing excess items
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":lagclear [ hours ] [ minutes ] [ seconds ]"  
 > Example: :lagclear 0 15 0  
 > Example: :lagclear (uses default 10-minute timer)  
 
+---
 
 ## namespoof
 ### At A Glance
@@ -411,11 +431,11 @@ The `namespoof` module protects the server from players attempting to impersonat
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":namespoof [ help ]"  
 > Example: :namespoof  
 > Example: :namespoof help  
 
+---
 
 ## noclip
 ### At A Glance
@@ -438,11 +458,11 @@ It is essential for catching exploits that bypass normal collision mechanics, en
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":noclip"  
 > Example: :noclip  
 > Example: :noclip help  
 
+---
 
 ## packetmonitor
 ?> This module is only available on **Bedrock Dedicated Server (BDS)** due to the `@minecraft/server-net` dependency.  
@@ -466,9 +486,10 @@ It logs suspicious activity for administrative review and helps prevent server o
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":packetmonitor [ help ]"  
 > Example: :packetmonitor
+
+---
 
 ## pathing
 ### At A Glance
@@ -503,12 +524,12 @@ The `platformblock` module manages which player platforms (console, desktop, mob
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":platformblock <platform> [ -e | -d | -l | --list ]"  
 > Example: :platformblock console -e  
 > Example: :platformblock desktop -d  
 > Example: :platformblock -l  
 
+---
 
 ## ratelimit
 ### At A Glance
@@ -538,10 +559,10 @@ It enforces per-player, per-packet, and global packet rate limits, automatically
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":ratelimit [ help ]",  
 > Example: :ratelimit  
 
+---
 
 ## reach
 ### At A Glance
@@ -558,11 +579,11 @@ This is strictly a combat check and does **not** affect block placement or movem
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":reach [ help ]",  
 > Example: :reach  
 > Example: :reach help  
 
+---
 
 ## scaffold
 ### At A Glance
@@ -582,11 +603,11 @@ The `scaffold` module detects and prevents automated block placement hacks, comm
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":scaffold [ help ]"  
 > Example: :scaffold  
 > Example: :scaffold help  
 
+---
 
 ## selfattack
 ### At A Glance
@@ -602,11 +623,11 @@ The `selfattack` module detects and prevents players from using modified clients
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":selfattack [ help ]"  
 > Example: :selfattack  
 > Example: :selfattack help  
 
+---
 
 ## visioncheck
 ### At A Glance
@@ -625,11 +646,11 @@ Toggles the `visioncheck` module, which continuously monitors the contents of co
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":visioncheck [ help ]",  
 > Example: :visioncheck  
 > Example: :visioncheck help  
 
+---
 
 ## worldborder
 ### At A Glance
@@ -653,7 +674,6 @@ Toggles the `worldborder` module, which restricts players from exceeding configu
 
 ?> Required Clearance Level To Execute: `4`
 
-
 > Usage: ":worldborder [ --overworld | -o <size> ] [ --nether | -n <size> ]  
 >        [ --end | -e <size> ] [ -d | --disable ] [ -l | --list ]",  
 > Example: :worldborder -o 10000 -n 5000 -e 10000  
@@ -665,6 +685,7 @@ Toggles the `worldborder` module, which restricts players from exceeding configu
 > Example: :worldborder -l  
 > Example: :worldborder --list  
 
+---
 
 ## xray
 ### At A Glance
@@ -684,7 +705,6 @@ The `xray` module detects and reports suspicious mining activity that may indica
 - **Administrator Notifications:** High-security staff are alerted with player name, ore type, count, and coordinates of suspicious mining activity.
 
 ?> Required Clearance Level To Execute: `4`
-
 
 > Usage: ":xray [ -Help ]"  
 > Example: :xray  
