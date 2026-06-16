@@ -120,6 +120,7 @@ import { whoisCommand } from "../commands/utility/whois";
 import { waypointCommand, startWaypointHUD } from "../commands/utility/waypoint";
 import { historyCommand } from "../commands/utility/history";
 import { environmentCommand } from "../commands/utility/environment";
+import { pingCommand } from "../commands/utility/ping";
 
 type PlayerID = string;
 
@@ -221,6 +222,7 @@ const allCommands: Command[] = [
     waypointCommand,
     historyCommand,
     environmentCommand,
+    pingCommand,
 ];
 
 /**

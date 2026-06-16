@@ -353,6 +353,35 @@ The `info` command displays a GUI-based overview of the **Paradox AntiCheat** pr
 
 ---
 
+## ping
+### At A Glance
+The `ping` command provides a real-time monitor of network latency for all online players. It helps both players and staff identify connection issues and distinguish between server-side lag and individual network instability.
+
+?> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- **Latency Monitoring**: Uses the native player API to retrieve precise ping values in milliseconds (ms).
+- **Color-Coded Feedback**: Latency is categorized and color-coded for quick visual assessment:
+    - §a[EXCELLENT]§r: < 50ms
+    - §e[GOOD]§r: 50ms - 100ms
+    - §6[AVERAGE]§r: 100ms - 200ms
+    - §c[POOR]§r: 200ms - 400ms
+    - §4[CRITICAL]§r: > 400ms
+- **Sorted Display**: Players are automatically sorted by their ping, showing the most stable connections first.
+
+> Usage: ":ping"
+> Example: :ping
+
+### **GUI Integration**
+- Located in the **Utility** category.
+- **Network Latency**: Opens a form providing an overview of connection quality with a refresh option to update the statistics.
+
+### **Notes**
+- The output is formatted into a clean, aligned list in the chat.
+- Useful for validating "lag" claims during moderation sessions.
+
+---
+
 ## pvp
 ### At A Glance
 The `pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.

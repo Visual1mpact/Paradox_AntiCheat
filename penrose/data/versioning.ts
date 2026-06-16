@@ -1,1 +1,1 @@
-export const paradoxVersion = "v6.2.3";
+export const paradoxVersion = "v6.3.0";

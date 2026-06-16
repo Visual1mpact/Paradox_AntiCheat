@@ -144,6 +144,7 @@ export const whoisCommand: Command = {
         let healthBar = "";
         let position = "N/A";
         let dimension = "N/A";
+        let ping = "N/A";
 
         if (onlineTarget) {
             const healthComp = onlineTarget.getComponent("minecraft:health");
@@ -157,6 +158,16 @@ export const whoisCommand: Command = {
             }
             position = `§f${Math.round(onlineTarget.location.x)}§7, §f${Math.round(onlineTarget.location.y)}§7, §f${Math.round(onlineTarget.location.z)}`;
             dimension = `§e${onlineTarget.dimension.id.replace("minecraft:", "").toUpperCase()}`;
+            const p = onlineTarget.getPing();
+            if (p !== undefined) {
+                let pingColor = "§a"; // Green for excellent
+                if (p >= 50 && p < 100) pingColor = "§e"; // Yellow for good
+                if (p >= 100 && p < 200) pingColor = "§6"; // Orange for acceptable
+                if (p >= 200) pingColor = "§c"; // Red for high latency
+                ping = `${pingColor}${p}ms`;
+            } else {
+                ping = "§7Unknown";
+            }
         }
 
         const dossier = [
@@ -170,6 +181,7 @@ export const whoisCommand: Command = {
             `§7Dimension: §f${dimension}`,
             `§7Position:  ${position}`,
             `§7Health:    ${health}`,
+            `§7Ping:      ${ping}`,
         ];
 
         // 6. Level 4 Restricted Forensic Data
