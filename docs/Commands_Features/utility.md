@@ -173,13 +173,14 @@ The `environment` command allows administrators to control the world's time and 
 
 ## home
 ### At A Glance
-The `home` command allows players to manage personal locations. Players can save, delete, list, and teleport to homes within the game.
+The `home` command allows players to manage personal locations. Players can save, delete, rename, list, and teleport to homes within the game.
 
 ?> Required Clearance Level To Execute: `1`  
 
 ### **How It Works**
 - Players can **set** a home at their current coordinates.
 - **Delete** removes an existing home.
+- **Rename** changes the name of an existing home.
 - **Teleport** moves the player to a saved home.
 - **List** shows all saved homes, including their coordinates and dimension.
 - Homes are **encrypted** per player for security.
@@ -187,9 +188,10 @@ The `home` command allows players to manage personal locations. Players can save
 
 ?> Note: Players cannot use `:home` while imprisoned.  
 
-> Usage: ":home <set | delete | teleport | list | help> [homeName]"  
+> Usage: ":home <set | delete | rename | teleport | list | help> [homeName]"  
 > Example: :home set MyHome  
 > Example: :home delete MyHome  
+> Example: :home rename MyHome --to NewHome
 > Example: :home teleport MyHome  
 > Example: :home list  
 > Example: :home help  

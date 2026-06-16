@@ -10,9 +10,9 @@ const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport 
  */
 export const homeCommand: Command = {
     name: "home",
-    description: "Manage home locations.",
-    usage: "{prefix}home <set | delete | teleport | list | help> [ homeName ]",
-    examples: [`{prefix}home set MyHome`, `{prefix}home delete MyHome`, `{prefix}home teleport MyHome`, `{prefix}home list`, `{prefix}home help`],
+    description: "Manage personal home locations with encryption support.",
+    usage: "{prefix}home <set | delete | rename | teleport | list | help> [ homeName ]",
+    examples: [`{prefix}home set MyHome`, `{prefix}home delete MyHome`, `{prefix}home rename MyHome --to NewHome`, `{prefix}home teleport MyHome`, `{prefix}home list`, `{prefix}home help`],
     category: "Utility",
     securityClearance: 1,
     icon: "textures/ui/store_home_icon.png",
@@ -31,11 +31,13 @@ export const homeCommand: Command = {
         actions: [
             { name: "Set Home", icon: "textures/ui/store_home_icon.png", command: ["set"], description: "Set a new home location", requiredFields: ["homeNameText"], crypto: true, generateModalForm: true },
             { name: "Delete Home", icon: "textures/ui/icon_trash.png", command: ["delete"], description: "Delete an existing home location", requiredFields: ["homeNameDropdown"], crypto: true, generateModalForm: true },
+            { name: "Rename Home", icon: "textures/ui/sidebar_icons/realms.png", command: ["rename"], description: "Rename an existing home location", requiredFields: ["homeNameDropdown", "newNameText"], crypto: true, generateModalForm: true },
             { name: "Teleport to Home", icon: "textures/ui/NetherPortalMirror.png", command: ["teleport"], description: "Teleport to a saved home location", requiredFields: ["homeNameDropdown"], crypto: true, generateModalForm: true },
             { name: "List Homes", icon: "textures/ui/icon_map.png", command: ["list"], description: "List all saved home locations", requiredFields: [], crypto: true },
         ],
         dynamicFields: [
             { name: "\nName of Home:", type: "text", placeholder: "Enter Home Name", requiredFields: ["homeNameText"] },
+            { name: "\nRename To:", type: "text", arg: "--to", placeholder: "Enter New Name", requiredFields: ["newNameText"] },
             {
                 name: "\nSelect Home:",
                 type: "dropdown",
@@ -55,6 +57,7 @@ export const homeCommand: Command = {
     execute: async (message?: ChatSendBeforeEvent, args?: string[], cryptoParam?: typeof CryptoES): Promise<void> => {
         if (!message || !message.sender) return;
         const player = message.sender;
+        args = args ?? [];
         const cryptoES = (cryptoParam ?? CryptoES) as typeof CryptoES;
 
         // Prevent command if player is imprisoned
@@ -189,6 +192,45 @@ export const homeCommand: Command = {
         }
 
         /**
+         * Helper function to rename a home location.
+         * @param {string} oldName - The current name of the home location.
+         * @param {string} newName - The new name for the home location.
+         * @returns {Promise<string>} Returns a message indicating the result.
+         */
+        async function renameHomeLocation(oldName: string, newName: string): Promise<string> {
+            const index = playerHomes.findIndex((encryptedContent) => {
+                const decryptedTag = decryptData(encryptedContent);
+                if (!decryptedTag) return false;
+                const parts = decryptedTag.split(":");
+                return parts[1] === oldName;
+            });
+
+            if (index === -1) {
+                return `§o§c[Paradox] Home location "${oldName}§c" not found!`;
+            }
+
+            const alreadyExists = playerHomes.some((encryptedContent) => {
+                const decryptedTag = decryptData(encryptedContent);
+                if (!decryptedTag) return false;
+                const parts = decryptedTag.split(":");
+                return parts[1] === newName;
+            });
+
+            if (alreadyExists) {
+                return `§o§c[Paradox] A home named "${newName}§c" already exists!`;
+            }
+
+            const decryptedTag = decryptData(playerHomes[index]);
+            const parts = decryptedTag.split(":");
+            parts[1] = newName;
+            const updatedTag = parts.join(":");
+            playerHomes[index] = encryptData(updatedTag);
+
+            await homesDB.set(player.id, { locations: playerHomes });
+            return `§2[§7Paradox§2]§o§7 Home "${oldName}§7" renamed to "${newName}§7".`;
+        }
+
+        /**
          * Helper function to list all home locations.
          */
         function listHomeLocations(): void {
@@ -247,10 +289,10 @@ export const homeCommand: Command = {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" not found!`);
         }
 
-        const subCommand = args?.[0]?.toLowerCase();
-        const homeName = args?.slice(1).join(" ")?.replace(/[:"@]/g, "").trim() ?? "";
+        const subCommand = args[0]?.toLowerCase();
+        const homeName = args.slice(1).join(" ").replace(/[:"@]/g, "").trim();
 
-        if (!homeName && subCommand && ["set", "delete", "teleport"].includes(subCommand)) {
+        if (!homeName && subCommand && ["set", "delete", "teleport", "rename"].includes(subCommand)) {
             player.sendMessage(`§o§c[Paradox] Please provide a home name.`);
             return;
         }
@@ -278,6 +320,29 @@ export const homeCommand: Command = {
                 } else {
                     player.sendMessage(`§o§c[Paradox] Home location "${homeName}§c" not found!`);
                 }
+                break;
+            }
+            case "rename": {
+                const toIndex = args.indexOf("--to");
+                if (toIndex === -1) {
+                    const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
+                    player.sendMessage(`§o§c[Paradox] Usage: ${prefix}home rename <oldName> --to <newName>`);
+                    return;
+                }
+                const oldName = args.slice(1, toIndex).join(" ").replace(/[:"@]/g, "").trim();
+                const newName = args
+                    .slice(toIndex + 1)
+                    .join(" ")
+                    .replace(/[:"@]/g, "")
+                    .trim();
+
+                if (!oldName || !newName) {
+                    player.sendMessage("§o§c[Paradox] Please provide both the current name and the new name.");
+                    return;
+                }
+
+                const resultMessage = await renameHomeLocation(oldName, newName);
+                player.sendMessage(resultMessage);
                 break;
             }
             case "teleport": {
