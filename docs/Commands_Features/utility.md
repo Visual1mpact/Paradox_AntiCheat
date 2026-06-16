@@ -179,6 +179,30 @@ The `environment` command allows administrators to control the world's time and 
 
 ---
 
+## gamerule
+### At A Glance
+The `gamerule` command provides administrators with the ability to modify the world's internal rules directly. It supports all rules exposed by the Minecraft Scripting API, covering both boolean toggles and numeric settings.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "{prefix}gamerule <ruleName> <value>"  
+> Example: :gamerule pvp false  
+> Example: :gamerule randomTickSpeed 3  
+> Example: :gamerule doDaylightCycle true  
+
+### **Behavior & Notes**
+- **Rule Types**:
+    - **Boolean**: Toggles mechanics like `pvp`, `keepInventory`, or `doMobSpawning`.
+    - **Number**: Adjusts limits such as `randomTickSpeed` or `spawnRadius`.
+- **Value Parsing**: Accepts standard truthy/falsy inputs (`true`/`false`, `on`/`off`, `1`/`0`) for boolean rules and standard numbers for numeric ones.
+- **Validation**: The command automatically detects the correct type for the specified rule and validates your input before applying changes.
+
+### **GUI Integration**
+- **Categorized Selection**: The GUI features a sorted dropdown containing all available rules, ensuring correct casing and spelling.
+- **Action Form**: Found under the **Utility** category.
+
+---
+
 ## history
 ### At A Glance
 The `history` command provides a chronological journey of the Paradox AntiCheat project, detailing its evolution from early experimental systems to a modern security framework.

@@ -39,6 +39,7 @@ import { banCommand } from "../commands/moderation/ban";
 import { unbanCommand } from "../commands/moderation/unban";
 import { lagClearCommand } from "../commands/settings/lag-clear";
 import { gameModeCommand } from "../commands/settings/game-mode";
+import { gameruleCommand } from "../commands/settings/gamerule";
 import { worldBorderCommand } from "../commands/settings/world-border";
 import { flyCheckCommand } from "../commands/settings/fly";
 import { afkCommand } from "../commands/settings/afk";
@@ -168,6 +169,7 @@ const allCommands: Command[] = [
     unbanCommand,
     lagClearCommand,
     gameModeCommand,
+    gameruleCommand,
     worldBorderCommand,
     flyCheckCommand,
     afkCommand,
