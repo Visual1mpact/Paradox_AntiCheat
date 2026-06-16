@@ -1,35 +1,5 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-
-const BOOLEAN_RULES = [
-    "allowDestructiveObjects",
-    "commandBlockOutput",
-    "commandBlocksEnabled",
-    "doDaylightCycle",
-    "doEntityDrops",
-    "doFireTick",
-    "doImmediateRespawn",
-    "doInsomnia",
-    "doLimitedCrafting",
-    "doMobLoot",
-    "doMobSpawning",
-    "doTileDrops",
-    "doWeatherCycle",
-    "drowningDamage",
-    "fallDamage",
-    "fireDamage",
-    "freezeDamage",
-    "keepInventory",
-    "mobGriefing",
-    "pvp",
-    "recipesUnlock",
-    "sendCommandFeedback",
-    "showCoordinates",
-    "showDeathMessages",
-    "showTags",
-];
-
-const NUMBER_RULES = ["functionCommandLimit", "maxCommandChainLength", "randomTickSpeed", "spawnRadius"];
 
 /**
  * Command to modify Minecraft game rules.
@@ -65,7 +35,7 @@ export const gameruleCommand: Command = {
             {
                 name: "\nSelect Game Rule:",
                 type: "dropdown",
-                options: [...BOOLEAN_RULES, ...NUMBER_RULES].sort(),
+                options: [],
                 requiredFields: ["rule"],
             },
             {
@@ -88,9 +58,11 @@ export const gameruleCommand: Command = {
         const ruleInput = args[0].replace(/["']/g, "");
         const valueInput = args[1].toLowerCase();
 
-        // The world.gameRules object contains the rules.
-        // We attempt to find the correct casing by checking keys or direct lookup.
-        let ruleKey = Object.keys(world.gameRules).find((k) => k.toLowerCase() === ruleInput.toLowerCase()) as keyof typeof world.gameRules;
+        // The world.gameRules properties are native accessors and may not be enumerable.
+        // We reflect on the prototype to find all available rule keys.
+        const availableRules = Object.getOwnPropertyNames(Object.getPrototypeOf(world.gameRules)).filter((prop) => prop !== "constructor");
+
+        let ruleKey = availableRules.find((k) => k.toLowerCase() === ruleInput.toLowerCase()) as keyof typeof world.gameRules;
 
         // Fallback for non-enumerable properties in the API
         if (!ruleKey && ruleInput in world.gameRules) {
@@ -106,14 +78,14 @@ export const gameruleCommand: Command = {
             const currentValue = world.gameRules[ruleKey];
             let newValue: boolean | number;
 
-            if (BOOLEAN_RULES.includes(ruleKey) || typeof currentValue === "boolean") {
+            if (typeof currentValue === "boolean") {
                 if (["true", "1", "on"].includes(valueInput)) newValue = true;
                 else if (["false", "0", "off"].includes(valueInput)) newValue = false;
                 else {
                     sender.sendMessage(`§o§c[Paradox] Rule "${ruleKey}" requires a boolean value (true/false).`);
                     return;
                 }
-            } else if (NUMBER_RULES.includes(ruleKey) || typeof currentValue === "number") {
+            } else if (typeof currentValue === "number") {
                 newValue = Number(valueInput);
                 if (isNaN(newValue)) {
                     sender.sendMessage(`§o§c[Paradox] Rule "${ruleKey}" requires a numeric value.`);
@@ -133,3 +105,12 @@ export const gameruleCommand: Command = {
         }
     },
 };
+
+// Populate game rules after early execution phase using prototype reflection
+system.run(() => {
+    const field = gameruleCommand.guiInstructions?.dynamicFields?.find((f) => f.type === "dropdown");
+    if (field && world.gameRules) {
+        const rules = Object.getOwnPropertyNames(Object.getPrototypeOf(world.gameRules)).filter((prop) => prop !== "constructor");
+        field.options = rules.sort();
+    }
+});

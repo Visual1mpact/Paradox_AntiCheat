@@ -216,11 +216,11 @@ class GUIManager {
             const placeholder = field.placeholder || "";
             const formattedName = name
                 .split(" ")
-                .map((w) => w[0].toUpperCase() + w.slice(1))
+                .map((w) => (w[0] ? w[0].toUpperCase() + w.slice(1) : ""))
                 .join(" ");
             const formattedPlaceholder = (placeholder ?? "")
                 .split(" ")
-                .map((w) => w[0]?.toUpperCase() + w.slice(1))
+                .map((w) => (w[0] ? w[0].toUpperCase() + w.slice(1) : ""))
                 .join(" ");
 
             switch (field.type) {
