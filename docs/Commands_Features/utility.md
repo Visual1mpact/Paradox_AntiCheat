@@ -2,6 +2,8 @@
 
 ?> This documentation could change with any version. Be sure to check it periodically.
 
+---
+
 ## broadcast
 ### At A Glance
 The `broadcast` command allows Administrators to send server-wide announcements using prominent on-screen UI elements. This ensures that important messages are seen by every player, even if they aren't looking at the chat.
@@ -71,6 +73,8 @@ The `channels` command allows players to manage private chat channels. Players c
 - Invitations are automatically canceled if the invited player does not respond in time.
 - Dynamic updates ensure all members are informed of joins, leaves, and ownership changes.
 
+---
+
 ## debugdb
 ### At A Glance
 The `debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
@@ -121,6 +125,8 @@ The `debugdb` command allows admins to inspect all initialized database entries 
 - Large databases may result in truncated output in the form for readability and performance.
 - Useful for checking database sizes, pointer structure, and detecting chunked entries.
 
+---
+
 ## doublejump
 ### At A Glance
 The `doublejump` command toggles a utility that allows players to perform an additional jump while in mid-air. This feature is designed for high performance and includes safety checks to prevent fall damage associated with its use.
@@ -143,6 +149,7 @@ The `doublejump` command toggles a utility that allows players to perform an add
 - **Staff Control:** Only administrators with Level 4 security clearance can enable or disable this feature globally.
 - **GUI Integration:** The toggle is available in the Paradox GUI menu for easy access.
 
+---
 
 ## environment
 ### At A Glance
@@ -170,6 +177,27 @@ The `environment` command allows administrators to control the world's time and 
 - **Weather**: 
   - `clear`, `rain`, `thunder`
 
+---
+
+## history
+### At A Glance
+The `history` command provides a chronological journey of the Paradox AntiCheat project, detailing its evolution from early experimental systems to a modern security framework.
+
+?> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- Displays a multi-page GUI form containing major milestones and development eras.
+- Covers the project's foundation (2022), the Script API expansion (2023), the architectural rewrite (2024-2025), and modern performance engineering (2026+).
+- Provides insights into the philosophy and technical breakthroughs of the system.
+
+> Usage: ":history"  
+> Example: :history  
+
+### **Notes**
+- Available to all players to provide transparency regarding the project's growth.
+- The interface is read-only and provides a "Back" button to return to the main utility menu.
+
+---
 
 ## home
 ### At A Glance
@@ -201,6 +229,8 @@ The `home` command allows players to manage personal locations. Players can save
 - Teleportation checks the dimension; if invalid, the teleport fails.
 - If the maximum number of homes is reached, players must delete an existing home before adding a new one.
 - All saved locations are secured via per-player encryption to prevent tampering.
+
+---
 
 ## invclone
 ### At A Glance
@@ -243,6 +273,8 @@ The `invclone` command allows admins to clone a player's entire inventory or end
 - Removing cloned chests only affects those created by this command.
 - The search radius for removal is approximately 20 blocks horizontally and 5 blocks vertically.
 
+---
+
 ## invsee
 ### At A Glance
 The `invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
@@ -263,11 +295,12 @@ The `invsee` command allows players with sufficient clearance to view another pl
 > Example: :invsee PlayerName --enderchest  
 > Example: :invsee help  
 
-
 ### **Notes**
 - Player names are **case-sensitive**.
 - Inventory components are retrieved securely; missing or invalid components will trigger an error.
 - Intended for **moderation** or **administrative oversight**.
+
+---
 
 ## info
 ### At A Glance
@@ -294,6 +327,8 @@ The `info` command displays a GUI-based overview of the **Paradox AntiCheat** pr
 - The displayed GUI is **read-only**; players cannot modify content through this form.
 - Designed for quick access to Paradox AC information without needing console access.
 
+---
+
 ## pvp
 ### At A Glance
 The `pvp` command allows players to control Player vs. Player (PvP) settings. Players can toggle their own PvP mode, enable or disable PvP globally, or check the current PvP status.
@@ -312,7 +347,6 @@ The `pvp` command allows players to control Player vs. Player (PvP) settings. Pl
 > Example: :pvp global        (toggles PvP for the server)  
 > Example: :pvp status        (shows PvP status)  
 > Example: :pvp help  
-
 
 ### Notes
 - **Safe Zones:** To bypass PvP in certain areas, assign players the tag `paradoxBypassPvPCheck`. This is owner-managed.
@@ -343,6 +377,8 @@ Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. Th
 
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
+
+---
 
 ## scripture
 ### At A Glance
@@ -381,6 +417,8 @@ The `scripture` command allows players to enable or disable receiving **scriptur
 - Players can manually disable scripture mode at any time.
 - On server restart, the **interval automatically resumes**, applying only to players who have scripture mode enabled.
 
+---
+
 ## setrank
 ### At A Glance
 The `setrank` command allows admins to manage chat ranks for players. You can:
@@ -413,12 +451,13 @@ When executed, the command verifies the provided arguments and checks that the t
 > Example: :setrank -d  
 > Example: :setrank -e  
 
-
 ### Notes
 - When a rank is set, the player’s `nameTag` updates to show the rank before their username.  
 - The system forces a client sync by teleporting the player to their current location.  
 - Global rank changes immediately affect all players.  
 - Players without clearance `4` cannot modify global rank settings if ranks are disabled.  
+
+---
 
 ## tpr
 ### At A Glance
@@ -458,6 +497,8 @@ Requests have a `60` second timeout. Players are notified when a request is sent
 - Only one teleport request can be pending for a player at a time.
 - Players receive messages about the status of their requests (sent, accepted, denied, or timed out).
 
+---
+
 ## tps
 ### At A Glance
 The `tps` command toggles a real-time, on-screen performance monitor. It allows administrators to track the server's Ticks Per Second (TPS) and overall health status directly on their HUD without opening menus or checking logs.
@@ -484,6 +525,8 @@ The `tps` command toggles a real-time, on-screen performance monitor. It allows 
 - **Automatic Cleanup:** To prevent memory leaks, the system automatically stops monitoring for any player who disconnects or crashes.
 - **GUI Integration:** The monitor can also be toggled via the `:gui` menu under the Utility category.
 
+---
+
 ## transfer
 ### At A Glance
 The `transfer` command allows players to connect to another **Minecraft Bedrock server** by specifying a hostname (IP or domain) and port. This is useful for switching between network servers, hubs, or external worlds.
@@ -501,7 +544,6 @@ The `transfer` command allows players to connect to another **Minecraft Bedrock 
 > Usage: ":transfer -h <hostname> -p <port>"  
 > Example: :transfer -h play.example.com -p 19132  
 > Example: :transfer -h 25.777.25.777 -p 25806  
-
 
 ### GUI Integration
 - The command can be executed via an **in-game modal form**.
@@ -548,7 +590,6 @@ The `waypoint` command provides players with a personal navigation GPS. It allow
 > Example: :waypoint clear MyHouse
 > Example: :waypoint clear
 > Example: :waypoint list
-
 
 ---
 
