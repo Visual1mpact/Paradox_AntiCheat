@@ -122,9 +122,9 @@ export const platformBlockCommand: Command = {
         if (args.includes("-l") || args.includes("--list")) {
             const messageLines = [
                 `§2[§7Paradox§2]§o§7 Current Platform Restrictions:`,
-                `  | Console: ${platformSettings.console ? "§2Blocked§7" : "§aAllowed§7"}`,
-                `  | Desktop: ${platformSettings.desktop ? "§2Blocked§7" : "§aAllowed§7"}`,
-                `  | Mobile: ${platformSettings.mobile ? "§2Blocked§7" : "§aAllowed§7"}`,
+                `  | Console: ${platformSettings.console ? "§4Blocked§7" : "§aAllowed§7"}`,
+                `  | Desktop: ${platformSettings.desktop ? "§4Blocked§7" : "§aAllowed§7"}`,
+                `  | Mobile: ${platformSettings.mobile ? "§4Blocked§7" : "§aAllowed§7"}`,
             ];
             player.sendMessage(messageLines.join("\n"));
             return;
