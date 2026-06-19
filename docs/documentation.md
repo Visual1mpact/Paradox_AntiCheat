@@ -3,8 +3,8 @@
 <div align="center">
   <img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo">
   <br><br>
-  <p><b>Updated for Minecraft Bedrock 1.26.20</b><br>
-Paradox AntiCheat now utilizes the 2.8.0-Beta server, 1.0.0-Beta server-net, 1.0.0-Beta server-admin and 2.1.0-Beta server-ui APIs, enhancing compatibility and performance for Minecraft Bedrock; both Realms and BDS environments.</p>
+  <p><b>Updated for Minecraft Bedrock 1.26.30</b><br>
+Paradox AntiCheat now utilizes the 2.9.0-Beta server, 1.0.0-Beta server-net, 1.0.0-Beta server-admin and 2.2.0-Beta server-ui APIs, enhancing compatibility and performance for Minecraft Bedrock; both Realms and BDS environments.</p>
   <br><br>
 </div>
 
