@@ -1,5 +1,9 @@
 import { world, WorldAfterEvents, WorldBeforeEvents } from "@minecraft/server";
 
+// Helper types to extract native event argument types
+type AfterEventArg<K extends keyof WorldAfterEvents> = Parameters<Parameters<WorldAfterEvents[K]["subscribe"]>[0]>[0];
+type BeforeEventArg<K extends keyof WorldBeforeEvents> = Parameters<Parameters<WorldBeforeEvents[K]["subscribe"]>[0]>[0];
+
 /**
  * World-Class Event Coordinator
  * Reduces bridge-crossing overhead by using a single native listener
@@ -16,8 +20,12 @@ export class EventCoordinator {
     /**
      * Subscribe a callback lazily to an AfterEvent.
      * Only creates the native Minecraft subscription if this is the first listener.
+     * Returns a cleanup function for easy unsubscription.
      */
-    static subscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: Parameters<Parameters<WorldAfterEvents[K]["subscribe"]>[0]>[0]) => void) {
+    static subscribeAfter<K extends keyof WorldAfterEvents>(
+        event: K, 
+        callback: (arg: AfterEventArg<K>) => void
+    ): () => void {
         if (!this.afterListeners.has(event)) {
             this.afterListeners.set(event, new Set());
         }
@@ -27,7 +35,9 @@ export class EventCoordinator {
 
         if (set.size === 1) {
             const nativeSub = (world.afterEvents[event] as any).subscribe((data: any) => {
-                for (const listener of this.afterListeners.get(event)!) {
+                // Copy set to array to prevent concurrent modification issues if a listener unsubscribes during execution
+                const listeners = Array.from(this.afterListeners.get(event) || []);
+                for (const listener of listeners) {
                     try {
                         listener(data);
                     } catch (e) {
@@ -37,13 +47,19 @@ export class EventCoordinator {
             });
             this.afterNativeSubs.set(event, nativeSub);
         }
+
+        return () => this.unsubscribeAfter(event, callback);
     }
 
     /**
      * Subscribe a callback lazily to a BeforeEvent.
      * These are critical for cancellation logic (e.g., Anti-Spam or Movement correction).
+     * Returns a cleanup function for easy unsubscription.
      */
-    static subscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: Parameters<Parameters<WorldBeforeEvents[K]["subscribe"]>[0]>[0]) => void) {
+    static subscribeBefore<K extends keyof WorldBeforeEvents>(
+        event: K, 
+        callback: (arg: BeforeEventArg<K>) => void
+    ): () => void {
         if (!this.beforeListeners.has(event)) {
             this.beforeListeners.set(event, new Set());
         }
@@ -53,7 +69,9 @@ export class EventCoordinator {
 
         if (set.size === 1) {
             const nativeSub = (world.beforeEvents[event] as any).subscribe((data: any) => {
-                for (const listener of this.beforeListeners.get(event)!) {
+                // Copy set to array to prevent concurrent modification issues if a listener unsubscribes during execution
+                const listeners = Array.from(this.beforeListeners.get(event) || []);
+                for (const listener of listeners) {
                     try {
                         listener(data);
                     } catch (e) {
@@ -63,12 +81,17 @@ export class EventCoordinator {
             });
             this.beforeNativeSubs.set(event, nativeSub);
         }
+
+        return () => this.unsubscribeBefore(event, callback);
     }
 
     /**
      * Unsubscribe a callback from an AfterEvent.
      */
-    static unsubscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: Parameters<Parameters<WorldAfterEvents[K]["subscribe"]>[0]>[0]) => void) {
+    static unsubscribeAfter<K extends keyof WorldAfterEvents>(
+        event: K, 
+        callback: (arg: AfterEventArg<K>) => void
+    ) {
         const set = this.afterListeners.get(event);
         if (!set) return;
 
@@ -82,7 +105,10 @@ export class EventCoordinator {
     /**
      * Unsubscribe a callback from a BeforeEvent.
      */
-    static unsubscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: Parameters<Parameters<WorldBeforeEvents[K]["subscribe"]>[0]>[0]) => void) {
+    static unsubscribeBefore<K extends keyof WorldBeforeEvents>(
+        event: K, 
+        callback: (arg: BeforeEventArg<K>) => void
+    ) {
         const set = this.beforeListeners.get(event);
         if (!set) return;
 
