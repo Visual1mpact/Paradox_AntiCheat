@@ -3,42 +3,42 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
-const MAX_REACH = 4.5;
-const MAX_REACH_SQ = MAX_REACH * MAX_REACH;
-const HISTORY_SIZE = 6;
-const UPDATE_INTERVAL_TICKS = 1; // update every tick for accurate reach tracking
+// CONFIGURATION CONSTANTS
+const MAX_REACH = 4.5; // Maximum allowed block reach distance
+const MAX_REACH_SQ = MAX_REACH * MAX_REACH; // Squared reach distance (saves performance by omitting Math.sqrt)
+const HISTORY_SIZE = 6; // Number of past positions to track for lag compensation
 
-/**
- * Stores a player's recent positions for reach detection.
- */
-interface PlayerHistory {
-    /** Flattened array of positions [x0,y0,z0, x1,y1,z1,...] */
-    positions: Float32Array;
-    /** Current index in the positions array */
-    index: number;
-    /** Number of valid positions stored */
-    count: number;
+interface Position {
+    x: number;
+    y: number;
+    z: number;
 }
 
-/** Map of player IDs to their position history */
-const playerHistory = new Map<string, PlayerHistory>();
+interface PlayerHistory {
+    positions: Position[];
+}
 
-/** Map of player IDs to their cached location per tick */
-let cachedLocations = new Map<string, { x: number; y: number; z: number }>();
+/**
+ * ACTIVE POSITION CACHE
+ * Tracks the most up-to-date recorded positions for players.
+ * Updated incrementally per-player to ensure data stays relevant mid-tick.
+ */
+const cachedLocations = new Map<string, Position>();
+
+/**
+ * HISTORICAL POSITION CACHE
+ * Stores an array of past positions per player. Used to evaluate historical positional matching
+ * when network latency (ping) causes disparity between the attacker and victim coordinates.
+ */
+const playerHistory = new Map<string, PlayerHistory>();
 
 let intervalId: number | undefined;
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
 let reachJobId: number | null = null;
 
 /**
- * Calculates squared distance between two 3D points.
- * @param ax - X coordinate of point A
- * @param ay - Y coordinate of point A
- * @param az - Z coordinate of point A
- * @param bx - X coordinate of point B
- * @param by - Y coordinate of point B
- * @param bz - Z coordinate of point B
- * @returns Squared distance between points
+ * Calculates the squared distance between two 3D spatial points.
+ * Omits calculating a square root to optimize script runtime performance.
  */
 function distSq(ax: number, ay: number, az: number, bx: number, by: number, bz: number) {
     const dx = ax - bx;
@@ -48,67 +48,40 @@ function distSq(ax: number, ay: number, az: number, bx: number, by: number, bz: 
 }
 
 /**
- * Updates the position history for a player using a cached location.
- * Skips update if player hasn't moved since last recorded position.
- * @param player - Player whose position is being tracked
- * @param loc - Cached location object for the current tick
+ * Commits a player's latest positional update into their historical buffer array.
+ * Overlaps identical stationary positions and evicts old data beyond HISTORY_SIZE.
  */
-function updatePlayerWithLoc(player: Player, loc: { x: number; y: number; z: number }) {
-    const id = player.id;
-
-    let data = playerHistory.get(id);
-
+function updatePlayerHistory(playerId: string, loc: Position) {
+    let data = playerHistory.get(playerId);
     if (!data) {
-        data = {
-            positions: new Float32Array(HISTORY_SIZE * 3),
-            index: 0,
-            count: 0,
-        };
-        playerHistory.set(id, data);
-    } else if (data.count > 0) {
-        const lastIndex = ((data.index - 1 + HISTORY_SIZE) % HISTORY_SIZE) * 3;
-        const px = data.positions[lastIndex];
-        const py = data.positions[lastIndex + 1];
-        const pz = data.positions[lastIndex + 2];
-
-        if (px === loc.x && py === loc.y && pz === loc.z) return;
+        data = { positions: [] };
+        playerHistory.set(playerId, data);
     }
 
-    const i = data.index * 3;
+    const history = data.positions;
 
-    data.positions[i] = loc.x;
-    data.positions[i + 1] = loc.y;
-    data.positions[i + 2] = loc.z;
+    // De-duplication: Do not push position updates if the player hasn't moved
+    if (history.length > 0) {
+        const last = history[history.length - 1];
+        if (last.x === loc.x && last.y === loc.y && last.z === loc.z) return;
+    }
 
-    data.index = (data.index + 1) % HISTORY_SIZE;
+    // Clone and push the position object into history tracking
+    history.push({ ...loc });
 
-    // Prevents reading empty Float32Array slots as valid locations
-    if (data.count < HISTORY_SIZE) {
-        data.count++;
+    // Evict the oldest position snapshot to maintain a fixed sliding window buffer size
+    if (history.length > HISTORY_SIZE) {
+        history.shift();
     }
 }
 
 /**
- * Retrieves the last recorded position of a player.
- * @param player - Player to retrieve position for
- * @returns Last position as {x, y, z} or null if none recorded
- */
-function getLastPositionIndex(player: Player) {
-    const data = playerHistory.get(player.id);
-
-    if (!data || data.count === 0) return -1;
-
-    return ((data.index - 1 + HISTORY_SIZE) % HISTORY_SIZE) * 3;
-}
-
-/**
- * Sends an alert to staff with security clearance level 4 when a player exceeds reach distance.
- * @param attacker - Player who exceeded reach
- * @param distSqValue - Squared distance of attack
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a reach violation is verified.
  */
 function alertStaff(attacker: Player, distSqValue: number) {
     const staff = getSecurityClearanceLevel4Players();
-    const distance = Math.sqrt(distSqValue);
+    const distance = Math.sqrt(distSqValue); // Calculated here ONLY when a violation occurs
 
     for (const s of staff) {
         if (s.id === attacker.id) continue;
@@ -117,138 +90,129 @@ function alertStaff(attacker: Player, distSqValue: number) {
 }
 
 /**
- * Event handler for player vs player damage using cached locations.
- * Cancels attack if the attacker exceeds max reach.
- * @param event - EntityHurtBeforeEvent triggered by Minecraft
+ * HOOK: Triggered before an entity takes damage.
+ * Validates hit distances using cached snapshots, live fallbacks, and historic matrix arrays.
  */
 function onHitCached(event: EntityHurtBeforeEvent) {
     const attacker = event.damageSource.damagingEntity;
     const victim = event.hurtEntity;
 
+    // Verify both participants are actual players, and ignore creative-mode players
     if (!(attacker instanceof Player) || !(victim instanceof Player)) return;
     if (attacker.getGameMode() === GameMode.Creative) return;
 
-    const a = cachedLocations.get(attacker.id);
-    const v = cachedLocations.get(victim.id);
+    /**
+     * CRITICAL FALLBACK MECHANIC:
+     * Attempts to read coordinates from the cache. If the generator has not yet cycled
+     * a player this turn, it instantly falls back to pulling their live `.location` API values.
+     * This eliminates massive "crazy number" distance artifacts (like 664.07).
+     */
+    const aLoc = cachedLocations.get(attacker.id) ?? attacker.location;
+    const vLoc = cachedLocations.get(victim.id) ?? victim.location;
 
-    if (!a || !v) return;
+    // STEP 1: Evaluate current baseline distance
+    const currentDistSq = distSq(aLoc.x, aLoc.y, aLoc.z, vLoc.x, vLoc.y, vLoc.z);
+    if (currentDistSq <= MAX_REACH_SQ) return; // Hit is legal within standard thresholds. Exit check.
 
-    let d = distSq(a.x, a.y, a.z, v.x, v.y, v.z);
+    // STEP 2: Lag Compensation Check
+    // If the immediate check fails, cross-reference all historical position variations.
+    const attackerData = playerHistory.get(attacker.id);
+    const victimData = playerHistory.get(victim.id);
 
-    if (d <= MAX_REACH_SQ) return;
-
-    const ai = getLastPositionIndex(attacker);
-    const vi = getLastPositionIndex(victim);
-
-    if (ai === -1 || vi === -1) return;
-
-    const attackerHistory = playerHistory.get(attacker.id);
-    const victimHistory = playerHistory.get(victim.id);
-
-    if (!attackerHistory || !victimHistory) return;
-
-    const ah = attackerHistory.positions;
-    const vh = victimHistory.positions;
-
-    d = distSq(ah[ai], ah[ai + 1], ah[ai + 2], vh[vi], vh[vi + 1], vh[vi + 2]);
-
-    const distance = Math.sqrt(d);
-
-    // Prevents invalid history values from creating impossible reach alerts
-    if (distance > 20) return;
-
-    if (d > MAX_REACH_SQ) {
-        event.damage = 0;
-        alertStaff(attacker, d);
+    if (attackerData && victimData) {
+        // Nested loop cross-checks historical vectors to catch latency-delayed positions
+        for (const aHist of attackerData.positions) {
+            for (const vHist of victimData.positions) {
+                if (distSq(aHist.x, aHist.y, aHist.z, vHist.x, vHist.y, vHist.z) <= MAX_REACH_SQ) {
+                    return; // Found a valid timestamp matrix where this hit was within reach bounds. Exit check.
+                }
+            }
+        }
     }
+
+    const finalDistance = Math.sqrt(currentDistSq);
+
+    /**
+     * SAFETY ANOMALY FILTER:
+     * Prevents false alerts/cancels stemming from rapid dimension changes,
+     * ender-pearl teleports, or server-side structural position updates.
+     */
+    if (finalDistance > 30) return;
+
+    // VIOLATION VERIFIED: Cancel damage event and alert moderation staff
+    event.damage = 0;
+    alertStaff(attacker, currentDistSq);
 }
 
 /**
- * Updates cached player locations each tick and their history.
+ * SCALABLE GENERATOR ENGINE:
+ * Distributes player tracking calculations across server ticks.
+ * Processes chunks of players instead of running a full map lookup at once, minimizing tick overhead.
  */
 function* reachUpdateGenerator(): Generator<void, void, unknown> {
-    const newCache = new Map<string, { x: number; y: number; z: number }>();
+    const players = PlayerCache.getPlayers();
+    const playersPerTick = 5; // Chunk size: Adjust to higher (e.g. 10) or lower depending on total server capacity
+    let processedCount = 0;
 
-    for (const player of PlayerCache.getPlayers()) {
+    for (const player of players) {
         if (player.isValid) {
             try {
                 const loc = player.location;
+                const posObj = { x: loc.x, y: loc.y, z: loc.z };
 
-                newCache.set(player.id, {
-                    x: loc.x,
-                    y: loc.y,
-                    z: loc.z,
-                });
-
-                updatePlayerWithLoc(player, loc);
-            } catch (e) {}
-        }
-
-        yield;
-    }
-
-    // Swap cache only after all players have been updated
-    cachedLocations = newCache;
-}
-
-/**
- * Executes the reach update as a background job.
- */
-async function executeReachUpdate(): Promise<void> {
-    if (reachJobId !== null) return;
-
-    await new Promise<void>((resolve) => {
-        function* runner() {
-            try {
-                yield* reachUpdateGenerator();
-            } finally {
-                reachJobId = null;
-                resolve();
+                // Populate caches instantly per-player so active hits are accurately logged
+                cachedLocations.set(player.id, posObj);
+                updatePlayerHistory(player.id, posObj);
+            } catch (e) {
+                // Safeguard against occasional engine entity-detachment errors
             }
         }
 
-        reachJobId = system.runJob(runner());
-    });
+        processedCount++;
+
+        // Chunk enforcement: Check if processing limits have reached maximum capacity for this tick
+        if (processedCount >= playersPerTick) {
+            processedCount = 0;
+            yield; // Voluntarily pause execution loop, returning runtime control back to engine until next tick
+        }
+    }
 }
 
 /**
- * Starts the hit reach check system.
- * Updates player positions at a set interval and subscribes once to entity hurt events.
+ * Wrapper handling execution management of the background generator loop.
+ */
+function executeReachUpdate() {
+    // If a generator task sequence is currently active, cancel duplicate execution calls
+    if (reachJobId !== null) return;
+
+    const runner = reachUpdateGenerator();
+
+    // Pass the generator to Bedrock's native runJob queue scheduler
+    reachJobId = system.runJob(runner);
+}
+
+/**
+ * STARTS the hit reach system checking pipeline.
+ * Plugs into appropriate internal event-listeners and maps a recurring execution loop.
  */
 export function startHitReachCheck() {
-    if (intervalId) system.clearRun(intervalId);
-
-    if (hurtSubscription) EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
+    stopHitReachCheck(); // Clear structural instances to prevent active leak layers
 
     hurtSubscription = onHitCached;
     EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
 
-    let isRunning = false;
-    let runIdBackup: number | undefined;
-
-    intervalId = system.runInterval(async () => {
-        if (isRunning) {
-            system.clearRun(intervalId as number);
-            intervalId = runIdBackup;
-            return;
-        }
-
-        runIdBackup = intervalId;
-        isRunning = true;
-
-        await executeReachUpdate();
-
-        isRunning = false;
-    }, UPDATE_INTERVAL_TICKS);
+    // Call the background generator tracking execution engine every 1 tick
+    intervalId = system.runInterval(() => {
+        executeReachUpdate();
+    }, 1);
 }
 
 /**
- * Stops the hit reach check system.
- * Clears interval and unsubscribes from entity hurt events.
+ * STOPS the hit reach check system.
+ * Unbinds listeners, wipes lingering data caches, and destroys generator execution handles.
  */
 export function stopHitReachCheck() {
     if (intervalId) system.clearRun(intervalId);
-
     intervalId = undefined;
 
     if (hurtSubscription) {
@@ -261,6 +225,7 @@ export function stopHitReachCheck() {
         reachJobId = null;
     }
 
+    // Flush maps to free heap space memory allocations
     playerHistory.clear();
     cachedLocations.clear();
 }
