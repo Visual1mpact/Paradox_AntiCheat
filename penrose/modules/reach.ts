@@ -18,6 +18,13 @@ interface PlayerHistory {
     positions: Position[];
 }
 
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
+/** Active subscription handle for the entityHurt event */
+let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
+
 /**
  * ACTIVE POSITION CACHE
  * Tracks the most up-to-date recorded positions for players.
@@ -31,10 +38,6 @@ const cachedLocations = new Map<string, Position>();
  * when network latency (ping) causes disparity between the attacker and victim coordinates.
  */
 const playerHistory = new Map<string, PlayerHistory>();
-
-let intervalId: number | undefined;
-let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
-let reachJobId: number | null = null;
 
 /**
  * Calculates the squared distance between two 3D spatial points.
@@ -84,7 +87,8 @@ function alertStaff(attacker: Player, distSqValue: number) {
     const distance = Math.sqrt(distSqValue); // Calculated here ONLY when a violation occurs
 
     for (const s of staff) {
-        if (s.id === attacker.id) continue;
+        const isStaffValid = s.isValid;
+        if (!isStaffValid || s.id === attacker.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Reach] §f${attacker.name} §7hit too far: §e${distance.toFixed(2)} blocks`);
     }
 }
@@ -145,17 +149,28 @@ function onHitCached(event: EntityHurtBeforeEvent) {
 }
 
 /**
- * SCALABLE GENERATOR ENGINE:
- * Distributes player tracking calculations across server ticks.
- * Processes chunks of players instead of running a full map lookup at once, minimizing tick overhead.
+ * Continuous generator loop that distributes player tracking coordinates across server ticks.
+ * Seamlessly processes one player, yields to the game loop, and recursively restarts.
  */
-function* reachUpdateGenerator(): Generator<void, void, unknown> {
-    const players = PlayerCache.getPlayers();
-    const playersPerTick = 5; // Chunk size: Adjust to higher (e.g. 10) or lower depending on total server capacity
-    let processedCount = 0;
+function* continuousReachLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
 
-    for (const player of players) {
-        if (player.isValid) {
+    try {
+        // Safe exit if the module was manually toggled off or database tracking disabled
+        if (!isModuleActive) return;
+
+        const players = PlayerCache.getPlayers();
+
+        // Dynamic tracking: Track valid IDs currently on the server to flush disconnected data later
+        const activePlayerIds = new Set<string>();
+
+        for (const player of players) {
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
+            activePlayerIds.add(player.id);
+
             try {
                 const loc = player.location;
                 const posObj = { x: loc.x, y: loc.y, z: loc.z };
@@ -166,29 +181,29 @@ function* reachUpdateGenerator(): Generator<void, void, unknown> {
             } catch (e) {
                 // Safeguard against occasional engine entity-detachment errors
             }
+
+            // Yield control back to engine processing after processing each individual player
+            yield;
         }
 
-        processedCount++;
+        // Garbage collection: Clean caches of players who left the game since the last pass
+        for (const cachedId of cachedLocations.keys()) {
+            if (!activePlayerIds.has(cachedId)) {
+                cachedLocations.delete(cachedId);
+                playerHistory.delete(cachedId);
+            }
+        }
+    } finally {
+        // Unlock job state for the current pass
+        isJobActive = false;
 
-        // Chunk enforcement: Check if processing limits have reached maximum capacity for this tick
-        if (processedCount >= playersPerTick) {
-            processedCount = 0;
-            yield; // Voluntarily pause execution loop, returning runtime control back to engine until next tick
+        // Only queue up the next loop execution if the module state remains running
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousReachLoop());
+            });
         }
     }
-}
-
-/**
- * Wrapper handling execution management of the background generator loop.
- */
-function executeReachUpdate() {
-    // If a generator task sequence is currently active, cancel duplicate execution calls
-    if (reachJobId !== null) return;
-
-    const runner = reachUpdateGenerator();
-
-    // Pass the generator to Bedrock's native runJob queue scheduler
-    reachJobId = system.runJob(runner);
 }
 
 /**
@@ -196,15 +211,16 @@ function executeReachUpdate() {
  * Plugs into appropriate internal event-listeners and maps a recurring execution loop.
  */
 export function startHitReachCheck() {
-    stopHitReachCheck(); // Clear structural instances to prevent active leak layers
+    if (isModuleActive) return;
+    isModuleActive = true;
 
     hurtSubscription = onHitCached;
     EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
 
-    // Call the background generator tracking execution engine every 1 tick
-    intervalId = system.runInterval(() => {
-        executeReachUpdate();
-    }, 1);
+    // Call the seamless, background engine worker
+    if (!isJobActive) {
+        system.runJob(continuousReachLoop());
+    }
 }
 
 /**
@@ -212,17 +228,11 @@ export function startHitReachCheck() {
  * Unbinds listeners, wipes lingering data caches, and destroys generator execution handles.
  */
 export function stopHitReachCheck() {
-    if (intervalId) system.clearRun(intervalId);
-    intervalId = undefined;
+    isModuleActive = false;
 
     if (hurtSubscription) {
         EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
         hurtSubscription = undefined;
-    }
-
-    if (reachJobId !== null) {
-        system.clearJob(reachJobId);
-        reachJobId = null;
     }
 
     // Flush maps to free heap space memory allocations

@@ -19,9 +19,12 @@ interface PathingData {
     precisionTicks: number;
 }
 
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
+
 const playerData = new Map<string, PathingData>();
-let monitorIntervalId: number | undefined;
-let pathingJobId: number | null = null;
 
 /** Reference to the player leave event subscription */
 let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
@@ -97,6 +100,8 @@ function checkPathing(player: Player) {
 function flagPlayer(player: Player, reason: string) {
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
+        const isStaffValid = s.isValid;
+        if (!isStaffValid) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Pathing] §f${player.name} §7flagged: §c${reason}`);
     }
 
@@ -115,88 +120,72 @@ function handleLeave(event: PlayerLeaveAfterEvent) {
 }
 
 /**
- * Generator that iterates over players to analyze pathing signatures.
+ * Continuous generator loop that iterates over players to analyze pathing signatures.
  */
-function* pathingCheckGenerator(): Generator<void, void, unknown> {
-    for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
+function* continuousPathingLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
+
+    try {
+        // Safe exit if the module was toggled off or database tracking is disabled
+        if (!isModuleActive || paradoxModulesDB.get("pathingCheck_b")?.enabled === false) {
+            return;
+        }
+
+        const players = PlayerCache.getPlayers();
+
+        for (const player of players) {
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
             try {
                 checkPathing(player);
             } catch (e) {
-                // Handle dimension loading edge cases
+                // Handle dimension loading edge cases smoothly
             }
+
+            // Yield execution control back to the engine tick scheduler
+            yield;
         }
-        yield;
+    } finally {
+        // Unlock job state for the current pass
+        isJobActive = false;
+
+        // Recursively queue the next pass for the next available frame
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousPathingLoop());
+            });
+        }
     }
-}
-
-/**
- * Executes the pathing check as a background job.
- */
-async function executePathingCheck(): Promise<void> {
-    if (pathingJobId !== null) return;
-
-    await new Promise<void>((resolve) => {
-        function* runner() {
-            try {
-                yield* pathingCheckGenerator();
-            } finally {
-                pathingJobId = null;
-                resolve();
-            }
-        }
-        pathingJobId = system.runJob(runner());
-    });
 }
 
 /**
  * Starts the Pathing/Navigator monitor.
  */
 export function startPathingMonitor() {
-    if (monitorIntervalId) return;
+    if (isModuleActive) return;
+    isModuleActive = true;
 
-    playerLeaveSubscription = handleLeave;
-    EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
+    if (!playerLeaveSubscription) {
+        playerLeaveSubscription = handleLeave;
+        EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
+    }
 
-    let isRunning = false;
-    let runIdBackup: number | undefined;
-
-    monitorIntervalId = system.runInterval(async () => {
-        if (paradoxModulesDB.get("pathingCheck_b")?.enabled === false) {
-            stopPathingMonitor();
-            return;
-        }
-
-        if (isRunning) {
-            system.clearRun(monitorIntervalId as number);
-            monitorIntervalId = runIdBackup;
-            return;
-        }
-
-        runIdBackup = monitorIntervalId;
-        isRunning = true;
-        await executePathingCheck();
-        isRunning = false;
-    }, 1);
+    if (!isJobActive) {
+        system.runJob(continuousPathingLoop());
+    }
 }
 
 /**
  * Stops the Pathing/Navigator monitor.
  */
 export function stopPathingMonitor() {
-    if (monitorIntervalId !== undefined) {
-        system.clearRun(monitorIntervalId);
-        monitorIntervalId = undefined;
-    }
+    isModuleActive = false;
 
     if (playerLeaveSubscription) {
         EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveSubscription);
         playerLeaveSubscription = undefined;
-    }
-
-    if (pathingJobId !== null) {
-        system.clearJob(pathingJobId);
-        pathingJobId = null;
     }
 
     playerData.clear();

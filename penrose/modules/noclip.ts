@@ -4,11 +4,6 @@ import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
- * Number of ticks between checks.
- */
-const CHECK_INTERVAL = 2;
-
-/**
  * Number of detections required before action is taken.
  */
 const PHASE_FLAGS_REQUIRED = 5;
@@ -28,9 +23,14 @@ const playerData = new Map<string, { lastPos: { x: number; y: number; z: number 
  */
 const recentDamage = new Map<string, number>();
 
-let isNoClipActive = false;
-let intervalRef: number | undefined;
-let noclipJobId: number | null = null;
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
+
+/** Active event subscription references */
+let hurtSubscription: ((ev: EntityHurtAfterEvent) => void) | undefined;
+let leaveSubscription: ((ev: PlayerLeaveBeforeEvent) => void) | undefined;
 
 /**
  * Determines if a block should allow movement through it.
@@ -77,7 +77,8 @@ function alertStaff(offender: Player, dist: number) {
     const staff = getSecurityClearanceLevel4Players();
 
     for (const s of staff) {
-        if (s.id === offender.id) continue;
+        const isStaffValid = s.isValid;
+        if (!isStaffValid || s.id === offender.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[NoClip] §f${offender.name} §7tried to phase §e${dist.toFixed(1)} blocks§7!`);
     }
 }
@@ -105,20 +106,6 @@ function getBounds(box: AABB) {
 
 /**
  * Performs a tolerance-aware swept AABB collision check for a player.
- *
- * This function detects if the player's bounding box moves through any solid
- * blocks between two positions, including corner clipping and diagonal movement.
- * It uses a small `COLLISION_TOLERANCE` to reduce false positives from minor clipping.
- *
- * The detection includes:
- * 1. Checking all 8 corners of the swept bounding box with tolerance.
- * 2. Scanning interior blocks if corners intersect solid blocks.
- * 3. Performing a mini ray-march along the movement path to catch diagonal clipping.
- *
- * @param player - The player whose movement is being evaluated.
- * @param start - The starting position `{ x, y, z }` of the player.
- * @param end - The ending position `{ x, y, z }` of the player.
- * @returns `true` if the movement intersects a solid block (NoClip detected), otherwise `false`.
  */
 function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }) {
     const dim = player.dimension;
@@ -261,38 +248,40 @@ function checkPlayer(player: Player) {
 }
 
 /**
- * Generator that iterates over players to perform NoClip checks.
+ * Continuous generator loop that iterates over players to perform NoClip checks.
  */
-function* noclipCheckGenerator(): Generator<void, void, unknown> {
-    for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
+function* continuousNoClipLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
+
+    try {
+        if (!isModuleActive) return;
+
+        const players = PlayerCache.getPlayers();
+
+        for (const player of players) {
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
             try {
                 checkPlayer(player);
             } catch (e) {
-                // Ignore transient errors
+                // Ignore transient errors safely
             }
+
+            // Yield frame runtime distribution control execution back to engine
+            yield;
         }
-        yield;
+    } finally {
+        isJobActive = false;
+
+        // Automatically recurse next tick execution pass if tracking context is active
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousNoClipLoop());
+            });
+        }
     }
-}
-
-/**
- * Executes the NoClip check as a background job.
- */
-async function executeNoClipCheck(): Promise<void> {
-    if (noclipJobId !== null) return;
-
-    await new Promise<void>((resolve) => {
-        function* runner() {
-            try {
-                yield* noclipCheckGenerator();
-            } finally {
-                noclipJobId = null;
-                resolve();
-            }
-        }
-        noclipJobId = system.runJob(runner());
-    });
 }
 
 /**
@@ -315,44 +304,38 @@ function cleanupPlayerData(ev: PlayerLeaveBeforeEvent) {
  * Starts the NoClip detection module.
  */
 export function startNoClip() {
-    if (isNoClipActive) return;
-    isNoClipActive = true;
+    if (isModuleActive) return;
+    isModuleActive = true;
 
-    let isRunning = false;
-    let runIdBackup: number | undefined;
+    if (!hurtSubscription) {
+        hurtSubscription = trackDamage;
+        EventCoordinator.subscribeAfter("entityHurt", hurtSubscription);
+    }
 
-    intervalRef = system.runInterval(async () => {
-        if (isRunning) {
-            system.clearRun(intervalRef as number);
-            intervalRef = runIdBackup;
-            return;
-        }
+    if (!leaveSubscription) {
+        leaveSubscription = cleanupPlayerData;
+        EventCoordinator.subscribeBefore("playerLeave", leaveSubscription);
+    }
 
-        runIdBackup = intervalRef;
-        isRunning = true;
-        await executeNoClipCheck();
-        isRunning = false;
-    }, CHECK_INTERVAL);
-
-    EventCoordinator.subscribeAfter("entityHurt", trackDamage);
-    EventCoordinator.subscribeBefore("playerLeave", cleanupPlayerData);
+    if (!isJobActive) {
+        system.runJob(continuousNoClipLoop());
+    }
 }
 
 /**
  * Stops the NoClip detection module.
  */
 export function stopNoClip() {
-    if (!isNoClipActive) return;
-    isNoClipActive = false;
+    isModuleActive = false;
 
-    if (intervalRef !== undefined) {
-        system.clearRun(intervalRef);
-        intervalRef = undefined;
+    if (hurtSubscription) {
+        EventCoordinator.unsubscribeAfter("entityHurt", hurtSubscription);
+        hurtSubscription = undefined;
     }
 
-    if (noclipJobId !== null) {
-        system.clearJob(noclipJobId);
-        noclipJobId = null;
+    if (leaveSubscription) {
+        EventCoordinator.unsubscribeBefore("playerLeave", leaveSubscription);
+        leaveSubscription = undefined;
     }
 
     playerData.clear();

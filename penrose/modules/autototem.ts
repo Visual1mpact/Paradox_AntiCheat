@@ -18,22 +18,45 @@ const MIN_SWAP_TICKS = 5;
  */
 const playerTotemData = new Map<string, { lastPopTick: number; lastOffhandState: boolean }>();
 
-/** Stores the active background job ID for the detection loop */
-let autoTotemJobId: number | null = null;
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
 
 /** Reference to the player leave event subscription */
 let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
 
 /**
- * Generator loop that scans players for suspicious totem replenishment.
+ * Sends a formatted alert to level 4 staff about a violation.
+ */
+function alertStaff(player: Player, ticks: number) {
+    const staff = getSecurityClearanceLevel4Players();
+    for (const s of staff) {
+        const isStaffValid = s.isValid;
+        if (!isStaffValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[AutoTotem] §f${player.name} §7replenished totem in §e${ticks} ticks§7.`);
+    }
+}
+
+/**
+ * Continuous generator loop that scans players for suspicious totem replenishment.
  * Runs incrementally to avoid blocking the main thread.
  */
-function* autoTotemCheckGenerator(): Generator<void, void, unknown> {
-    const isEnabled = paradoxModulesDB.get("autoTotemCheck_b")?.enabled ?? false;
-    if (!isEnabled) return;
+function* continuousAutoTotemLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
 
-    for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
+    try {
+        if (!isModuleActive) return;
+
+        // Fetch toggle state safely from database tracking map
+        const isEnabled = paradoxModulesDB.get("autoTotemCheck_b")?.enabled ?? false;
+        if (!isEnabled) return;
+
+        for (const player of PlayerCache.getPlayers()) {
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
             try {
                 // Exempt high-security staff
                 if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
@@ -46,15 +69,14 @@ function* autoTotemCheckGenerator(): Generator<void, void, unknown> {
 
                 let data = playerTotemData.get(player.id);
                 if (!data) {
-                    data = { lastPopTick: 0, lastOffhandState: hasTotem };
-                    playerTotemData.set(player.id, data);
+                    playerTotemData.set(player.id, { lastPopTick: 0, lastOffhandState: hasTotem });
                     continue;
                 }
 
                 /**
-                 * DETECTION:
+                 * DETECTION MATRIX:
                  * Detects instant totem replenishment (Empty -> Totem too quickly),
-                 * which is typical of auto-totem cheats.
+                 * typical of auto-totem cheats.
                  */
                 if (!data.lastOffhandState && hasTotem) {
                     const ticksSinceChange = system.currentTick - data.lastPopTick;
@@ -64,22 +86,15 @@ function* autoTotemCheckGenerator(): Generator<void, void, unknown> {
                         alertStaff(player, ticksSinceChange);
 
                         /**
-                         * MITIGATION:
-                         * Removes the illegitimately equipped totem to prevent abuse.
+                         * MITIGATION INLINE:
+                         * Removes the illegitimately equipped totem instantly to prevent abuse.
                          */
-                        const pId = player.id;
-                        system.run(() => {
-                            const target = PlayerCache.getPlayerById(pId);
-                            if (target?.isValid) {
-                                const inv = target.getComponent("minecraft:equippable") as EntityEquippableComponent;
-                                inv?.setEquipment(EquipmentSlot.Offhand, undefined);
-                            }
-                        });
+                        equippable.setEquipment(EquipmentSlot.Offhand, undefined);
                     }
                 }
 
                 /**
-                 * TRACKING:
+                 * TRACKING COMPONENT:
                  * Detects when a totem is consumed (Totem -> Empty/Other).
                  * Stores the tick for future replenishment timing checks.
                  */
@@ -88,102 +103,59 @@ function* autoTotemCheckGenerator(): Generator<void, void, unknown> {
                 }
 
                 data.lastOffhandState = hasTotem;
-            } catch (e) {}
+            } catch (e) {
+                // Safeguard against rare runtime detachment exceptions
+            }
+
+            // Yield control back to engine processing after evaluating each individual player
+            yield;
         }
-        yield;
+    } finally {
+        isJobActive = false;
+
+        // Request next pass recursion smoothly for the very next engine tick frame
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousAutoTotemLoop());
+            });
+        }
     }
 }
 
 /**
- * Runs the generator as a scheduled background job.
- * Ensures completion before resolving.
- */
-async function executeAutoTotemCheck(): Promise<void> {
-    if (autoTotemJobId !== null) return;
-
-    await new Promise<void>((resolve) => {
-        function* runner() {
-            try {
-                yield* autoTotemCheckGenerator();
-            } finally {
-                autoTotemJobId = null;
-                resolve();
-            }
-        }
-        autoTotemJobId = system.runJob(runner());
-    });
-}
-
-/**
  * Cleans up player-specific data when a player leaves the world.
- * Without this cleanup, `playerTotemData` would retain entries for
- * players that have disconnected, causing the Map to grow indefinitely.
- * @param event - The playerLeave event containing the leaving player's ID.
  */
 function handlePlayerLeave(event: PlayerLeaveAfterEvent): void {
     playerTotemData.delete(event.playerId);
 }
 
 /**
- * Sends a formatted alert to level 4 staff about a violation.
- */
-function alertStaff(player: Player, ticks: number) {
-    const staff = getSecurityClearanceLevel4Players();
-    for (const s of staff) {
-        if (s.id === player.id) continue;
-        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[AutoTotem] §f${player.name} §7replenished totem in §e${ticks} ticks§7.`);
-    }
-}
-
-/** Interval ID for the repeating detection loop */
-let intervalId: number | undefined;
-
-/**
- * Starts the auto-totem detection loop.
- * Prevents overlapping executions using a simple lock mechanism.
+ * Starts the auto-totem detection loop monitoring ecosystem.
  */
 export function startAutoTotemCheck() {
-    if (intervalId !== undefined) return;
+    if (isModuleActive) return;
+    isModuleActive = true;
 
-    // Subscribe to player leave event for cleanup
-    playerLeaveSubscription = handlePlayerLeave;
-    EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
+    if (!playerLeaveSubscription) {
+        playerLeaveSubscription = handlePlayerLeave;
+        EventCoordinator.subscribeAfter("playerLeave", playerLeaveSubscription);
+    }
 
-    let isRunning = false;
-    let runIdBackup: number | undefined;
-
-    intervalId = system.runInterval(async () => {
-        if (isRunning) {
-            // Restore the backup runId if an overlap is detected
-            system.clearRun(intervalId as number);
-            intervalId = runIdBackup;
-            return; // Skip this iteration if the previous one is still running
-        }
-
-        runIdBackup = intervalId;
-        isRunning = true;
-        await executeAutoTotemCheck();
-        isRunning = false;
-    }, 1);
+    if (!isJobActive) {
+        system.runJob(continuousAutoTotemLoop());
+    }
 }
 
 /**
- * Stops the detection loop and clears all tracking data.
+ * Stops the detection loop and clears all active structural trackers.
  */
 export function stopAutoTotemCheck() {
-    if (intervalId !== undefined) {
-        system.clearRun(intervalId);
-        intervalId = undefined;
-    }
+    isModuleActive = false;
 
-    // Unsubscribe from player leave event
     if (playerLeaveSubscription) {
         EventCoordinator.unsubscribeAfter("playerLeave", playerLeaveSubscription);
         playerLeaveSubscription = undefined;
     }
-    if (autoTotemJobId !== null) {
-        system.clearJob(autoTotemJobId);
-        autoTotemJobId = null;
-    }
+
     playerTotemData.clear();
 }

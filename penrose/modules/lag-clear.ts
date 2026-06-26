@@ -8,17 +8,19 @@ const object = { cooldown: "String" };
 /** WeakMap to track cooldowns for lag clear operations */
 const cooldownTimer = new WeakMap<typeof object, number>();
 
-/** Job ID for the currently running lag clear generator */
-let lagClearJobId: number | null = null;
-
-/** Interval ID for the periodic lag clear runner */
-let lagClearRunId: number | null = null;
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
 
 /** Tick at which the next lag clear should execute */
 let globalEndTick: number | null = null;
 
 /** Index of the last countdown message sent */
 let lastMessageIndex = -1;
+
+/** Configuration parameters cached during setup */
+let savedClockSettings = { hours: 0, minutes: 5, seconds: 0 };
 
 /** Set of entity type IDs exempt from mass removal */
 const entityException = new Set([
@@ -44,172 +46,148 @@ const messageIntervals = [60, 5, 4, 3, 2, 1];
 
 /**
  * Converts hours, minutes, and seconds into Minecraft ticks.
- * @param {number} h - Hours
- * @param {number} m - Minutes
- * @param {number} s - Seconds
- * @returns {number} Total ticks
  */
 function timeToTicks(h: number, m: number, s: number): number {
     return h * 72000 + m * 1200 + s * 20;
-}
-
-// ------------------- LAG CLEAR -------------------
-
-/**
- * Generator that handles a single tick of countdown and clearing.
- * Sends countdown messages and clears entities/items when time expires.
- * @param {number} endTick - Tick at which lag clear should execute
- */
-function* lagClearGenerator(endTick: number): Generator<void, void, unknown> {
-    const currentTick = system.currentTick;
-    const ticksLeft = endTick - currentTick;
-
-    if (ticksLeft <= 0) {
-        clearEntityItems();
-        clearEntities();
-        world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag has been cleared!`);
-
-        cooldownTimer.set(object, currentTick);
-
-        globalEndTick = null;
-        lastMessageIndex = -1;
-        return;
-    }
-
-    const secondsLeft = Math.round(ticksLeft / 20);
-    const nextMessageIndex = messageIntervals.findIndex((interval) => interval === secondsLeft);
-
-    if (nextMessageIndex !== -1 && nextMessageIndex !== lastMessageIndex) {
-        const message = `${secondsLeft} second${secondsLeft > 1 ? "s" : ""}`;
-        world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag will be cleared in ${message}!`);
-        lastMessageIndex = nextMessageIndex;
-    }
-
-    yield; // single tick only
 }
 
 // ------------------- ENTITY CLEAR -------------------
 
 /**
  * Removes item entities in all standard dimensions that match registered ItemTypes.
- * Uses Promise.all to batch the work for multiple dimensions concurrently.
  */
-async function clearEntityItems() {
+function clearEntityItems() {
     const allTypes = ItemTypes.getAll();
     const dimensionIds = ["overworld", "nether", "the_end"];
 
-    await Promise.all(
-        dimensionIds.map(async (id) => {
-            try {
-                const dim = world.getDimension(id);
-                const items = dim.getEntities({ type: "item" });
-                for (const entity of items) {
-                    const itemComp = entity.getComponent("item");
-                    if (itemComp && allTypes.includes(itemComp.itemStack.type)) {
-                        entity.remove();
-                    }
+    for (const id of dimensionIds) {
+        try {
+            const dim = world.getDimension(id);
+            const items = dim.getEntities({ type: "item" });
+            for (const entity of items) {
+                // Safeguard check for entity validity
+                const isValid = entity.isValid;
+                if (!isValid) continue;
+
+                const itemComp = entity.getComponent("item");
+                if (itemComp && allTypes.includes(itemComp.itemStack.type)) {
+                    entity.remove();
                 }
-            } catch (e) {
-                console.warn(`[Paradox] Failed to get dimension ${id}: ${e}`);
             }
-        })
-    );
+        } catch (e) {
+            console.warn(`[Paradox] Failed to clear item entities in dimension ${id}: ${e}`);
+        }
+    }
 }
 
 /**
  * Removes non-tamed monster entities without name tags from the overworld,
  * skipping entity types in the exception set.
- * @param {number} [batchSize=50] - Maximum number of entities to remove per call
  */
-async function clearEntities(batchSize: number = 50) {
-    const overworld = world.getDimension("overworld");
-    const monsters = overworld.getEntities({ families: ["monster"] });
+function clearEntities(batchSize: number = 50) {
+    try {
+        const overworld = world.getDimension("overworld");
+        const monsters = overworld.getEntities({ families: ["monster"] });
 
-    let count = 0;
+        let count = 0;
 
-    for (const entity of monsters) {
-        const tameable = entity.getComponent("tameable");
-        const isTamed = tameable?.isTamed ?? false;
+        for (const entity of monsters) {
+            const isValid = entity.isValid;
+            if (!isValid) continue;
 
-        if (!entityException.has(entity.typeId) && !isTamed && !entity.nameTag) {
-            entity.remove();
-            count++;
-            if (count >= batchSize) break; // prevent lag spikes
+            const tameable = entity.getComponent("tameable");
+            const isTamed = tameable?.isTamed ?? false;
+
+            if (!entityException.has(entity.typeId) && !isTamed && !entity.nameTag) {
+                entity.remove();
+                count++;
+                if (count >= batchSize) break; // prevent sudden frame spikes
+            }
         }
+    } catch (e) {
+        console.warn(`[Paradox] Failed to clear monster entities: ${e}`);
     }
 }
 
-// ------------------- JOB EXECUTION -------------------
+// ------------------- LAG CLEAR ENGINE -------------------
 
 /**
- * Executes the lag clear generator as a background job.
- * Ensures only one job runs per tick.
- * @param {Object} clockSettings - Timer settings
- * @param {number} clockSettings.hours
- * @param {number} clockSettings.minutes
- * @param {number} clockSettings.seconds
+ * Continuous generator loop that handles ticks of countdown and clearing operations.
  */
-async function executeLagClear(clockSettings: { hours: number; minutes: number; seconds: number }) {
-    if (lagClearJobId !== null) return;
+function* continuousLagClearLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
 
-    if (globalEndTick === null) {
-        globalEndTick = system.currentTick + timeToTicks(clockSettings.hours, clockSettings.minutes, clockSettings.seconds);
-    }
+    try {
+        if (!isModuleActive) return;
 
-    await new Promise<void>((resolve) => {
-        function* jobRunner() {
-            try {
-                yield* lagClearGenerator(globalEndTick!);
-            } finally {
-                lagClearJobId = null;
-                resolve();
+        // Initialize target point if it dropped out or was reset
+        if (globalEndTick === null) {
+            globalEndTick = system.currentTick + timeToTicks(savedClockSettings.hours, savedClockSettings.minutes, savedClockSettings.seconds);
+        }
+
+        const currentTick = system.currentTick;
+        const ticksLeft = globalEndTick - currentTick;
+
+        // EXECUTE TRIGGER TIMESLOT REACHED
+        if (ticksLeft <= 0) {
+            clearEntityItems();
+            clearEntities();
+            world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag has been cleared!`);
+
+            cooldownTimer.set(object, currentTick);
+
+            // Setup variables for the next recurring cycle instantly
+            globalEndTick = currentTick + timeToTicks(savedClockSettings.hours, savedClockSettings.minutes, savedClockSettings.seconds);
+            lastMessageIndex = -1;
+        } else {
+            // EVALUATE COUNTDOWN WARNINGS
+            const secondsLeft = Math.round(ticksLeft / 20);
+            const nextMessageIndex = messageIntervals.findIndex((interval) => interval === secondsLeft);
+
+            if (nextMessageIndex !== -1 && nextMessageIndex !== lastMessageIndex) {
+                const message = `${secondsLeft} second${secondsLeft > 1 ? "s" : ""}`;
+                world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag will be cleared in ${message}!`);
+                lastMessageIndex = nextMessageIndex;
             }
         }
-        lagClearJobId = system.runJob(jobRunner());
-    });
+    } catch (e) {
+        console.error(`[Paradox] Error during lag clear pass: ${e}`);
+    } finally {
+        isJobActive = false;
+
+        // Request next frame recursion step smoothly
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousLagClearLoop());
+            });
+        }
+    }
 }
 
 // ------------------- START / STOP -------------------
 
 /**
- * Starts the lag clear system with a countdown and interval runner.
- * @param {number} [hours=0]
- * @param {number} [minutes=5]
- * @param {number} [seconds=0]
+ * Starts the lag clear system tracking scheduler.
  */
-export async function startLagClear(hours: number = 0, minutes: number = 5, seconds: number = 0) {
-    if (lagClearRunId !== null) system.clearRun(lagClearRunId);
-    if (lagClearJobId !== null) system.clearJob(lagClearJobId);
+export function startLagClear(hours: number = 0, minutes: number = 5, seconds: number = 0) {
+    if (isModuleActive) return;
+    isModuleActive = true;
 
-    const clockSettings = { hours, minutes, seconds };
+    savedClockSettings = { hours, minutes, seconds };
     globalEndTick = system.currentTick + timeToTicks(hours, minutes, seconds);
+    lastMessageIndex = -1;
 
-    let isRunning = false;
-    let runIdBackup: number | null = null;
-
-    lagClearRunId = system.runInterval(async () => {
-        if (isRunning) {
-            if (lagClearRunId !== null) system.clearRun(lagClearRunId);
-            lagClearRunId = runIdBackup;
-            return;
-        }
-
-        runIdBackup = lagClearRunId;
-        isRunning = true;
-        await executeLagClear(clockSettings);
-        isRunning = false;
-    }, 20);
+    if (!isJobActive) {
+        system.runJob(continuousLagClearLoop());
+    }
 }
 
 /**
- * Stops the lag clear system and cleans up jobs and intervals.
+ * Stops the lag clear system and cleans up running allocations.
  */
 export function stopLagClear() {
-    if (lagClearJobId !== null) system.clearJob(lagClearJobId);
-    if (lagClearRunId !== null) system.clearRun(lagClearRunId);
-
-    lagClearJobId = null;
-    lagClearRunId = null;
+    isModuleActive = false;
     globalEndTick = null;
     lastMessageIndex = -1;
 }

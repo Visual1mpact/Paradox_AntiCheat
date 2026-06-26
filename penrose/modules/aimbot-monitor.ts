@@ -3,10 +3,13 @@ import { PlayerCache } from "../classes/player-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { EventCoordinator } from "../classes/event-coordinator";
 
-let aimbotRunId: number | undefined;
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
+
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
 let leaveSubscription: ((event: PlayerLeaveAfterEvent) => void) | undefined;
-let aimbotJobId: number | null = null;
 
 /**
  * Tracks rotation data for each player to identify smoothing patterns.
@@ -22,11 +25,19 @@ const track = new Map<
 >();
 
 /**
- * Generator that iterates over cached players to analyze rotation variance.
+ * Continuous generator loop that iterates over cached players to analyze rotation variance.
  */
-function* aimbotCheckGenerator(): Generator<void, void, unknown> {
-    for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
+function* continuousAimbotLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
+
+    try {
+        if (!isModuleActive) return;
+
+        for (const player of PlayerCache.getPlayers()) {
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
             try {
                 // Bypass for high-security users
                 if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
@@ -37,8 +48,7 @@ function* aimbotCheckGenerator(): Generator<void, void, unknown> {
 
                 let data = track.get(player.id);
                 if (!data) {
-                    data = { lastYaw: yaw, lastPitch: pitch, deltas: [], violations: 0 };
-                    track.set(player.id, data);
+                    track.set(player.id, { lastYaw: yaw, lastPitch: pitch, deltas: [], violations: 0 });
                     continue;
                 }
 
@@ -70,10 +80,11 @@ function* aimbotCheckGenerator(): Generator<void, void, unknown> {
                 }
 
                 if (data.violations >= 25) {
-                    // Notify Level 4 staff members about the suspicious behavior
+                    // Notify Level 4 staff members about the suspicious behavior safely
                     const staff = getSecurityClearanceLevel4Players();
                     for (const s of staff) {
-                        if (s.id === player.id) continue;
+                        const isStaffValid = s.isValid;
+                        if (!isStaffValid || s.id === player.id) continue;
                         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Aimbot] §f${player.name} §7is flagged for unnatural rotation smoothing.`);
                     }
 
@@ -83,35 +94,26 @@ function* aimbotCheckGenerator(): Generator<void, void, unknown> {
                 data.lastYaw = yaw;
                 data.lastPitch = pitch;
             } catch (e) {
-                // Fail silently for transient entity errors
+                // Fail silently for transient entity errors or loaded chunk boundary edge cases
             }
+
+            // Yield control back to engine processing after evaluating each single player
+            yield;
         }
-        yield;
+    } finally {
+        isJobActive = false;
+
+        // Automatically recurse next pass cycle on the next frame tick allocation
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousAimbotLoop());
+            });
+        }
     }
 }
 
 /**
- * Executes the aimbot check as a background job.
- */
-async function executeAimbotCheck(): Promise<void> {
-    if (aimbotJobId !== null) return;
-
-    await new Promise<void>((resolve) => {
-        function* runner() {
-            try {
-                yield* aimbotCheckGenerator();
-            } finally {
-                aimbotJobId = null;
-                resolve();
-            }
-        }
-        aimbotJobId = system.runJob(runner());
-    });
-}
-
-/**
  * Cleans up tracking data when a player leaves.
- * @param event - The player leave event.
  */
 function handlePlayerLeave(event: PlayerLeaveAfterEvent) {
     track.delete(event.playerId);
@@ -136,29 +138,23 @@ function handleHurtEvent(event: EntityHurtBeforeEvent): void {
 /**
  * Monitors players for external aim-assist patterns.
  */
-export async function startAimbotMonitor(): Promise<boolean> {
-    if (aimbotRunId) return true;
+export function startAimbotMonitor(): boolean {
+    if (isModuleActive) return true;
+    isModuleActive = true;
 
-    hurtSubscription = handleHurtEvent;
-    leaveSubscription = handlePlayerLeave;
+    if (!hurtSubscription) {
+        hurtSubscription = handleHurtEvent;
+        EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
+    }
 
-    EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
-    EventCoordinator.subscribeAfter("playerLeave", leaveSubscription);
+    if (!leaveSubscription) {
+        leaveSubscription = handlePlayerLeave;
+        EventCoordinator.subscribeAfter("playerLeave", leaveSubscription);
+    }
 
-    let isRunning = false;
-    let runIdBackup: number | undefined;
-
-    aimbotRunId = system.runInterval(async () => {
-        if (isRunning) {
-            system.clearRun(aimbotRunId as number);
-            aimbotRunId = runIdBackup;
-            return;
-        }
-        runIdBackup = aimbotRunId;
-        isRunning = true;
-        await executeAimbotCheck();
-        isRunning = false;
-    }, 1); // Maintain 1-tick granularity while spreading player load
+    if (!isJobActive) {
+        system.runJob(continuousAimbotLoop());
+    }
 
     return true;
 }
@@ -167,10 +163,8 @@ export async function startAimbotMonitor(): Promise<boolean> {
  * Stop monitoring players for external aim-assist patterns.
  */
 export function stopAimbotMonitor(): void {
-    if (aimbotRunId) {
-        system.clearRun(aimbotRunId);
-        aimbotRunId = undefined;
-    }
+    isModuleActive = false;
+
     if (hurtSubscription) {
         EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
         hurtSubscription = undefined;
@@ -179,9 +173,6 @@ export function stopAimbotMonitor(): void {
         EventCoordinator.unsubscribeAfter("playerLeave", leaveSubscription);
         leaveSubscription = undefined;
     }
-    if (aimbotJobId !== null) {
-        system.clearJob(aimbotJobId);
-        aimbotJobId = null;
-    }
+
     track.clear();
 }

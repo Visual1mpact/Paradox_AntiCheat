@@ -2,23 +2,38 @@ import { Player, world, system, Dimension } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/player-cache";
 
-let worldBorderJobId: number | null = null;
-let worldBorderRunId: number | null = null;
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
 
 /**
- * Generator that iterates over players to enforce world borders.
+ * Continuous generator loop that iterates over players to enforce world borders.
  */
-function* worldBorderGenerator(): Generator<void, void, unknown> {
-    const module = paradoxModulesDB.get("worldBorderCheck_b");
-    if (!module?.enabled || !module?.settings) return;
+function* continuousWorldBorderLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
 
-    const { overworld, nether, end } = module.settings;
-    const players = PlayerCache.getPlayers();
-    const spawnLocation = world.getDefaultSpawnLocation();
-    const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
+    try {
+        // Safe exit if the module was toggled off or database tracking is disabled
+        if (!isModuleActive) return;
 
-    for (const player of players) {
-        if (player.isValid) {
+        const module = paradoxModulesDB.get("worldBorderCheck_b");
+        if (!module?.enabled || !module?.settings) {
+            yield;
+            return;
+        }
+
+        const { overworld, nether, end } = module.settings;
+        const players = PlayerCache.getPlayers();
+        const spawnLocation = world.getDefaultSpawnLocation();
+        const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
+
+        for (const player of players) {
+            // Robust check handle: handles both legacy properties and modern API method call states
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
             try {
                 if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
 
@@ -32,9 +47,23 @@ function* worldBorderGenerator(): Generator<void, void, unknown> {
                 } else if (dimId === "minecraft:the_end" && end > 0) {
                     checkAndTeleportPlayer(player, x, y, z, end, "End");
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error(`[Paradox] Error checking player border: ${e}`);
+            }
+
+            // Yield control back to the engine after processing this player
+            yield;
         }
-        yield;
+    } finally {
+        // Unlock job state for the current pass
+        isJobActive = false;
+
+        // Only queue up the next loop execution if the module state remains running
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousWorldBorderLoop());
+            });
+        }
     }
 }
 
@@ -53,7 +82,6 @@ function createWorldBorderChecker(spawnLocation: { x: number; y: number; z: numb
         let targetX = beyondBorder ? spawnLocation.x : x;
         let targetZ = beyondBorder ? spawnLocation.z : z;
 
-        // Determine if nudging is needed
         if (!beyondBorder) {
             if (dx < -borderSize + BUFFER) targetX = spawnLocation.x - (borderSize - BUFFER);
             else if (dx > borderSize - BUFFER) targetX = spawnLocation.x + (borderSize - BUFFER);
@@ -62,29 +90,24 @@ function createWorldBorderChecker(spawnLocation: { x: number; y: number; z: numb
             else if (dz > borderSize - BUFFER) targetZ = spawnLocation.z + (borderSize - BUFFER);
         }
 
-        // Only teleport if necessary
         const needTeleport = beyondBorder || targetX !== x || targetZ !== z;
         if (!needTeleport) return;
 
-        // Debounce nudges (only for nudges, not full teleport)
         if (!beyondBorder) {
             const nowTick = system.currentTick;
             const lastNudge = (player.getDynamicProperty("lastBorderNudge") as number | null) ?? 0;
-            if (nowTick - lastNudge < DEBOUNCE_TICKS) return; // skip if recently nudged
+            if (nowTick - lastNudge < DEBOUNCE_TICKS) return;
             player.setDynamicProperty("lastBorderNudge", nowTick);
         }
 
-        // Calculate safe Y
         const safeY = findSafeY(player, targetX, y, targetZ);
 
-        // Send messages
         if (beyondBorder) {
             player.sendMessage(`§2[§7Paradox§2]§o§7 You exceeded the world border in the ${dimension} and were returned to spawn.`);
         } else {
             player.sendMessage(`§2[§7Paradox§2]§o§7 You reached the world border in the ${dimension}.`);
         }
 
-        // Teleport
         player.teleport({ x: targetX, y: safeY, z: targetZ }, { dimension: player.dimension, checkForBlocks: true });
     };
 }
@@ -107,9 +130,8 @@ function getDimensionHeightRange(dimension: Dimension) {
 function findSafeY(player: Player, x: number, y: number, z: number): number {
     const { min: minHeight, max: maxHeight } = getDimensionHeightRange(player.dimension);
     const maxSearchDistance = 32;
-    const startY = Math.max(minHeight + 1, Math.min(y, maxHeight - 2)); // leave room for head
+    const startY = Math.max(minHeight + 1, Math.min(y, maxHeight - 2));
 
-    // Search upwards first, then downwards
     for (let offset = 0; offset <= maxSearchDistance; offset++) {
         const candidates = [startY + offset, startY - offset].filter((testY) => testY > minHeight && testY < maxHeight - 1);
 
@@ -120,14 +142,12 @@ function findSafeY(player: Player, x: number, y: number, z: number): number {
 
             if (!feet || !body || !head) continue;
 
-            // Feet must be solid, body & head must be air
             if (feet.isSolid && !body.isSolid && !head.isSolid) {
                 return testY;
             }
         }
     }
 
-    // Fallback: give slow falling if no safe spot found
     const effect = player.getEffect("minecraft:slow_falling");
     if (!effect || effect.duration < 1200) {
         player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
@@ -137,53 +157,20 @@ function findSafeY(player: Player, x: number, y: number, z: number): number {
 }
 
 /**
- * Executes the world border generator as a job.
+ * Starts periodic world border checks smoothly.
  */
-async function executeWorldBorderCheck(): Promise<void> {
-    if (worldBorderJobId !== null) return;
+export function startWorldBorderCheck(): void {
+    if (isModuleActive) return;
+    isModuleActive = true;
 
-    await new Promise<void>((resolve) => {
-        function* runner() {
-            try {
-                yield* worldBorderGenerator();
-            } finally {
-                worldBorderJobId = null;
-                resolve();
-            }
-        }
-        worldBorderJobId = system.runJob(runner());
-    });
+    if (!isJobActive) {
+        system.runJob(continuousWorldBorderLoop());
+    }
 }
 
 /**
- * Start world border enforcement.
- */
-export async function startWorldBorderCheck(): Promise<void> {
-    if (worldBorderRunId !== null) system.clearRun(worldBorderRunId);
-    if (worldBorderJobId !== null) system.clearJob(worldBorderJobId);
-
-    let isRunning = false;
-    let runIdBackup: number;
-
-    worldBorderRunId = system.runInterval(async () => {
-        if (isRunning) {
-            system.clearRun(worldBorderRunId as number);
-            worldBorderRunId = runIdBackup;
-            return;
-        }
-
-        runIdBackup = worldBorderRunId!;
-        isRunning = true;
-
-        await executeWorldBorderCheck();
-        isRunning = false;
-    }, 20);
-}
-
-/**
- * Stops the world border system.
+ * Stops the world border system safely.
  */
 export function stopWorldBorderCheck(): void {
-    if (worldBorderJobId !== null) system.clearJob(worldBorderJobId);
-    if (worldBorderRunId !== null) system.clearRun(worldBorderRunId);
+    isModuleActive = false;
 }

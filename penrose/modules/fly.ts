@@ -2,39 +2,49 @@ import { GameMode, system, Vector3 } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
-let currentJobId: number | null = null;
-let currentRunId: number | null = null;
+/** Flag indicating whether the module is manually toggled on */
+let isModuleActive = false;
+/** Flag indicating whether the background generator worker is processing a frame */
+let isJobActive = false;
+
+let resetSub: ((event: any) => void) | undefined;
+let itemUseSub: ((event: any) => void) | undefined;
 
 function onPlayerLeaveReset(event: any) {
     const player = event.player;
-    if (player.isValid) {
+    const isValid = player && (typeof player.isValid === "function" ? player.isValid() : (player as any).isValid);
+    if (isValid) {
         player.setDynamicProperty("tridentUsed", false);
     }
 }
-let resetSub: any;
 
 function onItemUseCheck(event: any) {
     const player = event.source;
-    const item = event.itemStack.typeId;
+    const item = event.itemStack?.typeId;
 
     if (item === "minecraft:trident") {
         player.setDynamicProperty("tridentUsed", true);
     }
 }
-let itemUseSub: any;
 
 /**
- * Generator function to check players' flying status and teleport if necessary.
- * @generator
- * @yields {void} Pauses the generator after processing each player.
+ * Continuous generator loop that checks players' flying status frame-by-frame.
  */
-function* flyCheckGenerator(): Generator<void, void, unknown> {
-    // Define gamemodes to exclude
-    const excludedGMs = new Set([GameMode.Creative, GameMode.Spectator]);
+function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
+    if (isJobActive) return;
+    isJobActive = true;
 
-    // Use PlayerCache for zero-allocation iteration
-    for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
+    try {
+        if (!isModuleActive) return;
+
+        // Define gamemodes to exclude
+        const excludedGMs = new Set([GameMode.Creative, GameMode.Spectator]);
+
+        // Use PlayerCache for zero-allocation iteration
+        for (const player of PlayerCache.getPlayers()) {
+            const isValid = player.isValid;
+            if (!isValid) continue;
+
             try {
                 // Skip excluded gamemodes
                 if (excludedGMs.has(player.getGameMode())) continue;
@@ -68,14 +78,19 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
                 if (!blockBelow) continue;
 
                 // Verify ground state to prevent spoofing.
-                // We check directly below the feet and slightly deeper to account for block types like fences and walls.
-                const physicallyGrounded = (blockBelow && (blockBelow.isSolid || blockBelow.isLiquid)) || player.dimension.getBlock({ x: location.x, y: location.y - 0.7, z: location.z })?.isSolid;
+                const checkBlockDeep = player.dimension.getBlock({ x: location.x, y: location.y - 0.7, z: location.z });
+                const physicallyGrounded = blockBelow.isSolid || blockBelow.isLiquid || (checkBlockDeep?.isSolid ?? false);
 
                 if (player.isOnGround && physicallyGrounded) {
                     player.setDynamicProperty("airportLanding", player.location);
                 }
 
-                const surroundingBlocksBelow = [blockBelow, blockBelow.north(), blockBelow.north()?.east(), blockBelow.east(), blockBelow.south()?.east(), blockBelow.south(), blockBelow.south()?.west(), blockBelow.west(), blockBelow.north()?.west()];
+                const blockN = blockBelow.north();
+                const blockS = blockBelow.south();
+                const blockE = blockBelow.east();
+                const blockW = blockBelow.west();
+
+                const surroundingBlocksBelow = [blockBelow, blockN, blockN?.east(), blockE, blockS?.east(), blockS, blockS?.west(), blockW, blockN?.west()];
 
                 const airBlockCountBelow = surroundingBlocksBelow.filter((block) => block?.isAir).length;
                 const majorityAreAir = airBlockCountBelow > surroundingBlocksBelow.length / 2;
@@ -87,10 +102,7 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
                 const hoverTimeThreshold = 2;
                 let hoverTime = (player.getDynamicProperty("hoverTime") as number) ?? 0;
 
-                // Anti-Fly Detection:
-                // 1. Standard isFlying check (if not falling).
-                // 2. Movement check: We ignore players with downward velocity (y < -0.1) to prevent false flags for falling.
-                // 3. Spoof check: We flag if they are not grounded OR if they claim ground but aren't physically supported.
+                // Anti-Fly Detection Matrix:
                 const isFloating = !player.isOnGround || !physicallyGrounded;
                 if ((!player.isFalling && player.isFlying) || (velocity.y >= -0.1 && majorityAreAir && (Math.abs(velocity.y) >= verticalVelocityThreshold || horizontalVelocity >= horizontalVelocityThreshold) && !player.isJumping && isFloating)) {
                     hoverTime += 1;
@@ -114,44 +126,30 @@ function* flyCheckGenerator(): Generator<void, void, unknown> {
                     player.setDynamicProperty("hoverTime", 0);
                 }
             } catch (e) {
-                // Ignore dimension loading errors
+                // Ignore structural chunk rendering loading bounds errors safely
             }
+
+            // Yield control back to engine processing after evaluating each single player
+            yield;
         }
-        yield;
+    } finally {
+        isJobActive = false;
+
+        // Loop the task dynamically on the next available engine frame tick
+        if (isModuleActive) {
+            system.run(() => {
+                system.runJob(continuousFlyCheckLoop());
+            });
+        }
     }
 }
 
 /**
- * Executes the fly check generator function with a promise-based approach.
- * @returns {Promise<void>} Resolves once the fly check job is finished.
+ * Starts the fly check process and coordinates listeners.
  */
-async function executeFlyCheck(): Promise<void> {
-    if (currentJobId !== null) {
-        system.clearJob(currentJobId);
-    }
-
-    const jobPromise = new Promise<void>((resolve) => {
-        function* jobRunner() {
-            try {
-                yield* flyCheckGenerator();
-            } finally {
-                resolve();
-            }
-        }
-        currentJobId = system.runJob(jobRunner());
-    });
-
-    await jobPromise;
-}
-
-/**
- * Starts the fly check process and schedules it to run at regular intervals.
- */
-export async function startFlyCheck(): Promise<void> {
-    if (currentRunId !== null) return;
-
-    let isRunning = false;
-    let runIdBackup: number | null = null;
+export function startFlyCheck(): void {
+    if (isModuleActive) return;
+    isModuleActive = true;
 
     if (!itemUseSub) {
         itemUseSub = onItemUseCheck;
@@ -162,40 +160,23 @@ export async function startFlyCheck(): Promise<void> {
         EventCoordinator.subscribeBefore("playerLeave", resetSub);
     }
 
-    currentRunId = system.runInterval(async () => {
-        if (isRunning) {
-            // Restore the backup runId if an overlap is detected
-            system.clearRun(currentRunId as number);
-            currentRunId = runIdBackup;
-            return; // Skip this iteration if the previous one is still running
-        }
-
-        runIdBackup = currentRunId!;
-        isRunning = true;
-
-        await executeFlyCheck();
-        isRunning = false;
-    }, 20); // Check every second (20 ticks)
+    if (!isJobActive) {
+        system.runJob(continuousFlyCheckLoop());
+    }
 }
 
 /**
- * Stops the fly check process.
+ * Stops the fly check process and safely detaches active listeners.
  */
 export function stopFlyCheck(): void {
-    if (currentJobId !== null) {
-        system.clearJob(currentJobId);
-        currentJobId = null;
-    }
-    if (currentRunId !== null) {
-        system.clearRun(currentRunId);
-        currentRunId = null;
-    }
+    isModuleActive = false;
+
     if (itemUseSub) {
-        EventCoordinator.unsubscribeBefore("itemUse", onItemUseCheck);
+        EventCoordinator.unsubscribeBefore("itemUse", itemUseSub);
         itemUseSub = undefined;
     }
     if (resetSub) {
-        EventCoordinator.unsubscribeBefore("playerLeave", onPlayerLeaveReset);
+        EventCoordinator.unsubscribeBefore("playerLeave", resetSub);
         resetSub = undefined;
     }
 }
