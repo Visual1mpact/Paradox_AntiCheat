@@ -334,6 +334,23 @@ The `gamemode` command allows server administrators to manage which game modes a
 
 ---
 
+## gravesaver
+### At A Glance
+The `gravesaver` command toggles the item preservation module. When activated, it automatically safely archives a player's inventory contents inside an on-site grave chest upon death. This acts independently of the coordinate messaging system, giving administrators the freedom to preserve gear drops without enforcing private broadcast pings.
+
+### How It Works
+- **Drop Interception:** Monitors player inventory parameters during an active `EntityDieAfterEvent`.
+- **Ground Clearance:** Scans a tight radius around the death location for newly spawned dropped ground items, securely caching item stack arrays within a single tick operation.
+- **Grave Generation:** Places a standard chest block directly at the rounded coordinates of the death location. Items are transferred safely into the container instances and applied with custom tracking item lore data.
+- **Massive Inventory Overflow Support:** If a player's dropped inventory exceeds a single container structure's item capacity limit, the algorithm automatically sequences and offsets vertically upward to stack multiple chests.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: ":gravesaver"  
+> Example: :gravesaver  
+
+---
+
 ## invsync
 ### At A Glance
 The `invsync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
