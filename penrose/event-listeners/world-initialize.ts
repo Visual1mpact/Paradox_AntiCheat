@@ -121,6 +121,8 @@ import { waypointCommand, startWaypointHUD } from "../commands/utility/waypoint"
 import { historyCommand } from "../commands/utility/history";
 import { environmentCommand } from "../commands/utility/environment";
 import { pingCommand } from "../commands/utility/ping";
+import { graveSaverCommand } from "../commands/settings/grave-saver";
+import { startGraveSaver } from "penrose/modules/grave-saver";
 
 type PlayerID = string;
 
@@ -223,6 +225,7 @@ const allCommands: Command[] = [
     historyCommand,
     environmentCommand,
     pingCommand,
+    graveSaverCommand,
 ];
 
 /**
@@ -408,6 +411,7 @@ async function initializeParadoxModules(): Promise<void> {
         pathingCheck_b: () => startPathingMonitor(),
         antiCrashCheck_b: () => startAntiCrash(),
         dimensionLock_b: () => startDimensionLock(),
+        graveSaver_b: () => startGraveSaver(),
     };
 
     const runModuleInitializers = () => {
