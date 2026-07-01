@@ -76,7 +76,6 @@ import {
     ChannelsSchema,
     DisabledCommandsSchema,
     ParadoxModulesSchema,
-    TrustedPlayersSchema,
     WhitelistPlayersSchema,
     InvSyncAudit,
     InvSyncSnapshots,
@@ -140,7 +139,6 @@ let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined
 let paradoxModulesDB: OptimizedDatabase<ParadoxModulesSchema>;
 let channelsDB: OptimizedDatabase<ChannelsSchema>;
 let disabledCommandsDB: OptimizedDatabase<DisabledCommandsSchema>;
-let spoofDB: OptimizedDatabase<TrustedPlayersSchema>;
 let whitelistDB: OptimizedDatabase<WhitelistPlayersSchema>;
 let allowlistDB: OptimizedDatabase<AllowlistPlayersSchema>;
 let banlistDB: OptimizedDatabase<BanlistPlayersSchema>;
@@ -236,7 +234,6 @@ async function initializeSystems() {
     paradoxModulesDB = new OptimizedDatabase("paradoxModules");
     channelsDB = new OptimizedDatabase("channels");
     disabledCommandsDB = new OptimizedDatabase("disabledCommands");
-    spoofDB = new OptimizedDatabase("trustedPlayers");
     whitelistDB = new OptimizedDatabase("whitelist");
     allowlistDB = new OptimizedDatabase("allowlist");
     banlistDB = new OptimizedDatabase("banlist");
@@ -248,7 +245,7 @@ async function initializeSystems() {
     homesDB = new OptimizedDatabase("homes");
 
     // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB];
 
     const results = await Promise.allSettled(dbs.map((db) => db.clean()));
     results.forEach((result, i) => {
@@ -532,4 +529,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, spoofDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB };

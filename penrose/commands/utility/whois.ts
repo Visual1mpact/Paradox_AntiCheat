@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { spoofDB, playerMetadataDB } from "../../event-listeners/world-initialize";
+import { playerMetadataDB } from "../../event-listeners/world-initialize";
 import { PlayerCache } from "../../classes/player-cache";
 
 /**
@@ -12,19 +12,15 @@ import { PlayerCache } from "../../classes/player-cache";
 export const whoisCommand: Command = {
     name: "whois",
     description: "Provides a detailed forensic dossier on a player (online or offline).",
-    usage: "{prefix}whois <player|id> [--clear] | {prefix}whois --clearall",
-    examples: ["{prefix}whois Pete9xi", "{prefix}whois Bob --clear", "{prefix}whois --clearall"],
+    usage: "{prefix}whois <player|id>",
+    examples: ["{prefix}whois Pete9xi", "{prefix}whois Bob"],
     icon: "textures/ui/magnifying_glass.png",
     securityClearance: 3,
     category: "Utility",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Forensic Dossier",
-        description:
-            "Investigate player identity and metadata.\n\n" +
-            "§7• View platform, join history, and health for online players.\n" +
-            "§7• Identify aliases, search by ID, and view spoofing history.\n" +
-            "§7• Admins (Lvl 4) can view internal IDs and clear spoof logs.\n\n",
+        description: "Investigate player identity and metadata.\n\n" + "§7• View platform, join history, and health for online players.\n" + "§7• Search by player name or unique ID.\n" + "§7• Admins (Lvl 4) can view internal system IDs.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -33,12 +29,6 @@ export const whoisCommand: Command = {
                 icon: "textures/ui/magnifying_glass.png",
                 requiredFields: ["query"],
                 generateModalForm: true,
-            },
-            {
-                name: "Clear All Identity Logs",
-                securityClearance: 4,
-                command: ["--clearall"],
-                icon: "textures/ui/trash_default.png",
             },
         ],
         dynamicFields: [
@@ -49,13 +39,6 @@ export const whoisCommand: Command = {
                 arg: "",
                 requiredFields: ["query"],
             },
-            {
-                type: "toggle",
-                name: "Clear Spoof History",
-                arg: "--clear",
-                securityClearance: 4,
-                requiredFields: ["query"],
-            },
         ],
     },
 
@@ -63,45 +46,26 @@ export const whoisCommand: Command = {
         if (!message || !args) return;
 
         const sender = message.sender;
-        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 1;
-        const isClearAll = args.includes("--clearall");
-        const isClear = args.includes("--clear");
 
-        // 1. Handle global database wipe (Level 4 only)
-        if (isClearAll) {
-            if (senderClearance < 4) {
-                sender.sendMessage("§o§c[Paradox] Clearance Level 4 required to wipe identity logs.");
-                return;
-            }
-            await spoofDB.set("players", {});
-            sender.sendMessage("§2[§7Paradox§2]§o§7 Global identity logs have been cleared.");
-            return;
-        }
-
-        const query = args
-            .filter((a) => a !== "--clear")
-            .join(" ")
-            .trim()
-            .replace(/["@]/g, "");
+        const query = args.join(" ").trim().replace(/["@]/g, "");
 
         if (!query) {
             sender.sendMessage("§o§c[Paradox] Please provide a player name or ID.");
             return;
         }
 
-        // 2. Resolve Identity (Database first to handle aliases/IDs with partial matching)
-        const spoofData = spoofDB.get("players") ?? {};
-        const matchedEntry = Object.entries(spoofData).find(([id, record]) => {
-            const q = query.toLowerCase();
-            return id.toLowerCase() === q || record.name.toLowerCase().includes(q) || record.knownNames.some((n) => n.toLowerCase().includes(q));
-        });
+        // 1. Resolve Identity
+        let targetId: string | undefined = undefined;
 
-        // Determine the stable Paradox ID. If not in DB, try a quick online name lookup.
-        let targetId: string | undefined = matchedEntry ? matchedEntry[0] : undefined;
-
-        if (!targetId) {
-            const onlineByName = PlayerCache.getPlayerByName(query);
-            if (onlineByName) targetId = onlineByName.id;
+        // Try looking up via online cache first
+        const onlineByName = PlayerCache.getPlayerByName(query);
+        if (onlineByName) {
+            targetId = onlineByName.id;
+        } else {
+            // Fallback: If query itself is a valid ID inside our metadata DB
+            if (playerMetadataDB.get(query)) {
+                targetId = query;
+            }
         }
 
         if (!targetId) {
@@ -109,25 +73,12 @@ export const whoisCommand: Command = {
             return;
         }
 
-        // 3. Resolve Online Instance (Fetch by ID for stability, or check for Paradox Alias)
+        // 2. Resolve Online Instance
         let onlineTarget = PlayerCache.getPlayerById(targetId) || [...PlayerCache.getPlayers()].find((p) => p.getDynamicProperty("paradoxAlias")?.toString().toLowerCase() === query.toLowerCase());
 
-        const record = matchedEntry ? matchedEntry[1] : undefined;
-
-        // 4. Handle single record clear (Level 4 only)
-        if (isClear) {
-            if (senderClearance < 4) {
-                sender.sendMessage("§o§c[Paradox] Clearance Level 4 required to clear identity records.");
-                return;
-            }
-            delete spoofData[targetId];
-            await spoofDB.set("players", spoofData);
-            sender.sendMessage(`§2[§7Paradox§2]§o§7 Identity record for "${query}" removed.`);
-            return;
-        }
-
-        // 5. Aggregate Data
+        // 3. Aggregate Data
         const metadata = playerMetadataDB.get(targetId);
+        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 1;
         const clearance = onlineTarget ? ((onlineTarget.getDynamicProperty("securityClearance") as number) ?? 1) : "Offline";
         const currentPlatform = onlineTarget ? (onlineTarget.clientSystemInfo.platformType ?? "Unknown") : "N/A";
 
@@ -135,10 +86,6 @@ export const whoisCommand: Command = {
             if (timestamp === undefined) return "N/A";
             return new Date(timestamp).toLocaleDateString("en-GB", { dateStyle: "medium", timeStyle: "short" });
         };
-
-        const aliases = record?.knownNames?.filter((n) => n.toLowerCase() !== query.toLowerCase()) ?? [];
-        const aliasText = aliases.length > 0 ? `§e${aliases.join(", ")}` : "§fNone";
-        const spoofFlag = (record?.spoofAttempts?.length ?? 0) > 0 ? " §l§c[SPOOF_RISK]§r" : "";
 
         let health = "N/A";
         let healthBar = "";
@@ -171,11 +118,10 @@ export const whoisCommand: Command = {
         }
 
         const dossier = [
-            `§l§2--- Paradox Dossier: ${onlineTarget?.name ?? record?.name ?? query}${spoofFlag} ---`,
+            `§l§2--- Paradox Dossier: ${onlineTarget?.name ?? query} ---`,
             `§7Clearance: §fLevel ${clearance}`,
             `§7Current Platform:  §f${currentPlatform}`,
             `§7First Platform:    §f${metadata?.firstPlatform ?? "Unknown"}`,
-            `§7Aliases:   ${aliasText}`,
             `§7First Joined: §f${metadata?.joinDate ?? "N/A"}`,
             `§7Last Seen:  §f${formatTimestamp(metadata?.lastSeen)}`,
             `§7Dimension: §f${dimension}`,
@@ -184,16 +130,10 @@ export const whoisCommand: Command = {
             `§7Ping:      ${ping}`,
         ];
 
-        // 6. Level 4 Restricted Forensic Data
+        // 4. Level 4 Restricted Forensic Data
         if (senderClearance === 4) {
             dossier.push(`§b[Forensic Data]`);
             dossier.push(`§7Stored ID: §f${targetId}`);
-            if (record?.spoofAttempts && record.spoofAttempts.length > 0) {
-                dossier.push(`§7Spoof Attempts: §c${record.spoofAttempts.length} detected`);
-                record.spoofAttempts.slice(-3).forEach((attempt) => {
-                    dossier.push(` §8- ${attempt.name} (${formatTimestamp(attempt.timestamp)})`);
-                });
-            }
         }
 
         dossier.push(`§2----------------------------------`);

@@ -162,25 +162,6 @@ export type DisabledCommandsSchema = {
 };
 
 /**
- * Schema for the trusted players database.
- * Each key is a player ID, mapped to identity tracking info.
- */
-export type TrustedPlayersSchema = {
-    players: {
-        [playerId: PlayerID]: {
-            name: PlayerName;
-            knownNames: PlayerName[];
-            firstSeen: number;
-            lastSeen: number;
-            spoofAttempts?: {
-                name: PlayerName;
-                timestamp: number;
-            }[];
-        };
-    };
-};
-
-/**
  * Schema for the warns database.
  * Each key is a player name, mapped to an array of warning objects.
  */

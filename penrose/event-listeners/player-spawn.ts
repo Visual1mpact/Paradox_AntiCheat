@@ -1,5 +1,5 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
-import { allowlistDB, banlistDB, paradoxModulesDB, spoofDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
+import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/event-coordinator";
@@ -30,79 +30,6 @@ export function onPlayerSpawn() {
  */
 function initializeEventHandlers() {
     EventCoordinator.subscribeAfter("playerSpawn", handlePlayerSpawn);
-}
-
-/**
- * Checks and validates the identity of a player joining the world, enforcing consistent name-ID mapping.
- * Prevents name spoofing by ensuring ID-to-name mappings are unique and consistent.
- *
- * @param {Player} player - The player instance that has joined or spawned in the world.
- * @returns {Promise<void>}
- */
-async function handleSpoofCheck(player: Player): Promise<void> {
-    const now = Date.now();
-    const idKey = player.id;
-    const playerName = player.name;
-    const STALE_THRESHOLD = 7 * 24 * 60 * 60 * 1000;
-
-    const allPlayers = spoofDB.get("players") ?? {};
-    const staleIDs: string[] = [];
-    const corruptedIDs: string[] = [];
-
-    // Cleanup stale or malformed records
-    for (const [storedID, record] of Object.entries(allPlayers)) {
-        if (typeof record !== "object" || typeof record.lastSeen !== "number" || !Array.isArray(record.knownNames)) {
-            corruptedIDs.push(storedID);
-            continue;
-        }
-
-        if (now - record.lastSeen >= STALE_THRESHOLD) {
-            staleIDs.push(storedID);
-        }
-    }
-
-    // Remove stale and corrupted records
-    [...staleIDs, ...corruptedIDs].forEach((id) => delete allPlayers[id]);
-
-    let existing = allPlayers[idKey];
-
-    // New player record
-    if (!existing) {
-        allPlayers[idKey] = {
-            name: playerName, // store with lowercase property
-            knownNames: [playerName],
-            firstSeen: now,
-            lastSeen: now,
-        };
-        await spoofDB.set("players", allPlayers);
-        return;
-    }
-
-    // Update existing player record
-    if (!existing.knownNames.includes(playerName)) {
-        existing.knownNames.push(playerName);
-    }
-    existing.lastSeen = now;
-
-    // Check for spoofing: another ID already claimed this name
-    for (const [otherID, record] of Object.entries(allPlayers)) {
-        if (otherID === idKey) continue;
-
-        if (record.knownNames.includes(playerName)) {
-            record.spoofAttempts ??= [];
-            record.spoofAttempts.push({ name: playerName, timestamp: now });
-
-            await spoofDB.set("players", allPlayers);
-
-            player.sendMessage(`§o§c[Paradox] Spoof attempt detected. This name is used by another account.`);
-            player.runCommand(`kick @s Spoofing is not allowed.`);
-            return;
-        }
-    }
-
-    // Commit updates to the database
-    allPlayers[idKey] = existing;
-    await spoofDB.set("players", allPlayers);
 }
 
 /**
@@ -181,9 +108,6 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
             });
         }
     }
-
-    // They can change their name at any given time so lets check whenever they spawn
-    await handleSpoofCheck(player);
 
     const prisonLocation = player.getDynamicProperty(PRISON_LOCATION_PROPERTY) as Vector3 | undefined;
     if (prisonLocation) {
