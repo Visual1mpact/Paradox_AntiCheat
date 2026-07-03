@@ -122,6 +122,7 @@ import { environmentCommand } from "../commands/utility/environment";
 import { pingCommand } from "../commands/utility/ping";
 import { graveSaverCommand } from "../commands/settings/grave-saver";
 import { startGraveSaver } from "penrose/modules/grave-saver";
+import { inventoryEditorCommand } from "penrose/commands/utility/inventory-editor";
 
 type PlayerID = string;
 
@@ -224,6 +225,7 @@ const allCommands: Command[] = [
     environmentCommand,
     pingCommand,
     graveSaverCommand,
+    inventoryEditorCommand,
 ];
 
 /**
