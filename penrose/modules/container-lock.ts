@@ -355,7 +355,6 @@ async function hopperPlaceBefore(event: PlayerPlaceBlockBeforeEvent): Promise<vo
     }
 
     const chestInfo = getChestInfo(containerBlock);
-    console.warn(`[DEBUG] Chest info: ${JSON.stringify(chestInfo)}`);
 
     const hasAccess = chestInfo?.owner === player.name || hasLevel4Clearance(player);
 
