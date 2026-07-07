@@ -1,4 +1,15 @@
-import { Block, Dimension, Player, PlayerBreakBlockAfterEvent, PlayerBreakBlockBeforeEvent, PlayerInteractWithBlockAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system } from "@minecraft/server";
+import {
+    Block,
+    Dimension,
+    Player,
+    PlayerBreakBlockAfterEvent,
+    PlayerBreakBlockBeforeEvent,
+    PlayerInteractWithBlockAfterEvent,
+    PlayerInteractWithBlockBeforeEvent,
+    PlayerPlaceBlockAfterEvent,
+    PlayerPlaceBlockBeforeEvent,
+    system,
+} from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { chestLockDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
@@ -324,6 +335,39 @@ async function chestLockPlaceAfter(event: PlayerPlaceBlockAfterEvent): Promise<v
     }
 }
 
+async function hopperPlaceBefore(event: PlayerPlaceBlockBeforeEvent): Promise<void> {
+    const { block, player, permutationToPlace } = event;
+
+    const placingId = permutationToPlace?.type?.id;
+
+    if (placingId !== "minecraft:hopper") {
+        return;
+    }
+
+    const containerBlock = player.dimension.getBlock({
+        x: block.x,
+        y: block.y + 1,
+        z: block.z,
+    });
+
+    if (!containerBlock) {
+        return;
+    }
+
+    const chestInfo = getChestInfo(containerBlock);
+    console.warn(`[DEBUG] Chest info: ${JSON.stringify(chestInfo)}`);
+
+    const hasAccess = chestInfo?.owner === player.name || hasLevel4Clearance(player);
+
+    if (!hasAccess) {
+        event.cancel = true;
+
+        player.sendMessage(`§2[§7Paradox§2]§o§7 You cannot place a hopper below this chest as you do not own it.`);
+        notifyLevel4Players(`§2[§7Paradox§2]§o§7 §4[LOG]§7 ${player.name} tried to place a hopper below locked chest by ${chestInfo?.owner} at ${getCanonicalChestKey(containerBlock)}`);
+        await logChestAccess(containerBlock, player.name);
+    }
+}
+
 /** ------------------- MODULE CONTROL ------------------- */
 
 /**
@@ -334,6 +378,7 @@ let afterSub: ((event: PlayerInteractWithBlockAfterEvent) => void) | null = null
 let breakSub: ((event: PlayerBreakBlockBeforeEvent) => void) | null = null;
 let afterBreakSub: ((event: PlayerBreakBlockAfterEvent) => void) | null = null;
 let afterPlaceSub: ((event: PlayerPlaceBlockAfterEvent) => void) | null = null;
+let hopperBeforePlaceSub: ((event: PlayerPlaceBlockBeforeEvent) => void) | null = null;
 let intervalHandle: number | null = null;
 
 /**
@@ -347,13 +392,14 @@ function startChestLock() {
     breakSub = (event) => chestLockBreakBefore(event);
     afterBreakSub = (event) => chestLockBreakAfter(event);
     afterPlaceSub = (event) => chestLockPlaceAfter(event);
-
+    hopperBeforePlaceSub = (event) => hopperPlaceBefore(event);
     // Subscribe to relevant events for chest locking functionality
     EventCoordinator.subscribeBefore("playerInteractWithBlock", beforeSub);
     EventCoordinator.subscribeAfter("playerInteractWithBlock", afterSub);
     EventCoordinator.subscribeBefore("playerBreakBlock", breakSub);
     EventCoordinator.subscribeAfter("playerBreakBlock", afterBreakSub);
     EventCoordinator.subscribeAfter("playerPlaceBlock", afterPlaceSub);
+    EventCoordinator.subscribeBefore("playerPlaceBlock", hopperBeforePlaceSub);
 
     intervalHandle = system.runInterval(() => pruneOldLogs(30), 72000);
 }
@@ -367,6 +413,7 @@ function stopChestLock() {
     if (breakSub) EventCoordinator.unsubscribeBefore("playerBreakBlock", breakSub);
     if (afterBreakSub) EventCoordinator.unsubscribeAfter("playerBreakBlock", afterBreakSub);
     if (afterPlaceSub) EventCoordinator.unsubscribeAfter("playerPlaceBlock", afterPlaceSub);
+    if (hopperBeforePlaceSub) EventCoordinator.unsubscribeBefore("playerPlaceBlock", hopperBeforePlaceSub);
 
     if (intervalHandle !== null) system.clearRun(intervalHandle);
 
