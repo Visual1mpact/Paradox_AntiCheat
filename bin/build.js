@@ -42,6 +42,8 @@ function run(command, args, options = {}) {
     });
 
     if (result.status !== 0) {
+        console.error(result.stdout);
+        console.error(result.stderr);
         exitWithError(`Command failed: ${command} ${args.join(" ")}`);
     }
 }
