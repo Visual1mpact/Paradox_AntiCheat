@@ -171,20 +171,26 @@ class ChatSendSubscription {
 
             // 4️⃣ Chat rank/global handling
             const isRankDisabled = world.getDynamicProperty("globalRankDisabled");
+            const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
 
-            if (isRankDisabled && !playerChannel) return;
+            // Decide if we need to format the message based on the presence of an alias, rank status, or custom channel.
+            const shouldFormat =
+                !!alias || // alias active
+                !isRankDisabled || // ranks enabled
+                !!playerChannel; // custom channel active
 
+            // If nothing is active we let vanilla chat handle it
+            if (!shouldFormat) return;
+
+            // From here on, we control the message
             event.cancel = true;
 
             const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+            const rank = isRankDisabled ? "" : (playerChannel ?? playerRank);
 
-            const rank = playerChannel ?? playerRank;
-
-            // Support for Rename/Alias system
-            const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
             const displayName = alias ?? player.name;
 
-            const formattedMessage = `${rank} §7${displayName}§7: §r${event.message}`;
+            const formattedMessage = rank ? `${rank} §7${displayName}§7: §r${event.message}` : `§7${displayName}§7: §r${event.message}`;
 
             // 5️⃣ Determine target players
             if (playerChannel) {
