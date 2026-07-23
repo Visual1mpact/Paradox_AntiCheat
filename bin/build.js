@@ -42,8 +42,12 @@ function run(command, args, options = {}) {
     });
 
     if (result.status !== 0) {
-        console.error(result.stdout);
-        console.error(result.stderr);
+        // --- This block prints the actual errors to your terminal ---
+        console.error(`\n❌ [BUILD ERROR] Standard Error Output:`);
+        if (result.stderr) console.error(result.stderr);
+        if (result.stdout) console.log(result.stdout);
+        if (result.error) console.error(result.error.message);
+        console.error(`❌ ---------------------------------------\n`);
         exitWithError(`Command failed: ${command} ${args.join(" ")}`);
     }
 }

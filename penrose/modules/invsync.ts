@@ -1,4 +1,4 @@
-import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
+import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
@@ -7,27 +7,30 @@ import { EventCoordinator } from "../classes/event-coordinator";
 /**
  * CONFIGURATION
  */
-const JOIN_DELAY_TICKS = 20; // ~1 second after join
 const MAX_AUDIT_EVENTS = 200;
-const SNAPSHOT_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const ITEM_TOLERANCE = 0; // tolerance per item type
-const CLEANUP_FREQUENCY_TICKS = 100; // How often to scan database expiration states
+const BUFFER_TICKS = 40; // 2 seconds safety window for loading/respawning
+const SNAPSHOT_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days expiration for offline players
+const CLEANUP_INTERVAL_TICKS = 6000; // Run database vacuum operations every ~5 minutes
 
 /**
- * RUNTIME LIFECYCLE FLAGS
+ * RUNTIME STATE & LIFECYCLE FLAGS
  */
 let isModuleActive = false;
-let isJobActive = false;
+let cleanupIntervalId: number | undefined;
 
+const dimensionChangingPlayers = new Set<string>();
+const deadPlayers = new Set<string>();
+
+// Cached Subscriber References
 let joinSub: ((arg: PlayerJoinAfterEvent) => void) | undefined;
 let leaveSub: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
-let respawnSub: ((arg: PlayerSpawnAfterEvent) => void) | undefined;
-
-const pendingJoinChecks = new Map<string, number>();
-let lastCleanupTick = 0;
+let dimensionSub: ((arg: PlayerDimensionChangeAfterEvent) => void) | undefined;
+let spawnSub: ((arg: PlayerSpawnAfterEvent) => void) | undefined;
+let dieSub: ((arg: any) => void) | undefined;
+let itemChangeSub: ((arg: PlayerInventoryItemChangeAfterEvent) => void) | undefined;
 
 /**
- * Stored inventory snapshot structure.
+ * TYPE DEFINITIONS
  */
 interface InvSyncSnapshot {
     counts: Record<string, number>;
@@ -36,9 +39,10 @@ interface InvSyncSnapshot {
 }
 
 /**
- * INVENTORY COUNTS UTILITY
+ * UTILITY: Safe Mapping of Present Inventory State
  */
 function getInventoryCounts(player: Player): Record<string, number> | null {
+    if (!player.isValid) return null;
     const container = player.getComponent("inventory")?.container;
     if (!container) return null;
 
@@ -56,66 +60,161 @@ function getInventoryCounts(player: Player): Record<string, number> | null {
 }
 
 /**
- * Continuous generator loop running background tasks on a frame-by-frame basis.
+ * SYSTEM HOOK: Periodic Database Garbage Collection
+ * Ported from Script 2 to stop database bloat from offline/historical data.
  */
-function* continuousInvSyncLoop(): Generator<void, void, unknown> {
-    if (isJobActive) return;
-    isJobActive = true;
-
+function runDatabaseVacuum() {
     try {
-        if (!isModuleActive) return;
-
-        const currentTick = system.currentTick;
-
-        // TASK 1: PROCESS PENDING DELAYED JOIN CHECKS
-        if (pendingJoinChecks.size > 0) {
-            for (const [playerId, scheduledTick] of pendingJoinChecks) {
-                if (currentTick >= scheduledTick) {
-                    const player = PlayerCache.getPlayerById(playerId);
-
-                    const isValid = player?.isValid;
-                    if (isValid) {
-                        try {
-                            checkPlayerInventory(player);
-                        } catch (e) {
-                            console.error(`[Paradox] Error verifying join snapshot: ${e}`);
-                        }
-                    }
-                    pendingJoinChecks.delete(playerId);
-                }
-                yield;
-            }
-        }
-
-        // TASK 2: THROTTLED EXPIRED SNAPSHOT CLEANUP
-        if (currentTick - lastCleanupTick >= CLEANUP_FREQUENCY_TICKS) {
-            lastCleanupTick = currentTick;
-            try {
-                invSyncSnapshotsDB.clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
-            } catch (e) {
-                console.error(`[Paradox] Error cleaning expired DB snapshots: ${e}`);
-            }
-            yield;
+        if (typeof (invSyncSnapshotsDB as any).clean === "function") {
+            (invSyncSnapshotsDB as any).clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
         }
     } catch (e) {
-        console.error(`[Paradox] Error during continuous invSync loop pass: ${e}`);
-    } finally {
-        isJobActive = false;
-
-        // Seamlessly recurse to loop the tasks on the next available engine frame
-        if (isModuleActive) {
-            system.run(() => {
-                system.runJob(continuousInvSyncLoop());
-            });
-        }
+        console.error(`[Paradox] Error vacuuming expired database entries: ${e}`);
     }
 }
 
 /**
- * PLAYER JOIN / LEAVE / RESPAWN EVENT ROUTERS
+ * CORE AUDIT EVENT: Evaluates precise item slot modifications instantly
+ */
+function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
+    const player = event.player;
+    if (!player || !player.isValid) return;
+
+    // STATE SAFETY GUARD: Ignore mutations during unstable engine processing windows
+    if (dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) return;
+
+    const container = player.getComponent("inventory")?.container;
+    if (!container) return;
+
+    const typeId = event.itemStack?.typeId ?? event.beforeItemStack?.typeId;
+    if (!typeId) return;
+
+    let snapshot: InvSyncSnapshot;
+    try {
+        snapshot = invSyncSnapshotsDB.get(player.id) ?? {
+            counts: {},
+            time: Date.now(),
+            name: player.name,
+        };
+    } catch (e) {
+        console.error(`[Paradox] Failed to retrieve snapshot read for ${player.name}: ${e}`);
+        return;
+    }
+
+    const currentCounts = getInventoryCounts(player);
+    if (!currentCounts) return;
+
+    const currentAmount = currentCounts[typeId] ?? 0;
+    const expectedAmount = snapshot.counts[typeId] ?? 0;
+
+    // Evaluate Spikes (Duping patterns typically create huge bursts instantly)
+    if (currentAmount > expectedAmount) {
+        const excessAmount = currentAmount - expectedAmount;
+
+        if (excessAmount > 64) {
+            handleAnomaly(player, typeId, excessAmount);
+            return; // Exit early; handleAnomaly performs its own fresh sync write
+        }
+    }
+
+    // Keep the snapshot dynamically up to date with natural progression steps
+    snapshot.counts = currentCounts;
+    snapshot.time = Date.now();
+
+    try {
+        invSyncSnapshotsDB.set(player.id, snapshot);
+    } catch (e) {
+        console.error(`[Paradox] Failure updating runtime baseline for ${player.name}: ${e}`);
+    }
+}
+
+/**
+ * CRITICAL CORRECTION ENGINE: Safe, Precise Stack Deduction
+ */
+function handleAnomaly(player: Player, typeId: string, excessAmount: number) {
+    player.sendMessage(`§2[§7Paradox§2]§o§7 §cInventory anomaly detected: §e${excessAmount}x ${typeId}.`);
+
+    const container = player.getComponent("inventory")?.container;
+    if (!container) return;
+
+    let remainingToDeduct = excessAmount;
+
+    // Sequentially reduce only the explicit item variant causing the alert
+    for (let i = 0; i < container.size; i++) {
+        if (remainingToDeduct <= 0) break;
+
+        try {
+            const item = container.getItem(i);
+            if (!item || item.typeId !== typeId) continue;
+
+            if (item.amount <= remainingToDeduct) {
+                remainingToDeduct -= item.amount;
+                container.setItem(i, undefined);
+            } else {
+                item.amount -= remainingToDeduct;
+                container.setItem(i, item);
+                remainingToDeduct = 0;
+            }
+        } catch (e) {
+            console.error(`[Paradox] Error correcting slot index ${i} on player ${player.name}: ${e}`);
+        }
+    }
+
+    // Post-Correction Synchronization Update
+    const postCounts = getInventoryCounts(player);
+    if (postCounts) {
+        try {
+            invSyncSnapshotsDB.set(player.id, {
+                counts: postCounts,
+                time: Date.now(),
+                name: player.name,
+            });
+        } catch (e) {
+            console.error(`[Paradox] Failed writing post-correction update for ${player.name}: ${e}`);
+        }
+    }
+
+    // Process Logging via implicit type inference
+    const actualDeducted = excessAmount - remainingToDeduct;
+
+    try {
+        const audit = invSyncAuditDB.get(player.id) ?? { events: [] };
+        audit.events.push({
+            time: Date.now(),
+            excessItems: { [typeId]: actualDeducted },
+            totalExcess: actualDeducted,
+        });
+
+        if (audit.events.length > MAX_AUDIT_EVENTS) {
+            audit.events = audit.events.slice(-MAX_AUDIT_EVENTS);
+        }
+        invSyncAuditDB.set(player.id, audit);
+    } catch (e) {
+        console.error(`[Paradox] Failed writing logging trail data for ${player.name}: ${e}`);
+    }
+
+    alertStaff(player, `${typeId} (x${actualDeducted} removed)`);
+}
+
+/**
+ * ENGINE STATE RECOVERY HOOKS
  */
 function onPlayerJoin(event: PlayerJoinAfterEvent) {
-    pendingJoinChecks.set(event.playerId, system.currentTick + JOIN_DELAY_TICKS);
+    const playerId = event.playerId;
+
+    system.runTimeout(() => {
+        const player = PlayerCache.getPlayerById(playerId);
+        if (!player || !player.isValid) return;
+
+        const counts = getInventoryCounts(player);
+        if (counts) {
+            try {
+                invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+            } catch (e) {
+                console.error(`[Paradox] Failed writing join baseline initialization for ${player.name}: ${e}`);
+            }
+        }
+    }, BUFFER_TICKS);
 }
 
 function onPlayerLeave(event: PlayerLeaveBeforeEvent) {
@@ -123,152 +222,90 @@ function onPlayerLeave(event: PlayerLeaveBeforeEvent) {
     if (!player) return;
 
     const counts = getInventoryCounts(player);
-    if (!counts) return;
-
-    try {
-        invSyncSnapshotsDB.set(player.id, {
-            counts,
-            time: Date.now(),
-            name: player.name,
-        });
-    } catch (e) {
-        console.error(`[Paradox] Failed to write leave snapshot for ${player.name}: ${e}`);
-    }
-}
-
-function onPlayerRespawn(event: PlayerSpawnAfterEvent) {
-    const player = event.player;
-    const isValid = player.isValid;
-    if (!isValid) return;
-
-    try {
-        checkPlayerInventory(player);
-    } catch (e) {
-        console.error(`[Paradox] Failed to process respawn check for ${player.name}: ${e}`);
-    }
-}
-
-/**
- * INVENTORY SYNCHRONIZATION AND VERIFICATION
- */
-function checkPlayerInventory(player: Player) {
-    const snapshot: InvSyncSnapshot = invSyncSnapshotsDB.get(player.id) ?? {
-        counts: {},
-        time: Date.now(),
-        name: player.name,
-    };
-
-    const current = getInventoryCounts(player);
-    if (!current) return;
-
-    const excess: Record<string, number> = {};
-    let totalExcess = 0;
-
-    for (const item in current) {
-        const delta = current[item] - (snapshot.counts[item] ?? 0);
-
-        if (delta > ITEM_TOLERANCE) {
-            excess[item] = delta;
-            totalExcess += delta;
-        }
-    }
-
-    if (totalExcess > 0) {
-        console.log(`[InvSync] Snapshot anomaly detected for ${player.name}: +${totalExcess} items`);
-        handleAnomaly(player, excess, totalExcess);
-    }
-
-    snapshot.counts = current;
-    snapshot.time = Date.now();
-    invSyncSnapshotsDB.set(player.id, snapshot);
-}
-
-/**
- * HANDLING FOUND ANOMALIES
- */
-function handleAnomaly(player: Player, excess: Record<string, number>, totalExcess: number) {
-    const snapshotClone = JSON.parse(JSON.stringify(excess));
-
-    player.sendMessage(`§2[§7Paradox§2]§o§7 §cInventory anomaly detected: §e${totalExcess} §cexcess items.`);
-
-    removeExcessItems(player, excess);
-
-    const audit = invSyncAuditDB.get(player.id) ?? { events: [] };
-    audit.events.push({
-        time: Date.now(),
-        excessItems: snapshotClone,
-        totalExcess,
-    });
-
-    if (audit.events.length > MAX_AUDIT_EVENTS) {
-        audit.events = audit.events.slice(-MAX_AUDIT_EVENTS);
-    }
-    invSyncAuditDB.set(player.id, audit);
-
-    alertStaff(player, totalExcess);
-}
-
-/**
- * REMOVE EXCESS ITEMS FROM INVENTORY CONTAINER
- */
-function removeExcessItems(player: Player, excess: Record<string, number>) {
-    const container = player.getComponent("inventory")?.container;
-    if (!container) return;
-
-    let remainingExcess = Object.values(excess).reduce((sum, v) => sum + v, 0);
-    if (remainingExcess <= 0) return;
-
-    for (let i = 0; i < container.size; i++) {
-        if (remainingExcess <= 0) break;
-
+    if (counts) {
         try {
-            const item = container.getItem(i);
-            if (!item) continue;
-
-            const type = item.typeId;
-            const amount = excess[type];
-            if (!amount) continue;
-
-            if (item.amount <= amount) {
-                container.setItem(i, undefined);
-                remainingExcess -= item.amount;
-                excess[type] = 0;
-            } else {
-                item.amount -= amount;
-                container.setItem(i, item);
-                remainingExcess -= amount;
-                excess[type] = 0;
-            }
-
-            if (excess[type] <= 0) delete excess[type];
-        } catch {
-            continue;
+            invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+        } catch (e) {
+            console.error(`[Paradox] Failed writing post-session save file baseline for ${player.name}: ${e}`);
         }
+    }
+    dimensionChangingPlayers.delete(player.id);
+    deadPlayers.delete(player.id);
+}
+
+function onDimensionChange(event: PlayerDimensionChangeAfterEvent) {
+    const player = event.player;
+    if (!player?.isValid) return;
+
+    dimensionChangingPlayers.add(player.id);
+
+    system.runTimeout(() => {
+        if (!player.isValid) {
+            dimensionChangingPlayers.delete(player.id);
+            return;
+        }
+        const counts = getInventoryCounts(player);
+        if (counts) {
+            try {
+                invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+            } catch (e) {
+                console.error(`[Paradox] Failed updating cross-dimension synchronization baseline for ${player.name}: ${e}`);
+            }
+        }
+        dimensionChangingPlayers.delete(player.id);
+    }, BUFFER_TICKS);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function onPlayerDie(event: any) {
+    const entity = event.deadEntity;
+    if (entity instanceof Player) {
+        deadPlayers.add(entity.id);
     }
 }
 
+function onPlayerSpawn(event: PlayerSpawnAfterEvent) {
+    const player = event.player;
+    if (!player?.isValid) return;
+
+    system.runTimeout(() => {
+        if (!player.isValid) return;
+
+        if (deadPlayers.has(player.id)) {
+            const counts = getInventoryCounts(player);
+            if (counts) {
+                try {
+                    invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+                } catch (e) {
+                    console.error(`[Paradox] Failed writing post-respawn recovery baseline for ${player.name}: ${e}`);
+                }
+            }
+            deadPlayers.delete(player.id);
+        }
+    }, BUFFER_TICKS);
+}
+
 /**
- * STAFF NOTIFICATION SYSTEMS
+ * NOTIFICATION ENGINE
  */
-function alertStaff(player: Player, totalExcess: number) {
+function alertStaff(player: Player, summaryMessage: string) {
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
-        const isStaffValid = s.isValid;
-        if (!isStaffValid || s.id === player.id) continue;
-        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvSync] §f${player.name} §7Excess: §e${totalExcess}`);
+        if (s.isValid && s.id !== player.id) {
+            s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvSync] §f${player.name} §7flagged: §c${summaryMessage}`);
+        }
     }
 }
 
 function alertStaffSystem(message: string) {
     const staff = getSecurityClearanceLevel4Players();
     for (const s of staff) {
-        const isStaffValid = s.isValid;
-        if (isStaffValid) s.sendMessage(`§2[§7Paradox§2]§o§7 ${message}`);
+        if (s.isValid) s.sendMessage(`§2[§7Paradox§2]§o§7 ${message}`);
     }
 }
 
 /**
- * LIFECYCLE MANAGEMENT INTERFACES
+ * SYSTEM LIFECYCLE MANAGEMENT (EVENT RUNTIME ROUTER)
  */
 export function startInvSync() {
     if (isModuleActive) return;
@@ -276,31 +313,38 @@ export function startInvSync() {
 
     joinSub = onPlayerJoin;
     leaveSub = onPlayerLeave;
-    respawnSub = onPlayerRespawn;
+    dimensionSub = onDimensionChange;
+    dieSub = onPlayerDie;
+    spawnSub = onPlayerSpawn;
+    itemChangeSub = onInventoryItemChanged;
 
     EventCoordinator.subscribeAfter("playerJoin", joinSub);
     EventCoordinator.subscribeBefore("playerLeave", leaveSub);
-    EventCoordinator.subscribeAfter("playerSpawn", respawnSub);
+    EventCoordinator.subscribeAfter("playerDimensionChange", dimensionSub);
+    EventCoordinator.subscribeAfter("entityDie", dieSub);
+    EventCoordinator.subscribeAfter("playerSpawn", spawnSub);
+    EventCoordinator.subscribeAfter("playerInventoryItemChange", itemChangeSub);
 
-    // Initial instant setup snapshot loop for any active players currently online
+    // Run active session scans for current online pool instantly
     for (const player of PlayerCache.getPlayers()) {
-        const isValid = player.isValid;
-        if (isValid) {
+        if (player.isValid) {
             const counts = getInventoryCounts(player);
             if (counts) {
-                invSyncSnapshotsDB.set(player.id, {
-                    counts,
-                    time: Date.now(),
-                    name: player.name,
-                });
+                try {
+                    invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+                } catch (e) {
+                    console.error(`[Paradox] Initialization snapshot failure during live hook for ${player.name}: ${e}`);
+                }
             }
         }
     }
 
-    if (!isJobActive) {
-        system.runJob(continuousInvSyncLoop());
-    }
-    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync module §astarted§7.");
+    // Ported background vacuum task from Script 2 (Throttled cleanly via safe intervals)
+    cleanupIntervalId = system.runInterval(() => {
+        runDatabaseVacuum();
+    }, CLEANUP_INTERVAL_TICKS);
+
+    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync framework §astarted§7.");
 }
 
 export function stopInvSync() {
@@ -309,41 +353,83 @@ export function stopInvSync() {
 
     if (joinSub) EventCoordinator.unsubscribeAfter("playerJoin", joinSub);
     if (leaveSub) EventCoordinator.unsubscribeBefore("playerLeave", leaveSub);
-    if (respawnSub) EventCoordinator.unsubscribeAfter("playerSpawn", respawnSub);
+    if (dimensionSub) EventCoordinator.unsubscribeAfter("playerDimensionChange", dimensionSub);
+    if (dieSub) EventCoordinator.unsubscribeAfter("entityDie", dieSub);
+    if (spawnSub) EventCoordinator.unsubscribeAfter("playerSpawn", spawnSub);
+    if (itemChangeSub) EventCoordinator.unsubscribeAfter("playerInventoryItemChange", itemChangeSub);
 
-    joinSub = leaveSub = respawnSub = undefined;
-    pendingJoinChecks.clear();
+    if (cleanupIntervalId !== undefined) {
+        system.clearRun(cleanupIntervalId);
+        cleanupIntervalId = undefined;
+    }
 
-    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync module §4stopped§7.");
+    joinSub = leaveSub = dimensionSub = dieSub = spawnSub = itemChangeSub = undefined;
+
+    dimensionChangingPlayers.clear();
+    deadPlayers.clear();
+
+    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync framework §4stopped§7.");
 }
 
-/**
- * MANUAL INTERACTION OPERATIONS
- */
 export function forceCheckAll() {
     for (const player of PlayerCache.getPlayers()) {
-        const isValid = player.isValid;
-        if (isValid) checkPlayerInventory(player);
-    }
-}
+        if (!player.isValid || dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) continue;
 
-export function clearAllSnapshots() {
-    invSyncSnapshotsDB.clear();
-    invSyncAuditDB.clear();
+        try {
+            const snapshot = invSyncSnapshotsDB.get(player.id);
+            const current = getInventoryCounts(player);
+            if (!snapshot || !current) continue;
+
+            for (const item in current) {
+                const delta = current[item] - (snapshot.counts[item] ?? 0);
+                if (delta > 64) {
+                    handleAnomaly(player, item, delta);
+                }
+            }
+        } catch (e) {
+            console.error(`[Paradox] Failed to complete manual verification scan for ${player.name}: ${e}`);
+        }
+    }
 }
 
 export function forceSnapshotAll() {
     for (const player of PlayerCache.getPlayers()) {
-        const isValid = player.isValid;
-        if (isValid) {
-            const counts = getInventoryCounts(player);
-            if (counts) {
+        if (!player.isValid) continue;
+        const counts = getInventoryCounts(player);
+        if (counts) {
+            try {
                 invSyncSnapshotsDB.set(player.id, {
                     counts,
                     time: Date.now(),
                     name: player.name,
                 });
+            } catch (e) {
+                console.error(`[Paradox] Emergency forced database snapshot failed for ${player.name}: ${e}`);
             }
         }
     }
+    alertStaffSystem("§2[§7Paradox§2]§o§7 Forced a fresh inventory snapshot update for all online entities.");
+}
+
+export function clearAllSnapshots() {
+    try {
+        // Safe clear implementation ported from Script 2
+        if (typeof (invSyncSnapshotsDB as any).clear === "function") {
+            (invSyncSnapshotsDB as any).clear();
+            (invSyncAuditDB as any).clear();
+        } else {
+            for (const player of PlayerCache.getPlayers()) {
+                if (player.isValid) {
+                    invSyncSnapshotsDB.delete(player.id);
+                }
+            }
+        }
+    } catch (e) {
+        console.error(`[Paradox] Critical error clearing infrastructure databases: ${e}`);
+    }
+
+    dimensionChangingPlayers.clear();
+    deadPlayers.clear();
+
+    alertStaffSystem("§2[§7Paradox§2]§o§7 Volatile baseline inventory snapshots cleared successfully.");
 }
