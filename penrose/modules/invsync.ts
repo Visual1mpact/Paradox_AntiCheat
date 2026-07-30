@@ -1,4 +1,4 @@
-import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent } from "@minecraft/server";
+import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent, EntityDieAfterEvent } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
@@ -256,8 +256,7 @@ function onDimensionChange(event: PlayerDimensionChangeAfterEvent) {
     }, BUFFER_TICKS);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function onPlayerDie(event: any) {
+function onPlayerDie(event: EntityDieAfterEvent) {
     const entity = event.deadEntity;
     if (entity instanceof Player) {
         deadPlayers.add(entity.id);
