@@ -17,13 +17,13 @@ export const despawnCommand: Command = {
         title: "Despawn Entities",
         description:
             "Manage and despawn entities in the world.\n\n" +
-            "Â§7âÿ¢ Â§fDespawn All EntitiesÂ§7: Remove all entities except players.\n" +
-            "Â§7âÿ¢ Â§fDespawn Specific EntityÂ§7: Remove entities of a specified type.\n\n" +
+            "Â§7â€¢ Â§fDespawn All EntitiesÂ§7: Remove all entities except players.\n" +
+            "Â§7â€¢ Â§fDespawn Specific EntityÂ§7: Remove entities of a specified type.\n\n" +
             "Â§7Rules & Notes:\n" +
-            "Â§7âÿ¢ Players are never affected.\n" +
-            "Â§7âÿ¢ Named or tamed entities are protected and will not be removed.\n" +
-            "Â§7âÿ¢ Use exact entity type names (case-sensitive) when targeting specific entities.\n" +
-            "Â§7âÿ¢ You can use 'all' to remove all eligible entities.\n\n",
+            "Â§7â€¢ Players are never affected.\n" +
+            "Â§7â€¢ Named or tamed entities are protected and will not be removed.\n" +
+            "Â§7â€¢ Use exact entity type names (case-sensitive) when targeting specific entities.\n" +
+            "Â§7â€¢ You can use 'all' to remove all eligible entities.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
