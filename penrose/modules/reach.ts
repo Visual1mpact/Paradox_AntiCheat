@@ -1,4 +1,4 @@
-import { Player, system, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
+import { Player, system, EntityHurtBeforeEvent, GameMode, EntityDamageCause } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
@@ -104,6 +104,8 @@ function onHitCached(event: EntityHurtBeforeEvent) {
     // Verify both participants are actual players, and ignore creative-mode players
     if (!(attacker instanceof Player) || !(victim instanceof Player)) return;
     if (attacker.getGameMode() === GameMode.Creative) return;
+    // Only process standard melee hits
+    if (event.damageSource.cause !== EntityDamageCause.entityAttack) return;
 
     /**
      * CRITICAL FALLBACK MECHANIC:
