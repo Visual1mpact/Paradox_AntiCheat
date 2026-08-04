@@ -10,7 +10,7 @@ export const graveSaverCommand: Command = {
     examples: [`{prefix}gravesaver`],
     category: "Modules",
     securityClearance: 4,
-    icon: "textures/items/chest.png",
+    icon: "textures/blocks/chest_front.png",
 
     guiInstructions: {
         formType: "ActionFormData",
