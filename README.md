@@ -2,9 +2,9 @@
   <img src="docs\Media\paradox-header.png" alt="Paradox AntiCheat Logo">
   <br><br>
   <div>
-    <em>Updated for Minecraft Bedrock 1.26.30</em>
+    <em>Updated for Minecraft Bedrock 1.26.40</em>
     <br>
-    Paradox AntiCheat now utilizes the 2.9.0-Beta server, 1.0.0-Beta server-net, 1.0.0-Beta server-admin and 2.2.0-Beta server-ui APIs, enhancing compatibility and performance for Minecraft Bedrock; both Realms and BDS environments.
+    Paradox AntiCheat now utilizes the 2.10.0-Beta server, 1.0.0-Beta server-net, 1.0.0-Beta server-admin and 2.2.0-Beta server-ui APIs, enhancing compatibility and performance for Minecraft Bedrock; both Realms and BDS environments.
   </div>
 </div>
 <hr>
