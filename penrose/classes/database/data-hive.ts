@@ -6,7 +6,65 @@ const CHUNK_SIZE = 30000;
 export type DatabaseValueObject = Record<string, any>;
 
 /**
+ * Lightweight LZW Compressor optimized for JS/Minecraft UTF-16 Dynamic Properties
+ */
+class LZCompressor {
+    public static compress(uncompressed: string): string {
+        if (!uncompressed) return "";
+        const dict: Record<string, number> = {};
+        const data = (uncompressed + "").split("");
+        const out: number[] = [];
+        let currChar: string;
+        let phrase = data[0];
+        let code = 256;
+
+        for (let i = 1; i < data.length; i++) {
+            currChar = data[i];
+            if (dict[phrase + currChar] != null) {
+                phrase += currChar;
+            } else {
+                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+                dict[phrase + currChar] = code;
+                code++;
+                phrase = currChar;
+            }
+        }
+        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+
+        // Pack numbers into UTF-16 string blocks
+        return String.fromCharCode(...out);
+    }
+
+    public static decompress(compressed: string): string {
+        if (!compressed) return "";
+        const dict: Record<number, string> = {};
+        const data = compressed.split("");
+        let currChar = data[0];
+        let oldPhrase = currChar;
+        const out = [currChar];
+        let code = 256;
+        let phrase: string;
+
+        for (let i = 1; i < data.length; i++) {
+            const currCode = data[i].charCodeAt(0);
+            if (currCode < 256) {
+                phrase = data[i];
+            } else {
+                phrase = dict[currCode] ? dict[currCode] : oldPhrase + currChar;
+            }
+            out.push(phrase);
+            currChar = phrase.charAt(0);
+            dict[code] = oldPhrase + currChar;
+            code++;
+            oldPhrase = phrase;
+        }
+        return out.join("");
+    }
+}
+
+/**
  * Type-safe, chunked database using dynamic properties, resilient to crashes.
+ * Version 2.0 - Features LZW Compression and Backward Compatibility.
  */
 export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     public name: string;
@@ -26,12 +84,10 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         if (!OptimizedDatabase.instances.includes(this)) OptimizedDatabase.instances.push(this);
     }
 
-    /** Returns all existing instances of the database */
     public static getAllInstances(): OptimizedDatabase<any>[] {
         return this.instances;
     }
 
-    /** Get cached pointers or read from dynamic properties */
     private _getPointers(): string[] {
         if (this.cachedPointers !== undefined) return this.cachedPointers;
         const pointers = world.getDynamicProperty(this.pointerKey) as string | undefined;
@@ -39,7 +95,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return this.cachedPointers || [];
     }
 
-    /** Update pointers and mark cache dirty */
     private _setPointers(pointers: string[]): void {
         if (JSON.stringify(pointers) !== JSON.stringify(this.cachedPointers)) {
             this.cachedPointers = pointers;
@@ -52,7 +107,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         this.cachedPointers = undefined;
     }
 
-    /** Run async/sync function with a lock to prevent concurrent writes */
     private static async _withLock<T>(resource: string, fn: () => T | Promise<T>): Promise<T> {
         const TIMEOUT = 10000;
         const start = Date.now();
@@ -68,7 +122,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         }
     }
 
-    /** Deletes all chunks of a base key */
     private _deleteChunks(baseKey: string): void {
         for (let i = 0; ; ++i) {
             const key = `${baseKey}/${i}`;
@@ -78,7 +131,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         world.setDynamicProperty(baseKey, undefined);
     }
 
-    /** Deletes multiple dynamic properties by key safely */
     private _deleteKeys(keys: string[]): void {
         for (const key of keys) {
             try {
@@ -89,18 +141,21 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         }
     }
 
-    /** Sets a key-value pair (chunks large entries) */
+    /** Sets a key-value pair with v2.0 LZW Compression */
     public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
         const base = `${this.name}/${String(key)}`;
         await OptimizedDatabase._withLock(base, async () => {
             const json = JSON.stringify(value);
-            const tmpBase = `${base}~tmp`;
 
+            // v2.0 Payload format: Prefix with "\u0002" (ASCII STX) to identify v2 compressed data
+            const compressedPayload = "\u0002" + LZCompressor.compress(json);
+
+            const tmpBase = `${base}~tmp`;
             this._deleteChunks(tmpBase);
 
             const tmpChunks: Record<string, string> = {};
-            for (let i = 0; i < json.length; i += CHUNK_SIZE) {
-                tmpChunks[`${tmpBase}/${i / CHUNK_SIZE}`] = json.slice(i, i + CHUNK_SIZE);
+            for (let i = 0; i < compressedPayload.length; i += CHUNK_SIZE) {
+                tmpChunks[`${tmpBase}/${i / CHUNK_SIZE}`] = compressedPayload.slice(i, i + CHUNK_SIZE);
             }
 
             world.setDynamicProperties(tmpChunks);
@@ -126,7 +181,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         if (!pointers.includes(base)) this._setPointers([...pointers, base]);
     }
 
-    /** Retrieves a stored object */
+    /** Retrieves a stored object (Handles both v1.0 raw and v2.0 compressed entries) */
     public get<K extends keyof T>(key: K): T[K] | undefined {
         const base = `${this.name}/${String(key)}`;
         const marker = world.getDynamicProperty(base) as string | undefined;
@@ -141,15 +196,68 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
         if (!chunks.length) return undefined;
 
+        const rawData = chunks.join("");
+
         try {
-            return JSON.parse(chunks.join("")) as T[K];
+            // Version 2.0 Check: Is data prefixed with "\u0002"?
+            if (rawData.startsWith("\u0002")) {
+                const decompressed = LZCompressor.decompress(rawData.slice(1));
+                return JSON.parse(decompressed) as T[K];
+            }
+
+            // Version 1.0 Fallback (Raw Uncompressed JSON)
+            return JSON.parse(rawData) as T[K];
         } catch (err) {
             console.warn(`[${this.name}] Failed to parse entry for key "${String(key)}":`, err);
             return undefined;
         }
     }
 
-    /** Deletes a key */
+    /** Converts all legacy v1.0 entries to compressed v2.0 format */
+    public async migrateToV2(): Promise<{ migrated: number; originalBytes: number; compressedBytes: number }> {
+        let migratedCount = 0;
+        let originalTotal = 0;
+        let compressedTotal = 0;
+
+        const pointers = this._getPointers();
+
+        for (const ptr of pointers) {
+            const key = ptr.split("/").pop() as keyof T;
+
+            // Read raw chunks directly without automatic parsing
+            const chunks: string[] = [];
+            for (let i = 0; ; ++i) {
+                const c = world.getDynamicProperty(`${ptr}/${i}`) as string | undefined;
+                if (c === undefined) break;
+                chunks.push(c);
+            }
+
+            const rawData = chunks.join("");
+
+            // If it doesn't have the v2 header, it's a v1 entry needing migration
+            if (!rawData.startsWith("\u0002") && rawData.length > 0) {
+                const parsedValue = this.get(key);
+                if (parsedValue !== undefined) {
+                    const beforeBytes = this.getEntrySizeBytes(String(key));
+
+                    // Saving re-compresses using set()
+                    await this.set(key, parsedValue);
+
+                    const afterBytes = this.getEntrySizeBytes(String(key));
+
+                    originalTotal += beforeBytes;
+                    compressedTotal += afterBytes;
+                    migratedCount++;
+                }
+            }
+        }
+
+        console.log(`[${this.name}] Migration complete! Migrated ${migratedCount} entries.`);
+        console.log(`[${this.name}] Saved Space: ${this.formatBytes(originalTotal - compressedTotal)} (${((1 - compressedTotal / (originalTotal || 1)) * 100).toFixed(1)}% reduction)`);
+
+        return { migrated: migratedCount, originalBytes: originalTotal, compressedBytes: compressedTotal };
+    }
+
     public async delete<K extends keyof T>(key: K): Promise<void> {
         const base = `${this.name}/${String(key)}`;
         await OptimizedDatabase._withLock(base, async () => {
@@ -158,7 +266,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         });
     }
 
-    /** Clears all keys */
     public async clear(): Promise<void> {
         await OptimizedDatabase._withLock(this.name, async () => {
             const pointers = this._getPointers();
@@ -167,7 +274,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         });
     }
 
-    /** Returns all entries */
     public entries(): [keyof T, T[keyof T]][] {
         return this._getPointers()
             .map((ptr) => {
@@ -179,14 +285,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             .filter((entry): entry is [keyof T, T[keyof T]] => entry !== null);
     }
 
-    /**
-     * Cleans invalid entries from the database.
-     *
-     * @param validator Optional custom validation function.
-     *                  Should return `true` for valid entries, `false` for invalid.
-     * @param options Optional configuration object:
-     *   - silent: if true, suppresses console logs/warnings.
-     */
     public async clean(validator?: (key: keyof T, value: T[keyof T]) => boolean, options?: { silent?: boolean }): Promise<void> {
         const silent = options?.silent ?? false;
 
@@ -221,14 +319,10 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         });
     }
 
-    /** ------------------- Legacy / Debug Methods ------------------- */
-
-    /** List all pointer keys */
     public listPointers(): string[] {
         return this._getPointers();
     }
 
-    /** Get size of a single entry in bytes */
     public getEntrySizeBytes(key: string): number {
         const base = `${this.name}/${key}`;
         let bytes = 0;
@@ -240,7 +334,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return bytes;
     }
 
-    /** Convert bytes to human-readable format */
     public formatBytes(bytes: number): string {
         const sizes = ["B", "KB", "MB", "GB", "TB"];
         if (bytes <= 0) return "0 B";
@@ -249,7 +342,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return `${value.toFixed(2)} ${sizes[i]}`;
     }
 
-    /** Total size of all entries in human-readable format */
     public getTotalSizeFormatted(): string {
         const totalBytes = this._getPointers().reduce((sum, ptr) => {
             const key = ptr.split("/").pop()!;
@@ -258,7 +350,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return this.formatBytes(totalBytes);
     }
 
-    /** Number of chunks for a given key */
     public getChunkCount(key: string): number {
         const base = `${this.name}/${key}`;
         let count = 0;
@@ -266,7 +357,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return count;
     }
 
-    /** Checks if a key exists */
     public containsKey(key: string): boolean {
         return this._getPointers().includes(`${this.name}/${key}`);
     }

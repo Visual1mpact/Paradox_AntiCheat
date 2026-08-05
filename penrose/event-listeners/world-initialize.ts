@@ -232,7 +232,7 @@ const allCommands: Command[] = [
  * Initializes and instantiates all necessary systems (databases, command handler, etc.)
  */
 async function initializeSystems() {
-    // Instantiate Databases
+    // 1. Instantiate Databases
     paradoxModulesDB = new OptimizedDatabase("paradoxModules");
     channelsDB = new OptimizedDatabase("channels");
     disabledCommandsDB = new OptimizedDatabase("disabledCommands");
@@ -246,17 +246,40 @@ async function initializeSystems() {
     playerMetadataDB = new OptimizedDatabase("playerMetadata");
     homesDB = new OptimizedDatabase("homes");
 
-    // Clean up invalid entries (Optional: you can pass a custom validation function per DB if needed)
     const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB];
 
-    const results = await Promise.allSettled(dbs.map((db) => db.clean()));
-    results.forEach((result, i) => {
+    // 2. Run Database Migrations (v1 Uncompressed -> v2 LZW Compressed)
+    console.log("[Paradox] Running database v2.0 compression migrations...");
+    const migrationResults = await Promise.allSettled(dbs.map((db) => db.migrateToV2()));
+
+    let totalMigrated = 0;
+    let totalSavedBytes = 0;
+
+    migrationResults.forEach((result, i) => {
+        if (result.status === "fulfilled") {
+            const { migrated, originalBytes, compressedBytes } = result.value;
+            totalMigrated += migrated;
+            totalSavedBytes += originalBytes - compressedBytes;
+        } else {
+            console.warn(`[Paradox] Migration failed for DB '${dbs[i].name}':`, result.reason);
+        }
+    });
+
+    if (totalMigrated > 0) {
+        console.log(`[Paradox] Migration complete! Standardized ${totalMigrated} entries. Total space saved: ${paradoxModulesDB.formatBytes(totalSavedBytes)}.`);
+    } else {
+        console.log("[Paradox] All databases are up to date (v2.0 compressed).");
+    }
+
+    // 3. Clean up invalid entries
+    const cleanResults = await Promise.allSettled(dbs.map((db) => db.clean()));
+    cleanResults.forEach((result, i) => {
         if (result.status === "rejected") {
             console.warn(`[Paradox] Failed to clean DB at index ${i}:`, result.reason);
         }
     });
 
-    // Clean up stagnant channels
+    // 4. Clean up stagnant channels
     async function channelsDBCleanup() {
         const now = Date.now();
         const cutoff = now - 7 * 24 * 60 * 60 * 1000; // 7 days in ms
@@ -270,10 +293,9 @@ async function initializeSystems() {
         }
     }
 
-    // Clean up stagnant channels
     await channelsDBCleanup();
 
-    // Instantiate CommandHandler
+    // 5. Instantiate CommandHandler
     commandHandler = new CommandHandler();
 
     // Fetch disabled commands from the database and create a Set for faster lookups
