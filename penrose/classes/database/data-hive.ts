@@ -8,20 +8,20 @@ export type DatabaseValueObject = Record<string, any>;
 
 /**
  * Lightweight LZW (Lempel-Ziv-Welch) Compressor optimized for JS/Minecraft UTF-16 Dynamic Properties.
- * Translates repetitive strings/JSON patterns into compact single UTF-16 character codes.
+ * Translates repetitive strings/JSON patterns into compact single character codes.
  */
 class LZCompressor {
     /**
      * Compresses an uncompressed UTF-8/UTF-16 string using the LZW algorithm.
      * @param uncompressed Raw input string (e.g., stringified JSON).
-     * @returns LZW compressed UTF-16 string prefixed for character packing.
+     * @returns LZW compressed string prefixed for character packing.
      */
     public static compress(uncompressed: string): string {
         if (!uncompressed) return "";
 
-        // Dictionary to track observed string phrases mapped to generated character codes
-        const dict: Record<string, number> = {};
-        const data = (uncompressed + "").split("");
+        // Use Map for O(1) key lookups and better memory management over standard objects
+        const dict = new Map<string, number>();
+        const data = uncompressed.split("");
         const out: number[] = [];
 
         let currChar: string;
@@ -30,30 +30,38 @@ class LZCompressor {
 
         for (let i = 1; i < data.length; i++) {
             currChar = data[i];
+            const combined = phrase + currChar;
 
             // If sequence is already in dictionary, extend current phrase search
-            if (dict[phrase + currChar] != null) {
-                phrase += currChar;
+            if (dict.has(combined)) {
+                phrase = combined;
             } else {
                 // Output code for known phrase (or raw ASCII char code if length is 1)
-                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+                out.push(phrase.length > 1 ? dict.get(phrase)! : phrase.charCodeAt(0));
 
                 // Add new combined pattern phrase into dictionary
-                dict[phrase + currChar] = code;
+                dict.set(combined, code);
                 code++;
                 phrase = currChar;
             }
         }
 
         // Push remaining phrase
-        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+        out.push(phrase.length > 1 ? dict.get(phrase)! : phrase.charCodeAt(0));
 
-        // Pack array of character codes back into a UTF-16 string block
-        return String.fromCharCode(...out);
+        // Safely pack array of character codes into a string without stack overflow
+        // Processing in 8192-element chunks prevents exceeding maximum argument stack limits
+        let result = "";
+        const chunkSize = 8192;
+        for (let i = 0; i < out.length; i += chunkSize) {
+            result += String.fromCharCode(...out.slice(i, i + chunkSize));
+        }
+
+        return result;
     }
 
     /**
-     * Decompresses an LZW-compressed UTF-16 string back to its original raw form.
+     * Decompresses an LZW-compressed string back to its original raw form.
      * @param compressed LZW packed UTF-16 input string.
      * @returns Decompressed raw text/JSON.
      */
@@ -61,12 +69,12 @@ class LZCompressor {
         if (!compressed) return "";
 
         // Reverse dictionary mapping codes back to string sequences
-        const dict: Record<number, string> = {};
+        const dict = new Map<number, string>();
         const data = compressed.split("");
 
         let currChar = data[0];
         let oldPhrase = currChar;
-        const out = [currChar];
+        const out: string[] = [currChar];
         let code = 256;
         let phrase: string;
 
@@ -77,14 +85,14 @@ class LZCompressor {
             if (currCode < 256) {
                 phrase = data[i];
             } else {
-                phrase = dict[currCode] ? dict[currCode] : oldPhrase + currChar;
+                phrase = dict.has(currCode) ? dict.get(currCode)! : oldPhrase + currChar;
             }
 
             out.push(phrase);
             currChar = phrase.charAt(0);
 
             // Reconstruct original state entry in memory dictionary
-            dict[code] = oldPhrase + currChar;
+            dict.set(code, oldPhrase + currChar);
             code++;
             oldPhrase = phrase;
         }

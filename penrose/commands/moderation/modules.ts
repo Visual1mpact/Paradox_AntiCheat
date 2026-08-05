@@ -50,6 +50,7 @@ export const modulesStatusCommand: Command = {
         const registeredCommandNames = commandHandler.getRegisteredCommands().map((cmd) => cmd.name);
 
         const moduleToCommandMap: Record<string, string> = {
+            afkCheck_b: "afk",
             aimbotMonitorCheck_b: "aimbotmonitor",
             antiCrashCheck_b: "anticrash",
             autoClickerCheck_b: "autoclicker",
