@@ -112,21 +112,26 @@ function getContainerCounts(container: Container): Record<string, number> {
 }
 
 /**
+ * Helper to safely pre-fetch the database setting before invoking the generator pass.
+ */
+async function isVisionModuleEnabledInDB(): Promise<boolean> {
+    try {
+        const moduleConfig = (await paradoxModulesDB.get("visionCheck_b")) as { enabled?: boolean } | undefined;
+        return moduleConfig?.enabled ?? false;
+    } catch {
+        return false;
+    }
+}
+
+/**
  * Continuous generator loop that iterates over staff members to perform vision checks.
  */
-function* continuousVisionLoop(): Generator<void, void, unknown> {
+function* continuousVisionLoop(isEnabledInDB: boolean): Generator<void, void, unknown> {
     if (isJobActive) return;
     isJobActive = true;
 
     try {
-        if (!isModuleActive) return;
-
-        // Fetch toggle state safely from database tracking map
-        // paradoxModulesDB.get may return a Promise in some environments; cast to any
-        // to allow flexible runtime handling (we only need the resolved object's 'enabled' when available).
-        const moduleConfig = paradoxModulesDB.get("visionCheck_b") as any;
-        const isEnabled = moduleConfig?.enabled ?? false;
-        if (!isEnabled) return;
+        if (!isModuleActive || !isEnabledInDB) return;
 
         const players = getSecurityClearanceLevel4Players();
         const currentTick = system.currentTick;
@@ -208,10 +213,14 @@ function* continuousVisionLoop(): Generator<void, void, unknown> {
         // Unlock job state for the current pass
         isJobActive = false;
 
-        // Only queue up the next loop execution if the module state remains running
+        // Queue up the next loop execution asynchronously if module state remains active
         if (isModuleActive) {
-            system.run(() => {
-                system.runJob(continuousVisionLoop());
+            system.run(async () => {
+                if (!isModuleActive) return;
+                const enabled = await isVisionModuleEnabledInDB();
+                if (enabled && isModuleActive) {
+                    system.runJob(continuousVisionLoop(enabled));
+                }
             });
         }
     }
@@ -220,12 +229,15 @@ function* continuousVisionLoop(): Generator<void, void, unknown> {
 /**
  * Starts periodic vision checks smoothly.
  */
-export function startVisionCheck(): void {
+export async function startVisionCheck(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
 
     if (!isJobActive) {
-        system.runJob(continuousVisionLoop());
+        const isEnabled = await isVisionModuleEnabledInDB();
+        if (isEnabled && isModuleActive) {
+            system.runJob(continuousVisionLoop(isEnabled));
+        }
     }
 }
 
