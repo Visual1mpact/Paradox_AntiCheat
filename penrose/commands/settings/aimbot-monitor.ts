@@ -41,7 +41,7 @@ export const aimbotMonitorCommand: Command = {
         const player = message.sender;
 
         // Get monitoring status from the database
-        const moduleData = paradoxModulesDB.get("aimbotMonitorCheck_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("aimbotMonitorCheck_b")) ?? {
             enabled: false,
         };
         const aimbotMonitorEnabled = moduleData?.enabled ?? false;

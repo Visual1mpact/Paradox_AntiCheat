@@ -36,7 +36,7 @@ export const modulesStatusCommand: Command = {
      * Executes the modules status command.
      * @param {ChatSendBeforeEvent | undefined} message - The message object.
      */
-    execute: (message?: ChatSendBeforeEvent) => {
+    execute: async (message?: ChatSendBeforeEvent) => {
         if (!message) return;
         const player = message.sender;
 
@@ -80,7 +80,7 @@ export const modulesStatusCommand: Command = {
             xrayDetection_b: "xray",
         };
 
-        const entries = paradoxModulesDB.entries();
+        const entries = await paradoxModulesDB.entries();
 
         // Filter only modules that have registered commands
         const filteredModules = entries.filter(([key]) => {

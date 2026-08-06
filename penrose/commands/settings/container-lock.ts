@@ -234,7 +234,7 @@ export const chestForensicCommand: Command = {
 
             let updated = 0;
 
-            for (const [key, value] of chestLockDB.entries()) {
+            for (const [key, value] of await chestLockDB.entries()) {
                 if (value.owner !== player.name) continue;
 
                 if (value.sharedWith?.includes(target)) continue;
@@ -270,7 +270,7 @@ export const chestForensicCommand: Command = {
 
             let updated = 0;
 
-            for (const [key, value] of chestLockDB.entries()) {
+            for (const [key, value] of await chestLockDB.entries()) {
                 if (value.owner !== player.name) continue;
 
                 if (!value.sharedWith?.includes(target)) continue;
@@ -294,7 +294,7 @@ export const chestForensicCommand: Command = {
         if (args[0]?.toLowerCase() === "shared") {
             const sharedPlayers = new Set<string>();
 
-            for (const [, value] of chestLockDB.entries()) {
+            for (const [, value] of await chestLockDB.entries()) {
                 if (value.owner !== player.name) continue;
 
                 value.sharedWith?.forEach((p) => sharedPlayers.add(p));
@@ -314,7 +314,7 @@ export const chestForensicCommand: Command = {
         }
 
         // Chest lookup
-        const chestData = chestLockDB.get(normalizedArg);
+        const chestData = await chestLockDB.get(normalizedArg);
         if (chestData) {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Chest Forensics for §f${inputArg}`);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Owner: §f${chestData.owner ?? "Unknown"}`);
@@ -336,7 +336,7 @@ export const chestForensicCommand: Command = {
 
         // Player lookup
         const logs: { chest: string; time: number }[] = [];
-        for (const [key, value] of chestLockDB.entries()) {
+        for (const [key, value] of await chestLockDB.entries()) {
             value.accessLog?.forEach((entry) => {
                 if (entry.player === inputArg) {
                     logs.push({ chest: key as string, time: entry.time });

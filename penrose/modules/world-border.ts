@@ -7,30 +7,36 @@ let isModuleActive = false;
 /** Flag indicating whether the background generator worker is processing a frame */
 let isJobActive = false;
 
+interface ModuleConfig {
+    enabled?: boolean;
+    settings?: {
+        overworld: number;
+        nether: number;
+        end: number;
+    };
+}
+
 /**
  * Continuous generator loop that iterates over players to enforce world borders.
  */
-function* continuousWorldBorderLoop(): Generator<void, void, unknown> {
+function* continuousWorldBorderLoop(moduleConfig: ModuleConfig | undefined): Generator<void, void, unknown> {
     if (isJobActive) return;
     isJobActive = true;
 
     try {
-        // Safe exit if the module was toggled off or database tracking is disabled
         if (!isModuleActive) return;
 
-        const module = paradoxModulesDB.get("worldBorderCheck_b");
-        if (!module?.enabled || !module?.settings) {
-            yield;
+        const isEnabled = moduleConfig?.enabled ?? false;
+        if (!isEnabled || !moduleConfig?.settings) {
             return;
         }
 
-        const { overworld, nether, end } = module.settings;
+        const { overworld, nether, end } = moduleConfig.settings;
         const players = PlayerCache.getPlayers();
         const spawnLocation = world.getDefaultSpawnLocation();
         const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
 
         for (const player of players) {
-            // Robust check handle: handles both legacy properties and modern API method call states
             const isValid = player.isValid;
             if (!isValid) continue;
 
@@ -51,17 +57,17 @@ function* continuousWorldBorderLoop(): Generator<void, void, unknown> {
                 console.error(`[Paradox] Error checking player border: ${e}`);
             }
 
-            // Yield control back to the engine after processing this player
+            // Yield control back to the tick engine after each player
             yield;
         }
     } finally {
-        // Unlock job state for the current pass
         isJobActive = false;
 
-        // Only queue up the next loop execution if the module state remains running
         if (isModuleActive) {
-            system.run(() => {
-                system.runJob(continuousWorldBorderLoop());
+            system.run(async () => {
+                // Await DB fetch on the next tick pass before feeding to the generator job
+                const nextConfig = (await paradoxModulesDB.get("worldBorderCheck_b")) as ModuleConfig | undefined;
+                system.runJob(continuousWorldBorderLoop(nextConfig));
             });
         }
     }
@@ -159,12 +165,23 @@ function findSafeY(player: Player, x: number, y: number, z: number): number {
 /**
  * Starts periodic world border checks smoothly.
  */
-export function startWorldBorderCheck(): void {
+export async function startWorldBorderCheck(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
 
     if (!isJobActive) {
-        system.runJob(continuousWorldBorderLoop());
+        try {
+            // Fetch initial configuration before passing to the generator
+            const initialConfig = (await paradoxModulesDB.get("worldBorderCheck_b")) as ModuleConfig | undefined;
+
+            // Ensure module state didn't flip while awaiting the DB fetch
+            if (!isModuleActive) return;
+
+            system.runJob(continuousWorldBorderLoop(initialConfig));
+        } catch (e) {
+            console.error(`[Paradox] Failed to load config for world border check: ${e}`);
+            isModuleActive = false; // Reset state if initialization fails
+        }
     }
 }
 

@@ -112,7 +112,7 @@ export const warnCommand: Command = {
             return;
         }
 
-        const allWarns = warnsDB.get("players") ?? {};
+        const allWarns = (await warnsDB.get("players")) ?? {};
         const playerWarns = allWarns[playerName] ?? [];
 
         if (action === "add") {

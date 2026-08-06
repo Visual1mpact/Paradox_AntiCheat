@@ -45,7 +45,7 @@ export const selfAttackCheckCommand: Command = {
         const selfAttackCheckKey = "selfAttackCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const moduleData = paradoxModulesDB.get(selfAttackCheckKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(selfAttackCheckKey)) ?? {
             enabled: false,
         };
         const selfAttackCheckEnabled = moduleData?.enabled ?? false;

@@ -45,7 +45,7 @@ export const scaffoldCommand: Command = {
         const scaffoldCheckKey = "scaffoldCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const moduleData = paradoxModulesDB.get(scaffoldCheckKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(scaffoldCheckKey)) ?? {
             enabled: false,
         };
         const scaffoldCheckEnabled = moduleData?.enabled ?? false;

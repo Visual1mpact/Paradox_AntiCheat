@@ -109,7 +109,7 @@ export const platformBlockCommand: Command = {
         const player = message.sender;
 
         // Retrieve settings safely from the typed schema
-        const moduleData = paradoxModulesDB.get("platformBlock_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("platformBlock_b")) ?? {
             enabled: false,
             settings: { console: false, desktop: false, mobile: false },
         };

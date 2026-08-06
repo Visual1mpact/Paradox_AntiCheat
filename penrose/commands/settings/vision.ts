@@ -46,7 +46,7 @@ export const visionCheckCommand: Command = {
         const visionCheckKey = "visionCheck_b";
 
         // Retrieve the current state of the module
-        const moduleData = paradoxModulesDB.get(visionCheckKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(visionCheckKey)) ?? {
             enabled: false,
         };
         const visionCheckEnabled = moduleData?.enabled ?? false;

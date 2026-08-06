@@ -43,7 +43,7 @@ export const flyCheckCommand: Command = {
         const player = message.sender;
 
         // Get fly detection status from the database
-        const moduleData = paradoxModulesDB.get("flyCheck_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("flyCheck_b")) ?? {
             enabled: false,
         };
         const antiflyEnabled = moduleData?.enabled ?? false;

@@ -8,8 +8,8 @@ let dimensionChangeSub: ((event: PlayerDimensionChangeAfterEvent) => void) | und
 /**
  * Monitors dimension changes to prevent access to locked dimensions.
  */
-function handleDimensionChange(event: PlayerDimensionChangeAfterEvent) {
-    const moduleData = paradoxModulesDB.get("dimensionLock_b");
+async function handleDimensionChange(event: PlayerDimensionChangeAfterEvent) {
+    const moduleData = (await paradoxModulesDB.get("dimensionLock_b")) ?? null;
     if (!moduleData?.enabled || !moduleData.settings) return;
 
     const { player, toDimension, fromDimension } = event;

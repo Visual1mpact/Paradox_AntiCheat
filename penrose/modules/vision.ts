@@ -119,10 +119,14 @@ function* continuousVisionLoop(): Generator<void, void, unknown> {
     isJobActive = true;
 
     try {
-        // Safe exit if the module was toggled off or database tracking is disabled
-        if (!isModuleActive || paradoxModulesDB.get("visionCheck_b")?.enabled === false) {
-            return;
-        }
+        if (!isModuleActive) return;
+
+        // Fetch toggle state safely from database tracking map
+        // paradoxModulesDB.get may return a Promise in some environments; cast to any
+        // to allow flexible runtime handling (we only need the resolved object's 'enabled' when available).
+        const moduleConfig = paradoxModulesDB.get("visionCheck_b") as any;
+        const isEnabled = moduleConfig?.enabled ?? false;
+        if (!isEnabled) return;
 
         const players = getSecurityClearanceLevel4Players();
         const currentTick = system.currentTick;

@@ -7,13 +7,13 @@ import { EventCoordinator } from "../classes/event-coordinator";
  * Handles game mode change events and enforces allowed game modes.
  * @param event - The game mode change event.
  */
-function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
+async function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): Promise<void> {
     const player = event.player;
 
     // Bypass for high-security users
     if ((player.getDynamicProperty("securityClearance") as number) === 4) return;
 
-    const settings = paradoxModulesDB.get("gamemodeCheck_b")?.settings ?? {
+    const settings = (await paradoxModulesDB.get("gamemodeCheck_b"))?.settings ?? {
         Adventure: true,
         Creative: true,
         Survival: true,

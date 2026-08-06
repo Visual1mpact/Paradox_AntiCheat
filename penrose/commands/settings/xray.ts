@@ -43,7 +43,7 @@ export const xrayCommand: Command = {
         const player = message.sender;
 
         // Get current Xray detection module state from paradoxModulesDB
-        const moduleData = paradoxModulesDB.get("xrayDetection_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("xrayDetection_b")) ?? {
             enabled: false,
         };
         const xrayEnabled = moduleData?.enabled ?? false; // Default to false if not set

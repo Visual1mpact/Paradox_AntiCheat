@@ -14,11 +14,11 @@ const MIN_CRIT_HEIGHT = 0.55;
  * Monitors players for "Packet Criticals" where they manipulate their
  * on-ground state to force critical hits without jumping naturally.
  */
-function handleHurtEvent(event: EntityHurtBeforeEvent) {
+async function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const attacker = event.damageSource.damagingEntity;
 
     // Check if module is enabled in database
-    const isEnabled = paradoxModulesDB.get("criticalsCheck_b")?.enabled ?? false;
+    const isEnabled = (await paradoxModulesDB.get("criticalsCheck_b"))?.enabled ?? false;
     if (!isEnabled) return;
 
     if (!(attacker instanceof Player)) return;

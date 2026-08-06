@@ -71,7 +71,7 @@ export const invSyncCommand: Command = {
         const player = message.sender;
 
         const key = "invSync_b";
-        const moduleData = paradoxModulesDB.get(key) ?? { enabled: false };
+        const moduleData = (await paradoxModulesDB.get(key)) ?? { enabled: false };
         const enabled = moduleData.enabled ?? false;
 
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
@@ -141,7 +141,7 @@ export const invSyncCommand: Command = {
             }
 
             // Locate snapshot by case-insensitive name match.
-            const snapshotEntry = [...invSyncSnapshotsDB.entries()].find(([_, snapshot]) => snapshot.name.toLowerCase() === targetName.toLowerCase());
+            const snapshotEntry = [...(await invSyncSnapshotsDB.entries())].find(([_, snapshot]) => snapshot.name.toLowerCase() === targetName.toLowerCase());
 
             if (!snapshotEntry) {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 §cNo snapshot found for player §f${targetName}`);
@@ -149,7 +149,7 @@ export const invSyncCommand: Command = {
             }
 
             const [targetId, snapshot] = snapshotEntry;
-            const audit = invSyncAuditDB.get(targetId) ?? { events: [] };
+            const audit = (await invSyncAuditDB.get(targetId)) ?? { events: [] };
 
             // Header information
             player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${snapshot.name}`);

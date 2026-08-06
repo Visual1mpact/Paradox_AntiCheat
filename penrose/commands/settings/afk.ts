@@ -101,7 +101,7 @@ export const afkCommand: Command = {
         };
 
         // Load existing module data or set default if missing
-        let moduleData = paradoxModulesDB.get(afkKey) ?? {
+        let moduleData = (await paradoxModulesDB.get(afkKey)) ?? {
             enabled: false,
             settings: { hours: 0, minutes: 10, seconds: 0 },
         };

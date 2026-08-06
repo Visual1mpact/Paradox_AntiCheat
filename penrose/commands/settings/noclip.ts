@@ -52,7 +52,7 @@ export const noClipCommand: Command = {
         const player = message.sender;
 
         // Retrieve current module state from the database
-        const moduleData = paradoxModulesDB.get("noClipCheck_b") ?? { enabled: false };
+        const moduleData = (await paradoxModulesDB.get("noClipCheck_b")) ?? { enabled: false };
         const isEnabled = moduleData?.enabled ?? false;
 
         if (!isEnabled) {

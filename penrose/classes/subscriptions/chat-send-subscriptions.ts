@@ -80,8 +80,9 @@ class ChatSendSubscription {
         this.channelMemberCache = new Map();
     }
 
-    private isSpamCheckEnabled(): boolean {
-        return paradoxModulesDB.get("spamCheck_b")?.enabled === true;
+    private async isSpamCheckEnabled(): Promise<boolean> {
+        const mod = await paradoxModulesDB.get("spamCheck_b");
+        return mod?.enabled === true;
     }
 
     private isPlayerPropertyEqual(player: Player, propertyKey: string, expectedValue: number): boolean {
@@ -89,8 +90,9 @@ class ChatSendSubscription {
         return value === expectedValue;
     }
 
-    private getPlayerChannel(player: Player): string | undefined {
-        const channels = channelsDB.entries() as [string, Channel][];
+    private async getPlayerChannel(player: Player): Promise<string | undefined> {
+        const entries = await channelsDB.entries();
+        const channels = entries as unknown as [string, Channel][];
         for (const [channelName, channelData] of channels) {
             if (channelData.Members[player.id]) return channelName;
         }
@@ -103,28 +105,30 @@ class ChatSendSubscription {
         this.callback = async (event: ChatSendBeforeEvent) => {
             const player = event.sender;
             const playerId = player.id;
-            const playerChannel = this.getPlayerChannel(player);
             const currentTick = system.currentTick;
-
-            // 1️⃣ Command handling (Intercept first so muted players can still use commands)
             const prefix = (world.getDynamicProperty("__prefix") as string) || ":";
 
+            // ⚠️ CRITICAL FIX: Cancel synchronously right away so vanilla chat does NOT process it.
+            event.cancel = true;
+
+            // 1️⃣ Fast synchronous command check
             if (event.message.startsWith(prefix)) {
-                event.cancel = true;
                 commandHandler.handleCommand(event, player, prefix);
                 return;
             }
 
-            // 2️⃣ Mute check - If the player is muted, cancel the event and inform them.
+            // 2️⃣ Fast synchronous mute check
             const isMuted = player.getDynamicProperty("isMuted") as boolean;
             if (isMuted) {
-                event.cancel = true;
                 player.sendMessage("§o§c[Paradox] You are currently muted and cannot send messages.");
-                return; // Stop further processing for muted players
+                return;
             }
 
+            // Now perform asynchronous checks
+            const playerChannel = await this.getPlayerChannel(player);
+
             // 3️⃣ Spam detection
-            if (this.isSpamCheckEnabled() && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
+            if ((await this.isSpamCheckEnabled()) && !this.isPlayerPropertyEqual(player, "securityClearance", 4)) {
                 let tracker = this.spamData.get(playerId);
 
                 if (!tracker) {
@@ -133,37 +137,28 @@ class ChatSendSubscription {
                     this.spamData.set(playerId, tracker);
                 }
 
-                // actively muted
+                // Actively muted
                 if (tracker.mutedUntil && currentTick < tracker.mutedUntil) {
-                    event.cancel = true;
-
                     const remainingSec = Math.ceil((tracker.mutedUntil - currentTick) / 20);
-
                     player.sendMessage(`§o§c[Paradox] You are muted for spamming. Wait ${remainingSec}s.`);
-
                     return;
                 }
 
                 const isSpam = tracker.recordMessage(currentTick);
 
                 if (isSpam) {
-                    event.cancel = true;
-
                     player.setDynamicProperty("mutedUntil", tracker.mutedUntil);
-
                     const muteSec = Math.ceil(MUTE_DURATION / 20);
-
                     player.sendMessage(`§o§c[Paradox] You have been muted for spamming. Wait ${muteSec}s.`);
-
                     return;
                 }
 
-                // clear stored mute once expired
+                // Clear stored mute once expired
                 if (tracker.mutedUntil === undefined) {
                     player.setDynamicProperty("mutedUntil", undefined);
                 }
 
-                // cleanup once fully inactive
+                // Cleanup once fully inactive
                 if (tracker.isFullyInactive()) {
                     this.spamData.delete(playerId);
                 }
@@ -173,50 +168,43 @@ class ChatSendSubscription {
             const isRankDisabled = world.getDynamicProperty("globalRankDisabled");
             const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
 
-            // Decide if we need to format the message based on the presence of an alias, rank status, or custom channel.
             const shouldFormat =
                 !!alias || // alias active
                 !isRankDisabled || // ranks enabled
                 !!playerChannel; // custom channel active
 
-            // If nothing is active we let vanilla chat handle it
-            if (!shouldFormat) return;
+            // If formatting is disabled, un-cancel to allow normal vanilla chat handling
+            if (!shouldFormat) {
+                event.cancel = false;
+                return;
+            }
 
-            // From here on, we control the message
-            event.cancel = true;
-
+            // From here on, custom chat broadcasting takes over
             const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
             const rank = isRankDisabled ? "" : (playerChannel ?? playerRank);
-
             const displayName = alias ?? player.name;
-
             const formattedMessage = rank ? `${rank} §7${displayName}§7: §r${event.message}` : `§7${displayName}§7: §r${event.message}`;
 
             // 5️⃣ Determine target players
             if (playerChannel) {
-                const channelData = channelsDB.get(playerChannel);
+                const channelData = (await channelsDB.get(playerChannel)) as Channel | undefined;
 
                 if (channelData) {
                     const now = Date.now();
                     const DEBOUNCE_INTERVAL = 5000;
 
-                    // debounce lastActive writes
                     if (!channelData.lastActive || now - channelData.lastActive > DEBOUNCE_INTERVAL) {
                         channelData.lastActive = now;
-
                         system.run(() => {
                             channelsDB.set(playerChannel, channelData);
                         });
                     }
 
-                    // cached member set
                     const cacheEntry = this.channelMemberCache.get(playerChannel);
-
                     let memberSet: Set<string>;
 
                     if (!cacheEntry || now - cacheEntry.lastUpdated > DEBOUNCE_INTERVAL) {
                         memberSet = new Set(Object.keys(channelData.Members));
-
                         this.channelMemberCache.set(playerChannel, {
                             memberSet,
                             lastUpdated: now,
@@ -229,13 +217,11 @@ class ChatSendSubscription {
                         p.sendMessage(formattedMessage);
                     }
                 } else {
-                    // fallback global broadcast
                     for (const p of PlayerCache.getPlayers()) {
                         p.sendMessage(formattedMessage);
                     }
                 }
             } else {
-                // global broadcast
                 for (const p of PlayerCache.getPlayers()) {
                     p.sendMessage(formattedMessage);
                 }

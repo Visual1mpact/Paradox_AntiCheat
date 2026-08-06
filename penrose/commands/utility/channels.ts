@@ -109,8 +109,8 @@ export const channelCommand: Command = {
          * @param {string} channelName - The name of the channel.
          * @returns {Channel | undefined} The channel object if found, otherwise undefined.
          */
-        function getChannel(channelName: string): Channel | undefined {
-            return channelsDB.get(channelName);
+        async function getChannel(channelName: string): Promise<Channel | undefined> {
+            return (await channelsDB.get(channelName)) as Channel | undefined;
         }
 
         /**
@@ -145,7 +145,7 @@ export const channelCommand: Command = {
                 return;
             }
 
-            const channel = getChannel(channelName);
+            const channel = await getChannel(channelName);
             if (!channel) {
                 msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
@@ -214,7 +214,7 @@ export const channelCommand: Command = {
          * @returns {Promise<void>}
          */
         async function transferChannelOwnership(channelName: string, newOwnerName: string): Promise<void> {
-            const channel = getChannel(channelName);
+            const channel = await getChannel(channelName);
             if (!channel) {
                 msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
@@ -244,7 +244,7 @@ export const channelCommand: Command = {
          */
         async function leaveChannel(): Promise<void> {
             const channelName = msg.sender.getDynamicProperty("currentChannel") as string;
-            const channel = channelName ? getChannel(channelName) : undefined;
+            const channel = channelName ? await getChannel(channelName) : undefined;
 
             if (!channelName) {
                 msg.sender.sendMessage(`§o§c[Paradox] You are not in any channel to leave.`);
@@ -303,7 +303,7 @@ export const channelCommand: Command = {
                 return;
             }
 
-            const channel = getChannel(channelName);
+            const channel = await getChannel(channelName);
             if (channel) {
                 msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' already exists.`);
             } else {

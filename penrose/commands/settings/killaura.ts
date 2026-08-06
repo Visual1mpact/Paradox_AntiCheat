@@ -43,7 +43,7 @@ export const killauraCommand: Command = {
         const player = message.sender;
 
         // Retrieve the current state of the module from paradoxModulesDB
-        const moduleData = paradoxModulesDB.get("killAuraCheck_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("killAuraCheck_b")) ?? {
             enabled: false,
         };
         const killauraEnabled = moduleData?.enabled ?? false;

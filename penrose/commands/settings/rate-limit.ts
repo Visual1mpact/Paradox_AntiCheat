@@ -43,7 +43,7 @@ export const rateLimitCommand: Command = {
         const player = message.sender;
 
         // Get rate-limit detection status from the database
-        const moduleData = paradoxModulesDB.get("rateLimitCheck_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("rateLimitCheck_b")) ?? {
             enabled: false,
         };
         const rateLimitEnabled = moduleData?.enabled ?? false;

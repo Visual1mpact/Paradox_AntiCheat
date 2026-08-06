@@ -43,7 +43,7 @@ async function handleMetadataUpdate(player: Player): Promise<void> {
     const platform: string = player.clientSystemInfo.platformType ?? "Unknown";
     const now = Date.now();
 
-    const metadata = playerMetadataDB.get(id) ?? {
+    const metadata = (await playerMetadataDB.get(id)) ?? {
         joinDate: new Date(now).toLocaleDateString("en-GB", { dateStyle: "medium" }),
         firstPlatform: platform,
         firstJoined: now,
@@ -144,7 +144,7 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
     const player = event.player;
     const playerName = player.name;
 
-    const bannedPlayers = banlistDB.get("players") ?? {};
+    const bannedPlayers = (await banlistDB.get("players")) ?? {};
     const whitelistedPlayers = whitelistDB.get("players") ?? {};
 
     // Whitelisted players are exempt
@@ -223,7 +223,7 @@ function isValidPlatform(key: string): key is ValidPlatform {
  * Kicks players whose platform is blocked in configured module settings.
  * @param {PlayerSpawnAfterEvent} event - The event containing player spawn info.
  */
-function isPlatformBlocked(event: PlayerSpawnAfterEvent): void {
+async function isPlatformBlocked(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
 
     // Ensure spoof tracking property exists
@@ -231,7 +231,7 @@ function isPlatformBlocked(event: PlayerSpawnAfterEvent): void {
         player.setDynamicProperty("PlayerName", player.name);
     }
 
-    const platformModule = paradoxModulesDB.get("platformBlock_b");
+    const platformModule = await paradoxModulesDB.get("platformBlock_b");
 
     if (!platformModule?.enabled) return;
 
@@ -260,9 +260,9 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
     const playerName = player.name;
 
-    const bannedPlayers = banlistDB.get("players") ?? {};
-    const whitelistedPlayers = whitelistDB.get("players") ?? {};
-    const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
+    const bannedPlayers = (await banlistDB.get("players")) ?? {};
+    const whitelistedPlayers = (await whitelistDB.get("players")) ?? {};
+    const opsecData: SecurityClearanceData = JSON.parse(((await world.getDynamicProperty("paradoxOPSEC")) as string) ?? "{}");
 
     // Always allow the host in, remove them from banlist if needed
     if (opsecData.host?.id === player.id) {
@@ -301,7 +301,7 @@ async function handleWarnCheck(event: PlayerSpawnAfterEvent): Promise<void> {
     const clearance = player.getDynamicProperty("securityClearance") as number;
     if (clearance === 4) return;
 
-    const allWarns = warnsDB.get("players") ?? {};
+    const allWarns = (await warnsDB.get("players")) ?? {};
     const playerWarns = allWarns[playerName] ?? [];
 
     if (playerWarns.length >= 3) {

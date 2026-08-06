@@ -50,7 +50,7 @@ export const packetMonitorCommand: Command = {
         const player = message.sender;
 
         // Get packet monitoring status from the database
-        const moduleData = paradoxModulesDB.get("packetMonitorCheck_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("packetMonitorCheck_b")) ?? {
             enabled: false,
         };
         const packetMonitorEnabled = moduleData?.enabled ?? false;

@@ -76,7 +76,7 @@ function runDatabaseVacuum() {
 /**
  * CORE AUDIT EVENT: Evaluates precise item slot modifications instantly
  */
-function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
+async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
     const player = event.player;
     if (!player || !player.isValid) return;
 
@@ -91,7 +91,7 @@ function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
 
     let snapshot: InvSyncSnapshot;
     try {
-        snapshot = invSyncSnapshotsDB.get(player.id) ?? {
+        snapshot = (await invSyncSnapshotsDB.get(player.id)) ?? {
             counts: {},
             time: Date.now(),
             name: player.name,
@@ -112,7 +112,7 @@ function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
         const excessAmount = currentAmount - expectedAmount;
 
         if (excessAmount > 64) {
-            handleAnomaly(player, typeId, excessAmount);
+            await handleAnomaly(player, typeId, excessAmount);
             return; // Exit early; handleAnomaly performs its own fresh sync write
         }
     }
@@ -131,7 +131,7 @@ function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
 /**
  * CRITICAL CORRECTION ENGINE: Safe, Precise Stack Deduction
  */
-function handleAnomaly(player: Player, typeId: string, excessAmount: number) {
+async function handleAnomaly(player: Player, typeId: string, excessAmount: number) {
     player.sendMessage(`§2[§7Paradox§2]§o§7 §cInventory anomaly detected: §e${excessAmount}x ${typeId}.`);
 
     const container = player.getComponent("inventory")?.container;
@@ -178,7 +178,7 @@ function handleAnomaly(player: Player, typeId: string, excessAmount: number) {
     const actualDeducted = excessAmount - remainingToDeduct;
 
     try {
-        const audit = invSyncAuditDB.get(player.id) ?? { events: [] };
+        const audit = (await invSyncAuditDB.get(player.id)) ?? { events: [] };
         audit.events.push({
             time: Date.now(),
             excessItems: { [typeId]: actualDeducted },
@@ -370,12 +370,12 @@ export function stopInvSync() {
     alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync framework §4stopped§7.");
 }
 
-export function forceCheckAll() {
+export async function forceCheckAll() {
     for (const player of PlayerCache.getPlayers()) {
         if (!player.isValid || dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) continue;
 
         try {
-            const snapshot = invSyncSnapshotsDB.get(player.id);
+            const snapshot = await invSyncSnapshotsDB.get(player.id);
             const current = getInventoryCounts(player);
             if (!snapshot || !current) continue;
 

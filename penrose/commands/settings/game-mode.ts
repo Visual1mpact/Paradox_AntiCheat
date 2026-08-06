@@ -71,7 +71,7 @@ export const gameModeCommand: Command = {
         if (!message) return;
         const player = message.sender;
 
-        const gamemodeEntry = paradoxModulesDB.get("gamemodeCheck_b") ?? {
+        const gamemodeEntry = (await paradoxModulesDB.get("gamemodeCheck_b")) ?? {
             enabled: true,
             settings: {
                 Adventure: true,

@@ -11,6 +11,10 @@ const TOTEM_ID = "minecraft:totem_of_undying";
  */
 const MIN_SWAP_TICKS = 5;
 
+interface AutoTotemModuleConfig {
+    enabled?: boolean;
+}
+
 /**
  * Tracks per-player totem usage state.
  * - lastPopTick: tick when a totem was consumed (offhand emptied)
@@ -42,15 +46,15 @@ function alertStaff(player: Player, ticks: number) {
  * Continuous generator loop that scans players for suspicious totem replenishment.
  * Runs incrementally to avoid blocking the main thread.
  */
-function* continuousAutoTotemLoop(): Generator<void, void, unknown> {
+function* continuousAutoTotemLoop(moduleConfig: AutoTotemModuleConfig | undefined): Generator<void, void, unknown> {
     if (isJobActive) return;
     isJobActive = true;
 
     try {
         if (!isModuleActive) return;
 
-        // Fetch toggle state safely from database tracking map
-        const isEnabled = paradoxModulesDB.get("autoTotemCheck_b")?.enabled ?? false;
+        // Check pre-fetched module status without using inline promises inside the generator
+        const isEnabled = moduleConfig?.enabled ?? false;
         if (!isEnabled) return;
 
         for (const player of PlayerCache.getPlayers()) {
@@ -115,8 +119,10 @@ function* continuousAutoTotemLoop(): Generator<void, void, unknown> {
 
         // Request next pass recursion smoothly for the very next engine tick frame
         if (isModuleActive) {
-            system.run(() => {
-                system.runJob(continuousAutoTotemLoop());
+            system.run(async () => {
+                // Pre-fetch DB state outside generator on the loop continuation pass
+                const nextConfig = (await paradoxModulesDB.get("autoTotemCheck_b")) as AutoTotemModuleConfig | undefined;
+                system.runJob(continuousAutoTotemLoop(nextConfig));
             });
         }
     }
@@ -132,7 +138,7 @@ function handlePlayerLeave(event: PlayerLeaveAfterEvent): void {
 /**
  * Starts the auto-totem detection loop monitoring ecosystem.
  */
-export function startAutoTotemCheck() {
+export async function startAutoTotemCheck(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
 
@@ -142,7 +148,18 @@ export function startAutoTotemCheck() {
     }
 
     if (!isJobActive) {
-        system.runJob(continuousAutoTotemLoop());
+        try {
+            // Await initial database fetch before spawning the generator job
+            const initialConfig = (await paradoxModulesDB.get("autoTotemCheck_b")) as AutoTotemModuleConfig | undefined;
+
+            // Guard against module stopping while the database call was pending
+            if (!isModuleActive) return;
+
+            system.runJob(continuousAutoTotemLoop(initialConfig));
+        } catch (e) {
+            console.error(`[Paradox] Failed to load config for auto totem check: ${e}`);
+            isModuleActive = false;
+        }
     }
 }
 

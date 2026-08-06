@@ -33,7 +33,7 @@ export const anticrashCommand: Command = {
         const player = message.sender;
 
         const moduleKey = "antiCrashCheck_b";
-        const moduleData = paradoxModulesDB.get(moduleKey) ?? { enabled: false };
+        const moduleData = (await paradoxModulesDB.get(moduleKey)) ?? { enabled: false };
         const isEnabled = moduleData.enabled;
 
         if (!isEnabled) {

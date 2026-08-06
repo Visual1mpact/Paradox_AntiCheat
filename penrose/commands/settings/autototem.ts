@@ -36,7 +36,7 @@ export const autoTotemCommand: Command = {
         const player = message.sender;
         const checkKey = "autoTotemCheck_b";
 
-        const moduleData = paradoxModulesDB.get(checkKey) ?? { enabled: false };
+        const moduleData = (await paradoxModulesDB.get(checkKey)) ?? { enabled: false };
         const isEnabled = moduleData.enabled;
 
         if (!isEnabled) {

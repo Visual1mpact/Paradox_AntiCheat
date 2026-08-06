@@ -47,7 +47,7 @@ export const nameSpoofCommand: Command = {
         const nameSpoofKey = "nameSpoofCheck_b";
 
         // Retrieve the current state of the module
-        const moduleData = paradoxModulesDB.get(nameSpoofKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(nameSpoofKey)) ?? {
             enabled: false,
         };
         const nameSpoofEnabled = moduleData?.enabled ?? false;

@@ -87,7 +87,7 @@ export const dimensionLockCommand: Command = {
         if (!message) return;
 
         const moduleKey = "dimensionLock_b";
-        const moduleData = paradoxModulesDB.get(moduleKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(moduleKey)) ?? {
             enabled: false,
             settings: { nether: false, theEnd: false },
         };

@@ -133,7 +133,7 @@ export const worldBorderCommand: Command = {
         const player = message.sender;
         const moduleKey = "worldBorderCheck_b";
 
-        const moduleData = paradoxModulesDB.get(moduleKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(moduleKey)) ?? {
             enabled: false,
             settings: { overworld: 0, nether: 0, end: 0 },
         };

@@ -16,7 +16,7 @@ async function handleSelfAttack(eventData: EntityHitEntityAfterEvent): Promise<v
     if (attacker.id !== victim.id) return;
 
     const reason = "Using a client to attack oneself";
-    const bannedPlayers = banlistDB.get("players") ?? {};
+    const bannedPlayers = (await banlistDB.get("players")) ?? {};
 
     if (!(attacker.name in bannedPlayers)) {
         bannedPlayers[attacker.name] = {

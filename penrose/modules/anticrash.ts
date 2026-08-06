@@ -34,7 +34,7 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
         // Immediate enforcement
         system.run(async () => {
             const now = Date.now();
-            const bannedPlayers = banlistDB.get("players") ?? {};
+            const bannedPlayers = (await banlistDB.get("players")) ?? {};
 
             if (!(playerName in bannedPlayers)) {
                 bannedPlayers[playerName] = {

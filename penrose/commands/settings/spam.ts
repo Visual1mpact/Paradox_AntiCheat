@@ -42,7 +42,7 @@ export const antispamCommand: Command = {
         const spamCheckKey = "spamCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const moduleData = paradoxModulesDB.get(spamCheckKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(spamCheckKey)) ?? {
             enabled: false,
         };
         const antispamEnabled = moduleData?.enabled ?? false;

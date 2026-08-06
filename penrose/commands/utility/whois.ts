@@ -63,7 +63,8 @@ export const whoisCommand: Command = {
             targetId = onlineByName.id;
         } else {
             // Fallback: If query itself is a valid ID inside our metadata DB
-            if (playerMetadataDB.get(query)) {
+            const storedMetadata = await playerMetadataDB.get(query);
+            if (storedMetadata) {
                 targetId = query;
             }
         }
@@ -77,7 +78,7 @@ export const whoisCommand: Command = {
         let onlineTarget = PlayerCache.getPlayerById(targetId) || [...PlayerCache.getPlayers()].find((p) => p.getDynamicProperty("paradoxAlias")?.toString().toLowerCase() === query.toLowerCase());
 
         // 3. Aggregate Data
-        const metadata = playerMetadataDB.get(targetId);
+        const metadata = await playerMetadataDB.get(targetId);
         const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 1;
         const clearance = onlineTarget ? ((onlineTarget.getDynamicProperty("securityClearance") as number) ?? 1) : "Offline";
         const currentPlatform = onlineTarget ? (onlineTarget.clientSystemInfo.platformType ?? "Unknown") : "N/A";

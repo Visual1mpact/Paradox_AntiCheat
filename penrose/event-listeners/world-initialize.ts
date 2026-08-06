@@ -284,7 +284,7 @@ async function initializeSystems() {
         const now = Date.now();
         const cutoff = now - 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
-        for (const [channelName, channel] of channelsDB.entries() as [string, Channel][]) {
+        for (const [channelName, channel] of (await channelsDB.entries()) as [string, Channel][]) {
             if (typeof channel.lastActive !== "number") continue;
             if (channel.lastActive < cutoff) {
                 await channelsDB.delete(channelName);
@@ -299,7 +299,7 @@ async function initializeSystems() {
     commandHandler = new CommandHandler();
 
     // Fetch disabled commands from the database and create a Set for faster lookups
-    const disabledCommandsSet = new Set(disabledCommandsDB.entries().map((entry) => entry[0]));
+    const disabledCommandsSet = new Set((await disabledCommandsDB.entries()).map((entry) => entry[0]));
 
     // Filter out disabled commands using the Set for faster lookup
     const enabledCommands = allCommands.filter((command) => !disabledCommandsSet.has(command.name));
@@ -389,12 +389,13 @@ function initializeGlobalBanList() {
  */
 async function initializeParadoxModules(): Promise<void> {
     // Retrieve paradoxModules from the OptimizedDatabase (paradoxModulesDB)
-    const paradoxModules = paradoxModulesDB.entries();
+    const paradoxModules = await paradoxModulesDB.entries();
 
     // Lookup table for module initialization
     const moduleActions: Record<string, () => void> = {
-        lagClearCheck_b: () => {
-            const settings = paradoxModulesDB.get("lagClearCheck_b")?.settings;
+        lagClearCheck_b: async () => {
+            const moduleData = await paradoxModulesDB.get("lagClearCheck_b");
+            const settings = moduleData?.settings;
             if (settings && "hours" in settings && "minutes" in settings && "seconds" in settings) {
                 startLagClear(settings.hours, settings.minutes, settings.seconds);
             } else {
@@ -404,8 +405,9 @@ async function initializeParadoxModules(): Promise<void> {
         gamemodeCheck_b: () => startGameModeCheck(),
         worldBorderCheck_b: () => startWorldBorderCheck(),
         flyCheck_b: () => startFlyCheck(),
-        afkCheck_b: () => {
-            const settings = paradoxModulesDB.get("afkCheck_b")?.settings;
+        afkCheck_b: async () => {
+            const moduleData = await paradoxModulesDB.get("afkCheck_b");
+            const settings = moduleData?.settings;
             if (settings && "hours" in settings && "minutes" in settings && "seconds" in settings) {
                 startAFKChecker(settings.hours, settings.minutes, settings.seconds);
             } else {

@@ -68,7 +68,7 @@ export const whitelistCommand: Command = {
             return;
         }
 
-        const whitelist = whitelistDB.get("players") ?? {};
+        const whitelist = (await whitelistDB.get("players")) ?? {};
 
         if (action === "list") {
             const playerNames = Object.keys(whitelist);

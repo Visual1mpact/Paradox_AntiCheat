@@ -471,7 +471,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             while (recentViolators.length && recentViolators[0].timestamp < cutoff) recentViolators.shift();
             if (recentViolators.length >= LOCKDOWN_THRESHOLD) triggerLockdown();
 
-            const bannedPlayers = banlistDB.get("players") ?? {};
+            const bannedPlayers = (await banlistDB.get("players")) ?? {};
             if (!(playerName in bannedPlayers)) {
                 bannedPlayers[playerName] = { reason: "Packet rate abuse", bannedBy: "System", timestamp: now };
                 await banlistDB.set("players", bannedPlayers);

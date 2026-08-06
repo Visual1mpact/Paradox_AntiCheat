@@ -19,6 +19,10 @@ interface PathingData {
     precisionTicks: number;
 }
 
+interface PathingModuleConfig {
+    enabled?: boolean;
+}
+
 /** Flag indicating whether the module is manually toggled on */
 let isModuleActive = false;
 /** Flag indicating whether the background generator worker is processing a frame */
@@ -122,15 +126,16 @@ function handleLeave(event: PlayerLeaveAfterEvent) {
 /**
  * Continuous generator loop that iterates over players to analyze pathing signatures.
  */
-function* continuousPathingLoop(): Generator<void, void, unknown> {
+function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): Generator<void, void, void> {
     if (isJobActive) return;
     isJobActive = true;
 
     try {
-        // Safe exit if the module was toggled off or database tracking is disabled
-        if (!isModuleActive || paradoxModulesDB.get("pathingCheck_b")?.enabled === false) {
-            return;
-        }
+        if (!isModuleActive) return;
+
+        // Check pre-fetched module status without using inline promises inside the generator
+        const isEnabled = moduleConfig?.enabled ?? false;
+        if (!isEnabled) return;
 
         const players = PlayerCache.getPlayers();
 
@@ -153,8 +158,10 @@ function* continuousPathingLoop(): Generator<void, void, unknown> {
 
         // Recursively queue the next pass for the next available frame
         if (isModuleActive) {
-            system.run(() => {
-                system.runJob(continuousPathingLoop());
+            system.run(async () => {
+                // Pre-fetch DB state outside generator on the loop continuation pass
+                const nextConfig = (await paradoxModulesDB.get("pathingCheck_b")) as PathingModuleConfig | undefined;
+                system.runJob(continuousPathingLoop(nextConfig));
             });
         }
     }
@@ -163,7 +170,7 @@ function* continuousPathingLoop(): Generator<void, void, unknown> {
 /**
  * Starts the Pathing/Navigator monitor.
  */
-export function startPathingMonitor() {
+export async function startPathingMonitor(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
 
@@ -173,7 +180,18 @@ export function startPathingMonitor() {
     }
 
     if (!isJobActive) {
-        system.runJob(continuousPathingLoop());
+        try {
+            // Await initial database fetch before spawning the generator job
+            const initialConfig = (await paradoxModulesDB.get("pathingCheck_b")) as PathingModuleConfig | undefined;
+
+            // Guard against module stopping while the database call was pending
+            if (!isModuleActive) return;
+
+            system.runJob(continuousPathingLoop(initialConfig));
+        } catch (e) {
+            console.error(`[Paradox] Failed to load config for pathing check: ${e}`);
+            isModuleActive = false;
+        }
     }
 }
 

@@ -35,7 +35,7 @@ export const hitReachCheckCommand: Command = {
     /**
      * Executes the hit reach detection command.
      * @param {ChatSendBeforeEvent | undefined} message - The message object.
-     * @param {string[]} _ - The command arguments.]
+     * @param {string[]} _ - The command arguments.
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent | undefined, _?: string[]): Promise<void> => {
@@ -45,7 +45,7 @@ export const hitReachCheckCommand: Command = {
         const hitReachCheckKey = "hitReachCheck_b";
 
         // Retrieve the current state from paradoxModulesDB
-        const moduleData = paradoxModulesDB.get(hitReachCheckKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(hitReachCheckKey)) ?? {
             enabled: false,
         };
         const hitReachCheckEnabled = moduleData?.enabled ?? false;

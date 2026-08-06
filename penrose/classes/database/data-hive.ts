@@ -7,103 +7,98 @@ const CHUNK_SIZE = 30000;
 export type DatabaseValueObject = Record<string, any>;
 
 /**
- * Lightweight LZW (Lempel-Ziv-Welch) Compressor optimized for JS/Minecraft UTF-16 Dynamic Properties.
- * Translates repetitive strings/JSON patterns into compact single character codes.
+ * UTF-16 Safe LZW Compressor optimized for JS/Minecraft Dynamic Properties.
+ * Translates repetitive strings/JSON patterns into compact arrays and avoids
+ * unpaired surrogate code points (0xD800-0xDFFF) that corrupt Bedrock NBT storage.
  */
 class LZCompressor {
     /**
      * Compresses an uncompressed UTF-8/UTF-16 string using the LZW algorithm.
      * @param uncompressed Raw input string (e.g., stringified JSON).
-     * @returns LZW compressed string prefixed for character packing.
+     * @returns LZW compressed payload stringified safely as JSON array.
      */
     public static compress(uncompressed: string): string {
         if (!uncompressed) return "";
 
-        // Use Map for O(1) key lookups and better memory management over standard objects
-        const dict = new Map<string, number>();
-        const data = uncompressed.split("");
-        const out: number[] = [];
+        let dictSize = 256;
+        const dictionary = new Map<string, number>();
+        for (let i = 0; i < 256; i++) {
+            dictionary.set(String.fromCharCode(i), i);
+        }
 
-        let currChar: string;
-        let phrase = data[0];
-        let code = 256; // Standard ASCII range ends at 255; dictionary extensions begin at 256
+        let w = "";
+        const result: number[] = [];
 
-        for (let i = 1; i < data.length; i++) {
-            currChar = data[i];
-            const combined = phrase + currChar;
-
-            // If sequence is already in dictionary, extend current phrase search
-            if (dict.has(combined)) {
-                phrase = combined;
+        for (let i = 0; i < uncompressed.length; i++) {
+            const c = uncompressed.charAt(i);
+            const wc = w + c;
+            if (dictionary.has(wc)) {
+                w = wc;
             } else {
-                // Output code for known phrase (or raw ASCII char code if length is 1)
-                out.push(phrase.length > 1 ? dict.get(phrase)! : phrase.charCodeAt(0));
-
-                // Add new combined pattern phrase into dictionary
-                dict.set(combined, code);
-                code++;
-                phrase = currChar;
+                result.push(dictionary.get(w)!);
+                dictionary.set(wc, dictSize++);
+                w = c;
             }
         }
 
-        // Push remaining phrase
-        out.push(phrase.length > 1 ? dict.get(phrase)! : phrase.charCodeAt(0));
-
-        // Safely pack array of character codes into a string without stack overflow
-        // Processing in 8192-element chunks prevents exceeding maximum argument stack limits
-        let result = "";
-        const chunkSize = 8192;
-        for (let i = 0; i < out.length; i += chunkSize) {
-            result += String.fromCharCode(...out.slice(i, i + chunkSize));
+        if (w !== "") {
+            result.push(dictionary.get(w)!);
         }
 
-        return result;
+        // Return numerical code array as JSON string to stay within safe character bounds
+        return JSON.stringify(result);
     }
 
     /**
      * Decompresses an LZW-compressed string back to its original raw form.
-     * @param compressed LZW packed UTF-16 input string.
+     * @param compressed LZW packed input stringified array.
      * @returns Decompressed raw text/JSON.
      */
     public static decompress(compressed: string): string {
         if (!compressed) return "";
 
-        // Reverse dictionary mapping codes back to string sequences
-        const dict = new Map<number, string>();
-        const data = compressed.split("");
-
-        let currChar = data[0];
-        let oldPhrase = currChar;
-        const out: string[] = [currChar];
-        let code = 256;
-        let phrase: string;
-
-        for (let i = 1; i < data.length; i++) {
-            const currCode = data[i].charCodeAt(0);
-
-            // Rebuild symbol or sequence from current code point
-            if (currCode < 256) {
-                phrase = data[i];
-            } else {
-                phrase = dict.has(currCode) ? dict.get(currCode)! : oldPhrase + currChar;
-            }
-
-            out.push(phrase);
-            currChar = phrase.charAt(0);
-
-            // Reconstruct original state entry in memory dictionary
-            dict.set(code, oldPhrase + currChar);
-            code++;
-            oldPhrase = phrase;
+        let compressedCodes: number[];
+        try {
+            compressedCodes = JSON.parse(compressed);
+        } catch {
+            return "";
         }
 
-        return out.join("");
+        if (!Array.isArray(compressedCodes) || compressedCodes.length === 0) return "";
+
+        let dictSize = 256;
+        const dictionary = new Map<number, string>();
+        for (let i = 0; i < 256; i++) {
+            dictionary.set(i, String.fromCharCode(i));
+        }
+
+        let w = String.fromCharCode(compressedCodes[0]);
+        let result = w;
+
+        for (let i = 1; i < compressedCodes.length; i++) {
+            const k = compressedCodes[i];
+            let entry = "";
+
+            if (dictionary.has(k)) {
+                entry = dictionary.get(k)!;
+            } else if (k === dictSize) {
+                entry = w + w.charAt(0);
+            } else {
+                throw new Error("[Paradox] Data Hive Error: Invalid LZW decompression block.");
+            }
+
+            result += entry;
+            dictionary.set(dictSize++, w + entry.charAt(0));
+            w = entry;
+        }
+
+        return result;
     }
 }
 
 /**
  * Type-safe, chunked database using Minecraft Dynamic Properties.
- * Features auto-chunking for payloads exceeding key size limits, concurency locking,
+ * Features auto-chunking for payloads exceeding key size limits, concurrency locking,
  * LZW string compression, and automatic backward-compatibility for v1.0 entries.
  */
 export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
@@ -129,9 +124,13 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         this.name = name;
         this.pointerKey = `${this.name}/pointers`;
 
-        // Initialize empty pointer registry array in dynamic properties if non-existent
-        if (!world.getDynamicProperty(this.pointerKey)) {
-            world.setDynamicProperty(this.pointerKey, JSON.stringify([]));
+        // Trapped world dynamic property read prevents startup crash during script load
+        try {
+            if (world.getDynamicProperty(`${this.pointerKey}/0`) === undefined && world.getDynamicProperty(this.pointerKey) === undefined) {
+                world.setDynamicProperties({ [`${this.pointerKey}/0`]: JSON.stringify([]) });
+            }
+        } catch {
+            // Ignored: world dynamic properties become accessible upon world load
         }
 
         // Maintain global registry list
@@ -147,21 +146,67 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
     /**
      * Reads pointer array listing stored entry base keys (uses cache when available).
+     * Supports chunked pointer entries to prevent 32KB dynamic property string limit overflow.
      */
     private _getPointers(): string[] {
         if (this.cachedPointers !== undefined) return this.cachedPointers;
-        const pointers = world.getDynamicProperty(this.pointerKey) as string | undefined;
-        this.cachedPointers = pointers ? JSON.parse(pointers) : [];
+
+        const chunks: string[] = [];
+        for (let i = 0; ; ++i) {
+            const ptrChunk = world.getDynamicProperty(`${this.pointerKey}/${i}`) as string | undefined;
+            if (ptrChunk === undefined) break;
+            chunks.push(ptrChunk);
+        }
+
+        if (chunks.length === 0) {
+            // Legacy single-key fallback check for v1 pointer structures
+            try {
+                const legacy = world.getDynamicProperty(this.pointerKey) as string | undefined;
+                this.cachedPointers = legacy ? JSON.parse(legacy) : [];
+                return this.cachedPointers!;
+            } catch {
+                this.cachedPointers = [];
+                return [];
+            }
+        }
+
+        try {
+            const joined = chunks.join("");
+            this.cachedPointers = joined.trim() ? JSON.parse(joined) : [];
+        } catch {
+            this.cachedPointers = [];
+        }
+
         return this.cachedPointers || [];
     }
 
     /**
      * Persists updated pointer array into Dynamic Properties and updates internal cache.
+     * Uses chunking to bypass single-key string size limits.
      */
     private _setPointers(pointers: string[]): void {
         if (JSON.stringify(pointers) !== JSON.stringify(this.cachedPointers)) {
             this.cachedPointers = pointers;
-            world.setDynamicProperty(this.pointerKey, JSON.stringify(pointers));
+            const json = JSON.stringify(pointers);
+
+            try {
+                // Remove older pointer chunk keys
+                for (let i = 0; ; ++i) {
+                    const key = `${this.pointerKey}/${i}`;
+                    if (world.getDynamicProperty(key) === undefined) break;
+                    world.setDynamicProperty(key, undefined);
+                }
+
+                // Write chunked pointer index
+                const chunks: Record<string, string> = {};
+                for (let i = 0; i < json.length; i += CHUNK_SIZE) {
+                    chunks[`${this.pointerKey}/${i / CHUNK_SIZE}`] = json.slice(i, i + CHUNK_SIZE);
+                }
+                world.setDynamicProperties(chunks);
+            } catch (err) {
+                console.warn(`[${this.name}] Failed to update database pointer index:`, err);
+            }
+
             this._markDirty();
         }
     }
@@ -229,8 +274,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         await OptimizedDatabase._withLock(base, async () => {
             const json = JSON.stringify(value);
 
-            // Prefix payload with ASCII STX control char (\u0002) to signify v2.0 compressed structure
-            const compressedPayload = "\u0002" + LZCompressor.compress(json);
+            // Calculate expected chunk count for header tracking
+            const rawCompressed = LZCompressor.compress(json);
+            const chunkCount = Math.ceil((rawCompressed.length + 1) / CHUNK_SIZE);
+
+            // Prefix payload with STX marker (\u0002) and header metadata specifying total chunk count
+            const compressedPayload = `\u0002:${chunkCount}:` + rawCompressed;
 
             // Step 1: Write chunk payloads into temporary staging key space (~tmp) to guarantee crash safety
             const tmpBase = `${base}~tmp`;
@@ -270,42 +319,56 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     }
 
     /**
-     * Retrieves and parses a stored entry, supporting both v1.0 raw JSON and v2.0 compressed entries.
+     * Retrieves and parses a stored entry behind an async lock to prevent dirty reads.
+     * Validates full chunk sequence completeness using header metadata.
      * @param key Entry key identifier.
-     * @returns Parsed object payload or undefined if entry doesn't exist.
+     * @returns Parsed object payload or undefined if entry doesn't exist or is incomplete.
      */
-    public get<K extends keyof T>(key: K): T[K] | undefined {
+    public async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
         const base = `${this.name}/${String(key)}`;
-        const marker = world.getDynamicProperty(base) as string | undefined;
+        return await OptimizedDatabase._withLock(base, async () => {
+            const marker = world.getDynamicProperty(base) as string | undefined;
 
-        // Read from staging (~tmp) if last transaction crashed during commit
-        const real = marker === "USE_TMP" ? `${base}~tmp` : base;
+            // Read from staging (~tmp) if last transaction crashed during commit
+            const real = marker === "USE_TMP" ? `${base}~tmp` : base;
 
-        // Reassemble payload chunks in sequential order
-        const chunks: string[] = [];
-        for (let i = 0; ; ++i) {
-            const c = world.getDynamicProperty(`${real}/${i}`) as string | undefined;
-            if (c === undefined) break;
-            chunks.push(c);
-        }
-
-        if (!chunks.length) return undefined;
-
-        const rawData = chunks.join("");
-
-        try {
-            // Version 2.0 Check: Inspect payload header marker (\u0002)
-            if (rawData.startsWith("\u0002")) {
-                const decompressed = LZCompressor.decompress(rawData.slice(1));
-                return JSON.parse(decompressed) as T[K];
+            // Reassemble payload chunks in sequential order
+            const chunks: string[] = [];
+            for (let i = 0; ; ++i) {
+                const c = world.getDynamicProperty(`${real}/${i}`) as string | undefined;
+                if (c === undefined) break;
+                chunks.push(c);
             }
 
-            // Version 1.0 Fallback: Handle legacy raw stringified JSON entries directly
-            return JSON.parse(rawData) as T[K];
-        } catch (err) {
-            console.warn(`[${this.name}] Failed to parse entry for key "${String(key)}":`, err);
-            return undefined;
-        }
+            if (!chunks.length) return undefined;
+
+            const rawData = chunks.join("").trim();
+
+            if (!rawData) return undefined;
+
+            try {
+                // Version 2.0 Check: Inspect payload header marker (\u0002)
+                if (rawData.startsWith("\u0002")) {
+                    const headerEnd = rawData.indexOf(":", 2);
+                    if (headerEnd !== -1) {
+                        const expectedChunks = parseInt(rawData.slice(2, headerEnd), 10);
+                        // Header integrity check: Verify payload contains all expected sub-chunks
+                        if (!isNaN(expectedChunks) && chunks.length < expectedChunks) {
+                            console.warn(`[${this.name}] Corrupted/incomplete entry read for key "${String(key)}": expected ${expectedChunks} chunks, found ${chunks.length}`);
+                            return undefined;
+                        }
+                        const decompressed = LZCompressor.decompress(rawData.slice(headerEnd + 1));
+                        return decompressed.trim() ? (JSON.parse(decompressed) as T[K]) : undefined;
+                    }
+                }
+
+                // Version 1.0 Fallback: Handle legacy raw stringified JSON entries directly
+                return JSON.parse(rawData) as T[K];
+            } catch (err) {
+                console.warn(`[${this.name}] Failed to parse entry for key "${String(key)}":`, err);
+                return undefined;
+            }
+        });
     }
 
     /**
@@ -334,7 +397,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
             // If header character lacks '\u0002' marker, migrate v1 entry to v2
             if (!rawData.startsWith("\u0002") && rawData.length > 0) {
-                const parsedValue = this.get(key);
+                const parsedValue = await this.get(key);
                 if (parsedValue !== undefined) {
                     const beforeBytes = this.getEntrySizeBytes(String(key));
 
@@ -381,15 +444,19 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     /**
      * Retrieves all valid [key, value] pairs stored in the database.
      */
-    public entries(): [keyof T, T[keyof T]][] {
-        return this._getPointers()
-            .map((ptr) => {
-                const key = ptr.split("/").pop() as keyof T;
-                const value = this.get(key);
-                if (value === undefined) return null;
-                return [key, value] as [keyof T, T[keyof T]];
-            })
-            .filter((entry): entry is [keyof T, T[keyof T]] => entry !== null);
+    public async entries(): Promise<[keyof T, T[keyof T]][]> {
+        const pointers = this._getPointers();
+        const result: [keyof T, T[keyof T]][] = [];
+
+        for (const ptr of pointers) {
+            const key = ptr.split("/").pop() as keyof T;
+            const value = await this.get(key);
+            if (value !== undefined) {
+                result.push([key, value]);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -401,7 +468,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         const silent = options?.silent ?? false;
 
         await OptimizedDatabase._withLock(this.name, async () => {
-            const entries = this.entries();
+            const entriesList = await this.entries();
             let deletedCount = 0;
 
             // Fallback default validation checks for undefined, empty objects, arrays, empty strings, and NaN
@@ -415,7 +482,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
                 return true;
             };
 
-            for (const [key, value] of entries) {
+            for (const [key, value] of entriesList) {
                 const isValid = validator ? validator(key, value) : defaultValidator(value);
                 if (!isValid) {
                     await this.delete(key);

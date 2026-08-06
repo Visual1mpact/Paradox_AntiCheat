@@ -82,7 +82,7 @@ export const allowlistCommand: Command = {
             return;
         }
 
-        const current = allowlistDB.get("players") ?? {};
+        const current = (await allowlistDB.get("players")) ?? {};
 
         if (action === "disable") {
             await allowlistDB.set("players", {});

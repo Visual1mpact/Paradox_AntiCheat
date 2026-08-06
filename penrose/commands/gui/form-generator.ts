@@ -260,7 +260,7 @@ class GUIManager {
                         if (!field.options || field.options.length === 0) field.options = ["No Waypoints Saved"];
                     } else if (field.sourceType === "playerHomes") {
                         // Pull saved homes from database and decrypt names for display
-                        const dbEntry = homesDB.get(this.player.id);
+                        const dbEntry = await homesDB.get(this.player.id);
                         const locations = dbEntry?.locations ?? [];
                         const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
                         field.options = locations.map((enc) => {

@@ -36,7 +36,7 @@ export const criticalsCommand: Command = {
 
         const checkKey = "criticalsCheck_b";
 
-        const moduleData = paradoxModulesDB.get(checkKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(checkKey)) ?? {
             enabled: false,
         };
         const isEnabled = moduleData?.enabled ?? false;

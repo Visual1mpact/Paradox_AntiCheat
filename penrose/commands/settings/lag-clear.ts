@@ -100,7 +100,7 @@ export const lagClearCommand: Command = {
             return allInvalid ? { hours: 0, minutes: 10, seconds: 0 } : { hours, minutes, seconds };
         };
 
-        const moduleData = paradoxModulesDB.get(moduleKey) ?? {
+        const moduleData = (await paradoxModulesDB.get(moduleKey)) ?? {
             enabled: false,
             settings: { hours: 0, minutes: 10, seconds: 0 },
         };

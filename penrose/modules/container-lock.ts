@@ -117,15 +117,15 @@ function notifyLevel4Players(message: string): void {
  * @property {{ player: string; time: number }[]} [accessLog] - Array of past access events.
  * @property {string[]} [sharedWith] - Players allowed to access this chest in addition to the owner.
  */
-function getChestInfo(block: Block): {
+async function getChestInfo(block: Block): Promise<{
     owner?: string;
     placedBy?: string;
     lastAccessed?: number;
     accessLog?: { player: string; time: number }[];
     sharedWith?: string[];
-} | null {
+} | null> {
     const key = getCanonicalChestKey(block);
-    return chestLockDB.get(key) ?? null;
+    return (await chestLockDB.get(key)) ?? null;
 }
 
 /**
@@ -138,7 +138,7 @@ function getChestInfo(block: Block): {
 async function logChestAccess(block: Block, playerName: string): Promise<void> {
     const key = getCanonicalChestKey(block);
     const timestamp = Date.now();
-    const entry = chestLockDB.get(key);
+    const entry = (await chestLockDB.get(key)) ?? null;
 
     const logEntry = { player: playerName, time: timestamp };
 
@@ -167,7 +167,7 @@ async function logChestAccess(block: Block, playerName: string): Promise<void> {
 async function pruneOldLogs(retentionDays: number = 30): Promise<void> {
     const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
 
-    for (const [key, value] of chestLockDB.entries()) {
+    for (const [key, value] of await chestLockDB.entries()) {
         if (!value.accessLog) continue;
 
         const prunedLog = value.accessLog.filter((e) => e.time >= cutoff);
@@ -190,7 +190,7 @@ async function chestLockBefore(event: PlayerInteractWithBlockBeforeEvent): Promi
     const { block, player } = event;
     if (!isStorageBlock(block)) return;
 
-    const chestInfo = getChestInfo(block);
+    const chestInfo = await getChestInfo(block);
     const owner = chestInfo?.owner;
     const sharedWith = chestInfo?.sharedWith ?? [];
     if (!owner) return;
@@ -227,7 +227,7 @@ async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent): Promise
     if (!itemStack || itemStack.typeId !== "minecraft:stick") return;
 
     const key = getCanonicalChestKey(block);
-    const entry = chestLockDB.get(key);
+    const entry = await chestLockDB.get(key);
     const owner = entry?.owner ?? null;
     const placer = entry?.placedBy ?? null;
     const timestamp = Date.now();
@@ -268,7 +268,7 @@ async function chestLockBreakBefore(event: PlayerBreakBlockBeforeEvent): Promise
     const { block, player } = event;
     if (!isStorageBlock(block)) return;
 
-    const chestInfo = getChestInfo(block);
+    const chestInfo = await getChestInfo(block);
     const owner = chestInfo?.owner;
     if (!owner) return;
 
@@ -354,7 +354,7 @@ async function hopperPlaceBefore(event: PlayerPlaceBlockBeforeEvent): Promise<vo
         return;
     }
 
-    const chestInfo = getChestInfo(containerBlock);
+    const chestInfo = await getChestInfo(containerBlock);
 
     const hasAccess = chestInfo?.owner === player.name || hasLevel4Clearance(player);
 

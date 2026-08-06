@@ -49,7 +49,7 @@ export const deathCoordsCommand: Command = {
         const player = message.sender;
 
         // Retrieve current module state from the database
-        const moduleData = paradoxModulesDB.get("deathCoords_b") ?? { enabled: false };
+        const moduleData = (await paradoxModulesDB.get("deathCoords_b")) ?? { enabled: false };
         const isEnabled = moduleData?.enabled ?? false;
 
         if (!isEnabled) {

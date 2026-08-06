@@ -80,7 +80,7 @@ export const homeCommand: Command = {
         const obfuscatedKey = cryptoES.SHA256(message.sender.id).toString();
 
         // Load homes from database
-        const dbEntry = homesDB.get(player.id);
+        const dbEntry = (await homesDB.get(player.id)) ?? { locations: [] };
         let playerHomes = Array.isArray(dbEntry?.locations) ? dbEntry!.locations : [];
 
         // Migration logic: move legacy tags to database

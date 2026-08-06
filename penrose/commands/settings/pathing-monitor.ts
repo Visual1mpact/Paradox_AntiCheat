@@ -31,14 +31,15 @@ export const pathingCommand: Command = {
             },
         ],
     },
-    execute: (message?: ChatSendBeforeEvent) => {
+    execute: async (message?: ChatSendBeforeEvent) => {
         if (!message) return;
         const player = message.sender;
         const moduleKey = "pathingCheck_b";
-        const config = paradoxModulesDB.get(moduleKey) || { enabled: false };
+        const fetched = await paradoxModulesDB.get(moduleKey);
+        const config = (fetched as { enabled: boolean } | undefined) || { enabled: false };
 
         config.enabled = !config.enabled;
-        paradoxModulesDB.set(moduleKey, config);
+        await paradoxModulesDB.set(moduleKey, config);
 
         if (config.enabled) {
             startPathingMonitor();

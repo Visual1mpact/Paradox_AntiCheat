@@ -28,7 +28,7 @@ export const graveSaverCommand: Command = {
         if (!message) return;
         const player = message.sender;
 
-        const moduleData = paradoxModulesDB.get("graveSaver_b") ?? { enabled: false };
+        const moduleData = (await paradoxModulesDB.get("graveSaver_b")) ?? { enabled: false };
         const isEnabled = moduleData?.enabled ?? false;
 
         if (!isEnabled) {

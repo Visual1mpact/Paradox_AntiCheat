@@ -46,11 +46,11 @@ async function checkNamespoof(player: Player): Promise<void> {
  * Checks if a player's name has duplicates and kicks the player with the same base name.
  * @param {Player} player - The player being checked for name duplication.
  */
-function checkDuplicateName(player: Player) {
+async function checkDuplicateName(player: Player) {
     const baseName = getBaseName(player.name);
 
     if (playerNameMap.has(baseName)) {
-        kickPlayer(player, "kicked for duplicate name");
+        await kickPlayer(player, "kicked for duplicate name");
     } else {
         playerNameMap.set(baseName, player);
     }
@@ -61,7 +61,7 @@ function checkDuplicateName(player: Player) {
  * @param {Player} player - The player to be kicked.
  * @param {string} reason - The reason for kicking the player.
  */
-function kickPlayer(player: Player, reason: string) {
+async function kickPlayer(player: Player, reason: string) {
     player.runCommand(`kick @s ${reason}`);
     player.sendMessage(`§2[§7Paradox§2]§o§7 Player "${player.name}§7" has been ${reason}§7.`);
 }
@@ -76,7 +76,7 @@ async function banPlayer(player: Player, reason: string): Promise<void> {
     try {
         const name = player.name;
 
-        const bannedPlayers = banlistDB.get("players") ?? {};
+        const bannedPlayers = (await banlistDB.get("players")) ?? {};
 
         if (!(name in bannedPlayers)) {
             bannedPlayers[name] = {
@@ -87,7 +87,7 @@ async function banPlayer(player: Player, reason: string): Promise<void> {
             await banlistDB.set("players", bannedPlayers);
         }
 
-        kickPlayer(player, reason);
+        await kickPlayer(player, reason);
     } catch (error) {
         console.error(`[Paradox] Failed to ban player '${player.name}': ${error}`);
     }

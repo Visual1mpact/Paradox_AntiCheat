@@ -92,7 +92,7 @@ export const command: Command = {
                 if (registered.includes(cmd.name)) {
                     enabled.push(cmd.name);
                 } else {
-                    const meta = disabledCommandsDB.get(cmd.name);
+                    const meta = await disabledCommandsDB.get(cmd.name);
                     if (meta) {
                         disabled.push({ name: cmd.name, metadata: meta });
                     }

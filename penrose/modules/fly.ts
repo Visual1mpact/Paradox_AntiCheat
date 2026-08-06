@@ -1,4 +1,4 @@
-import { GameMode, system, Vector3 } from "@minecraft/server";
+import { GameMode, ItemUseBeforeEvent, PlayerLeaveBeforeEvent, system, Vector3 } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
@@ -7,18 +7,18 @@ let isModuleActive = false;
 /** Flag indicating whether the background generator worker is processing a frame */
 let isJobActive = false;
 
-let resetSub: ((event: any) => void) | undefined;
-let itemUseSub: ((event: any) => void) | undefined;
+let resetSub: ((event: PlayerLeaveBeforeEvent) => void) | undefined;
+let itemUseSub: ((event: ItemUseBeforeEvent) => void) | undefined;
 
-function onPlayerLeaveReset(event: any) {
+async function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent) {
     const player = event.player;
-    const isValid = player && (typeof player.isValid === "function" ? player.isValid() : (player as any).isValid);
+    const isValid = player && player.isValid;
     if (isValid) {
         player.setDynamicProperty("tridentUsed", false);
     }
 }
 
-function onItemUseCheck(event: any) {
+async function onItemUseCheck(event: ItemUseBeforeEvent) {
     const player = event.source;
     const item = event.itemStack?.typeId;
 

@@ -43,7 +43,7 @@ export const autoClickerCommand: Command = {
         const player = message.sender;
 
         // Get auto-clicker detection status from the database
-        const moduleData = paradoxModulesDB.get("autoClickerCheck_b") ?? {
+        const moduleData = (await paradoxModulesDB.get("autoClickerCheck_b")) ?? {
             enabled: false,
         };
         const autoClickerEnabled = moduleData?.enabled ?? false;
