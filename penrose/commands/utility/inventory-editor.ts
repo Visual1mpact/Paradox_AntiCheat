@@ -12,7 +12,7 @@ export const inventoryEditorCommand: Command = {
     examples: [`{prefix}inventoryeditor`],
     category: "Utility",
     securityClearance: 3,
-    icon: "textures/blocks/enchanting_table_top.png",
+    icon: "textures/blocks/enchanting_table_side.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Editor",
