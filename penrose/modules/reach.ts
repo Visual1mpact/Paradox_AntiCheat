@@ -98,14 +98,15 @@ function alertStaff(attacker: Player, distSqValue: number) {
  * Validates hit distances using cached snapshots, live fallbacks, and historic matrix arrays.
  */
 function onHitCached(event: EntityHurtBeforeEvent) {
+    // Only process standard melee hits
+    if (event.damageSource.cause !== EntityDamageCause.entityAttack) return;
+
     const attacker = event.damageSource.damagingEntity;
     const victim = event.hurtEntity;
 
     // Verify both participants are actual players, and ignore creative-mode players
     if (!(attacker instanceof Player) || !(victim instanceof Player)) return;
     if (attacker.getGameMode() === GameMode.Creative) return;
-    // Only process standard melee hits
-    if (event.damageSource.cause !== EntityDamageCause.entityAttack) return;
 
     /**
      * CRITICAL FALLBACK MECHANIC:

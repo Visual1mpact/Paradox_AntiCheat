@@ -1,5 +1,5 @@
 const { Vector3Builder, Vector3Utils } = await import("../node_modules/@minecraft/math/dist/minecraft-math");
-import { Player, system, EntityHurtBeforeEvent } from "@minecraft/server";
+import { Player, system, EntityHurtBeforeEvent, EntityDamageCause } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
@@ -91,6 +91,9 @@ function alertStaff(attacker: Player, distance: number, recentAttacks: number) {
  * Pre-damage handler for detecting killaura or reach exploits.
  */
 function handleHurtEvent(event: EntityHurtBeforeEvent) {
+    // Only process standard melee hits
+    if (event.damageSource.cause !== EntityDamageCause.entityAttack) return;
+
     const attacker = event.damageSource.damagingEntity;
     const target = event.hurtEntity;
     const currentTick = system.currentTick;
