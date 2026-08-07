@@ -2,7 +2,15 @@ import { CustomForm, ObservableNumber, ObservableString, ObservableBoolean, Data
 import { Container, EnchantmentTypes, ItemStack, Player } from "@minecraft/server";
 import { PlayerCache } from "penrose/classes/player-cache";
 
+/**
+ * Custom DDUI inventory viewer and editor for Penrose
+ *
+ * Designed to allow admins to inspect player inventories, edit names/lore,
+ * modify enchantments, repair durability, transfer items between players,
+ * change stack quantities, or swap slot contents.
+ */
 export function showInventoryEditor(player: Player) {
+    // DDUI reactive state bindings
     const selectedPlayer = new ObservableNumber(0, { clientWritable: true });
     const inventoryText = new ObservableString("", { clientWritable: true });
     const selectedSlot = new ObservableString("", { clientWritable: true });
@@ -12,69 +20,68 @@ export function showInventoryEditor(player: Player) {
     const enchantmentIndex = new ObservableNumber(0, { clientWritable: true });
     const enchantmentLevel = new ObservableString("0", { clientWritable: true });
     const transferTargetPlayer = new ObservableNumber(0, { clientWritable: true });
+    const newItemAmount = new ObservableString("1", { clientWritable: true });
+    const targetSwapSlot = new ObservableString("", { clientWritable: true });
 
-    // Booleans for enabling or disabling certain fields based on the selected option
+    // Conditional visibility control observables
     const isEditNameLore = new ObservableBoolean(false);
     const isEditEnchantments = new ObservableBoolean(false);
     const isRepairItem = new ObservableBoolean(false);
     const isTransferItem = new ObservableBoolean(false);
+    const isEditAmount = new ObservableBoolean(false);
+    const isSwapSlot = new ObservableBoolean(false);
 
+    // Fetch snapshot of available player names from cache
     const playerNames = [...PlayerCache.getPlayerNames()];
+    if (playerNames.length === 0) {
+        inventoryText.setData("No players online.");
+        return;
+    }
+
+    // Prepare enchantment list dropdown entries
     const enchantList = EnchantmentTypes.getAll();
     const enchantOptions = enchantList.map((ench, index) => ({
         label: ench.id.replace("minecraft:", ""),
         value: index,
     }));
 
+    // Auto-update inventory view when selected player index changes
     selectedPlayer.subscribe((newIndex) => {
         updateInventory(newIndex);
     });
+
+    // Auto-update item detail summary when user types or updates target slot
     selectedSlot.subscribe((value) => {
         updateItemFields(value);
     });
-    selectedOption.subscribe((value) => {
-        switch (value) {
-            case 0: // View Inventory
-                isEditNameLore.setData(false);
-                isEditEnchantments.setData(false);
-                isRepairItem.setData(false);
-                updateInventory(selectedPlayer.getData());
-                break;
-            case 1: // Edit Name and Lore
-                isEditNameLore.setData(true);
-                isEditEnchantments.setData(false);
-                isRepairItem.setData(false);
-                updateItemFields(selectedSlot.getData());
 
-                break;
-            case 2: // Edit Enchantments
-                isEditNameLore.setData(false);
-                isEditEnchantments.setData(true);
-                isRepairItem.setData(false);
-                updateItemFields(selectedSlot.getData());
-                break;
-            case 3: // Repair Item
-                isEditNameLore.setData(false);
-                isEditEnchantments.setData(false);
-                isRepairItem.setData(true);
-                updateItemFields(selectedSlot.getData());
-                break;
-            case 4: // Transfer Item
-                isEditNameLore.setData(false);
-                isEditEnchantments.setData(false);
-                isRepairItem.setData(false);
-                isTransferItem.setData(true);
-                updateItemFields(selectedSlot.getData());
-                break;
+    // Dynamic UI visibility toggle based on dropdown selection
+    selectedOption.subscribe((value) => {
+        // Toggle feature visibility flags depending on the chosen action mode
+        isEditNameLore.setData(value === 1);
+        isEditEnchantments.setData(value === 2);
+        isRepairItem.setData(value === 3);
+        isTransferItem.setData(value === 4);
+        isEditAmount.setData(value === 5);
+        isSwapSlot.setData(value === 6);
+
+        if (value === 0) {
+            updateInventory(selectedPlayer.getData());
+        } else {
+            updateItemFields(selectedSlot.getData());
         }
     });
 
+    // Initial load population
     updateInventory(selectedPlayer.getData());
 
+    // Main DDUI Form Definition
     new CustomForm(player, "Inventory Editor")
         .spacer()
         .label("Inventory Editor")
         .spacer()
+
+        // Dropdown to pick target online player
         .dropdown(
             "Select a player",
             selectedPlayer,
@@ -83,38 +90,53 @@ export function showInventoryEditor(player: Player) {
                 value: index,
             }))
         )
-        .spacer()
 
+        .spacer()
         .label(inventoryText)
         .spacer()
+
+        // Main action selector dropdown
         .dropdown("select an action", selectedOption, [
             { label: "View Inventory", value: 0 },
             { label: "Edit Item Name and Lore", value: 1 },
             { label: "Edit Item Enchantments", value: 2 },
             { label: "Repair Item", value: 3 },
             { label: "Transfer Item to Another Player", value: 4 },
+            { label: "Edit Stack Amount", value: 5 },
+            { label: "Swap Slots", value: 6 },
         ])
+
         .divider()
+
+        // Slot selection input
         .textField("Enter slot number ", selectedSlot)
+
+        // Sub-menu control fields dynamically displayed based on active option
         .textField("New name data", newName, { visible: isEditNameLore })
         .textField("New lore data", newLore, { visible: isEditNameLore })
+
         .dropdown("Select enchantment", enchantmentIndex, enchantOptions, { visible: isEditEnchantments })
         .textField("Enchantment Level", enchantmentLevel, { visible: isEditEnchantments })
+
         .dropdown(
             "Select target player for transfer",
             transferTargetPlayer,
-            playerNames.map(
-                (name, index) => ({
-                    label: name,
-                    value: index,
-                }),
-                { visible: isTransferItem }
-            )
+            playerNames.map((name, index) => ({
+                label: name,
+                value: index,
+            })),
+            { visible: isTransferItem }
         )
 
+        .textField("New stack amount", newItemAmount, { visible: isEditAmount })
+        .textField("Target slot to swap with", targetSwapSlot, { visible: isSwapSlot })
+
+        // Submit action handler button
         .button("Apply Changes", () => {
             const playerIndex = selectedPlayer.getData();
             const selectedName = playerNames[playerIndex];
+
+            if (!selectedName) return;
 
             const playerObject = PlayerCache.getPlayerByName(selectedName);
             const container = playerObject?.getComponent("minecraft:inventory")?.container;
@@ -125,43 +147,63 @@ export function showInventoryEditor(player: Player) {
             if (isNaN(slot) || slot < 0 || slot >= container.size) return;
 
             const item = container.getItem(slot);
-            if (!item) return;
-
             const option = selectedOption.getData();
 
+            // Options 1-5 require an item in the primary slot
+            if (!item && option >= 1 && option <= 5) return;
+
             switch (option) {
-                case 1: // Edit Name & Lore
-                    applyNameLore(container, item, slot);
+                case 1:
+                    if (item) applyNameLore(container, item, slot);
                     break;
 
-                case 2: // Edit Enchantments
-                    applyEnchant(container, item, slot);
+                case 2:
+                    if (item) applyEnchant(container, item, slot);
                     break;
 
-                case 3: // Repair Item
-                    repairItem(container, item, slot);
+                case 3:
+                    if (item) repairItem(container, item, slot);
                     break;
-                case 4: // Transfer Item
+
+                case 4: {
+                    if (!item) break;
                     const targetIndex = transferTargetPlayer.getData();
                     const targetName = playerNames[targetIndex];
+                    if (!targetName) break;
+
                     const targetPlayerObject = PlayerCache.getPlayerByName(targetName);
                     const targetContainer = targetPlayerObject?.getComponent("minecraft:inventory")?.container;
 
-                    if (!targetContainer) return;
+                    if (!targetContainer) break;
 
                     transferItem(container, targetContainer, item, slot);
                     break;
+                }
+
+                case 5:
+                    if (item) applyAmount(container, item, slot);
+                    break;
+
+                case 6:
+                    swapSlots(container, slot);
+                    break;
 
                 default:
-                    // View Inventory → do nothing
                     break;
             }
-            // Update the item fields after applying changes
-            updateItemFields(selectedSlot.getData());
+
+            // Refresh UI text display post mutation
+            if (selectedOption.getData() === 0) {
+                updateInventory(selectedPlayer.getData());
+            } else {
+                updateItemFields(selectedSlot.getData());
+            }
         })
+
         .closeButton()
         .show()
         .then((showResult) => {
+            // Re-open UI if form failed to open due to UserBusy state
             if (showResult === DataDrivenScreenClosedReason.UserBusy) {
                 showInventoryEditor(player);
             }
@@ -171,17 +213,16 @@ export function showInventoryEditor(player: Player) {
         });
 
     /**
-     * Updates the inventory display text for a selected player.
-     *
-     * Lists all non-empty slots and their contents.
-     *
-     * @param {number} index - Index of the selected player.
+     * Rebuilds full list view text representation of selected player's inventory
      */
-
     function updateInventory(index: number) {
         const selectedName = playerNames[index];
-        const playerObject = PlayerCache.getPlayerByName(selectedName);
+        if (!selectedName) {
+            inventoryText.setData("No player selected");
+            return;
+        }
 
+        const playerObject = PlayerCache.getPlayerByName(selectedName);
         const container = playerObject?.getComponent("minecraft:inventory")?.container;
 
         if (!container) {
@@ -193,30 +234,24 @@ export function showInventoryEditor(player: Player) {
 
         for (let i = 0; i < container.size; i++) {
             const item = container.getItem(i);
-
             if (!item) continue;
 
             lines.push(`Slot ${i}: ${item.typeId.replace("minecraft:", "")} x${item.amount}`);
         }
 
-        inventoryText.setData(lines.join("\n"));
+        inventoryText.setData(lines.length > 0 ? lines.join("\n") : "Inventory is empty.");
     }
 
     /**
-     * Updates UI fields based on the selected inventory slot.
-     *
-     * - Updates name and lore fields
-     * - Displays detailed item info (durability, enchantments, etc.)
-     *
-     * @param {string} slotRaw - Raw slot input string from UI.
+     * Reads slot state and generates detailed item breakdown string + updates default field values
      */
-
     function updateItemFields(slotRaw: string) {
         const slot = parseInt(slotRaw);
         if (isNaN(slot)) return;
 
         const playerIndex = selectedPlayer.getData();
         const selectedName = playerNames[playerIndex];
+        if (!selectedName) return;
 
         const playerObject = PlayerCache.getPlayerByName(selectedName);
         const container = playerObject?.getComponent("minecraft:inventory")?.container;
@@ -225,34 +260,31 @@ export function showInventoryEditor(player: Player) {
 
         const item = container.getItem(slot);
 
-        // Always update editable fields
+        // Keep target text input fields synced with focused item
         if (!item) {
             newName.setData("");
             newLore.setData("");
+            newItemAmount.setData("1");
         } else {
             newName.setData(item.nameTag ?? "");
             const lore = item.getLore?.() ?? [];
             newLore.setData(lore.join("\n"));
+            newItemAmount.setData(item.amount.toString());
         }
 
-        // If in "View Inventory" mode → DO NOT override label
+        // Avoid overwriting overall inventory overview if currently viewing Option 0
         if (selectedOption.getData() === 0) {
             return;
         }
 
-        // Otherwise show detailed item view
         if (!item) {
             inventoryText.setData(`Slot ${slot}: Empty`);
             return;
         }
 
-        const lines: string[] = [];
+        const lines: string[] = [`Slot: ${slot}`, `Item: ${item.typeId.replace("minecraft:", "")}`, `Amount: ${item.amount}`];
 
-        lines.push(`Slot: ${slot}`);
-        lines.push(`Item: ${item.typeId.replace("minecraft:", "")}`);
-        lines.push(`Amount: ${item.amount}`);
-
-        // Durability
+        // Parse durability details
         try {
             const durability = item.getComponent("minecraft:durability");
             if (durability) {
@@ -262,7 +294,7 @@ export function showInventoryEditor(player: Player) {
             }
         } catch {}
 
-        // Enchantments
+        // Parse enchantment list details
         try {
             const enchComp = item.getComponent("minecraft:enchantable");
             if (enchComp) {
@@ -279,10 +311,12 @@ export function showInventoryEditor(player: Player) {
             }
         } catch {}
 
+        // Custom name tag details
         if (item.nameTag) {
             lines.push(`Name: ${item.nameTag}`);
         }
 
+        // Item lore array
         const lore = item.getLore?.() ?? [];
         if (lore.length > 0) {
             lines.push("Lore:");
@@ -295,40 +329,21 @@ export function showInventoryEditor(player: Player) {
     }
 
     /**
-     * Updates an item's name tag and lore.
-     *
-     * - Name is applied if non-empty.
-     * - Lore is split by new lines and applied if non-empty.
-     *
-     * @param {Container} container - The container holding the item.
-     * @param {ItemStack} item - The item to modify.
-     * @param {number} slot - The slot index of the item.
+     * Applies new custom name tag and lore strings to chosen item stack
      */
-
     function applyNameLore(container: Container, item: ItemStack, slot: number) {
         const nameInput = newName.getData().trim();
-        if (nameInput.length > 0) {
-            item.nameTag = nameInput;
-        }
+        item.nameTag = nameInput.length > 0 ? nameInput : undefined;
 
         const loreInput = newLore.getData().trim();
-        if (loreInput.length > 0) {
-            item.setLore?.(loreInput.split("\n"));
-        }
+        item.setLore?.(loreInput.length > 0 ? loreInput.split("\n") : []);
 
         container.setItem(slot, item);
     }
 
     /**
-     * Repairs an item by resetting its durability damage to 0.
-     *
-     * If the item does not support durability, nothing happens.
-     *
-     * @param {Container} container - The container holding the item.
-     * @param {ItemStack} item - The item to repair.
-     * @param {number} slot - The slot index of the item.
+     * Resets item durability damage to 0
      */
-
     function repairItem(container: Container, item: ItemStack, slot: number) {
         try {
             const durability = item.getComponent("minecraft:durability");
@@ -340,16 +355,8 @@ export function showInventoryEditor(player: Player) {
     }
 
     /**
-     * Applies or removes an enchantment on an item.
-     *
-     * If the provided level is 0 or less, the enchantment is removed.
-     * Otherwise, the enchantment is added or updated if valid.
-     *
-     * @param {Container} container - The container holding the item.
-     * @param {ItemStack} item - The item to modify.
-     * @param {number} slot - The slot index of the item.
+     * Adds or updates enchantment entries on target item
      */
-
     function applyEnchant(container: Container, item: ItemStack, slot: number) {
         const enchantComp = item.getComponent("minecraft:enchantable");
         if (!enchantComp) return;
@@ -360,45 +367,31 @@ export function showInventoryEditor(player: Player) {
         const selectedEnchantment = enchantList[enchantmentIndex.getData()];
         if (!selectedEnchantment) return;
 
-        // REMOVE IF LEVEL IS 0 OR LESS
-        if (level <= 0) {
-            enchantComp.removeEnchantment(selectedEnchantment);
-            container.setItem(slot, item);
-            return;
+        // Clear existing enchantment instance first to prevent Bedrock component conflicts
+        enchantComp.removeEnchantment(selectedEnchantment);
+
+        if (level > 0) {
+            const enchantment = {
+                type: selectedEnchantment,
+                level: level,
+            };
+
+            if (enchantComp.canAddEnchantment(enchantment)) {
+                enchantComp.addEnchantment(enchantment);
+            }
         }
-
-        const enchantment = {
-            type: selectedEnchantment,
-            level: level,
-        };
-
-        if (!enchantComp.canAddEnchantment(enchantment)) return;
-
-        enchantComp.addEnchantment(enchantment);
 
         container.setItem(slot, item);
     }
 
     /**
-     * Transfers an item from one container to another.
-     *
-     * Moves the item from the source slot into the first available empty slot
-     * in the target container. If no space is found, the item is returned
-     * back to the source slot.
-     *
-     * @param {Container} sourceContainer - The container the item is being moved from.
-     * @param {Container} targetContainer - The container receiving the item.
-     * @param {ItemStack} item - The item stack to transfer.
-     * @param {number} sourceSlot - The slot index in the source container.
+     * Moves target item from source container into first open slot of target container
      */
-
     function transferItem(sourceContainer: Container, targetContainer: Container, item: ItemStack, sourceSlot: number) {
         if (!targetContainer) return;
 
-        // Remove item from source
         sourceContainer.setItem(sourceSlot, undefined);
 
-        // Find first empty slot in target
         for (let i = 0; i < targetContainer.size; i++) {
             if (!targetContainer.getItem(i)) {
                 targetContainer.setItem(i, item);
@@ -406,7 +399,32 @@ export function showInventoryEditor(player: Player) {
             }
         }
 
-        // If no empty slot found, return item to source
+        // Revert back if target inventory was full
         sourceContainer.setItem(sourceSlot, item);
+    }
+
+    /**
+     * Updates item stack quantity (clamped between 1 and item's max stack size)
+     */
+    function applyAmount(container: Container, item: ItemStack, slot: number) {
+        const amount = parseInt(newItemAmount.getData());
+        if (isNaN(amount) || amount <= 0) return;
+
+        item.amount = Math.min(amount, item.maxAmount);
+        container.setItem(slot, item);
+    }
+
+    /**
+     * Swaps two slot items (or moves to an empty slot) within the same player container
+     */
+    function swapSlots(container: Container, sourceSlot: number) {
+        const targetSlot = parseInt(targetSwapSlot.getData());
+        if (isNaN(targetSlot) || targetSlot < 0 || targetSlot >= container.size || sourceSlot === targetSlot) return;
+
+        const sourceItem = container.getItem(sourceSlot);
+        const targetItem = container.getItem(targetSlot);
+
+        container.setItem(sourceSlot, targetItem);
+        container.setItem(targetSlot, sourceItem);
     }
 }
