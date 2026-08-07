@@ -10,6 +10,9 @@ import { PlayerCache } from "penrose/classes/player-cache";
  * change stack quantities, or swap slot contents.
  */
 export function showInventoryEditor(player: Player) {
+    // Check if the executing player is online and valid before rendering
+    if (!player || !player.isValid) return;
+
     // DDUI reactive state bindings
     const selectedPlayer = new ObservableNumber(0, { clientWritable: true });
     const inventoryText = new ObservableString("", { clientWritable: true });
@@ -133,6 +136,8 @@ export function showInventoryEditor(player: Player) {
 
         // Submit action handler button
         .button("Apply Changes", () => {
+            if (!player.isValid) return;
+
             const playerIndex = selectedPlayer.getData();
             const selectedName = playerNames[playerIndex];
 
@@ -205,11 +210,16 @@ export function showInventoryEditor(player: Player) {
         .then((showResult) => {
             // Re-open UI if form failed to open due to UserBusy state
             if (showResult === DataDrivenScreenClosedReason.UserBusy) {
-                showInventoryEditor(player);
+                if (player.isValid) {
+                    showInventoryEditor(player);
+                }
             }
         })
         .catch((e) => {
-            console.error(e);
+            const errorString = String(e);
+            if (!errorString.includes("Player quit") && !errorString.includes("UserBusy")) {
+                console.error("Inventory Editor Form Error:", e);
+            }
         });
 
     /**
