@@ -1,20 +1,21 @@
-import { ItemUseAfterEvent, world, Player } from "@minecraft/server";
+import { ItemUseAfterEvent, Player } from "@minecraft/server";
 import { commandHandler } from "../../event-listeners/world-initialize";
 import { openMainGui } from "../../commands/gui/form-generator";
+import { EventCoordinator } from "../event-coordinator";
 
 /**
  * Handles item use events to trigger the Paradox GUI if a configured item is used.
  */
 class ItemUseSubscription {
-    private callback: ((event: ItemUseAfterEvent) => void) | null = null;
+    private cleanup: (() => void) | null = null;
 
     /**
-     * Subscribes to the world itemUse event.
+     * Subscribes to the itemUse event via the EventCoordinator.
      */
     subscribe() {
-        if (this.callback) return;
+        if (this.cleanup) return;
 
-        this.callback = (event: ItemUseAfterEvent) => {
+        this.cleanup = EventCoordinator.subscribeAfter("itemUse", (event: ItemUseAfterEvent) => {
             const player = event.source;
             if (!(player instanceof Player)) return;
 
@@ -24,15 +25,17 @@ class ItemUseSubscription {
             if (guiItem && event.itemStack.typeId === guiItem) {
                 openMainGui(player);
             }
-        };
-
-        world.afterEvents.itemUse.subscribe(this.callback);
+        });
     }
 
+    /**
+     * Unsubscribes from the itemUse event.
+     */
     unsubscribe() {
-        if (!this.callback) return;
-        world.afterEvents.itemUse.unsubscribe(this.callback);
-        this.callback = null;
+        if (!this.cleanup) return;
+
+        this.cleanup();
+        this.cleanup = null;
     }
 }
 
