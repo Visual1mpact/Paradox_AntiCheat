@@ -119,25 +119,25 @@ export const whoisCommand: Command = {
         }
 
         const dossier = [
-            `§l§2--- Paradox Dossier: ${onlineTarget?.name ?? query} ---`,
-            `§7Clearance: §fLevel ${clearance}`,
-            `§7Current Platform:  §f${currentPlatform}`,
-            `§7First Platform:    §f${metadata?.firstPlatform ?? "Unknown"}`,
-            `§7First Joined: §f${metadata?.joinDate ?? "N/A"}`,
-            `§7Last Seen:  §f${formatTimestamp(metadata?.lastSeen)}`,
-            `§7Dimension: §f${dimension}`,
-            `§7Position:  ${position}`,
-            `§7Health:    ${health}`,
-            `§7Ping:      ${ping}`,
+            `§r§l§2--- Paradox Dossier: ${onlineTarget?.name ?? query} ---§r`,
+            `§r§7Clearance: §fLevel ${clearance}`,
+            `§r§7Current Platform:  §f${currentPlatform}`,
+            `§r§7First Platform:    §f${metadata?.firstPlatform ?? "Unknown"}`,
+            `§r§7First Joined: §f${metadata?.joinDate ?? "N/A"}`,
+            `§r§7Last Seen:  §f${formatTimestamp(metadata?.lastSeen)}`,
+            `§r§7Dimension: §f${dimension}`,
+            `§r§7Position:  ${position}`,
+            `§r§7Health:    ${health}`,
+            `§r§7Ping:      ${ping}`,
         ];
 
         // 4. Level 4 Restricted Forensic Data
         if (senderClearance === 4) {
-            dossier.push(`§b[Forensic Data]`);
-            dossier.push(`§7Stored ID: §f${targetId}`);
+            dossier.push(`§r§b[Forensic Data]`);
+            dossier.push(`§r§7Stored ID: §f${targetId}`);
         }
 
-        dossier.push(`§2----------------------------------`);
+        dossier.push(`§r§2----------------------------------`);
 
         // Send the report privately to the moderator
         sender.sendMessage(dossier.join("\n"));
