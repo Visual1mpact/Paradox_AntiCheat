@@ -120,7 +120,7 @@ function createArchive(type = "zip") {
     if (type === "mcpack") {
         console.log("Modifying manifest.json for Realms build...");
         if (manifest.dependencies) {
-            manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net" && dep.module_name !== "@minecraft/server-admin");
+            manifest.dependencies = manifest.dependencies.filter((dep) => dep.module_name !== "@minecraft/server-net" && dep.module_name !== "@minecraft/server-admin" && dep.module_name !== "@minecraft/debug-utilities");
         }
     }
     fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
