@@ -75,6 +75,31 @@ The `channels` command allows players to manage private chat channels. Players c
 
 ---
 
+## chunkborders
+### At A Glance
+The `chunkborders` command toggles real-time, on-screen chunk boundary overlays, allowing players to visualize $16 \times 16$ world grid columns and sub-chunk vertical sections directly in world space.
+
+?> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- **Real-Time Debug Rendering:** Draws vertical grid lines, 16-block section rings, and corner pillars around the player's active chunk coordinates using native debug lines.
+- **Dynamic Chunk Movement Tracking:** Monitors player location and automatically recalculates and shifts debug boundary lines when entering a new chunk.
+- **Generator-Based Threading:** Spreads rendering operations across tick yields to maintain server performance and prevent spike latency.
+- **Toggle Mechanism:** Executing the command toggles overlay visibility on and off. Disabling clears all rendered shapes and frees memory resources.
+
+> Usage: ":chunkborders"
+> Example: :chunkborders
+
+### **GUI Integration**
+- Found under the **Utility** category in the main GUI.
+- **Toggle Chunk Borders**: Selecting this option opens the UI overlay controls to toggle border visibility on or off without needing manual chat invocation.
+
+### **Notes**
+- **Platform Availability:** Utilizes native debug drawing capabilities. If executed on unsupported platforms (such as Minecraft Realms), the command gracefully catches the exception and displays an operational warning.
+- **Building & Technical Utility:** Extremely helpful for aligning perimeter bases, configuring redstone mechanics across chunk boundaries, and mapping slime farm spawn limits.
+
+---
+
 ## debugdb
 ### At A Glance
 The `debugdb` command allows admins to inspect all initialized database entries in detail. It provides a GUI view of the databases, including:
