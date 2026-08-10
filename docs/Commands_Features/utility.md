@@ -256,6 +256,37 @@ The `home` command allows players to manage personal locations. Players can save
 
 ---
 
+## info
+### At A Glance
+The `info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and project philosophy.
+
+?> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- Shows a **MessageFormData GUI** with all relevant information for the server.
+- Information includes:
+  - **Version** – Current Paradox AC version dynamically sourced from project versioning.
+  - **License** – GPL-3.0.
+  - **Authors** – Author (Visual1mpact) and Co-Author (Pete9xi).
+  - **Links** – Official GitHub, Discord, and Wiki repositories.
+  - **Project Philosophy** – Brief description explaining how Paradox utilizes sophisticated algorithms and advanced detection techniques to maintain fair play across Realms and BDS environments.
+- The GUI **automatically retries** if the player is busy (`UserBusy`).
+- Form features navigation buttons to **Close** or go **Back** to the main administrative GUI.
+- Players are prompted to **close their chat window** before the form is displayed.
+
+> Usage: ":info" 
+> Example: :info
+
+### **GUI Integration**
+- Found under the **Utility** category.
+- **View Paradox Info**: Action item that opens the interactive information form.
+
+### **Notes**
+- Available to all players regardless of security clearance level.
+- Displays structured section headers with custom formatting for readability.
+
+---
+
 ## invclone
 ### At A Glance
 The `invclone` command allows admins to clone a player's entire inventory or ender chest into chests placed in the world for inspection, or to remove previously cloned chests.
@@ -299,6 +330,38 @@ The `invclone` command allows admins to clone a player's entire inventory or end
 
 ---
 
+## inventoryeditor
+### At A Glance
+The `inventoryeditor` command allows administrators to inspect and dynamically modify an online player's inventory using an interactive Data-Driven UI (DDUI) form.
+
+?> Required Clearance Level To Execute: `3`
+
+### **How It Works**
+- Administrators select a target online player from a dynamically updated player dropdown.
+- Provides multi-mode inventory editing capabilities without needing external commands or chest blocks:
+  - **View Inventory**: Displays a full list view breakdown of all items and quantities across slots.
+  - **Edit Item Name and Lore**: Applies custom item display name tags and multi-line lore text.
+  - **Edit Item Enchantments**: Adds, updates, or removes item enchantments and custom levels.
+  - **Repair Item**: Resets item durability damage back to full strength.
+  - **Transfer Item to Another Player**: Moves selected items directly into open slots of another player's inventory.
+  - **Edit Stack Amount**: Adjusts quantity for stacked items (clamped to maximum valid stack limits).
+  - **Swap Slots**: Moves or swaps item positions within the target player's inventory slots.
+- Real-time reactivity updates item attributes (durability, current enchantments, lore, names) as you specify slot numbers.
+
+> Usage: ":inventoryeditor"
+> Example: :inventoryeditor
+
+### **GUI Integration**
+- Found under the **Utility** category in the administrative GUI.
+- Executing the command opens the DDUI controls directly. Players must close their chat window for the interface to display properly.
+
+### **Notes**
+- Selecting slots updates the detailed view showing item ID, stack quantity, current durability (`Current/Max`), active enchantments, custom names, and existing lore lines.
+- Safe execution handling automatically re-opens the UI if interrupted by client UI busy states (`DataDrivenScreenClosedReason.UserBusy`).
+- Ensure appropriate clearance before altering player inventories and use responsibly.
+
+---
+
 ## invsee
 ### At A Glance
 The `invsee` command allows players with sufficient clearance to view another player's inventory or ender chest in detail, including items, quantities, and enchantments.
@@ -323,33 +386,6 @@ The `invsee` command allows players with sufficient clearance to view another pl
 - Player names are **case-sensitive**.
 - Inventory components are retrieved securely; missing or invalid components will trigger an error.
 - Intended for **moderation** or **administrative oversight**.
-
----
-
-## info
-### At A Glance
-The `info` command displays a GUI-based overview of the **Paradox AntiCheat** project, including version, authors, license, links, and description.
-
-?> Required Clearance Level To Execute: `1`
-
-### **How It Works**
-- Shows a **MessageFormData GUI** with all relevant information for the server.
-- Information includes:
-  - **Version** – Current Paradox AC version.
-  - **License** – License type (GPL-3.0).
-  - **Authors** – Main and co-authors.
-  - **Links** – GitHub, Discord, and Wiki.
-  - **Description** – Brief explanation of the project and design philosophy.
-- The GUI **automatically retries** if the player is busy.
-- Players are prompted to **close their chat window** before the form is displayed.
-
-> Usage: ":info"  
-> Example: :info
-
-### Notes
-- The command is **available to all players** (security clearance 1).
-- The displayed GUI is **read-only**; players cannot modify content through this form.
-- Designed for quick access to Paradox AC information without needing console access.
 
 ---
 
