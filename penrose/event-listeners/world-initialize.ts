@@ -83,6 +83,7 @@ import {
     WarnsSchema,
     PlayerMetadataSchema,
     HomesSchema,
+    WaypointsSchema,
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
@@ -150,6 +151,7 @@ let invSyncAuditDB: OptimizedDatabase<InvSyncAudit>;
 let chestLockDB: OptimizedDatabase<ChestLocksSchema>;
 let playerMetadataDB: OptimizedDatabase<PlayerMetadataSchema>;
 let homesDB: OptimizedDatabase<HomesSchema>;
+let waypointsDB: OptimizedDatabase<WaypointsSchema>;
 let commandHandler: CommandHandler;
 
 // Define all available commands
@@ -247,8 +249,9 @@ async function initializeSystems() {
     chestLockDB = new OptimizedDatabase("chestLocks");
     playerMetadataDB = new OptimizedDatabase("playerMetadata");
     homesDB = new OptimizedDatabase("homes");
+    waypointsDB = new OptimizedDatabase("waypoints");
 
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB];
 
     // 2. Run Database Migrations (v1 Uncompressed -> v2 LZW Compressed)
     console.log("[Paradox] Running database v2.0 compression migrations...");
@@ -557,4 +560,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB };

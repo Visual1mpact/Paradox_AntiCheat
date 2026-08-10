@@ -1,4 +1,4 @@
-import { Player } from "@minecraft/server";
+import { Player, Vector3 } from "@minecraft/server";
 
 /**
  * Represents the unique identifier for a Player (`Player.id`).
@@ -235,5 +235,28 @@ export type HomesSchema = {
     [playerId: PlayerID]: {
         locations: string[];
         maxHomes?: number;
+    };
+};
+
+/**
+ * Schema for stored waypoints.
+ * Contains name, coordinate position, dimension ID, and creation timestamp.
+ */
+export interface WaypointData {
+    name: string;
+    location: Vector3;
+    dimension: string;
+    timestamp: number;
+}
+
+/**
+ * Schema for the waypoints database.
+ * Maps a player's unique ID (`Player.id`) to their navigation HUD state and saved waypoints.
+ */
+export type WaypointsSchema = {
+    [playerId: PlayerID]: {
+        activeWaypointName?: string;
+        maxWaypoints?: number;
+        savedWaypoints: Record<string, WaypointData>;
     };
 };

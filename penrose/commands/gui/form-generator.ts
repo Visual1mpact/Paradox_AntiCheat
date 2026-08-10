@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
-import { chestLockDB, commandHandler, homesDB } from "../../event-listeners/world-initialize";
+import { chestLockDB, commandHandler, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoESImport from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/player-cache";
@@ -24,6 +24,17 @@ class GUIManager {
         this.player = player;
         // Retrieve the player's security clearance or default to 0
         this.playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+    }
+
+    /**
+     * Helper to safely handle form errors (ignoring player quit/rejection errors).
+     */
+    private handleFormError(err: unknown): void {
+        const errorMsg = String(err);
+        if (errorMsg.includes("Player quit before responding") || errorMsg.includes("FormRejectError")) {
+            return; // Gracefully ignore player disconnects while UI is open
+        }
+        console.error("[Paradox] GUI Error:", err);
     }
 
     /**
@@ -84,7 +95,7 @@ class GUIManager {
                 await this.openCategoryMenu(selected.category, selected.commands);
             }
         } catch (err) {
-            console.error(err);
+            this.handleFormError(err);
         }
     }
 
@@ -111,7 +122,7 @@ class GUIManager {
             // Open the command-specific menu (action or modal)
             await this.buildCommandMenu(selectedCommand);
         } catch (err) {
-            console.error(err);
+            this.handleFormError(err);
         }
     }
 
@@ -168,7 +179,7 @@ class GUIManager {
                 await this.handleActionSelection(selectedAction, dynamicFields, title, command, commandOrder);
             }
         } catch (err) {
-            console.error(err);
+            this.handleFormError(err);
         }
     }
 
@@ -247,16 +258,10 @@ class GUIManager {
                             return key.replace(/^minecraft:/, ""); // remove prefix for display
                         });
                     } else if (field.sourceType === "playerWaypoints") {
-                        // Pull saved waypoint names from the player's dynamic property
-                        const raw = this.player.getDynamicProperty("paradox:waypoint_data") as string | undefined;
-                        if (raw) {
-                            try {
-                                const data = JSON.parse(raw);
-                                field.options = Object.keys(data.savedWaypoints || {});
-                            } catch {
-                                field.options = [];
-                            }
-                        }
+                        // Pull saved waypoint names from waypointsDB
+                        const dbEntry = (await waypointsDB.get(this.player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
+                        const savedWaypoints = dbEntry?.savedWaypoints ?? {};
+                        field.options = Object.keys(savedWaypoints);
                         if (!field.options || field.options.length === 0) field.options = ["No Waypoints Saved"];
                     } else if (field.sourceType === "playerHomes") {
                         // Pull saved homes from database and decrypt names for display
@@ -295,7 +300,7 @@ class GUIManager {
             // Execute the command with optional encryption
             command.execute(chatSendBeforeEvent, finalCommand, cryptoES ? CryptoES : undefined);
         } catch (err) {
-            console.error(err);
+            this.handleFormError(err);
         }
     }
 
