@@ -710,20 +710,20 @@ The `waypoint` command provides players with a personal navigation GPS. It allow
 - **Auto-Arrival**: Automatically stops navigation once you are within 3 blocks of the active target.
 - **Limit Management (Level 4)**: Admins can modify maximum allowed waypoints per player or server-wide.
 
-> Usage: `:waypoint <set [name] [--no-gps] | goto [name] | clear [name] | list | rename <old> --to <new>>`
-> Usage (Admin): `:waypoint [ -t | --target <player> | -g | --global ] [ -l | --limit <amount> ] [ --reset-limit ]`
+> Usage: `:waypoint <set [name] [--no-gps] | goto [name] | clear [name] | list | rename <old> --to <new>>`  
+> Usage (Admin): `:waypoint [ -t | --target <player> | -g | --global ] [ -l | --limit <amount> ] [ --reset-limit ]`  
 
-> Example: :waypoint set MyHouse
-> Example: :waypoint set SecretBase --no-gps
-> Example: :waypoint rename MyHouse --to MainHQ
-> Example: :waypoint goto MainHQ
-> Example: :waypoint clear MainHQ
-> Example: :waypoint clear
-> Example: :waypoint list
-> Example (Admin): :waypoint -g -l 10
-> Example (Admin): :waypoint -g --reset-limit
-> Example (Admin): :waypoint -t Steve -l 8
-> Example (Admin): :waypoint -t Steve --reset-limit
+> Example: :waypoint set MyHouse  
+> Example: :waypoint set SecretBase --no-gps  
+> Example: :waypoint rename MyHouse --to MainHQ  
+> Example: :waypoint goto MainHQ  
+> Example: :waypoint clear MainHQ  
+> Example: :waypoint clear  
+> Example: :waypoint list  
+> Example (Admin): :waypoint -g -l 10  
+> Example (Admin): :waypoint -g --reset-limit  
+> Example (Admin): :waypoint -t Steve -l 8  
+> Example (Admin): :waypoint -t Steve --reset-limit  
 
 ---
 
