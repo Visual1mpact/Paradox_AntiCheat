@@ -283,7 +283,7 @@ The `home` command allows players to manage personal locations. Players can save
 
 ### **Notes**
 - Home names are **case-sensitive**.
-- Limit Hierarchy: **Per-Player Override** $\rightarrow$ **Global Dynamic Limit** $\rightarrow$ **Default (5)**.
+- Limit Hierarchy: **Per-Player Override** → **Global Dynamic Limit** → **Default (5)**.
 - Player limit overrides persist in `homesDB` even when the target player is offline.
 - Teleportation checks the dimension; if invalid, the teleport fails.
 - If a player reaches their maximum allocated home limit, they must delete an existing home or have an administrator increase their capacity before adding a new one.
