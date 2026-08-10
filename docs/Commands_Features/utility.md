@@ -695,35 +695,35 @@ The `transfer` command allows players to connect to another **Minecraft Bedrock 
 
 ## waypoint
 ### At A Glance
-The `waypoint` command provides players with a personal navigation GPS[cite: 13]. It allows you to save multiple destinations, activate navigation to any of them, and provides a real-time directional HUD on your screen[cite: 13]. Server administrators can also configure maximum waypoint limits globally or per player[cite: 13].
+The `waypoint` command provides players with a personal navigation GPS. It allows you to save multiple destinations, activate navigation to any of them, and provides a real-time directional HUD on your screen. Server administrators can also configure maximum waypoint limits globally or per player.
 
-?> Required Clearance Level To Execute: `1` (User Actions) | `4` (Limit Management)[cite: 13]
+?> Required Clearance Level To Execute: `1` (User Actions) | `4` (Limit Management)
 
 ### **How It Works**
-- **Set Waypoint**: Saves your current location as a named navigation target and activates its HUD[cite: 13]. Appending `--no-gps` saves the location without immediately starting active tracking[cite: 13].
-- **Rename Waypoint**: Allows you to change the identifier of an existing saved waypoint[cite: 13].
-- **Go To Waypoint**: Activates the directional HUD for a previously saved waypoint[cite: 13].
-- **Clear Waypoint**: Removes a specific named waypoint[cite: 13]. If no name is provided, it stops the currently active navigation target[cite: 13].
-- **List Waypoints**: Displays all your saved waypoints alongside coordinate/dimension info and current usage against your maximum waypoint limit[cite: 13].
-- **Directional HUD**: An arrow appears on your action bar pointing toward the active target, along with the distance[cite: 13].
-- **Dimension Check**: Notifies you if you are in a different dimension than your active waypoint[cite: 13].
-- **Auto-Arrival**: Automatically stops navigation once you are within 3 blocks of the active target[cite: 13].
-- **Limit Management (Level 4)**: Admins can modify maximum allowed waypoints per player or server-wide[cite: 13].
+- **Set Waypoint**: Saves your current location as a named navigation target and activates its HUD. Appending `--no-gps` saves the location without immediately starting active tracking.
+- **Rename Waypoint**: Allows you to change the identifier of an existing saved waypoint.
+- **Go To Waypoint**: Activates the directional HUD for a previously saved waypoint.
+- **Clear Waypoint**: Removes a specific named waypoint. If no name is provided, it stops the currently active navigation target.
+- **List Waypoints**: Displays all your saved waypoints alongside coordinate/dimension info and current usage against your maximum waypoint limit.
+- **Directional HUD**: An arrow appears on your action bar pointing toward the active target, along with the distance.
+- **Dimension Check**: Notifies you if you are in a different dimension than your active waypoint.
+- **Auto-Arrival**: Automatically stops navigation once you are within 3 blocks of the active target.
+- **Limit Management (Level 4)**: Admins can modify maximum allowed waypoints per player or server-wide.
 
-> Usage: `:waypoint <set [name] [--no-gps] | goto [name] | clear [name] | list | rename <old> --to <new>>`[cite: 13]
-> Usage (Admin): `:waypoint [ -t | --target <player> | -g | --global ] [ -l | --limit <amount> ] [ --reset-limit ]`[cite: 13]
+> Usage: `:waypoint <set [name] [--no-gps] | goto [name] | clear [name] | list | rename <old> --to <new>>`
+> Usage (Admin): `:waypoint [ -t | --target <player> | -g | --global ] [ -l | --limit <amount> ] [ --reset-limit ]`
 
-> Example: :waypoint set MyHouse[cite: 13]
-> Example: :waypoint set SecretBase --no-gps[cite: 13]
-> Example: :waypoint rename MyHouse --to MainHQ[cite: 13]
-> Example: :waypoint goto MainHQ[cite: 13]
-> Example: :waypoint clear MainHQ[cite: 13]
-> Example: :waypoint clear[cite: 13]
-> Example: :waypoint list[cite: 13]
-> Example (Admin): :waypoint -g -l 10[cite: 13]
-> Example (Admin): :waypoint -g --reset-limit[cite: 13]
-> Example (Admin): :waypoint -t Steve -l 8[cite: 13]
-> Example (Admin): :waypoint -t Steve --reset-limit[cite: 13]
+> Example: :waypoint set MyHouse
+> Example: :waypoint set SecretBase --no-gps
+> Example: :waypoint rename MyHouse --to MainHQ
+> Example: :waypoint goto MainHQ
+> Example: :waypoint clear MainHQ
+> Example: :waypoint clear
+> Example: :waypoint list
+> Example (Admin): :waypoint -g -l 10
+> Example (Admin): :waypoint -g --reset-limit
+> Example (Admin): :waypoint -t Steve -l 8
+> Example (Admin): :waypoint -t Steve --reset-limit
 
 ---
 
