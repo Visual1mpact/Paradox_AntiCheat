@@ -43,6 +43,10 @@
         {
             "module_name": "@minecraft/server-admin",
             "version": "1.0.0-beta"
+        },
+        {
+            "module_name": "@minecraft/debug-utilities",
+            "version": "1.0.0-beta"
         }
     ]
 }
