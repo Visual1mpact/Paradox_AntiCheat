@@ -250,9 +250,9 @@ The `history` command provides a chronological journey of the Paradox AntiCheat 
 
 ## home
 ### At A Glance
-The `home` command allows players to manage personal locations. Players can save, delete, rename, list, and teleport to homes within the game.
+The `home` command allows players to manage personal locations. Players can save, delete, rename, list, and teleport to homes within the game. Level 4 administrators can also adjust or reset home limits globally or for specific target players.
 
-?> Required Clearance Level To Execute: `1`  
+?> Required Clearance Level To Execute: `1` (User Actions) | `4` (Limit Management)
 
 ### **How It Works**
 - Players can **set** a home at their current coordinates.
@@ -261,22 +261,32 @@ The `home` command allows players to manage personal locations. Players can save
 - **Teleport** moves the player to a saved home.
 - **List** shows all saved homes, including their coordinates and dimension.
 - Homes are **encrypted** per player for security.
-- Maximum of **5 homes per player**.
+- Default limit is **5 homes per player** unless overridden by a server administrator.
+- **Admin Management (Clearance 4):**
+  - **Global Limit:** Set or reset the default home capacity for every player across the server (`-g` / `--global`).
+  - **Player Override:** Set or reset a custom home capacity for an individual target player (`-t` / `--target`).
 
 ?> Note: Players cannot use `:home` while imprisoned.  
 
 > Usage: ":home <set | delete | rename | teleport | list | help> [homeName]"  
+> Usage (Admin): ":home [ -g | --global | -t | --target <player> ] [ -l | --limit <amount> ] [ --reset-limit ]"  
 > Example: :home set MyHome  
 > Example: :home delete MyHome  
-> Example: :home rename MyHome --to NewHome
+> Example: :home rename MyHome --to NewHome  
 > Example: :home teleport MyHome  
 > Example: :home list  
+> Example: :home -g -l 10  
+> Example: :home -g --reset-limit  
+> Example: :home -t PlayerName -l 8  
+> Example: :home -t PlayerName --reset-limit  
 > Example: :home help  
 
 ### **Notes**
 - Home names are **case-sensitive**.
+- Limit Hierarchy: **Per-Player Override** $\rightarrow$ **Global Dynamic Limit** $\rightarrow$ **Default (5)**.
+- Player limit overrides persist in `homesDB` even when the target player is offline.
 - Teleportation checks the dimension; if invalid, the teleport fails.
-- If the maximum number of homes is reached, players must delete an existing home before adding a new one.
+- If a player reaches their maximum allocated home limit, they must delete an existing home or have an administrator increase their capacity before adding a new one.
 - All saved locations are secured via per-player encryption to prevent tampering.
 
 ---
