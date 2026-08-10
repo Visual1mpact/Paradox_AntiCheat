@@ -7,7 +7,6 @@ on:
       - 'docs/**'
   workflow_dispatch:
 
-# Opt into Node.js 24 early to avoid deprecation warnings and future breakage
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -29,19 +28,16 @@ jobs:
 
     steps:
       - name: Checkout
-        # Latest major release of checkout with Node 24 support
-        uses: actions/checkout@v6  # supports Node.js 24 and runner improvements :contentReference[oaicite:1]{index=1}
+        uses: actions/checkout@v4
 
       - name: Setup Pages
-        # Use latest major tag for configure-pages
-        uses: actions/configure-pages@v6  # (if available) otherwise stick to v5 and test Node24 :contentReference[oaicite:2]{index=2}
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages Artifact
-        # Latest version for artifact upload for Pages
-        uses: actions/upload-pages-artifact@v4  # Latest v4 release :contentReference[oaicite:3]{index=3}
+        uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4  # Latest major for deploy-pages :contentReference[oaicite:4]{index=4}
+        uses: actions/deploy-pages@v4
