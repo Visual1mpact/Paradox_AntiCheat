@@ -77,7 +77,7 @@ The `channels` command allows players to manage private chat channels. Players c
 
 ## chunkborders
 ### At A Glance
-The `chunkborders` command toggles real-time, on-screen chunk boundary overlays, allowing players to visualize $16 \times 16$ world grid columns and sub-chunk vertical sections directly in world space.
+The `chunkborders` command toggles real-time, on-screen chunk boundary overlays, allowing players to visualize 16 x 16 world grid columns and sub-chunk vertical sections directly in world space.
 
 ?> Required Clearance Level To Execute: `1`
 
