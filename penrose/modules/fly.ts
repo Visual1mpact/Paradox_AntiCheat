@@ -1,6 +1,7 @@
-import { GameMode, ItemUseBeforeEvent, PlayerLeaveBeforeEvent, system, Vector3 } from "@minecraft/server";
+import { GameMode, ItemUseBeforeEvent, PlayerLeaveBeforeEvent, system, Vector3, Player } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 /** Flag indicating whether the module is manually toggled on */
 let isModuleActive = false;
@@ -10,11 +11,36 @@ let isJobActive = false;
 let resetSub: ((event: PlayerLeaveBeforeEvent) => void) | undefined;
 let itemUseSub: ((event: ItemUseBeforeEvent) => void) | undefined;
 
+/** Tracks the last tick a fly alert was sent per player to prevent spam */
+const alertCooldowns = new Map<string, number>();
+const ALERT_COOLDOWN_TICKS = 200; // 10 seconds cooldown between staff alerts per player
+
+/**
+ * Distributes an in-game alert notification to active staff players when
+ * a player is detected flying/hovering.
+ */
+function alertStaff(player: Player): void {
+    const currentTick = system.currentTick;
+    const lastAlert = alertCooldowns.get(player.id) ?? 0;
+
+    // Prevent spam by checking if the cooldown interval has passed
+    if (currentTick - lastAlert < ALERT_COOLDOWN_TICKS) return;
+
+    alertCooldowns.set(player.id, currentTick);
+
+    const staff = getSecurityClearanceLevel4Players();
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Fly] §f${player.name} §7was detected flying/hovering.`);
+    }
+}
+
 async function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent) {
     const player = event.player;
     const isValid = player && player.isValid;
     if (isValid) {
         player.setDynamicProperty("tridentUsed", false);
+        alertCooldowns.delete(player.id);
     }
 }
 
@@ -109,6 +135,8 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                     player.setDynamicProperty("hoverTime", hoverTime);
 
                     if (hoverTime >= hoverTimeThreshold) {
+                        alertStaff(player); // Trigger anti-spam alert to staff
+
                         const airport = player.getDynamicProperty("airportLanding") as Vector3;
                         if (airport) {
                             player.teleport(airport, {
@@ -179,4 +207,6 @@ export function stopFlyCheck(): void {
         EventCoordinator.unsubscribeBefore("playerLeave", resetSub);
         resetSub = undefined;
     }
+
+    alertCooldowns.clear();
 }

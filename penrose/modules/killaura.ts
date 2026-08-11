@@ -77,12 +77,18 @@ function isSuspiciousAttackPattern(attackTimes: number[]): boolean {
 }
 
 /**
- * Notify Level 4 staff of a suspicious killaura attempt.
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a suspicious attack occurs.
+ *
+ * @param {Player} attacker - The player attempting the attack.
+ * @param {number} distance - The distance at which the attack occurred.
+ * @param {number} recentAttacks - Number of recent hits within 1 second.
  */
-function alertStaff(attacker: Player, distance: number, recentAttacks: number) {
+function alertStaff(attacker: Player, distance: number, recentAttacks: number): void {
     const staff = getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
-        if (s.id === attacker.id) continue;
+        if (!s.isValid || s.id === attacker.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[KillAura] §f${attacker.name} §7suspicious attack: ${recentAttacks} hits, distance ${distance.toFixed(2)}`);
     }
 }

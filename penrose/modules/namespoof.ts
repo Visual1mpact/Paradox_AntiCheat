@@ -1,6 +1,7 @@
 import { PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, Player } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 // Subscription holders for enabling/disabling
 let playerSpawnSubscription: ((arg: PlayerSpawnAfterEvent) => void) | null = null;
@@ -12,6 +13,22 @@ const MAX_NAME_LENGTH = 16;
 
 // Dictionary to track logged-in player names for collision detection
 const playerNameMap = new Map<string, Player>();
+
+/**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a namespoof violation occurs.
+ *
+ * @param {Player} player - The player violating naming rules.
+ * @param {string} reason - The reason/action taking place.
+ */
+function alertStaff(player: Player, reason: string): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Namespoof] §f${player.name} §7was ${reason}.`);
+    }
+}
 
 /**
  * Extracts the base name from a player's name by removing suffixes.
@@ -62,6 +79,7 @@ async function checkDuplicateName(player: Player) {
  * @param {string} reason - The reason for kicking the player.
  */
 async function kickPlayer(player: Player, reason: string) {
+    alertStaff(player, reason);
     player.runCommand(`kick @s ${reason}`);
     player.sendMessage(`§2[§7Paradox§2]§o§7 Player "${player.name}§7" has been ${reason}§7.`);
 }

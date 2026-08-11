@@ -219,13 +219,15 @@ function checkVeinJump(profile: MiningProfile, playerId: string, location: { x: 
 ============================================================ */
 
 /**
- * Sends alert messages to security staff.
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when X-ray suspicion rises.
  */
 function alertStaff(playerId: string, profile: MiningProfile, level: string) {
     const player = PlayerCache.getPlayerById(playerId);
     const staff = getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
-        if (player && s.id === player.id) continue;
+        if (!s.isValid || (player && s.id === player.id)) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 ${level} §f${player?.name ?? playerId} §7Suspicion: §c${profile.suspicion}`);
     }
 }

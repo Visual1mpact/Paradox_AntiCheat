@@ -1,9 +1,26 @@
-import { world, PlayerDimensionChangeAfterEvent } from "@minecraft/server";
+import { world, Player, PlayerDimensionChangeAfterEvent } from "@minecraft/server";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 /** Reference to the dimension change event subscription */
 let dimensionChangeSub: ((event: PlayerDimensionChangeAfterEvent) => void) | undefined;
+
+/**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a player attempts to enter a locked dimension.
+ *
+ * @param {Player} player - The player attempting to enter the locked dimension.
+ * @param {string} dimName - The formatted name of the locked dimension.
+ */
+function alertStaff(player: Player, dimName: string): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[DimensionLock] §f${player.name} §7attempted to enter locked dimension: §e${dimName}§7.`);
+    }
+}
 
 /**
  * Monitors dimension changes to prevent access to locked dimensions.
@@ -30,6 +47,9 @@ async function handleDimensionChange(event: PlayerDimensionChangeAfterEvent) {
 
         const dimName = toDimension.id.split(":")[1].replace("_", " ");
         player.sendMessage(`§2[§7Paradox§2]§o§7 Access to the §e${dimName}§7 dimension is currently §clocked§7.`);
+
+        // Notify staff of the violation attempt
+        alertStaff(player, dimName);
     }
 }
 

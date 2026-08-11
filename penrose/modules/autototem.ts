@@ -31,10 +31,15 @@ let isJobActive = false;
 let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
 
 /**
- * Sends a formatted alert to level 4 staff about a violation.
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when an AutoTotem violation occurs.
+ *
+ * @param {Player} player - The player flagged for suspicious totem replenishment.
+ * @param {number} ticks - The time in ticks taken to replenish the totem.
  */
-function alertStaff(player: Player, ticks: number) {
+function alertStaff(player: Player, ticks: number): void {
     const staff = getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
         const isStaffValid = s.isValid;
         if (!isStaffValid || s.id === player.id) continue;

@@ -11,6 +11,22 @@ import { EventCoordinator } from "../classes/event-coordinator";
 const MIN_CRIT_HEIGHT = 0.55;
 
 /**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a Criticals violation occurs.
+ *
+ * @param {Player} attacker - The player flagged for a Packet-Crit.
+ * @param {number} yVelocity - The attacker's vertical velocity when flagged.
+ */
+function alertStaff(attacker: Player, yVelocity: number): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === attacker.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Criticals] §f${attacker.name} §7flagged for Packet-Crits (Y-Vel: ${yVelocity.toFixed(3)})`);
+    }
+}
+
+/**
  * Monitors players for "Packet Criticals" where they manipulate their
  * on-ground state to force critical hits without jumping naturally.
  */
@@ -57,17 +73,6 @@ async function handleHurtEvent(event: EntityHurtBeforeEvent) {
 
             alertStaff(attacker, velocity.y);
         }
-    }
-}
-
-/**
- * Notify staff about the Criticals violation.
- */
-function alertStaff(attacker: Player, yVelocity: number) {
-    const staff = getSecurityClearanceLevel4Players();
-    for (const s of staff) {
-        if (s.id === attacker.id) continue;
-        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Criticals] §f${attacker.name} §7flagged for Packet-Crits (Y-Vel: ${yVelocity.toFixed(3)})`);
     }
 }
 

@@ -1,5 +1,6 @@
-import { system, Block, PlayerLeaveBeforeEvent, PlayerPlaceBlockBeforeEvent, Vector3, GameMode } from "@minecraft/server";
+import { system, Block, PlayerLeaveBeforeEvent, PlayerPlaceBlockBeforeEvent, Vector3, GameMode, Player } from "@minecraft/server";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 // Configuration Constants
 const SCAFFOLD_THRESHOLD = 3; // Number of blocks placed in quick succession
@@ -9,9 +10,35 @@ const EXCLUDED_BLOCKS = ["minecraft:scaffolding"]; // Excluded blocks like scaff
 // Data structure to keep track of block placements
 const playerBlockPlacements: Map<string, { positions: Block[]; times: number[] }> = new Map();
 
+/** Tracks the last tick a scaffold alert was sent per player to prevent spam */
+const alertCooldowns = new Map<string, number>();
+const ALERT_COOLDOWN_TICKS = 100; // 5 seconds cooldown between staff alerts per player
+
 // Variables to store the subscription references
 let blockPlacementCallback: ((arg: PlayerPlaceBlockBeforeEvent) => void) | undefined;
 let playerLeaveCallback: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
+
+/**
+ * Distributes an in-game alert notification to active staff players when
+ * a player is detected using scaffold hacks.
+ *
+ * @param {Player} player - The player detected using scaffold hacks.
+ */
+function alertStaff(player: Player): void {
+    const currentTick = system.currentTick;
+    const lastAlert = alertCooldowns.get(player.id) ?? 0;
+
+    // Prevent spam by checking if the cooldown interval has passed
+    if (currentTick - lastAlert < ALERT_COOLDOWN_TICKS) return;
+
+    alertCooldowns.set(player.id, currentTick);
+
+    const staff = getSecurityClearanceLevel4Players();
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Scaffold] §f${player.name} §7was detected using Scaffold.`);
+    }
+}
 
 /**
  * Unsubscribes from the scaffold detection events.
@@ -26,6 +53,7 @@ export function stopScaffoldCheck() {
         playerLeaveCallback = undefined;
     }
     playerBlockPlacements.clear();
+    alertCooldowns.clear();
 }
 
 /**
@@ -113,6 +141,8 @@ export function startScaffoldCheck() {
         // Detect potential scaffolding and handle suspicious blocks
         const suspiciousBlocks = detectScaffolding(playerId);
         if (suspiciousBlocks.length > 0) {
+            alertStaff(player);
+
             system.run(() => {
                 // Handle block replacement and inventory
                 const inventory = player.getComponent("inventory");
@@ -133,6 +163,7 @@ export function startScaffoldCheck() {
     // Clean up when a player leaves
     playerLeaveCallback = (event: PlayerLeaveBeforeEvent) => {
         playerBlockPlacements.delete(event.player.id);
+        alertCooldowns.delete(event.player.id);
     };
 
     // Subscribe to events

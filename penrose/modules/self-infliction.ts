@@ -1,6 +1,22 @@
 import { Player, EntityHitEntityAfterEvent } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+
+/**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a self-attack violation occurs.
+ *
+ * @param {Player} attacker - The player attempting to attack themselves.
+ */
+function alertStaff(attacker: Player): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === attacker.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Self-Infliction] §f${attacker.name} §7was banned for attacking themselves.`);
+    }
+}
 
 /**
  * Handle the entity hit event to check if the attacker attacked themselves.
@@ -14,6 +30,8 @@ async function handleSelfAttack(eventData: EntityHitEntityAfterEvent): Promise<v
 
     if (!(attacker instanceof Player && victim instanceof Player)) return;
     if (attacker.id !== victim.id) return;
+
+    alertStaff(attacker);
 
     const reason = "Using a client to attack oneself";
     const bannedPlayers = (await banlistDB.get("players")) ?? {};

@@ -1,7 +1,24 @@
-import { GameMode, PlayerGameModeChangeAfterEvent } from "@minecraft/server";
+import { GameMode, PlayerGameModeChangeAfterEvent, Player } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { GamemodeCheckSettings } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+
+/**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when an illegal gamemode change occurs.
+ *
+ * @param {Player} player - The player attempting the unauthorized gamemode change.
+ * @param {GameMode} attemptedGM - The illegal gamemode they attempted to switch to.
+ */
+function alertStaff(player: Player, attemptedGM: GameMode): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Gamemode] §f${player.name} §7attempted to switch to §e${attemptedGM}`);
+    }
+}
 
 /**
  * Handles game mode change events and enforces allowed game modes.
@@ -26,6 +43,9 @@ async function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): Prom
     const isAllowed = (gm: GameMode): boolean => settings[gm as keyof GamemodeCheckSettings] ?? false;
 
     if (isAllowed(to)) return;
+
+    // VIOLATION VERIFIED: Send staff alert before reverting/reassigning gamemode
+    alertStaff(player, to);
 
     if (isAllowed(from)) {
         player.setGameMode(from);

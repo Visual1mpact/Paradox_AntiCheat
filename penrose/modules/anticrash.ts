@@ -16,6 +16,23 @@ let serverNet: typeof import("@minecraft/server-net").beforeEvents;
 let PacketId: typeof import("@minecraft/server-net").PacketId;
 
 /**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when an anti-crash violation occurs.
+ *
+ * @param {string} playerName - The name of the player attempting to crash the server.
+ * @param {string} sizeKB - The formatted packet size in KB.
+ * @param {string} playerId - Optional player ID to avoid sending the notification to the target.
+ */
+function alertStaff(playerName: string, sizeKB: string, playerId?: string): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || (playerId && s.id === playerId)) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Anti-Crash]§7 Blocked crash attempt from §f${playerName} §e[${sizeKB}KB]§7.`);
+    }
+}
+
+/**
  * Handles incoming packets to detect SubChunkRequest exploits.
  */
 function handlePacket(data: PacketReceivedBeforeEvent) {
@@ -29,6 +46,7 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
         data.cancel = true;
 
         const playerName = player.name;
+        const playerId = player.id;
         const sizeKB = (data.packetSize / 1024).toFixed(2);
 
         // Immediate enforcement
@@ -45,10 +63,7 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
                 await banlistDB.set("players", bannedPlayers);
             }
 
-            const staff = getSecurityClearanceLevel4Players();
-            for (const s of staff) {
-                s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Anti-Crash]§7 Blocked crash attempt from §f${playerName} §e[${sizeKB}KB]§7.`);
-            }
+            alertStaff(playerName, sizeKB, playerId);
 
             player.runCommand(`kick @s [Paradox] Crasher exploit detected.`);
         });

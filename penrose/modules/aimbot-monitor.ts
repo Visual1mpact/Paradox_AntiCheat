@@ -25,6 +25,21 @@ const track = new Map<
 >();
 
 /**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when unnatural rotation smoothing occurs.
+ *
+ * @param {Player} player - The player flagged for aimbot behavior.
+ */
+function alertStaff(player: Player): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Aimbot] §f${player.name} §7is flagged for unnatural rotation smoothing.`);
+    }
+}
+
+/**
  * Continuous generator loop that iterates over cached players to analyze rotation variance.
  */
 function* continuousAimbotLoop(): Generator<void, void, unknown> {
@@ -80,14 +95,7 @@ function* continuousAimbotLoop(): Generator<void, void, unknown> {
                 }
 
                 if (data.violations >= 25) {
-                    // Notify Level 4 staff members about the suspicious behavior safely
-                    const staff = getSecurityClearanceLevel4Players();
-                    for (const s of staff) {
-                        const isStaffValid = s.isValid;
-                        if (!isStaffValid || s.id === player.id) continue;
-                        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Aimbot] §f${player.name} §7is flagged for unnatural rotation smoothing.`);
-                    }
-
+                    alertStaff(player);
                     data.violations = 0;
                 }
 

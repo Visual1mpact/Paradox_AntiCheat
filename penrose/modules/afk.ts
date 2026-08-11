@@ -1,6 +1,7 @@
 import { system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 let currentRunId: number | null = null;
 let playerLeaveCallback: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
@@ -46,6 +47,22 @@ function isSecurityClearanceIgnored(player: Player): boolean {
 }
 
 /**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a player is kicked for being AFK.
+ *
+ * @param {Player} player - The player being kicked for AFK.
+ */
+function alertStaff(player: Player): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        const isStaffValid = s.isValid;
+        if (!isStaffValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[AFK] §f${player.name} §7was kicked for being AFK.`);
+    }
+}
+
+/**
  * Checks the AFK status of all players.
  * Kicks players who have been AFK longer than the configured time.
  */
@@ -64,6 +81,7 @@ function* afkCheckGenerator(): Generator<void, void, unknown> {
                     } else {
                         const lastActiveTick = playerLastActive[player.id];
                         if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
+                            alertStaff(player);
                             player.runCommand(`kick @s You have been kicked for being AFK!`);
                             delete playerLastActive[player.id];
                         }

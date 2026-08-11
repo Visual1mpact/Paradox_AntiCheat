@@ -20,12 +20,17 @@ function calculateClicksPerSecond(clicks: number[]): number {
 }
 
 /**
- * Notify Level 4 staff of an autoclicker violation
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when an autoclicker violation occurs.
+ *
+ * @param {Player} attacker - The player exceeding the CPS limit.
+ * @param {number} cps - The calculated clicks per second.
  */
-function alertStaff(attacker: Player, cps: number) {
+function alertStaff(attacker: Player, cps: number): void {
     const staff = getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
-        if (s.id === attacker.id) continue; // skip attacker if they are staff
+        if (!s.isValid || s.id === attacker.id) continue; // skip invalid entity or attacker if they are staff
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[AutoClicker] §f${attacker.name} §7exceeded CPS limit: §e${cps} CPS`);
     }
 }

@@ -34,6 +34,22 @@ const playerData = new Map<string, PathingData>();
 let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
 
 /**
+ * Distributes an in-game alert notification to all active staff players
+ * possessing Security Clearance Level 4 when a pathing violation occurs.
+ *
+ * @param {Player} player - The player triggering the pathing alert.
+ * @param {string} reason - The reason for the pathing violation.
+ */
+function alertStaff(player: Player, reason: string): void {
+    const staff = getSecurityClearanceLevel4Players();
+
+    for (const s of staff) {
+        if (!s.isValid || s.id === player.id) continue;
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Pathing] §f${player.name} §7flagged: §c${reason}`);
+    }
+}
+
+/**
  * Detects artifacts produced by Auto-Navigation scripts:
  * 1. Constant yaw precision (robotic snapping).
  * 2. Speeds exceeding the vanilla horizontal limit.
@@ -102,12 +118,7 @@ function checkPathing(player: Player) {
  * Alerts staff and mitigates the movement.
  */
 function flagPlayer(player: Player, reason: string) {
-    const staff = getSecurityClearanceLevel4Players();
-    for (const s of staff) {
-        const isStaffValid = s.isValid;
-        if (!isStaffValid) continue;
-        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Pathing] §f${player.name} §7flagged: §c${reason}`);
-    }
+    alertStaff(player, reason);
 
     // Mitigation: Reset velocity to stop the navigator loop
     const data = playerData.get(player.id);
