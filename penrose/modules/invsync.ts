@@ -1,4 +1,4 @@
-import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent, EntityDieAfterEvent } from "@minecraft/server";
+import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent, EntityDieAfterEvent, ItemTypes, ItemStack } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
@@ -36,6 +36,31 @@ interface InvSyncSnapshot {
     counts: Record<string, number>;
     time: number;
     name: string;
+}
+
+/**
+ * UTILITY: Helper to retrieve max stack size for any typeId safely.
+ */
+const stackSizeCache = new Map<string, number>();
+
+function getMaxStackSize(typeId: string): number {
+    if (stackSizeCache.has(typeId)) {
+        return stackSizeCache.get(typeId)!;
+    }
+
+    try {
+        const itemType = ItemTypes.get(typeId);
+        if (itemType) {
+            const tempStack = new ItemStack(itemType, 1);
+            const max = tempStack.maxAmount;
+            stackSizeCache.set(typeId, max);
+            return max;
+        }
+    } catch {
+        // Fallback for custom or invalid items
+    }
+
+    return 64;
 }
 
 /**
@@ -107,11 +132,14 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
     const currentAmount = currentCounts[typeId] ?? 0;
     const expectedAmount = snapshot.counts[typeId] ?? 0;
 
-    // Evaluate Spikes (Duping patterns typically create huge bursts instantly)
+    // Evaluate Spikes against the item's specific stack size limit
     if (currentAmount > expectedAmount) {
         const excessAmount = currentAmount - expectedAmount;
 
-        if (excessAmount > 64) {
+        // Use event itemStack maxAmount if available; fall back to cached lookup
+        const maxStackSize = event.itemStack?.maxAmount ?? getMaxStackSize(typeId);
+
+        if (excessAmount > maxStackSize) {
             await handleAnomaly(player, typeId, excessAmount);
             return; // Exit early; handleAnomaly performs its own fresh sync write
         }
@@ -381,7 +409,11 @@ export async function forceCheckAll() {
 
             for (const item in current) {
                 const delta = current[item] - (snapshot.counts[item] ?? 0);
-                if (delta > 64) {
+
+                // Dynamic stack threshold calculation per item type
+                const maxStackSize = getMaxStackSize(item);
+
+                if (delta > maxStackSize) {
                     handleAnomaly(player, item, delta);
                 }
             }
