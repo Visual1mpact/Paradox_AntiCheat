@@ -71,6 +71,15 @@ export function startGraveSaver(): void {
 
                 // Calculate the location for the marker sign next to the base chest (+1 on X-axis)
                 const signLoc = { x: baseChestLoc.x + 1, y: baseChestLoc.y, z: baseChestLoc.z };
+                const supportLoc = { x: signLoc.x, y: signLoc.y - 1, z: signLoc.z };
+
+                // Ensure there is a solid block beneath the sign location
+                const supportBlock = dim.getBlock(supportLoc);
+                if (supportBlock && (supportBlock.isAir || supportBlock.isLiquid)) {
+                    dim.setBlockType(supportLoc, "minecraft:dirt");
+                }
+
+                // Prepare the sign location (overwrites existing blocks/obstacles)
                 const signBlock = dim.getBlock(signLoc);
 
                 if (signBlock) {

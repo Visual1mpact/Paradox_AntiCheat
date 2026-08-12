@@ -371,7 +371,7 @@ export function startInvSync() {
         runDatabaseVacuum();
     }, CLEANUP_INTERVAL_TICKS);
 
-    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync framework §astarted§7.");
+    alertStaffSystem("§7InvSync framework §astarted§7.");
 }
 
 export function stopInvSync() {
@@ -395,7 +395,7 @@ export function stopInvSync() {
     dimensionChangingPlayers.clear();
     deadPlayers.clear();
 
-    alertStaffSystem("§2[§7Paradox§2]§o§7 InvSync framework §4stopped§7.");
+    alertStaffSystem("§7InvSync framework §4stopped§7.");
 }
 
 export async function forceCheckAll() {
