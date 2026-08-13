@@ -126,6 +126,7 @@ import { startGraveSaver } from "penrose/modules/grave-saver";
 import { inventoryEditorCommand } from "penrose/commands/utility/inventory-editor";
 import { chunkBordersCommand } from "../commands/utility/chunkborders";
 import { invalidMovementVectorCommand } from "../commands/settings/invalid-movement-vector";
+import { inventoryMovementCommand } from "../commands/settings/inventory-movement";
 
 type PlayerID = string;
 
@@ -232,6 +233,7 @@ const allCommands: Command[] = [
     inventoryEditorCommand,
     chunkBordersCommand,
     invalidMovementVectorCommand,
+    inventoryMovementCommand,
 ];
 
 /**

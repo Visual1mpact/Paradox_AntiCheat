@@ -124,6 +124,7 @@ export type ModuleSettingsMap = {
     antiCrashCheck_b: undefined; // This module has no configurable settings
     dimensionLock_b: DimensionLockSettings;
     invalidMovementVectorCheck_b: undefined; // This module has no configurable settings
+    inventoryMovementCheck_b: undefined; // This module has no configurable settings
 };
 
 /**

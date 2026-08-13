@@ -1,6 +1,7 @@
-import { Player, world, system, GameMode } from "@minecraft/server";
+import { Player, system, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
+import { PlayerCache } from "../classes/player-cache";
 
 /**
  * Maximum allowed directional input magnitude on client-side vectors.
@@ -33,9 +34,8 @@ function alertStaff(player: Player, moveVector: { x: number; y: number }): void 
 function checkPlayerMoveVectors(): void {
     if (!isModuleEnabled) return;
 
-    for (const player of world.getAllPlayers()) {
-        if (!player.isValid) continue;
-
+    // Fast O(1) player lookup iterating cached player instances
+    for (const player of PlayerCache.getPlayers()) {
         const gm = player.getGameMode();
         if (gm === GameMode.Spectator) continue;
 
@@ -57,7 +57,7 @@ function checkPlayerMoveVectors(): void {
 }
 
 /**
- * Loads the initial state from DB and starts the 1-tick listener.
+ * Loads the initial state from DB and starts the 1-tick check interval.
  */
 export async function startInvalidMovementVectorCheck(): Promise<void> {
     // Sync initial state from DB
@@ -66,7 +66,6 @@ export async function startInvalidMovementVectorCheck(): Promise<void> {
 
     if (runIntervalId !== null) return;
 
-    // Fast, synchronous 1-tick interval
     runIntervalId = system.runInterval(() => {
         checkPlayerMoveVectors();
     }, 1);

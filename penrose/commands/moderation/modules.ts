@@ -79,6 +79,7 @@ export const modulesStatusCommand: Command = {
             worldBorderCheck_b: "worldborder",
             xrayDetection_b: "xray",
             invalidMovementVectorCheck_b: "invalidvector",
+            inventoryMovementCheck_b: "invmove",
         };
 
         const entries = await paradoxModulesDB.entries();

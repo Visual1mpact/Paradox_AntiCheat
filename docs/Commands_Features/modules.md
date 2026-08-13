@@ -351,6 +351,26 @@ The `gravesaver` command toggles the item preservation module. When activated, i
 
 ---
 
+## invmove
+### At A Glance
+The `invmove` command toggles a movement validation module that detects and prevents players from moving while interacting with or organizing items inside their inventory. This stops inventory movement hacks (commonly referred to as InvMove or ChestWalk).
+
+### How It Works
+- **Inventory Interaction Listening:** Intercepts item movement actions via player inventory change events.
+- **Horizontal Velocity Check:** When an item is moved in an inventory, the module checks if the player has active horizontal movement speed ($x^2 + z^2 > 0.0001$).
+- **Tick Validation:** If a player triggers an inventory modification while moving and maintains momentum on the subsequent tick, they are immediately flagged.
+- **Immediate Mitigation:** Resets the offending player's velocity (`clearVelocity()`) to interrupt illegal momentum while managing inventory items.
+- **Staff Alerts:** Sends real-time notifications to active staff with Level 4 security clearance detailing the player and detection flag.
+- **Performance Optimized:** Uses an event-driven validation queue and `PlayerCache` to ensure O(1) tick execution overhead when no players are moving items.
+- **Gamemode Aware:** Automatically ignores players in Spectator mode.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: ":invmove"  
+> Example: :invmove  
+
+---
+
 ## invalidvector
 ### At A Glance
 The `invalidvector` command toggles a movement validation module that detects and prevents players from sending out-of-bounds movement input vectors. Standard client inputs range between -1.0 and 1.0, making this effective for stopping movement manipulation hacks and modified client inputs.
