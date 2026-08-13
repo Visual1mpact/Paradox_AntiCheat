@@ -78,6 +78,7 @@ export const modulesStatusCommand: Command = {
             visionCheck_b: "visioncheck",
             worldBorderCheck_b: "worldborder",
             xrayDetection_b: "xray",
+            invalidMovementVectorCheck_b: "invalidvector",
         };
 
         const entries = await paradoxModulesDB.entries();

@@ -351,6 +351,24 @@ The `gravesaver` command toggles the item preservation module. When activated, i
 
 ---
 
+## invalidvector
+### At A Glance
+The `invalidvector` command toggles a movement validation module that detects and prevents players from sending out-of-bounds movement input vectors. Standard client inputs range between -1.0 and 1.0, making this effective for stopping movement manipulation hacks and modified client inputs.
+
+### How It Works
+- **Input Vector Inspection:** Continuously monitors player movement input vectors (`player.inputInfo.getMovementVector()`) on a per-tick basis.
+- **Boundary Validation:** Flags any player whose directional movement inputs exceed the standard normalized bounds (-1.001 to 1.001).
+- **Immediate Mitigation:** When an invalid movement vector is detected, the offending player's velocity is instantly cleared (`clearVelocity()`) to reset momentum and break movement exploits.
+- **Staff Alerts:** Notifications detailing the out-of-bounds X and Y input values are sent in real-time to active staff with Level 4 security clearance.
+- **Gamemode Aware:** Spectator mode players are automatically excluded from checks.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: ":invalidvector"  
+> Example: :invalidvector  
+
+---
+
 ## invsync
 ### At A Glance
 The `invsync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
