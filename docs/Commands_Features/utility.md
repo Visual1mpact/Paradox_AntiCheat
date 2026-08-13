@@ -506,40 +506,48 @@ Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. Th
 
 ## scripture
 ### At A Glance
-The `scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily diamond rewards**. Players with scripture enabled receive verses at a regular interval, displayed on-screen with an optional reward.
+The `scripture` command allows players to enable or disable receiving **scripture verses** in-game along with optional **daily rewards**. Features can be toggled per-player for self-use, or managed globally and per-target by server administrators.
 
-?> Required Clearance Level To Execute: `3`
+?> Required Clearance Level To Execute: `1` (Self-Toggle) | `3` (Global & Target Administration)
 
 ### **How It Works**
-- Each player can **enable or disable** scripture mode using the command.
-- When scripture mode is **enabled**, the player will receive a verse every **30 minutes** (configurable in code).
-- Verses are displayed **on-screen** with the reference as a title and the verse text as a subtitle.
-- Players receive **1 reward item per verse** (up to 10 per day), randomly chosen between **diamonds** and **netherite ingots**.
-- Daily reward counters reset at **midnight** server time.
-- The system tracks which verses have already been shown, ensuring **variety without repetition**.
+- **Global Toggle Gating:** Scripture mode is globally disabled by default. An admin with clearance level 3+ must globally enable scripture before individual players or admins can turn it on for themselves or targets.
+- **Per-Player Control:** Once globally enabled, any player can **enable or disable** scripture delivery for themselves.
+- **Interval Delivery:** When enabled both globally and for a specific player, the system broadcasts a verse every **30 minutes** (configurable in code).
+- **On-Screen Display:** Verses feature the reference as the main title and wrapped verse text as a subtitle.
+- **Daily Rewards:** Players receive **1 reward item per verse** (up to 10 per day), with a 75% chance for a **diamond** and a 25% chance for a **netherite ingot**.
+- **Automatic Resets & Shuffling:** Reward counters reset daily, and verse queues are shuffled per-player to ensure varied delivery without immediate repetition.
 
 ### Usage
 
-> :scripture -t <player> [-e | -d]  
-> Example: :scripture -t PlayerName -e  – Enable scripture mode for PlayerName  
-> Example: :scripture -t PlayerName -d  – Disable scripture mode for PlayerName  
+> :scripture [-e | -d]  
+> :scripture [-g | --global] [-e | -d]  
+> :scripture [-t | --target <player>] [-e | -d]  
+
+* **Personal Examples:**
+  > Example: `:scripture -e` – Enable scripture mode for yourself.  
+  > Example: `:scripture -d` – Disable scripture mode for yourself.  
+
+* **Admin Examples (Clearance 3+):**
+  > Example: `:scripture -g -e` – Globally enable scripture mode for the entire server.  
+  > Example: `:scripture -g -d` – Globally disable scripture mode for the entire server.  
+  > Example: `:scripture -t PlayerName -e` – Enable scripture mode for PlayerName (requires global mode to be enabled).  
+  > Example: `:scripture -t PlayerName -d` – Disable scripture mode for PlayerName.  
 
 ### **Actions**
-1. **Enable Scripture** – Turns on scripture verse notifications and daily rewards for the target player.
-2. **Disable Scripture** – Turns off scripture verse notifications and daily rewards for the target player.
+1. **Toggle Scripture (Self)** – Allows any player to opt in (`-e`) or opt out (`-d`) of scripture delivery for their own account.
+2. **Toggle Scripture Globally** – Admin-only action (Level 3+) that controls whether the scripture feature is active across the server.
+3. **Toggle Scripture for Player** – Admin-only action (Level 3+) that forces an enable or disable state on a targeted player.
 
 ### **GUI Integration**
-- The command can also be executed via an **in-game GUI form**, allowing selection of a player and toggling enable/disable options.
-- The form includes:
-  - Dropdown of all players.
-  - Toggle buttons to enable or disable scripture mode.
+- Built with form-action integration for quick management:
+  - **Self-Service:** Fast toggle buttons for individual players.
+  - **Admin Actions:** Dedicated forms gated behind Level 3 clearance for global controls and target player selection via a player dropdown menu.
 
 ### Notes
-- Scripture mode is **per-player**; enabling for one player does not affect others.
-- Rewards are **limited to 10 per player per day** to prevent abuse.
-- Verses are selected from a **shuffled queue** to avoid immediate repetition.
-- Players can manually disable scripture mode at any time.
-- On server restart, the **interval automatically resumes**, applying only to players who have scripture mode enabled.
+- **Global Precedence:** Admins **cannot** enable scripture for a targeted player if the feature is globally disabled.
+- **Target Disabling:** Admins can always disable scripture for a targeted player regardless of global state.
+- **Persistence:** Individual opt-in choices and global configuration persist across server restarts.
 
 ---
 

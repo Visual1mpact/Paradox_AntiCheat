@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, Player, system, ItemStack } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, ItemStack, world } from "@minecraft/server";
 import { verses } from "../../data/verses";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/player-cache";
@@ -21,9 +21,16 @@ EventCoordinator.subscribeAfter("playerLeave", (event) => {
 });
 
 /**
+ * Helper to check whether Scripture mode is globally enabled by admins.
+ * Defaults to false until an admin with level 3 or 4 clearance enables it globally.
+ */
+function isGlobalScriptureEnabled(): boolean {
+    const globalState = world.getDynamicProperty("globalScriptureEnabled");
+    return globalState === true;
+}
+
+/**
  * Shuffles an array and returns a new shuffled array.
- * @param array - Array of strings to shuffle
- * @returns New shuffled array
  */
 function shuffleArray(array: string[]) {
     const copy = [...array];
@@ -36,9 +43,6 @@ function shuffleArray(array: string[]) {
 
 /**
  * Wraps verse text into multiple lines for on-screen display.
- * @param text - Full verse string including reference
- * @param maxLineLength - Maximum number of characters per line
- * @returns Wrapped verse string with reference on first line
  */
 function wrapVerseText(text: string, maxLineLength = 42): string {
     const [reference, verseText] = text.split(" — ");
@@ -65,7 +69,6 @@ function wrapVerseText(text: string, maxLineLength = 42): string {
 
 /**
  * Resets the per-day scripture reward counter for a player.
- * @param player - Player whose counter is reset
  */
 function resetDailyCounters(player: Player) {
     player.setDynamicProperty("scriptureRewardsToday", 0);
@@ -73,7 +76,6 @@ function resetDailyCounters(player: Player) {
 
 /**
  * Sends a scripture verse to a player, displaying on-screen title and optionally granting rewards.
- * @param player - Player to broadcast the verse to
  */
 function broadcastScriptureToPlayer(player: Player) {
     const today = new Date().toDateString();
@@ -116,9 +118,12 @@ function broadcastScriptureToPlayer(player: Player) {
 }
 
 /**
- * Interval loop to broadcast scripture to all players who have scripture enabled.
+ * Interval loop to broadcast scripture to players who have it enabled,
+ * only if Scripture mode is globally enabled by an admin.
  */
 system.runInterval(() => {
+    if (!isGlobalScriptureEnabled()) return;
+
     for (const player of PlayerCache.getPlayers()) {
         const enabled = player.getDynamicProperty("scriptureEnabled");
         if (enabled === true) {
@@ -128,15 +133,15 @@ system.runInterval(() => {
 }, INTERVAL_TICKS);
 
 /**
- * Command definition to enable or disable scripture mode and daily rewards for a player.
+ * Command definition to enable or disable scripture mode for self or globally.
  */
 export const scriptureCommand: Command = {
     name: "scripture",
-    description: "Enable or disable scripture & daily diamond for a player.",
-    usage: "{prefix}scripture -t <player> [-e | -d]",
-    examples: [`{prefix}scripture -t PlayerName -e`, `{prefix}scripture -t PlayerName -d`],
+    description: "Enable or disable scripture & daily rewards for yourself or globally.",
+    usage: "{prefix}scripture [-e | -d] | {prefix}scripture [-g | --global] [-e | -d] | {prefix}scripture [-t | --target <player>] [-e | -d]",
+    examples: [`{prefix}scripture -e`, `{prefix}scripture -d`, `{prefix}scripture -g -e`, `{prefix}scripture -g -d`, `{prefix}scripture -t PlayerName -e`],
     category: "Utility",
-    securityClearance: 3,
+    securityClearance: 1,
     icon: "textures/items/book_enchanted",
     guiInstructions: {
         formType: "ActionFormData",
@@ -144,59 +149,78 @@ export const scriptureCommand: Command = {
         title: "Scripture",
         description:
             "Manage automated scripture verses and daily rewards.\n\n" +
-            "§7Scripture Mode:\n" +
-            "§7• §fEnable Scripture§7: Player receives a scripture verse every 30 minutes.\n" +
-            "§7• §fDisable Scripture§7: Stops verses and daily rewards for the player.\n\n" +
+            "§7Personal Settings:\n" +
+            "§7• Enable or disable scripture delivery for yourself.\n\n" +
+            "§7Admin Management (Clearance Level 3+):\n" +
+            "§7• §fGlobal Toggle§7: Enable or disable scripture feature globally.\n" +
+            "§7• §fTarget Player§7: Manage scripture status for a specific player.\n\n" +
             "§7Rewards:\n" +
-            "§7• Players receive §f1 reward§7 per verse.\n" +
-            "§7• Rewards are usually §fdiamonds§7, with a small chance of §fnetherite ingots§7.\n" +
-            "§7• Maximum of §f10 rewards per day§7 per player.\n\n" +
-            "§7Display:\n" +
-            "§7• Scripture reference appears as the §ftitle§7.\n" +
-            "§7• Verse text appears as the §fsubtitle§7.\n" +
-            "§7• Verses are automatically shuffled to avoid repetition.\n\n" +
-            "§7Changes apply immediately and persist through server restarts.\n\n",
+            "§7• Maximum of §f10 rewards per day§7 per player.\n\n",
         actions: [
             {
-                name: "Apply Changes",
-                description: "Enable or Disable Scripture mode for the selected player.",
+                name: "Toggle Scripture (Self)",
+                description: "Enable or disable scripture verses for yourself.",
                 icon: "textures/ui/confirm.png",
                 generateModalForm: true,
                 requiredFields: ["scriptureAction"],
             },
+            {
+                name: "Toggle Scripture Globally",
+                description: "Enable or disable scripture feature globally (Admin level 3+).",
+                securityClearance: 3,
+                icon: "textures/ui/world_glyph.png",
+                command: ["-g"],
+                generateModalForm: true,
+                requiredFields: ["scriptureAction"],
+            },
+            {
+                name: "Toggle Scripture for Player",
+                description: "Enable or disable scripture mode for a target player (Admin level 3+).",
+                securityClearance: 3,
+                icon: "textures/ui/editIcon.png",
+                requiredFields: ["TargetPlayer", "scriptureAction"],
+                generateModalForm: true,
+            },
         ],
         dynamicFields: [
-            { name: "Player", type: "dropdown", sourceType: "players", arg: "-t", requiredFields: ["scriptureAction"] },
             { name: "Enable Scripture", type: "toggle", arg: "-e", requiredFields: ["scriptureAction"] },
             { name: "Disable Scripture", type: "toggle", arg: "-d", requiredFields: ["scriptureAction"] },
+            { name: "Target Player", type: "dropdown", sourceType: "players", arg: "-t", requiredFields: ["TargetPlayer"] },
         ],
     },
     /**
-     * Executes the scripture command to enable/disable a player’s scripture mode.
-     * @param message - Optional chat event for sender feedback
-     * @param args - Array of command arguments and flags
+     * Executes the scripture command.
      */
     execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
-        if (!message) return;
-        const validFlags = new Set(["-t", "--target", "-e", "-d"]);
-        let playerName = "";
+        if (!message || !message.sender) return;
+        const player = message.sender;
+        const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+
+        const validFlags = new Set(["-t", "--target", "-g", "--global", "-e", "-d"]);
+        let targetName = "";
+        let isGlobal = false;
         let enable = false;
         let disable = false;
 
-        function captureMultiWordArgument(args: string[]): string {
+        function captureMultiWordArgument(argsCopy: string[]): string {
             let result = "";
-            while (args.length > 0 && !validFlags.has(args[0])) {
-                result += (result ? " " : "") + args.shift();
+            while (argsCopy.length > 0 && !validFlags.has(argsCopy[0])) {
+                result += (result ? " " : "") + argsCopy.shift();
             }
             return result.replace(/["@]/g, "");
         }
 
-        while (args.length > 0) {
-            const flag = args.shift();
+        const argsCopy = [...args];
+        while (argsCopy.length > 0) {
+            const flag = argsCopy.shift();
             switch (flag) {
+                case "-g":
+                case "--global":
+                    isGlobal = true;
+                    break;
                 case "-t":
                 case "--target":
-                    playerName = captureMultiWordArgument(args);
+                    targetName = captureMultiWordArgument(argsCopy);
                     break;
                 case "-e":
                     enable = true;
@@ -207,43 +231,85 @@ export const scriptureCommand: Command = {
             }
         }
 
-        if (!playerName) {
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${message.sender.getDynamicProperty("__prefix") ?? ":"}scripture -t <player> [-e | -d]`);
-            return;
-        }
-
-        const player = PlayerCache.getPlayerByName(playerName);
-        if (!player) {
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}" not found.`);
-            return;
-        }
-
         if (enable && disable) {
-            message.sender.sendMessage(`§o§c[Paradox] Cannot enable and disable at the same time.`);
+            player.sendMessage(`§o§c[Paradox] Cannot specify enable (-e) and disable (-d) at the same time.`);
+            return;
+        }
+
+        if (!enable && !disable) {
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Specify §a-e§7 to enable or §4-d§7 to disable.`);
+            return;
+        }
+
+        // --- GLOBAL ADMIN ROUTE ---
+        if (isGlobal) {
+            if (senderClearance < 3) {
+                player.sendMessage(`§o§c[Paradox] You do not have permission to toggle scripture globally (Level 3 clearance required).`);
+                return;
+            }
+
+            if (enable) {
+                world.setDynamicProperty("globalScriptureEnabled", true);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode has been §aglobally enabled§7.`);
+            } else {
+                world.setDynamicProperty("globalScriptureEnabled", false);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode has been §4globally disabled§7.`);
+            }
+            return;
+        }
+
+        // --- TARGET PLAYER ADMIN ROUTE ---
+        if (targetName) {
+            if (senderClearance < 3) {
+                player.sendMessage(`§o§c[Paradox] You do not have permission to modify scripture mode for other players.`);
+                return;
+            }
+
+            if (enable && !isGlobalScriptureEnabled()) {
+                player.sendMessage(`§o§c[Paradox] Cannot enable scripture for ${targetName} because scripture mode is globally disabled.`);
+                return;
+            }
+
+            const targetPlayer = PlayerCache.getPlayerByName(targetName);
+            if (!targetPlayer) {
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Player "${targetName}" not found.`);
+                return;
+            }
+
+            if (enable) {
+                targetPlayer.setDynamicProperty("scriptureEnabled", true);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §aenabled§7 for ${targetPlayer.name}.`);
+                targetPlayer.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §aenabled§7 by admin ${player.name}.`);
+            } else {
+                targetPlayer.setDynamicProperty("scriptureEnabled", false);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §4disabled§7 for ${targetPlayer.name}.`);
+                targetPlayer.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §4disabled§7 by admin ${player.name}.`);
+            }
+            return;
+        }
+
+        // --- PERSONAL PLAYER ROUTE ---
+        if (!isGlobalScriptureEnabled()) {
+            player.sendMessage(`§o§c[Paradox] Scripture mode is currently disabled globally by an administrator.`);
             return;
         }
 
         const currentState = player.getDynamicProperty("scriptureEnabled");
-        const isEnabled = currentState === undefined || currentState === true;
 
         if (enable) {
-            if (isEnabled) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode is already §aenabled§7 for ${player.name}.`);
+            if (currentState === true) {
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode is already §aenabled§7 for you.`);
             } else {
                 player.setDynamicProperty("scriptureEnabled", true);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §aenabled§7 for ${player.name}.`);
-                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §aenabled§7 by ${message.sender.name}.`);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §aenabled§7.`);
             }
         } else if (disable) {
-            if (!isEnabled) {
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode is already §4disabled§7 for ${player.name}.`);
+            if (currentState === false || currentState === undefined) {
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode is already §4disabled§7 for you.`);
             } else {
                 player.setDynamicProperty("scriptureEnabled", false);
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §4disabled§7 for ${player.name}.`);
-                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §4disabled§7 by ${message.sender.name}.`);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Scripture mode §4disabled§7.`);
             }
-        } else {
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Specify -e to §aenable§7 or -d to §4disable§7.`);
         }
     },
 };
