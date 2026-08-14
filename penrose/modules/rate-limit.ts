@@ -336,7 +336,7 @@ async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent): Promise<void>
     }
 
     // Synchronous memory banlist check
-    const bannedPlayers = ((await banlistDB.get("players")) as Record<string, unknown>) ?? {};
+    const bannedPlayers = ((await banlistDB.get("players")) as BanlistMap) ?? {};
     if (event.name in bannedPlayers) {
         event.disconnect("§o§c[Paradox] You are banned from this server.");
     }
