@@ -1,30 +1,33 @@
-import { PlayerLeaveBeforeEvent, system, world } from "@minecraft/server";
+import { Player, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 import * as CryptoESImport from "../node_modules/crypto-es";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { PlayerCache } from "../classes/player-cache";
 
+/**
+ * Handles CryptoES default export fallback logic for multi-environment compatibility.
+ */
 const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
- * Ring buffer for timestamps used in rate-limiting.
- * This data structure efficiently stores a fixed-size sliding window of timestamps,
- * automatically overwriting oldest entries when full.
+ * Ring buffer for timestamps used in rate-limiting and burst tracking.
+ * Efficiently stores a fixed-size sliding window of timestamps without array allocations.
  */
 class TimestampBuffer {
-    /** Internal array storage for timestamps */
+    /** Fixed-capacity array storing recorded timestamps in milliseconds */
     private buffer: number[];
     /** Index pointing to the oldest element in the buffer */
     private start = 0;
-    /** Current number of valid timestamps in the buffer */
+    /** Current count of valid timestamps stored in the buffer */
     private count = 0;
-    /** Maximum capacity of the buffer */
+    /** Maximum number of timestamps the buffer can store before overwriting */
     private maxSize: number;
 
     /**
      * Creates a new TimestampBuffer instance.
-     * @param maxSize - The maximum number of timestamps to store in the buffer
+     * @param maxSize - The maximum capacity of the timestamp sliding window buffer
      */
     constructor(maxSize: number) {
         this.maxSize = maxSize;
@@ -32,9 +35,8 @@ class TimestampBuffer {
     }
 
     /**
-     * Adds a new timestamp to the buffer.
-     * If the buffer is full, the oldest timestamp is overwritten.
-     * @param ts - The timestamp (in milliseconds) to add to the buffer
+     * Adds a new timestamp to the buffer. Overwrites the oldest timestamp if full.
+     * @param ts - The timestamp in milliseconds to record
      */
     push(ts: number) {
         const index = (this.start + this.count) % this.maxSize;
@@ -45,9 +47,9 @@ class TimestampBuffer {
     }
 
     /**
-     * Removes timestamps older than the specified window from the buffer.
-     * @param now - The current timestamp to compare against (in milliseconds)
-     * @param window - The time window in milliseconds; timestamps older than (now - window) are removed
+     * Removes all timestamps older than the designated time window relative to `now`.
+     * @param now - Current timestamp in milliseconds
+     * @param window - Allowed time window duration in milliseconds
      */
     prune(now: number, window: number) {
         while (this.count > 0) {
@@ -59,34 +61,35 @@ class TimestampBuffer {
     }
 
     /**
-     * Returns the current number of timestamps in the buffer.
-     * @returns The count of valid timestamps currently stored
+     * Retrieves the active count of valid timestamps currently stored.
+     * @returns The number of un-pruned timestamps in the buffer
      */
-    size() {
+    size(): number {
         return this.count;
+    }
+
+    /**
+     * Resets the buffer state, clearing all recorded entries without reallocating memory.
+     */
+    clear(): void {
+        this.start = 0;
+        this.count = 0;
     }
 }
 
-/* ---------------- CRYPTO CONFIG ---------------- */
+/* ---------------- CRYPTO & PROPERTIES ---------------- */
 
-/**
- * Dynamic property key used to persist the AES encryption key in the world.
- * This allows the encryption key to survive server restarts so previously
- * generated encrypted tokens remain valid.
- */
+/** Dynamic property key used to store the server's AES encryption key in world properties */
 const AES_KEY_PROPERTY = "paradox_aes_key";
-
-/**
- * Dynamic property key used to store the encrypted proxy validation token.
- * This property is persistent and shared across server restarts.
- */
+/** Dynamic property key used to store the server's proxy validation token in world properties */
 const TOKEN_PROPERTY = "paradox_proxy_token";
+/** Dynamic property key used to store the server's global lockdown flag */
+const LOCKDOWN_PROPERTY = "lockdown_b";
 
 /**
- * Retrieves the encrypted server proxy token from world dynamic properties.
- * If no token exists yet, a new encrypted token is generated and stored.
- *
- * This token persists across server restarts.
+ * Retrieves the persisted server proxy token from world dynamic properties,
+ * or generates and saves a new token if one does not exist.
+ * @returns The active AES-encrypted proxy token string
  */
 function getOrCreateProxyToken(): string {
     let token = world.getDynamicProperty(TOKEN_PROPERTY) as string | undefined;
@@ -100,23 +103,9 @@ function getOrCreateProxyToken(): string {
 }
 
 /**
- * Generates a safe, unique kick tag for use with Minecraft selector commands.
- *
- * This function takes the server's persistent proxy token, hashes it using SHA-256,
- * and converts it to a hexadecimal string. The result is truncated to 16 characters
- * to ensure it is safe for use as a player tag in Minecraft commands.
- *
- * @returns {string} A 16-character hexadecimal string that can be safely used as a temporary player tag.
- *
- * @remarks
- * Minecraft player tags cannot safely contain certain characters (e.g., '+', '/', '=')
- * that may appear in Base64-encoded data. This function hashes the token to avoid
- * invalid characters and ensures consistent tag length.
- *
- * @example
- * const tag = getKickTag();
- * player.addTag(tag);
- * runCommand(`kick @a[tag=${tag}] You have been kicked.`);
+ * Generates a truncated hexadecimal tag derived from the server's hashed proxy token.
+ * Used for safely tagging and kicking targeted players via Minecraft selector commands.
+ * @returns A 16-character hexadecimal tag string
  */
 function getKickTag(): string {
     const token = getOrCreateProxyToken();
@@ -124,23 +113,9 @@ function getKickTag(): string {
 }
 
 /**
- * Retrieves the server AES encryption key from world dynamic properties,
- * or generates and stores a new key if one does not yet exist.
- *
- * The AES key is persisted using a world dynamic property so that encrypted
- * server tokens remain valid across server restarts. If the key is missing,
- * a new 128-bit cryptographically secure key is generated and saved.
- *
- * @returns {CryptoESImport.WordArray} The AES encryption key used for token encryption.
- *
- * @remarks
- * The key is stored as a hexadecimal string inside the world dynamic property
- * defined by {@link AES_KEY_PROPERTY}. When retrieved, the stored hex string
- * is parsed back into a CryptoES `WordArray` instance.
- *
- * @example
- * const key = getOrCreateAESKey();
- * const encrypted = CryptoES.AES.encrypt("data", key);
+ * Retrieves the stored AES encryption key or generates a new 128-bit key if missing.
+ * Persists the hexadecimal representation inside world dynamic properties.
+ * @returns The CryptoES WordArray representing the active AES key
  */
 function getOrCreateAESKey(): CryptoESImport.WordArray {
     let stored = world.getDynamicProperty(AES_KEY_PROPERTY) as string | undefined;
@@ -157,42 +132,41 @@ function getOrCreateAESKey(): CryptoESImport.WordArray {
 }
 
 /**
- * Generates an AES-encrypted server token value for proxy validation.
- * Creates a random 256-bit data blob and encrypts it using AES.
- * @returns A Base64-encoded encrypted string representing the server token
+ * Generates a dynamic AES-encrypted server token value.
+ * Encrypts a random 256-bit binary blob using the server's AES key.
+ * @returns Base64-encoded string representation of the encrypted token
  */
 function generateEncryptedToken(): string {
     const AES_SECRET = getOrCreateAESKey();
-    const randomData = CryptoES.WordArray.random(32); // 256-bit
+    const randomData = CryptoES.WordArray.random(32);
     const encrypted = CryptoES.AES.encrypt(randomData, AES_SECRET);
-    return encrypted.toString(); // Base64 encoded
+    return encrypted.toString();
 }
 
 /* ---------------- CONFIG ---------------- */
 
-/** Time window (in milliseconds) to track recent packet violators for lockdown detection */
+/** Time window (in milliseconds) used to track recent rate-limit violators for lockdown detection */
 const VIOLATOR_WINDOW = 2000;
-/** Number of recent violators required within the VIOLATOR_WINDOW to trigger server lockdown */
+/** Total number of rate-limit violations within VIOLATOR_WINDOW required to trigger global lockdown */
 const LOCKDOWN_THRESHOLD = 3;
-/** Maximum number of packets allowed globally within the GLOBAL_WINDOW before triggering burst protection */
+/** Maximum total incoming network packets allowed server-wide within GLOBAL_WINDOW */
 const GLOBAL_PACKET_LIMIT = 200;
-/** Time window (in milliseconds) for detecting global packet burst anomalies */
+/** Time window (in milliseconds) for evaluating global packet limits */
 const GLOBAL_WINDOW = 1000;
-/** Time window (in milliseconds) to track join attempts for anti-flood protection */
+/** Time window (in milliseconds) used to track early connection attempts for join-flood protection */
 const JOIN_WINDOW = 5000;
-/** Maximum number of join attempts allowed per JOIN_WINDOW before rejecting new connections */
+/** Maximum permitted player connection attempts within JOIN_WINDOW */
 const JOIN_LIMIT = 30;
-/** Maximum packets a player may send within the global packet window */
+/** Maximum total allowed packets per individual player within PLAYER_PACKET_WINDOW */
 const PLAYER_PACKET_LIMIT = 80;
-/** Time window (ms) used to evaluate {@link PLAYER_PACKET_LIMIT} */
+/** Time window (in milliseconds) for evaluating individual total packet thresholds */
 const PLAYER_PACKET_WINDOW = 1000;
-/** Minimum time (ms) allowed between consecutive packets from the same player */
+/** Minimum required interval (in milliseconds) between successive packets from a single client */
 const MIN_PACKET_INTERVAL = 5;
 
 /**
- * Packet rate limits configuration per packet type.
- * Each entry specifies the maximum number of packets allowed (limit)
- * within a specific time window (window in milliseconds).
+ * Per-packet rate limit configuration lookup map.
+ * Defines maximum capacity (limit) and sliding evaluate duration (window) per packet ID.
  */
 const PACKET_LIMITS: Record<string, { limit: number; window: number }> = {
     MovePlayerPacket: { limit: 40, window: 1000 },
@@ -201,94 +175,137 @@ const PACKET_LIMITS: Record<string, { limit: number; window: number }> = {
     EmotePacket: { limit: 5, window: 5000 },
 };
 
+type BanEntry = {
+    reason: string;
+    bannedBy: string;
+    timestamp: number;
+};
+
+type BanlistMap = Record<string, BanEntry>;
+
 /* ----------------- TRACKING ----------------- */
 
-/** Per-player buffers tracking total packet timestamps for burst detection */
+/** Map tracking overall per-player packet arrival timestamps */
 const playerGlobalBuffers = new Map<string, TimestampBuffer>();
-/** Stores the timestamp of the last packet received from each player */
+/** Map storing the most recent packet arrival timestamp for each player name */
 const lastPacketTime = new Map<string, number>();
-/** Per-player buffers tracking recent command packets to detect command spam */
+/** Map tracking command execution request timestamps per player to detect command spam */
 const commandBurst = new Map<string, TimestampBuffer>();
-/**
- * Stores per-player per-packet timestamp buffers for rate limiting.
- * Outer Map key: player name, Inner Map key: packet ID
- */
+/** Nested map tracking timestamp buffers per packet ID for each player name */
 const packetLimits = new Map<string, Map<string, TimestampBuffer>>();
-/** Global packet timestamp buffer used for detecting server-wide packet bursts */
+/** Global timestamp buffer tracking incoming packet velocity across all clients */
 const globalBuffer = new TimestampBuffer(GLOBAL_PACKET_LIMIT * 2);
-/**
- * List of recent violators detected for potential attack analysis.
- * Each entry contains the player's name and the timestamp of the violation.
- */
-const recentViolators: { name: string; timestamp: number }[] = [];
-/** Array storing timestamps of recent join attempts for anti-flood detection */
-const joinAttempts: number[] = [];
-/** Maps each player name to their last received packet type for duplicate detection */
+/** Global buffer tracking timestamps of recent player rate-limiting violations */
+const recentViolatorsBuffer = new TimestampBuffer(LOCKDOWN_THRESHOLD * 2);
+/** Global buffer tracking connection attempt timestamps for join-flood detection */
+const joinAttemptsBuffer = new TimestampBuffer(JOIN_LIMIT * 2);
+/** Map recording the ID of the last processed packet per player name */
 const lastPacketType = new Map<string, string>();
-/** Flag indicating whether the server is currently in lockdown mode due to detected anomalies */
+
+/** Local state flag indicating active server lockdown */
 let isLockedDown = false;
-/** Timeout ID reference used to automatically lift lockdown after a delay */
+/** System timeout ID reference for automatic lockdown expiry */
 let lockdownTimeout: number | undefined;
-/** Reference to the packet receive event handler function for unsubscribing */
+/** System interval ID reference for periodic memory garbage collection sweeps */
+let sweepInterval: number | undefined;
+
+/** Active subscription reference for packet-receive events */
 let packetHandlerRef: ((data: PacketReceivedBeforeEvent) => void) | null = null;
-/** Reference to the async player join event handler for unsubscribing */
+/** Active subscription reference for async player join before-events */
 let asyncJoinRef: ((event: AsyncPlayerJoinBeforeEvent) => Promise<void>) | null = null;
-/** Reference to the player leave event handler for cleanup on disconnect */
+/** Active subscription reference for player leave before-events */
 let playerLeaveRef: ((event: PlayerLeaveBeforeEvent) => void) | null = null;
-/** Reference to the server-net module's beforeEvents API for packet handling */
+/** Active subscription reference for player spawn after-events */
+let playerSpawnRef: ((event: PlayerSpawnAfterEvent) => void) | null = null;
+
+/** Module reference for server-net event management API */
 let serverNet: typeof import("@minecraft/server-net").beforeEvents;
-/** Reference to the PacketId enum from server-net for filtering monitored packets */
+/** Enumeration reference containing server network packet identifiers */
 let PacketId: typeof import("@minecraft/server-net").PacketId;
-/** Reference to the server-admin module's beforeEvents API for async join handling */
+/** Module reference for server-admin event management API */
 let serverAdmin: typeof import("@minecraft/server-admin").beforeEvents;
 
-/* ----------------- UTILITY ----------------- */
+/* ----------------- UTILITIES ----------------- */
 
 /**
- * Kicks a player from the server using the encrypted server token as a temporary tag.
- * This method tags the player with the dynamic token and executes a kick command
- * targeting all players with that tag, then removes the tag.
- * @param player - The player object to banish (kick) from the server
+ * Safely kicks a player using deferred execution in system context to prevent
+ * read-only operation errors during before-event callbacks.
+ * @param player - Target player object to disconnect
  */
-function banish(player: import("@minecraft/server").Player) {
-    const tag = getKickTag();
-    player.addTag(tag);
-    world.getDimension("overworld").runCommand(`kick @a[tag=${tag}] You have been kicked.`);
+function banish(player: Player) {
+    if (!player?.isValid) return;
+    const name = player.name;
+
+    system.run(() => {
+        try {
+            const target = PlayerCache.getPlayerByName(name);
+            if (!target?.isValid) return;
+
+            const tag = getKickTag();
+            target.addTag(tag);
+            world.getDimension("overworld").runCommand(`kick @a[tag=${tag}] You have been kicked.`);
+        } catch {
+            // Guard against player disconnecting prior to command execution
+        }
+    });
+}
+
+/**
+ * Purges all rate-limiting and buffer tracking maps associated with a specific player name.
+ * @param name - Username of the player to cleanup
+ */
+function cleanupPlayerData(name: string) {
+    packetLimits.delete(name);
+    playerGlobalBuffers.delete(name);
+    lastPacketType.delete(name);
+    lastPacketTime.delete(name);
+    commandBurst.delete(name);
+}
+
+/**
+ * Sweeps tracking state to purge orphaned memory structures belonging to disconnected
+ * or unspawned player entries not tracked by PlayerCache.
+ */
+function sweepOrphanedPlayerState() {
+    const activeNames = new Set(PlayerCache.getPlayerNames());
+
+    for (const name of packetLimits.keys()) {
+        if (!activeNames.has(name)) cleanupPlayerData(name);
+    }
 }
 
 /* ----------------- LOCKDOWN ----------------- */
 
 /**
- * Triggers server lockdown due to excessive packet traffic or detected abuse.
- * When activated, sets the isLockedDown flag and schedules automatic lockdown
- * release after 1200 ticks. Clears the recent violators list when lifted.
+ * Triggers server-wide lockdown, blocking new player connections and setting lockdown indicators.
+ * Automatically clears after a 1200-tick delay (60 seconds).
  */
 function triggerLockdown() {
     if (isLockedDown) return;
     isLockedDown = true;
+    world.setDynamicProperty(LOCKDOWN_PROPERTY, true);
     world.sendMessage("§o§c[Paradox] Network anomaly detected. Server entering lockdown.");
+
     lockdownTimeout = system.runTimeout(() => {
         isLockedDown = false;
-        recentViolators.length = 0;
+        world.setDynamicProperty(LOCKDOWN_PROPERTY, false);
+        recentViolatorsBuffer.clear();
         world.sendMessage("§2[§7Paradox§2]§o§7 Lockdown lifted. Server is now open.");
     }, 1200);
 }
 
-/* ----------------- INITIALIZE ----------------- */
+/* ----------------- EVENT HANDLERS ----------------- */
 
 /**
- * Handles early join events with anti-flood protection, ban checks, and proxy validation.
- * Performs multiple security checks on the connecting player including name validation,
- * flood detection, banlist lookup, and active lockdown status verification.
- * @param event - The async player join before event object containing player connection details
- * @returns Promise that resolves when all checks are complete
+ * Intercepts early player join attempts to validate player names, enforce ban lists,
+ * perform connection-rate checks, and enforce active lockdown state.
+ * @param event - The AsyncPlayerJoinBeforeEvent context
  */
-async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent) {
+async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent): Promise<void> {
     const now = Date.now();
 
-    // Early proxy name checks
-    const normalized = event.name.normalize("NFKD").toLowerCase();
-    if (normalized.includes("discord.gg")) event.disconnect();
+    // Proxy name / formatting checks
+    const normalized = event.name ? event.name.normalize("NFKD").toLowerCase() : "";
     if (
         !event.name ||
         event.name.trim() === "" ||
@@ -296,59 +313,55 @@ async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent) {
         event.name.includes('"') ||
         event.name.includes(".") ||
         event.name.includes("/") ||
-        event.name.includes("discord.gg") ||
-        (world.getAllPlayers().length > 0 && event.persistentId.length === 0)
+        normalized.includes("discord.gg") ||
+        (PlayerCache.size() > 0 && (!event.persistentId || event.persistentId.length === 0))
     ) {
         event.disconnect();
         return;
     }
 
-    // Flood tracking
-    joinAttempts.push(now);
-    while (joinAttempts.length && joinAttempts[0] < now - JOIN_WINDOW) joinAttempts.shift();
-    if (joinAttempts.length > JOIN_LIMIT) {
+    // Rate-limit join attempts via ring buffer
+    joinAttemptsBuffer.push(now);
+    joinAttemptsBuffer.prune(now, JOIN_WINDOW);
+    if (joinAttemptsBuffer.size() > JOIN_LIMIT) {
         event.disconnect("Server busy. Try again later.");
         return;
     }
 
-    const bannedPlayers = banlistDB.get("players") ?? {};
-    isLockedDown = (world.getDynamicProperty("lockdown_b") as boolean) || false;
-    if (isLockedDown) {
+    // Check lockdown dynamic property state
+    const dynamicLockdown = (world.getDynamicProperty(LOCKDOWN_PROPERTY) as boolean) || false;
+    if (isLockedDown || dynamicLockdown) {
         event.disconnect("§o§7\n\nUnder Maintenance! Sorry for the inconvenience.");
         return;
     }
+
+    // Synchronous memory banlist check
+    const bannedPlayers = ((await banlistDB.get("players")) as Record<string, unknown>) ?? {};
     if (event.name in bannedPlayers) {
         event.disconnect("§o§c[Paradox] You are banned from this server.");
     }
 }
 
 /**
- * Handles player spawn events for suspicious client detection and token initialization.
- * Validates client system information and creates the encrypted server token if missing.
- * @param event - The player spawn after event containing player and spawn type information
+ * Validates player client specifications on spawn to disconnect invalid or modified clients.
+ * @param event - PlayerSpawnAfterEvent event parameter
  */
-function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEvent) {
+function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
     const { player, initialSpawn } = event;
-    if (!initialSpawn) return;
+    if (!initialSpawn || !player?.isValid) return;
 
-    // Ensure the encrypted world token exists
     if (world.getDynamicProperty(TOKEN_PROPERTY) === undefined) {
-        const token = generateEncryptedToken();
-        world.setDynamicProperty(TOKEN_PROPERTY, token);
+        world.setDynamicProperty(TOKEN_PROPERTY, generateEncryptedToken());
     }
 
     const info = player.clientSystemInfo;
-
-    // If client info is missing, treat as invalid
     if (!info) {
         banish(player);
         return;
     }
 
     const { maxRenderDistance, platformType, memoryTier } = info;
-
     const invalidRenderDistance = maxRenderDistance == null || Number.isNaN(maxRenderDistance) || maxRenderDistance < 6 || maxRenderDistance > 96;
-
     const invalidMemory = (platformType === "Desktop" && memoryTier === 0) || (platformType === "Console" && memoryTier <= 1);
 
     if (invalidRenderDistance || invalidMemory) {
@@ -356,43 +369,65 @@ function handlePlayerSpawn(event: import("@minecraft/server").PlayerSpawnAfterEv
     }
 }
 
+/* ----------------- INITIALIZE ----------------- */
+
 /**
  * Initializes the packet handler, anti-spam system, join protection, and proxy protection.
- * Sets up event subscriptions for async player join, packet receive, and player leave events.
- * Configures monitored packet IDs and initializes required module references.
- * @returns A promise that resolves to false if module imports fail, otherwise void
+ * Dynamically imports BDS-exclusive modules (`@minecraft/server-net` and `@minecraft/server-admin`).
+ *
+ * @remarks
+ * Realms Compatibility:
+ * `@minecraft/server-net` and `@minecraft/server-admin` APIs are strictly limited to
+ * Bedrock Dedicated Server (BDS) environments and are not available on Minecraft Realms.
+ * If these imports fail (e.g., when hosted on a Realm), the initialization gracefully
+ * catches the error and returns `false`, preventing script runtime crashes.
+ *
+ * @returns Resolves to `false` if module imports fail (e.g., on Realms), or `void` on successful setup.
  */
 async function initializePacketHandler(): Promise<boolean | void> {
     try {
         const networkModule = await import("@minecraft/server-net");
         const adminModule = await import("@minecraft/server-admin");
+
         serverNet = networkModule.beforeEvents;
         PacketId = networkModule.PacketId;
         serverAdmin = adminModule.beforeEvents;
     } catch {
+        console.warn("[Paradox] Network/Admin APIs unavailable. Rate-limiting is disabled (Realms environment detected).");
         return false;
     }
 
-    asyncJoinRef = async (event) => handleAsyncJoin(event);
-    serverAdmin.asyncPlayerJoin.subscribe(asyncJoinRef);
-    EventCoordinator.subscribeAfter("playerSpawn", handlePlayerSpawn);
+    PlayerCache.init();
 
-    // Existing packet handler
-    packetHandlerRef = async (data) => {
+    asyncJoinRef = (event) => handleAsyncJoin(event);
+    serverAdmin.asyncPlayerJoin.subscribe(asyncJoinRef);
+
+    playerSpawnRef = (event) => handlePlayerSpawn(event);
+    EventCoordinator.subscribeAfter("playerSpawn", playerSpawnRef);
+
+    playerLeaveRef = (event) => {
+        const name = event.player?.name;
+        if (name) cleanupPlayerData(name);
+    };
+    EventCoordinator.subscribeBefore("playerLeave", playerLeaveRef);
+
+    // Periodic orphan cleanup every 30 seconds
+    sweepInterval = system.runInterval(() => sweepOrphanedPlayerState(), 600);
+
+    packetHandlerRef = (data) => {
         const player = data.sender;
         if (!player || !player.isValid) {
             data.cancel = true;
             return;
         }
+
         const playerName = player.name;
         const packetId = data.packetId;
         const now = Date.now();
 
-        /** Command burst protection */
-
+        // Command burst check
         if (packetId === PacketId.CommandRequestPacket) {
             let cmdBuffer = commandBurst.get(playerName);
-
             if (!cmdBuffer) {
                 cmdBuffer = new TimestampBuffer(20);
                 commandBurst.set(playerName, cmdBuffer);
@@ -408,27 +443,21 @@ async function initializePacketHandler(): Promise<boolean | void> {
             }
         }
 
-        /** Minimum packet timing detection */
-
+        // Minimum packet interval check
         const lastTime = lastPacketTime.get(playerName);
-
         if (lastTime && now - lastTime < MIN_PACKET_INTERVAL) {
             data.cancel = true;
             return;
         }
-
         lastPacketTime.set(playerName, now);
 
-        /** Global burst detection */
-
+        // Global server packet burst detection
         globalBuffer.push(now);
         globalBuffer.prune(now, GLOBAL_WINDOW);
         if (globalBuffer.size() > GLOBAL_PACKET_LIMIT) triggerLockdown();
 
-        /** Per-player global packet limit */
-
+        // Per-player packet limit
         let playerGlobal = playerGlobalBuffers.get(playerName);
-
         if (!playerGlobal) {
             playerGlobal = new TimestampBuffer(PLAYER_PACKET_LIMIT * 2);
             playerGlobalBuffers.set(playerName, playerGlobal);
@@ -443,8 +472,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             return;
         }
 
-        /** Per-packet limits */
-
+        // Per-packet type rate limits
         const config = PACKET_LIMITS[packetId];
         if (!config) return;
 
@@ -453,6 +481,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
             playerMap = new Map();
             packetLimits.set(playerName, playerMap);
         }
+
         let buffer = playerMap.get(packetId);
         if (!buffer) {
             buffer = new TimestampBuffer(config.limit * 2);
@@ -461,87 +490,84 @@ async function initializePacketHandler(): Promise<boolean | void> {
 
         buffer.push(now);
         buffer.prune(now, config.window);
-
         lastPacketType.set(playerName, packetId);
 
         if (buffer.size() > config.limit) {
             data.cancel = true;
-            recentViolators.push({ name: playerName, timestamp: now });
-            const cutoff = now - VIOLATOR_WINDOW;
-            while (recentViolators.length && recentViolators[0].timestamp < cutoff) recentViolators.shift();
-            if (recentViolators.length >= LOCKDOWN_THRESHOLD) triggerLockdown();
 
-            const bannedPlayers = (await banlistDB.get("players")) ?? {};
-            if (!(playerName in bannedPlayers)) {
-                bannedPlayers[playerName] = { reason: "Packet rate abuse", bannedBy: "System", timestamp: now };
-                await banlistDB.set("players", bannedPlayers);
+            recentViolatorsBuffer.push(now);
+            recentViolatorsBuffer.prune(now, VIOLATOR_WINDOW);
+
+            if (recentViolatorsBuffer.size() >= LOCKDOWN_THRESHOLD) {
+                triggerLockdown();
             }
 
-            packetLimits.delete(playerName);
-            world.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} triggered rate-limiting.`);
-            system.run(() => {
-                if (player.isValid) player.runCommand(`kick @s Packet spam detected.`);
-            });
-        }
-    };
+            // Async database write handled out-of-band via system.run
+            system.run(async () => {
+                const bannedPlayers = ((await banlistDB.get("players")) as BanlistMap) ?? {};
+                if (!(playerName in bannedPlayers)) {
+                    bannedPlayers[playerName] = { reason: "Packet rate abuse", bannedBy: "System", timestamp: now };
+                    await banlistDB.set("players", bannedPlayers);
+                }
 
-    playerLeaveRef = (event) => {
-        const name = event.player.name;
-        packetLimits.delete(name);
-        lastPacketType.delete(name);
-        playerGlobalBuffers.delete(name);
-        lastPacketTime.delete(name);
-        commandBurst.delete(name);
+                if (player.isValid) {
+                    player.runCommand(`kick @s Packet spam detected.`);
+                }
+            });
+
+            cleanupPlayerData(playerName);
+            world.sendMessage(`§2[§7Paradox§2]§o§7 ${playerName} triggered rate-limiting.`);
+        }
     };
 
     serverNet.packetReceive.subscribe(packetHandlerRef, {
         monitoredPacketIds: [PacketId.CommandRequestPacket, PacketId.LegacyTelemetryEventPacket, PacketId.TextPacket, PacketId.EmotePacket, PacketId.MovePlayerPacket],
     });
-
-    EventCoordinator.subscribeBefore("playerLeave", playerLeaveRef);
 }
 
 /* ----------------- START / STOP ----------------- */
 
 /**
- * Starts the packet handler system by initializing event subscriptions and handlers.
- * This function should be called during server startup or when enabling the anti-abuse system.
- * @returns A promise that resolves to true if initialization succeeded, false otherwise
- * @example
- * await startPacketHandler();
+ * Starts and initializes packet processing, anti-flood listeners, and rate-limiting structures.
+ * @returns Promise resolving to `true` if initialized successfully, or `false` on failure (e.g. on Realms).
  */
 export async function startPacketHandler(): Promise<boolean> {
     const success = await initializePacketHandler();
-    return success === false ? false : true;
+    return success !== false;
 }
 
 /**
- * Stops the packet handler system by unsubscribing from all event listeners
- * and clearing tracking data. Call this function during server shutdown
- * or when disabling the anti-abuse system to clean up resources.
- * @example
- * stopPacketHandler();
+ * Stops packet listeners, unhooks event subscriptions, clears running system tasks,
+ * and purges all active memory buffers.
  */
 export function stopPacketHandler(): void {
     if (serverNet && packetHandlerRef) serverNet.packetReceive.unsubscribe(packetHandlerRef);
     if (serverAdmin && asyncJoinRef) serverAdmin.asyncPlayerJoin.unsubscribe(asyncJoinRef);
     if (playerLeaveRef) EventCoordinator.unsubscribeBefore("playerLeave", playerLeaveRef);
+    if (playerSpawnRef) EventCoordinator.unsubscribeAfter("playerSpawn", playerSpawnRef);
 
     packetLimits.clear();
     playerGlobalBuffers.clear();
     lastPacketType.clear();
     lastPacketTime.clear();
     commandBurst.clear();
-    recentViolators.length = 0;
-    joinAttempts.length = 0;
+    recentViolatorsBuffer.clear();
+    joinAttemptsBuffer.clear();
 
     if (lockdownTimeout !== undefined) {
         system.clearRun(lockdownTimeout);
         lockdownTimeout = undefined;
     }
+    if (sweepInterval !== undefined) {
+        system.clearRun(sweepInterval);
+        sweepInterval = undefined;
+    }
+
     isLockedDown = false;
+    world.setDynamicProperty(LOCKDOWN_PROPERTY, false);
 
     packetHandlerRef = null;
     asyncJoinRef = null;
     playerLeaveRef = null;
+    playerSpawnRef = null;
 }
