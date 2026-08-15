@@ -1,4 +1,13 @@
 # Changelog
+
+## [v6.5.0](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v6.5.0) (2026-08-15)
+
+[Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v6.4.1...v6.5.0)
+
+**Merged pull requests:**
+
+- fix database async calls, criticals detection lifecycle, and global ban persistence [\#66](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/66) ([Spagles](https://github.com/Spagles))
+
 ## [v6.4.1](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v6.4.1) (2026-08-08)
 
 [Full Changelog](https://github.com/Visual1mpact/Paradox_AntiCheat/compare/v6.4.0...v6.4.1)
@@ -429,7 +438,6 @@ If you are expecting the function to accept certain arguments, you should explic
 - Fix to Chatrank not working [\#32](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/32) ([frostice482](https://github.com/frostice482))
 - Debug & stuff [\#31](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/31) ([frostice482](https://github.com/frostice482))
 - style fix [\#30](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/30) ([Mantou1233](https://github.com/Mantou1233))
-- Please add some colors. [\#29](https://github.com/Visual1mpact/Paradox_AntiCheat/pull/29) ([ghost](https://github.com/ghost))
 
 ## [v2.17.51](https://github.com/Visual1mpact/Paradox_AntiCheat/tree/v2.17.51) (2022-06-10)
 
