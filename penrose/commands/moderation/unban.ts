@@ -72,7 +72,7 @@ export const unbanCommand: Command = {
                 const parsed = globalBanStr ? JSON.parse(globalBanStr) : [];
                 bannedPlayers = Object.fromEntries(parsed.map((name: string) => [name, {}])); // Dummy structure
             } else {
-                bannedPlayers = banlistDB.get("players") ?? {};
+                bannedPlayers = (await banlistDB.get("players")) ?? {};
             }
         } catch (err) {
             message.sender.sendMessage("§o§c[Paradox] Failed to retrieve the ban list. Please contact an admin.");
