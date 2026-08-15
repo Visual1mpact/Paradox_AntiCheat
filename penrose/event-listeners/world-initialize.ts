@@ -374,7 +374,7 @@ function initializeGlobalBanList() {
     const version = world.getDynamicProperty("paradoxVersion") as string;
 
     // Compare the world version with the paradox version
-    if (!version || compareVersions(version, paradoxVersion) <= 0) {
+    if (!version || compareVersions(version, paradoxVersion) < 0) {
         // Update the current world version
         world.setDynamicProperty("paradoxVersion", paradoxVersion);
         // Update global ban list for new version
