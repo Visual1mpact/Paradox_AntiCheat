@@ -195,9 +195,7 @@ class ChatSendSubscription {
 
                     if (!channelData.lastActive || now - channelData.lastActive > DEBOUNCE_INTERVAL) {
                         channelData.lastActive = now;
-                        system.run(() => {
-                            channelsDB.set(playerChannel, channelData);
-                        });
+                        await channelsDB.set(playerChannel, channelData);
                     }
 
                     const cacheEntry = this.channelMemberCache.get(playerChannel);

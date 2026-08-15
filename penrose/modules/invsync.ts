@@ -88,10 +88,10 @@ function getInventoryCounts(player: Player): Record<string, number> | null {
  * SYSTEM HOOK: Periodic Database Garbage Collection
  * Ported from Script 2 to stop database bloat from offline/historical data.
  */
-function runDatabaseVacuum() {
+async function runDatabaseVacuum() {
     try {
         if (typeof (invSyncSnapshotsDB as any).clean === "function") {
-            (invSyncSnapshotsDB as any).clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
+            await (invSyncSnapshotsDB as any).clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
         }
     } catch (e) {
         console.error(`[Paradox] Error vacuuming expired database entries: ${e}`);
@@ -150,7 +150,7 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
     snapshot.time = Date.now();
 
     try {
-        invSyncSnapshotsDB.set(player.id, snapshot);
+        await invSyncSnapshotsDB.set(player.id, snapshot);
     } catch (e) {
         console.error(`[Paradox] Failure updating runtime baseline for ${player.name}: ${e}`);
     }
@@ -192,7 +192,7 @@ async function handleAnomaly(player: Player, typeId: string, excessAmount: numbe
     const postCounts = getInventoryCounts(player);
     if (postCounts) {
         try {
-            invSyncSnapshotsDB.set(player.id, {
+            await invSyncSnapshotsDB.set(player.id, {
                 counts: postCounts,
                 time: Date.now(),
                 name: player.name,
@@ -216,7 +216,7 @@ async function handleAnomaly(player: Player, typeId: string, excessAmount: numbe
         if (audit.events.length > MAX_AUDIT_EVENTS) {
             audit.events = audit.events.slice(-MAX_AUDIT_EVENTS);
         }
-        invSyncAuditDB.set(player.id, audit);
+        await invSyncAuditDB.set(player.id, audit);
     } catch (e) {
         console.error(`[Paradox] Failed writing logging trail data for ${player.name}: ${e}`);
     }
@@ -230,14 +230,14 @@ async function handleAnomaly(player: Player, typeId: string, excessAmount: numbe
 function onPlayerJoin(event: PlayerJoinAfterEvent) {
     const playerId = event.playerId;
 
-    system.runTimeout(() => {
+    system.runTimeout(async () => {
         const player = PlayerCache.getPlayerById(playerId);
         if (!player || !player.isValid) return;
 
         const counts = getInventoryCounts(player);
         if (counts) {
             try {
-                invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+                await invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
             } catch (e) {
                 console.error(`[Paradox] Failed writing join baseline initialization for ${player.name}: ${e}`);
             }
@@ -245,14 +245,14 @@ function onPlayerJoin(event: PlayerJoinAfterEvent) {
     }, BUFFER_TICKS);
 }
 
-function onPlayerLeave(event: PlayerLeaveBeforeEvent) {
+async function onPlayerLeave(event: PlayerLeaveBeforeEvent) {
     const player = event.player;
     if (!player) return;
 
     const counts = getInventoryCounts(player);
     if (counts) {
         try {
-            invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+            await invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
         } catch (e) {
             console.error(`[Paradox] Failed writing post-session save file baseline for ${player.name}: ${e}`);
         }
@@ -267,7 +267,7 @@ function onDimensionChange(event: PlayerDimensionChangeAfterEvent) {
 
     dimensionChangingPlayers.add(player.id);
 
-    system.runTimeout(() => {
+    system.runTimeout(async () => {
         if (!player.isValid) {
             dimensionChangingPlayers.delete(player.id);
             return;
@@ -275,7 +275,7 @@ function onDimensionChange(event: PlayerDimensionChangeAfterEvent) {
         const counts = getInventoryCounts(player);
         if (counts) {
             try {
-                invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+                await invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
             } catch (e) {
                 console.error(`[Paradox] Failed updating cross-dimension synchronization baseline for ${player.name}: ${e}`);
             }
@@ -295,14 +295,14 @@ function onPlayerSpawn(event: PlayerSpawnAfterEvent) {
     const player = event.player;
     if (!player?.isValid) return;
 
-    system.runTimeout(() => {
+    system.runTimeout(async () => {
         if (!player.isValid) return;
 
         if (deadPlayers.has(player.id)) {
             const counts = getInventoryCounts(player);
             if (counts) {
                 try {
-                    invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+                    await invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
                 } catch (e) {
                     console.error(`[Paradox] Failed writing post-respawn recovery baseline for ${player.name}: ${e}`);
                 }
@@ -334,7 +334,7 @@ function alertStaffSystem(message: string) {
 /**
  * SYSTEM LIFECYCLE MANAGEMENT (EVENT RUNTIME ROUTER)
  */
-export function startInvSync() {
+export async function startInvSync() {
     if (isModuleActive) return;
     isModuleActive = true;
 
@@ -358,7 +358,7 @@ export function startInvSync() {
             const counts = getInventoryCounts(player);
             if (counts) {
                 try {
-                    invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
+                    await invSyncSnapshotsDB.set(player.id, { counts, time: Date.now(), name: player.name });
                 } catch (e) {
                     console.error(`[Paradox] Initialization snapshot failure during live hook for ${player.name}: ${e}`);
                 }
@@ -367,8 +367,8 @@ export function startInvSync() {
     }
 
     // Ported background vacuum task from Script 2 (Throttled cleanly via safe intervals)
-    cleanupIntervalId = system.runInterval(() => {
-        runDatabaseVacuum();
+    cleanupIntervalId = system.runInterval(async () => {
+        await runDatabaseVacuum();
     }, CLEANUP_INTERVAL_TICKS);
 
     alertStaffSystem("§7InvSync framework §astarted§7.");
@@ -414,7 +414,7 @@ export async function forceCheckAll() {
                 const maxStackSize = getMaxStackSize(item);
 
                 if (delta > maxStackSize) {
-                    handleAnomaly(player, item, delta);
+                    await handleAnomaly(player, item, delta);
                 }
             }
         } catch (e) {
@@ -423,13 +423,13 @@ export async function forceCheckAll() {
     }
 }
 
-export function forceSnapshotAll() {
+export async function forceSnapshotAll() {
     for (const player of PlayerCache.getPlayers()) {
         if (!player.isValid) continue;
         const counts = getInventoryCounts(player);
         if (counts) {
             try {
-                invSyncSnapshotsDB.set(player.id, {
+                await invSyncSnapshotsDB.set(player.id, {
                     counts,
                     time: Date.now(),
                     name: player.name,
@@ -442,16 +442,16 @@ export function forceSnapshotAll() {
     alertStaffSystem("§2[§7Paradox§2]§o§7 Forced a fresh inventory snapshot update for all online entities.");
 }
 
-export function clearAllSnapshots() {
+export async function clearAllSnapshots() {
     try {
         // Safe clear implementation ported from Script 2
         if (typeof (invSyncSnapshotsDB as any).clear === "function") {
-            (invSyncSnapshotsDB as any).clear();
-            (invSyncAuditDB as any).clear();
+            await (invSyncSnapshotsDB as any).clear();
+            await (invSyncAuditDB as any).clear();
         } else {
             for (const player of PlayerCache.getPlayers()) {
                 if (player.isValid) {
-                    invSyncSnapshotsDB.delete(player.id);
+                    await invSyncSnapshotsDB.delete(player.id);
                 }
             }
         }
