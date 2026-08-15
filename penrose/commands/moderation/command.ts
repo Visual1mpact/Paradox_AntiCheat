@@ -211,7 +211,7 @@ export const command: Command = {
 
                 disabledCommands.push(commandName);
             } else if (action === "enable") {
-                const disabledMeta = disabledCommandsDB.get(commandName);
+                const disabledMeta = await disabledCommandsDB.get(commandName);
 
                 if (!disabledMeta) {
                     const isAlreadyEnabled = commandHandlerRegistry.some((cmd) => cmd.name === commandName);
