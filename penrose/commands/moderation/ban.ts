@@ -68,8 +68,8 @@ export const banCommand: Command = {
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
         // Load ban and whitelist records, defaulting to empty objects if not found
-        const bannedPlayers = (banlistDB.get("players") ?? {}) as Record<string, any>;
-        const whitelistedPlayers = (whitelistDB.get("players") ?? {}) as Record<string, any>;
+        const bannedPlayers = ((await banlistDB.get("players")) ?? {}) as Record<string, any>;
+        const whitelistedPlayers = ((await whitelistDB.get("players")) ?? {}) as Record<string, any>;
 
         // Handle the list command first
         if (args.includes("-l") || args.includes("--list")) {
