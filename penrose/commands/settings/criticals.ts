@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
+import { startCriticalsCheck, stopCriticalsCheck } from "../../modules/criticals";
 
 /**
  * Represents the criticals toggle command.
@@ -44,10 +45,12 @@ export const criticalsCommand: Command = {
         if (!isEnabled) {
             moduleData.enabled = true;
             await paradoxModulesDB.set(checkKey, moduleData);
+            startCriticalsCheck();
             player.sendMessage(`§2[§7Paradox§2]§o§7 Criticals detection has been §aenabled§7.`);
         } else {
             moduleData.enabled = false;
             await paradoxModulesDB.set(checkKey, moduleData);
+            stopCriticalsCheck();
             player.sendMessage(`§2[§7Paradox§2]§o§7 Criticals detection has been §4disabled§7.`);
         }
     },

@@ -1,6 +1,5 @@
 import { Player, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 /**
@@ -30,12 +29,8 @@ function alertStaff(attacker: Player, yVelocity: number): void {
  * Monitors players for "Packet Criticals" where they manipulate their
  * on-ground state to force critical hits without jumping naturally.
  */
-async function handleHurtEvent(event: EntityHurtBeforeEvent) {
+function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const attacker = event.damageSource.damagingEntity;
-
-    // Check if module is enabled in database
-    const isEnabled = (await paradoxModulesDB.get("criticalsCheck_b"))?.enabled ?? false;
-    if (!isEnabled) return;
 
     if (!(attacker instanceof Player)) return;
 
