@@ -295,7 +295,7 @@ export class CommandHandler {
      */
     private async acquireCommandExecutionLock() {
         while (this.prefixLock || this.prefixUpdateLock) {
-            await new Promise<void>((resolve) => setTimeout(resolve, 10));
+            await new Promise<void>((resolve) => system.run(resolve));
         }
         this.prefixLock = true;
     }
