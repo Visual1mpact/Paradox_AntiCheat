@@ -323,7 +323,7 @@ async function chestLockPlaceAfter(event: PlayerPlaceBlockAfterEvent): Promise<v
     if (!isStorageBlock(block)) return;
 
     const key = getCanonicalChestKey(block);
-    const existing = chestLockDB.get(key);
+    const existing = await chestLockDB.get(key);
 
     // Don't overwrite if already tracked (important for double chests / reloads)
     if (!existing) {
