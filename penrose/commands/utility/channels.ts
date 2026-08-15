@@ -31,11 +31,11 @@ function registerChannelsCleanup() {
     });
 
     // Lazy validation: Clear stale channel properties when a player joins
-    EventCoordinator.subscribeAfter("playerSpawn", (event) => {
+    EventCoordinator.subscribeAfter("playerSpawn", async (event) => {
         const { player, initialSpawn } = event;
         if (!initialSpawn) return;
         const channelName = player.getDynamicProperty("currentChannel") as string;
-        if (channelName && !channelsDB.get(channelName)) player.setDynamicProperty("currentChannel", undefined);
+        if (channelName && !(await channelsDB.get(channelName))) player.setDynamicProperty("currentChannel", undefined);
     });
 
     isCleanupRegistered = true;
@@ -100,7 +100,7 @@ export const channelCommand: Command = {
 
         // Global Sanity Check: If the player thinks they are in a channel that doesn't exist, clear it.
         const storedChannelName = msg.sender.getDynamicProperty("currentChannel") as string;
-        if (storedChannelName && !channelsDB.get(storedChannelName)) {
+        if (storedChannelName && !(await channelsDB.get(storedChannelName))) {
             msg.sender.setDynamicProperty("currentChannel", undefined);
         }
 
@@ -189,7 +189,7 @@ export const channelCommand: Command = {
                 return;
             }
 
-            if (!getChannel(channelName)) {
+            if (!(await getChannel(channelName))) {
                 msg.sender.sendMessage(`§o§c[Paradox] Channel '${channelName}§c' does not exist.`);
                 return;
             }
