@@ -76,7 +76,7 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
         await handleBanCheck(event);
         await handleWarnCheck(event);
         handleSecurityClearance(event);
-        allowList(event);
+        await allowList(event);
         await handleMetadataUpdate(player);
 
         // Logic for setting the nameTag with chat rank
@@ -145,7 +145,7 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
     const playerName = player.name;
 
     const bannedPlayers = (await banlistDB.get("players")) ?? {};
-    const whitelistedPlayers = whitelistDB.get("players") ?? {};
+    const whitelistedPlayers = (await whitelistDB.get("players")) ?? {};
 
     // Whitelisted players are exempt
     if (playerName in whitelistedPlayers) {
@@ -179,10 +179,10 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
  * If the connecting player is not on the list, they get kicked.
  * @param {PlayerSpawnAfterEvent} event - The event object containing player spawn information.
  */
-function allowList(event: PlayerSpawnAfterEvent): void {
+async function allowList(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
     const playerName = player.name;
-    const allowListedPlayers = allowlistDB.get("players") ?? {};
+    const allowListedPlayers = (await allowlistDB.get("players")) ?? {};
 
     // If no allowlist is enforced, let everyone in
     if (Object.keys(allowListedPlayers).length === 0) return;
