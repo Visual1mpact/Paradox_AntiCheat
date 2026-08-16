@@ -86,7 +86,7 @@ class ChatSendSubscription {
     }
 
     private isPlayerPropertyEqual(player: Player, propertyKey: string, expectedValue: number): boolean {
-        const value = player.isValid ? (player.getDynamicProperty(propertyKey) as number | undefined) : undefined;
+        const value = player?.isValid ? (player.getDynamicProperty(propertyKey) as number | undefined) : undefined;
         return value === expectedValue;
     }
 

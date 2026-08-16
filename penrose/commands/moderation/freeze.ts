@@ -237,7 +237,7 @@ export const imprisonCommand: Command = {
         }
 
         // Execute the command logic in the game tick loop
-        if (player && player.isValid) {
+        if (player?.isValid) {
             // Check if player is already imprisoned
             const isImprisoned = player.getDynamicProperty(PRISON_LOCATION_PROPERTY);
 

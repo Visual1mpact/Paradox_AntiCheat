@@ -94,7 +94,7 @@ export const deopCommand: Command = {
                 // First, check if the player is online using the cached PlayerCache
                 const player = PlayerCache.getPlayerByName(playerName);
 
-                if (player && player.isValid) {
+                if (player?.isValid) {
                     // Remove player from the security clearance list
                     const updatedList = securityClearanceList.filter((playerObject: PlayerInfo) => playerObject.id !== player.id);
                     securityClearanceListData.securityClearanceList = updatedList;

@@ -137,8 +137,7 @@ function* continuousVisionLoop(isEnabledInDB: boolean): Generator<void, void, un
         const currentTick = system.currentTick;
 
         for (const player of players) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             const state = getPlayerState(player.id);
 

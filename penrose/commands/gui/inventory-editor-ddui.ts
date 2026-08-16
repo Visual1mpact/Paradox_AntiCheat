@@ -11,7 +11,7 @@ import { PlayerCache } from "penrose/classes/player-cache";
  */
 export function showInventoryEditor(player: Player) {
     // Check if the executing player is online and valid before rendering
-    if (!player || !player.isValid) return;
+    if (!player?.isValid) return;
 
     // DDUI reactive state bindings
     const selectedPlayer = new ObservableNumber(0, { clientWritable: true });
@@ -136,7 +136,7 @@ export function showInventoryEditor(player: Player) {
 
         // Submit action handler button
         .button("Apply Changes", () => {
-            if (!player.isValid) return;
+            if (!player?.isValid) return;
 
             const playerIndex = selectedPlayer.getData();
             const selectedName = playerNames[playerIndex];
@@ -210,7 +210,7 @@ export function showInventoryEditor(player: Player) {
         .then((showResult) => {
             // Re-open UI if form failed to open due to UserBusy state
             if (showResult === DataDrivenScreenClosedReason.UserBusy) {
-                if (player.isValid) {
+                if (player?.isValid) {
                     showInventoryEditor(player);
                 }
             }

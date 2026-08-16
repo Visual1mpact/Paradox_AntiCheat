@@ -50,8 +50,7 @@ function* continuousAimbotLoop(): Generator<void, void, unknown> {
         if (!isModuleActive) return;
 
         for (const player of PlayerCache.getPlayers()) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             try {
                 // Bypass for high-security users

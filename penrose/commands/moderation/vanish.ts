@@ -73,7 +73,7 @@ export const vanishCommand: Command = {
             return;
         }
 
-        if (player && player.isValid) {
+        if (player?.isValid) {
             // Get the player's current game mode
             const playerGameMode = player.getGameMode();
 

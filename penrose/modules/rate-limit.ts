@@ -416,7 +416,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
 
     packetHandlerRef = (data) => {
         const player = data.sender;
-        if (!player || !player.isValid) {
+        if (!player?.isValid) {
             data.cancel = true;
             return;
         }
@@ -510,7 +510,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
                     await banlistDB.set("players", bannedPlayers);
                 }
 
-                if (player.isValid) {
+                if (player?.isValid) {
                     player.runCommand(`kick @s Packet spam detected.`);
                 }
             });

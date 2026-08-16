@@ -66,29 +66,35 @@ function alertStaff(player: Player): void {
  * Checks the AFK status of all players.
  * Kicks players who have been AFK longer than the configured time.
  */
+/**
+ * Checks the AFK status of all players.
+ * Kicks players who have been AFK longer than the configured time.
+ */
 function* afkCheckGenerator(): Generator<void, void, unknown> {
     const currentTick = system.currentTick;
 
     for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
-            try {
+        if (!player?.isValid) continue;
+
+        try {
+            if (!isSecurityClearanceIgnored(player)) {
                 const velocity = player.getVelocity();
 
-                // Update only if the player is moving and should not be ignored
-                if (!isSecurityClearanceIgnored(player)) {
-                    if (!playerLastActive[player.id] || !isPlayerAFK(velocity)) {
-                        playerLastActive[player.id] = currentTick;
-                    } else {
-                        const lastActiveTick = playerLastActive[player.id];
-                        if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
-                            alertStaff(player);
-                            player.runCommand(`kick @s You have been kicked for being AFK!`);
-                            delete playerLastActive[player.id];
-                        }
+                if (!playerLastActive[player.id] || !isPlayerAFK(velocity)) {
+                    playerLastActive[player.id] = currentTick;
+                } else {
+                    const lastActiveTick = playerLastActive[player.id];
+                    if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
+                        alertStaff(player);
+                        player.runCommand(`kick @s You have been kicked for being AFK!`);
+                        delete playerLastActive[player.id];
                     }
                 }
-            } catch (e) {}
+            }
+        } catch (e) {
+            // Handle or log error if needed
         }
+
         yield;
     }
 }

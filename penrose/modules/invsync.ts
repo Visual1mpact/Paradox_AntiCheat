@@ -67,7 +67,7 @@ function getMaxStackSize(typeId: string): number {
  * UTILITY: Safe Mapping of Present Inventory State
  */
 function getInventoryCounts(player: Player): Record<string, number> | null {
-    if (!player.isValid) return null;
+    if (!player?.isValid) return null;
     const container = player.getComponent("inventory")?.container;
     if (!container) return null;
 
@@ -103,7 +103,7 @@ async function runDatabaseVacuum() {
  */
 async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent) {
     const player = event.player;
-    if (!player || !player.isValid) return;
+    if (!player?.isValid) return;
 
     // STATE SAFETY GUARD: Ignore mutations during unstable engine processing windows
     if (dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) return;
@@ -232,7 +232,7 @@ function onPlayerJoin(event: PlayerJoinAfterEvent) {
 
     system.runTimeout(async () => {
         const player = PlayerCache.getPlayerById(playerId);
-        if (!player || !player.isValid) return;
+        if (!player?.isValid) return;
 
         const counts = getInventoryCounts(player);
         if (counts) {
@@ -268,7 +268,7 @@ function onDimensionChange(event: PlayerDimensionChangeAfterEvent) {
     dimensionChangingPlayers.add(player.id);
 
     system.runTimeout(async () => {
-        if (!player.isValid) {
+        if (!player?.isValid) {
             dimensionChangingPlayers.delete(player.id);
             return;
         }
@@ -296,7 +296,7 @@ function onPlayerSpawn(event: PlayerSpawnAfterEvent) {
     if (!player?.isValid) return;
 
     system.runTimeout(async () => {
-        if (!player.isValid) return;
+        if (!player?.isValid) return;
 
         if (deadPlayers.has(player.id)) {
             const counts = getInventoryCounts(player);
@@ -354,7 +354,7 @@ export async function startInvSync() {
 
     // Run active session scans for current online pool instantly
     for (const player of PlayerCache.getPlayers()) {
-        if (player.isValid) {
+        if (player?.isValid) {
             const counts = getInventoryCounts(player);
             if (counts) {
                 try {
@@ -400,7 +400,7 @@ export function stopInvSync() {
 
 export async function forceCheckAll() {
     for (const player of PlayerCache.getPlayers()) {
-        if (!player.isValid || dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) continue;
+        if (!player?.isValid || dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) continue;
 
         try {
             const snapshot = await invSyncSnapshotsDB.get(player.id);
@@ -425,7 +425,7 @@ export async function forceCheckAll() {
 
 export async function forceSnapshotAll() {
     for (const player of PlayerCache.getPlayers()) {
-        if (!player.isValid) continue;
+        if (!player?.isValid) continue;
         const counts = getInventoryCounts(player);
         if (counts) {
             try {
@@ -450,7 +450,7 @@ export async function clearAllSnapshots() {
             await (invSyncAuditDB as any).clear();
         } else {
             for (const player of PlayerCache.getPlayers()) {
-                if (player.isValid) {
+                if (player?.isValid) {
                     await invSyncSnapshotsDB.delete(player.id);
                 }
             }

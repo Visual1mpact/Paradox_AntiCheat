@@ -63,8 +63,7 @@ function* continuousAutoTotemLoop(moduleConfig: AutoTotemModuleConfig | undefine
         if (!isEnabled) return;
 
         for (const player of PlayerCache.getPlayers()) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             try {
                 // Exempt high-security staff

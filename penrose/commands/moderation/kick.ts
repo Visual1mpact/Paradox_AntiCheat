@@ -114,7 +114,7 @@ export const kickCommand: Command = {
             return;
         }
 
-        if (player.isValid) {
+        if (player?.isValid) {
             // Kick the player with the specified reason
             player.runCommand(`kick @s \nYOU ARE KICKED!\n\n[Kicked By]: ${message.sender.name ?? "N/A"}\n[Reason]: ${reason ?? "Farewell"}`);
 

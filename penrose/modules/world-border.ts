@@ -37,8 +37,7 @@ function* continuousWorldBorderLoop(moduleConfig: ModuleConfig | undefined): Gen
         const checkAndTeleportPlayer = createWorldBorderChecker(spawnLocation);
 
         for (const player of players) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             try {
                 if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;

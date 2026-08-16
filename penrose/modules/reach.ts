@@ -169,8 +169,7 @@ function* continuousReachLoop(): Generator<void, void, unknown> {
         const activePlayerIds = new Set<string>();
 
         for (const player of players) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             activePlayerIds.add(player.id);
 

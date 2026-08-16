@@ -39,7 +39,7 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
     if (data.packetId !== PacketId.SubChunkRequestPacket) return;
 
     const player = data.sender;
-    if (!player || !player.isValid) return;
+    if (!player?.isValid) return;
 
     // Validate the raw packet size to block oversized coordinate flood exploits
     if (data.packetSize > MAX_PACKET_SIZE_THRESHOLD) {

@@ -151,8 +151,7 @@ function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): 
         const players = PlayerCache.getPlayers();
 
         for (const player of players) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             try {
                 checkPathing(player);

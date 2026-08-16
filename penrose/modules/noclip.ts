@@ -260,8 +260,7 @@ function* continuousNoClipLoop(): Generator<void, void, unknown> {
         const players = PlayerCache.getPlayers();
 
         for (const player of players) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             try {
                 checkPlayer(player);

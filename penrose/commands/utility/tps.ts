@@ -86,9 +86,11 @@ function updateTpsHud() {
     const title = `§2TPS: ${color}${currentTPS.toFixed(2)}`;
     const subtitle = `§7Status: ${color}${status} §8| §7Target: §f20.0`;
 
-    for (const playerId of activeMonitors) {
+    for (const playerId of [...activeMonitors]) {
         const player = PlayerCache.getPlayerById(playerId);
-        if (!player || !player.isValid) {
+
+        // Early exit & cleanup for invalid players
+        if (!player?.isValid) {
             activeMonitors.delete(playerId);
             if (activeMonitors.size === 0) stopTpsInterval();
             continue;

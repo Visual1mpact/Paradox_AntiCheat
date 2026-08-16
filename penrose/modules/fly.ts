@@ -37,8 +37,7 @@ function alertStaff(player: Player): void {
 
 async function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent) {
     const player = event.player;
-    const isValid = player && player.isValid;
-    if (isValid) {
+    if (player?.isValid) {
         player.setDynamicProperty("tridentUsed", false);
         alertCooldowns.delete(player.id);
     }
@@ -68,8 +67,7 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
 
         // Use PlayerCache for zero-allocation iteration
         for (const player of PlayerCache.getPlayers()) {
-            const isValid = player.isValid;
-            if (!isValid) continue;
+            if (!player?.isValid) continue;
 
             try {
                 // Skip excluded gamemodes
