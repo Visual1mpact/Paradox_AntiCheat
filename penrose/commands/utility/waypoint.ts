@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, Player, system, world, Vector3 } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache, CachedPlayerTransform } from "../../classes/cache/player-location-cache";
 import { waypointsDB } from "../../event-listeners/world-initialize";
 import { WaypointData } from "../../classes/database/db-types";
 
@@ -362,10 +363,14 @@ export const waypointCommand: Command = {
                     return;
                 }
 
+                const playerTransform = PlayerLocationCache.getTransform(player);
+                const loc = playerTransform?.location ?? player.location;
+                const dimId = playerTransform?.dimension.id ?? player.dimension.id;
+
                 const newWaypoint: WaypointData = {
                     name,
-                    location: { x: Math.floor(player.location.x), y: Math.floor(player.location.y), z: Math.floor(player.location.z) },
-                    dimension: player.dimension.id,
+                    location: { x: Math.floor(loc.x), y: Math.floor(loc.y), z: Math.floor(loc.z) },
+                    dimension: dimId,
                     timestamp: Date.now(),
                 };
                 playerWaypoints.savedWaypoints[name] = newWaypoint;
@@ -479,16 +484,16 @@ export const waypointCommand: Command = {
 };
 
 /**
- * Directional logic to determine which arrow to show based on player rotation.
+ * Directional logic to determine which arrow to show based on player transform and target position.
  */
-function getDirectionArrow(player: Player, target: Vector3): string {
-    const dx = target.x - player.location.x;
-    const dz = target.z - player.location.z;
+function getDirectionArrow(transform: CachedPlayerTransform, target: Vector3): string {
+    const dx = target.x - transform.location.x;
+    const dz = target.z - transform.location.z;
 
     const targetAngle = Math.atan2(dz, dx) * (180 / Math.PI);
     const targetYaw = targetAngle - 90;
 
-    let diff = (targetYaw - player.getRotation().y) % 360;
+    let diff = (targetYaw - transform.rotation.y) % 360;
     if (diff < 0) diff += 360;
 
     if (diff >= 337.5 || diff < 22.5) return "↑";
@@ -525,12 +530,18 @@ export function startWaypointHUD() {
                     continue;
                 }
 
-                if (player.dimension.id !== wp.dimension) {
+                const transform = PlayerLocationCache.getTransform(player);
+                if (!transform) {
+                    player.onScreenDisplay.setActionBar("");
+                    continue;
+                }
+
+                if (transform.dimension.id !== wp.dimension) {
                     player.onScreenDisplay.setActionBar(`§bGPS §7| §f${wp.name} §7| §cWrong Dimension`);
                     continue;
                 }
 
-                const dist = Math.floor(Math.sqrt(Math.pow(player.location.x - wp.location.x, 2) + Math.pow(player.location.z - wp.location.z, 2)));
+                const dist = Math.floor(Math.sqrt(Math.pow(transform.location.x - wp.location.x, 2) + Math.pow(transform.location.z - wp.location.z, 2)));
 
                 if (dist < 3 && Date.now() - wp.timestamp > 25000) {
                     player.onScreenDisplay.setActionBar(`§bGPS §7| §aReached Destination!`);
@@ -542,7 +553,7 @@ export function startWaypointHUD() {
                     continue;
                 }
 
-                const arrow = getDirectionArrow(player, wp.location);
+                const arrow = getDirectionArrow(transform, wp.location);
                 player.onScreenDisplay.setActionBar(`§l§bGPS §r§7| §f${wp.name} §7| §f${dist}m §7| §e${arrow}`);
             } catch (e) {
                 console.error(`[Paradox] Error in Waypoint HUD for player ${player.name}: ${e}`);

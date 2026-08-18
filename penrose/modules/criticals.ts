@@ -1,6 +1,7 @@
 import { Player, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
 /**
  * Minimum height a player should be off the ground to be considered
@@ -38,17 +39,20 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const gm = attacker.getGameMode();
     if (gm === GameMode.Creative || gm === GameMode.Spectator) return;
 
+    // Retrieve cached transform/location data
+    const transform = PlayerLocationCache.getTransform(attacker);
+    const loc = transform?.location ?? attacker.location;
+    const dimension = transform?.dimension ?? attacker.dimension;
+
     // If the player claims to be airborne (isOnGround = false)
     if (!attacker.isOnGround) {
         const velocity = attacker.getVelocity();
-        const loc = attacker.location;
 
         // Exclude legitimate airborne states
         if (attacker.isGliding || attacker.isClimbing || attacker.isInWater) return;
 
-        // Check the block directly beneath the player
-        // We check a distance slightly below the player to see if they are "fake" airborne
-        const blockBelow = attacker.dimension.getBlock({
+        // Check the block directly beneath the player using cached dimension & location
+        const blockBelow = dimension.getBlock({
             x: loc.x,
             y: loc.y - MIN_CRIT_HEIGHT,
             z: loc.z,
@@ -64,7 +68,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
             event.damage = 0;
 
             // Teleport them back to ground to break the cheat loop
-            attacker.teleport(attacker.location, { checkForBlocks: true });
+            attacker.teleport(loc, { checkForBlocks: true });
 
             alertStaff(attacker, velocity.y);
         }

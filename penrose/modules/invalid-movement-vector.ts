@@ -1,7 +1,7 @@
 import { Player, system, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 
 /**
  * Maximum allowed directional input magnitude on client-side vectors.

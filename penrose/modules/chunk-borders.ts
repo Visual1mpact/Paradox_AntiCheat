@@ -1,5 +1,6 @@
 //imported from Debug Tools (Pete9xi)
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { system } from "@minecraft/server";
 
 /**
@@ -128,8 +129,9 @@ function* chunkDebugGenerator(): Generator<void, void, unknown> {
         for (const player of PlayerCache.getPlayers()) {
             if (!debugViewersChunks.has(player.id)) continue;
 
-            const px = Math.floor(player.location.x);
-            const pz = Math.floor(player.location.z);
+            const loc = PlayerLocationCache.getTransform(player)?.location ?? player.location;
+            const px = Math.floor(loc.x);
+            const pz = Math.floor(loc.z);
 
             const chunkX = Math.floor(px / CHUNK_SIZE);
             const chunkZ = Math.floor(pz / CHUNK_SIZE);
@@ -164,8 +166,9 @@ function* chunkDebugGenerator(): Generator<void, void, unknown> {
          * STEP 2: Render chunk borders progressively.
          */
         for (const player of playersToDraw) {
-            const px = Math.floor(player.location.x);
-            const pz = Math.floor(player.location.z);
+            const loc = PlayerLocationCache.getTransform(player)?.location ?? player.location;
+            const px = Math.floor(loc.x);
+            const pz = Math.floor(loc.z);
 
             const chunkX = Math.floor(px / CHUNK_SIZE) * CHUNK_SIZE;
             const chunkZ = Math.floor(pz / CHUNK_SIZE) * CHUNK_SIZE;
@@ -323,5 +326,5 @@ export async function toggleChunks(sender?: any) {
         enable();
     }
 
-    sender.sendMessage(`§2[§7Paradox§2]§o§7 Chunk borders are now §l${debugViewersChunks.has(sender.id) ? "ENABLED" : "DISABLED"}§7`);
+    sender.sendMessage(`§2[§7Paradox§2]§o§7 Chunk borders are now §l${debugViewersChunks.has(sender.id) ? "§aenabled§7" : "§4disabled§7"}`);
 }

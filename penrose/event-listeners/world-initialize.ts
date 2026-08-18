@@ -87,7 +87,7 @@ import {
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 import { invCloneCommand } from "../commands/utility/invclone";
 import { chestForensicCommand } from "../commands/settings/container-lock";
 import { startChestLock } from "../modules/container-lock";

@@ -1,6 +1,7 @@
 import { Player, system, EntityHurtBeforeEvent, GameMode, EntityDamageCause } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 // CONFIGURATION CONSTANTS
@@ -24,13 +25,6 @@ let isModuleActive = false;
 let isJobActive = false;
 /** Active subscription handle for the entityHurt event */
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
-
-/**
- * ACTIVE POSITION CACHE
- * Tracks the most up-to-date recorded positions for players.
- * Updated incrementally per-player to ensure data stays relevant mid-tick.
- */
-const cachedLocations = new Map<string, Position>();
 
 /**
  * HISTORICAL POSITION CACHE
@@ -95,7 +89,7 @@ function alertStaff(attacker: Player, distSqValue: number) {
 
 /**
  * HOOK: Triggered before an entity takes damage.
- * Validates hit distances using cached snapshots, live fallbacks, and historic matrix arrays.
+ * Validates hit distances using cached snapshots and historic matrix arrays.
  */
 function onHitCached(event: EntityHurtBeforeEvent) {
     // Only process standard melee hits
@@ -108,14 +102,15 @@ function onHitCached(event: EntityHurtBeforeEvent) {
     if (!(attacker instanceof Player) || !(victim instanceof Player)) return;
     if (attacker.getGameMode() === GameMode.Creative) return;
 
-    /**
-     * CRITICAL FALLBACK MECHANIC:
-     * Attempts to read coordinates from the cache. If the generator has not yet cycled
-     * a player this turn, it instantly falls back to pulling their live `.location` API values.
-     * This eliminates massive "crazy number" distance artifacts (like 664.07).
-     */
-    const aLoc = cachedLocations.get(attacker.id) ?? attacker.location;
-    const vLoc = cachedLocations.get(victim.id) ?? victim.location;
+    // Fetch cached transform data (retrieves lazy per-tick update via PlayerLocationCache)
+    const attackerTransform = PlayerLocationCache.getTransform(attacker);
+    const victimTransform = PlayerLocationCache.getTransform(victim);
+
+    if (!attackerTransform || !victimTransform) return;
+    if (attackerTransform.dimension !== victimTransform.dimension) return;
+
+    const aLoc = attackerTransform.location;
+    const vLoc = victimTransform.location;
 
     // STEP 1: Evaluate current baseline distance
     const currentDistSq = distSq(aLoc.x, aLoc.y, aLoc.z, vLoc.x, vLoc.y, vLoc.z);
@@ -160,7 +155,7 @@ function* continuousReachLoop(): Generator<void, void, unknown> {
     isJobActive = true;
 
     try {
-        // Safe exit if the module was manually toggled off or database tracking disabled
+        // Safe exit if the module was manually toggled off
         if (!isModuleActive) return;
 
         const players = PlayerCache.getPlayers();
@@ -174,12 +169,11 @@ function* continuousReachLoop(): Generator<void, void, unknown> {
             activePlayerIds.add(player.id);
 
             try {
-                const loc = player.location;
-                const posObj = { x: loc.x, y: loc.y, z: loc.z };
-
-                // Populate caches instantly per-player so active hits are accurately logged
-                cachedLocations.set(player.id, posObj);
-                updatePlayerHistory(player.id, posObj);
+                // Fetch transform from location cache
+                const transform = PlayerLocationCache.getTransform(player);
+                if (transform) {
+                    updatePlayerHistory(player.id, transform.location);
+                }
             } catch (e) {
                 // Safeguard against occasional engine entity-detachment errors
             }
@@ -188,11 +182,10 @@ function* continuousReachLoop(): Generator<void, void, unknown> {
             yield;
         }
 
-        // Garbage collection: Clean caches of players who left the game since the last pass
-        for (const cachedId of cachedLocations.keys()) {
-            if (!activePlayerIds.has(cachedId)) {
-                cachedLocations.delete(cachedId);
-                playerHistory.delete(cachedId);
+        // Garbage collection: Clean history cache of players who left the game since the last pass
+        for (const historyId of playerHistory.keys()) {
+            if (!activePlayerIds.has(historyId)) {
+                playerHistory.delete(historyId);
             }
         }
     } finally {
@@ -216,6 +209,9 @@ export function startHitReachCheck() {
     if (isModuleActive) return;
     isModuleActive = true;
 
+    // Ensure location cache is initialized
+    PlayerLocationCache.init();
+
     hurtSubscription = onHitCached;
     EventCoordinator.subscribeBefore("entityHurt", hurtSubscription);
 
@@ -237,7 +233,6 @@ export function stopHitReachCheck() {
         hurtSubscription = undefined;
     }
 
-    // Flush maps to free heap space memory allocations
+    // Flush history map to free heap space memory allocations
     playerHistory.clear();
-    cachedLocations.clear();
 }

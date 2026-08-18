@@ -1,5 +1,6 @@
 import { system, Player, PlayerLeaveAfterEvent, Vector3, GameMode } from "@minecraft/server";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
@@ -61,8 +62,12 @@ function checkPathing(player: Player) {
     // Ignore if player is using movement-altering mechanics
     if (player.isGliding || player.isInWater || player.isClimbing) return;
 
-    const currentLoc = player.location;
-    const currentYaw = player.getRotation().y;
+    // Fetch transform from the cache to avoid repeated cross-bridge C++ calls
+    const transform = PlayerLocationCache.getTransform(player);
+    if (!transform) return;
+
+    const currentLoc = transform.location;
+    const currentYaw = transform.rotation.y;
     let data = playerData.get(player.id);
 
     if (!data) {
@@ -183,6 +188,9 @@ function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): 
 export async function startPathingMonitor(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
+
+    // Ensure location cache event listener is initialized
+    PlayerLocationCache.init();
 
     if (!playerLeaveSubscription) {
         playerLeaveSubscription = handleLeave;

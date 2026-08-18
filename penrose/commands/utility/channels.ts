@@ -2,7 +2,7 @@ import { Player, ChatSendBeforeEvent, TicksPerSecond, system, world } from "@min
 import { Command } from "../../classes/command-handler";
 import { channelsDB } from "../../event-listeners/world-initialize";
 import { Channel } from "../../classes/database/db-types";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 import { EventCoordinator } from "../../classes/event-coordinator";
 
 interface Invitation {

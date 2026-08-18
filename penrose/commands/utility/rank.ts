@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
  * Updates the player's nameTag based on their chat rank and the global rank setting.
@@ -15,7 +16,12 @@ function updateNameTag(player: Player): void {
     const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
     const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
     player.nameTag = isRankDisabled ? player.name : `${rank}§r ${player.name}`;
-    player.teleport(player.location, { dimension: player.dimension }); // Force client sync
+
+    const transform = PlayerLocationCache.getTransform(player);
+    const location = transform?.location ?? player.location;
+    const dimension = transform?.dimension ?? player.dimension;
+
+    player.teleport(location, { dimension }); // Force client sync
 }
 
 /**

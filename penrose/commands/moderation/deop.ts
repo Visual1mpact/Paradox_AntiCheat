@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { removePlayerFromSecurityClearanceList } from "../../utility/level-4-security-tracker";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 interface PlayerInfo {
     name: string;

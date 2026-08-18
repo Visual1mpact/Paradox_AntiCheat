@@ -1,5 +1,5 @@
 import { world, Player, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, system } from "@minecraft/server";
-import { EventCoordinator } from "./event-coordinator";
+import { EventCoordinator } from "../event-coordinator";
 
 /**
  * Centralized cache of online players.

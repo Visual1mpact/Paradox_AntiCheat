@@ -3,7 +3,8 @@ import { Command, DynamicField, ActionFormButton } from "../../classes/command-h
 import { chestLockDB, commandHandler, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoESImport from "../../node_modules/crypto-es";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 // Import CryptoES library for optional encryption of commands
 const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
@@ -243,14 +244,11 @@ class GUIManager {
                     if (field.sourceType === "players") {
                         field.options = [...PlayerCache.getPlayerNames()];
                     } else if (field.sourceType === "entities") {
-                        field.options = [
-                            ...new Set(
-                                world
-                                    .getDimension(this.player.dimension.id)
-                                    .getEntities({ excludeTypes: ["player"] })
-                                    .map((e) => e.typeId.replace("minecraft:", ""))
-                            ),
-                        ];
+                        // Use location cache to fetch the cached dimension instance safely
+                        const transform = PlayerLocationCache.getTransform(this.player);
+                        const dimension = transform?.dimension ?? world.getDimension(this.player.dimension.id);
+
+                        field.options = [...new Set(dimension.getEntities({ excludeTypes: ["player"] }).map((e) => e.typeId.replace("minecraft:", "")))];
                     } else if (field.sourceType === "chests") {
                         // Pull all locked chest keys from chestLockDB
                         field.options = [...chestLockDB.listPointers()].map((ptr) => {

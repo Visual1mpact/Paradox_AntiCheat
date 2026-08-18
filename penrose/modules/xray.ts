@@ -1,6 +1,7 @@
 import { system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 /* ============================================================
@@ -257,9 +258,12 @@ function freezePlayer(playerId: string, profile: MiningProfile, reason: string) 
 ============================================================ */
 
 /**
- * Gets current player location.
+ * Gets current player location utilizing location cache.
  */
 function getPlayerLocation(playerId: string) {
+    const location = PlayerLocationCache.getLocationById(playerId);
+    if (location) return location;
+
     const player = PlayerCache.getPlayerById(playerId);
     return player ? { x: player.location.x, y: player.location.y, z: player.location.z } : { x: 0, y: 0, z: 0 };
 }
@@ -320,15 +324,18 @@ function handleBlockBreak(event: PlayerBreakBlockAfterEvent) {
     profile.totalBlocks++;
     profile.windowBlocks++;
 
+    const playerTransform = PlayerLocationCache.getTransform(player);
+    const playerLoc = playerTransform?.location ?? player.location;
+
     // Safe Zone check with expiration
     const safeZone = safeZones.get(playerId);
     if (safeZone) {
         if (system.currentTick > safeZone.expires) {
             safeZones.delete(playerId);
         } else {
-            const dx = Math.abs(player.location.x - safeZone.x);
-            const dy = Math.abs(player.location.y - safeZone.y);
-            const dz = Math.abs(player.location.z - safeZone.z);
+            const dx = Math.abs(playerLoc.x - safeZone.x);
+            const dy = Math.abs(playerLoc.y - safeZone.y);
+            const dz = Math.abs(playerLoc.z - safeZone.z);
             if (dx <= 20 && dy <= 20 && dz <= 20) return; // inside safe zone, skip detection
         }
     }
@@ -346,7 +353,7 @@ function handleBlockBreak(event: PlayerBreakBlockAfterEvent) {
     }
 
     checkOreRatio(profile, playerId, blockId);
-    checkVeinJump(profile, playerId, player.location, blockId);
+    checkVeinJump(profile, playerId, playerLoc, blockId);
 
     // Ancient debris burst detection
     if (blockId === "minecraft:ancient_debris") {
@@ -400,6 +407,8 @@ function onLeave(event: PlayerLeaveAfterEvent) {
  * Starts X-ray detection system.
  */
 export function startXrayDetection() {
+    PlayerLocationCache.init();
+
     EventCoordinator.subscribeAfter("playerBreakBlock", handleBlockBreak);
     EventCoordinator.subscribeAfter("playerLeave", onLeave);
     EventCoordinator.subscribeBefore("chatSend", handleSafeZoneChat);

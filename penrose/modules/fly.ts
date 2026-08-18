@@ -1,5 +1,6 @@
 import { GameMode, ItemUseBeforeEvent, PlayerLeaveBeforeEvent, system, Vector3, Player } from "@minecraft/server";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
@@ -87,26 +88,30 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                     continue;
                 }
 
-                const location = player.location;
-                const { min: minHeight, max: maxHeight } = player.dimension.heightRange;
+                // Retrieve cached location and dimension data
+                const transform = PlayerLocationCache.getTransform(player);
+                const location = transform?.location ?? player.location;
+                const dimension = transform?.dimension ?? player.dimension;
+
+                const { min: minHeight, max: maxHeight } = dimension.heightRange;
 
                 // Validate player location within height range
                 if (location.y < minHeight || location.y >= maxHeight) {
                     continue;
                 }
 
-                const blockAtLocation = player.dimension.getBlock(location);
+                const blockAtLocation = dimension.getBlock(location);
                 if (!blockAtLocation) continue;
 
                 const blockBelow = blockAtLocation.below();
                 if (!blockBelow) continue;
 
                 // Verify ground state to prevent spoofing.
-                const checkBlockDeep = player.dimension.getBlock({ x: location.x, y: location.y - 0.7, z: location.z });
+                const checkBlockDeep = dimension.getBlock({ x: location.x, y: location.y - 0.7, z: location.z });
                 const physicallyGrounded = blockBelow.isSolid || blockBelow.isLiquid || (checkBlockDeep?.isSolid ?? false);
 
                 if (player.isOnGround && physicallyGrounded) {
-                    player.setDynamicProperty("airportLanding", player.location);
+                    player.setDynamicProperty("airportLanding", location);
                 }
 
                 const blockN = blockBelow.north();
@@ -138,7 +143,7 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                         const airport = player.getDynamicProperty("airportLanding") as Vector3;
                         if (airport) {
                             player.teleport(airport, {
-                                dimension: player.dimension,
+                                dimension: dimension,
                                 rotation: { x: airport.x, y: airport.y },
                                 facingLocation: { x: airport.x, y: airport.y, z: airport.z },
                                 checkForBlocks: true,

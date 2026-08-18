@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent, EntityHealthComponent, Player, system, world } fro
 import { Command } from "../../classes/command-handler";
 import { initializePvPSystem, stopPvPSystem, updateCoolDownTicks } from "../../modules/pvp-manager";
 import { MessageFormData } from "@minecraft/server-ui";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 /**
  * Converts a given time in seconds to a more human-readable format (hours, minutes, and seconds).

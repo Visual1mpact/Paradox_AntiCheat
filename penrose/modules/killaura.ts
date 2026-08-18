@@ -1,7 +1,8 @@
 const { Vector3Builder, Vector3Utils } = await import("../node_modules/@minecraft/math/dist/minecraft-math");
-import { Player, system, EntityHurtBeforeEvent, EntityDamageCause } from "@minecraft/server";
+import { Player, system, EntityHurtBeforeEvent, EntityDamageCause, Vector3 } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 // CONFIGURATION CONSTANTS
@@ -51,10 +52,10 @@ function getDynamicThreshold(intervals: number[]): number {
 /**
  * Checks if the attacker is facing the target within a specified angle.
  */
-function checkIfFacingEntity(attacker: Player, target: Player): boolean {
+function checkIfFacingEntity(attacker: Player, attackerLoc: Vector3, targetLoc: Vector3): boolean {
     const attackerDir = attacker.getViewDirection();
     const attackerVector = new Vector3Builder(attackerDir.x, attackerDir.y, attackerDir.z);
-    const targetVector = new Vector3Builder(target.location.x - attacker.location.x, target.location.y - attacker.location.y, target.location.z - attacker.location.z).normalize();
+    const targetVector = new Vector3Builder(targetLoc.x - attackerLoc.x, targetLoc.y - attackerLoc.y, targetLoc.z - attackerLoc.z).normalize();
 
     const dot = Vector3Utils.dot(attackerVector, targetVector);
     // clamp to valid acos domain
@@ -113,9 +114,13 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const cachedAttacker = PlayerCache.getPlayerById(attackerId);
     if (!cachedAttacker) return; // attacker is gone, skip
 
-    const attackerLocation = new Vector3Builder(attacker.location.x, attacker.location.y, attacker.location.z);
-    const targetLocation = new Vector3Builder(target.location.x, target.location.y, target.location.z);
-    const distance = Vector3Utils.distance(attackerLocation, targetLocation);
+    // Retrieve cached transform locations
+    const attackerLoc = PlayerLocationCache.getTransform(attacker)?.location ?? attacker.location;
+    const targetLoc = PlayerLocationCache.getTransform(target)?.location ?? target.location;
+
+    const attackerVector = new Vector3Builder(attackerLoc.x, attackerLoc.y, attackerLoc.z);
+    const targetVector = new Vector3Builder(targetLoc.x, targetLoc.y, targetLoc.z);
+    const distance = Vector3Utils.distance(attackerVector, targetVector);
 
     if (!playerAttackData.has(attackerId)) playerAttackData.set(attackerId, []);
     const attackTimes = playerAttackData.get(attackerId)!;
@@ -135,7 +140,7 @@ function handleHurtEvent(event: EntityHurtBeforeEvent) {
     const recentAttacks = attackTimes.filter((t) => currentTick - t <= 20);
 
     const isCloseRange = distance < 2;
-    const facing = isCloseRange || checkIfFacingEntity(attacker, target);
+    const facing = isCloseRange || checkIfFacingEntity(attacker, attackerLoc, targetLoc);
 
     if (distance > MAX_ATTACK_DISTANCE || recentAttacks.length >= MAX_ATTACKS_PER_SECOND || isSuspiciousAttackPattern(attackTimes) || !facing || isRapidSwitch) {
         event.damage = 0;

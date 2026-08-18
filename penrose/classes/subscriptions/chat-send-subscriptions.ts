@@ -1,6 +1,6 @@
 import { world, system, ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { commandHandler, paradoxModulesDB, channelsDB } from "../../event-listeners/world-initialize";
-import { PlayerCache } from "../player-cache";
+import { PlayerCache } from "../cache/player-cache";
 import { EventCoordinator } from "../event-coordinator";
 
 // Configuration for spam detection

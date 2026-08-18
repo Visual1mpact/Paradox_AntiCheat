@@ -1,5 +1,6 @@
 import { system, Block, PlayerLeaveBeforeEvent, PlayerPlaceBlockBeforeEvent, Vector3, GameMode, Player } from "@minecraft/server";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 
 // Configuration Constants
@@ -99,6 +100,9 @@ function detectScaffolding(playerId: string): Vector3[] {
  * This function sets up event listeners to detect potential scaffold hacks by players.
  */
 export function startScaffoldCheck() {
+    // Initialize location cache tracking
+    PlayerLocationCache.init();
+
     blockPlacementCallback = (event: PlayerPlaceBlockBeforeEvent) => {
         const player = event.player;
         const block = event.block;
@@ -111,7 +115,7 @@ export function startScaffoldCheck() {
             return;
         }
 
-        // Check the block below for solidity;
+        // Check the block below for solidity
         const belowBlock = block.below();
         // Skip farmland when planting crops like potatoes, carrots, etc.
         if (belowBlock?.typeId === "minecraft:farmland") {
@@ -144,6 +148,10 @@ export function startScaffoldCheck() {
             alertStaff(player);
 
             system.run(() => {
+                // Retrieve player dimension via cache fallback
+                const transform = PlayerLocationCache.getTransform(player);
+                const dimension = transform?.dimension ?? player.dimension;
+
                 // Handle block replacement and inventory
                 const inventory = player.getComponent("inventory");
                 if (inventory && inventory.container) {
@@ -153,7 +161,7 @@ export function startScaffoldCheck() {
                     }
                 }
                 suspiciousBlocks.forEach((pos) => {
-                    const suspiciousBlock = player.dimension.getBlock(pos);
+                    const suspiciousBlock = dimension.getBlock(pos);
                     if (suspiciousBlock) suspiciousBlock.setType("minecraft:air");
                 });
             });

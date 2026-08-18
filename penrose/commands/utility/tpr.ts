@@ -1,6 +1,7 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond, world, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 import { EventCoordinator } from "../../classes/event-coordinator";
 
 interface TeleportRequest {
@@ -122,7 +123,11 @@ export const tprCommand: Command = {
 
                 // Check if sender is still valid before teleporting
                 if (sender && sender.isValid) {
-                    sender.teleport(receiver.location, { dimension: receiver.dimension });
+                    const receiverTransform = PlayerLocationCache.getTransform(receiver);
+                    const location = receiverTransform?.location ?? receiver.location;
+                    const dimension = receiverTransform?.dimension ?? receiver.dimension;
+
+                    sender.teleport(location, { dimension });
                     sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request accepted. Teleporting to ${receiverName}§7.`);
                     receiver.sendMessage(`§2[§7Paradox§2]§o§7 You accepted the teleport request from ${sender.name}§7.`);
                 } else {

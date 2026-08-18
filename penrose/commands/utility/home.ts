@@ -2,7 +2,8 @@ import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import * as CryptoESImport from "../../node_modules/crypto-es";
 import { homesDB } from "../../event-listeners/world-initialize";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
@@ -429,8 +430,12 @@ export const homeCommand: Command = {
                     player.sendMessage(`§o§c[Paradox] You have reached your maximum limit of ${playerMaxHomes} homes!`);
                     return;
                 }
-                const location = player.location;
-                const dimension = player.dimension.id;
+
+                // Fetch location and dimension from PlayerLocationCache
+                const transform = PlayerLocationCache.getTransform(player);
+                const location = transform?.location ?? player.location;
+                const dimension = transform?.dimension.id ?? player.dimension.id;
+
                 const existingHome = await saveHomeLocation(homeName, location, dimension);
                 if (existingHome) {
                     player.sendMessage(`§2[§7Paradox§2]§o§7 A home named "${homeName}§7" already exists!`);

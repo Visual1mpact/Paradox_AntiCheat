@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, PlayerSpawnAfterEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 import { EventCoordinator } from "../../classes/event-coordinator";
 
 let lockdownMonitorFn: ((event: PlayerSpawnAfterEvent) => void) | undefined;

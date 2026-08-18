@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 /**
  * Represents the mute command.

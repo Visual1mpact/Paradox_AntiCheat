@@ -1,7 +1,8 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { playerMetadataDB } from "../../event-listeners/world-initialize";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
  * Represents the whois command.
@@ -104,8 +105,13 @@ export const whoisCommand: Command = {
                 healthBar = ` §8[§2${"|".repeat(Math.floor(percent * bars))}§7${"|".repeat(bars - Math.floor(percent * bars))}§8]`;
                 health = `§a${current}§7/§2${max}${healthBar}`;
             }
-            position = `§f${Math.round(onlineTarget.location.x)}§7, §f${Math.round(onlineTarget.location.y)}§7, §f${Math.round(onlineTarget.location.z)}`;
-            dimension = `§e${onlineTarget.dimension.id.replace("minecraft:", "").toUpperCase()}`;
+
+            const targetTransform = PlayerLocationCache.getTransform(onlineTarget);
+            const targetLoc = targetTransform?.location ?? onlineTarget.location;
+            const targetDim = targetTransform?.dimension ?? onlineTarget.dimension;
+
+            position = `§f${Math.round(targetLoc.x)}§7, §f${Math.round(targetLoc.y)}§7, §f${Math.round(targetLoc.z)}`;
+            dimension = `§e${targetDim.id.replace("minecraft:", "").toUpperCase()}`;
             const p = onlineTarget.getPing();
             if (p !== undefined) {
                 let pingColor = "§a"; // Green for excellent

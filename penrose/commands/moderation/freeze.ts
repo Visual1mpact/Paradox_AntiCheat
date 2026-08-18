@@ -1,6 +1,7 @@
 import { Player, ChatSendBeforeEvent, Vector3, world, PlayerDimensionChangeAfterEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 import { EventCoordinator } from "../../classes/event-coordinator";
 
 // Define the dimensions and block type of the prison
@@ -19,8 +20,9 @@ export const PRISON_LOCATION_PROPERTY = "prisonLocation";
  * @param {Player} player - The player to imprison.
  */
 export function buildPrison(player: Player) {
-    const currentLocation = player.location;
-    const currentDimension = player.dimension.id;
+    const transform = PlayerLocationCache.getTransform(player);
+    const currentLocation = transform?.location ?? player.location;
+    const currentDimension = transform?.dimension.id ?? player.dimension.id;
 
     // Helper function to teleport the player
     function teleportPlayerToPrison(prisonLocation: Vector3) {
@@ -70,8 +72,11 @@ export function buildPrison(player: Player) {
         // Teleport player to prison
         teleportPlayerToPrison(prisonLocation);
 
+        // Fetch current active dimension via cache check
+        const activeDimension = PlayerLocationCache.getTransform(player)?.dimension.id ?? player.dimension.id;
+
         // If the player did not change dimensions, build the prison immediately
-        if (player.dimension.id === currentDimension) {
+        if (activeDimension === currentDimension) {
             buildingPermit(prisonLocation);
             EventCoordinator.unsubscribeAfter("playerDimensionChange", dimensionChangeEvent);
         }

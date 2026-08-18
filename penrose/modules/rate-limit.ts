@@ -4,7 +4,7 @@ import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 import * as CryptoESImport from "../node_modules/crypto-es";
 import { EventCoordinator } from "../classes/event-coordinator";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 
 /**
  * Handles CryptoES default export fallback logic for multi-environment compatibility.

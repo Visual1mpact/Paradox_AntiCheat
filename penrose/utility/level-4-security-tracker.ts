@@ -1,5 +1,5 @@
 import { Player } from "@minecraft/server";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 // This will store players with security clearance level 4

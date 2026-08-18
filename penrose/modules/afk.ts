@@ -1,5 +1,5 @@
 import { system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 

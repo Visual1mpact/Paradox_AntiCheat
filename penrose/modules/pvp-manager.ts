@@ -15,7 +15,8 @@ import {
     world,
 } from "@minecraft/server";
 import { MessageFormData } from "@minecraft/server-ui";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 /** PvP cooldown in ticks (default 2 minutes = 2400 ticks) */
@@ -117,11 +118,14 @@ function cachePlayerInventory(player: Player) {
         }
     }
 
+    // Retrieve transform from the cache to avoid unnecessary cross-bridge calls
+    const transform = PlayerLocationCache.getTransform(player);
+
     playerDataMap.set(player.id, {
         inventory: inventoryItems,
         equipment: equipmentItems,
-        location: player.location,
-        dimension: player.dimension,
+        location: transform?.location ?? player.location,
+        dimension: transform?.dimension ?? player.dimension,
     });
 }
 
@@ -275,6 +279,9 @@ function dropItems(items: ItemStack[], dimension: Dimension, location: Vector3) 
  * Initializes the PvP system by subscribing to events.
  */
 export function initializePvPSystem() {
+    // Ensure player location cache is initialized
+    PlayerLocationCache.init();
+
     if (!pvpCleanupIntervalId) {
         pvpCleanupIntervalId = system.runInterval(() => {
             const tick = system.currentTick;

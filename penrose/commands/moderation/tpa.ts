@@ -1,6 +1,7 @@
 import { Player, ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
  * Represents the tpa command.
@@ -131,9 +132,15 @@ export const tpaCommand: Command = {
             return;
         }
 
-        const result = target1.tryTeleport(target2.location, {
-            dimension: target2.dimension,
-            rotation: target2.getRotation(),
+        // Fetch target2 transform from location cache
+        const transform2 = PlayerLocationCache.getTransform(target2);
+        const destinationLocation = transform2?.location ?? target2.location;
+        const destinationDimension = transform2?.dimension ?? target2.dimension;
+        const destinationRotation = transform2?.rotation ?? target2.getRotation();
+
+        const result = target1.tryTeleport(destinationLocation, {
+            dimension: destinationDimension,
+            rotation: destinationRotation,
             facingLocation: target2.getViewDirection(),
             checkForBlocks: true,
             keepVelocity: false,

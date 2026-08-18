@@ -1,7 +1,7 @@
 import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 // Define the ban command
 export const banCommand: Command = {

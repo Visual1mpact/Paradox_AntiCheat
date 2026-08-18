@@ -1,7 +1,7 @@
 import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent, EntityDieAfterEvent, ItemTypes, ItemStack } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 /**

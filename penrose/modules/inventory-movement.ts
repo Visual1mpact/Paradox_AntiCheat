@@ -2,7 +2,7 @@ import { Player, system, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
 
 /**
  * In-memory state cache to prevent querying the database every tick.

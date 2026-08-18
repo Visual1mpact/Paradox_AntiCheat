@@ -13,6 +13,7 @@ import {
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { chestLockDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
 /** ------------------- CONFIG & HELPERS ------------------- */
 
@@ -255,7 +256,10 @@ async function chestLockAfter(event: PlayerInteractWithBlockAfterEvent): Promise
         await chestLockDB.delete(key);
 
         player.sendMessage(`§2[§7Paradox§2]§o§7 You have unlocked this chest.`);
-        player.playSound("open.iron_door", { location: block.location });
+
+        const transform = PlayerLocationCache.getTransform(player);
+        const loc = transform?.location ?? block.location;
+        player.playSound("open.iron_door", { location: loc });
     }
 }
 
@@ -344,7 +348,10 @@ async function hopperPlaceBefore(event: PlayerPlaceBlockBeforeEvent): Promise<vo
         return;
     }
 
-    const containerBlock = player.dimension.getBlock({
+    const transform = PlayerLocationCache.getTransform(player);
+    const targetDimension = transform?.dimension ?? player.dimension;
+
+    const containerBlock = targetDimension.getBlock({
         x: block.x,
         y: block.y + 1,
         z: block.z,

@@ -1,6 +1,7 @@
-import { system, world, Player, GameMode, AABB, EntityHurtAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent } from "@minecraft/server";
+import { system, Player, GameMode, AABB, EntityHurtAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, Dimension } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { PlayerCache } from "../classes/player-cache";
+import { PlayerCache } from "../classes/cache/player-cache";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
 /** Number of detections required before action is taken. */
@@ -111,8 +112,7 @@ function getBounds(box: AABB) {
 }
 
 /** Performs a tolerance-aware swept AABB collision check for a player. */
-function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }) {
-    const dim = player.dimension;
+function sweptAABBWithTolerance(player: Player, dim: Dimension, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }) {
     const base = getBounds(player.getAABB());
 
     const movement = {
@@ -227,8 +227,11 @@ function checkPlayer(player: Player) {
     const uuid = player.id;
     if (now() - (recentDamage.get(uuid) ?? 0) < 2) return;
 
-    const loc = player.location;
-    const currentDimId = player.dimension.id;
+    // Retrieve cached location and dimension data
+    const transform = PlayerLocationCache.getTransform(player);
+    const loc = transform?.location ?? player.location;
+    const dimension = transform?.dimension ?? player.dimension;
+    const currentDimId = dimension.id;
 
     let data = playerData.get(uuid);
     if (!data) {
@@ -260,7 +263,7 @@ function checkPlayer(player: Player) {
         return;
     }
 
-    const detected = sweptAABBWithTolerance(player, prev, cur);
+    const detected = sweptAABBWithTolerance(player, dimension, prev, cur);
 
     if (detected) {
         data.phaseFlags++;
@@ -268,7 +271,7 @@ function checkPlayer(player: Player) {
         if (data.phaseFlags >= PHASE_FLAGS_REQUIRED) {
             player.sendMessage("§o§c[Paradox] You have been detected phasing through blocks!");
             alertStaff(player, movedDist);
-            player.teleport(prev, { dimension: player.dimension });
+            player.teleport(prev, { dimension: dimension });
             data.phaseFlags = 0;
         }
     } else {

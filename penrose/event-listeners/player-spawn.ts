@@ -3,6 +3,7 @@ import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerM
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
 // Define a type for player information
 interface PlayerInfo {
@@ -104,17 +105,23 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
         if (player.nameTag !== targetTag) {
             system.run(() => {
                 player.nameTag = targetTag;
-                player.teleport(player.location, { dimension: player.dimension }); // force client sync
+                const transform = PlayerLocationCache.getTransform(player);
+                const loc = transform?.location ?? player.location;
+                const dim = transform?.dimension ?? player.dimension;
+                player.teleport(loc, { dimension: dim }); // force client sync
             });
         }
     }
 
     const prisonLocation = player.getDynamicProperty(PRISON_LOCATION_PROPERTY) as Vector3 | undefined;
     if (prisonLocation) {
+        const transform = PlayerLocationCache.getTransform(player);
+        const loc = transform?.location ?? player.location;
+
         // Only rebuild/freeze if the player is outside their prison bounds
-        const px = player.location.x;
-        const py = player.location.y;
-        const pz = player.location.z;
+        const px = loc.x;
+        const py = loc.y;
+        const pz = loc.z;
 
         const PRISON_WIDTH = 5;
         const PRISON_HEIGHT = 4;

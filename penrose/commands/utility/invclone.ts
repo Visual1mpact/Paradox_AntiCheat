@@ -1,6 +1,7 @@
 import { Player, ChatSendBeforeEvent, ItemStack, BlockVolume, EntityEnderInventoryComponent, EntityInventoryComponent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
  * Represents the invclone command.
@@ -62,10 +63,14 @@ export const invCloneCommand: Command = {
      * @param args Command arguments.
      */
     execute: (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
-        const dimension = message?.sender.dimension;
-        const base = message?.sender.location;
+        if (!message || !message.sender) return;
 
-        if (!message || !dimension || !base) return;
+        // Fetch sender's position and dimension from PlayerLocationCache
+        const senderTransform = PlayerLocationCache.getTransform(message.sender);
+        const dimension = senderTransform?.dimension ?? message.sender.dimension;
+        const base = senderTransform?.location ?? message.sender.location;
+
+        if (!dimension || !base) return;
 
         // --- Removal logic if no args or 'remove' keyword ---
         if (!args?.length || args[0].toLowerCase() === "remove") {

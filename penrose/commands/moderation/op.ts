@@ -2,7 +2,7 @@ import { ChatSendBeforeEvent, Player, PlayerPermissionLevel, world } from "@mine
 
 import { Command } from "../../classes/command-handler";
 import { addPlayerToSecurityClearanceList } from "../../utility/level-4-security-tracker";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 /**
  * Represents basic information stored about a player

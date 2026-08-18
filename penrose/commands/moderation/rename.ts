@@ -1,6 +1,7 @@
 import { ChatSendBeforeEvent, system } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { PlayerCache } from "../../classes/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
+import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
  * Command to rename a player via an alias.
@@ -120,7 +121,13 @@ export const renameCommand: Command = {
             const rank = (target.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
             system.run(() => {
                 target.nameTag = `${rank}§r ${newAlias}`;
-                target.teleport(target.location, { dimension: target.dimension }); // Force sync
+
+                // Fetch transform from cache to force sync safely
+                const transform = PlayerLocationCache.getTransform(target);
+                const location = transform?.location ?? target.location;
+                const dimension = transform?.dimension ?? target.dimension;
+
+                target.teleport(location, { dimension }); // Force sync
             });
         } else {
             // If UI is not opted in, ensure the nameTag shows their real name but with current rank
