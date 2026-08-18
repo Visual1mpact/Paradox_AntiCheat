@@ -1,26 +1,31 @@
-import { system, Player, GameMode, Block, AABB, EntityHurtAfterEvent, PlayerLeaveBeforeEvent } from "@minecraft/server";
+import { system, world, Player, GameMode, AABB, EntityHurtAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
-/**
- * Number of detections required before action is taken.
- */
+/** Number of detections required before action is taken. */
 const PHASE_FLAGS_REQUIRED = 5;
 
-/**
- * Collision tolerance in blocks to prevent false positives from minor clipping.
- */
+/** Collision tolerance in blocks to prevent false positives from minor clipping. */
 const COLLISION_TOLERANCE = 0.15;
 
 /**
- * Tracks players' movement history.
+ * Maximum distance (in blocks) evaluated per tick.
+ * Movement beyond this (e.g., teleports) skips collision checks to prevent Watchdog hangs.
  */
-const playerData = new Map<string, { lastPos: { x: number; y: number; z: number }; phaseFlags: number }>();
+const MAX_CHECK_DISTANCE = 10;
 
-/**
- * Tracks recent damage to allow knockback exemptions.
- */
+/** Tracks players' movement history and dimension context. */
+const playerData = new Map<
+    string,
+    {
+        lastPos: { x: number; y: number; z: number };
+        dimensionId: string;
+        phaseFlags: number;
+    }
+>();
+
+/** Tracks recent damage to allow knockback exemptions. */
 const recentDamage = new Map<string, number>();
 
 /** Flag indicating whether the module is manually toggled on */
@@ -31,34 +36,46 @@ let isJobActive = false;
 /** Active event subscription references */
 let hurtSubscription: ((ev: EntityHurtAfterEvent) => void) | undefined;
 let leaveSubscription: ((ev: PlayerLeaveBeforeEvent) => void) | undefined;
+let dimensionChangeSubscription: ((ev: PlayerDimensionChangeAfterEvent) => void) | undefined;
 
 /**
- * Determines if a block should allow movement through it.
+ * Determines if a block position should allow movement through it.
+ * Safely handles unloaded chunks or out-of-bounds coordinates to prevent engine freezes.
  *
- * @param block - Block to evaluate
+ * @param dim - Dimension instance
+ * @param pos - Block position to evaluate
  * @returns True if block should be ignored for collision checks
  */
-function isPassThrough(block: Block | undefined) {
-    if (!block || !block.isValid) return true;
-    if (block.isAir || block.isLiquid || !block.isSolid) return true;
-
+function isPassThrough(dim: any, pos: { x: number; y: number; z: number }): boolean {
     try {
-        if (block.permutation.getState("open_bit") === true) return true;
-    } catch {}
+        const block = dim.getBlock({
+            x: Math.floor(pos.x),
+            y: Math.floor(pos.y),
+            z: Math.floor(pos.z),
+        });
 
-    return false;
+        if (!block || !block.isValid) return true;
+        if (block.isAir || block.isLiquid || !block.isSolid) return true;
+
+        try {
+            if (block.permutation.getState("open_bit") === true) return true;
+        } catch {
+            // Ignore block permutation lookup errors on non-standard block types
+        }
+
+        return false;
+    } catch {
+        // Treat unloaded/inaccessible chunks as pass-through to prevent watchdog crashes
+        return true;
+    }
 }
 
-/**
- * Returns the current timestamp in seconds.
- */
+/** Returns the current timestamp in seconds. */
 function now() {
     return Date.now() / 1000;
 }
 
-/**
- * Calculates Euclidean distance between two positions.
- */
+/** Calculates Euclidean distance between two positions. */
 function distance(a: { x: number; y: number; z: number }, b: { x: number; y: number; z: number }) {
     const dx = a.x - b.x;
     const dy = a.y - b.y;
@@ -67,28 +84,17 @@ function distance(a: { x: number; y: number; z: number }, b: { x: number; y: num
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-/**
- * Sends a NoClip alert to Level 4 security staff.
- *
- * @param offender - Player triggering the detection
- * @param dist - Distance moved through collision
- */
+/** Sends a NoClip alert to Level 4 security staff. */
 function alertStaff(offender: Player, dist: number) {
     const staff = getSecurityClearanceLevel4Players();
 
     for (const s of staff) {
-        const isStaffValid = s.isValid;
-        if (!isStaffValid || s.id === offender.id) continue;
+        if (!s?.isValid || s.id === offender.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[NoClip] §f${offender.name} §7tried to phase §e${dist.toFixed(1)} blocks§7!`);
     }
 }
 
-/**
- * Converts a Bedrock AABB (center/extent) into min/max bounds.
- *
- * @param box - The AABB returned from getAABB()
- * @returns Bounding box with min/max coordinates
- */
+/** Converts a Bedrock AABB (center/extent) into min/max bounds. */
 function getBounds(box: AABB) {
     return {
         min: {
@@ -104,9 +110,7 @@ function getBounds(box: AABB) {
     };
 }
 
-/**
- * Performs a tolerance-aware swept AABB collision check for a player.
- */
+/** Performs a tolerance-aware swept AABB collision check for a player. */
 function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }) {
     const dim = player.dimension;
     const base = getBounds(player.getAABB());
@@ -137,7 +141,7 @@ function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z
     const minZ = Math.floor(sweep.min.z);
     const maxZ = Math.floor(sweep.max.z);
 
-    // Corners first, with tolerance
+    // Corners check with tolerance
     const corners = [
         { x: minX + COLLISION_TOLERANCE, y: minY + COLLISION_TOLERANCE, z: minZ + COLLISION_TOLERANCE },
         { x: minX + COLLISION_TOLERANCE, y: minY + COLLISION_TOLERANCE, z: maxZ + 1 - COLLISION_TOLERANCE },
@@ -150,21 +154,27 @@ function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z
     ];
 
     for (const corner of corners) {
-        const block = dim.getBlock({ x: Math.floor(corner.x), y: Math.floor(corner.y), z: Math.floor(corner.z) });
-        if (!isPassThrough(block)) return true;
+        if (!isPassThrough(dim, corner)) return true;
     }
 
-    // Interior blocks
+    // Interior blocks check
     for (let x = minX; x <= maxX; x++) {
         for (let y = minY; y <= maxY; y++) {
             for (let z = minZ; z <= maxZ; z++) {
                 const isCorner = (x === minX || x === maxX) && (y === minY || y === maxY) && (z === minZ || z === maxZ);
                 if (isCorner) continue;
 
-                const block = dim.getBlock({ x, y, z });
-                if (!isPassThrough(block)) {
-                    const blockMin = { x: x + COLLISION_TOLERANCE, y: y + COLLISION_TOLERANCE, z: z + COLLISION_TOLERANCE };
-                    const blockMax = { x: x + 1 - COLLISION_TOLERANCE, y: y + 1 - COLLISION_TOLERANCE, z: z + 1 - COLLISION_TOLERANCE };
+                if (!isPassThrough(dim, { x, y, z })) {
+                    const blockMin = {
+                        x: x + COLLISION_TOLERANCE,
+                        y: y + COLLISION_TOLERANCE,
+                        z: z + COLLISION_TOLERANCE,
+                    };
+                    const blockMax = {
+                        x: x + 1 - COLLISION_TOLERANCE,
+                        y: y + 1 - COLLISION_TOLERANCE,
+                        z: z + 1 - COLLISION_TOLERANCE,
+                    };
 
                     if (sweep.min.x <= blockMax.x && sweep.max.x >= blockMin.x && sweep.min.y <= blockMax.y && sweep.max.y >= blockMin.y && sweep.min.z <= blockMax.z && sweep.max.z >= blockMin.z) return true;
                 }
@@ -190,10 +200,17 @@ function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z
         const by = Math.floor(py);
         const bz = Math.floor(pz);
 
-        const block = dim.getBlock({ x: bx, y: by, z: bz });
-        if (!isPassThrough(block)) {
-            const blockMin = { x: bx + COLLISION_TOLERANCE, y: by + COLLISION_TOLERANCE, z: bz + COLLISION_TOLERANCE };
-            const blockMax = { x: bx + 1 - COLLISION_TOLERANCE, y: by + 1 - COLLISION_TOLERANCE, z: bz + 1 - COLLISION_TOLERANCE };
+        if (!isPassThrough(dim, { x: bx, y: by, z: bz })) {
+            const blockMin = {
+                x: bx + COLLISION_TOLERANCE,
+                y: by + COLLISION_TOLERANCE,
+                z: bz + COLLISION_TOLERANCE,
+            };
+            const blockMax = {
+                x: bx + 1 - COLLISION_TOLERANCE,
+                y: by + 1 - COLLISION_TOLERANCE,
+                z: bz + 1 - COLLISION_TOLERANCE,
+            };
 
             if (px >= blockMin.x && px <= blockMax.x && py >= blockMin.y && py <= blockMax.y && pz >= blockMin.z && pz <= blockMax.z) return true;
         }
@@ -202,11 +219,7 @@ function sweptAABBWithTolerance(player: Player, start: { x: number; y: number; z
     return false;
 }
 
-/**
- * Performs NoClip detection for a player.
- *
- * @param player - Player to evaluate
- */
+/** Performs NoClip detection for a player. */
 function checkPlayer(player: Player) {
     const gameMode = player.getGameMode();
     if (gameMode === GameMode.Creative || gameMode === GameMode.Spectator) return;
@@ -215,18 +228,34 @@ function checkPlayer(player: Player) {
     if (now() - (recentDamage.get(uuid) ?? 0) < 2) return;
 
     const loc = player.location;
+    const currentDimId = player.dimension.id;
 
     let data = playerData.get(uuid);
     if (!data) {
-        playerData.set(uuid, { lastPos: { x: loc.x, y: loc.y, z: loc.z }, phaseFlags: 0 });
+        playerData.set(uuid, {
+            lastPos: { x: loc.x, y: loc.y, z: loc.z },
+            dimensionId: currentDimId,
+            phaseFlags: 0,
+        });
         return;
     }
 
     const prev = data.lastPos;
     const cur = { x: loc.x, y: loc.y, z: loc.z };
+    const movedDist = distance(prev, cur);
+
+    // Safeguard 1: Dimension changed without triggering event callback yet
+    // Safeguard 2: Distance exceeds MAX_CHECK_DISTANCE (e.g. Teleports / ender pearls)
+    if (data.dimensionId !== currentDimId || movedDist > MAX_CHECK_DISTANCE) {
+        data.lastPos = cur;
+        data.dimensionId = currentDimId;
+        data.phaseFlags = 0;
+        return;
+    }
+
     data.lastPos = cur;
 
-    if (distance(prev, cur) < 0.75) {
+    if (movedDist < 0.75) {
         data.phaseFlags = Math.max(0, data.phaseFlags - 1);
         return;
     }
@@ -238,7 +267,7 @@ function checkPlayer(player: Player) {
 
         if (data.phaseFlags >= PHASE_FLAGS_REQUIRED) {
             player.sendMessage("§o§c[Paradox] You have been detected phasing through blocks!");
-            alertStaff(player, distance(prev, cur));
+            alertStaff(player, movedDist);
             player.teleport(prev, { dimension: player.dimension });
             data.phaseFlags = 0;
         }
@@ -247,9 +276,7 @@ function checkPlayer(player: Player) {
     }
 }
 
-/**
- * Continuous generator loop that iterates over players to perform NoClip checks.
- */
+/** Continuous generator loop that iterates over players to perform NoClip checks. */
 function* continuousNoClipLoop(): Generator<void, void, unknown> {
     if (isJobActive) return;
     isJobActive = true;
@@ -268,13 +295,11 @@ function* continuousNoClipLoop(): Generator<void, void, unknown> {
                 // Ignore transient errors safely
             }
 
-            // Yield frame runtime distribution control execution back to engine
             yield;
         }
     } finally {
         isJobActive = false;
 
-        // Automatically recurse next tick execution pass if tracking context is active
         if (isModuleActive) {
             system.run(() => {
                 system.runJob(continuousNoClipLoop());
@@ -283,25 +308,31 @@ function* continuousNoClipLoop(): Generator<void, void, unknown> {
     }
 }
 
-/**
- * Tracks player damage for knockback exemptions.
- */
+/** Tracks player damage for knockback exemptions. */
 function trackDamage(ev: EntityHurtAfterEvent) {
     if (ev.hurtEntity instanceof Player) recentDamage.set(ev.hurtEntity.id, now());
 }
 
-/**
- * Cleans up player tracking when they leave.
- */
+/** Cleans up player tracking when they leave. */
 function cleanupPlayerData(ev: PlayerLeaveBeforeEvent) {
     const player = ev.player;
     playerData.delete(player.id);
     recentDamage.delete(player.id);
 }
 
-/**
- * Starts the NoClip detection module.
- */
+/** Updates tracking state upon explicit dimension change events. */
+function handleDimensionChange(ev: PlayerDimensionChangeAfterEvent) {
+    const player = ev.player;
+    if (!player?.isValid) return;
+
+    playerData.set(player.id, {
+        lastPos: { x: ev.toLocation.x, y: ev.toLocation.y, z: ev.toLocation.z },
+        dimensionId: ev.toDimension.id,
+        phaseFlags: 0,
+    });
+}
+
+/** Starts the NoClip detection module. */
 export function startNoClip() {
     if (isModuleActive) return;
     isModuleActive = true;
@@ -316,14 +347,17 @@ export function startNoClip() {
         EventCoordinator.subscribeBefore("playerLeave", leaveSubscription);
     }
 
+    if (!dimensionChangeSubscription) {
+        dimensionChangeSubscription = handleDimensionChange;
+        world.afterEvents.playerDimensionChange.subscribe(dimensionChangeSubscription);
+    }
+
     if (!isJobActive) {
         system.runJob(continuousNoClipLoop());
     }
 }
 
-/**
- * Stops the NoClip detection module.
- */
+/** Stops the NoClip detection module. */
 export function stopNoClip() {
     isModuleActive = false;
 
@@ -335,6 +369,11 @@ export function stopNoClip() {
     if (leaveSubscription) {
         EventCoordinator.unsubscribeBefore("playerLeave", leaveSubscription);
         leaveSubscription = undefined;
+    }
+
+    if (dimensionChangeSubscription) {
+        world.afterEvents.playerDimensionChange.unsubscribe(dimensionChangeSubscription);
+        dimensionChangeSubscription = undefined;
     }
 
     playerData.clear();
