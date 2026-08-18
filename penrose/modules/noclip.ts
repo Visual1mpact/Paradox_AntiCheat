@@ -349,7 +349,7 @@ export function startNoClip() {
 
     if (!dimensionChangeSubscription) {
         dimensionChangeSubscription = handleDimensionChange;
-        world.afterEvents.playerDimensionChange.subscribe(dimensionChangeSubscription);
+        EventCoordinator.subscribeAfter("playerDimensionChange", dimensionChangeSubscription);
     }
 
     if (!isJobActive) {
@@ -372,7 +372,7 @@ export function stopNoClip() {
     }
 
     if (dimensionChangeSubscription) {
-        world.afterEvents.playerDimensionChange.unsubscribe(dimensionChangeSubscription);
+        EventCoordinator.unsubscribeAfter("playerDimensionChange", dimensionChangeSubscription);
         dimensionChangeSubscription = undefined;
     }
 
