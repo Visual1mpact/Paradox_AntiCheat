@@ -1,6 +1,5 @@
-import { Player, system, EntityHurtBeforeEvent, GameMode, EntityDamageCause } from "@minecraft/server";
+import { Player, EntityHurtBeforeEvent, GameMode, EntityDamageCause } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
@@ -16,7 +15,6 @@ interface Position {
 }
 
 let isModuleActive = false;
-let intervalRunId: number | undefined;
 let hurtSubscription: ((event: EntityHurtBeforeEvent) => void) | undefined;
 let leaveSubscription: ((event: { playerId: string }) => void) | undefined;
 
@@ -76,6 +74,9 @@ function onHitCached(event: EntityHurtBeforeEvent): void {
     const aLoc = attackerTransform.location;
     const vLoc = victimTransform.location;
 
+    // Record victim location on hit (lazily driven by event, eliminating runInterval)
+    updateVictimHistory(victim.id, vLoc);
+
     const currentDistSq = distSq(aLoc.x, aLoc.y, aLoc.z, vLoc.x, vLoc.y, vLoc.z);
 
     // 1. Within legitimate reach -> allow
@@ -104,19 +105,6 @@ function onHitCached(event: EntityHurtBeforeEvent): void {
     alertStaff(attacker, currentDistSq);
 }
 
-function tickReachHistory(): void {
-    if (!isModuleActive) return;
-
-    for (const player of PlayerCache.getPlayers()) {
-        if (!player?.isValid) continue;
-
-        const transform = PlayerLocationCache.getTransform(player);
-        if (transform) {
-            updateVictimHistory(player.id, transform.location);
-        }
-    }
-}
-
 export function startHitReachCheck(): void {
     if (isModuleActive) return;
     isModuleActive = true;
@@ -131,17 +119,10 @@ export function startHitReachCheck(): void {
         victimHistory.delete(event.playerId);
     };
     EventCoordinator.subscribeAfter("playerLeave", leaveSubscription);
-
-    intervalRunId = system.runInterval(tickReachHistory, 1);
 }
 
 export function stopHitReachCheck(): void {
     isModuleActive = false;
-
-    if (intervalRunId !== undefined) {
-        system.clearRun(intervalRunId);
-        intervalRunId = undefined;
-    }
 
     if (hurtSubscription) {
         EventCoordinator.unsubscribeBefore("entityHurt", hurtSubscription);
