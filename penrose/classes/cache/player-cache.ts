@@ -156,6 +156,14 @@ export class PlayerCache {
         return this.cachedPlayerArray;
     }
 
+    /**
+     * Returns the internal cached player array directly.
+     * Eliminates the need for Array.from() or spread operators when direct array access/indexing is required.
+     */
+    public static getPlayersArray(): readonly Player[] {
+        return this.getAllPlayers();
+    }
+
     /** Returns an iterator of all valid cached player names */
     public static *getPlayerNames(): IterableIterator<string> {
         for (const name of this.playersByName.keys()) {

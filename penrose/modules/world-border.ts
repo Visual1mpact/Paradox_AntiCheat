@@ -1,96 +1,91 @@
-import { Player, world, system, Dimension, PlayerLeaveBeforeEvent } from "@minecraft/server";
+/**
+ * @file modules/world-border.ts
+ * @description High-performance, anti-cheat resistant world border enforcement system.
+ */
+
+import { Player, world, system, Dimension, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, Vector3 } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 
-/** Module active execution flag */
-let isModuleActive = false;
-/** Active state indicator for the Safe-Y generator job worker */
-let isSafeYJobActive = false;
-
-/** Interface for dimension border boundary configuration settings */
-interface ModuleSettings {
+/** Structure defining per-dimension border distance limits */
+interface BorderBounds {
+    /** Overworld max distance from center in blocks */
     overworld: number;
+    /** Nether max distance from center in blocks */
     nether: number;
+    /** End max distance from center in blocks */
     end: number;
 }
 
-/** Interface for world border database module configuration */
+/** Represents configuration parameters loaded from database */
 interface ModuleConfig {
+    /** Global module enablement flag */
     enabled?: boolean;
-    settings?: ModuleSettings;
+    /** Per-dimension bounds settings */
+    settings?: BorderBounds;
 }
 
-/** Interface representing a queued player relocation request awaiting safe terrain evaluation */
+/** In-flight safe position search payload */
 interface PendingSafeYCheck {
-    /** Target player entity handle */
+    /** Target player instance */
     player: Player;
-    /** Dimension instance where relocation is taking place */
+    /** Player dimension handle */
     dimension: Dimension;
-    /** Initial player position coordinates */
-    x: number;
-    y: number;
-    z: number;
-    /** Calculated destination target coordinates */
+    /** Target clamped X coordinate */
     targetX: number;
+    /** Target clamped Z coordinate */
     targetZ: number;
-    /** Human-readable dimension name for user notifications */
+    /** Friendly dimension display name */
     dimensionName: string;
-    /** True if player significantly breached the boundary threshold */
+    /** True if player exceeded the outer safety perimeter */
     beyondBorder: boolean;
 }
 
-/** Interface representing dimension bounding bounds cached in memory */
-interface BorderBounds {
-    overworld: number;
-    nether: number;
-    end: number;
-}
+/** Execution tracking state flags */
+let isModuleActive = false;
+let isSafeYJobActive = false;
 
-/** Database module configuration pointer */
+/** Cached border configuration data */
 let moduleConfig: ModuleConfig | undefined;
-/** Execution handle for main world border check interval */
 let checkIntervalId: number | undefined;
-/** Execution handle for database configuration sync interval */
 let configRefreshIntervalId: number | undefined;
-/** Active configuration sync promise to prevent redundant concurrent fetches */
-let configRefreshPromise: Promise<void> | undefined;
 
-/** In-memory lookup map caching security clearance levels by player string ID */
+/** Fast in-memory caches */
 const securityClearanceCache = new Map<string, number>();
-/** In-memory map storing tick timestamps of recent boundary nudges for debouncing */
 const lastBorderNudgeCache = new Map<string, number>();
+const playerNextCheckTickCache = new Map<string, number>();
 
-/** In-memory cache of world default spawn coordinates */
-const cachedSpawnLocation = { x: 0, y: 0, z: 0 };
-/** In-memory cache of dimension border sizes */
+/** Cached spawn location for Overworld centering */
+const cachedSpawnLocation: Vector3 = { x: 0, y: 0, z: 0 };
 let cachedBounds: BorderBounds = { overworld: 0, nether: 0, end: 0 };
 
-/** Tick frequency interval for border evaluation sweeps */
+/** Timing & Distance Constants */
 const CHECK_INTERVAL_TICKS = 10;
-/** Tick frequency interval for database configuration sync (60 seconds) */
 const CONFIG_REFRESH_INTERVAL_TICKS = 1200;
-/** Tick debounce window threshold to prevent rapid back-to-back border nudges */
-const DEBOUNCE_TICKS = 20;
-/** Safety distance buffer (in blocks) applied when pushing players inward */
-const BUFFER = 3;
-/** Maximum vertical offset distance searched during terrain evaluation */
+const ADMIN_BYPASS_SLEEP_TICKS = 600;
+const DEBOUNCE_TICKS = 10;
+const BUFFER = 2;
 const MAX_SAFE_Y_SEARCH_DISTANCE = 32;
 
-/** FIFO queue storing pending relocation requests */
+/** High-performance processing queue */
 const safeYQueue: PendingSafeYCheck[] = [];
-/** Set of player IDs currently queued for relocation to prevent duplicate processing */
 const queuedPlayerIds = new Set<string>();
 
-/** Reference for player leave event listener cleanup */
+/** Listener unsubscribe handlers */
 let leaveSubscription: ((ev: PlayerLeaveBeforeEvent) => void) | undefined;
+let spawnSubscription: ((ev: PlayerSpawnAfterEvent) => void) | undefined;
+
+/** Zero-allocation reusable object structures */
+const blockQueryLoc: Vector3 = { x: 0, y: 0, z: 0 };
+const teleportLoc: Vector3 = { x: 0, y: 0, z: 0 };
 
 /**
- * Returns the maximum border radius for a given dimension ID from cached settings.
+ * Resolves the configured border size for a specified dimension ID.
  *
- * @param dimensionId - The identifier string of the dimension (e.g., 'minecraft:overworld').
- * @returns The configured border radius in blocks, or 0 if disabled.
+ * @param dimensionId - Native dimension identifier (e.g. "minecraft:overworld")
+ * @returns Max block radius from center
  */
 function getConfiguredBorder(dimensionId: string): number {
     switch (dimensionId) {
@@ -106,72 +101,128 @@ function getConfiguredBorder(dimensionId: string): number {
 }
 
 /**
- * Retrieves the security clearance level for a player using in-memory cache.
- * Falls back to native `getDynamicProperty` only if no cached value exists.
+ * Calculates dimension center coordinates.
+ * Overworld uses default spawn point; Nether and End use world origin (0, 0).
  *
- * @param player - The Minecraft Player entity to query.
- * @returns The numerical security clearance level (defaults to 0).
+ * @param dimensionId - Native dimension identifier
+ * @returns Vector2 representation of center coordinates
  */
-function getSecurityClearance(player: Player): number {
-    const clearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+function getDimensionCenter(dimensionId: string): { x: number; z: number } {
+    if (dimensionId === "minecraft:overworld") {
+        return { x: cachedSpawnLocation.x, z: cachedSpawnLocation.z };
+    }
+    return { x: 0, z: 0 };
+}
+
+/**
+ * Retrieves the security clearance level for a player directly from dynamic properties.
+ * Always checks live entity state to catch dynamic property mutations instantly.
+ */
+export function getSecurityClearance(player: Player): number {
+    try {
+        const rawProperty = player.getDynamicProperty("securityClearance");
+        const clearance = typeof rawProperty === "number" ? rawProperty : 1;
+        securityClearanceCache.set(player.id, clearance);
+        return clearance;
+    } catch {
+        return securityClearanceCache.get(player.id) ?? 1;
+    }
+}
+
+/**
+ * Updates a player's security clearance level and updates internal cache.
+ *
+ * @param player - Target player entity
+ * @param clearance - Clearance level to set
+ */
+export function setSecurityClearance(player: Player, clearance: number): void {
+    try {
+        player.setDynamicProperty("securityClearance", clearance);
+    } catch {
+        // Ignored if player instance is destroyed
+    }
+
     securityClearanceCache.set(player.id, clearance);
-    return clearance;
+    playerNextCheckTickCache.delete(player.id);
+
+    if (clearance >= 4 && queuedPlayerIds.has(player.id)) {
+        queuedPlayerIds.delete(player.id);
+    }
 }
 
 /**
- * Sets or updates the in-memory security clearance cache for a player.
- * Call this helper whenever clearance levels are updated in commands or UI scripts.
+ * Purges cached entries associated with a player ID on disconnect.
  *
- * @param player - The target player entity or player string ID.
- * @param clearance - The updated clearance level.
- */
-export function setPlayerClearanceCache(player: Player | string, clearance: number): void {
-    const id = typeof player === "string" ? player : player.id;
-    securityClearanceCache.set(id, clearance);
-}
-
-/**
- * Purges cached border and security state when a player disconnects.
- *
- * @param playerId - Unique string ID of the departing player.
+ * @param playerId - Unique string identifier of player
  */
 export function clearPlayerBorderCache(playerId: string): void {
     securityClearanceCache.delete(playerId);
     lastBorderNudgeCache.delete(playerId);
     queuedPlayerIds.delete(playerId);
+    playerNextCheckTickCache.delete(playerId);
 }
 
 /**
- * Evaluates whether a player has crossed the configured world border boundaries.
- * Queues players for safe relocation if a boundary violation occurs.
+ * Evaluates player location against dimension border boundaries.
  *
- * @param player - The player entity to evaluate.
+ * @param player - Target player entity
+ * @param currentTick - Pre-fetched current server tick
  */
-function checkPlayerBorder(player: Player): void {
-    if (!player?.isValid || queuedPlayerIds.has(player.id)) return;
+function checkPlayerBorder(player: Player, currentTick: number): void {
+    const clearance = getSecurityClearance(player);
+
+    if (clearance >= 4) {
+        if (queuedPlayerIds.has(player.id)) {
+            queuedPlayerIds.delete(player.id);
+        }
+        playerNextCheckTickCache.set(player.id, currentTick + ADMIN_BYPASS_SLEEP_TICKS);
+        return;
+    } else {
+        // IF player was previously sleeping due to level 4 admin bypass, clear it immediately
+        const nextCheck = playerNextCheckTickCache.get(player.id) ?? 0;
+        if (nextCheck > currentTick + CHECK_INTERVAL_TICKS) {
+            playerNextCheckTickCache.delete(player.id);
+        }
+    }
+
+    const nextCheck = playerNextCheckTickCache.get(player.id) ?? 0;
+    if (currentTick < nextCheck || queuedPlayerIds.has(player.id)) return;
 
     try {
-        // Fast in-memory clearance check; level 4 bypasses world border checks
-        if (getSecurityClearance(player) === 4) return;
-
         const transform = PlayerLocationCache.getTransform(player);
         if (!transform) return;
 
         const { location: loc, dimension } = transform;
         const borderSize = getConfiguredBorder(dimension.id);
-        if (borderSize <= 0) return;
+        if (borderSize <= 0) {
+            playerNextCheckTickCache.set(player.id, currentTick + 100);
+            return;
+        }
 
-        // Absolute axis boundaries relative to world spawn
-        const minX = cachedSpawnLocation.x - borderSize;
-        const maxX = cachedSpawnLocation.x + borderSize;
-        const minZ = cachedSpawnLocation.z - borderSize;
-        const maxZ = cachedSpawnLocation.z + borderSize;
+        const center = getDimensionCenter(dimension.id);
+        const minX = center.x - borderSize;
+        const maxX = center.x + borderSize;
+        const minZ = center.z - borderSize;
+        const maxZ = center.z + borderSize;
 
-        // Severe breach boundary thresholds (+20 block radius outside border)
-        const hardMinX = minX - 20;
-        const hardMaxX = maxX + 20;
-        const hardMinZ = minZ - 20;
-        const hardMaxZ = maxZ + 20;
+        const distMinX = loc.x - minX;
+        const distMaxX = maxX - loc.x;
+        const distMinZ = loc.z - minZ;
+        const distMaxZ = maxZ - loc.z;
+
+        const minDistanceToEdge = Math.min(distMinX, distMaxX, distMinZ, distMaxZ);
+
+        // Security fix: Max sleep capped tightly at 15 ticks to prevent high-velocity bypasses
+        if (minDistanceToEdge > 60) {
+            const sleepTicks = Math.min(15, Math.max(5, Math.floor((minDistanceToEdge - 30) / 10)));
+            playerNextCheckTickCache.set(player.id, currentTick + sleepTicks);
+            return;
+        }
+
+        const hardMinX = minX - 15;
+        const hardMaxX = maxX + 15;
+        const hardMinZ = minZ - 15;
+        const hardMaxZ = maxZ + 15;
 
         const outside = loc.x < hardMinX || loc.x > hardMaxX || loc.z < hardMinZ || loc.z > hardMaxZ;
 
@@ -179,11 +230,9 @@ function checkPlayerBorder(player: Player): void {
         let targetZ = loc.z;
 
         if (outside) {
-            // Far boundary breach: return directly to world spawn
-            targetX = cachedSpawnLocation.x;
-            targetZ = cachedSpawnLocation.z;
+            targetX = center.x;
+            targetZ = center.z;
         } else {
-            // Edge contact: nudge inward with safety buffer
             if (loc.x < minX) targetX = minX + BUFFER;
             else if (loc.x > maxX) targetX = maxX - BUFFER;
 
@@ -191,59 +240,65 @@ function checkPlayerBorder(player: Player): void {
             else if (loc.z > maxZ) targetZ = maxZ - BUFFER;
         }
 
-        if (targetX === loc.x && targetZ === loc.z) return;
-
-        // Debounce soft edge nudges to prevent teleport notification spam
-        if (!outside) {
-            const nowTick = system.currentTick;
-            const lastNudge = lastBorderNudgeCache.get(player.id) ?? 0;
-            if (nowTick - lastNudge < DEBOUNCE_TICKS) return;
-            lastBorderNudgeCache.set(player.id, nowTick);
+        if (targetX === loc.x && targetZ === loc.z) {
+            playerNextCheckTickCache.set(player.id, currentTick + CHECK_INTERVAL_TICKS);
+            return;
         }
 
-        // Lock player from re-queueing and push relocation payload
+        if (!outside) {
+            const lastNudge = lastBorderNudgeCache.get(player.id) ?? 0;
+            if (currentTick - lastNudge < DEBOUNCE_TICKS) return;
+            lastBorderNudgeCache.set(player.id, currentTick);
+        }
+
         queuedPlayerIds.add(player.id);
         safeYQueue.push({
             player,
             dimension,
-            x: loc.x,
-            y: loc.y,
-            z: loc.z,
             targetX,
             targetZ,
             dimensionName: dimension.id === "minecraft:overworld" ? "Overworld" : dimension.id === "minecraft:nether" ? "Nether" : "End",
             beyondBorder: outside,
         });
     } catch (e) {
-        console.error(`[Paradox] Error checking player border: ${e}`);
+        console.error(`[Paradox] Error evaluating player world border: ${e}`);
     }
 }
 
 /**
- * Checks whether a specific 3-block vertical column can safely accommodate a player entity.
+ * Validates block clearance at target coordinates.
  *
- * @param dimension - Dimension instance to evaluate blocks in.
- * @param x - Target X coordinate.
- * @param testY - Target Y coordinate (representing feet level).
- * @param z - Target Z coordinate.
- * @returns True if feet rest on solid ground and body/head spaces are non-solid.
+ * @param dimension - Target dimension
+ * @param x - Block X coordinate
+ * @param testY - Block Y coordinate
+ * @param z - Block Z coordinate
+ * @returns True if block column is safe for player placement
  */
 function findSafeYAt(dimension: Dimension, x: number, testY: number, z: number): boolean {
-    const feet = dimension.getBlock({ x, y: testY - 1, z });
-    if (!feet?.isSolid) return false;
+    try {
+        blockQueryLoc.x = x;
+        blockQueryLoc.z = z;
 
-    const body = dimension.getBlock({ x, y: testY, z });
-    if (body?.isSolid) return false;
+        blockQueryLoc.y = testY - 1;
+        const feet = dimension.getBlock(blockQueryLoc);
+        if (!feet?.isSolid) return false;
 
-    const head = dimension.getBlock({ x, y: testY + 1, z });
-    if (head?.isSolid) return false;
+        blockQueryLoc.y = testY;
+        const body = dimension.getBlock(blockQueryLoc);
+        if (body?.isSolid) return false;
 
-    return true;
+        blockQueryLoc.y = testY + 1;
+        const head = dimension.getBlock(blockQueryLoc);
+        if (head?.isSolid) return false;
+
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 /**
- * Batched safe-Y worker generator function.
- * Evaluates solid terrain around target coordinates across generator ticks to preserve FPS.
+ * Job generator worker computing non-blocking safe vertical coordinates for teleportation.
  */
 function* safeYWorker(): Generator<void, void, unknown> {
     if (isSafeYJobActive) return;
@@ -251,68 +306,96 @@ function* safeYWorker(): Generator<void, void, unknown> {
 
     try {
         while (isModuleActive && safeYQueue.length > 0) {
+            // Memory Fix: Array shift ensures zero heap reference leaks
             const request = safeYQueue.shift();
-            if (!request) break;
+            if (!request) continue;
 
-            const { player, dimension, y, targetX, targetZ, dimensionName, beyondBorder } = request;
+            const { player, dimension, targetX, targetZ, dimensionName, beyondBorder } = request;
 
-            if (player?.id) queuedPlayerIds.delete(player.id);
+            if (player?.id) {
+                const isStillQueued = queuedPlayerIds.has(player.id);
+                queuedPlayerIds.delete(player.id);
+
+                if (!isStillQueued || getSecurityClearance(player) === 4) {
+                    continue;
+                }
+            }
+
             if (!player?.isValid) continue;
+
+            // Fetch live current position rather than stale queued coordinates
+            const currentTransform = PlayerLocationCache.getTransform(player);
+            const currentY = currentTransform ? currentTransform.location.y : player.location.y;
 
             const minHeight = dimension.heightRange?.min ?? -64;
             const maxHeight = dimension.heightRange?.max ?? 320;
-            const startY = Math.max(minHeight + 1, Math.min(Math.floor(y), maxHeight - 2));
+            const startY = Math.max(minHeight + 1, Math.min(Math.floor(currentY), maxHeight - 2));
 
             let safeY: number | undefined;
             let iterationsThisTick = 0;
 
-            // Search outward vertically from current player Y position
             for (let offset = 0; offset <= MAX_SAFE_Y_SEARCH_DISTANCE; offset++) {
-                const candidates = offset === 0 ? [startY] : [startY + offset, startY - offset];
-
-                for (const testY of candidates) {
-                    if (testY <= minHeight || testY >= maxHeight - 1) continue;
-
-                    if (findSafeYAt(dimension, targetX, testY, targetZ)) {
-                        safeY = testY;
+                if (offset === 0) {
+                    if (findSafeYAt(dimension, targetX, startY, targetZ)) {
+                        safeY = startY;
+                        break;
+                    }
+                    iterationsThisTick++;
+                } else {
+                    const testYUp = startY + offset;
+                    if (testYUp < maxHeight - 1 && findSafeYAt(dimension, targetX, testYUp, targetZ)) {
+                        safeY = testYUp;
                         break;
                     }
 
-                    // Process up to 32 block queries before yielding control to main thread
-                    iterationsThisTick++;
-                    if (iterationsThisTick >= 32) {
-                        iterationsThisTick = 0;
-                        yield;
+                    const testYDown = startY - offset;
+                    if (testYDown > minHeight && findSafeYAt(dimension, targetX, testYDown, targetZ)) {
+                        safeY = testYDown;
+                        break;
                     }
+
+                    iterationsThisTick += 2;
                 }
 
-                if (safeY !== undefined) break;
+                if (iterationsThisTick >= 4) {
+                    iterationsThisTick = 0;
+                    yield;
+                }
             }
 
             if (!player.isValid) continue;
 
-            // Fallback strategy: Grant slow falling if no solid ground was found nearby
+            if (getSecurityClearance(player) === 4) {
+                continue;
+            }
+
             if (safeY === undefined) {
-                const effect = player.getEffect("minecraft:slow_falling");
-                if (!effect || effect.duration < 1200) {
-                    player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
+                try {
+                    const effect = player.getEffect("minecraft:slow_falling");
+                    if (!effect || effect.duration < 1200) {
+                        player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
+                    }
+                } catch {
+                    // Ignored if effect application fails
                 }
                 safeY = Math.max(minHeight + 1, Math.min(startY, maxHeight - 2));
             }
 
-            // Notify player of border enforcement action
-            if (beyondBorder) {
-                player.sendMessage(`§2[§7Paradox§2]§o§7 You exceeded the world border in the ${dimensionName} and were returned to spawn.`);
-            } else {
-                player.sendMessage(`§2[§7Paradox§2]§o§7 You reached the world border in the ${dimensionName}.`);
-            }
-
-            // Perform relocation and refresh transform cache
             try {
-                player.teleport({ x: targetX, y: safeY, z: targetZ }, { dimension, checkForBlocks: true });
+                if (beyondBorder) {
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 You exceeded the world border in the ${dimensionName} and were returned to spawn.`);
+                } else {
+                    player.sendMessage(`§2[§7Paradox§2]§o§7 You reached the world border in the ${dimensionName}.`);
+                }
+
+                teleportLoc.x = targetX;
+                teleportLoc.y = safeY;
+                teleportLoc.z = targetZ;
+
+                player.teleport(teleportLoc, { dimension, checkForBlocks: true });
                 PlayerLocationCache.refresh(player);
             } catch (e) {
-                console.error(`[Paradox] Error teleporting player at world border: ${e}`);
+                console.error(`[Paradox] Error applying world border teleport: ${e}`);
             }
 
             yield;
@@ -320,7 +403,6 @@ function* safeYWorker(): Generator<void, void, unknown> {
     } finally {
         isSafeYJobActive = false;
 
-        // Restart job queue if remaining items exist
         if (isModuleActive && safeYQueue.length > 0) {
             system.runJob(safeYWorker());
         }
@@ -328,7 +410,7 @@ function* safeYWorker(): Generator<void, void, unknown> {
 }
 
 /**
- * Initiates the safe-Y worker generator job if not already active.
+ * Triggers the Safe-Y generator job queue if inactive.
  */
 function startSafeYWorker(): void {
     if (!isModuleActive || isSafeYJobActive || safeYQueue.length === 0) return;
@@ -336,53 +418,46 @@ function startSafeYWorker(): void {
 }
 
 /**
- * Main execution pass run every check interval.
- * Evaluates active players against configured world border limits.
+ * Main execution pass executed on tick interval.
  */
 function runWorldBorderChecks(): void {
     if (!isModuleActive || !moduleConfig?.enabled || !moduleConfig.settings) return;
 
-    for (const player of PlayerCache.getPlayers()) {
-        checkPlayerBorder(player);
+    const currentTick = system.currentTick;
+    const players = PlayerCache.getPlayersArray();
+    const len = players.length;
+
+    for (let i = 0; i < len; i++) {
+        checkPlayerBorder(players[i], currentTick);
     }
 
     startSafeYWorker();
 }
 
 /**
- * Asynchronously synchronizes local configuration and spawn caches with the database.
+ * Safely fetches database configurations and updates world border boundaries.
  */
 async function refreshConfig(): Promise<void> {
-    if (configRefreshPromise) return configRefreshPromise;
+    try {
+        moduleConfig = (await paradoxModulesDB.get("worldBorderCheck_b")) as ModuleConfig | undefined;
 
-    configRefreshPromise = (async () => {
-        try {
-            moduleConfig = (await paradoxModulesDB.get("worldBorderCheck_b")) as ModuleConfig | undefined;
-
-            if (moduleConfig?.settings) {
-                cachedBounds = {
-                    overworld: moduleConfig.settings.overworld ?? 0,
-                    nether: moduleConfig.settings.nether ?? 0,
-                    end: moduleConfig.settings.end ?? 0,
-                };
-            }
-
-            const spawn = world.getDefaultSpawnLocation();
-            cachedSpawnLocation.x = spawn.x;
-            cachedSpawnLocation.y = spawn.y;
-            cachedSpawnLocation.z = spawn.z;
-        } catch (e) {
-            console.error(`[Paradox] Failed to load world border configuration: ${e}`);
-        } finally {
-            configRefreshPromise = undefined;
+        if (moduleConfig?.settings) {
+            cachedBounds.overworld = moduleConfig.settings.overworld ?? 0;
+            cachedBounds.nether = moduleConfig.settings.nether ?? 0;
+            cachedBounds.end = moduleConfig.settings.end ?? 0;
         }
-    })();
 
-    return configRefreshPromise;
+        const spawn = world.getDefaultSpawnLocation();
+        cachedSpawnLocation.x = spawn.x;
+        cachedSpawnLocation.y = spawn.y;
+        cachedSpawnLocation.z = spawn.z;
+    } catch (e) {
+        console.error(`[Paradox] Failed to load world border configuration: ${e}`);
+    }
 }
 
 /**
- * Starts the world border enforcement module, listeners, and recurring background intervals.
+ * Initializes and starts world border monitoring services.
  */
 export async function startWorldBorderCheck(): Promise<void> {
     if (isModuleActive) return;
@@ -390,7 +465,17 @@ export async function startWorldBorderCheck(): Promise<void> {
     isModuleActive = true;
     PlayerLocationCache.init();
 
-    // Register player disconnect cleanup
+    spawnSubscription = (ev: PlayerSpawnAfterEvent) => {
+        if (ev.initialSpawn && ev.player) {
+            system.runTimeout(() => {
+                if (ev.player?.isValid) {
+                    getSecurityClearance(ev.player);
+                }
+            }, 1);
+        }
+    };
+    EventCoordinator.subscribeAfter("playerSpawn", spawnSubscription);
+
     leaveSubscription = (ev: PlayerLeaveBeforeEvent) => {
         if (ev.player?.id) {
             clearPlayerBorderCache(ev.player.id);
@@ -404,12 +489,12 @@ export async function startWorldBorderCheck(): Promise<void> {
 
     checkIntervalId = system.runInterval(runWorldBorderChecks, CHECK_INTERVAL_TICKS);
     configRefreshIntervalId = system.runInterval(() => {
-        refreshConfig();
+        refreshConfig().catch((err) => console.error(`[Paradox] Unhandled error during border config refresh: ${err}`));
     }, CONFIG_REFRESH_INTERVAL_TICKS);
 }
 
 /**
- * Halts world border checking routines and clears queue state.
+ * Stops world border enforcement and releases resources.
  */
 export function stopWorldBorderCheck(): void {
     isModuleActive = false;
@@ -429,8 +514,14 @@ export function stopWorldBorderCheck(): void {
         leaveSubscription = undefined;
     }
 
+    if (spawnSubscription) {
+        EventCoordinator.unsubscribeAfter("playerSpawn", spawnSubscription);
+        spawnSubscription = undefined;
+    }
+
     safeYQueue.length = 0;
     queuedPlayerIds.clear();
     securityClearanceCache.clear();
     lastBorderNudgeCache.clear();
+    playerNextCheckTickCache.clear();
 }
