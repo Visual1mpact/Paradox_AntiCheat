@@ -25,29 +25,30 @@ export class EventCoordinator {
      * Returns a cleanup function for easy unsubscription.
      */
     static subscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: AfterEventArg<K>) => void): () => void {
-        if (!this.afterListeners.has(event)) {
-            this.afterListeners.set(event, new Set());
+        let set = this.afterListeners.get(event);
+        if (!set) {
+            set = new Set();
+            this.afterListeners.set(event, set);
         }
 
-        const set = this.afterListeners.get(event)!;
         set.add(callback as (arg: unknown) => void);
 
         if (set.size === 1) {
-            // Helper function cast keeps native subscription strongly typed without triggering generic union collapse
-            const subscribeNative = <E extends keyof WorldAfterEvents>(e: E) => {
-                return world.afterEvents[e].subscribe((data) => {
-                    const listeners = Array.from(this.afterListeners.get(e) || []);
+            // OPTIMIZATION: Bypassed nested closure allocation
+            const sub = world.afterEvents[event].subscribe((data) => {
+                const listeners = this.afterListeners.get(event);
+                if (listeners) {
+                    // OPTIMIZATION: Iterate Set directly to avoid Array.from() GC thrashing
                     for (const listener of listeners) {
                         try {
                             listener(data);
                         } catch (err) {
-                            console.error(`[Coordinator] Error in afterEvents.${String(e)} listener:`, err);
+                            console.error(`[Coordinator] Error in afterEvents.${String(event)} listener:`, err);
                         }
                     }
-                });
-            };
-
-            this.afterNativeSubs.set(event, subscribeNative(event));
+                }
+            });
+            this.afterNativeSubs.set(event, sub);
         }
 
         return () => this.unsubscribeAfter(event, callback);
@@ -59,28 +60,28 @@ export class EventCoordinator {
      * Returns a cleanup function for easy unsubscription.
      */
     static subscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: BeforeEventArg<K>) => void): () => void {
-        if (!this.beforeListeners.has(event)) {
-            this.beforeListeners.set(event, new Set());
+        let set = this.beforeListeners.get(event);
+        if (!set) {
+            set = new Set();
+            this.beforeListeners.set(event, set);
         }
 
-        const set = this.beforeListeners.get(event)!;
         set.add(callback as (arg: unknown) => void);
 
         if (set.size === 1) {
-            const subscribeNative = <E extends keyof WorldBeforeEvents>(e: E) => {
-                return world.beforeEvents[e].subscribe((data) => {
-                    const listeners = Array.from(this.beforeListeners.get(e) || []);
+            const sub = world.beforeEvents[event].subscribe((data) => {
+                const listeners = this.beforeListeners.get(event);
+                if (listeners) {
                     for (const listener of listeners) {
                         try {
                             listener(data);
                         } catch (err) {
-                            console.error(`[Coordinator] Error in beforeEvents.${String(e)} listener:`, err);
+                            console.error(`[Coordinator] Error in beforeEvents.${String(event)} listener:`, err);
                         }
                     }
-                });
-            };
-
-            this.beforeNativeSubs.set(event, subscribeNative(event));
+                }
+            });
+            this.beforeNativeSubs.set(event, sub);
         }
 
         return () => this.unsubscribeBefore(event, callback);
@@ -97,12 +98,8 @@ export class EventCoordinator {
         if (set.size === 0) {
             const sub = this.afterNativeSubs.get(event);
             if (sub !== undefined) {
-                const unsubscribeNative = <E extends keyof WorldAfterEvents>(e: E, nativeSub: unknown) => {
-                    // Safety check for native signal unsubscribe method
-                    const signal = world.afterEvents[e] as unknown as { unsubscribe(s: unknown): void };
-                    signal.unsubscribe(nativeSub);
-                };
-                unsubscribeNative(event, sub);
+                // Safely cast to access the generic unsubscribe method without generating dynamic closures
+                (world.afterEvents[event] as unknown as { unsubscribe(s: unknown): void }).unsubscribe(sub);
             }
             this.afterNativeSubs.delete(event);
         }
@@ -119,11 +116,7 @@ export class EventCoordinator {
         if (set.size === 0) {
             const sub = this.beforeNativeSubs.get(event);
             if (sub !== undefined) {
-                const unsubscribeNative = <E extends keyof WorldBeforeEvents>(e: E, nativeSub: unknown) => {
-                    const signal = world.beforeEvents[e] as unknown as { unsubscribe(s: unknown): void };
-                    signal.unsubscribe(nativeSub);
-                };
-                unsubscribeNative(event, sub);
+                (world.beforeEvents[event] as unknown as { unsubscribe(s: unknown): void }).unsubscribe(sub);
             }
             this.beforeNativeSubs.delete(event);
         }
