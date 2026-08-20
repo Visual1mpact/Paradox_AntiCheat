@@ -4,6 +4,7 @@ import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache, CachedPlayerTransform } from "../../classes/cache/player-location-cache";
 import { waypointsDB } from "../../event-listeners/world-initialize";
 import { WaypointData } from "../../classes/database/db-types";
+import { EventCoordinator } from "penrose/classes/event-coordinator";
 
 const LEGACY_WAYPOINT_PROP = "paradox:waypoint_data";
 const DEFAULT_MAX_WAYPOINTS = 5;
@@ -14,14 +15,52 @@ interface PlayerWaypoints {
     savedWaypoints: Record<string, WaypointData>;
 }
 
+/** In-memory cache for fast, synchronous reads during HUD tick updates */
+const waypointsMemoryCache = new Map<string, PlayerWaypoints>();
+
+/** Active tracking count to short-circuit tick execution when no player is navigating */
+let activeGpsCount = 0;
+
+/**
+ * Recalculates the active GPS target count across all loaded player caches.
+ */
+function updateActiveGpsCount(): void {
+    let count = 0;
+    for (const entry of waypointsMemoryCache.values()) {
+        if (entry.activeWaypointName) {
+            count++;
+        }
+    }
+    activeGpsCount = count;
+}
+
+/**
+ * Gets cached player waypoints or loads them from the database into memory.
+ *
+ * @param playerId - The unique ID of the target player.
+ * @returns The target player's waypoints object.
+ */
+async function getOrLoadWaypoints(playerId: string): Promise<PlayerWaypoints> {
+    const cached = waypointsMemoryCache.get(playerId);
+    if (cached) return cached;
+
+    const dbData = ((await waypointsDB.get(playerId)) as PlayerWaypoints | undefined) ?? { savedWaypoints: {} };
+    waypointsMemoryCache.set(playerId, dbData);
+    updateActiveGpsCount();
+    return dbData;
+}
+
 /**
  * Helper to fetch the applicable maximum waypoint count for a specific player ID.
  * Hierarchy: Per-Player DB Override -> World Dynamic Property -> Default (5)
+ *
+ * @param playerId - The unique ID of the target player.
+ * @returns The effective max waypoint limit.
  */
 async function getMaxWaypointsForPlayer(playerId: string): Promise<number> {
-    const dbEntry = (await waypointsDB.get(playerId)) as PlayerWaypoints | undefined;
-    if (dbEntry?.maxWaypoints !== undefined && dbEntry.maxWaypoints > 0) {
-        return dbEntry.maxWaypoints;
+    const entry = await getOrLoadWaypoints(playerId);
+    if (entry?.maxWaypoints !== undefined && entry.maxWaypoints > 0) {
+        return entry.maxWaypoints;
     }
     const globalMax = world.getDynamicProperty("globalMaxWaypoints") as number | undefined;
     if (globalMax !== undefined && globalMax > 0) {
@@ -32,16 +71,18 @@ async function getMaxWaypointsForPlayer(playerId: string): Promise<number> {
 
 /**
  * Migrates legacy player dynamic property waypoint data into waypointsDB.
+ *
+ * @param player - The player entity to evaluate for migration.
+ * @returns The updated player waypoints record.
  */
 async function migrateLegacyWaypoints(player: Player): Promise<PlayerWaypoints> {
-    let currentDBData = ((await waypointsDB.get(player.id)) as PlayerWaypoints | undefined) ?? { savedWaypoints: {} };
+    let currentDBData = await getOrLoadWaypoints(player.id);
 
     const legacyRaw = player.getDynamicProperty(LEGACY_WAYPOINT_PROP) as string | undefined;
     if (legacyRaw) {
         try {
             const legacyData = JSON.parse(legacyRaw) as PlayerWaypoints;
             if (legacyData?.savedWaypoints) {
-                // Merge legacy waypoints into DB data without overwriting existing DB waypoints
                 currentDBData.savedWaypoints = {
                     ...legacyData.savedWaypoints,
                     ...currentDBData.savedWaypoints,
@@ -49,12 +90,13 @@ async function migrateLegacyWaypoints(player: Player): Promise<PlayerWaypoints> 
                 if (!currentDBData.activeWaypointName && legacyData.activeWaypointName) {
                     currentDBData.activeWaypointName = legacyData.activeWaypointName;
                 }
+                waypointsMemoryCache.set(player.id, currentDBData);
+                updateActiveGpsCount();
                 await waypointsDB.set(player.id, currentDBData);
             }
         } catch (e) {
             console.error(`[Paradox] Failed to parse legacy waypoint data for ${player.name}: ${e}`);
         } finally {
-            // Remove legacy property from player entity
             player.setDynamicProperty(LEGACY_WAYPOINT_PROP, undefined);
         }
     }
@@ -68,10 +110,9 @@ async function migrateLegacyWaypoints(player: Player): Promise<PlayerWaypoints> 
 export const waypointCommand: Command = {
     name: "waypoint",
     description: "Manages personal navigation waypoints with a directional HUD and configurable waypoint limits.",
-    usage: "{prefix}waypoint <set [name] [--no-gps] | goto [name] | clear [name] | list | rename <old> --to <new>> | {prefix}waypoint [ -t | --target <player> | -g | --global ] [ -l | --limit <amount> ] [ --reset-limit ]",
+    usage: "{prefix}waypoint <set [name] | goto [name] | clear [name] | list | rename <old> --to <new>> | {prefix}waypoint [ -t | --target <player> | -g | --global ] [ -l | --limit <amount> ] [ --reset-limit ]",
     examples: [
         "{prefix}waypoint set Base",
-        "{prefix}waypoint set Secret --no-gps",
         "{prefix}waypoint rename Base --to HQ",
         "{prefix}waypoint goto Base",
         "{prefix}waypoint list",
@@ -89,8 +130,8 @@ export const waypointCommand: Command = {
         description:
             "Manage personal navigation waypoints with a real-time directional HUD.\n\n" +
             "§7Management:\n" +
-            "§7• Save unique locations with custom names for GPS tracking.\n" +
-            "§7• View distance and direction to active targets on your action bar.\n" +
+            "§7• Save unique locations with custom names.\n" +
+            "§7• Select a destination via 'goto' to activate directional HUD tracking.\n" +
             "§7• Dimension-aware tracking ensures you're on the right path.\n" +
             "§7• Automatically stops navigation once you arrive at your destination.\n\n" +
             "§7Admin Management:\n" +
@@ -101,7 +142,7 @@ export const waypointCommand: Command = {
                 name: "Set New Waypoint",
                 command: ["set"],
                 description: "Set a marker at your current location.",
-                requiredFields: ["waypointNameText", "noGpsToggle"],
+                requiredFields: ["waypointNameText"],
                 generateModalForm: true,
                 icon: "textures/ui/color_plus.png",
             },
@@ -200,12 +241,6 @@ export const waypointCommand: Command = {
                 requiredFields: ["renameToText"],
             },
             {
-                name: "Create Without GPS:",
-                type: "toggle",
-                arg: "--no-gps",
-                requiredFields: ["noGpsToggle"],
-            },
-            {
                 type: "dropdown",
                 sourceType: "players",
                 name: "\nSelect Target Player:",
@@ -226,10 +261,8 @@ export const waypointCommand: Command = {
         if (!message || !message.sender) return;
         const player = message.sender;
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? "!";
-
         const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
 
-        // Flags handling for global or player limit adjustments
         if (args.includes("-t") || args.includes("--target") || args.includes("-g") || args.includes("--global") || args.includes("-l") || args.includes("--limit") || args.includes("--reset-limit")) {
             if (senderClearance < 4) {
                 player.sendMessage(`§o§c[Paradox] You do not have permission to modify waypoint limits.`);
@@ -242,8 +275,8 @@ export const waypointCommand: Command = {
             let resetLimit = false;
 
             const validFlags = new Set(["-t", "--target", "-g", "--global", "-l", "--limit", "--reset-limit"]);
-
             const argsCopy = [...args];
+
             while (argsCopy.length > 0) {
                 const flag = argsCopy.shift();
                 switch (flag) {
@@ -279,7 +312,6 @@ export const waypointCommand: Command = {
                 }
             }
 
-            // Global settings route
             if (isGlobal) {
                 if (resetLimit) {
                     world.setDynamicProperty("globalMaxWaypoints", undefined);
@@ -297,7 +329,6 @@ export const waypointCommand: Command = {
                 return;
             }
 
-            // Individual player route
             if (!targetName) {
                 player.sendMessage(`§o§c[Paradox] Usage: ${prefix}waypoint [ -g | -t <player> ] [ -l <limit> | --reset-limit ]`);
                 return;
@@ -306,10 +337,12 @@ export const waypointCommand: Command = {
             const targetPlayer = PlayerCache.getPlayerByName(targetName);
             const targetId = targetPlayer ? targetPlayer.id : targetName;
 
-            const dbEntry = ((await waypointsDB.get(targetId)) as PlayerWaypoints | undefined) ?? { savedWaypoints: {} };
+            const dbEntry = await getOrLoadWaypoints(targetId);
 
             if (resetLimit) {
                 dbEntry.maxWaypoints = undefined;
+                waypointsMemoryCache.set(targetId, dbEntry);
+                updateActiveGpsCount();
                 await waypointsDB.set(targetId, dbEntry);
 
                 const newLimit = await getMaxWaypointsForPlayer(targetId);
@@ -326,6 +359,8 @@ export const waypointCommand: Command = {
             }
 
             dbEntry.maxWaypoints = limitVal;
+            waypointsMemoryCache.set(targetId, dbEntry);
+            updateActiveGpsCount();
             await waypointsDB.set(targetId, dbEntry);
 
             player.sendMessage(`§2[§7Paradox§2]§o§7 Set waypoint limit override for "${targetName}§7" to ${limitVal}.`);
@@ -344,14 +379,7 @@ export const waypointCommand: Command = {
         }
 
         const action = args[0].toLowerCase();
-
-        const noGps = args.includes("--no-gps");
-        const waypointNameArg = args
-            .slice(1)
-            .filter((a) => a.toLowerCase() !== "--no-gps")
-            .join(" ")
-            .replace(/["@]/g, "")
-            .trim();
+        const waypointNameArg = args.slice(1).join(" ").replace(/["@]/g, "").trim();
 
         switch (action) {
             case "set": {
@@ -374,10 +402,11 @@ export const waypointCommand: Command = {
                     timestamp: Date.now(),
                 };
                 playerWaypoints.savedWaypoints[name] = newWaypoint;
-                if (!noGps) playerWaypoints.activeWaypointName = name;
 
+                waypointsMemoryCache.set(player.id, playerWaypoints);
+                updateActiveGpsCount();
                 await waypointsDB.set(player.id, playerWaypoints);
-                player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${name}§7" set! (${Object.keys(playerWaypoints.savedWaypoints).length}/${playerMaxWaypoints}) ${!noGps ? "Navigation active." : ""}`);
+                player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${name}§7" saved! (${Object.keys(playerWaypoints.savedWaypoints).length}/${playerMaxWaypoints}). Use 'goto ${name}' to start GPS.`);
                 break;
             }
             case "goto": {
@@ -391,6 +420,8 @@ export const waypointCommand: Command = {
                     return;
                 }
                 playerWaypoints.activeWaypointName = waypointNameArg;
+                waypointsMemoryCache.set(player.id, playerWaypoints);
+                updateActiveGpsCount();
                 await waypointsDB.set(player.id, playerWaypoints);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Navigation activated for "§f${waypointNameArg}§7".`);
                 break;
@@ -425,6 +456,8 @@ export const waypointCommand: Command = {
 
                 if (playerWaypoints.activeWaypointName === oldName) playerWaypoints.activeWaypointName = newName;
 
+                waypointsMemoryCache.set(player.id, playerWaypoints);
+                updateActiveGpsCount();
                 await waypointsDB.set(player.id, playerWaypoints);
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${oldName}§7" renamed to "§f${newName}§7".`);
                 break;
@@ -439,6 +472,8 @@ export const waypointCommand: Command = {
                         } else {
                             player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${waypointNameArg}§7" cleared.`);
                         }
+                        waypointsMemoryCache.set(player.id, playerWaypoints);
+                        updateActiveGpsCount();
                         await waypointsDB.set(player.id, playerWaypoints);
                     } else {
                         player.sendMessage(`§o§c[Paradox] Waypoint "§f${waypointNameArg}§c" not found.`);
@@ -447,6 +482,8 @@ export const waypointCommand: Command = {
                     if (playerWaypoints.activeWaypointName) {
                         const clearedName = playerWaypoints.activeWaypointName;
                         playerWaypoints.activeWaypointName = undefined;
+                        waypointsMemoryCache.set(player.id, playerWaypoints);
+                        updateActiveGpsCount();
                         await waypointsDB.set(player.id, playerWaypoints);
                         player.sendMessage(`§2[§7Paradox§2]§o§7 Active navigation to "§f${clearedName}§7" stopped.`);
                     } else {
@@ -485,6 +522,10 @@ export const waypointCommand: Command = {
 
 /**
  * Directional logic to determine which arrow to show based on player transform and target position.
+ *
+ * @param transform - Cached position and rotation for the player.
+ * @param target - Target vector location.
+ * @returns Arrow indicator string.
  */
 function getDirectionArrow(transform: CachedPlayerTransform, target: Vector3): string {
     const dx = target.x - transform.location.x;
@@ -510,14 +551,32 @@ function getDirectionArrow(transform: CachedPlayerTransform, target: Vector3): s
  * Background task to update the HUD for all players with active waypoints.
  */
 export function startWaypointHUD() {
-    system.runInterval(async () => {
-        for (const player of PlayerCache.getPlayers()) {
-            try {
-                const playerWaypoints = await migrateLegacyWaypoints(player);
-                const activeWaypointName = playerWaypoints.activeWaypointName;
+    EventCoordinator.subscribeBefore("playerLeave", (event) => {
+        waypointsMemoryCache.delete(event.player.id);
+        updateActiveGpsCount();
+    });
 
+    system.runInterval(() => {
+        // Fast skip if no active routes exist
+        if (activeGpsCount <= 0) {
+            return;
+        }
+
+        const players = PlayerCache.getPlayers();
+
+        for (const player of players) {
+            try {
+                const playerWaypoints = waypointsMemoryCache.get(player.id);
+
+                if (!playerWaypoints) {
+                    getOrLoadWaypoints(player.id).then(() => {
+                        migrateLegacyWaypoints(player);
+                    });
+                    continue;
+                }
+
+                const activeWaypointName = playerWaypoints.activeWaypointName;
                 if (!activeWaypointName) {
-                    player.onScreenDisplay.setActionBar("");
                     continue;
                 }
 
@@ -525,7 +584,11 @@ export function startWaypointHUD() {
 
                 if (!wp) {
                     playerWaypoints.activeWaypointName = undefined;
-                    await waypointsDB.set(player.id, playerWaypoints);
+                    waypointsMemoryCache.set(player.id, playerWaypoints);
+                    updateActiveGpsCount();
+                    system.run(async () => {
+                        await waypointsDB.set(player.id, playerWaypoints);
+                    });
                     player.onScreenDisplay.setActionBar("");
                     continue;
                 }
@@ -541,18 +604,24 @@ export function startWaypointHUD() {
                     continue;
                 }
 
-                const dist = Math.floor(Math.sqrt(Math.pow(transform.location.x - wp.location.x, 2) + Math.pow(transform.location.z - wp.location.z, 2)));
+                const dx = transform.location.x - wp.location.x;
+                const dz = transform.location.z - wp.location.z;
+                const distSq = dx * dx + dz * dz;
 
-                if (dist < 3 && Date.now() - wp.timestamp > 25000) {
+                if (distSq < 9 && Date.now() - wp.timestamp > 25000) {
                     player.onScreenDisplay.setActionBar(`§bGPS §7| §aReached Destination!`);
+                    playerWaypoints.activeWaypointName = undefined;
+                    waypointsMemoryCache.set(player.id, playerWaypoints);
+                    updateActiveGpsCount();
+
                     system.run(async () => {
                         player.sendMessage(`§2[§7Paradox§2]§o§7 You have reached "§f${wp.name}§7".`);
-                        playerWaypoints.activeWaypointName = undefined;
                         await waypointsDB.set(player.id, playerWaypoints);
                     });
                     continue;
                 }
 
+                const dist = Math.floor(Math.sqrt(distSq));
                 const arrow = getDirectionArrow(transform, wp.location);
                 player.onScreenDisplay.setActionBar(`§l§bGPS §r§7| §f${wp.name} §7| §f${dist}m §7| §e${arrow}`);
             } catch (e) {

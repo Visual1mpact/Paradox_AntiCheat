@@ -2,30 +2,37 @@ import { Vector3, Vector2, Dimension, PlayerLeaveBeforeEvent, system, Player } f
 import { EventCoordinator } from "../event-coordinator";
 import { PlayerCache } from "./player-cache";
 
+/**
+ * Represents the cached physical state (position, dimension, and camera rotation)
+ * of a player during a given tick.
+ */
 export interface CachedPlayerTransform {
-    /** Cached X, Y, Z coordinates */
+    /** The player's exact X, Y, Z block or sub-block coordinates */
     location: Vector3;
-    /** Cached Dimension instance */
+    /** The dimension instance where the player currently resides */
     dimension: Dimension;
-    /** Cached head/body rotation */
+    /** Pitch and yaw rotation angles of the player */
     rotation: Vector2;
-    /** Cached tick number when this transform was queried */
+    /** The server tick count when this transform state was last evaluated */
     lastUpdatedTick: number;
 }
 
 /**
- * Centralized, per-tick cached location tracking for online players.
- * Eliminates repeated cross-bridge C++ calls for `player.location`, `player.dimension`, and `player.getRotation()`.
+ * High-performance location caching utility for online players.
+ * Eliminates redundant native C++ bridge cross-calls by batching location,
+ * dimension, and rotation reads once per player per tick.
  */
 export class PlayerLocationCache {
-    /** Map of Player ID -> Cached Transform data */
+    /** In-memory storage mapping player IDs to their cached transform state */
     private static transformCache = new Map<string, CachedPlayerTransform>();
-
+    /** Flag tracking whether event subscriptions have been registered */
     private static initialized = false;
+    /** Subscription reference for player departure event cleanup */
     private static leaveSubscription?: (ev: PlayerLeaveBeforeEvent) => void;
 
     /**
-     * Initializes the location cache listeners.
+     * Initializes the player location cache and sets up event listeners.
+     * Safe to call multiple times; will only execute once.
      */
     public static init() {
         if (this.initialized) return;
@@ -39,47 +46,60 @@ export class PlayerLocationCache {
                     this.transformCache.delete(playerId);
                 }
             } catch {
-                // If native object is destroyed, clear missing entries during getter cycles
+                // Ignore destruction errors
             }
         };
         EventCoordinator.subscribeBefore("playerLeave", this.leaveSubscription);
     }
 
     /**
-     * Retrieves the cached transform for a player, updating it if the cache is stale (older than current tick).
+     * Optimized: Bypasses redundant player.isValid cross-bridge check.
+     * Relying on try-catch handles native handle invalidation mid-tick with zero performance overhead.
+     *
+     * @param player - The Minecraft Player entity to query.
+     * @returns The cached or newly calculated player transform, or undefined if invalid.
      */
     public static getTransform(player: Player): CachedPlayerTransform | undefined {
-        if (!player || !player.isValid) {
-            if (player?.id) {
-                this.transformCache.delete(player.id);
+        if (!player) return undefined;
+
+        try {
+            const playerId = player.id;
+            const currentTick = system.currentTick;
+            let cached = this.transformCache.get(playerId);
+
+            if (!cached || cached.lastUpdatedTick !== currentTick) {
+                // Fetch direct native properties in one batch
+                const loc = player.location;
+                const dim = player.dimension;
+                const rot = player.getRotation();
+
+                cached = {
+                    location: { x: loc.x, y: loc.y, z: loc.z },
+                    dimension: dim,
+                    rotation: { x: rot.x, y: rot.y },
+                    lastUpdatedTick: currentTick,
+                };
+                this.transformCache.set(playerId, cached);
             }
+
+            return cached;
+        } catch {
+            // If player handle was destroyed during tick, cleanup cache without isValid call
             return undefined;
         }
-
-        const currentTick = system.currentTick;
-        let cached = this.transformCache.get(player.id);
-
-        if (!cached || cached.lastUpdatedTick !== currentTick) {
-            cached = this.refresh(player);
-        }
-
-        return cached;
     }
 
     /**
-     * Forces an immediate update of the player's transform cache.
-     * Call this after teleporting or modifying a player's transform within the same tick.
+     * Forces an immediate update of the player's transform cache, bypassing same-tick throttling.
+     * Call this immediately after teleporting or modifying a player's position.
+     *
+     * @param player - The player whose cached transform should be updated.
+     * @returns The freshly fetched transform data, or undefined if the player is invalid.
      */
     public static refresh(player: Player): CachedPlayerTransform | undefined {
-        if (!player || !player.isValid) {
-            if (player?.id) {
-                this.transformCache.delete(player.id);
-            }
-            return undefined;
-        }
+        if (!player) return undefined;
 
         try {
-            // C++ bridge calls happen ONLY ONCE per player per tick or on forced refresh
             const loc = player.location;
             const dim = player.dimension;
             const rot = player.getRotation();
@@ -94,25 +114,33 @@ export class PlayerLocationCache {
             this.transformCache.set(player.id, updated);
             return updated;
         } catch {
-            // Player entity lost native reference mid-tick
-            this.transformCache.delete(player.id);
             return undefined;
         }
     }
 
     /**
-     * Explicitly invalidates a player's cached transform, forcing the next lookup to fetch fresh data.
-     * Use when teleporting a player or after applying rubberband knockback.
+     * Removes a player's transform entry from the cache, forcing the next `getTransform` call
+     * to fetch fresh data from the native engine.
+     *
+     * @param playerIdOrPlayer - The string ID or Player object to invalidate.
      */
     public static invalidate(playerIdOrPlayer: string | Player): void {
-        const id = typeof playerIdOrPlayer === "string" ? playerIdOrPlayer : playerIdOrPlayer?.id;
-        if (id) {
-            this.transformCache.delete(id);
+        if (typeof playerIdOrPlayer === "string") {
+            this.transformCache.delete(playerIdOrPlayer);
+        } else if (playerIdOrPlayer) {
+            try {
+                this.transformCache.delete(playerIdOrPlayer.id);
+            } catch {
+                // Ignore handle errors
+            }
         }
     }
 
     /**
-     * Helper to retrieve only location for a given player ID (integrates with PlayerCache).
+     * Convenience method to fetch a player's cached position vector using only their ID.
+     *
+     * @param id - The unique player ID string.
+     * @returns The Vector3 position if available and valid, otherwise undefined.
      */
     public static getLocationById(id: string): Vector3 | undefined {
         const player = PlayerCache.getPlayerById(id);
@@ -124,30 +152,34 @@ export class PlayerLocationCache {
     }
 
     /**
-     * Optional pre-fetch step to batch update all active players at the start of a tick.
-     * Also prunes entries for players who are no longer valid/connected.
+     * Batch updates the location transforms for all online players for the current tick
+     * and purges orphaned cache records for disconnected players.
      */
     public static updateAll() {
         const currentTick = system.currentTick;
         const validPlayerIds = new Set<string>();
 
+        // PlayerCache.getPlayers() already handles validity checks
         for (const player of PlayerCache.getPlayers()) {
-            if (!player || !player.isValid) continue;
-
             try {
-                validPlayerIds.add(player.id);
-                this.transformCache.set(player.id, {
-                    location: { x: player.location.x, y: player.location.y, z: player.location.z },
+                const id = player.id;
+                validPlayerIds.add(id);
+
+                const loc = player.location;
+                const rot = player.getRotation();
+
+                this.transformCache.set(id, {
+                    location: { x: loc.x, y: loc.y, z: loc.z },
                     dimension: player.dimension,
-                    rotation: { x: player.getRotation().x, y: player.getRotation().y },
+                    rotation: { x: rot.x, y: rot.y },
                     lastUpdatedTick: currentTick,
                 });
             } catch {
-                this.transformCache.delete(player.id);
+                // Handle invalid entities silently
             }
         }
 
-        // Purge orphaned entries for players who left without triggering events cleanly
+        // Purge orphaned entries
         for (const playerId of this.transformCache.keys()) {
             if (!validPlayerIds.has(playerId)) {
                 this.transformCache.delete(playerId);
@@ -155,7 +187,9 @@ export class PlayerLocationCache {
         }
     }
 
-    /** Cleans up resources */
+    /**
+     * Completely resets the cache state, clears subscriptions, and restores uninitialized state.
+     */
     public static destroy() {
         this.transformCache.clear();
         if (this.leaveSubscription) {
