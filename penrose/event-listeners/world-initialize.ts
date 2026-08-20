@@ -127,6 +127,7 @@ import { inventoryEditorCommand } from "penrose/commands/utility/inventory-edito
 import { chunkBordersCommand } from "../commands/utility/chunkborders";
 import { invalidMovementVectorCommand } from "../commands/settings/invalid-movement-vector";
 import { inventoryMovementCommand } from "../commands/settings/inventory-movement";
+import { switchGamemodeCommand } from "../commands/moderation/switch-game-mode";
 
 type PlayerID = string;
 
@@ -234,6 +235,7 @@ const allCommands: Command[] = [
     chunkBordersCommand,
     invalidMovementVectorCommand,
     inventoryMovementCommand,
+    switchGamemodeCommand,
 ];
 
 /**
