@@ -24,12 +24,14 @@ const tridentUsage = new Map<string, boolean>();
 
 /** Cooldown duration in ticks (10 seconds at 20 ticks/sec) between staff alert notifications */
 const ALERT_COOLDOWN_TICKS = 200;
-/** Threshold in ticks before a flying player triggers anti-fly mitigation (Increased to absorb step-down/bhop micro-hangs) */
+/** Threshold in ticks before a flying player triggers anti-fly mitigation */
 const HOVER_TIME_THRESHOLD = 6;
 /** Horizontal velocity detection threshold */
 const HORIZONTAL_VELOCITY_THRESHOLD = 0.35;
 /** Vertical velocity detection threshold */
 const VERTICAL_VELOCITY_THRESHOLD = 0.2;
+/** Max number of players evaluated per job micro-tick budget */
+const PLAYERS_PER_YIELD_BATCH = 4;
 
 /** Excluded GameModes compiled outside the loop pass */
 const EXCLUDED_GAMEMODES = new Set<GameMode>([GameMode.Creative, GameMode.Spectator]);
@@ -61,13 +63,13 @@ function alertStaff(player: Player): void {
  *
  * @param event - The player leave before event object.
  */
-async function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent): Promise<void> {
-    const player = event.player;
-    if (player?.id) {
-        alertCooldowns.delete(player.id);
-        hoverTicks.delete(player.id);
-        landingLocations.delete(player.id);
-        tridentUsage.delete(player.id);
+function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent): void {
+    const playerId = event.player?.id;
+    if (playerId) {
+        alertCooldowns.delete(playerId);
+        hoverTicks.delete(playerId);
+        landingLocations.delete(playerId);
+        tridentUsage.delete(playerId);
     }
 }
 
@@ -77,19 +79,17 @@ async function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent): Promise<void> 
  *
  * @param event - The item use before event object.
  */
-async function onItemUseCheck(event: ItemUseBeforeEvent): Promise<void> {
+function onItemUseCheck(event: ItemUseBeforeEvent): void {
     const player = event.source;
     if (!player?.isValid) return;
 
-    const item = event.itemStack?.typeId;
-    if (item === "minecraft:trident") {
+    if (event.itemStack?.typeId === "minecraft:trident") {
         tridentUsage.set(player.id, true);
     }
 }
 
 /**
- * Performs a fast 3x3 surrounding ground density scan using integer vector math
- * instead of native directional chaining (e.g. block.north().east()).
+ * Performs a fast 3x3 surrounding ground density scan using integer vector math.
  *
  * @param dimension - Target dimension instance.
  * @param baseX - Floor-aligned X coordinate below the player.
@@ -115,8 +115,9 @@ function checkIsMajorityAirBelow(dimension: Dimension, baseX: number, baseY: num
 
 /**
  * Continuous generator loop that checks players' flying status frame-by-frame.
+ * Batch processes multiple players before yielding execution back to the server worker.
  *
- * @yields Control back to the server job scheduler per player evaluated.
+ * @yields Control back to the server job scheduler after evaluating execution batches.
  */
 function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
     if (isJobActive) return;
@@ -125,10 +126,13 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
     try {
         if (!isModuleActive) return;
 
+        let processedInBatch = 0;
+
         for (const player of PlayerCache.getPlayers()) {
             if (!player?.isValid) continue;
 
             try {
+                // 1. CHEAP Native state filtering first
                 if (EXCLUDED_GAMEMODES.has(player.getGameMode())) {
                     hoverTicks.delete(player.id);
                     continue;
@@ -145,6 +149,7 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                     continue;
                 }
 
+                // Optimization: Cache or short-circuit property reads if needed
                 if ((player.getDynamicProperty("securityClearance") as number) === 4) {
                     hoverTicks.delete(player.id);
                     continue;
@@ -160,14 +165,23 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                     continue;
                 }
 
+                const velocity = player.getVelocity();
+                const isNaturalFalling = player.isFalling || velocity.y < -0.08;
+
+                // Fast Ground Short-Circuit: If physics reports ground or player is in standard falling arc, bypass chunk block lookups
+                if (player.isOnGround) {
+                    landingLocations.set(player.id, { x: location.x, y: location.y, z: location.z });
+
+                    const currentHover = hoverTicks.get(player.id) ?? 0;
+                    if (currentHover > 0) hoverTicks.set(player.id, currentHover - 1);
+                    continue;
+                }
+
+                // 2. EXPENSIVE Operations (Executes only when player is airborne)
                 const bx = Math.floor(location.x);
                 const by = Math.floor(location.y);
                 const bz = Math.floor(location.z);
 
-                const velocity = player.getVelocity();
-
-                // --- EXPANDED GROUND BOUNDING BOX SCAN ---
-                // Scan down 3 blocks (y-1, y-2, y-3) to accommodate step-downs, stairs, and b-hop landing arcs
                 let blockGroundFound = false;
                 for (let offset = 1; offset <= 3; offset++) {
                     const blk = dimension.getBlock({ x: bx, y: by - offset, z: bz });
@@ -177,32 +191,27 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                     }
                 }
 
-                // Legitimate downward step or gravity arc protection
-                const isNaturalFalling = player.isFalling || velocity.y < -0.08;
                 const physicallyGrounded = blockGroundFound || isNaturalFalling;
 
-                if (player.isOnGround || blockGroundFound) {
+                if (blockGroundFound) {
                     landingLocations.set(player.id, { x: location.x, y: location.y, z: location.z });
                 }
 
-                // Early exit for legitimately grounded or falling players
-                const isFloating = !player.isOnGround && !physicallyGrounded;
+                const isFloating = !physicallyGrounded;
                 if (!isFloating && !player.isFlying) {
-                    // Decay hover ticks gracefully instead of instantly zeroing to catch multi-tick micro-flights
                     const currentHover = hoverTicks.get(player.id) ?? 0;
                     if (currentHover > 0) hoverTicks.set(player.id, currentHover - 1);
                     continue;
                 }
 
-                const majorityAreAir = checkIsMajorityAirBelow(dimension, bx, by - 1, bz);
                 const horizontalVelocity = Math.hypot(velocity.x, velocity.z);
+                const majorityAreAir = checkIsMajorityAirBelow(dimension, bx, by - 1, bz);
 
-                // Ignore violations during downward acceleration or active jump arcs
                 const isViolatingFlight =
                     (!player.isFalling && player.isFlying) || (velocity.y >= -0.05 && majorityAreAir && (Math.abs(velocity.y) >= VERTICAL_VELOCITY_THRESHOLD || horizontalVelocity >= HORIZONTAL_VELOCITY_THRESHOLD) && !player.isJumping && isFloating);
 
                 if (isViolatingFlight) {
-                    let hoverTime = (hoverTicks.get(player.id) ?? 0) + 1;
+                    const hoverTime = (hoverTicks.get(player.id) ?? 0) + 1;
                     hoverTicks.set(player.id, hoverTime);
 
                     if (hoverTime >= HOVER_TIME_THRESHOLD) {
@@ -227,7 +236,12 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
                 // Ignore structural chunk rendering loading bounds errors safely
             }
 
-            yield;
+            // Yield control only once batch budget is reached
+            processedInBatch++;
+            if (processedInBatch >= PLAYERS_PER_YIELD_BATCH) {
+                processedInBatch = 0;
+                yield;
+            }
         }
     } finally {
         isJobActive = false;
