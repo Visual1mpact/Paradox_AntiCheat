@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "penrose/*": ["./penrose/*"]
+      "../*": ["./penrose/*"]
     },
 
     "rootDir": "./penrose",

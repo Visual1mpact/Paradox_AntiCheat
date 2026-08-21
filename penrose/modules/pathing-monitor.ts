@@ -4,6 +4,7 @@ import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /**
  * Movement constants for Bedrock Edition.
@@ -43,7 +44,7 @@ let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
  */
 function alertStaff(player: Player, reason: string): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "Pathing", `Player was ${reason}.`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Pathing] §f${player.name} §7flagged: §c${reason}`);

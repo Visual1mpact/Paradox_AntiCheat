@@ -3,6 +3,7 @@ import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-ini
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /**
  * CONFIGURATION
@@ -317,6 +318,7 @@ function onPlayerSpawn(event: PlayerSpawnAfterEvent) {
  */
 function alertStaff(player: Player, summaryMessage: string) {
     const staff = getSecurityClearanceLevel4Players();
+    FlagManager.logFlag(player, "InvSync", `Inventory anomaly corrected: ${summaryMessage}`);
     for (const s of staff) {
         if (s.isValid && s.id !== player.id) {
             s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvSync] §f${player.name} §7flagged: §c${summaryMessage}`);

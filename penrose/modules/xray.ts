@@ -1,8 +1,9 @@
-import { system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent } from "@minecraft/server";
+import { system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /* ============================================================
    CONFIGURATION
@@ -221,15 +222,24 @@ function checkVeinJump(profile: MiningProfile, playerId: string, location: { x: 
 
 /**
  * Distributes an in-game alert notification to all active staff players
- * possessing Security Clearance Level 4 when X-ray suspicion rises.
+ * possessing Security Clearance Level 4 when X-ray suspicion rises,
+ * and logs the violation to the database.
+ *
+ * @param {string | Player} target - The player or player ID triggering the suspicion.
+ * @param {MiningProfile} profile - The mining profile containing current metrics.
+ * @param {string} level - The severity label for the alert.
  */
-function alertStaff(playerId: string, profile: MiningProfile, level: string) {
-    const player = PlayerCache.getPlayerById(playerId);
-    const staff = getSecurityClearanceLevel4Players();
+function alertStaff(target: string | Player, profile: MiningProfile, level: string): void {
+    const player = typeof target === "string" ? PlayerCache.getPlayerById(target) : target;
+    const playerName = player?.name ?? (typeof target === "string" ? target : "Unknown");
 
+    const staff = getSecurityClearanceLevel4Players();
+    if (player?.isValid) {
+        FlagManager.logFlag(player, "X-Ray", `Player flagged for X-ray suspicion: ${profile.suspicion.toFixed(2)} points.`);
+    }
     for (const s of staff) {
         if (!s.isValid || (player && s.id === player.id)) continue;
-        s.sendMessage(`§2[§7Paradox§2]§o§7 ${level} §f${player?.name ?? playerId} §7Suspicion: §c${profile.suspicion}`);
+        s.sendMessage(`§2[§7Paradox§2]§o§7 ${level} §f${playerName} §7Suspicion: §c${profile.suspicion}`);
     }
 }
 

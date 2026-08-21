@@ -3,6 +3,7 @@ import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /** Flag indicating whether the fly detection module is manually toggled on */
 let isModuleActive = false;
@@ -51,6 +52,7 @@ function alertStaff(player: Player): void {
     alertCooldowns.set(player.id, currentTick);
 
     const staff = getSecurityClearanceLevel4Players();
+    FlagManager.logFlag(player, "Fly", "Player was detected flying/hovering.");
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Fly] §f${player.name} §7was detected flying/hovering.`);

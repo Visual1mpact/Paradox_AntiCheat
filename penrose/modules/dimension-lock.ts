@@ -2,6 +2,7 @@ import { world, Player, PlayerDimensionChangeAfterEvent } from "@minecraft/serve
 import { EventCoordinator } from "../classes/event-coordinator";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /** Reference to the dimension change event subscription */
 let dimensionChangeSub: ((event: PlayerDimensionChangeAfterEvent) => void) | undefined;
@@ -15,7 +16,7 @@ let dimensionChangeSub: ((event: PlayerDimensionChangeAfterEvent) => void) | und
  */
 function alertStaff(player: Player, dimName: string): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "DimensionLock", `Player attempted to enter locked dimension: ${dimName}.`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[DimensionLock] §f${player.name} §7attempted to enter locked dimension: §e${dimName}§7.`);

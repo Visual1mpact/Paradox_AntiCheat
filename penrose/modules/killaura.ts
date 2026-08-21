@@ -4,6 +4,7 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 // CONFIGURATION CONSTANTS
 const MAX_ATTACKS_PER_SECOND = 5; // Maximum allowed clicks per second
@@ -87,7 +88,7 @@ function isSuspiciousAttackPattern(attackTimes: number[]): boolean {
  */
 function alertStaff(attacker: Player, distance: number, recentAttacks: number): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(attacker, "KillAura", `Player flagged for suspicious attack: ${recentAttacks} hits, distance ${distance.toFixed(2)}`);
     for (const s of staff) {
         if (!s.isValid || s.id === attacker.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[KillAura] §f${attacker.name} §7suspicious attack: ${recentAttacks} hits, distance ${distance.toFixed(2)}`);

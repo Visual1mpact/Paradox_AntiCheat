@@ -1,7 +1,8 @@
-import { system } from "@minecraft/server";
+import { Player, system } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /**
  * Maximum allowed size for a sub-chunk request packet (in bytes).
@@ -19,16 +20,16 @@ let PacketId: typeof import("@minecraft/server-net").PacketId;
  * Distributes an in-game alert notification to all active staff players
  * possessing Security Clearance Level 4 when an anti-crash violation occurs.
  *
- * @param {string} playerName - The name of the player attempting to crash the server.
+ * @param {Player} player - The player attempting to crash the server.
  * @param {string} sizeKB - The formatted packet size in KB.
  * @param {string} playerId - Optional player ID to avoid sending the notification to the target.
  */
-function alertStaff(playerName: string, sizeKB: string, playerId?: string): void {
+function alertStaff(player: Player, sizeKB: string, playerId?: string): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "Anti-Crash", `Blocked crash attempt from ${player.name} [${sizeKB}KB].`);
     for (const s of staff) {
         if (!s.isValid || (playerId && s.id === playerId)) continue;
-        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Anti-Crash]§7 Blocked crash attempt from §f${playerName} §e[${sizeKB}KB]§7.`);
+        s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Anti-Crash]§7 Blocked crash attempt from §f${player.name} §e[${sizeKB}KB]§7.`);
     }
 }
 
@@ -63,7 +64,7 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
                 await banlistDB.set("players", bannedPlayers);
             }
 
-            alertStaff(playerName, sizeKB, playerId);
+            alertStaff(player, sizeKB, playerId);
 
             player.runCommand(`kick @s [Paradox] Crasher exploit detected.`);
         });

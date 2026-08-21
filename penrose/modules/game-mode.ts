@@ -3,6 +3,7 @@ import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { GamemodeCheckSettings } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /**
  * Distributes an in-game alert notification to all active staff players
@@ -13,7 +14,7 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
  */
 function alertStaff(player: Player, attemptedGM: GameMode): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "Gamemode", `Player attempted to switch to ${attemptedGM}`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Gamemode] §f${player.name} §7attempted to switch to §e${attemptedGM}`);

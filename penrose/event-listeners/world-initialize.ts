@@ -84,6 +84,7 @@ import {
     PlayerMetadataSchema,
     HomesSchema,
     WaypointsSchema,
+    FlagDatabaseSchema,
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip } from "../modules/noclip";
@@ -122,12 +123,13 @@ import { historyCommand } from "../commands/utility/history";
 import { environmentCommand } from "../commands/utility/environment";
 import { pingCommand } from "../commands/utility/ping";
 import { graveSaverCommand } from "../commands/settings/grave-saver";
-import { startGraveSaver } from "penrose/modules/grave-saver";
-import { inventoryEditorCommand } from "penrose/commands/utility/inventory-editor";
+import { startGraveSaver } from "../modules/grave-saver";
+import { inventoryEditorCommand } from "../commands/utility/inventory-editor";
 import { chunkBordersCommand } from "../commands/utility/chunkborders";
 import { invalidMovementVectorCommand } from "../commands/settings/invalid-movement-vector";
 import { inventoryMovementCommand } from "../commands/settings/inventory-movement";
 import { switchGamemodeCommand } from "../commands/utility/switch-game-mode";
+import { flagsCommand } from "../commands/moderation/flags";
 
 type PlayerID = string;
 
@@ -155,6 +157,7 @@ let chestLockDB: OptimizedDatabase<ChestLocksSchema>;
 let playerMetadataDB: OptimizedDatabase<PlayerMetadataSchema>;
 let homesDB: OptimizedDatabase<HomesSchema>;
 let waypointsDB: OptimizedDatabase<WaypointsSchema>;
+let flagsDB: OptimizedDatabase<FlagDatabaseSchema>;
 let commandHandler: CommandHandler;
 
 // Define all available commands
@@ -236,6 +239,7 @@ const allCommands: Command[] = [
     invalidMovementVectorCommand,
     inventoryMovementCommand,
     switchGamemodeCommand,
+    flagsCommand, // Ensure flagsCommand is included in the list of commands
 ];
 
 /**
@@ -256,8 +260,9 @@ async function initializeSystems() {
     playerMetadataDB = new OptimizedDatabase("playerMetadata");
     homesDB = new OptimizedDatabase("homes");
     waypointsDB = new OptimizedDatabase("waypoints");
+    flagsDB = new OptimizedDatabase("flags"); // Initialize the flags database
 
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB]; // Include flagsDB in the list of databases
 
     // 2. Run Database Migrations (v1 Uncompressed -> v2 LZW Compressed)
     console.log("[Paradox] Running database v2.0 compression migrations...");
@@ -566,4 +571,4 @@ export function subscribeToWorldInitialize() {
 }
 
 // Export the instantiated databases and command handler
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB };

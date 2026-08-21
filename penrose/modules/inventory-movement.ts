@@ -3,6 +3,7 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { PlayerCache } from "../classes/cache/player-cache";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /**
  * In-memory state cache to prevent querying the database every tick.
@@ -27,7 +28,7 @@ let unsubscribeInventoryChange: (() => void) | null = null;
  */
 function alertStaff(player: Player): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "InvMove", "Player flagged for moving items in inventory while moving.");
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvMove] §f${player.name} §7flagged for moving items in inventory while moving.`);

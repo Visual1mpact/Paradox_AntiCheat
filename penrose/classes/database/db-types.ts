@@ -262,3 +262,30 @@ export type WaypointsSchema = {
         savedWaypoints: Record<string, WaypointData>;
     };
 };
+
+/**
+ * Represents an individual flag violation log entry.
+ */
+export interface ViolationFlagEntry {
+    flagType: string;
+    details: string;
+    timestamp: number;
+    date: string;
+    count: number;
+}
+
+/**
+ * Represents an individual player's historic flag record.
+ */
+export interface PlayerFlagRecord {
+    playerName: string;
+    totalViolations: number;
+    flags: ViolationFlagEntry[];
+}
+
+/**
+ * Storage schema mapping player IDs to their historic flag records.
+ */
+export interface FlagDatabaseSchema extends Record<string, PlayerFlagRecord> {
+    [playerId: string]: PlayerFlagRecord;
+}

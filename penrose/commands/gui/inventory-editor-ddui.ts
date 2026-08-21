@@ -1,6 +1,6 @@
 import { CustomForm, ObservableNumber, ObservableString, ObservableBoolean, DataDrivenScreenClosedReason } from "@minecraft/server-ui";
 import { Container, EnchantmentTypes, ItemStack, Player } from "@minecraft/server";
-import { PlayerCache } from "penrose/classes/cache/player-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 /**
  * Custom DDUI inventory viewer and editor for Penrose

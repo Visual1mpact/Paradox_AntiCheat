@@ -2,6 +2,7 @@ import { Player, system, GameMode } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /**
  * Maximum allowed directional input magnitude on client-side vectors.
@@ -21,7 +22,7 @@ let runIntervalId: number | null = null;
  */
 function alertStaff(player: Player, moveVector: { x: number; y: number }): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "InvalidVector", `Player flagged for out-of-bounds MoveVector (X: ${moveVector.x.toFixed(3)}, Y: ${moveVector.y.toFixed(3)})`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvalidVector] §f${player.name} §7flagged for out-of-bounds MoveVector (X: ${moveVector.x.toFixed(3)}, Y: ${moveVector.y.toFixed(3)})`);

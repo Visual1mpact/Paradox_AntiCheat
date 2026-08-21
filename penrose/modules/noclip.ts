@@ -3,6 +3,7 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 /** Number of detections required before action is taken. */
 const PHASE_FLAGS_REQUIRED = 5;
@@ -88,7 +89,7 @@ function distance(a: { x: number; y: number; z: number }, b: { x: number; y: num
 /** Sends a NoClip alert to Level 4 security staff. */
 function alertStaff(offender: Player, dist: number) {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(offender, "NoClip", `Player tried to phase ${dist.toFixed(1)} blocks.`);
     for (const s of staff) {
         if (!s?.isValid || s.id === offender.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[NoClip] §f${offender.name} §7tried to phase §e${dist.toFixed(1)} blocks§7!`);

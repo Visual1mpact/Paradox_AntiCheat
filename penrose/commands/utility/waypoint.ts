@@ -1,10 +1,10 @@
-import { ChatSendBeforeEvent, Player, system, world, Vector3 } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, world, Vector3, PlayerLeaveBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache, CachedPlayerTransform } from "../../classes/cache/player-location-cache";
 import { waypointsDB } from "../../event-listeners/world-initialize";
 import { WaypointData } from "../../classes/database/db-types";
-import { EventCoordinator } from "penrose/classes/event-coordinator";
+import { EventCoordinator } from "../../classes/event-coordinator";
 
 const LEGACY_WAYPOINT_PROP = "paradox:waypoint_data";
 const DEFAULT_MAX_WAYPOINTS = 5;
@@ -551,7 +551,7 @@ function getDirectionArrow(transform: CachedPlayerTransform, target: Vector3): s
  * Background task to update the HUD for all players with active waypoints.
  */
 export function startWaypointHUD() {
-    EventCoordinator.subscribeBefore("playerLeave", (event) => {
+    EventCoordinator.subscribeBefore("playerLeave", (event: PlayerLeaveBeforeEvent) => {
         waypointsMemoryCache.delete(event.player.id);
         updateActiveGpsCount();
     });

@@ -3,6 +3,7 @@ import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-t
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/event-coordinator";
+import { FlagManager } from "../classes/logs/flag-manager";
 
 const TOTEM_ID = "minecraft:totem_of_undying";
 /**
@@ -39,7 +40,7 @@ let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
  */
 function alertStaff(player: Player, ticks: number): void {
     const staff = getSecurityClearanceLevel4Players();
-
+    FlagManager.logFlag(player, "AutoTotem", `Player replenished totem in ${ticks} ticks.`);
     for (const s of staff) {
         const isStaffValid = s.isValid;
         if (!isStaffValid || s.id === player.id) continue;
