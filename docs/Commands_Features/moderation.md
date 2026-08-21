@@ -142,6 +142,32 @@ The `despawn` command removes entities from the world, either **all entities** o
 
 ---
 
+## flags
+### At A Glance
+The `flags` command allows administrators to inspect, filter, or clear recorded anti-cheat violation logs for players. Detections logged across all Paradox modules are stored in a centralized database, automatically stacking repeated violations within a short window to conserve log clarity.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "{prefix}flags <player> [clear] OR {prefix}flags clearall"  
+> Example: `{prefix}flags Steve`  
+> Example: `{prefix}flags Steve clear`  
+> Example: `{prefix}flags clearall`  
+
+### **Options**
+- `<player>`: Displays the total violation count and the 10 most recent timestamped anti-cheat flags for a specific player.
+- `<player> clear`: Purges all violation flag records for the specified player from the database.
+- `clearall`: Completely resets and clears all anti-cheat violation logs across the entire database.
+
+### **Behavior & Notes**
+- **Online & Offline Lookup:**  
+  - Resolves active online players directly from the server list.
+  - Performs case-insensitive fallback lookups across saved database entries for offline players while preserving original gamertags.
+- **Automated Stacking:** Repeated violations of the same detection type within a 10-second window are stacked into a single log entry with an incremented count.
+- **Output Breakdown:** Displays total recorded flags along with a breakdown of recent violations, including timestamp, date, flag category (e.g., `Fly`, `KillAura`, `AutoClicker`), iteration count, and contextual details.
+- **GUI Integration:** Fully accessible through the Paradox GUI, featuring dynamic dropdown selection for active online players, manual text fields for offline tag lookups, and clear record actions.
+
+---
+
 ## freeze
 ### At A Glance
 The `freeze` command allows administrators to **lock a player in place** by imprisoning them in a temporary structure and applying status effects. This is useful for investigating potential issues, controlling disruptive players, or handling suspicious activity. The command acts as a **toggle**, allowing the player to be released later.
