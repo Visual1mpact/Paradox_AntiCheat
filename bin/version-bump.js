@@ -2,7 +2,7 @@ import { spawnSync } from "child_process";
 import semver from "semver";
 
 /** Run Git command safely */
-function runGit(args, gitRoot) {
+function runGit(args, gitRoot = process.cwd()) {
     const result = spawnSync("git", args, { cwd: gitRoot, encoding: "utf-8" });
     if (result.status !== 0) {
         throw new Error(`Git command failed: git ${args.join(" ")}\n${result.stderr}`);
@@ -38,108 +38,85 @@ function getFilesChangedInCommit(hash, gitRoot) {
     return output ? output.split("\n") : [];
 }
 
-/** Check if files exist in last released tag */
-function isReleasedFile(files, gitRoot, lastTag) {
-    if (files.length === 0) return false;
-    const releasedFiles = runGit(["ls-tree", "-r", "--name-only", lastTag], gitRoot).split("\n");
-    // If ANY of the changed files were in the previous release, it's a released-impact change
-    return files.some((f) => releasedFiles.includes(f));
-}
-
-/** Analyze impact of a commit */
-function analyzeCommitImpact(commit, gitRoot, lastTag) {
+/** Analyze impact of a commit using SemVer rules */
+function analyzeCommitImpact(commit, gitRoot) {
     const { hash, subject, body } = commit;
     const text = `${subject}\n${body}`;
     const filesChanged = getFilesChangedInCommit(hash, gitRoot);
-    const released = isReleasedFile(filesChanged, gitRoot, lastTag);
     const reasons = [];
-    let major = false,
-        minor = false,
-        patch = false;
-    let breakingExplanation = "";
 
-    // Documentation-only commits (only if the subject starts with docs:)
-    if (/^docs:/i.test(subject)) {
-        reasons.push(`Ignored documentation-only commit ${hash}`);
-        return { major, minor, patch, reasons, breakingExplanation };
+    let major = false;
+    let minor = false;
+    let patch = false;
+
+    // 1. Skip non-code changes (docs, style, test, ci, chore)
+    if (/^(docs|style|test|ci|chore)(\([^)]+\))?:/i.test(subject)) {
+        reasons.push(`Ignored non-functional commit ${hash}: ${subject}`);
+        return { major, minor, patch, reasons };
     }
 
-    // Detect explicit BREAKING CHANGE in body
+    // 2. MAJOR: Breaking Changes (Conventional Commits '!' or 'BREAKING CHANGE')
     const breakingMatch = body.match(/BREAKING CHANGE:\s*(.+)/i);
-
-    // Major: breaking changes
-    if (/BREAKING CHANGE|!:/.test(subject) || breakingMatch) {
-        minor = true;
-        if (breakingMatch) {
-            breakingExplanation = breakingMatch[1].trim();
-            reasons.push(`Minor: breaking change detected ${hash} - Reason: ${breakingExplanation}`);
-        } else {
-            reasons.push(`Minor: breaking change detected ${hash}`);
-        }
-    }
-
-    // Major: Minecraft or Script API updates
-    // Verified by checking if manifest.json was modified alongside keyword detection
-    const hasPlatformKeywords = /(?:minecraft|bedrock) (?:version|update)|script api/i.test(text);
-    const manifestChanged = filesChanged.includes("manifest.json");
-
-    if (hasPlatformKeywords && manifestChanged) {
+    if (/^[a-z]+(\([^)]+\))?!:/i.test(subject) || breakingMatch) {
         major = true;
-        reasons.push(`Major: Minecraft or Script API update verified in manifest.json ${hash}`);
+        const explanation = breakingMatch ? breakingMatch[1].trim() : "Breaking change detected in commit syntax";
+        reasons.push(`Major: breaking change in ${hash} - ${explanation}`);
     }
 
-    // Minor: features or enhancements
-    if (/^feat:/i.test(subject) || /api change/i.test(text)) {
+    // 3. MAJOR: Platform & Manifest level changes (Minecraft Script API major shifts)
+    const manifestsChanged = filesChanged.some((f) => f.endsWith("manifest.json"));
+    if (manifestsChanged && /(?:minecraft|bedrock) (?:version|update)|script api/i.test(text)) {
+        major = true;
+        reasons.push(`Major: Minecraft engine or Script API shift in ${hash}`);
+    }
+
+    // 4. MINOR: New Features (feat: or additions)
+    if (/^feat(\([^)]+\))?:/i.test(subject)) {
         minor = true;
-        reasons.push(`Minor: feature or enhancement ${hash}`);
+        reasons.push(`Minor: new feature added in ${hash} - ${subject}`);
     }
 
-    // Patch: fixes or improvements
-    if (/^fix:|bug|typo|patch|refactor|optimize|performance/i.test(subject)) {
+    // 5. PATCH: Fixes, Refactors, Performance, Security Hotfixes
+    if (/^(fix|refactor|perf|sec|fix-ci)(\([^)]+\))?:/i.test(subject) || /bug|fix|typo|patch|refactor|optimize/i.test(subject)) {
         patch = true;
-        reasons.push(`Patch: fix or improvement ${hash}`);
+        reasons.push(`Patch: fix/improvement in ${hash} - ${subject}`);
     }
 
-    // Critical areas
-    if (/core|auth|security|database|network|api/i.test(text) && !major) {
-        minor = true;
-        reasons.push(`Minor: touches critical areas ${hash}`);
+    // Fallback: If code changed without a conventional prefix, default to a patch
+    if (!major && !minor && !patch && filesChanged.length > 0) {
+        patch = true;
+        reasons.push(`Patch: unclassified code change in ${hash} - ${subject}`);
     }
 
-    // Risk keywords
-    if (/critical|urgent|security|hotfix/i.test(text) && released) {
-        minor = true;
-        reasons.push(`Minor: high-risk keywords in released commit ${hash}`);
-    }
-
-    if (filesChanged.length > 0) {
-        reasons.push(`Files changed: ${filesChanged.join(", ")}`);
-    }
-
-    return { major, minor, patch, reasons, breakingExplanation };
+    return { major, minor, patch, reasons };
 }
 
 /** Determine overall version bump */
-function determineBump(commits, gitRoot, lastTag) {
+function determineBump(commits, gitRoot) {
     const priority = { major: 3, minor: 2, patch: 1, none: 0 };
     let highestImpact = "none";
     const explanation = [];
 
     for (const commit of commits) {
-        const impact = analyzeCommitImpact(commit, gitRoot, lastTag);
+        const impact = analyzeCommitImpact(commit, gitRoot);
         explanation.push(...impact.reasons);
 
         if (impact.major) highestImpact = "major";
         else if (impact.minor && priority["minor"] > priority[highestImpact]) highestImpact = "minor";
-        else if (impact.patch && priority["patch"] > priority[highestImpact]) highestImpact = "patch";
+        else if (impact.patch && priority["patch"] > priority[highestImpact]) highestImpact = "minor" && priority["patch"] > priority[highestImpact] ? "patch" : highestImpact;
 
-        if (highestImpact === "major") break;
+        // Correct priority tracking:
+        if (impact.major) highestImpact = "major";
+        else if (impact.minor && priority.minor > priority[highestImpact]) highestImpact = "minor";
+        else if (impact.patch && priority.patch > priority[highestImpact]) highestImpact = "patch";
+
+        if (highestImpact === "major") break; // Max bump reached
     }
 
     return { bump: highestImpact, explanation };
 }
 
-/** Main */
+/** Main execution */
 function main() {
     try {
         const gitRoot = getGitRoot();
@@ -147,7 +124,7 @@ function main() {
 
         let oldVersion = lastTag.startsWith("v") ? lastTag.slice(1) : lastTag;
         if (!semver.valid(oldVersion)) {
-            console.warn(`Warning: last tag (${lastTag}) is not a valid semver. Defaulting to 0.0.0`);
+            console.warn(`Warning: last tag (${lastTag}) is not valid semver. Defaulting to 0.0.0`);
             oldVersion = "0.0.0";
         }
 
@@ -157,7 +134,7 @@ function main() {
             return;
         }
 
-        const { bump, explanation } = determineBump(commits, gitRoot, lastTag);
+        const { bump, explanation } = determineBump(commits, gitRoot);
 
         if (bump === "none") {
             console.log("No impactful commits detected. Version stays the same.");
@@ -165,8 +142,10 @@ function main() {
         }
 
         const newVersion = semver.inc(oldVersion, bump);
-        console.log(`Next version should be: ${newVersion}`);
-        console.log("Reasoning behind version selection:");
+        console.log(`Current Version: ${oldVersion}`);
+        console.log(`Calculated Bump: ${bump.toUpperCase()}`);
+        console.log(`Next Version:    ${newVersion}\n`);
+        console.log("Reasoning:");
         explanation.forEach((reason) => console.log("- " + reason));
     } catch (err) {
         console.error("Error:", err.message);
