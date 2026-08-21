@@ -231,7 +231,7 @@ The `kick` command removes a player from the server, optionally providing a reas
 ?> Required Clearance Level To Execute: `3`
 
 > Usage: ":kick [ -t | --target <player> ] [ -r | --reason <reason> ]"  
-> Example: :kick -t Pete9xi -r Spamming Chat
+> Example: :kick -t Pete9xi -r Spamming Chat  
 > Example: :kick --target "Some Player" --reason "Griefing"  
 
 ### **Behavior & Notes**
@@ -304,6 +304,28 @@ The `lockdown` command toggles server lockdown, preventing players without a sec
 
 ---
 
+## modstate
+### At A Glance
+The `modstate` command allows administrators to bulk-enable or bulk-disable all registered Paradox protection checks and utility modules at once.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "{prefix}modstate [ enable | disable ]"  
+> Example: {prefix}modstate enable  
+> Example: {prefix}modstate disable  
+
+### **Options**
+- `enable`: Activates and starts all Paradox protection checks and utility modules instantly, saving their state to the database.
+- `disable`: Stops and deactivates all running Paradox module listeners and updates database records.
+
+### **Behavior & Notes**
+- **Settings Preservation**: Custom settings, configurations, and timers associated with individual modules are preserved in the database when toggling states.
+- **State Check**: Modules already in the target state (e.g., trying to enable a module that is already enabled) are automatically skipped.
+- **Feedback Summary**: Displays a real-time message confirming the exact number of modules whose state was modified, or notifies the administrator if all modules are already in the target state.
+- **GUI Integration**: Accessible through the Paradox ActionFormData interface with dedicated one-click actions for bulk enabling and disabling.
+
+---
+
 ## modules
 ### At A Glance
 The `modules` command displays the status of all registered modules, including whether they are enabled or disabled, and lists the specific settings for each module.
@@ -338,10 +360,10 @@ The `mute` command allows administrators to toggle a player's ability to send ch
 
 ?> Required Clearance Level To Execute: `3`
 
-> Usage: "{prefix}mute <player>"
-> Example: `{prefix}mute Steve`
-> Example: `{prefix}mute "Steve Bob"`
-> Example: `{prefix}mute help`
+> Usage: "{prefix}mute <player>"  
+> Example: `{prefix}mute Steve`  
+> Example: `{prefix}mute "Steve Bob"`  
+> Example: `{prefix}mute help`  
 
 ### **Behavior & Notes**
 - **Toggle Functionality:**

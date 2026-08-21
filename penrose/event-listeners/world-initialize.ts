@@ -1,26 +1,26 @@
 import { PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { lockdownCommand } from "../commands/moderation/lockdown";
-import { startLagClear } from "../modules/lag-clear";
-import { startGameModeCheck } from "../modules/game-mode";
-import { startWorldBorderCheck } from "../modules/world-border";
-import { startFlyCheck } from "../modules/fly";
-import { startAFKChecker } from "../modules/afk";
+import { startLagClear, stopLagClear } from "../modules/lag-clear";
+import { startGameModeCheck, stopGameModeCheck } from "../modules/game-mode";
+import { startWorldBorderCheck, stopWorldBorderCheck } from "../modules/world-border";
+import { startFlyCheck, stopFlyCheck } from "../modules/fly";
+import { startAFKChecker, stopAFKChecker } from "../modules/afk";
 import { initializePvPSystem } from "../modules/pvp-manager";
-import { startHitReachCheck } from "../modules/reach";
+import { startHitReachCheck, stopHitReachCheck } from "../modules/reach";
 import { startDoubleJump, doubleJumpCommand } from "../commands/utility/double-jump";
-import { startAutoClicker } from "../modules/autoclicker";
-import { startKillAuraCheck } from "../modules/killaura";
-import { startScaffoldCheck } from "../modules/scaffold";
-import { startNamespoofDetection } from "../modules/namespoof";
-import { startXrayDetection } from "../modules/xray";
-import { startInvSync } from "../modules/invsync";
+import { startAutoClicker, stopAutoClicker } from "../modules/autoclicker";
+import { startKillAuraCheck, stopKillAuraCheck } from "../modules/killaura";
+import { startScaffoldCheck, stopScaffoldCheck } from "../modules/scaffold";
+import { startNamespoofDetection, stopNamespoofDetection } from "../modules/namespoof";
+import { startXrayDetection, stopXrayDetection } from "../modules/xray";
+import { startInvSync, stopInvSync } from "../modules/invsync";
 import { globalBanPlayers } from "../data/global-ban";
 import { paradoxVersion } from "../data/versioning";
 import { OptimizedDatabase } from "../classes/database/data-hive";
-import { startSelfAttackCheck } from "../modules/self-infliction";
-import { startPacketHandler } from "../modules/rate-limit";
-import { startPacketListener } from "../modules/packet-monitor";
-import { startVisionCheck } from "../modules/vision";
+import { startSelfAttackCheck, stopSelfAttackCheck } from "../modules/self-infliction";
+import { startPacketHandler, stopPacketHandler } from "../modules/rate-limit";
+import { startPacketListener, stopPacketListener } from "../modules/packet-monitor";
+import { startVisionCheck, stopVisionCheck } from "../modules/vision";
 import { Command, CommandHandler } from "../classes/command-handler";
 import { opCommand } from "../commands/moderation/op";
 import { deopCommand } from "../commands/moderation/deop";
@@ -87,11 +87,11 @@ import {
     FlagDatabaseSchema,
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
-import { startNoClip } from "../modules/noclip";
+import { startNoClip, stopNoClip } from "../modules/noclip";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { invCloneCommand } from "../commands/utility/invclone";
 import { chestForensicCommand } from "../commands/settings/container-lock";
-import { startChestLock } from "../modules/container-lock";
+import { startChestLock, stopChestLock } from "../modules/container-lock";
 import { scriptureCommand } from "../commands/utility/scriptures";
 import { paradoxInfoCommand } from "../commands/utility/paradox-info";
 import { transferCommand } from "../commands/utility/transfer";
@@ -100,20 +100,20 @@ import { warnCommand } from "../commands/moderation/warn";
 import { renameCommand } from "../commands/moderation/rename";
 import { tpsCommand } from "../commands/utility/tps";
 import { deathCoordsCommand } from "../commands/settings/death-coords";
-import { startDeathCoords } from "../modules/death-coords";
-import { startAimbotMonitor } from "../modules/aimbot-monitor";
+import { startDeathCoords, stopDeathCoords } from "../modules/death-coords";
+import { startAimbotMonitor, stopAimbotMonitor } from "../modules/aimbot-monitor";
 import { aimbotMonitorCommand } from "../commands/settings/aimbot-monitor";
 import { criticalsCommand } from "../commands/settings/criticals";
-import { startCriticalsCheck } from "../modules/criticals";
+import { startCriticalsCheck, stopCriticalsCheck } from "../modules/criticals";
 import { autoTotemCommand } from "../commands/settings/autototem";
-import { startAutoTotemCheck } from "../modules/autototem";
+import { startAutoTotemCheck, stopAutoTotemCheck } from "../modules/autototem";
 import { pathingCommand } from "../commands/settings/pathing-monitor";
-import { startPathingMonitor } from "../modules/pathing-monitor";
+import { startPathingMonitor, stopPathingMonitor } from "../modules/pathing-monitor";
 import { anticrashCommand } from "../commands/settings/anticrash";
-import { startAntiCrash } from "../modules/anticrash";
+import { startAntiCrash, stopAntiCrash } from "../modules/anticrash";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { dimensionLockCommand } from "../commands/settings/dimension-lock";
-import { startDimensionLock } from "../modules/dimension-lock";
+import { startDimensionLock, stopDimensionLock } from "../modules/dimension-lock";
 import { itemUseSubscription } from "../classes/subscriptions/item-use-subscriptions";
 import { guiItemCommand } from "../commands/settings/gui-item";
 import { broadcastCommand } from "../commands/utility/broadcast";
@@ -123,13 +123,16 @@ import { historyCommand } from "../commands/utility/history";
 import { environmentCommand } from "../commands/utility/environment";
 import { pingCommand } from "../commands/utility/ping";
 import { graveSaverCommand } from "../commands/settings/grave-saver";
-import { startGraveSaver } from "../modules/grave-saver";
+import { startGraveSaver, stopGraveSaver } from "../modules/grave-saver";
 import { inventoryEditorCommand } from "../commands/utility/inventory-editor";
 import { chunkBordersCommand } from "../commands/utility/chunkborders";
 import { invalidMovementVectorCommand } from "../commands/settings/invalid-movement-vector";
 import { inventoryMovementCommand } from "../commands/settings/inventory-movement";
 import { switchGamemodeCommand } from "../commands/utility/switch-game-mode";
 import { flagsCommand } from "../commands/moderation/flags";
+import { modStateCommand } from "../commands/moderation/mod-state";
+import { setInvalidMovementVectorState } from "../modules/invalid-movement-vector";
+import { setInventoryMovementState } from "../modules/inventory-movement";
 
 type PlayerID = string;
 
@@ -159,6 +162,130 @@ let homesDB: OptimizedDatabase<HomesSchema>;
 let waypointsDB: OptimizedDatabase<WaypointsSchema>;
 let flagsDB: OptimizedDatabase<FlagDatabaseSchema>;
 let commandHandler: CommandHandler;
+
+/**
+ * Shared registry lookup table for stopping system modules.
+ */
+export const moduleStopActions: Record<string, () => void> = {
+    lagClearCheck_b: () => stopLagClear(),
+    gamemodeCheck_b: () => stopGameModeCheck(),
+    worldBorderCheck_b: () => stopWorldBorderCheck(),
+    flyCheck_b: () => stopFlyCheck(),
+    afkCheck_b: () => stopAFKChecker(),
+    hitReachCheck_b: () => stopHitReachCheck(),
+    autoClickerCheck_b: () => stopAutoClicker(),
+    killAuraCheck_b: () => stopKillAuraCheck(),
+    scaffoldCheck_b: () => stopScaffoldCheck(),
+    nameSpoofCheck_b: () => stopNamespoofDetection(),
+    xrayDetection_b: () => stopXrayDetection(),
+    selfAttackCheck_b: () => stopSelfAttackCheck(),
+    rateLimitCheck_b: () => stopPacketHandler(),
+    packetMonitorCheck_b: () => stopPacketListener(),
+    visionCheck_b: () => stopVisionCheck(),
+    invSync_b: () => stopInvSync(),
+    noClipCheck_b: () => stopNoClip(),
+    chestLock_b: () => stopChestLock(),
+    deathCoords_b: () => stopDeathCoords(),
+    aimbotMonitorCheck_b: () => stopAimbotMonitor(),
+    criticalsCheck_b: () => stopCriticalsCheck(),
+    autoTotemCheck_b: () => stopAutoTotemCheck(),
+    pathingCheck_b: () => stopPathingMonitor(),
+    antiCrashCheck_b: () => stopAntiCrash(),
+    dimensionLock_b: () => stopDimensionLock(),
+    graveSaver_b: () => stopGraveSaver(),
+    invalidMovementVectorCheck_b: () => setInvalidMovementVectorState(false),
+    inventoryMovementCheck_b: () => setInventoryMovementState(false),
+    spamCheck_b: async () => {
+        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? {
+            enabled: false,
+        };
+
+        // Disable anti-spam
+        moduleData.enabled = false;
+        await paradoxModulesDB.set("spamCheck_b", moduleData);
+    },
+    platformBlock_b: async () => {
+        const moduleData = (await paradoxModulesDB.get("platformBlock_b")) ?? {
+            enabled: false,
+            settings: { console: false, desktop: false, mobile: false },
+        };
+
+        // Preserves all platform restriction settings ({ console, desktop, mobile }) intact
+        await paradoxModulesDB.set("platformBlock_b", {
+            ...moduleData,
+            enabled: false,
+        });
+    },
+};
+
+/**
+ * Shared registry lookup table for starting system modules.
+ */
+export const moduleActions: Record<string, (settings?: any) => void> = {
+    lagClearCheck_b: async (settings) => {
+        const moduleSettings = settings ?? (await paradoxModulesDB.get("lagClearCheck_b"))?.settings;
+        if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
+            startLagClear(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
+        } else {
+            startLagClear(0, 5, 0); // fallback
+        }
+    },
+    gamemodeCheck_b: () => startGameModeCheck(),
+    worldBorderCheck_b: () => startWorldBorderCheck(),
+    flyCheck_b: () => startFlyCheck(),
+    afkCheck_b: async (settings) => {
+        const moduleSettings = settings ?? (await paradoxModulesDB.get("afkCheck_b"))?.settings;
+        if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
+            startAFKChecker(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
+        } else {
+            startAFKChecker(0, 10, 0);
+        }
+    },
+    hitReachCheck_b: () => startHitReachCheck(),
+    autoClickerCheck_b: () => startAutoClicker(),
+    killAuraCheck_b: () => startKillAuraCheck(),
+    scaffoldCheck_b: () => startScaffoldCheck(),
+    nameSpoofCheck_b: () => startNamespoofDetection(),
+    xrayDetection_b: () => startXrayDetection(),
+    selfAttackCheck_b: () => startSelfAttackCheck(),
+    rateLimitCheck_b: () => startPacketHandler(),
+    packetMonitorCheck_b: () => startPacketListener(),
+    visionCheck_b: () => startVisionCheck(),
+    invSync_b: () => startInvSync(),
+    noClipCheck_b: () => startNoClip(),
+    chestLock_b: () => startChestLock(),
+    deathCoords_b: () => startDeathCoords(),
+    aimbotMonitorCheck_b: () => startAimbotMonitor(),
+    criticalsCheck_b: () => startCriticalsCheck(),
+    autoTotemCheck_b: () => startAutoTotemCheck(),
+    pathingCheck_b: () => startPathingMonitor(),
+    antiCrashCheck_b: () => startAntiCrash(),
+    dimensionLock_b: () => startDimensionLock(),
+    graveSaver_b: () => startGraveSaver(),
+    invalidMovementVectorCheck_b: () => setInvalidMovementVectorState(true),
+    inventoryMovementCheck_b: () => setInventoryMovementState(true),
+    spamCheck_b: async () => {
+        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? {
+            enabled: true,
+        };
+
+        // Enable anti-spam
+        moduleData.enabled = true;
+        await paradoxModulesDB.set("spamCheck_b", moduleData);
+    },
+    platformBlock_b: async () => {
+        const moduleData = (await paradoxModulesDB.get("platformBlock_b")) ?? {
+            enabled: true,
+            settings: { console: false, desktop: false, mobile: false },
+        };
+
+        // Preserves all platform restriction settings ({ console, desktop, mobile }) intact
+        await paradoxModulesDB.set("platformBlock_b", {
+            ...moduleData,
+            enabled: true,
+        });
+    },
+};
 
 // Define all available commands
 const allCommands: Command[] = [
@@ -239,7 +366,8 @@ const allCommands: Command[] = [
     invalidMovementVectorCommand,
     inventoryMovementCommand,
     switchGamemodeCommand,
-    flagsCommand, // Ensure flagsCommand is included in the list of commands
+    flagsCommand,
+    modStateCommand,
 ];
 
 /**
@@ -260,9 +388,9 @@ async function initializeSystems() {
     playerMetadataDB = new OptimizedDatabase("playerMetadata");
     homesDB = new OptimizedDatabase("homes");
     waypointsDB = new OptimizedDatabase("waypoints");
-    flagsDB = new OptimizedDatabase("flags"); // Initialize the flags database
+    flagsDB = new OptimizedDatabase("flags");
 
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB]; // Include flagsDB in the list of databases
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB];
 
     // 2. Run Database Migrations (v1 Uncompressed -> v2 LZW Compressed)
     console.log("[Paradox] Running database v2.0 compression migrations...");
@@ -333,21 +461,21 @@ function compareVersions(version1: string, version2: string): number {
         return version
             .slice(1)
             .split(".")
-            .map((num) => parseInt(num, 10)); // Remove 'v' and split by '.'
+            .map((num) => parseInt(num, 10));
     };
 
     const v1Parts = parseVersion(version1);
     const v2Parts = parseVersion(version2);
 
     for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
-        const v1Part = v1Parts[i] ?? 0; // Default to 0 if the version part doesn't exist
-        const v2Part = v2Parts[i] ?? 0; // Default to 0 if the version part doesn't exist
+        const v1Part = v1Parts[i] ?? 0;
+        const v2Part = v2Parts[i] ?? 0;
 
         if (v1Part < v2Part) return -1;
         if (v1Part > v2Part) return 1;
     }
 
-    return 0; // The versions are equal
+    return 0;
 }
 
 /**
@@ -372,86 +500,29 @@ function initializePrefix() {
 
 /**
  * Initializes the global banned players list if it does not exist.
- * If it doesn't exist, create it and store the `globalBanPlayers` list as a stringified JSON object.
  */
 function initializeGlobalBanList() {
     const globalBannedPlayersKey = "globalBannedPlayers";
-
-    // Get the current world version dynamically
     const version = world.getDynamicProperty("paradoxVersion") as string;
 
-    // Compare the world version with the paradox version
     if (!version || compareVersions(version, paradoxVersion) < 0) {
-        // Update the current world version
         world.setDynamicProperty("paradoxVersion", paradoxVersion);
-        // Update global ban list for new version
         world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify([...globalBanPlayers]));
         return;
     }
 
-    // Check if the globalBannedPlayers dynamic property already exists
     const existingBanList = world.getDynamicProperty(globalBannedPlayersKey);
 
     if (!existingBanList) {
-        // If it doesn't exist, initialize it with the globalBanPlayers array
         world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify([...globalBanPlayers]));
     }
 }
 
 /**
  * Initializes and updates paradoxModules from the world dynamic property.
- * Starts corresponding modules based on their configured values.
- * @returns {Promise<void>}
  */
 async function initializeParadoxModules(): Promise<void> {
-    // Retrieve paradoxModules from the OptimizedDatabase (paradoxModulesDB)
     const paradoxModules = await paradoxModulesDB.entries();
-
-    // Lookup table for module initialization
-    const moduleActions: Record<string, () => void> = {
-        lagClearCheck_b: async () => {
-            const moduleData = await paradoxModulesDB.get("lagClearCheck_b");
-            const settings = moduleData?.settings;
-            if (settings && "hours" in settings && "minutes" in settings && "seconds" in settings) {
-                startLagClear(settings.hours, settings.minutes, settings.seconds);
-            } else {
-                startLagClear(0, 5, 0); // fallback
-            }
-        },
-        gamemodeCheck_b: () => startGameModeCheck(),
-        worldBorderCheck_b: () => startWorldBorderCheck(),
-        flyCheck_b: () => startFlyCheck(),
-        afkCheck_b: async () => {
-            const moduleData = await paradoxModulesDB.get("afkCheck_b");
-            const settings = moduleData?.settings;
-            if (settings && "hours" in settings && "minutes" in settings && "seconds" in settings) {
-                startAFKChecker(settings.hours, settings.minutes, settings.seconds);
-            } else {
-                startAFKChecker(0, 10, 0);
-            }
-        },
-        hitReachCheck_b: () => startHitReachCheck(),
-        autoClickerCheck_b: () => startAutoClicker(),
-        killAuraCheck_b: () => startKillAuraCheck(),
-        scaffoldCheck_b: () => startScaffoldCheck(),
-        nameSpoofCheck_b: () => startNamespoofDetection(),
-        xrayDetection_b: () => startXrayDetection(),
-        selfAttackCheck_b: () => startSelfAttackCheck(),
-        rateLimitCheck_b: () => startPacketHandler(),
-        packetMonitorCheck_b: () => startPacketListener(),
-        visionCheck_b: () => startVisionCheck(),
-        invSync_b: () => startInvSync(),
-        noClipCheck_b: () => startNoClip(),
-        chestLock_b: () => startChestLock(),
-        deathCoords_b: () => startDeathCoords(),
-        aimbotMonitorCheck_b: () => startAimbotMonitor(),
-        criticalsCheck_b: () => startCriticalsCheck(),
-        autoTotemCheck_b: () => startAutoTotemCheck(),
-        pathingCheck_b: () => startPathingMonitor(),
-        antiCrashCheck_b: () => startAntiCrash(),
-        dimensionLock_b: () => startDimensionLock(),
-        graveSaver_b: () => startGraveSaver(),
-    };
 
     const runModuleInitializers = () => {
         paradoxModules.forEach(([key, value]) => {
@@ -465,8 +536,7 @@ async function initializeParadoxModules(): Promise<void> {
 }
 
 /**
- * Subscribes to the lockdown event and sets up a monitor for player spawns.
- * If lockdown is active, the player spawn event will be handled by the lockdown monitor.
+ * Subscribes to lockdown events.
  */
 function subscribeToLockDown() {
     lockDownMonitor = lockdownCommand.execute(undefined, undefined, undefined, true) as (event: PlayerSpawnAfterEvent) => void;
@@ -478,7 +548,7 @@ function subscribeToLockDown() {
                 return;
             }
             if (lockDownMonitor) {
-                lockDownMonitor(event); // Call the original lockDownMonitor
+                lockDownMonitor(event);
             }
         };
         EventCoordinator.subscribeAfter("playerSpawn", wrappedLockDownMonitor);
@@ -486,24 +556,23 @@ function subscribeToLockDown() {
 }
 
 /**
- * Unsubscribes from the lockdown event and cleans up references to monitoring functions.
- * Stops handling player spawn events for lockdown if no longer active.
+ * Unsubscribes from lockdown events.
  */
 function unsubscribeFromLockDown() {
     const cleanupLockdownState = () => {
         if (wrappedLockDownMonitor) {
             EventCoordinator.unsubscribeAfter("playerSpawn", wrappedLockDownMonitor);
-            wrappedLockDownMonitor = undefined; // Clear the reference
+            wrappedLockDownMonitor = undefined;
         }
-        lockDownMonitor = undefined; // Clear the reference to the original function
-        EventCoordinator.unsubscribeAfter("worldLoad", onWorldInitialize); // Unsubscribe from world load to prevent re-initialization
+        lockDownMonitor = undefined;
+        EventCoordinator.unsubscribeAfter("worldLoad", onWorldInitialize);
     };
 
     system.run(cleanupLockdownState);
 }
 
 /**
- * Checks if lockdown is active and subscribes to the lockdown events if so.
+ * Handles active lockdown state on server start.
  */
 function handleLockDown() {
     const isLockdownActive = world.getDynamicProperty("lockdown_b");
@@ -513,23 +582,19 @@ function handleLockDown() {
 }
 
 /**
- * Checks if PvP is globally enabled and initializes the PvP system if so.
- * Sets the PvP game rule to true if the dynamic property is enabled.
+ * Checks if PvP is globally enabled and initializes PvP system.
  */
 function handlePvP() {
     const isPvPGlobalEnabled = world.getDynamicProperty("pvpGlobalEnabled") ?? false;
 
     if (isPvPGlobalEnabled) {
-        // Ensure the game rule is set to true if PvP is enabled globally
         world.gameRules.pvp = true;
-
-        // Initialize the PvP system
         initializePvPSystem();
     }
 }
 
 /**
- * Checks if Double Jump is enabled and initializes the system if so.
+ * Initializes Double Jump if enabled.
  */
 function handleDoubleJump() {
     const isDoubleJumpEnabled = world.getDynamicProperty("doubleJumpEnabled") ?? false;
@@ -539,36 +604,34 @@ function handleDoubleJump() {
 }
 
 /**
- * Initializes paradoxModules and handles lockdown on world load.
- * @returns {Promise<void>}
+ * Initializes modules and subsystems on world load.
  */
 async function onWorldInitialize(): Promise<void> {
-    if (commandHandler.getGuiItem()) itemUseSubscription.subscribe(); // Only subscribe if a GUI item is configured
-    chatSendSubscription.subscribe(); // Subscribe to chat send events
-    initializeSecurityClearanceTracking(); // Initializes the tracking of players with security clearance level 4.
-    initializeGlobalBanList(); // Ensure the global banned player list is initialized
-    initializeGlobalBanCheck(); // Initialize the global ban listener
-    initializePrefix(); // Validate and initialize the command prefix
-    await initializeParadoxModules(); // Ensure paradoxModules is initialized and modules are started
-    handleLockDown(); // Handle lockdown if it's active
-    handlePvP(); // Handle PvP if it's enabled
-    handleDoubleJump(); // Handle Double Jump persistence
-    onPlayerSpawn(); // Subscribe to player spawn events
-    startWaypointHUD(); // Initialize the Waypoint navigation HUD
-    healthChangeListener.start(); // Synchronize health
+    if (commandHandler.getGuiItem()) itemUseSubscription.subscribe();
+    chatSendSubscription.subscribe();
+    initializeSecurityClearanceTracking();
+    initializeGlobalBanList();
+    initializeGlobalBanCheck();
+    initializePrefix();
+    await initializeParadoxModules();
+    handleLockDown();
+    handlePvP();
+    handleDoubleJump();
+    onPlayerSpawn();
+    startWaypointHUD();
+    healthChangeListener.start();
 }
 
 /**
  * Subscribes to the world load event.
- * Sets up paradoxModules and handles lockdown when the world initializes.
  */
 export function subscribeToWorldInitialize() {
     EventCoordinator.subscribeAfter("worldLoad", async () => {
         await initializeSystems();
-        PlayerCache.init(); // Initialize PlayerCache after systems are set up
+        PlayerCache.init();
         await onWorldInitialize();
     });
 }
 
-// Export the instantiated databases and command handler
+// Export instantiated databases and utilities
 export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB };
