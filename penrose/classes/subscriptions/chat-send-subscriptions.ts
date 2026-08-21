@@ -108,7 +108,7 @@ class ChatSendSubscription {
             const currentTick = system.currentTick;
             const prefix = (world.getDynamicProperty("__prefix") as string) || ":";
 
-            // ⚠️ CRITICAL FIX: Cancel synchronously right away so vanilla chat does NOT process it.
+            // Cancel synchronously right away so vanilla chat does NOT process it.
             event.cancel = true;
 
             // 1️⃣ Fast synchronous command check
@@ -124,7 +124,7 @@ class ChatSendSubscription {
                 return;
             }
 
-            // Now perform asynchronous checks
+            // Asynchronous checks
             const playerChannel = await this.getPlayerChannel(player);
 
             // 3️⃣ Spam detection
@@ -164,28 +164,18 @@ class ChatSendSubscription {
                 }
             }
 
-            // 4️⃣ Chat rank/global handling
-            const isRankDisabled = world.getDynamicProperty("globalRankDisabled");
+            // 4️⃣ Chat rank/global/alias handling
+            const isRankDisabled = (world.getDynamicProperty("globalRankDisabled") as boolean | undefined) ?? false;
             const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
 
-            const shouldFormat =
-                !!alias || // alias active
-                !isRankDisabled || // ranks enabled
-                !!playerChannel; // custom channel active
-
-            // If formatting is disabled, un-cancel to allow normal vanilla chat handling
-            if (!shouldFormat) {
-                event.cancel = false;
-                return;
-            }
-
-            // From here on, custom chat broadcasting takes over
             const playerRank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-            const rank = isRankDisabled ? "" : (playerChannel ?? playerRank);
+
+            // Fix: Explicitly preserve channel tag if in a channel, otherwise respect isRankDisabled
+            const rank = playerChannel ?? (isRankDisabled ? "" : playerRank);
             const displayName = alias ?? player.name;
             const formattedMessage = rank ? `${rank} §7${displayName}§7: §r${event.message}` : `§7${displayName}§7: §r${event.message}`;
 
-            // 5️⃣ Determine target players
+            // 5️⃣ Determine target players and broadcast custom chat
             if (playerChannel) {
                 const channelData = (await channelsDB.get(playerChannel)) as Channel | undefined;
 

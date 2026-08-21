@@ -4,18 +4,23 @@ import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
- * Updates the player's nameTag based on their chat rank and the global rank setting.
+ * Updates the player's nameTag based on their chat rank, dynamic alias settings, and the global rank setting.
  *
- * If ranks are disabled globally, the nameTag will only show the player's name.
- * Otherwise, it will prepend the player's rank (or the default rank if none is set).
+ * If ranks are disabled globally, the nameTag will only show the player's display name.
+ * Otherwise, it will prepend the player's rank (or default rank).
  * A teleport to the player's current location is issued to force a client sync for the nameTag.
  *
  * @param {Player} player - The player whose nameTag should be updated.
  */
 function updateNameTag(player: Player): void {
-    const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
+    const isRankDisabled = (world.getDynamicProperty("globalRankDisabled") as boolean | undefined) ?? false;
     const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-    player.nameTag = isRankDisabled ? player.name : `${rank}§r ${player.name}`;
+
+    const showUI = (player.getDynamicProperty("showAliasInUI") as boolean | undefined) ?? false;
+    const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
+    const displayName = showUI && alias ? alias : player.name;
+
+    player.nameTag = isRankDisabled ? displayName : `${rank}§r ${displayName}`;
 
     const transform = PlayerLocationCache.getTransform(player);
     const location = transform?.location ?? player.location;
@@ -100,6 +105,7 @@ export const setRankCommand: Command = {
      */
     execute: (message: ChatSendBeforeEvent | undefined, args: string[] | undefined) => {
         if (!message || !args) return;
+
         /**
          * Toggles global rank functionality (enable/disable).
          * @param {ChatSendBeforeEvent} message - The message object.
@@ -122,7 +128,7 @@ export const setRankCommand: Command = {
         }
 
         // Check if the global rank setting is disabled
-        const isRankDisabled = world.getDynamicProperty("globalRankDisabled") ?? false;
+        const isRankDisabled = (world.getDynamicProperty("globalRankDisabled") as boolean | undefined) ?? false;
 
         const senderClearance = message.sender.getDynamicProperty("securityClearance") as number;
 
@@ -189,7 +195,7 @@ export const setRankCommand: Command = {
 
         // Check if player name is provided for rank assignment or reset
         if (!playerName && !reset) {
-            const prefix = world.getDynamicProperty("__prefix") ?? ":";
+            const prefix = (world.getDynamicProperty("__prefix") as string | undefined) ?? ":";
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> [-r <rank> | --reset]`);
             return;
         }
@@ -215,7 +221,7 @@ export const setRankCommand: Command = {
         } else {
             // Check if rank is provided
             if (!rank) {
-                const prefix = world.getDynamicProperty("__prefix") ?? ":";
+                const prefix = (world.getDynamicProperty("__prefix") as string | undefined) ?? ":";
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> -r <rank> | --reset`);
                 return;
             }

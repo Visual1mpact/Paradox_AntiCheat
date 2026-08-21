@@ -1,7 +1,33 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
+
+/**
+ * Safely updates a player's overhead nameTag taking ranks, global rank settings, and active aliases into account.
+ *
+ * @param {Player} player - Target player object.
+ */
+function refreshNameTag(player: Player): void {
+    const isRankDisabled = (world.getDynamicProperty("globalRankDisabled") as boolean | undefined) ?? false;
+    const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+    const showUI = (player.getDynamicProperty("showAliasInUI") as boolean | undefined) ?? false;
+    const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
+
+    const activeName = showUI && alias ? alias : player.name;
+    const nameTagText = isRankDisabled ? activeName : `${rank}§r ${activeName}`;
+
+    system.run(() => {
+        player.nameTag = nameTagText;
+
+        // Fetch transform from cache to force sync safely
+        const transform = PlayerLocationCache.getTransform(player);
+        const location = transform?.location ?? player.location;
+        const dimension = transform?.dimension ?? player.dimension;
+
+        player.teleport(location, { dimension }); // Force sync
+    });
+}
 
 /**
  * Command to rename a player via an alias.
@@ -97,11 +123,7 @@ export const renameCommand: Command = {
             target.setDynamicProperty("paradoxAlias", undefined);
             target.setDynamicProperty("showAliasInUI", false);
 
-            // Force reset the nameTag back to original logic
-            const rank = (target.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-            system.run(() => {
-                target.nameTag = `${rank}§r ${target.name}`;
-            });
+            refreshNameTag(target);
 
             sender.sendMessage(`§2[§7Paradox§2]§o§7 Identity reset for ${target.name}.`);
             return;
@@ -117,25 +139,7 @@ export const renameCommand: Command = {
         target.setDynamicProperty("paradoxAlias", newAlias);
         target.setDynamicProperty("showAliasInUI", showUI);
 
-        if (showUI) {
-            const rank = (target.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-            system.run(() => {
-                target.nameTag = `${rank}§r ${newAlias}`;
-
-                // Fetch transform from cache to force sync safely
-                const transform = PlayerLocationCache.getTransform(target);
-                const location = transform?.location ?? target.location;
-                const dimension = transform?.dimension ?? target.dimension;
-
-                target.teleport(location, { dimension }); // Force sync
-            });
-        } else {
-            // If UI is not opted in, ensure the nameTag shows their real name but with current rank
-            const rank = (target.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-            system.run(() => {
-                target.nameTag = `${rank}§r ${target.name}`;
-            });
-        }
+        refreshNameTag(target);
 
         sender.sendMessage(`§2[§7Paradox§2]§o§7 ${target.name} is now known as "${newAlias}" (UI: ${showUI ? "Enabled" : "Disabled"}).`);
     },
