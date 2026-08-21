@@ -127,7 +127,7 @@ import { inventoryEditorCommand } from "penrose/commands/utility/inventory-edito
 import { chunkBordersCommand } from "../commands/utility/chunkborders";
 import { invalidMovementVectorCommand } from "../commands/settings/invalid-movement-vector";
 import { inventoryMovementCommand } from "../commands/settings/inventory-movement";
-import { switchGamemodeCommand } from "../commands/moderation/switch-game-mode";
+import { switchGamemodeCommand } from "../commands/utility/switch-game-mode";
 
 type PlayerID = string;
 
