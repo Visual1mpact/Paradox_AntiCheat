@@ -591,6 +591,33 @@ When executed, the command verifies the provided arguments and checks that the t
 
 ---
 
+## switchgamemode
+### At A Glance
+The `switchgamemode` command allows administrators to quickly switch their personal game mode between Survival, Creative, Adventure, and Spectator.
+
+?> Required Clearance Level To Execute: `4`
+
+### **How It Works**
+- Accepts game mode names or shorthand aliases (`survival` / `s`, `creative` / `c`, `adventure` / `a`, `spectator` / `sp`).
+- Instantly updates the executing player's game mode and sends a confirmation message in chat.
+- Provides error handling feedback if an invalid game mode argument is passed or if mode changing fails.
+
+> Usage: ":switchgamemode <mode>"  
+> Example: :switchgamemode survival  
+> Example: :switchgamemode creative  
+> Example: :switchgamemode adventure  
+> Example: :switchgamemode spectator  
+
+### **GUI Integration**
+- Found under the **Utility** category in the main GUI.
+- **Game Mode Manager**: Displays a modal form with a dropdown to select and apply your target game mode without needing to type chat commands.
+
+### **Notes**
+- Requires security clearance level 4.
+- Supports aliases (`s`, `c`, `a`, `sp`) for faster execution via chat.
+
+---
+
 ## tpr
 ### At A Glance
 The `tpr` command allows players to manage teleport requests:
