@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import pkg from "7zip-bin-full";
 import os from "os";
 import { glob } from "glob";
+
 const { path7z } = pkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,11 +18,23 @@ const wantZip = process.argv.includes("--zip");
 const skipArchive = process.argv.includes("--server");
 
 // ---------------- Utilities ----------------
+
+/**
+ * Logs an error message and terminates the process with exit code 1.
+ *
+ * @param {string} message - Error description to display in the console.
+ */
 function exitWithError(message) {
     console.error(message);
     process.exit(1);
 }
 
+/**
+ * Encloses argument strings in quotes if running on Windows and spaces are present.
+ *
+ * @param {string} arg - The command argument string.
+ * @returns {string} The escaped or original argument string.
+ */
 function quoteWinArg(arg) {
     if (/[\s"]/g.test(arg)) {
         return `"${arg.replace(/"/g, '\\"')}"`;
@@ -29,6 +42,13 @@ function quoteWinArg(arg) {
     return arg;
 }
 
+/**
+ * Synchronously executes a command line binary or process.
+ *
+ * @param {string} command - Binary executable path or name.
+ * @param {string[]} args - List of arguments supplied to the binary.
+ * @param {import("child_process").SpawnSyncOptions} [options={}] - Additional spawn configurations.
+ */
 function run(command, args, options = {}) {
     const isWin = process.platform === "win32";
 
@@ -42,7 +62,6 @@ function run(command, args, options = {}) {
     });
 
     if (result.status !== 0) {
-        // --- This block prints the actual errors to your terminal ---
         console.error(`\n❌ [BUILD ERROR] Standard Error Output:`);
         if (result.stderr) console.error(result.stderr);
         if (result.stdout) console.log(result.stdout);
@@ -52,36 +71,51 @@ function run(command, args, options = {}) {
     }
 }
 
+/**
+ * Wipes the existing build folder and recreates an empty directory.
+ */
 function cleanBuildDir() {
     fs.removeSync(BUILD_DIR);
     fs.mkdirSync(BUILD_DIR, { recursive: true });
 }
 
+/**
+ * Resolves the executable path for 7-Zip depending on environment variables.
+ *
+ * @returns {string} Path or command alias to execute 7-Zip.
+ */
 function get7zaPath() {
-    // If user wants system 7z
     if (process.env.USE_SYSTEM_7Z) {
         console.log("Using system 7z from PATH...");
-        return process.platform === "win32" ? "7z" : "7z";
+        return "7z";
     }
 
-    // Otherwise use bundled binary
     try {
-        fs.chmodSync(path7z, 0o755); // ensure executable on unix
+        fs.chmodSync(path7z, 0o755);
     } catch {}
 
     return path7z;
 }
 
+/**
+ * Calculates which archive types should be created based on CLI flags.
+ *
+ * @returns {Array<"mcpack" | "zip">} List of output archive formats.
+ */
 function getArchiveTypes() {
     const types = [];
-    if (skipArchive) return []; // skip all
+    if (skipArchive) return [];
     if (wantMcpack) types.push("mcpack");
     if (wantZip) types.push("zip");
-    if (!wantMcpack && !wantZip) types.push("zip"); // default
+    if (!wantMcpack && !wantZip) types.push("zip");
     return types;
 }
 
 // ---------------- Version Sync ----------------
+
+/**
+ * Validates that package.json version matches the exported constant in versioning.ts.
+ */
 function syncVersion() {
     console.log("\nSyncing version with versioning.ts...");
     const packageJson = fs.readJsonSync("package.json");
@@ -94,11 +128,22 @@ function syncVersion() {
 }
 
 // ---------------- Build Steps ----------------
+
+/**
+ * Compiles TypeScript source files given a target tsconfig file.
+ *
+ * @param {string} tsconfigPath - Path to tsconfig.json.
+ */
 function compile(tsconfigPath) {
     console.log(`Compiling TypeScript: ${tsconfigPath}`);
     run(process.platform === "win32" ? "npx.cmd" : "npx", ["tsc", "-p", tsconfigPath], { cwd: process.cwd() });
 }
 
+/**
+ * Executes tsc-alias to replace configured import aliases with relative paths.
+ *
+ * @param {string} tsconfigPath - Path to tsconfig.json.
+ */
 function resolveAliases(tsconfigPath) {
     console.log("Resolving TypeScript paths...");
     const args = ["--resolve-full-paths", "--project", tsconfigPath];
@@ -106,6 +151,22 @@ function resolveAliases(tsconfigPath) {
     else run(`./${TSC_ALIAS}`, args);
 }
 
+/**
+ * Removes all TypeScript declaration (.d.ts) and map (.d.ts.map) files from the build output directory.
+ */
+function removeDeclarationFiles() {
+    console.log("Cleaning declaration files from build directory...");
+    const declarationFiles = glob.sync(`${BUILD_DIR}/**/*.{d.ts,d.ts.map}`);
+    for (const file of declarationFiles) {
+        fs.removeSync(file);
+    }
+}
+
+/**
+ * Compresses build assets into a .zip or .mcpack archive using 7-Zip.
+ *
+ * @param {"zip" | "mcpack"} [type="zip"] - Target archive file type.
+ */
 function createArchive(type = "zip") {
     const packageJson = fs.readJsonSync("package.json");
     const archiveName = type === "mcpack" ? `Paradox-AntiCheat-v${packageJson.version}-REALMS.mcpack` : `Paradox-AntiCheat-v${packageJson.version}-BDS.zip`;
@@ -113,7 +174,6 @@ function createArchive(type = "zip") {
     const outputFilePath = path.join(BUILD_DIR, archiveName);
     if (fs.existsSync(outputFilePath)) fs.unlinkSync(outputFilePath);
 
-    // Modify manifest.json for mcpack
     const manifest = fs.readJsonSync("manifest.json");
     const manifestPath = path.join(BUILD_DIR, "manifest.json");
 
@@ -126,15 +186,23 @@ function createArchive(type = "zip") {
     fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
 
     console.log(`Creating archive: ${archiveName}`);
-    run(get7zaPath(), ["a", "-tzip", archiveName, "-xr!*.d.ts", "-xr!*.d.ts.map", "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"], { cwd: BUILD_DIR });
+
+    const archiveArgs = ["a", "-tzip", archiveName, "-xr!*.d.ts", "-xr!*.d.ts.map", "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"];
+
+    run(get7zaPath(), archiveArgs, { cwd: BUILD_DIR });
     console.log(`Archive created successfully: ${outputFilePath}`);
 }
 
 // ---------------- Server/Test Mode ----------------
+
+/**
+ * Prepares a Bedrock Dedicated Server environment and deploys the build folder to run test passes.
+ *
+ * @returns {Promise<void>}
+ */
 async function runServerTest() {
     console.log("> Running build in server/test mode...");
 
-    // Find bedrock server directory
     let bedrockDirs = glob.sync("bedrock-server-*");
     let bedrockServerDir = bedrockDirs[0];
 
@@ -180,7 +248,6 @@ async function runServerTest() {
         }
     }
 
-    // Run BDS server
     const serverPath = path.resolve(bedrockServerDir, "bedrock_server");
     const osType = os.type();
 
@@ -207,6 +274,12 @@ async function runServerTest() {
 }
 
 // ---------------- Main ----------------
+
+/**
+ * Entry point for orchestration pipeline.
+ *
+ * @returns {Promise<void>}
+ */
 async function main() {
     syncVersion();
 
@@ -226,6 +299,9 @@ async function main() {
 
     // Final alias resolution for penrose imports
     resolveAliases("./tsconfig.json");
+
+    // Purge unwanted declaration files from build directory prior to archiving/server test
+    removeDeclarationFiles();
 
     console.log("\nBuild finished successfully.\n");
 
