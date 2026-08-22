@@ -1,11 +1,9 @@
 import { Command } from "../../classes/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
-import * as CryptoESImport from "../../node_modules/crypto-es";
+import * as CryptoES from "../../node_modules/crypto-es";
 import { homesDB } from "../../event-listeners/world-initialize";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
-
-const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 const DEFAULT_MAX_HOMES = 5;
 

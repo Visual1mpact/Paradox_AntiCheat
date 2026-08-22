@@ -2,14 +2,9 @@ import { Player, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, system, world } 
 import { banlistDB } from "../event-listeners/world-initialize";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
-import * as CryptoESImport from "../node_modules/crypto-es";
+import * as CryptoES from "crypto-es";
 import { EventCoordinator } from "../classes/event-coordinator";
 import { PlayerCache } from "../classes/cache/player-cache";
-
-/**
- * Handles CryptoES default export fallback logic for multi-environment compatibility.
- */
-const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
  * Ring buffer for timestamps used in rate-limiting and burst tracking.
@@ -117,7 +112,7 @@ function getKickTag(): string {
  * Persists the hexadecimal representation inside world dynamic properties.
  * @returns The CryptoES WordArray representing the active AES key
  */
-function getOrCreateAESKey(): CryptoESImport.WordArray {
+function getOrCreateAESKey(): CryptoES.WordArray {
     let stored = world.getDynamicProperty(AES_KEY_PROPERTY) as string | undefined;
 
     if (!stored) {

@@ -1,4 +1,4 @@
-const { Vector3Builder, Vector3Utils } = await import("../node_modules/@minecraft/math/dist/minecraft-math");
+import { Vector3Builder, Vector3Utils } from "../node_modules/@minecraft/math/dist/minecraft-math";
 import { Player, system, EntityHurtBeforeEvent, EntityDamageCause, Vector3 } from "@minecraft/server";
 import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";

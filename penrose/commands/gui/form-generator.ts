@@ -2,12 +2,9 @@ import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
 import { chestLockDB, commandHandler, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
-import * as CryptoESImport from "../../node_modules/crypto-es";
+import * as CryptoES from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
-
-// Import CryptoES library for optional encryption of commands
-const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
 
 /**
  * GUIManager handles all GUI interactions for a player, including:

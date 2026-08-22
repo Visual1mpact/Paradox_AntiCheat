@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import pkg from "7zip-bin-full";
 import os from "os";
 import { glob } from "glob";
+import { obfuscateBundle } from "./obfuscate.js";
 
 const { path7z } = pkg;
 
@@ -130,44 +131,11 @@ function syncVersion() {
 // ---------------- Build Steps ----------------
 
 /**
- * Compiles TypeScript source files given a target tsconfig file.
- *
- * @param {string} tsconfigPath - Path to tsconfig.json.
- */
-function compile(tsconfigPath) {
-    console.log(`Compiling TypeScript: ${tsconfigPath}`);
-    run(process.platform === "win32" ? "npx.cmd" : "npx", ["tsc", "-p", tsconfigPath], { cwd: process.cwd() });
-}
-
-/**
- * Executes tsc-alias to replace configured import aliases with relative paths.
- *
- * @param {string} tsconfigPath - Path to tsconfig.json.
- */
-function resolveAliases(tsconfigPath) {
-    console.log("Resolving TypeScript paths...");
-    const args = ["--resolve-full-paths", "--project", tsconfigPath];
-    if (process.platform === "win32") run("cmd.exe", ["/c", TSC_ALIAS, ...args]);
-    else run(`./${TSC_ALIAS}`, args);
-}
-
-/**
- * Removes all TypeScript declaration (.d.ts) and map (.d.ts.map) files from the build output directory.
- */
-function removeDeclarationFiles() {
-    console.log("Cleaning declaration files from build directory...");
-    const declarationFiles = glob.sync(`${BUILD_DIR}/**/*.{d.ts,d.ts.map}`);
-    for (const file of declarationFiles) {
-        fs.removeSync(file);
-    }
-}
-
-/**
  * Compresses build assets into a .zip or .mcpack archive using 7-Zip.
  *
  * @param {"zip" | "mcpack"} [type="zip"] - Target archive file type.
  */
-function createArchive(type = "zip") {
+async function createArchive(type = "zip") {
     const packageJson = fs.readJsonSync("package.json");
     const archiveName = type === "mcpack" ? `Paradox-AntiCheat-v${packageJson.version}-REALMS.mcpack` : `Paradox-AntiCheat-v${packageJson.version}-BDS.zip`;
 
@@ -184,6 +152,13 @@ function createArchive(type = "zip") {
         }
     }
     fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
+
+    // 1. Re-compile clean paradox.js from TypeScript
+    console.log(`Running esbuild for [${type.toUpperCase()}] target...`);
+    run("node", ["./bin/esbuild.js"]);
+
+    // 2. Generate target-specific imports in paradox.js loader
+    await obfuscateBundle(type === "mcpack");
 
     console.log(`Creating archive: ${archiveName}`);
 
@@ -290,26 +265,18 @@ async function main() {
     // Copy static files
     ["CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png"].forEach((file) => fs.copyFileSync(file, path.join(BUILD_DIR, file)));
 
-    // Regular build
-    console.log("Running regular build...");
-    run("node", ["./bin/esbuild.js"]);
-
-    // Compile penrose first
-    compile("./tsconfig.json");
-
-    // Final alias resolution for penrose imports
-    resolveAliases("./tsconfig.json");
-
-    // Purge unwanted declaration files from build directory prior to archiving/server test
-    removeDeclarationFiles();
-
-    console.log("\nBuild finished successfully.\n");
-
     // Create archives if not in --server mode
     const archiveTypes = getArchiveTypes();
-    for (const type of archiveTypes) createArchive(type);
+    for (const type of archiveTypes) {
+        await createArchive(type);
+    }
 
-    if (skipArchive) await runServerTest();
+    if (skipArchive) {
+        console.log("Running esbuild bundler for server test mode...");
+        run("node", ["./bin/esbuild.js"]);
+        await obfuscateBundle(false); // Generate full BDS loader
+        await runServerTest();
+    }
 }
 
 main();

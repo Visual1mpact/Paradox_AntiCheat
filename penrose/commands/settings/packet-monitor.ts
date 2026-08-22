@@ -2,9 +2,7 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
 import { startPacketListener, stopPacketListener } from "../../modules/packet-monitor";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import * as CryptoESImport from "../../node_modules/crypto-es";
-
-const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
+import * as CryptoES from "../../node_modules/crypto-es";
 
 /**
  * Represents the packet monitoring command.

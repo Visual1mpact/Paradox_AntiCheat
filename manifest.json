@@ -27,6 +27,7 @@
             "entry": "scripts/paradox.js"
         }
     ],
+    "capabilities": ["script_eval"],
     "dependencies": [
         {
             "module_name": "@minecraft/server",

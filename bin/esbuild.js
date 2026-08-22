@@ -1,78 +1,56 @@
+/**
+ * @file esbuild.js
+ * Configures esbuild to output IIFE syntax and shim Minecraft Bedrock native imports.
+ */
+
 import esbuild from "esbuild";
-import path from "path";
-import fs from "fs/promises";
-import { createRequire } from "module";
+import path from "node:path";
+import fs from "fs-extra";
+import { obfuscateBundle } from "./obfuscate.js";
 
-const require = createRequire(import.meta.url);
-
-// Define modules
-const modulesToConvert = [
-    "./node_modules/@minecraft/math/dist/minecraft-math.js", // direct file path
-    "crypto-es", // package name, dynamic resolution
-];
-
-// Output directory
-const outputDir = "./build/scripts/node_modules";
-
-async function ensureDirExists(dir) {
-    try {
-        await fs.mkdir(dir, { recursive: true });
-    } catch (err) {
-        if (err.code !== "EEXIST") throw err;
-    }
-}
-
-// Resolve package entry if it’s an npm package
-function resolveModuleEntry(moduleName) {
-    if (moduleName.startsWith(".")) return moduleName; // local file, return as-is
-    try {
-        return require.resolve(moduleName); // npm package
-    } catch (err) {
-        console.error(`Cannot resolve module "${moduleName}":`, err.message);
-        return null;
-    }
-}
-
-async function buildModules() {
-    try {
-        await ensureDirExists(outputDir);
-
-        const buildPromises = modulesToConvert.map(async (moduleName) => {
-            const entry = resolveModuleEntry(moduleName);
-            if (!entry) return; // skip unresolved modules
-
-            let outPath;
-
-            if (moduleName.includes("@minecraft/math")) {
-                // Preserve folder structure for minecraft-math
-                const relativePath = path.relative("./node_modules", entry);
-                outPath = path.join(outputDir, relativePath);
-            } else {
-                // Flatten other packages like crypto-es
-                const baseName = moduleName.startsWith(".") ? path.basename(moduleName) : moduleName + ".js";
-                outPath = path.join(outputDir, baseName);
-            }
-
-            await ensureDirExists(path.dirname(outPath));
-
-            await esbuild.build({
-                entryPoints: [entry],
-                outfile: outPath,
-                format: "esm",
-                target: "esnext",
-                bundle: true,
-                platform: "node",
-                external: entry.includes("minecraft-math") ? ["@minecraft/server"] : [],
-            });
-
-            console.log(`Converted: ${moduleName} -> ${outPath}`);
+/**
+ * Custom esbuild plugin to replace native @minecraft/* imports with global scope lookups.
+ */
+const minecraftGlobalsPlugin = {
+    name: "minecraft-globals-shim",
+    setup(build) {
+        build.onResolve({ filter: /^@minecraft\// }, (args) => {
+            return { path: args.path, namespace: "mc-global-ns" };
         });
 
-        await Promise.all(buildPromises);
-        console.log("All modules converted successfully!");
+        build.onLoad({ filter: /.*/, namespace: "mc-global-ns" }, (args) => {
+            const moduleKey = args.path;
+            return {
+                contents: `module.exports = globalThis.__mc__["${moduleKey}"];`,
+                loader: "js",
+            };
+        });
+    },
+};
+
+async function buildBundle() {
+    const outputDir = path.resolve("build", "scripts");
+    await fs.ensureDir(outputDir);
+
+    try {
+        console.log("[esbuild] Building bundle...");
+        await esbuild.build({
+            entryPoints: ["penrose/paradox.ts"],
+            outfile: path.join(outputDir, "paradox.js"),
+            bundle: true,
+            format: "iife", // IIFE prevents top-level export/import statements inside the bundle
+            target: "es2020",
+            platform: "node",
+            minify: false,
+            plugins: [minecraftGlobalsPlugin],
+        });
+
+        console.log("[esbuild] Bundle complete. Running obfuscator...");
+        //await obfuscateBundle();
     } catch (err) {
-        console.error("Error during module conversion:", err);
+        console.error("[esbuild Error]:", err);
+        process.exit(1);
     }
 }
 
-buildModules();
+buildBundle();

@@ -1,7 +1,5 @@
 import { Player, ChatSendBeforeEvent, system, world, PlayerSpawnAfterEvent } from "@minecraft/server";
-import * as CryptoESImport from "../node_modules/crypto-es";
-
-const CryptoES = (CryptoESImport as unknown as { default: typeof CryptoESImport }).default ?? CryptoESImport;
+import * as CryptoES from "../node_modules/crypto-es";
 
 /**
  * Security clearance levels for commands.
