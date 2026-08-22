@@ -7,7 +7,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import JavaScriptObfuscator from "javascript-obfuscator";
+import { bannerHeader } from "./esbuild.js";
 
 const OUTPUT_DIR = path.resolve("build", "scripts");
 const BUNDLE_PATH = path.join(OUTPUT_DIR, "paradox.js");
@@ -48,7 +50,12 @@ export async function obfuscateBundle() {
     }
 
     console.log("[Obfuscator] Running single-pass obfuscation...");
-    const rawCode = fs.readFileSync(BUNDLE_PATH, "utf8");
+    let rawCode = fs.readFileSync(BUNDLE_PATH, "utf8");
+
+    // Remove the esbuild-injected banner header so top-level imports aren't passed to eval()
+    if (rawCode.startsWith(bannerHeader)) {
+        rawCode = rawCode.slice(bannerHeader.length);
+    }
 
     const obfuscationResult = JavaScriptObfuscator.obfuscate(rawCode, {
         compact: true,
@@ -96,23 +103,7 @@ export async function obfuscateBundle() {
     const foodImports = chunkManifest.map((item, idx) => `import { chunk as c${idx} } from "./${item.file}";`).join("\n");
     const chunkReferences = chunkManifest.map((_, idx) => `c${idx}`).join(", ");
 
-    const loaderContent = `/** Native Bedrock API imports */
-import * as mcServer from "@minecraft/server";
-import * as mcUI from "@minecraft/server-ui";
-
-let mcAdmin, mcDebug, mcServerNet;
-try { mcAdmin = await import("@minecraft/server-admin"); } catch {}
-try { mcDebug = await import("@minecraft/debug-utilities"); } catch {}
-try { mcServerNet = await import("@minecraft/server-net"); } catch {}
-
-// Bind native modules to global scope before dynamic payload evaluation
-globalThis.__mc__ = {
-    "@minecraft/server": mcServer,
-    "@minecraft/server-ui": mcUI,
-    "@minecraft/server-admin": mcAdmin,
-    "@minecraft/debug-utilities": mcDebug,
-    "@minecraft/server-net": mcServerNet
-};
+    const loaderContent = `${bannerHeader}
 
 ${foodImports}
 
@@ -130,6 +121,8 @@ ${foodImports}
     console.log(`[Obfuscator Done] Successfully written loader to ${BUNDLE_PATH}`);
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(import.meta.filename || "")) {
+// Ensure the module only auto-executes when called directly from CLI (e.g. node bin/obfuscate.js)
+const currentFilePath = fileURLToPath(import.meta.url);
+if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
     obfuscateBundle();
 }
