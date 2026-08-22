@@ -11,7 +11,6 @@ const { path7z } = pkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BUILD_DIR = "build";
-const TSC_ALIAS = path.join("./node_modules", ".bin", process.platform === "win32" ? "tsc-alias.cmd" : "tsc-alias");
 
 // ---------------- Flags ----------------
 const wantMcpack = process.argv.includes("--mcpack");
@@ -20,22 +19,11 @@ const skipArchive = process.argv.includes("--server");
 
 // ---------------- Utilities ----------------
 
-/**
- * Logs an error message and terminates the process with exit code 1.
- *
- * @param {string} message - Error description to display in the console.
- */
 function exitWithError(message) {
     console.error(message);
     process.exit(1);
 }
 
-/**
- * Encloses argument strings in quotes if running on Windows and spaces are present.
- *
- * @param {string} arg - The command argument string.
- * @returns {string} The escaped or original argument string.
- */
 function quoteWinArg(arg) {
     if (/[\s"]/g.test(arg)) {
         return `"${arg.replace(/"/g, '\\"')}"`;
@@ -43,16 +31,8 @@ function quoteWinArg(arg) {
     return arg;
 }
 
-/**
- * Synchronously executes a command line binary or process.
- *
- * @param {string} command - Binary executable path or name.
- * @param {string[]} args - List of arguments supplied to the binary.
- * @param {import("child_process").SpawnSyncOptions} [options={}] - Additional spawn configurations.
- */
 function run(command, args, options = {}) {
     const isWin = process.platform === "win32";
-
     const cmdString = isWin ? [command, ...args.map(quoteWinArg)].join(" ") : command;
 
     const result = spawnSync(cmdString, isWin ? [] : args, {
@@ -72,19 +52,11 @@ function run(command, args, options = {}) {
     }
 }
 
-/**
- * Wipes the existing build folder and recreates an empty directory.
- */
 function cleanBuildDir() {
     fs.removeSync(BUILD_DIR);
     fs.mkdirSync(BUILD_DIR, { recursive: true });
 }
 
-/**
- * Resolves the executable path for 7-Zip depending on environment variables.
- *
- * @returns {string} Path or command alias to execute 7-Zip.
- */
 function get7zaPath() {
     if (process.env.USE_SYSTEM_7Z) {
         console.log("Using system 7z from PATH...");
@@ -98,25 +70,6 @@ function get7zaPath() {
     return path7z;
 }
 
-/**
- * Calculates which archive types should be created based on CLI flags.
- *
- * @returns {Array<"mcpack" | "zip">} List of output archive formats.
- */
-function getArchiveTypes() {
-    const types = [];
-    if (skipArchive) return [];
-    if (wantMcpack) types.push("mcpack");
-    if (wantZip) types.push("zip");
-    if (!wantMcpack && !wantZip) types.push("zip");
-    return types;
-}
-
-// ---------------- Version Sync ----------------
-
-/**
- * Validates that package.json version matches the exported constant in versioning.ts.
- */
 function syncVersion() {
     console.log("\nSyncing version with versioning.ts...");
     const packageJson = fs.readJsonSync("package.json");
@@ -131,11 +84,11 @@ function syncVersion() {
 // ---------------- Build Steps ----------------
 
 /**
- * Compresses build assets into a .zip or .mcpack archive using 7-Zip.
+ * Packs existing build directory files into a .zip or .mcpack archive without re-obfuscating.
  *
- * @param {"zip" | "mcpack"} [type="zip"] - Target archive file type.
+ * @param {"zip" | "mcpack"} type - Target archive file format.
  */
-async function createArchive(type = "zip") {
+async function createArchive(type) {
     const packageJson = fs.readJsonSync("package.json");
     const archiveName = type === "mcpack" ? `Paradox-AntiCheat-v${packageJson.version}-REALMS.mcpack` : `Paradox-AntiCheat-v${packageJson.version}-BDS.zip`;
 
@@ -153,28 +106,13 @@ async function createArchive(type = "zip") {
     }
     fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
 
-    // 1. Re-compile clean paradox.js from TypeScript
-    console.log(`Running esbuild for [${type.toUpperCase()}] target...`);
-    run("node", ["./bin/esbuild.js"]);
-
-    // 2. Generate target-specific imports in paradox.js loader
-    await obfuscateBundle(type === "mcpack");
-
     console.log(`Creating archive: ${archiveName}`);
-
     const archiveArgs = ["a", "-tzip", archiveName, "-xr!*.d.ts", "-xr!*.d.ts.map", "CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png", "scripts"];
 
     run(get7zaPath(), archiveArgs, { cwd: BUILD_DIR });
     console.log(`Archive created successfully: ${outputFilePath}`);
 }
 
-// ---------------- Server/Test Mode ----------------
-
-/**
- * Prepares a Bedrock Dedicated Server environment and deploys the build folder to run test passes.
- *
- * @returns {Promise<void>}
- */
 async function runServerTest() {
     console.log("> Running build in server/test mode...");
 
@@ -250,31 +188,34 @@ async function runServerTest() {
 
 // ---------------- Main ----------------
 
-/**
- * Entry point for orchestration pipeline.
- *
- * @returns {Promise<void>}
- */
 async function main() {
     syncVersion();
 
-    console.log(`Starting build | mcpack=${wantMcpack} | zip=${wantZip}\n`);
+    console.log(`Starting build pipeline | mcpack=${wantMcpack} | zip=${wantZip} | server=${skipArchive}\n`);
 
     cleanBuildDir();
 
-    // Copy static files
+    // 1. Copy root static files
     ["CHANGELOG.md", "LICENSE", "README.md", "manifest.json", "pack_icon.png"].forEach((file) => fs.copyFileSync(file, path.join(BUILD_DIR, file)));
 
-    // Create archives if not in --server mode
-    const archiveTypes = getArchiveTypes();
-    for (const type of archiveTypes) {
-        await createArchive(type);
+    // 2. Single-pass compilation and obfuscation
+    console.log("[Build] Executing single-pass esbuild compilation...");
+    run("node", ["./bin/esbuild.js"]);
+
+    console.log("[Build] Executing single-pass obfuscator...");
+    await obfuscateBundle();
+
+    // 3. Output target archives
+    if (wantZip) {
+        await createArchive("zip");
     }
 
+    if (wantMcpack) {
+        await createArchive("mcpack");
+    }
+
+    // 4. Launch Bedrock server test if requested
     if (skipArchive) {
-        console.log("Running esbuild bundler for server test mode...");
-        run("node", ["./bin/esbuild.js"]);
-        await obfuscateBundle(false); // Generate full BDS loader
         await runServerTest();
     }
 }

@@ -39,18 +39,17 @@ const ITALIAN_FOODS = [
 /**
  * Obfuscates the target bundle and fragments it across modular food files.
  *
- * @param {boolean} [isMcpack] - Explicitly force MCPACK mode if true, ZIP mode if false.
+ * @returns {Promise<void>}
  */
-export async function obfuscateBundle(isMcpack = process.argv.includes("--mcpack")) {
+export async function obfuscateBundle() {
     if (!fs.existsSync(BUNDLE_PATH)) {
         console.error(`[Obfuscator Error] Target bundle not found at: ${BUNDLE_PATH}`);
         process.exit(1);
     }
 
-    console.log(`[Obfuscator] Generating loader for [${isMcpack ? "MCPACK / Realms" : "ZIP / BDS"}]...`);
+    console.log("[Obfuscator] Running single-pass obfuscation...");
     const rawCode = fs.readFileSync(BUNDLE_PATH, "utf8");
 
-    console.log("[Obfuscator] Obfuscating source payload...");
     const obfuscationResult = JavaScriptObfuscator.obfuscate(rawCode, {
         compact: true,
         controlFlowFlattening: true,
@@ -75,7 +74,6 @@ export async function obfuscateBundle(isMcpack = process.argv.includes("--mcpack
     const chunkSize = Math.ceil(obfuscatedPayload.length / ITALIAN_FOODS.length);
     const chunkManifest = [];
 
-    // Split payload across food-named files
     for (let i = 0; i < ITALIAN_FOODS.length; i++) {
         const start = i * chunkSize;
         const end = Math.min(start + chunkSize, obfuscatedPayload.length);
@@ -93,37 +91,27 @@ export async function obfuscateBundle(isMcpack = process.argv.includes("--mcpack
         chunkManifest.push({ name: foodName, file: fileName });
     }
 
-    console.log("[Obfuscator] Rewriting 'paradox.js' as the module loader entry point...");
+    console.log("[Obfuscator] Rewriting 'paradox.js' as unified module loader entry point...");
 
-    // Generate loader imports
     const foodImports = chunkManifest.map((item, idx) => `import { chunk as c${idx} } from "./${item.file}";`).join("\n");
     const chunkReferences = chunkManifest.map((_, idx) => `c${idx}`).join(", ");
 
-    // Target-specific module imports and global mappings
-    const nativeImports = isMcpack
-        ? `import * as mcServer from "@minecraft/server";
-import * as mcUI from "@minecraft/server-ui";`
-        : `import * as mcServer from "@minecraft/server";
-import * as mcUI from "@minecraft/server-ui";
-import * as mcAdmin from "@minecraft/server-admin";
-import * as mcDebug from "@minecraft/debug-utilities";
-import * as mcServerNet from "@minecraft/server-net";`;
-
-    const globalMappings = isMcpack
-        ? `    "@minecraft/server": mcServer,
-    "@minecraft/server-ui": mcUI`
-        : `    "@minecraft/server": mcServer,
-    "@minecraft/server-ui": mcUI,
-    "@minecraft/server-admin": mcAdmin,
-    "@minecraft/debug-utilities": mcDebug,
-    "@minecraft/server-net": mcServerNet`;
-
     const loaderContent = `/** Native Bedrock API imports */
-${nativeImports}
+import * as mcServer from "@minecraft/server";
+import * as mcUI from "@minecraft/server-ui";
+
+let mcAdmin, mcDebug, mcServerNet;
+try { mcAdmin = await import("@minecraft/server-admin"); } catch {}
+try { mcDebug = await import("@minecraft/debug-utilities"); } catch {}
+try { mcServerNet = await import("@minecraft/server-net"); } catch {}
 
 // Bind native modules to global scope before dynamic payload evaluation
 globalThis.__mc__ = {
-${globalMappings}
+    "@minecraft/server": mcServer,
+    "@minecraft/server-ui": mcUI,
+    "@minecraft/server-admin": mcAdmin,
+    "@minecraft/debug-utilities": mcDebug,
+    "@minecraft/server-net": mcServerNet
 };
 
 ${foodImports}

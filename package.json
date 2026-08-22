@@ -64,9 +64,9 @@
         "git-tree": "node bin/git-tree.js",
         "update-bds": "node bin/bds.js",
         "docs": "node bin/server.js",
-        "test": "node bin/build.js --server",
         "check-naming": "node bin/tree-format.js",
-        "build": "npm run check-naming && node bin/build.js",
-        "dist": "npm run check-naming && node bin/build.js --mcpack --zip"
+        "build": "npm run check-naming && node bin/build.js --zip",
+        "dist": "npm run check-naming && node bin/build.js --zip --mcpack",
+        "test": "npm run check-naming && node bin/build.js --zip --server"
     }
 }
