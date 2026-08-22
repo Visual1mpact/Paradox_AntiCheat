@@ -72,7 +72,7 @@ export async function obfuscateBundle() {
         stringArrayCallsTransform: true,
         stringArrayEncoding: ["base64"],
         stringArrayThreshold: 0.75,
-        target: "browser",
+        target: "node",
     });
 
     const obfuscatedPayload = obfuscationResult.getObfuscatedCode();
