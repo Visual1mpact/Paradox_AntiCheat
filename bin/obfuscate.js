@@ -39,6 +39,20 @@ const ITALIAN_FOODS = [
 ];
 
 /**
+ * Synchronously writes content and forces an OS disk sync.
+ * Eliminates race conditions where 7-Zip reads stale/uncommitted file handles.
+ *
+ * @param {string} filePath - Destination file path.
+ * @param {string} content - Code payload to write.
+ */
+function writeAndFileSync(filePath, content) {
+    const fd = fs.openSync(filePath, "w");
+    fs.writeFileSync(fd, content, "utf8");
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+}
+
+/**
  * Obfuscates the target bundle and fragments it across modular food files.
  *
  * @returns {Promise<void>}
@@ -93,7 +107,7 @@ export async function obfuscateBundle() {
         const filePath = path.join(OUTPUT_DIR, fileName);
 
         const moduleContent = `/** Obfuscated chunk: ${foodName} */\nexport const chunk = ${JSON.stringify(chunkData)};\n`;
-        fs.writeFileSync(filePath, moduleContent, "utf8");
+        writeAndFileSync(filePath, moduleContent);
 
         chunkManifest.push({ name: foodName, file: fileName });
     }
@@ -117,12 +131,12 @@ ${foodImports}
 })();
 `;
 
-    fs.writeFileSync(BUNDLE_PATH, loaderContent, "utf8");
+    writeAndFileSync(BUNDLE_PATH, loaderContent);
     console.log(`[Obfuscator Done] Successfully written loader to ${BUNDLE_PATH}`);
 }
 
-// Ensure the module only auto-executes when called directly from CLI (e.g. node bin/obfuscate.js)
+// Ensure execution ONLY when called directly from CLI
 const currentFilePath = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
-    obfuscateBundle();
+    await obfuscateBundle();
 }

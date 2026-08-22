@@ -5,6 +5,9 @@ import { fileURLToPath } from "url";
 import pkg from "7zip-bin-full";
 import os from "os";
 import { glob } from "glob";
+
+// Direct async imports to prevent duplicate execution loops
+import { buildBundle } from "./esbuild.js";
 import { obfuscateBundle } from "./obfuscate.js";
 
 const { path7z } = pkg;
@@ -200,7 +203,7 @@ async function main() {
 
     // 2. Single-pass compilation and obfuscation
     console.log("[Build] Executing single-pass esbuild compilation...");
-    run("node", ["./bin/esbuild.js"]);
+    await buildBundle();
 
     console.log("[Build] Executing single-pass obfuscator...");
     await obfuscateBundle();

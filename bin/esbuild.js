@@ -1,7 +1,7 @@
-// esbuild.js
 import esbuild from "esbuild";
 import path from "node:path";
 import fs from "fs-extra";
+import { fileURLToPath } from "node:url";
 
 /**
  * Custom esbuild plugin to replace native @minecraft/* imports with global scope lookups.
@@ -43,7 +43,12 @@ globalThis.__mc__ = {
 };
 `;
 
-async function buildBundle() {
+/**
+ * Executes the esbuild compilation pass.
+ *
+ * @returns {Promise<void>}
+ */
+export async function buildBundle() {
     const outputDir = path.resolve("build", "scripts");
     await fs.ensureDir(outputDir);
 
@@ -64,7 +69,11 @@ async function buildBundle() {
     console.log("[esbuild] Bundle complete.");
 }
 
-buildBundle().catch((err) => {
-    console.error("[esbuild Error]:", err);
-    process.exit(1);
-});
+// Ensure execution ONLY when called directly from CLI (e.g. node bin/esbuild.js)
+const currentFilePath = fileURLToPath(import.meta.url);
+if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
+    buildBundle().catch((err) => {
+        console.error("[esbuild Error]:", err);
+        process.exit(1);
+    });
+}
