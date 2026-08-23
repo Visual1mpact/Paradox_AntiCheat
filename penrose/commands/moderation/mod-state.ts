@@ -54,7 +54,6 @@ export const modStateCommand: Command = {
         const subCommand = args[0]?.toLowerCase().trim();
         const isDisable = subCommand === "disable";
 
-        // Validate that an argument was supplied if run via chat
         if (!subCommand || (subCommand !== "enable" && subCommand !== "disable")) {
             player.sendMessage("§2[§7Paradox§2]§o§c Usage: {prefix}modstate [ enable | disable ]");
             return;
@@ -62,46 +61,48 @@ export const modStateCommand: Command = {
 
         let modifiedCount = 0;
 
-        for (const [moduleKey, startAction] of Object.entries(moduleActions) as [keyof typeof moduleActions, (settings: Record<string, unknown>) => void][]) {
+        for (const [moduleKey, startAction] of Object.entries(moduleActions) as [keyof typeof moduleActions, (settings: Record<string, unknown>) => Promise<boolean | void> | boolean | void][]) {
             const dbKey = moduleKey as Parameters<typeof paradoxModulesDB.get>[0];
             const moduleData: NonNullable<Awaited<ReturnType<typeof paradoxModulesDB.get>>> = (await paradoxModulesDB.get(dbKey)) ?? { enabled: false };
 
             if (isDisable) {
-                // Skip if already disabled
-                if (!moduleData.enabled) {
-                    continue;
-                }
+                if (!moduleData.enabled) continue;
 
-                // Preserve settings object if present while updating enabled status
                 await paradoxModulesDB.set(dbKey, {
                     ...moduleData,
                     enabled: false,
                 });
 
-                // Stop module runtime logic
                 system.run(() => {
                     const stopAction = moduleStopActions[moduleKey];
-                    if (stopAction) {
-                        stopAction();
-                    }
+                    if (stopAction) stopAction();
                 });
 
                 modifiedCount++;
             } else {
-                // Skip if already enabled
-                if (moduleData.enabled) {
+                if (moduleData.enabled) continue;
+
+                // Attempt to execute startAction first to verify platform compatibility
+                let result: boolean | void = true;
+                try {
+                    result = await startAction(moduleData.settings ?? {});
+                } catch {
+                    result = false;
+                }
+
+                // If startup failed (e.g. BDS API missing on Realms), keep disabled
+                if (result === false) {
+                    await paradoxModulesDB.set(dbKey, {
+                        ...moduleData,
+                        enabled: false,
+                    });
                     continue;
                 }
 
-                // Preserve settings object if present while updating enabled status
+                // Standard module or successful start
                 await paradoxModulesDB.set(dbKey, {
                     ...moduleData,
                     enabled: true,
-                });
-
-                // Start module runtime logic
-                system.run(() => {
-                    startAction(moduleData.settings ?? {});
                 });
 
                 modifiedCount++;
@@ -116,7 +117,7 @@ export const modStateCommand: Command = {
             }
         } else {
             if (modifiedCount === 0) {
-                player.sendMessage("§2[§7Paradox§2]§o§7 All modules are already §aenabled§7.");
+                player.sendMessage("§2[§7Paradox§2]§o§7 All compatible modules are already §aenabled§7.");
             } else {
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Successfully enabled §a${modifiedCount}§7 module(s).`);
             }

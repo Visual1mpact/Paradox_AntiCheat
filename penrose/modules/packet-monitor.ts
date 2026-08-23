@@ -154,12 +154,15 @@ function runCleanup() {
 
 /**
  * Starts packet monitoring.
+ * Safely guards against missing server-net beforeEvents/packetReceive on Realms.
+ *
+ * @returns Resolves to `true` if listening started, or `false` on Realms/unsupported platforms.
  */
 export async function startPacketListener(): Promise<boolean> {
-    const networkModule: typeof import("@minecraft/server-net") | null = await import("@minecraft/server-net").catch((): null => null);
+    const networkModule = await import("@minecraft/server-net").catch(() => null);
 
-    if (!networkModule) {
-        console.warn("[Paradox] server-net unavailable. Packet monitor disabled.");
+    if (!networkModule?.beforeEvents?.packetReceive) {
+        console.warn("[Paradox] server-net or packetReceive unavailable. Packet monitor disabled (Realms environment detected).");
         return false;
     }
 

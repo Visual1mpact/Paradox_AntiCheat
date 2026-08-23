@@ -374,21 +374,26 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
  * Realms Compatibility:
  * `@minecraft/server-net` and `@minecraft/server-admin` APIs are strictly limited to
  * Bedrock Dedicated Server (BDS) environments and are not available on Minecraft Realms.
- * If these imports fail (e.g., when hosted on a Realm), the initialization gracefully
- * catches the error and returns `false`, preventing script runtime crashes.
+ * If these imports fail or return dummy objects (e.g., when hosted on a Realm), the initialization
+ * gracefully logs a warning and returns `false`, preventing script runtime crashes.
  *
- * @returns Resolves to `false` if module imports fail (e.g., on Realms), or `void` on successful setup.
+ * @returns Resolves to `false` if BDS modules/events are missing (Realms environment), or `void` on successful setup.
  */
 async function initializePacketHandler(): Promise<boolean | void> {
     try {
-        const networkModule = await import("@minecraft/server-net");
-        const adminModule = await import("@minecraft/server-admin");
+        const networkModule = await import("@minecraft/server-net").catch(() => null);
+        const adminModule = await import("@minecraft/server-admin").catch(() => null);
+
+        if (!networkModule?.beforeEvents?.packetReceive || !networkModule?.PacketId || !adminModule?.beforeEvents?.asyncPlayerJoin) {
+            console.warn("[Paradox] BDS Network/Admin APIs unavailable. Rate-limiting is disabled (Realms environment detected).");
+            return false;
+        }
 
         serverNet = networkModule.beforeEvents;
         PacketId = networkModule.PacketId;
         serverAdmin = adminModule.beforeEvents;
     } catch {
-        console.warn("[Paradox] Network/Admin APIs unavailable. Rate-limiting is disabled (Realms environment detected).");
+        console.warn("[Paradox] Network/Admin APIs failed to load. Rate-limiting disabled.");
         return false;
     }
 
