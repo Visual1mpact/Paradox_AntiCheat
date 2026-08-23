@@ -19,11 +19,15 @@ let debugLineFunc: typeof import("@minecraft/debug-utilities").DebugLine | undef
  * True if debugDrawer and DebugLine are available, false otherwise.
  */
 async function ensureDebugUtilitiesSupport(): Promise<boolean> {
-    if (debugDrawerFunc) return true;
-    if (debugLineFunc) return true;
+    if (debugDrawerFunc && debugLineFunc) return true;
 
     try {
-        const debugModule = await import("@minecraft/debug-utilities");
+        const debugModule = await import("@minecraft/debug-utilities").catch(() => null);
+
+        if (!debugModule?.debugDrawer || !debugModule?.DebugLine) {
+            return false;
+        }
+
         debugDrawerFunc = debugModule.debugDrawer;
         debugLineFunc = debugModule.DebugLine;
         return true;
@@ -77,18 +81,13 @@ let debugEnabled = false;
  * @param color - RGBA color of the line
  */
 function addLine(player: any, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }, color: { red: number; green: number; blue: number; alpha: number }) {
-    if (!debugLineFunc) {
-        console.log("Debug utilities are not available. AddlineFunction.");
+    if (!debugLineFunc || !debugDrawerFunc) {
         return;
     }
     const line = new debugLineFunc(start, end);
 
     line.color = color;
     line.visibleTo = [player];
-    if (!debugDrawerFunc) {
-        console.log("Debug utilities are not available. AddlineFunction.");
-        return;
-    }
     debugDrawerFunc.addShape(line);
 }
 
@@ -157,7 +156,6 @@ function* chunkDebugGenerator(): Generator<void, void, unknown> {
          * Clear all existing debug shapes before redrawing.
          */
         if (!debugDrawerFunc) {
-            console.log("Debug utilities are not available.");
             return;
         }
         debugDrawerFunc.removeAll();
@@ -288,11 +286,9 @@ export function disable() {
     debugEnabled = false;
 
     lastPlayerChunks.clear();
-    if (!debugDrawerFunc) {
-        console.log("Debug utilities are not available.");
-        return;
+    if (debugDrawerFunc) {
+        debugDrawerFunc.removeAll();
     }
-    debugDrawerFunc.removeAll();
 }
 
 /**
@@ -302,15 +298,11 @@ export function disable() {
  */
 export async function toggleChunks(sender?: any) {
     if (!sender?.id) return;
-    /**
-     * Verify server-admin module availability.
-     * Prevents errors when running on Realms.
-     */
+
     const supported = await ensureDebugUtilitiesSupport();
 
     if (!supported || !debugDrawerFunc || !debugLineFunc) {
         sender.sendMessage("§o§c[Paradox] Chunkborders not supported on this platform.");
-
         return;
     }
 
