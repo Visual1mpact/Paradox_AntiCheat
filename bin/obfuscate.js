@@ -1,8 +1,7 @@
 /**
  * @file obfuscate.js
- * Standalone post-build obfuscation script.
- * Reads esbuild output, obfuscates the payload, fragments it into Italian food ES modules,
- * and overwrites 'build/scripts/paradox.js' with a module loader.
+ * Unified post-build obfuscation script.
+ * Fragments payload into food modules and obfuscates the entire module loader framework.
  */
 
 import fs from "node:fs";
@@ -39,21 +38,36 @@ const ITALIAN_FOODS = [
 ];
 
 /**
- * Synchronously writes content and forces an OS disk sync.
- * Eliminates race conditions where 7-Zip reads stale/uncommitted file handles.
+ * Safely splits a string into chunks without cutting through multi-byte Unicode
+ * surrogate pairs or broken escape sequences.
+ *
+ * @param {string} str - String to split.
+ * @param {number} numChunks - Target number of chunks.
+ * @returns {string[]} Array of string fragments.
+ */
+function safeChunkString(str, numChunks) {
+    const chars = Array.from(str); // Respects multi-byte Unicode code points
+    const chunkSize = Math.ceil(chars.length / numChunks);
+    const chunks = [];
+
+    for (let i = 0; i < chars.length; i += chunkSize) {
+        chunks.push(chars.slice(i, i + chunkSize).join(""));
+    }
+    return chunks;
+}
+
+/**
+ * Synchronously writes content to disk.
  *
  * @param {string} filePath - Destination file path.
  * @param {string} content - Code payload to write.
  */
-function writeAndFileSync(filePath, content) {
-    const fd = fs.openSync(filePath, "w");
-    fs.writeFileSync(fd, content, "utf8");
-    fs.fsyncSync(fd);
-    fs.closeSync(fd);
+function writeFileSync(filePath, content) {
+    fs.writeFileSync(filePath, content, "utf8");
 }
 
 /**
- * Obfuscates the target bundle and fragments it across modular food files.
+ * Obfuscates target code and wraps the loader logic in a single obfuscation pass.
  *
  * @returns {Promise<void>}
  */
@@ -63,67 +77,35 @@ export async function obfuscateBundle() {
         process.exit(1);
     }
 
-    console.log("[Obfuscator] Running single-pass obfuscation...");
+    console.log("[Obfuscator] Processing payload and chunking...");
     let rawCode = fs.readFileSync(BUNDLE_PATH, "utf8");
 
-    // Remove the esbuild-injected banner header so top-level imports aren't passed to eval()
     if (rawCode.startsWith(bannerHeader)) {
         rawCode = rawCode.slice(bannerHeader.length);
     }
 
-    const obfuscationResult = JavaScriptObfuscator.obfuscate(rawCode, {
-        compact: true,
-        controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.75,
-        deadCodeInjection: false,
-        identifierNamesGenerator: "hexadecimal",
-        renameGlobals: false,
-        selfDefending: false,
-        simplify: true,
-        splitStrings: true,
-        splitStringsChunkLength: 10,
-        stringArray: true,
-        stringArrayCallsTransform: true,
-        stringArrayEncoding: ["base64"],
-        stringArrayThreshold: 0.75,
-        target: "node",
-    });
-
-    const obfuscatedPayload = obfuscationResult.getObfuscatedCode();
-
-    console.log(`[Obfuscator] Fragmenting code across ${ITALIAN_FOODS.length} Italian food modules...`);
-    const chunkSize = Math.ceil(obfuscatedPayload.length / ITALIAN_FOODS.length);
+    // 1. Chunk the raw code safely BEFORE obfuscation
+    const chunks = safeChunkString(rawCode, ITALIAN_FOODS.length);
     const chunkManifest = [];
 
-    for (let i = 0; i < ITALIAN_FOODS.length; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(start + chunkSize, obfuscatedPayload.length);
-        const chunkData = obfuscatedPayload.slice(start, end);
-
-        if (chunkData.length === 0) continue;
-
+    for (let i = 0; i < chunks.length; i++) {
         const foodName = ITALIAN_FOODS[i];
         const fileName = `${foodName}.js`;
         const filePath = path.join(OUTPUT_DIR, fileName);
 
-        const moduleContent = `/** Obfuscated chunk: ${foodName} */\nexport const chunk = ${JSON.stringify(chunkData)};\n`;
-        writeAndFileSync(filePath, moduleContent);
+        // Export raw chunks from food modules
+        const moduleContent = `/** Chunk: ${foodName} */\nexport const chunk = ${JSON.stringify(chunks[i])};\n`;
+        writeFileSync(filePath, moduleContent);
 
         chunkManifest.push({ name: foodName, file: fileName });
     }
 
-    console.log("[Obfuscator] Rewriting 'paradox.js' as unified module loader entry point...");
-
+    // 2. Build the un-obfuscated loader source code
     const foodImports = chunkManifest.map((item, idx) => `import { chunk as c${idx} } from "./${item.file}";`).join("\n");
     const chunkReferences = chunkManifest.map((_, idx) => `c${idx}`).join(", ");
 
-    const loaderContent = `${bannerHeader}
+    const rawLoaderSource = `${foodImports}
 
-${foodImports}
-
-/**
- * Paradox AntiCheat Runtime Loader
- */
 (function () {
     const chunks = [${chunkReferences}];
     const fullPayload = chunks.join("");
@@ -131,11 +113,34 @@ ${foodImports}
 })();
 `;
 
-    writeAndFileSync(BUNDLE_PATH, loaderContent);
-    console.log(`[Obfuscator Done] Successfully written loader to ${BUNDLE_PATH}`);
+    // 3. Obfuscate the ENTIRE loader script (imports, references, and execution logic)
+    console.log("[Obfuscator] Running unified obfuscation pass on loader and payload logic...");
+    const obfuscatedLoader = JavaScriptObfuscator.obfuscate(rawLoaderSource, {
+        compact: true,
+        controlFlowFlattening: true,
+        controlFlowFlatteningThreshold: 0.5,
+        deadCodeInjection: false,
+        identifierNamesGenerator: "hexadecimal",
+        renameGlobals: false,
+        selfDefending: false,
+        simplify: true,
+        splitStrings: true,
+        splitStringsChunkLength: 8,
+        stringArray: true,
+        stringArrayCallsTransform: true,
+        stringArrayEncoding: ["base64"],
+        stringArrayThreshold: 0.8,
+        target: "node",
+    });
+
+    // 4. Prepend bannerHeader back onto the final output
+    const finalOutput = `${bannerHeader}\n${obfuscatedLoader.getObfuscatedCode()}`;
+    writeFileSync(BUNDLE_PATH, finalOutput);
+
+    console.log(`[Obfuscator Done] Successfully protected loader written to ${BUNDLE_PATH}`);
 }
 
-// Ensure execution ONLY when called directly from CLI
+// CLI Execution Check
 const currentFilePath = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
     await obfuscateBundle();
