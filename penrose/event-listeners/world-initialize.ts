@@ -239,7 +239,7 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
     packetMonitorCheck_b: () => startPacketListener(),
     visionCheck_b: () => startVisionCheck(),
     invSync_b: () => startInvSync(),
-    noClipCheck_b: () => stopNoClip(),
+    noClipCheck_b: () => startNoClip(),
     chestLock_b: () => startChestLock(),
     deathCoords_b: () => startDeathCoords(),
     aimbotMonitorCheck_b: () => startAimbotMonitor(),
