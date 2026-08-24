@@ -22,7 +22,8 @@ class TimestampBuffer {
 
     /**
      * Creates a new TimestampBuffer instance.
-     * @param maxSize - The maximum capacity of the timestamp sliding window buffer
+     *
+     * @param {number} maxSize - The maximum capacity of the timestamp sliding window buffer.
      */
     constructor(maxSize: number) {
         this.maxSize = maxSize;
@@ -31,9 +32,10 @@ class TimestampBuffer {
 
     /**
      * Adds a new timestamp to the buffer. Overwrites the oldest timestamp if full.
-     * @param ts - The timestamp in milliseconds to record
+     *
+     * @param {number} ts - The timestamp in milliseconds to record.
      */
-    push(ts: number) {
+    push(ts: number): void {
         const index = (this.start + this.count) % this.maxSize;
         this.buffer[index] = ts;
 
@@ -43,10 +45,11 @@ class TimestampBuffer {
 
     /**
      * Removes all timestamps older than the designated time window relative to `now`.
-     * @param now - Current timestamp in milliseconds
-     * @param window - Allowed time window duration in milliseconds
+     *
+     * @param {number} now - Current timestamp in milliseconds.
+     * @param {number} window - Allowed time window duration in milliseconds.
      */
-    prune(now: number, window: number) {
+    prune(now: number, window: number): void {
         while (this.count > 0) {
             const ts = this.buffer[this.start];
             if (now - ts <= window) break;
@@ -57,7 +60,8 @@ class TimestampBuffer {
 
     /**
      * Retrieves the active count of valid timestamps currently stored.
-     * @returns The number of un-pruned timestamps in the buffer
+     *
+     * @returns {number} The number of un-pruned timestamps in the buffer.
      */
     size(): number {
         return this.count;
@@ -84,7 +88,8 @@ const LOCKDOWN_PROPERTY = "lockdown_b";
 /**
  * Retrieves the persisted server proxy token from world dynamic properties,
  * or generates and saves a new token if one does not exist.
- * @returns The active AES-encrypted proxy token string
+ *
+ * @returns {string} The active AES-encrypted proxy token string.
  */
 function getOrCreateProxyToken(): string {
     let token = world.getDynamicProperty(TOKEN_PROPERTY) as string | undefined;
@@ -100,7 +105,8 @@ function getOrCreateProxyToken(): string {
 /**
  * Generates a truncated hexadecimal tag derived from the server's hashed proxy token.
  * Used for safely tagging and kicking targeted players via Minecraft selector commands.
- * @returns A 16-character hexadecimal tag string
+ *
+ * @returns {string} A 16-character hexadecimal tag string.
  */
 function getKickTag(): string {
     const token = getOrCreateProxyToken();
@@ -110,7 +116,8 @@ function getKickTag(): string {
 /**
  * Retrieves the stored AES encryption key or generates a new 128-bit key if missing.
  * Persists the hexadecimal representation inside world dynamic properties.
- * @returns The CryptoES WordArray representing the active AES key
+ *
+ * @returns {CryptoES.WordArray} The CryptoES WordArray representing the active AES key.
  */
 function getOrCreateAESKey(): CryptoES.WordArray {
     let stored = world.getDynamicProperty(AES_KEY_PROPERTY) as string | undefined;
@@ -129,7 +136,8 @@ function getOrCreateAESKey(): CryptoES.WordArray {
 /**
  * Generates a dynamic AES-encrypted server token value.
  * Encrypts a random 256-bit binary blob using the server's AES key.
- * @returns Base64-encoded string representation of the encrypted token
+ *
+ * @returns {string} Base64-encoded string representation of the encrypted token.
  */
 function generateEncryptedToken(): string {
     const AES_SECRET = getOrCreateAESKey();
@@ -214,20 +222,21 @@ let playerLeaveRef: ((event: PlayerLeaveBeforeEvent) => void) | null = null;
 let playerSpawnRef: ((event: PlayerSpawnAfterEvent) => void) | null = null;
 
 /** Module reference for server-net event management API */
-let serverNet: typeof import("@minecraft/server-net").beforeEvents;
+let serverNet: typeof import("@minecraft/server-net").beforeEvents | undefined;
 /** Enumeration reference containing server network packet identifiers */
-let PacketId: typeof import("@minecraft/server-net").PacketId;
+let PacketId: typeof import("@minecraft/server-net").PacketId | undefined;
 /** Module reference for server-admin event management API */
-let serverAdmin: typeof import("@minecraft/server-admin").beforeEvents;
+let serverAdmin: typeof import("@minecraft/server-admin").beforeEvents | undefined;
 
 /* ----------------- UTILITIES ----------------- */
 
 /**
  * Safely kicks a player using deferred execution in system context to prevent
  * read-only operation errors during before-event callbacks.
- * @param player - Target player object to disconnect
+ *
+ * @param {Player} player - Target player object to disconnect.
  */
-function banish(player: Player) {
+function banish(player: Player): void {
     if (!player?.isValid) return;
     const name = player.name;
 
@@ -247,9 +256,10 @@ function banish(player: Player) {
 
 /**
  * Purges all rate-limiting and buffer tracking maps associated with a specific player name.
- * @param name - Username of the player to cleanup
+ *
+ * @param {string} name - Username of the player to cleanup.
  */
-function cleanupPlayerData(name: string) {
+function cleanupPlayerData(name: string): void {
     packetLimits.delete(name);
     playerGlobalBuffers.delete(name);
     lastPacketType.delete(name);
@@ -261,7 +271,7 @@ function cleanupPlayerData(name: string) {
  * Sweeps tracking state to purge orphaned memory structures belonging to disconnected
  * or unspawned player entries not tracked by PlayerCache.
  */
-function sweepOrphanedPlayerState() {
+function sweepOrphanedPlayerState(): void {
     const activeNames = new Set(PlayerCache.getPlayerNames());
 
     for (const name of packetLimits.keys()) {
@@ -275,7 +285,7 @@ function sweepOrphanedPlayerState() {
  * Triggers server-wide lockdown, blocking new player connections and setting lockdown indicators.
  * Automatically clears after a 1200-tick delay (60 seconds).
  */
-function triggerLockdown() {
+function triggerLockdown(): void {
     if (isLockedDown) return;
     isLockedDown = true;
     world.setDynamicProperty(LOCKDOWN_PROPERTY, true);
@@ -294,7 +304,9 @@ function triggerLockdown() {
 /**
  * Intercepts early player join attempts to validate player names, enforce ban lists,
  * perform connection-rate checks, and enforce active lockdown state.
- * @param event - The AsyncPlayerJoinBeforeEvent context
+ *
+ * @param {AsyncPlayerJoinBeforeEvent} event - The AsyncPlayerJoinBeforeEvent context.
+ * @returns {Promise<void>} Resolves when checking completes.
  */
 async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent): Promise<void> {
     const now = Date.now();
@@ -339,9 +351,10 @@ async function handleAsyncJoin(event: AsyncPlayerJoinBeforeEvent): Promise<void>
 
 /**
  * Validates player client specifications on spawn to disconnect invalid or modified clients.
- * @param event - PlayerSpawnAfterEvent event parameter
+ *
+ * @param {PlayerSpawnAfterEvent} event - PlayerSpawnAfterEvent event parameter.
  */
-function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
+function handlePlayerSpawn(event: PlayerSpawnAfterEvent): void {
     const { player, initialSpawn } = event;
     if (!initialSpawn || !player?.isValid) return;
 
@@ -377,25 +390,20 @@ function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
  * If these imports fail or return dummy objects (e.g., when hosted on a Realm), the initialization
  * gracefully logs a warning and returns `false`, preventing script runtime crashes.
  *
- * @returns Resolves to `false` if BDS modules/events are missing (Realms environment), or `void` on successful setup.
+ * @returns {Promise<boolean>} Resolves to `false` if BDS modules/events are missing (Realms environment), or `true` on successful setup.
  */
-async function initializePacketHandler(): Promise<boolean | void> {
-    try {
-        const networkModule = await import("@minecraft/server-net").catch(() => null);
-        const adminModule = await import("@minecraft/server-admin").catch(() => null);
+async function initializePacketHandler(): Promise<boolean> {
+    const networkModule = await import("@minecraft/server-net").catch(() => null);
+    const adminModule = await import("@minecraft/server-admin").catch(() => null);
 
-        if (!networkModule?.beforeEvents?.packetReceive || !networkModule?.PacketId || !adminModule?.beforeEvents?.asyncPlayerJoin) {
-            console.warn("[Paradox] BDS Network/Admin APIs unavailable. Rate-limiting is disabled (Realms environment detected).");
-            return false;
-        }
-
-        serverNet = networkModule.beforeEvents;
-        PacketId = networkModule.PacketId;
-        serverAdmin = adminModule.beforeEvents;
-    } catch {
-        console.warn("[Paradox] Network/Admin APIs failed to load. Rate-limiting disabled.");
+    if (!networkModule?.beforeEvents?.packetReceive || !networkModule?.PacketId || !adminModule?.beforeEvents?.asyncPlayerJoin) {
+        console.warn("[Paradox] BDS Network/Admin APIs unavailable. Rate-limiting is disabled (Realms environment detected).");
         return false;
     }
+
+    serverNet = networkModule.beforeEvents;
+    PacketId = networkModule.PacketId;
+    serverAdmin = adminModule.beforeEvents;
 
     PlayerCache.init();
 
@@ -426,7 +434,7 @@ async function initializePacketHandler(): Promise<boolean | void> {
         const now = Date.now();
 
         // Command burst check
-        if (packetId === PacketId.CommandRequestPacket) {
+        if (PacketId && packetId === PacketId.CommandRequestPacket) {
             let cmdBuffer = commandBurst.get(playerName);
             if (!cmdBuffer) {
                 cmdBuffer = new TimestampBuffer(20);
@@ -523,17 +531,20 @@ async function initializePacketHandler(): Promise<boolean | void> {
     serverNet.packetReceive.subscribe(packetHandlerRef, {
         monitoredPacketIds: [PacketId.CommandRequestPacket, PacketId.LegacyTelemetryEventPacket, PacketId.TextPacket, PacketId.EmotePacket, PacketId.MovePlayerPacket],
     });
+
+    return true;
 }
 
 /* ----------------- START / STOP ----------------- */
 
 /**
  * Starts and initializes packet processing, anti-flood listeners, and rate-limiting structures.
- * @returns Promise resolving to `true` if initialized successfully, or `false` on failure (e.g. on Realms).
+ *
+ * @returns {Promise<boolean>} Promise resolving to `true` if initialized successfully, or `false` on failure (e.g. on Realms).
  */
 export async function startPacketHandler(): Promise<boolean> {
     const success = await initializePacketHandler();
-    return success !== false;
+    return success;
 }
 
 /**
@@ -541,8 +552,15 @@ export async function startPacketHandler(): Promise<boolean> {
  * and purges all active memory buffers.
  */
 export function stopPacketHandler(): void {
-    if (serverNet && packetHandlerRef) serverNet.packetReceive.unsubscribe(packetHandlerRef);
-    if (serverAdmin && asyncJoinRef) serverAdmin.asyncPlayerJoin.unsubscribe(asyncJoinRef);
+    if (serverNet?.packetReceive && packetHandlerRef) {
+        serverNet.packetReceive.unsubscribe(packetHandlerRef);
+        serverNet = undefined;
+        PacketId = undefined;
+    }
+    if (serverAdmin?.asyncPlayerJoin && asyncJoinRef) {
+        serverAdmin.asyncPlayerJoin.unsubscribe(asyncJoinRef);
+        serverAdmin = undefined;
+    }
     if (playerLeaveRef) EventCoordinator.unsubscribeBefore("playerLeave", playerLeaveRef);
     if (playerSpawnRef) EventCoordinator.unsubscribeAfter("playerSpawn", playerSpawnRef);
 

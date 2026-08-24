@@ -1,7 +1,7 @@
 import { system } from "@minecraft/server";
 import type { beforeEvents as BeforeEventsType } from "@minecraft/server-net";
 
-let beforeEvents: typeof BeforeEventsType;
+let beforeEvents: typeof BeforeEventsType | undefined;
 
 /**
  * Maximum packets allowed in TIME_WINDOW.
@@ -36,7 +36,12 @@ class TimestampBuffer {
     private start = 0;
     private count = 0;
 
-    push(timestamp: number) {
+    /**
+     * Pushes a timestamp into the ring buffer.
+     *
+     * @param {number} timestamp - Epoch timestamp in milliseconds.
+     */
+    push(timestamp: number): void {
         const index = (this.start + this.count) % BUFFER_SIZE;
         this.buffer[index] = timestamp;
 
@@ -47,7 +52,12 @@ class TimestampBuffer {
         }
     }
 
-    prune(now: number) {
+    /**
+     * Removes timestamps outside the defined time window.
+     *
+     * @param {number} now - Current epoch timestamp in milliseconds.
+     */
+    prune(now: number): void {
         while (this.count > 0) {
             const ts = this.buffer[this.start];
             if (now - ts <= TIME_WINDOW) break;
@@ -57,11 +67,21 @@ class TimestampBuffer {
         }
     }
 
-    size() {
+    /**
+     * Retrieves the current buffer size.
+     *
+     * @returns {number} Active element count.
+     */
+    size(): number {
         return this.count;
     }
 
-    empty() {
+    /**
+     * Checks if the buffer is empty.
+     *
+     * @returns {boolean} True if empty, false otherwise.
+     */
+    empty(): boolean {
         return this.count === 0;
     }
 }
@@ -80,8 +100,11 @@ let cleanupTaskId: number | undefined;
 
 /**
  * Checks packet spam using ring buffers.
+ *
+ * @param {string} packetId - Identifier of the incoming packet.
+ * @param {string} playerName - Target player name.
  */
-function checkPacketSpam(packetId: string, playerName: string) {
+function checkPacketSpam(packetId: string, playerName: string): void {
     const now = Date.now();
 
     let playerMap = packetFrequency.get(packetId);
@@ -100,13 +123,11 @@ function checkPacketSpam(packetId: string, playerName: string) {
     buffer.prune(now);
 
     if (buffer.size() > SPAM_THRESHOLD) {
-        const key = packetId + "|" + playerName;
-
+        const key = `${packetId}|${playerName}`;
         const last = lastWarning.get(key) ?? 0;
 
         if (now - last > TIME_WINDOW) {
             console.warn(`[Paradox] Potential spam detected | Packet: ${packetId} | Count: ${buffer.size()} | Player: ${playerName}`);
-
             lastWarning.set(key, now);
         }
     }
@@ -114,8 +135,10 @@ function checkPacketSpam(packetId: string, playerName: string) {
 
 /**
  * Packet receive callback.
+ *
+ * @param {import("@minecraft/server-net").PacketReceivedBeforeEvent} event - Incoming packet event.
  */
-const packetReceiveCallback = (event: import("@minecraft/server-net").PacketReceivedBeforeEvent) => {
+const packetReceiveCallback = (event: import("@minecraft/server-net").PacketReceivedBeforeEvent): void => {
     const packetId = event.packetId;
 
     if (IGNORED_PACKETS.has(packetId)) return;
@@ -128,7 +151,7 @@ const packetReceiveCallback = (event: import("@minecraft/server-net").PacketRece
 /**
  * Memory cleanup task.
  */
-function runCleanup() {
+function runCleanup(): void {
     const now = Date.now();
 
     for (const [packetId, playerMap] of packetFrequency) {
@@ -156,7 +179,7 @@ function runCleanup() {
  * Starts packet monitoring.
  * Safely guards against missing server-net beforeEvents/packetReceive on Realms.
  *
- * @returns Resolves to `true` if listening started, or `false` on Realms/unsupported platforms.
+ * @returns {Promise<boolean>} Resolves to `true` if listening started, or `false` on Realms/unsupported platforms.
  */
 export async function startPacketListener(): Promise<boolean> {
     const networkModule = await import("@minecraft/server-net").catch(() => null);
@@ -167,7 +190,6 @@ export async function startPacketListener(): Promise<boolean> {
     }
 
     beforeEvents = networkModule.beforeEvents;
-
     beforeEvents.packetReceive.subscribe(packetReceiveCallback);
 
     if (cleanupTaskId === undefined) {
@@ -181,9 +203,10 @@ export async function startPacketListener(): Promise<boolean> {
 /**
  * Stops packet monitoring.
  */
-export function stopPacketListener() {
-    if (beforeEvents) {
+export function stopPacketListener(): void {
+    if (beforeEvents?.packetReceive) {
         beforeEvents.packetReceive.unsubscribe(packetReceiveCallback);
+        beforeEvents = undefined;
     }
 
     if (cleanupTaskId !== undefined) {

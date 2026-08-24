@@ -13,8 +13,8 @@ const MAX_PACKET_SIZE_THRESHOLD = 16384;
 
 let isAntiCrashEnabled = false;
 let packetHandlerRef: ((data: PacketReceivedBeforeEvent) => void) | null = null;
-let serverNet: typeof import("@minecraft/server-net").beforeEvents;
-let PacketId: typeof import("@minecraft/server-net").PacketId;
+let serverNet: typeof import("@minecraft/server-net").beforeEvents | undefined;
+let PacketId: typeof import("@minecraft/server-net").PacketId | undefined;
 
 /**
  * Distributes an in-game alert notification to all active staff players
@@ -35,9 +35,11 @@ function alertStaff(player: Player, sizeKB: string, playerId?: string): void {
 
 /**
  * Handles incoming packets to detect SubChunkRequest exploits.
+ *
+ * @param {PacketReceivedBeforeEvent} data - The received packet event data.
  */
-function handlePacket(data: PacketReceivedBeforeEvent) {
-    if (data.packetId !== PacketId.SubChunkRequestPacket) return;
+function handlePacket(data: PacketReceivedBeforeEvent): void {
+    if (data.packetId !== PacketId?.SubChunkRequestPacket) return;
 
     const player = data.sender;
     if (!player?.isValid) return;
@@ -75,34 +77,31 @@ function handlePacket(data: PacketReceivedBeforeEvent) {
  * Initializes the packet handler logic by dynamically importing server-net.
  * Safely returns `false` if running on Realms where BDS APIs are absent or stubbed out.
  *
- * @returns Resolves to `true` if server-net APIs are valid, or `false` on Realms.
+ * @returns {Promise<boolean>} Resolves to `true` if server-net APIs are valid, or `false` on Realms.
  */
 async function initializeAntiCrash(): Promise<boolean> {
-    try {
-        const networkModule = await import("@minecraft/server-net").catch(() => null);
+    const networkModule = await import("@minecraft/server-net").catch(() => null);
 
-        if (!networkModule?.beforeEvents?.packetReceive || !networkModule?.PacketId) {
-            console.warn("[Paradox] Anti-Crash disabled: server-net API unavailable (Realms environment detected).");
-            return false;
-        }
-
-        serverNet = networkModule.beforeEvents;
-        PacketId = networkModule.PacketId;
-        return true;
-    } catch {
-        console.warn("[Paradox] Anti-Crash failed to load network modules.");
+    if (!networkModule?.beforeEvents?.packetReceive || !networkModule?.PacketId) {
+        console.warn("[Paradox] Anti-Crash disabled: server-net API unavailable (Realms environment detected).");
         return false;
     }
+
+    serverNet = networkModule.beforeEvents;
+    PacketId = networkModule.PacketId;
+    return true;
 }
 
 /**
  * Starts the Anti-Crash module.
+ *
+ * @returns {Promise<boolean>} True if successfully enabled, false otherwise.
  */
 export async function startAntiCrash(): Promise<boolean> {
     if (isAntiCrashEnabled) return true;
 
     const success = await initializeAntiCrash();
-    if (!success) return false;
+    if (!success || !serverNet?.packetReceive || !PacketId) return false;
 
     isAntiCrashEnabled = true;
     packetHandlerRef = (data) => handlePacket(data);
@@ -117,11 +116,11 @@ export async function startAntiCrash(): Promise<boolean> {
 /**
  * Stops the Anti-Crash module.
  */
-export function stopAntiCrash() {
+export function stopAntiCrash(): void {
     if (!isAntiCrashEnabled) return;
 
     isAntiCrashEnabled = false;
-    if (packetHandlerRef && serverNet) {
+    if (packetHandlerRef && serverNet?.packetReceive) {
         serverNet.packetReceive.unsubscribe(packetHandlerRef);
         packetHandlerRef = null;
     }
