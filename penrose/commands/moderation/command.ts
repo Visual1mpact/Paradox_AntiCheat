@@ -1,14 +1,14 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/command-handler";
-import { allCommands, commandHandler } from "../../event-listeners/world-initialize";
-import { disabledCommandsDB } from "../../event-listeners/world-initialize";
+import { allCommands, commandHandler, disabledCommandsDB } from "../../event-listeners/world-initialize";
 
 /**
  * Command to dynamically enable, disable, or list other commands.
+ * Admin clearance Level 4 bypasses disabled checks.
  */
 export const command: Command = {
     name: "command",
-    description: "Enable, disable, or list commands dynamically.",
+    description: "Enable, disable, or list commands dynamically (Security Clearance 4 bypasses disabled status).",
     usage: "{prefix}command [ enable | disable | list ] <commandName1> [commandName2] ...",
     category: "Moderation",
     examples: [`{prefix}command disable kick ban`, `{prefix}command enable kick ban`, `{prefix}command list`],
@@ -24,6 +24,7 @@ export const command: Command = {
             "§7• §fList Commands§7: View which commands are currently enabled or disabled.\n\n" +
             "§7Command Rules:\n" +
             "§7• The `command` command itself cannot be disabled.\n" +
+            "§7• Security Clearance 4 admins bypass command restrictions and can execute disabled commands.\n" +
             "§7• Only valid commands in the registry can be enabled or disabled.\n" +
             "§7• Disabled commands record metadata including who disabled them and when.\n" +
             "§7• All results are displayed in a tree-style structured message.\n\n",
@@ -102,33 +103,22 @@ export const command: Command = {
             let listMessage = "§2[§7Paradox§2]§o§7 Command Status:\n";
 
             /**
-             * Formats a timestamp into a readable string.
-             *
-             * @param timestamp - UNIX timestamp in milliseconds
-             * @returns Formatted string
+             * Converts timestamp into local time string.
+             * @param timestamp - Epoch time in milliseconds
+             * @returns Formatted date string
              */
             const formatTimestamp = (timestamp: number): string => {
                 const date = new Date(timestamp);
                 return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
             };
 
-            /**
-             * Represents an individual item in the tree. It can either be:
-             * - a plain string (for enabled items), or
-             * - an object containing metadata about who disabled the item and when.
-             */
             type TreeItem = string | { name: string; metadata: { disabledBy: string; timestamp: number } };
 
             /**
-             * Generates a formatted tree-style message with multiple titled sections.
-             * Skips any section that has no items.
-             * Each section is rendered with a tree branch prefix and indented list items.
-             * If an item includes metadata, additional context is shown (e.g., who disabled it and when).
-             *
-             * @param sections - An array of section objects, each with a title and list of items.
+             * Renders command state list as an ASCII tree structure.
+             * @param sections - Category sections containing items
              */
             const generateTreeMessage = (sections: { title: string; items: TreeItem[] }[]) => {
-                // Filter out sections with no items
                 const filteredSections = sections.filter((section) => section.items.length > 0);
 
                 filteredSections.forEach((section, index) => {
@@ -142,10 +132,8 @@ export const command: Command = {
                         const indent = isLastSection ? "   " : "│  ";
 
                         if (typeof item === "string") {
-                            // Plain item with no metadata
                             listMessage += `§r  ${indent}${itemBranch} §2${item}§r\n`;
                         } else {
-                            // Item with metadata, show who disabled it and when
                             const { name, metadata } = item;
                             const formattedTime = formatTimestamp(metadata.timestamp);
                             listMessage += `§r  ${indent}${itemBranch} §2${name}§r §7(disabled by §o${metadata.disabledBy}§r§7 @ §o${formattedTime}§7)\n`;
@@ -171,7 +159,6 @@ export const command: Command = {
         const commandNames = args.slice(1);
         const commandHandlerRegistry = commandHandler.getRegisteredCommands();
 
-        // Prepare tracking arrays for results
         const notRegistered: string[] = [];
         const disabledCommands: string[] = [];
         const enabledCommands: string[] = [];
@@ -200,7 +187,6 @@ export const command: Command = {
                     continue;
                 }
 
-                // Remove from the registry and store metadata
                 const index = commandHandlerRegistry.indexOf(registeredCommand);
                 if (index > -1) commandHandlerRegistry.splice(index, 1);
 
@@ -245,15 +231,13 @@ export const command: Command = {
             }
         }
 
-        // Build structured feedback message
         let responseMessage = "§2[§7Paradox§2]§o§7 Command Management Results:\n";
 
         /**
-         * Adds a tree-style result section to the response message.
-         *
-         * @param title - Section title
+         * Appends execution result branches to output message.
+         * @param title - Section header string
          * @param items - List of command names
-         * @param isLastBranch - Whether this is the last main section
+         * @param isLastBranch - Whether section is the last in tree
          */
         const appendResultBranch = (title: string, items: string[], isLastBranch = false) => {
             if (items.length === 0) return;
@@ -267,7 +251,6 @@ export const command: Command = {
             });
         };
 
-        // Determine which section is last for formatting
         const sections = [
             ["Disabled", disabledCommands],
             ["Already Disabled", alreadyDisabled],
@@ -286,7 +269,7 @@ export const command: Command = {
 
         message.sender.sendMessage(responseMessage);
 
-        // Re-apply command handler registry
-        commandHandler.registerCommand(commandHandlerRegistry);
+        // Re-apply command handler registry passing active and master command arrays
+        commandHandler.registerCommand(commandHandlerRegistry, allCommands);
     },
 };

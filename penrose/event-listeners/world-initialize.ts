@@ -134,19 +134,19 @@ import { modStateCommand } from "../commands/moderation/mod-state";
 import { setInvalidMovementVectorState } from "../modules/invalid-movement-vector";
 import { setInventoryMovementState } from "../modules/inventory-movement";
 
+/** Player unique identifier type */
 type PlayerID = string;
 
+/** Channel document structure */
 interface Channel {
     Owner: PlayerID;
     Members: Record<PlayerID, string>;
-    lastActive: number; // store `Date.now()` timestamp
+    lastActive: number;
 }
 
-// Store the lockDownMonitor function reference
 let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 
-// Declare the necessary objects to be exported
 let paradoxModulesDB: OptimizedDatabase<ParadoxModulesSchema>;
 let channelsDB: OptimizedDatabase<ChannelsSchema>;
 let disabledCommandsDB: OptimizedDatabase<DisabledCommandsSchema>;
@@ -163,9 +163,7 @@ let waypointsDB: OptimizedDatabase<WaypointsSchema>;
 let flagsDB: OptimizedDatabase<FlagDatabaseSchema>;
 let commandHandler: CommandHandler;
 
-/**
- * Shared registry lookup table for stopping system modules.
- */
+/** Action callbacks to stop module execution routines */
 export const moduleStopActions: Record<string, () => void> = {
     lagClearCheck_b: () => stopLagClear(),
     gamemodeCheck_b: () => stopGameModeCheck(),
@@ -196,11 +194,7 @@ export const moduleStopActions: Record<string, () => void> = {
     invalidMovementVectorCheck_b: () => setInvalidMovementVectorState(false),
     inventoryMovementCheck_b: () => setInventoryMovementState(false),
     spamCheck_b: async () => {
-        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? {
-            enabled: false,
-        };
-
-        // Disable anti-spam
+        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? { enabled: false };
         moduleData.enabled = false;
         await paradoxModulesDB.set("spamCheck_b", moduleData);
     },
@@ -209,25 +203,18 @@ export const moduleStopActions: Record<string, () => void> = {
             enabled: false,
             settings: { console: false, desktop: false, mobile: false },
         };
-
-        // Preserves all platform restriction settings ({ console, desktop, mobile }) intact
-        await paradoxModulesDB.set("platformBlock_b", {
-            ...moduleData,
-            enabled: false,
-        });
+        await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: false });
     },
 };
 
-/**
- * Shared registry lookup table for starting system modules.
- */
+/** Action callbacks to initialize/start module execution routines */
 export const moduleActions: Record<string, (settings?: any) => void> = {
     lagClearCheck_b: async (settings) => {
         const moduleSettings = settings ?? (await paradoxModulesDB.get("lagClearCheck_b"))?.settings;
         if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
             startLagClear(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
         } else {
-            startLagClear(0, 5, 0); // fallback
+            startLagClear(0, 5, 0);
         }
     },
     gamemodeCheck_b: () => startGameModeCheck(),
@@ -252,7 +239,7 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
     packetMonitorCheck_b: () => startPacketListener(),
     visionCheck_b: () => startVisionCheck(),
     invSync_b: () => startInvSync(),
-    noClipCheck_b: () => startNoClip(),
+    noClipCheck_b: () => stopNoClip(),
     chestLock_b: () => startChestLock(),
     deathCoords_b: () => startDeathCoords(),
     aimbotMonitorCheck_b: () => startAimbotMonitor(),
@@ -265,11 +252,7 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
     invalidMovementVectorCheck_b: () => setInvalidMovementVectorState(true),
     inventoryMovementCheck_b: () => setInventoryMovementState(true),
     spamCheck_b: async () => {
-        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? {
-            enabled: true,
-        };
-
-        // Enable anti-spam
+        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? { enabled: true };
         moduleData.enabled = true;
         await paradoxModulesDB.set("spamCheck_b", moduleData);
     },
@@ -278,16 +261,11 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
             enabled: true,
             settings: { console: false, desktop: false, mobile: false },
         };
-
-        // Preserves all platform restriction settings ({ console, desktop, mobile }) intact
-        await paradoxModulesDB.set("platformBlock_b", {
-            ...moduleData,
-            enabled: true,
-        });
+        await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: true });
     },
 };
 
-// Define all available commands
+/** Master list of all Paradox commands */
 const allCommands: Command[] = [
     opCommand,
     deopCommand,
@@ -371,10 +349,9 @@ const allCommands: Command[] = [
 ];
 
 /**
- * Initializes and instantiates all necessary systems (databases, command handler, etc.)
+ * Initializes all database tables, cleans obsolete keys, and registers command sets.
  */
 async function initializeSystems() {
-    // 1. Instantiate Databases
     paradoxModulesDB = new OptimizedDatabase("paradoxModules");
     channelsDB = new OptimizedDatabase("channels");
     disabledCommandsDB = new OptimizedDatabase("disabledCommands");
@@ -392,7 +369,6 @@ async function initializeSystems() {
 
     const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB];
 
-    // 2. Run Database Migrations (v1 Uncompressed -> v2 LZW Compressed)
     console.log("[Paradox] Running database v2.0 compression migrations...");
     const migrationResults = await Promise.allSettled(dbs.map((db) => db.migrateToV2()));
 
@@ -415,7 +391,6 @@ async function initializeSystems() {
         console.log("[Paradox] All databases are up to date (v2.0 compressed).");
     }
 
-    // 3. Clean up invalid entries
     const cleanResults = await Promise.allSettled(dbs.map((db) => db.clean()));
     cleanResults.forEach((result, i) => {
         if (result.status === "rejected") {
@@ -423,10 +398,12 @@ async function initializeSystems() {
         }
     });
 
-    // 4. Clean up stagnant channels
+    /**
+     * Deletes chat channel entries older than 7 days.
+     */
     async function channelsDBCleanup() {
         const now = Date.now();
-        const cutoff = now - 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+        const cutoff = now - 7 * 24 * 60 * 60 * 1000;
 
         for (const [channelName, channel] of (await channelsDB.entries()) as [string, Channel][]) {
             if (typeof channel.lastActive !== "number") continue;
@@ -439,22 +416,20 @@ async function initializeSystems() {
 
     await channelsDBCleanup();
 
-    // 5. Instantiate CommandHandler
     commandHandler = new CommandHandler();
 
-    // Fetch disabled commands from the database and create a Set for faster lookups
     const disabledCommandsSet = new Set((await disabledCommandsDB.entries()).map((entry) => entry[0]));
-
-    // Filter out disabled commands using the Set for faster lookup
     const enabledCommands = allCommands.filter((command) => !disabledCommandsSet.has(command.name));
 
-    // Register only the enabled commands
-    commandHandler.registerCommand(enabledCommands);
+    // Register active commands and pass master allCommands list
+    commandHandler.registerCommand(enabledCommands, allCommands);
 }
 
 /**
- * Compares two version strings in the format "vX.Y.Z" and returns -1 if the first version is smaller,
- * 1 if the first version is greater, and 0 if both are equal.
+ * Compares two semantic version strings.
+ * @param version1 - First version string
+ * @param version2 - Second version string
+ * @returns -1 if v1 < v2, 1 if v1 > v2, 0 if equal
  */
 function compareVersions(version1: string, version2: string): number {
     const parseVersion = (version: string) => {
@@ -479,7 +454,7 @@ function compareVersions(version1: string, version2: string): number {
 }
 
 /**
- * Validates the stored command prefix and resets it to default if it violates safety rules.
+ * Validates or initializes global world command prefix.
  */
 function initializePrefix() {
     const DEFAULT_PREFIX = ":";
@@ -499,7 +474,7 @@ function initializePrefix() {
 }
 
 /**
- * Initializes the global banned players list if it does not exist.
+ * Initializes global banned players dynamic property entries.
  */
 function initializeGlobalBanList() {
     const globalBannedPlayersKey = "globalBannedPlayers";
@@ -519,7 +494,7 @@ function initializeGlobalBanList() {
 }
 
 /**
- * Initializes and updates paradoxModules from the world dynamic property.
+ * Initializes and starts enabled anti-cheat modules.
  */
 async function initializeParadoxModules(): Promise<void> {
     const paradoxModules = await paradoxModulesDB.entries();
@@ -536,7 +511,7 @@ async function initializeParadoxModules(): Promise<void> {
 }
 
 /**
- * Subscribes to lockdown events.
+ * Subscribes listener to track server lockdown state.
  */
 function subscribeToLockDown() {
     lockDownMonitor = lockdownCommand.execute(undefined, undefined, undefined, true) as (event: PlayerSpawnAfterEvent) => void;
@@ -556,7 +531,7 @@ function subscribeToLockDown() {
 }
 
 /**
- * Unsubscribes from lockdown events.
+ * Unsubscribes listener from tracking server lockdown state.
  */
 function unsubscribeFromLockDown() {
     const cleanupLockdownState = () => {
@@ -572,7 +547,7 @@ function unsubscribeFromLockDown() {
 }
 
 /**
- * Handles active lockdown state on server start.
+ * Evaluates lockdown state on server start.
  */
 function handleLockDown() {
     const isLockdownActive = world.getDynamicProperty("lockdown_b");
@@ -582,7 +557,7 @@ function handleLockDown() {
 }
 
 /**
- * Checks if PvP is globally enabled and initializes PvP system.
+ * Sets PvP state based on world dynamic settings.
  */
 function handlePvP() {
     const isPvPGlobalEnabled = world.getDynamicProperty("pvpGlobalEnabled") ?? false;
@@ -594,7 +569,7 @@ function handlePvP() {
 }
 
 /**
- * Initializes Double Jump if enabled.
+ * Initializes double jump listener if setting is enabled.
  */
 function handleDoubleJump() {
     const isDoubleJumpEnabled = world.getDynamicProperty("doubleJumpEnabled") ?? false;
@@ -604,7 +579,7 @@ function handleDoubleJump() {
 }
 
 /**
- * Initializes modules and subsystems on world load.
+ * Runs world initialization hooks across systems, subscriptions, and modules.
  */
 async function onWorldInitialize(): Promise<void> {
     if (commandHandler.getGuiItem()) itemUseSubscription.subscribe();
@@ -623,7 +598,7 @@ async function onWorldInitialize(): Promise<void> {
 }
 
 /**
- * Subscribes to the world load event.
+ * Main entrance subscription bound to world initialize event.
  */
 export function subscribeToWorldInitialize() {
     EventCoordinator.subscribeAfter("worldLoad", async () => {
@@ -633,5 +608,4 @@ export function subscribeToWorldInitialize() {
     });
 }
 
-// Export instantiated databases and utilities
 export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB };

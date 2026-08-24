@@ -5,7 +5,7 @@ import * as CryptoES from "../node_modules/crypto-es";
  * Security clearance levels for commands.
  * Determines which players can execute certain commands.
  */
-enum SecurityClearance {
+export enum SecurityClearance {
     Level1 = 1,
     Level2 = 2,
     Level3 = 3,
@@ -129,9 +129,10 @@ export interface Command {
     /** Required security clearance to execute */
     securityClearance: SecurityClearance;
 
+    /** Optional sub-argument security level requirements */
     argSecurity?: Record<string, SecurityClearance>;
 
-    /** Optional GUI icon */
+    /** Optional GUI icon texture path */
     icon?: string;
 
     /** Optional GUI instructions */
@@ -154,8 +155,11 @@ export class CommandHandler {
     /** Commands organized by category */
     private commandsByCategory: Map<string, Command[]> = new Map();
 
-    /** Commands lookup by name */
+    /** Currently active commands lookup by lowercased name */
     private commands: Map<string, Command> = new Map();
+
+    /** Master list of all registered commands (including disabled ones) */
+    private masterCommands: Map<string, Command> = new Map();
 
     /** Current command prefix */
     private prefix: string;
@@ -182,7 +186,7 @@ export class CommandHandler {
     private lastCommandTimestamp = 0;
 
     /**
-     * Initializes a new CommandHandler and sets the prefix.
+     * Initializes a new CommandHandler and retrieves the current prefix and GUI item settings.
      */
     constructor() {
         this.prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
@@ -190,14 +194,22 @@ export class CommandHandler {
     }
 
     /**
-     * Registers an array of commands and organizes them by category.
-     * @param commands - Array of Command objects
+     * Registers active commands and maintains a master list of all available commands.
+     * @param activeCommands - Currently active Command objects
+     * @param allCommands - Optional full array of all registered commands
      */
-    registerCommand(commands: Command[]) {
+    registerCommand(activeCommands: Command[], allCommands?: Command[]) {
         this.commands.clear();
         this.commandsByCategory.clear();
 
-        commands.forEach((command) => {
+        if (allCommands) {
+            this.masterCommands.clear();
+            allCommands.forEach((cmd) => {
+                this.masterCommands.set(cmd.name.toLowerCase(), cmd);
+            });
+        }
+
+        activeCommands.forEach((command) => {
             command.usage = command.usage.replaceAll("{prefix}", this.prefix);
             command.examples = command.examples.map((ex) => ex.replaceAll("{prefix}", this.prefix));
 
@@ -211,7 +223,8 @@ export class CommandHandler {
     }
 
     /**
-     * Returns all registered commands.
+     * Returns all currently active registered commands.
+     * @returns Array of active commands
      */
     getRegisteredCommands(): Command[] {
         return Array.from(this.commands.values());
@@ -219,16 +232,19 @@ export class CommandHandler {
 
     /**
      * Handles a player sending a command message.
-     * @param message - Chat event
+     * Clearance Level 4 bypasses rate limits.
+     * @param message - Chat send before event
      * @param player - Player sending the command
-     * @param prefix - Command prefix
+     * @param prefix - Current prefix used
+     * @returns True if processed as a command, false otherwise
      */
     async handleCommand(message: ChatSendBeforeEvent, player: Player, prefix: string): Promise<boolean> {
         const args = message.message.slice(prefix.length).trim().split(/\s+/);
         const commandName = args.shift()?.toLowerCase();
         if (!commandName) return false;
 
-        if (!this.canExecuteCommand()) {
+        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
+        if (playerSecurityClearance < SecurityClearance.Level4 && !this.canExecuteCommand()) {
             player.sendMessage("\n§2[§7Paradox§2]§o§7 Commands are being rate-limited. Please wait.");
             return true;
         }
@@ -245,15 +261,16 @@ export class CommandHandler {
     }
 
     /**
-     * Returns the current GUI trigger item ID.
+     * Returns the item ID configured to open the GUI form.
+     * @returns Minecraft item ID or undefined
      */
     getGuiItem(): string | undefined {
         return this.guiItem;
     }
 
     /**
-     * Sets the GUI trigger item ID.
-     * @param itemId - Minecraft item ID (e.g. 'minecraft:compass')
+     * Sets the item ID configured to open the GUI form.
+     * @param itemId - Minecraft item ID string or undefined
      */
     setGuiItem(itemId: string | undefined) {
         this.guiItem = itemId;
@@ -261,8 +278,8 @@ export class CommandHandler {
     }
 
     /**
-     * Updates the command prefix dynamically and updates all command usage strings and examples.
-     * @param player - Player triggering prefix update
+     * Updates prefix variables across commands dynamically.
+     * @param player - Player updating the prefix
      */
     updatePrefix(player: Player) {
         if (this.prefixUpdateLock) {
@@ -289,7 +306,7 @@ export class CommandHandler {
     }
 
     /**
-     * Waits for locks to clear and acquires command execution lock.
+     * Acquires lock for processing command executions sequentially.
      */
     private async acquireCommandExecutionLock() {
         while (this.prefixLock || this.prefixUpdateLock) {
@@ -299,42 +316,52 @@ export class CommandHandler {
     }
 
     /**
-     * Releases the command execution lock.
+     * Releases lock after command execution completes.
      */
     private releaseCommandExecutionLock() {
         this.prefixLock = false;
     }
 
     /**
-     * Executes a command safely, checks security, and handles help requests.
-     * @param message - Chat message event
-     * @param player - Player executing the command
-     * @param commandName - Command keyword
-     * @param args - Command arguments
-     * @param defaultPrefix - Current command prefix
+     * Executes a command safely, checks security clearance, and handles help queries.
+     * Checks masterCommands if a command is disabled and lets Security Clearance 4 bypass.
+     * @param message - Chat event message
+     * @param player - Player executing command
+     * @param commandName - Name of the target command
+     * @param args - Arguments provided
+     * @param defaultPrefix - Active prefix
+     * @returns Boolean indicating success or system state change
      */
     private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
         const helpAliases = ["help", "--help"];
         const isHelpRequest = helpAliases.includes(commandName) || helpAliases.includes(args[0]?.toLowerCase());
-        const command = this.commands.get(commandName);
+        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
 
+        // 1. Try active registered commands
+        let command = this.commands.get(commandName);
+
+        // 2. If missing, check master list for disabled status
+        if (!command) {
+            const disabledCommand = this.masterCommands.get(commandName);
+
+            if (disabledCommand) {
+                if (playerSecurityClearance === SecurityClearance.Level4) {
+                    command = disabledCommand;
+                } else {
+                    player.sendMessage(`\n§2[§7Paradox§2]§o§7 The command "${commandName}" is currently disabled.`);
+                    return false;
+                }
+            }
+        }
+
+        // 3. Command is genuinely invalid
         if (!command && !isHelpRequest) {
             player.sendMessage(`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found. Use ${defaultPrefix}help.`);
             return false;
         }
 
-        const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
-
-        /**
-         * Determine security requirement.
-         * Priority:
-         * 1. arg-specific security
-         * 2. command-level security
-         */
         const argKey = args[0]?.toLowerCase();
-
         const requiredClearance = command?.argSecurity?.[argKey ?? ""] ?? command?.securityClearance ?? SecurityClearance.Level1;
-
         const hasPermission = (playerSecurityClearance >= requiredClearance && playerSecurityClearance <= SecurityClearance.Level4) || commandName === "op";
 
         if (!hasPermission) {
@@ -364,12 +391,13 @@ export class CommandHandler {
     }
 
     /**
-     * Returns detailed command information for display.
-     * @param commandName - Name of the command
-     * @param player - Player requesting info
+     * Formats information block for a specific command.
+     * @param commandName - Target command name
+     * @param player - Player asking for command information
+     * @returns Line array containing formatted details
      */
     private getCommandInfo(commandName: string, player: Player): string[] {
-        const command = this.commands.get(commandName);
+        const command = this.commands.get(commandName) ?? this.masterCommands.get(commandName);
         if (!command) return [`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found.`];
 
         const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
@@ -388,30 +416,32 @@ export class CommandHandler {
     }
 
     /**
-     * Formats usage string with Minecraft color codes.
-     * @param usage - Command usage string
+     * Formats usage bracket syntax with Minecraft color codes.
+     * @param usage - Raw command usage string
+     * @returns Colorized string
      */
     private formatUsage(usage: string): string {
         return usage.replace(/[\[\]<>\|]/g, (m) => `§2${m}§f`);
     }
 
     /**
-     * Filters GUI buttons based on player security clearance.
-     * Used when generating ActionFormData menus.
+     * Filters buttons by security clearance for dynamic ActionFormData generation.
+     * @param buttons - Array of ActionFormButtons
+     * @param playerSecurityClearance - Clearance level of requesting player
+     * @returns Filtered ActionFormButton array
      */
     public filterButtonsBySecurity(buttons: ActionFormButton[], playerSecurityClearance: number): ActionFormButton[] {
         return buttons
             .filter((button) => (button.securityClearance ?? SecurityClearance.Level1) <= playerSecurityClearance)
             .map((button) => ({
                 ...button,
-
                 subActions: button.subActions ? this.filterButtonsBySecurity(button.subActions, playerSecurityClearance) : undefined,
             }));
     }
 
     /**
-     * Displays all commands available to the player, sorted and filtered by security clearance.
-     * @param player - Player requesting the command list
+     * Displays all registered commands divided by categories to the player.
+     * @param player - Player viewing commands
      */
     private displayAllCommands(player: Player) {
         let message = "\n§2[§7Available Commands§2]§r\n";
@@ -433,7 +463,8 @@ export class CommandHandler {
     }
 
     /**
-     * Checks if a command can be executed based on rate-limiting.
+     * Determines whether command rate limit bucket allows execution.
+     * @returns True if allowed, false if limit exceeded
      */
     private canExecuteCommand(): boolean {
         const tick = system.currentTick;
