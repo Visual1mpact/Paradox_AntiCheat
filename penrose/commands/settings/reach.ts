@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { startHitReachCheck, stopHitReachCheck } from "../../modules/reach";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 

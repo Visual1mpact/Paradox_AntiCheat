@@ -1,5 +1,5 @@
 import { Player, EntityHealthChangedAfterEvent, EntityDieAfterEvent, PlayerSpawnAfterEvent } from "@minecraft/server";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 
 /**
  * Synchronize the player's dynamic property "paradoxCurrentHealth" when their health changes.

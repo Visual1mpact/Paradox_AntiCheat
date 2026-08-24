@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { startDeathCoords, stopDeathCoords } from "../../modules/death-coords";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 

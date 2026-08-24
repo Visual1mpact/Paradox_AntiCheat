@@ -1,7 +1,7 @@
 import { Player, EntityHurtBeforeEvent, system, PlayerLeaveAfterEvent } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 // CONFIGURATION
 const MAX_CPS = 5; // Maximum allowed clicks per second
@@ -28,7 +28,7 @@ function calculateClicksPerSecond(clicks: number[]): number {
  * @param {number} cps - The calculated clicks per second.
  */
 function alertStaff(attacker: Player, cps: number): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(attacker, "AutoClicker", `Player exceeded CPS limit: ${cps} CPS.`);
     for (const s of staff) {
         if (!s.isValid || s.id === attacker.id) continue; // skip invalid entity or attacker if they are staff

@@ -1,10 +1,10 @@
 import { ChatSendBeforeEvent, Player, system, world, Vector3, PlayerLeaveBeforeEvent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache, CachedPlayerTransform } from "../../classes/cache/player-location-cache";
 import { waypointsDB } from "../../event-listeners/world-initialize";
 import { WaypointData } from "../../classes/database/db-types";
-import { EventCoordinator } from "../../classes/event-coordinator";
+import { EventCoordinator } from "../../classes/core/event-coordinator";
 
 const LEGACY_WAYPOINT_PROP = "paradox:waypoint_data";
 const DEFAULT_MAX_WAYPOINTS = 5;

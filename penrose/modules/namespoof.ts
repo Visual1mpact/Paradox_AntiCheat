@@ -1,8 +1,8 @@
 import { PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, Player } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 // Subscription holders for enabling/disabling
 let playerSpawnSubscription: ((arg: PlayerSpawnAfterEvent) => void) | null = null;
@@ -23,7 +23,7 @@ const playerNameMap = new Map<string, Player>();
  * @param {string} reason - The reason/action taking place.
  */
 function alertStaff(player: Player, reason: string): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Namespoof", `Player was ${reason}.`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

@@ -1,8 +1,8 @@
 import { ChatSendBeforeEvent, Player, system, ItemStack, world } from "@minecraft/server";
 import { verses } from "../../data/verses";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
-import { EventCoordinator } from "../../classes/event-coordinator";
+import { EventCoordinator } from "../../classes/core/event-coordinator";
 
 // ===== CONFIG =====
 const INTERVAL_TICKS = 30 * 60 * 20; // 30 minutes

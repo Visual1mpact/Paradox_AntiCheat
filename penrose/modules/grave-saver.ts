@@ -1,5 +1,5 @@
 import { Player, EntityDieAfterEvent, system, BlockComponentTypes, BlockSignComponent, BlockPermutation } from "@minecraft/server";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 
 let graveSubscription: ((event: EntityDieAfterEvent) => void) | undefined;
 

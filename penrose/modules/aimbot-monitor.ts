@@ -1,8 +1,8 @@
 import { system, Player, EntityHurtBeforeEvent, PlayerLeaveAfterEvent } from "@minecraft/server";
 import { PlayerCache } from "../classes/cache/player-cache";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /** Flag indicating whether the module is manually toggled on */
 let isModuleActive = false;
@@ -32,7 +32,7 @@ const track = new Map<
  * @param {Player} player - The player flagged for aimbot behavior.
  */
 function alertStaff(player: Player): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Aimbot", "Player is flagged for unnatural rotation smoothing.");
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { flagsDB } from "../../event-listeners/world-initialize";
 

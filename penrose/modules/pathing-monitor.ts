@@ -1,10 +1,10 @@
 import { system, Player, PlayerLeaveAfterEvent, Vector3, GameMode } from "@minecraft/server";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * Movement constants for Bedrock Edition.
@@ -43,7 +43,7 @@ let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
  * @param {string} reason - The reason for the pathing violation.
  */
 function alertStaff(player: Player, reason: string): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Pathing", `Player was ${reason}.`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

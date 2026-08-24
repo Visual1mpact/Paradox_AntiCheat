@@ -1,8 +1,8 @@
 import { Player, EntityHurtBeforeEvent, GameMode, EntityDamageCause } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 const MAX_REACH = 4.2; // Slightly tuned for standard Bedrock hitboxes
 const MAX_REACH_SQ = MAX_REACH * MAX_REACH;
@@ -48,7 +48,7 @@ function updateVictimHistory(playerId: string, loc: Position): void {
 }
 
 function alertStaff(attacker: Player, distSqValue: number): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     const distance = Math.sqrt(distSqValue);
     FlagManager.logFlag(attacker, "Reach", `Player flagged for suspicious reach: ${distance.toFixed(2)} blocks.`);
     for (const s of staff) {

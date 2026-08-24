@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, world, WeatherType } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 
 /**
  * Represents the environment command.

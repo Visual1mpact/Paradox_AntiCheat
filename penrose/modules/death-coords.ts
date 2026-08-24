@@ -1,5 +1,5 @@
 import { Player, EntityDieAfterEvent } from "@minecraft/server";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 
 let deathSubscription: ((event: EntityDieAfterEvent) => void) | undefined;
 

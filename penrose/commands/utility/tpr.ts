@@ -1,8 +1,8 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond, world, system } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
-import { EventCoordinator } from "../../classes/event-coordinator";
+import { EventCoordinator } from "../../classes/core/event-coordinator";
 
 interface TeleportRequest {
     sender: Player;

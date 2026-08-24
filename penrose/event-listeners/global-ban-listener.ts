@@ -1,5 +1,5 @@
 import { world } from "@minecraft/server";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 
 // High-performance runtime cache
 let activeBans: Set<string> = new Set();

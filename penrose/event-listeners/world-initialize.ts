@@ -21,7 +21,7 @@ import { startSelfAttackCheck, stopSelfAttackCheck } from "../modules/self-infli
 import { startPacketHandler, stopPacketHandler } from "../modules/rate-limit";
 import { startPacketListener, stopPacketListener } from "../modules/packet-monitor";
 import { startVisionCheck, stopVisionCheck } from "../modules/vision";
-import { Command, CommandHandler } from "../classes/command-handler";
+import { Command, CommandHandler } from "../classes/core/command-handler";
 import { opCommand } from "../commands/moderation/op";
 import { deopCommand } from "../commands/moderation/deop";
 import { punishCommand } from "../commands/moderation/punish";
@@ -67,7 +67,7 @@ import { invSyncCommand } from "../commands/settings/invsync";
 import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
 import { initializeGlobalBanCheck } from "./global-ban-listener";
-import { initializeSecurityClearanceTracking } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
 import {
@@ -111,7 +111,7 @@ import { pathingCommand } from "../commands/settings/pathing-monitor";
 import { startPathingMonitor, stopPathingMonitor } from "../modules/pathing-monitor";
 import { anticrashCommand } from "../commands/settings/anticrash";
 import { startAntiCrash, stopAntiCrash } from "../modules/anticrash";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { dimensionLockCommand } from "../commands/settings/dimension-lock";
 import { startDimensionLock, stopDimensionLock } from "../modules/dimension-lock";
 import { itemUseSubscription } from "../classes/subscriptions/item-use-subscriptions";
@@ -584,7 +584,7 @@ function handleDoubleJump() {
 async function onWorldInitialize(): Promise<void> {
     if (commandHandler.getGuiItem()) itemUseSubscription.subscribe();
     chatSendSubscription.subscribe();
-    initializeSecurityClearanceTracking();
+    SecurityClearanceManager.initializeSecurityClearanceTracking();
     initializeGlobalBanList();
     initializeGlobalBanCheck();
     initializePrefix();

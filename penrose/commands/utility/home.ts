@@ -1,4 +1,4 @@
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, Vector3, world } from "@minecraft/server";
 import * as CryptoES from "../../node_modules/crypto-es";
 import { homesDB } from "../../event-listeners/world-initialize";

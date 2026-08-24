@@ -1,4 +1,4 @@
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { startAntiCrash, stopAntiCrash } from "../../modules/anticrash";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";

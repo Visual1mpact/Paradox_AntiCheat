@@ -7,7 +7,7 @@ import { Player, world, system, Dimension, PlayerLeaveBeforeEvent, PlayerSpawnAf
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 
 /** Structure defining per-dimension border distance limits */
 interface BorderBounds {

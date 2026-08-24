@@ -3,7 +3,7 @@ import { banlistDB } from "../event-listeners/world-initialize";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
 import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 import * as CryptoES from "crypto-es";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerCache } from "../classes/cache/player-cache";
 
 /**

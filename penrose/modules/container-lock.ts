@@ -10,9 +10,9 @@ import {
     PlayerPlaceBlockBeforeEvent,
     system,
 } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { chestLockDB } from "../event-listeners/world-initialize";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
 /** ------------------- CONFIG & HELPERS ------------------- */
@@ -93,7 +93,7 @@ function getCanonicalChestKey(block: Block): string {
  * @returns {boolean} True if the player has clearance.
  */
 function hasLevel4Clearance(player: Player): boolean {
-    return getSecurityClearanceLevel4Players().has(player);
+    return SecurityClearanceManager.getSecurityClearanceLevel4Players().has(player);
 }
 
 /**
@@ -102,7 +102,7 @@ function hasLevel4Clearance(player: Player): boolean {
  * @param {string} message - The message to send.
  */
 function notifyLevel4Players(message: string): void {
-    getSecurityClearanceLevel4Players().forEach((p) => p.sendMessage(message));
+    SecurityClearanceManager.getSecurityClearanceLevel4Players().forEach((p) => p.sendMessage(message));
 }
 
 /** ------------------- CHEST DATABASE HELPERS ------------------- */

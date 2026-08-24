@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { startAimbotMonitor, stopAimbotMonitor } from "../../modules/aimbot-monitor";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 

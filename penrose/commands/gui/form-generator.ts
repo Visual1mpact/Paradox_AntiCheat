@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
-import { Command, DynamicField, ActionFormButton } from "../../classes/command-handler";
+import { Command, DynamicField, ActionFormButton } from "../../classes/core/command-handler";
 import { chestLockDB, commandHandler, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoES from "../../node_modules/crypto-es";

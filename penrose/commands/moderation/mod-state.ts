@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, system } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { moduleActions, moduleStopActions, paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

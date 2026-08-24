@@ -2,7 +2,7 @@ import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraf
 import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
 import { PlatformBlockSettings } from "../classes/database/db-types";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
 // Define a type for player information

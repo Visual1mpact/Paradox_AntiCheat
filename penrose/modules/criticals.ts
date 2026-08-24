@@ -1,8 +1,8 @@
 import { Player, EntityHurtBeforeEvent, GameMode } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * Minimum height a player should be off the ground to be considered
@@ -19,7 +19,7 @@ const MIN_CRIT_HEIGHT = 0.55;
  * @param {number} yVelocity - The attacker's vertical velocity when flagged.
  */
 function alertStaff(attacker: Player, yVelocity: number): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(attacker, "Criticals", `Player flagged for Packet-Crits (Y-Vel: ${yVelocity.toFixed(3)})`);
     for (const s of staff) {
         if (!s.isValid || s.id === attacker.id) continue;

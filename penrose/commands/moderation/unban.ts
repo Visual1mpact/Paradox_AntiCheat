@@ -1,5 +1,5 @@
 import { banlistDB } from "../../event-listeners/world-initialize";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { refreshGlobalBanCache } from "../../event-listeners/global-ban-listener";
 

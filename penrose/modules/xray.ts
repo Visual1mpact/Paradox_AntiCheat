@@ -1,9 +1,9 @@
 import { system, PlayerBreakBlockAfterEvent, PlayerLeaveAfterEvent, Block, ChatSendBeforeEvent, Player } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /* ============================================================
    CONFIGURATION
@@ -233,7 +233,7 @@ function alertStaff(target: string | Player, profile: MiningProfile, level: stri
     const player = typeof target === "string" ? PlayerCache.getPlayerById(target) : target;
     const playerName = player?.name ?? (typeof target === "string" ? target : "Unknown");
 
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     if (player?.isValid) {
         FlagManager.logFlag(player, "X-Ray", `Player flagged for X-ray suspicion: ${profile.suspicion.toFixed(2)} points.`);
     }

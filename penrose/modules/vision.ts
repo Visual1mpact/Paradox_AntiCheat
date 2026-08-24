@@ -1,10 +1,6 @@
-/**
- * Minecraft Vision Module: Shows the contents of containers or player inventories in action bars.
- */
-
 import { system, Player, Container } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 
 /** Flag indicating whether the module is manually toggled on */
 let isModuleActive = false;
@@ -133,7 +129,7 @@ function* continuousVisionLoop(isEnabledInDB: boolean): Generator<void, void, un
     try {
         if (!isModuleActive || !isEnabledInDB) return;
 
-        const players = getSecurityClearanceLevel4Players();
+        const players = SecurityClearanceManager.getSecurityClearanceLevel4Players();
         const currentTick = system.currentTick;
 
         for (const player of players) {

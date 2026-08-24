@@ -1,5 +1,5 @@
 import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { PlayerCache } from "../../classes/cache/player-cache";
 

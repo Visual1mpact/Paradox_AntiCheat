@@ -1,10 +1,10 @@
 import { Vector3Builder, Vector3Utils } from "../node_modules/@minecraft/math/dist/minecraft-math";
 import { Player, system, EntityHurtBeforeEvent, EntityDamageCause, Vector3 } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 // CONFIGURATION CONSTANTS
 const MAX_ATTACKS_PER_SECOND = 5; // Maximum allowed clicks per second
@@ -87,7 +87,7 @@ function isSuspiciousAttackPattern(attackTimes: number[]): boolean {
  * @param {number} recentAttacks - Number of recent hits within 1 second.
  */
 function alertStaff(attacker: Player, distance: number, recentAttacks: number): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(attacker, "KillAura", `Player flagged for suspicious attack: ${recentAttacks} hits, distance ${distance.toFixed(2)}`);
     for (const s of staff) {
         if (!s.isValid || s.id === attacker.id) continue;

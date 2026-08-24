@@ -1,9 +1,9 @@
 import { GameMode, ItemUseBeforeEvent, PlayerLeaveBeforeEvent, system, Vector3, Player, Dimension } from "@minecraft/server";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /** Flag indicating whether the fly detection module is manually toggled on */
 let isModuleActive = false;
@@ -51,7 +51,7 @@ function alertStaff(player: Player): void {
 
     alertCooldowns.set(player.id, currentTick);
 
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Fly", "Player was detected flying/hovering.");
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

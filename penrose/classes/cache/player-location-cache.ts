@@ -1,5 +1,5 @@
 import { Vector3, Vector2, Dimension, PlayerLeaveBeforeEvent, system, Player } from "@minecraft/server";
-import { EventCoordinator } from "../event-coordinator";
+import { EventCoordinator } from "../core/event-coordinator";
 import { PlayerCache } from "./player-cache";
 
 /**

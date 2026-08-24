@@ -17,7 +17,7 @@ import {
 import { MessageFormData } from "@minecraft/server-ui";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 
 /** PvP cooldown in ticks (default 2 minutes = 2400 ticks) */
 let cooldownTicks = 2400;

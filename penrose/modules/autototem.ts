@@ -1,9 +1,9 @@
 import { system, Player, EquipmentSlot, EntityEquippableComponent, PlayerLeaveAfterEvent } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 const TOTEM_ID = "minecraft:totem_of_undying";
 /**
@@ -39,7 +39,7 @@ let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
  * @param {number} ticks - The time in ticks taken to replenish the totem.
  */
 function alertStaff(player: Player, ticks: number): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "AutoTotem", `Player replenished totem in ${ticks} ticks.`);
     for (const s of staff) {
         const isStaffValid = s.isValid;

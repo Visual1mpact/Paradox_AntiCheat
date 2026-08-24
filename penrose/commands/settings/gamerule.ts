@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 
 /**
  * Command to modify Minecraft game rules.

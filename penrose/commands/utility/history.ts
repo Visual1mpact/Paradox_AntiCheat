@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { MessageFormData } from "@minecraft/server-ui";
 import { openMainGui } from "../gui/form-generator";
 

@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { chestLockDB, paradoxModulesDB } from "../../event-listeners/world-initialize";
 import { startChestLock, stopChestLock } from "../../modules/container-lock";
 

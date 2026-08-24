@@ -1,9 +1,9 @@
 import { Player, system, GameMode } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerCache } from "../classes/cache/player-cache";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * In-memory state cache to prevent querying the database every tick.
@@ -27,7 +27,7 @@ let unsubscribeInventoryChange: (() => void) | null = null;
  * possessing Security Clearance Level 4 when an Inventory Movement violation occurs.
  */
 function alertStaff(player: Player): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "InvMove", "Player flagged for moving items in inventory while moving.");
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

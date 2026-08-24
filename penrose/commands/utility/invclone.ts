@@ -1,5 +1,5 @@
 import { Player, ChatSendBeforeEvent, ItemStack, BlockVolume, EntityEnderInventoryComponent, EntityInventoryComponent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 

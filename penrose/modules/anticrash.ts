@@ -1,8 +1,8 @@
 import { Player, system } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PacketReceivedBeforeEvent } from "@minecraft/server-net";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * Maximum allowed size for a sub-chunk request packet (in bytes).
@@ -25,7 +25,7 @@ let PacketId: typeof import("@minecraft/server-net").PacketId | undefined;
  * @param {string} playerId - Optional player ID to avoid sending the notification to the target.
  */
 function alertStaff(player: Player, sizeKB: string, playerId?: string): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Anti-Crash", `Blocked crash attempt from ${player.name} [${sizeKB}KB].`);
     for (const s of staff) {
         if (!s.isValid || (playerId && s.id === playerId)) continue;

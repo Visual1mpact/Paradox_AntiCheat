@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { startLagClear, stopLagClear } from "../../modules/lag-clear";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 

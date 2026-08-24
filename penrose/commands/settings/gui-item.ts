@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { commandHandler } from "../../event-listeners/world-initialize";
 import { itemUseSubscription } from "../../classes/subscriptions/item-use-subscriptions";
 

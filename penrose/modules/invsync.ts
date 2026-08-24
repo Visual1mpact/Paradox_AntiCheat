@@ -1,9 +1,9 @@
 import { system, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent, EntityDieAfterEvent, ItemTypes, ItemStack } from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * CONFIGURATION
@@ -317,7 +317,7 @@ function onPlayerSpawn(event: PlayerSpawnAfterEvent) {
  * NOTIFICATION ENGINE
  */
 function alertStaff(player: Player, summaryMessage: string) {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "InvSync", `Inventory anomaly corrected: ${summaryMessage}`);
     for (const s of staff) {
         if (s.isValid && s.id !== player.id) {
@@ -327,7 +327,7 @@ function alertStaff(player: Player, summaryMessage: string) {
 }
 
 function alertStaffSystem(message: string) {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     for (const s of staff) {
         if (s.isValid) s.sendMessage(`§2[§7Paradox§2]§o§7 ${message}`);
     }

@@ -1,8 +1,8 @@
 import { Player, EntityHitEntityAfterEvent } from "@minecraft/server";
 import { banlistDB } from "../event-listeners/world-initialize";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * Distributes an in-game alert notification to all active staff players
@@ -11,7 +11,7 @@ import { FlagManager } from "../classes/logs/flag-manager";
  * @param {Player} attacker - The player attempting to attack themselves.
  */
 function alertStaff(attacker: Player): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(attacker, "Self-Infliction", "Player was banned for attacking themselves.");
     for (const s of staff) {
         if (!s.isValid || s.id === attacker.id) continue;

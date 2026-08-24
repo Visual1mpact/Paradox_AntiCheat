@@ -1,8 +1,8 @@
 import { system, PlayerLeaveAfterEvent, Vector3, Player } from "@minecraft/server";
 import { PlayerCache } from "../classes/cache/player-cache";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 let currentRunId: number | null = null;
 let playerLeaveCallback: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
@@ -54,7 +54,7 @@ function isSecurityClearanceIgnored(player: Player): boolean {
  * @param {Player} player - The player being kicked for AFK.
  */
 function alertStaff(player: Player): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "AFK", "Player was kicked for being AFK.");
     for (const s of staff) {
         const isStaffValid = s.isValid;

@@ -1,9 +1,9 @@
 import { GameMode, PlayerGameModeChangeAfterEvent, Player } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { GamemodeCheckSettings } from "../classes/database/db-types";
-import { EventCoordinator } from "../classes/event-coordinator";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { EventCoordinator } from "../classes/core/event-coordinator";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * Distributes an in-game alert notification to all active staff players
@@ -13,7 +13,7 @@ import { FlagManager } from "../classes/logs/flag-manager";
  * @param {GameMode} attemptedGM - The illegal gamemode they attempted to switch to.
  */
 function alertStaff(player: Player, attemptedGM: GameMode): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Gamemode", `Player attempted to switch to ${attemptedGM}`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

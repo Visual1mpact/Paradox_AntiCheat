@@ -1,8 +1,8 @@
 import { Player, system, GameMode } from "@minecraft/server";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
  * Maximum allowed directional input magnitude on client-side vectors.
@@ -21,7 +21,7 @@ let runIntervalId: number | null = null;
  * possessing Security Clearance Level 4 when an Invalid Movement Vector occurs.
  */
 function alertStaff(player: Player, moveVector: { x: number; y: number }): void {
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "InvalidVector", `Player flagged for out-of-bounds MoveVector (X: ${moveVector.x.toFixed(3)}, Y: ${moveVector.y.toFixed(3)})`);
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

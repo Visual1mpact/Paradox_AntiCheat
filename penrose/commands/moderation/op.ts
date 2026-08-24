@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, Player, PlayerPermissionLevel, world } from "@minecraft/server";
 
-import { Command } from "../../classes/command-handler";
-import { addPlayerToSecurityClearanceList } from "../../utility/level-4-security-tracker";
+import { Command } from "../../classes/core/command-handler";
+import { SecurityClearanceManager } from "../../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../../classes/cache/player-cache";
 
 /**
@@ -108,7 +108,7 @@ function addPlayerToSecurityList(data: SecurityClearanceData, player: Player): v
         saveSecurityData(data);
     }
 
-    addPlayerToSecurityClearanceList(player);
+    SecurityClearanceManager.addPlayerToSecurityClearanceList(player);
 }
 
 /**

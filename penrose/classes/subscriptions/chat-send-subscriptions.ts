@@ -1,7 +1,7 @@
 import { world, system, ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { commandHandler, paradoxModulesDB, channelsDB } from "../../event-listeners/world-initialize";
 import { PlayerCache } from "../cache/player-cache";
-import { EventCoordinator } from "../event-coordinator";
+import { EventCoordinator } from "../core/event-coordinator";
 
 // Configuration for spam detection
 const SPAM_THRESHOLD = 5; // Number of allowed messages

@@ -1,8 +1,8 @@
 import { system, Block, PlayerLeaveBeforeEvent, PlayerPlaceBlockBeforeEvent, Vector3, GameMode, Player } from "@minecraft/server";
-import { EventCoordinator } from "../classes/event-coordinator";
+import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
-import { getSecurityClearanceLevel4Players } from "../utility/level-4-security-tracker";
-import { FlagManager } from "../classes/logs/flag-manager";
+import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
+import { FlagManager } from "../classes/logging/flag-manager";
 
 // Configuration Constants
 const SCAFFOLD_THRESHOLD = 3; // Number of blocks placed in quick succession
@@ -35,7 +35,7 @@ function alertStaff(player: Player): void {
 
     alertCooldowns.set(player.id, currentTick);
 
-    const staff = getSecurityClearanceLevel4Players();
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Scaffold", "Player flagged for potential scaffold hack.");
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;

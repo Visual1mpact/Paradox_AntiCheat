@@ -1,7 +1,7 @@
 import { ItemUseAfterEvent, Player } from "@minecraft/server";
 import { commandHandler } from "../../event-listeners/world-initialize";
 import { openMainGui } from "../../commands/gui/form-generator";
-import { EventCoordinator } from "../event-coordinator";
+import { EventCoordinator } from "../core/event-coordinator";
 
 /**
  * Handles item use events to trigger the Paradox GUI if a configured item is used.

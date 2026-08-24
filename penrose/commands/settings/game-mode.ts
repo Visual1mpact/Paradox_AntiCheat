@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
+import { Command } from "../../classes/core/command-handler";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 

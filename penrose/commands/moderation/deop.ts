@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
-import { Command } from "../../classes/command-handler";
-import { removePlayerFromSecurityClearanceList } from "../../utility/level-4-security-tracker";
+import { Command } from "../../classes/core/command-handler";
+import { SecurityClearanceManager } from "../../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../../classes/cache/player-cache";
 
 interface PlayerInfo {
@@ -112,7 +112,7 @@ export const deopCommand: Command = {
                     player.setDynamicProperty("securityClearance", 1);
 
                     // Remove player from the level 4 tracker
-                    removePlayerFromSecurityClearanceList(player);
+                    SecurityClearanceManager.removePlayerFromSecurityClearanceList(player);
 
                     return true;
                 } else {
