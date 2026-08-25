@@ -610,27 +610,32 @@ export class LandClaimManager {
         EventCoordinator.subscribeBefore("entityHurt", (ev) => {
             const { hurtEntity, damageSource } = ev;
 
-            // Protect corner marker armor stands from being destroyed
-            if (hurtEntity.typeId === "minecraft:armor_stand" && hurtEntity.hasTag("claim_corner_marker")) {
-                ev.cancel = true;
-                const attacker = damageSource.damagingEntity;
-                if (attacker instanceof Player) {
-                    attacker.sendMessage("§o§c[Paradox] You cannot destroy claim corner markers.");
-                }
-                return;
-            }
-
             const claim = this.getClaimAt(hurtEntity.location, hurtEntity.dimension.id);
             if (!claim) return;
 
             const attacker = damageSource.damagingEntity;
+
+            // Scenario A: Player is attacking an entity inside a claim
             if (attacker instanceof Player) {
+                // Deny damage ONLY if the attacking player is NOT authorized on this claim
                 if (!this.isAuthorized(attacker, claim)) {
                     ev.cancel = true;
                     attacker.sendMessage("§o§c[Paradox] You cannot cause damage inside this protected claim.");
                     system.run(() => this.enforceGamemodeSafeguard(attacker, claim));
                 }
-            } else if (damageSource.cause === EntityDamageCause.blockExplosion || damageSource.cause === EntityDamageCause.entityExplosion) {
+                // Authorized owners/members bypass this check and can freely hurt mobs/animals on their land.
+                return;
+            }
+
+            // Scenario B: Mobs/Entities attacking a player on claimed land
+            if (hurtEntity instanceof Player && this.isAuthorized(hurtEntity, claim)) {
+                // Cancel damage dealt to authorized claim members by external mobs/entities
+                ev.cancel = true;
+                return;
+            }
+
+            // Scenario C: Explosions harming entities/mobs/players inside claims
+            if (damageSource.cause === EntityDamageCause.blockExplosion || damageSource.cause === EntityDamageCause.entityExplosion) {
                 ev.cancel = true;
             }
         });
