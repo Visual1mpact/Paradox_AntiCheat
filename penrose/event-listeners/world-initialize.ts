@@ -85,6 +85,7 @@ import {
     HomesSchema,
     WaypointsSchema,
     FlagDatabaseSchema,
+    LandClaimsSchema,
 } from "../classes/database/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip, stopNoClip } from "../modules/noclip";
@@ -133,6 +134,7 @@ import { flagsCommand } from "../commands/moderation/flags";
 import { modStateCommand } from "../commands/moderation/mod-state";
 import { setInvalidMovementVectorState } from "../modules/invalid-movement-vector";
 import { setInventoryMovementState } from "../modules/inventory-movement";
+import { claimCommand, landClaims } from "../commands/utility/land-claim";
 
 /** Player unique identifier type */
 type PlayerID = string;
@@ -161,6 +163,7 @@ let playerMetadataDB: OptimizedDatabase<PlayerMetadataSchema>;
 let homesDB: OptimizedDatabase<HomesSchema>;
 let waypointsDB: OptimizedDatabase<WaypointsSchema>;
 let flagsDB: OptimizedDatabase<FlagDatabaseSchema>;
+let landClaimsDB: OptimizedDatabase<LandClaimsSchema>;
 let commandHandler: CommandHandler;
 
 /** Action callbacks to stop module execution routines */
@@ -346,6 +349,7 @@ const allCommands: Command[] = [
     switchGamemodeCommand,
     flagsCommand,
     modStateCommand,
+    claimCommand,
 ];
 
 /**
@@ -366,8 +370,9 @@ async function initializeSystems() {
     homesDB = new OptimizedDatabase("homes");
     waypointsDB = new OptimizedDatabase("waypoints");
     flagsDB = new OptimizedDatabase("flags");
+    landClaimsDB = new OptimizedDatabase("LandClaimsDB");
 
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB, landClaimsDB];
 
     console.log("[Paradox] Running database v2.0 compression migrations...");
     const migrationResults = await Promise.allSettled(dbs.map((db) => db.migrateToV2()));
@@ -595,6 +600,7 @@ async function onWorldInitialize(): Promise<void> {
     onPlayerSpawn();
     startWaypointHUD();
     healthChangeListener.start();
+    await landClaims.init();
 }
 
 /**
@@ -608,4 +614,4 @@ export function subscribeToWorldInitialize() {
     });
 }
 
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB, landClaimsDB };

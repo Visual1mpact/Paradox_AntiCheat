@@ -1,4 +1,5 @@
 import { Player, Vector3 } from "@minecraft/server";
+import { DatabaseValueObject } from "./data-hive";
 
 /**
  * Represents the unique identifier for a Player (`Player.id`).
@@ -10,240 +11,319 @@ type PlayerID = Player["id"];
  */
 type PlayerName = Player["name"];
 
-// Settings schema for AFK check module (used to configure timer)
-type AFKCheckSettings = {
+// ==========================================
+// MODULE & SYSTEM CONFIGURATIONS
+// ==========================================
+
+/** Settings schema for the AFK check module timer */
+export interface AFKCheckSettings {
     hours: number;
     minutes: number;
     seconds: number;
-};
+}
 
-// Settings schema for LagClear check module (used to configure timer)
-type LagClearCheckSettings = {
+/** Settings schema for the LagClear check module timer */
+export interface LagClearCheckSettings {
     hours: number;
     minutes: number;
     seconds: number;
-};
+}
 
-/**
- * Schema for the chestLocks database.
- * Each key is a unique block location key (dimension + X_Y_Z).
- * Value stores the player who owns/locked the chest.
- */
-export type ChestLocksSchema = {
-    [blockLocationKey: string]: {
-        /** The player name who owns/locked this chest */
-        owner?: PlayerName;
-        /** The player name who placed the block in the world */
-        placedBy?: PlayerName;
-        /** Optional: track last access timestamp (ms) */
-        lastAccessed?: number;
-        /** Optional: access log of {player, time} */
-        accessLog?: { player: PlayerName; time: number }[];
-        /**
-         * Players that are allowed to access ALL containers
-         * owned by this owner.
-         */
-        sharedWith?: PlayerName[];
-    };
-};
-
-// Settings schema for game mode enforcement
-export type GamemodeCheckSettings = {
+/** Settings schema for gamemode enforcement checks */
+export interface GamemodeCheckSettings {
     Adventure: boolean;
     Creative: boolean;
     Survival: boolean;
     Spectator: boolean;
-};
+}
 
-// Settings schema for platform block enforcement
-export type PlatformBlockSettings = {
+/** Settings schema for device platform block enforcement */
+export interface PlatformBlockSettings {
     console: boolean;
     desktop: boolean;
     mobile: boolean;
-};
+}
 
-// Settings schema for world borders in each dimension
-type WorldBorderSettings = {
+/** Settings schema for dimension world border boundaries */
+export interface WorldBorderSettings {
     overworld: number;
     nether: number;
     end: number;
-};
+}
 
-// Settings schema for dimension lock enforcement
-type DimensionLockSettings = {
+/** Settings schema for dimension lock enforcement */
+export interface DimensionLockSettings {
     nether: boolean;
     theEnd: boolean;
-};
+}
 
-export type InvSyncSnapshots = {
-    [playerId: string]: {
-        counts: Record<string, number>;
-        time: number;
-        name: string;
-    };
-};
-
-export type InvSyncAudit = {
-    [playerId: string]: {
-        events: {
-            time: number;
-            excessItems: Record<string, number>;
-            totalExcess: number;
-        }[];
-    };
-};
-
-// Mapping of modules to their expected settings structure
+/**
+ * Mapping of Paradox anti-cheat modules to their configurable settings structures.
+ */
 export type ModuleSettingsMap = {
     afkCheck_b: AFKCheckSettings;
     gamemodeCheck_b: GamemodeCheckSettings;
-    autoClickerCheck_b: undefined; // This module has no configurable settings
-    flyCheck_b: undefined; // This module has no configurable settings
-    killAuraCheck_b: undefined; // This module has no configurable settings
-    scaffoldCheck_b: undefined; // This module has no configurable settings
-    nameSpoofCheck_b: undefined; // This module has no configurable settings
-    xrayDetection_b: undefined; // This module has no configurable settings
-    selfAttackCheck_b: undefined; // This module has no configurable settings
-    rateLimitCheck_b: undefined; // This module has no configurable settings
-    packetMonitorCheck_b: undefined; // This module has no configurable settings
-    visionCheck_b: undefined; // This module has no configurable settings
+    autoClickerCheck_b: undefined;
+    flyCheck_b: undefined;
+    killAuraCheck_b: undefined;
+    scaffoldCheck_b: undefined;
+    nameSpoofCheck_b: undefined;
+    xrayDetection_b: undefined;
+    selfAttackCheck_b: undefined;
+    rateLimitCheck_b: undefined;
+    packetMonitorCheck_b: undefined;
+    visionCheck_b: undefined;
     lagClearCheck_b: LagClearCheckSettings;
     platformBlock_b: PlatformBlockSettings;
-    hitReachCheck_b: undefined; // This module has no configurable settings
-    spamCheck_b: undefined; // This module has no configurable settings
+    hitReachCheck_b: undefined;
+    spamCheck_b: undefined;
     worldBorderCheck_b: WorldBorderSettings;
-    invSync_b: undefined; // This module has no configurable settings
-    noClipCheck_b: undefined; // This module has no configurable settings
-    chestLock_b: undefined; // This module has no configurable settings
-    deathCoords_b: undefined; // This module has no configurable settings
-    graveSaver_b: undefined; // This module has no configurable settings
-    aimbotMonitorCheck_b: undefined; // This module has no configurable settings
-    criticalsCheck_b: undefined; // This module has no configurable settings
-    autoTotemCheck_b: undefined; // This module has no configurable settings
-    pathingCheck_b: undefined; // This module has no configurable settings
-    antiCrashCheck_b: undefined; // This module has no configurable settings
+    invSync_b: undefined;
+    noClipCheck_b: undefined;
+    chestLock_b: undefined;
+    deathCoords_b: undefined;
+    graveSaver_b: undefined;
+    aimbotMonitorCheck_b: undefined;
+    criticalsCheck_b: undefined;
+    autoTotemCheck_b: undefined;
+    pathingCheck_b: undefined;
+    antiCrashCheck_b: undefined;
     dimensionLock_b: DimensionLockSettings;
-    invalidMovementVectorCheck_b: undefined; // This module has no configurable settings
-    inventoryMovementCheck_b: undefined; // This module has no configurable settings
+    invalidMovementVectorCheck_b: undefined;
+    inventoryMovementCheck_b: undefined;
 };
 
 /**
- * Schema for the paradoxModules database.
- * Each key represents a module and its associated state/configuration.
+ * Schema for the `paradoxModules` database.
+ * Maps module identifiers to their state and settings.
  */
-export type ParadoxModulesSchema = {
-    [K in keyof ModuleSettingsMap]: {
+export type ParadoxModulesSchema = Record<
+    keyof ModuleSettingsMap,
+    {
         enabled: boolean;
-        settings?: ModuleSettingsMap[K];
-    };
-};
+        settings?: ModuleSettingsMap[keyof ModuleSettingsMap];
+    } & DatabaseValueObject
+>;
+
+// ==========================================
+// LAND CLAIMS SCHEMA
+// ==========================================
+
+/** Represents a standard 3D spatial coordinate */
+export interface Vector3D {
+    x: number;
+    y: number;
+    z: number;
+}
+
+/** Represents an RGB color configuration (0–255 scale) */
+export interface RGBColor {
+    r: number;
+    g: number;
+    b: number;
+}
 
 /**
- * Schema for the channels database.
- * Each key is a channel name, mapped to a Channel object.
+ * Document structure for a registered land claim.
  */
-export interface Channel {
+export interface ClaimData extends DatabaseValueObject {
+    id: string;
+    ownerUuid: string;
+    ownerName: string;
+    dimensionId: string;
+    min: Vector3D;
+    max: Vector3D;
+    members: string[];
+    created: number;
+    color: RGBColor;
+    markerEntityUuids?: string[];
+}
+
+/**
+ * Schema for the `LandClaimsDB` database.
+ * Maps unique claim IDs to registered claim data.
+ */
+export type LandClaimsSchema = Record<string, ClaimData>;
+
+// ==========================================
+// CHAT & ACCESS CONTROL SCHEMAS
+// ==========================================
+
+/**
+ * Document structure for chat channels.
+ */
+export interface Channel extends DatabaseValueObject {
     Owner: PlayerID;
     Members: Record<PlayerID, string>;
     lastActive: number;
 }
 
-export type ChannelsSchema = {
-    [channelName: string]: Channel;
-};
+/**
+ * Schema for the `channels` database.
+ * Maps channel names to Channel details.
+ */
+export type ChannelsSchema = Record<string, Channel>;
 
 /**
- * Schema for the disabled commands database.
- * Each key is a command name.
+ * Document structure for disabled command entries.
  */
-export type DisabledCommandsSchema = {
-    [commandName: string]: {
-        disabledBy: PlayerName;
-        timestamp: number;
-    };
-};
+export interface DisabledCommandEntry extends DatabaseValueObject {
+    disabledBy: PlayerName;
+    timestamp: number;
+}
 
 /**
- * Schema for the warns database.
- * Each key is a player name, mapped to an array of warning objects.
+ * Schema for the `disabledCommands` database.
+ * Maps command names to their disable state info.
  */
-export type WarnsSchema = {
-    players: {
-        [playerName: PlayerName]: {
-            reason: string;
-            staff: string;
-            timestamp: number;
-        }[];
-    };
-};
+export type DisabledCommandsSchema = Record<string, DisabledCommandEntry>;
+
+// ==========================================
+// PLAYER MODERATION & LIST SCHEMAS
+// ==========================================
+
+/** Document structure for an individual warning */
+export interface WarningEntry {
+    reason: string;
+    staff: string;
+    timestamp: number;
+}
 
 /**
- * Schema for the whitelist database.
- * Each key is a player name, optionally storing their persistent ID.
+ * Document structure for player warnings.
  */
-export type WhitelistPlayersSchema = {
-    players: {
-        [playerName: PlayerName]: {
-            ID?: PlayerID;
-        };
-    };
-};
+export interface PlayerWarnData extends DatabaseValueObject {
+    warnings: WarningEntry[];
+}
 
 /**
- * Schema for the allowlist database.
- * Each key is a player name, optionally storing their persistent ID.
+ * Schema for the `warns` database.
+ * Maps player names/IDs to warning history records.
  */
-export type AllowlistPlayersSchema = {
-    players: {
-        [playerName: PlayerName]: {
-            ID?: PlayerID;
-        };
-    };
-};
+export type WarnsSchema = Record<PlayerName, PlayerWarnData>;
+
+/** Document structure for whitelist/allowlist player records */
+export interface ListPlayerRecord extends DatabaseValueObject {
+    ID?: PlayerID;
+}
 
 /**
- * Schema for the playerMetadata database.
- * Stores long-term forensic data and session history for players.
+ * Schema for the `whitelist` database.
+ * Maps whitelisted player names to persistent ID details.
  */
-export type PlayerMetadataSchema = {
-    [playerId: PlayerID]: {
-        joinDate: string;
-        firstPlatform: string;
-        firstJoined: number;
-        lastPlatform: string;
-        lastSeen: number;
-    };
-};
+export type WhitelistPlayersSchema = Record<PlayerName, ListPlayerRecord>;
 
 /**
- * Schema for the banlist database.
- * Each key is a player name, optionally storing their persistent ID.
+ * Schema for the `allowlist` database.
+ * Maps allowlisted player names to persistent ID details.
  */
-export type BanlistPlayersSchema = {
-    players: {
-        [playerName: PlayerName]: {
-            reason: string;
-            bannedBy: string;
-            timestamp: number;
-        };
-    };
-};
+export type AllowlistPlayersSchema = Record<PlayerName, ListPlayerRecord>;
+
+/** Document structure for a banned player record */
+export interface BanRecord extends DatabaseValueObject {
+    reason: string;
+    bannedBy: string;
+    timestamp: number;
+}
 
 /**
- * Schema for the homes database.
- * Maps a player's unique ID to an array of encrypted home location strings and an optional per-player home limit override.
+ * Schema for the `banlist` database.
+ * Maps banned player names to ban details.
  */
-export type HomesSchema = {
-    [playerId: PlayerID]: {
-        locations: string[];
-        maxHomes?: number;
-    };
-};
+export type BanlistPlayersSchema = Record<PlayerName, BanRecord>;
+
+// ==========================================
+// SECURITY & CONTAINER SCHEMAS
+// ==========================================
+
+/** Document structure for container access logs */
+export interface ContainerAccessLog {
+    player: PlayerName;
+    time: number;
+}
+
+/** Document structure for locked chest dynamic property entries */
+export interface ChestLockRecord extends DatabaseValueObject {
+    owner?: PlayerName;
+    placedBy?: PlayerName;
+    lastAccessed?: number;
+    accessLog?: ContainerAccessLog[];
+    sharedWith?: PlayerName[];
+}
 
 /**
- * Schema for stored waypoints.
- * Contains name, coordinate position, dimension ID, and creation timestamp.
+ * Schema for the `chestLocks` database.
+ * Maps block location keys (e.g., "minecraft:overworld:100_64_-200") to chest lock info.
  */
+export type ChestLocksSchema = Record<string, ChestLockRecord>;
+
+// ==========================================
+// INVENTORY & AUDIT SCHEMAS
+// ==========================================
+
+/** Document structure for inventory sync snapshot records */
+export interface InvSyncSnapshotRecord extends DatabaseValueObject {
+    counts: Record<string, number>;
+    time: number;
+    name: string;
+}
+
+/**
+ * Schema for the `invSyncSnapshots` database.
+ * Maps player IDs to inventory snapshots.
+ */
+export type InvSyncSnapshots = Record<PlayerID, InvSyncSnapshotRecord>;
+
+/** Document structure for inventory audit flag event entries */
+export interface InvSyncAuditEvent {
+    time: number;
+    excessItems: Record<string, number>;
+    totalExcess: number;
+}
+
+/** Document structure for player inventory audit records */
+export interface InvSyncAuditRecord extends DatabaseValueObject {
+    events: InvSyncAuditEvent[];
+}
+
+/**
+ * Schema for the `invSyncAudit` database.
+ * Maps player IDs to inventory audit histories.
+ */
+export type InvSyncAudit = Record<PlayerID, InvSyncAuditRecord>;
+
+// ==========================================
+// PLAYER METADATA & TELEPORTATION SCHEMAS
+// ==========================================
+
+/** Document structure for long-term forensic player metadata */
+export interface PlayerMetadataRecord extends DatabaseValueObject {
+    joinDate: string;
+    firstPlatform: string;
+    firstJoined: number;
+    lastPlatform: string;
+    lastSeen: number;
+}
+
+/**
+ * Schema for the `playerMetadata` database.
+ * Maps player IDs to session metadata histories.
+ */
+export type PlayerMetadataSchema = Record<PlayerID, PlayerMetadataRecord>;
+
+/** Document structure for player home coordinates */
+export interface HomesRecord extends DatabaseValueObject {
+    locations: string[];
+    maxHomes?: number;
+}
+
+/**
+ * Schema for the `homes` database.
+ * Maps player IDs to home location payloads.
+ */
+export type HomesSchema = Record<PlayerID, HomesRecord>;
+
+/** Document structure for custom waypoints */
 export interface WaypointData {
     name: string;
     location: Vector3;
@@ -251,21 +331,24 @@ export interface WaypointData {
     timestamp: number;
 }
 
-/**
- * Schema for the waypoints database.
- * Maps a player's unique ID (`Player.id`) to their navigation HUD state and saved waypoints.
- */
-export type WaypointsSchema = {
-    [playerId: PlayerID]: {
-        activeWaypointName?: string;
-        maxWaypoints?: number;
-        savedWaypoints: Record<string, WaypointData>;
-    };
-};
+/** Document structure for waypoints navigation HUD state */
+export interface WaypointRecord extends DatabaseValueObject {
+    activeWaypointName?: string;
+    maxWaypoints?: number;
+    savedWaypoints: Record<string, WaypointData>;
+}
 
 /**
- * Represents an individual flag violation log entry.
+ * Schema for the `waypoints` database.
+ * Maps player IDs to navigation HUD and saved waypoint records.
  */
+export type WaypointsSchema = Record<PlayerID, WaypointRecord>;
+
+// ==========================================
+// ANTI-CHEAT VIOLATION FLAGS SCHEMA
+// ==========================================
+
+/** Document structure for individual flag violations */
 export interface ViolationFlagEntry {
     flagType: string;
     details: string;
@@ -274,18 +357,15 @@ export interface ViolationFlagEntry {
     count: number;
 }
 
-/**
- * Represents an individual player's historic flag record.
- */
-export interface PlayerFlagRecord {
+/** Document structure for a player's flag record history */
+export interface PlayerFlagRecord extends DatabaseValueObject {
     playerName: string;
     totalViolations: number;
     flags: ViolationFlagEntry[];
 }
 
 /**
- * Storage schema mapping player IDs to their historic flag records.
+ * Schema for the `flags` database.
+ * Maps player IDs to historic violation flag records.
  */
-export interface FlagDatabaseSchema extends Record<string, PlayerFlagRecord> {
-    [playerId: string]: PlayerFlagRecord;
-}
+export type FlagDatabaseSchema = Record<PlayerID, PlayerFlagRecord>;

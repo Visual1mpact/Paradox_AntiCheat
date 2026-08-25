@@ -5,6 +5,7 @@ import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/ser
 import * as CryptoES from "../../node_modules/crypto-es";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
+import { LandClaimManager } from "../utility/land-claim";
 
 /**
  * GUIManager handles all GUI interactions for a player, including:
@@ -273,6 +274,15 @@ class GUIManager {
                             }
                         });
                         if (field.options.length === 0) field.options = ["No Homes Saved"];
+                    } else if (field.sourceType === "custom") {
+                        // Dynamically populate options based on required context (e.g., Claim IDs owned by the player)
+                        if (field.requiredFields?.includes("claimId")) {
+                            const userClaims = LandClaimManager.getInstance().getClaimsByOwner(this.player.id);
+                            field.options = userClaims.map((claim) => claim.id);
+                            if (field.options.length === 0) {
+                                field.options = ["No Claims Found"];
+                            }
+                        }
                     }
 
                     form.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });

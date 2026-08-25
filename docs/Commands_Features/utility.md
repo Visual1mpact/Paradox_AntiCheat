@@ -424,6 +424,44 @@ The `invsee` command allows players with sufficient clearance to view another pl
 
 ---
 
+## landclaim
+### At A Glance
+The `landclaim` command allows players to manage, inspect, and delete their registered land claims. Claims extend automatically from sky to bedrock (`-64` to `320`) and protect territories against unauthorized block modifications, entity damage, interactions, bucket liquid placements, explosion damage, and piston/sticky block breaches.
+
+?> Required Clearance Level To Execute: `1`
+
+### **How It Works**
+- **Wand Selection**: Claim boundaries are selected using a **Golden Hoe** (`minecraft:golden_hoe`) as a wand tool.
+  - Right-clicking **Corner 1** saves the first boundary coordinate.
+  - Right-clicking **Corner 2** saves the opposite boundary coordinate and attempts claim creation.
+  - Selections expire after **5 minutes** of inactivity.
+- **Claim Dimensions & Sizing**:
+  - Automatically claims from sky to bedrock (`Y: -64` to `Y: 320`).
+  - Requires a minimum horizontal size of **10 x 10 blocks**.
+  - Claims cannot overlap with existing claims.
+- **Corner Markers**: Upon creation, **4 armor stand markers** equipped with colored leather helmets spawn directly on top of the selected corner coordinates. Markers are protected from destruction and automatically clean up when a claim is deleted.
+- **Protection & Trespasser Safeguard**:
+  - Prevents non-authorized players from placing blocks, breaking blocks, dealing entity damage, or placing liquids (lava, water, powder snow).
+  - Detects pistons or sticky blocks attempting to push or stick across claim boundaries.
+  - Filters out explosion block damage inside claim boundaries.
+  - Unauthorized intruders who attempt restricted interactions inside a claim are temporarily forced into **Adventure Mode**. Their original game mode is restored once they exit the claim buffer zone (5 blocks away).
+
+> Usage: ":landclaim <list | info | delete> [claimId]"  
+> Example: :landclaim list  
+> Example: :landclaim info  
+> Example: :landclaim delete claim_1700000000000_1234  
+
+### **GUI Integration**
+- Located under the **Utility** category in the administrative GUI.
+- **Land Claim Management**: Displays interactive options to view claim details for your current position (**Claim Info**), review owned claims (**List My Claims**), or remove claims via a dynamic selection dropdown (**Delete Claim**).
+
+### **Notes**
+- Selecting corner blocks with a Golden Hoe triggers the selection process without placing or breaking blocks.
+- Claim corner markers are protected from destruction by players.
+- Deleting a land claim permanently removes its protection boundaries and cleans up associated corner marker entities from the world.
+
+---
+
 ## ping
 ### At A Glance
 The `ping` command provides a real-time monitor of network latency for all online players. It helps both players and staff identify connection issues and distinguish between server-side lag and individual network instability.
