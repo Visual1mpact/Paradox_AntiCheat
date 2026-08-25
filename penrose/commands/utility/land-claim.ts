@@ -351,8 +351,9 @@ export class LandClaimManager {
         ];
 
         const leatherHelmet = new ItemStack("minecraft:leather_helmet", 1);
-        const colorComp = leatherHelmet.getComponent("minecraft:color") as any;
-        if (colorComp) {
+        const colorComp = leatherHelmet.getComponent("minecraft:dyeable");
+
+        if (colorComp && "color" in colorComp) {
             colorComp.color = {
                 red: claim.color.r / 255,
                 green: claim.color.g / 255,
@@ -500,6 +501,44 @@ export class LandClaimManager {
     }
 
     /**
+     * Adds a trusted member to an existing claim.
+     *
+     * @param claimId - ID of claim to update.
+     * @param memberIdentifier - Target player ID/UUID or name to trust.
+     * @returns `true` if member was successfully added; otherwise `false`.
+     */
+    public async addMember(claimId: string, memberIdentifier: string): Promise<boolean> {
+        const claim = this.claimsCache.get(claimId);
+        if (!claim) return false;
+
+        if (!claim.members.includes(memberIdentifier)) {
+            claim.members.push(memberIdentifier);
+            await landClaimsDB.set(claimId, claim);
+        }
+        return true;
+    }
+
+    /**
+     * Removes a trusted member from an existing claim.
+     *
+     * @param claimId - ID of claim to update.
+     * @param memberIdentifier - Target player ID/UUID or name to untrust.
+     * @returns `true` if member was found and removed; otherwise `false`.
+     */
+    public async removeMember(claimId: string, memberIdentifier: string): Promise<boolean> {
+        const claim = this.claimsCache.get(claimId);
+        if (!claim) return false;
+
+        const index = claim.members.indexOf(memberIdentifier);
+        if (index !== -1) {
+            claim.members.splice(index, 1);
+            await landClaimsDB.set(claimId, claim);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Checks if a player is authorized to modify or interact inside a claim.
      *
      * @param player - Target player.
@@ -507,7 +546,7 @@ export class LandClaimManager {
      * @returns `true` if player is owner or member; otherwise `false`.
      */
     public isAuthorized(player: Player, claim: ClaimData): boolean {
-        return claim.ownerUuid === player.id || claim.members.includes(player.id);
+        return claim.ownerUuid === player.id || claim.members.includes(player.id) || claim.members.includes(player.name);
     }
 
     /**
@@ -810,13 +849,13 @@ export const landClaims = LandClaimManager.getInstance();
 // ==========================================
 
 /**
- * Command implementation for managing land claims (deleting, inspecting, and GUI integration).
+ * Command implementation for managing land claims (deleting, inspecting, member management, and GUI integration).
  */
 export const claimCommand: Command = {
     name: "landclaim",
-    description: "Manage, inspect, and delete your registered land claims.",
-    usage: "{prefix}claim <delete|list|info> [claimId]",
-    examples: [`{prefix}claim delete claim_1700000000000_1234`, `{prefix}claim list`, `{prefix}claim info`],
+    description: "Manage, inspect, and configure access for your registered land claims.",
+    usage: "{prefix}claim <delete|list|info|trust|untrust> [claimId] [player]",
+    examples: [`{prefix}claim trust claim_1700000000000_1234 Steve`, `{prefix}claim untrust claim_1700000000000_1234 Steve`, `{prefix}claim delete claim_1700000000000_1234`, `{prefix}claim list`, `{prefix}claim info`],
     category: "Utility",
     securityClearance: 1,
     icon: "textures/items/gold_hoe.png",
@@ -838,6 +877,8 @@ export const claimCommand: Command = {
             "§e§lAvailable Menu Actions:§r\n" +
             "§7• §fClaim Info:§7 View owner, bounds, and member list for your current location.\n" +
             "§7• §fList My Claims:§7 Display all active land claims registered to your account.\n" +
+            "§7• §fTrust Member:§7 Grant interact and build permissions to a player.\n" +
+            "§7• §fUntrust Member:§7 Revoke claim permissions from a trusted member.\n" +
             "§7• §fDelete Claim:§7 Remove an existing claim and clear its corner markers.\n\n",
         commandOrder: "command-arg",
         actions: [
@@ -858,6 +899,22 @@ export const claimCommand: Command = {
                 generateModalForm: false,
             },
             {
+                name: "Trust Member",
+                icon: "textures/ui/icon_multiplayer.png",
+                command: ["trust"],
+                description: "Grant full interaction rights to a player in your claim",
+                requiredFields: ["claimId", "targetPlayer"],
+                generateModalForm: true,
+            },
+            {
+                name: "Untrust Member",
+                icon: "textures/ui/bad_omen_effect.png",
+                command: ["untrust"],
+                description: "Revoke interaction rights from a player in your claim",
+                requiredFields: ["claimId", "targetPlayer"],
+                generateModalForm: true,
+            },
+            {
                 name: "Delete Claim",
                 icon: "textures/ui/cancel.png",
                 command: ["delete"],
@@ -872,6 +929,12 @@ export const claimCommand: Command = {
                 type: "dropdown",
                 sourceType: "custom",
                 requiredFields: ["claimId"],
+            },
+            {
+                name: "Target Player Name / ID:",
+                type: "text",
+                placeholder: "e.g., Steve",
+                requiredFields: ["targetPlayer"],
             },
         ],
     },
@@ -892,6 +955,7 @@ export const claimCommand: Command = {
 
         const action = args[0]?.toLowerCase();
         const targetClaimId = args[1]?.trim();
+        const targetPlayer = args[2]?.trim();
 
         // Subcommand: LIST
         if (!action || action === "list") {
@@ -913,6 +977,72 @@ export const claimCommand: Command = {
                 ` `,
             ];
             sender.sendMessage(listLines.join("\n"));
+            return;
+        }
+
+        // Subcommand: TRUST / ADD
+        if (action === "trust" || action === "add") {
+            if (!targetClaimId || !targetPlayer) {
+                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}claim trust <claimId> <player>");
+                return;
+            }
+
+            const claim = manager.getClaimById(targetClaimId);
+
+            if (!claim) {
+                sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
+                return;
+            }
+
+            if (claim.ownerUuid !== sender.id) {
+                sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
+                return;
+            }
+
+            // Resolve player instance if online to extract UUID, fallback to raw name/identifier string
+            const targetOnlinePlayer = world.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
+            const memberIdToSave = targetOnlinePlayer ? targetOnlinePlayer.id : targetPlayer;
+
+            manager.addMember(targetClaimId, memberIdToSave).then((success) => {
+                if (success) {
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Successfully trusted player "§a${targetPlayer}§7" on claim "§a${targetClaimId}§7".`);
+                } else {
+                    sender.sendMessage(`§o§c[Paradox] Failed to add member to claim "${targetClaimId}".`);
+                }
+            });
+            return;
+        }
+
+        // Subcommand: UNTRUST / REMOVE
+        if (action === "untrust" || action === "unadd") {
+            if (!targetClaimId || !targetPlayer) {
+                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}claim untrust <claimId> <player>");
+                return;
+            }
+
+            const claim = manager.getClaimById(targetClaimId);
+
+            if (!claim) {
+                sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
+                return;
+            }
+
+            if (claim.ownerUuid !== sender.id) {
+                sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
+                return;
+            }
+
+            // Check online players to resolve UUID if stored as such, fallback to raw string match
+            const targetOnlinePlayer = world.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
+            const memberIdToRemove = targetOnlinePlayer && claim.members.includes(targetOnlinePlayer.id) ? targetOnlinePlayer.id : targetPlayer;
+
+            manager.removeMember(targetClaimId, memberIdToRemove).then((success) => {
+                if (success) {
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Successfully untrusted player "§a${targetPlayer}§7" from claim "§a${targetClaimId}§7".`);
+                } else {
+                    sender.sendMessage(`§o§c[Paradox] Player "${targetPlayer}" is not listed as a trusted member of claim "${targetClaimId}".`);
+                }
+            });
             return;
         }
 
@@ -970,6 +1100,6 @@ export const claimCommand: Command = {
             return;
         }
 
-        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, delete, info");
+        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, trust, untrust, delete, info");
     },
 };
