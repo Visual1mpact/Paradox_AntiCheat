@@ -1,7 +1,7 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
-import { PlatformBlockSettings } from "../classes/database/db-types";
+import { PlatformBlockSettings, WarningEntry } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
@@ -309,7 +309,7 @@ async function handleWarnCheck(event: PlayerSpawnAfterEvent): Promise<void> {
     if (clearance === 4) return;
 
     const allWarns = (await warnsDB.get("players")) ?? {};
-    const playerWarns = allWarns[playerName] ?? [];
+    const playerWarns: WarningEntry[] = allWarns[playerName] ?? [];
 
     if (playerWarns.length >= 3) {
         player.runCommand(`kick @s Automatic Kick: Too many warnings (${playerWarns.length}/3). Appeal to an admin.`);

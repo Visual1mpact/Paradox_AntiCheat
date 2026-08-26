@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, system } from "@minecraft/server";
+import { ChatSendBeforeEvent, system, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { moduleActions, moduleStopActions, paradoxModulesDB } from "../../event-listeners/world-initialize";
 
@@ -55,13 +55,15 @@ export const modStateCommand: Command = {
         const isDisable = subCommand === "disable";
 
         if (!subCommand || (subCommand !== "enable" && subCommand !== "disable")) {
-            player.sendMessage("§2[§7Paradox§2]§o§c Usage: {prefix}modstate [ enable | disable ]");
+            const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
+            player.sendMessage(`§2[§7Paradox§2]§o§c Usage: ${prefix}modstate [ enable | disable ]`);
             return;
         }
 
         let modifiedCount = 0;
 
-        for (const [moduleKey, startAction] of Object.entries(moduleActions) as [keyof typeof moduleActions, (settings: Record<string, unknown>) => Promise<boolean | void> | boolean | void][]) {
+        // Accept unknown/any settings payload to safely accommodate diverse module settings interfaces
+        for (const [moduleKey, startAction] of Object.entries(moduleActions) as [keyof typeof moduleActions, (settings?: unknown) => Promise<boolean | void> | boolean | void][]) {
             const dbKey = moduleKey as Parameters<typeof paradoxModulesDB.get>[0];
             const moduleData: NonNullable<Awaited<ReturnType<typeof paradoxModulesDB.get>>> = (await paradoxModulesDB.get(dbKey)) ?? { enabled: false };
 
@@ -85,7 +87,7 @@ export const modStateCommand: Command = {
                 // Attempt to execute startAction first to verify platform compatibility
                 let result: boolean | void = true;
                 try {
-                    result = await startAction(moduleData.settings ?? {});
+                    result = await startAction(moduleData.settings);
                 } catch {
                     result = false;
                 }

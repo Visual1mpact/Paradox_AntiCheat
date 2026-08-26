@@ -95,15 +95,14 @@ export type ModuleSettingsMap = {
 
 /**
  * Schema for the `paradoxModules` database.
- * Maps module identifiers to their state and settings.
+ * Maps module identifiers strictly to their specific settings structure.
  */
-export type ParadoxModulesSchema = Record<
-    keyof ModuleSettingsMap,
-    {
+export type ParadoxModulesSchema = {
+    [K in keyof ModuleSettingsMap]: {
         enabled: boolean;
-        settings?: ModuleSettingsMap[keyof ModuleSettingsMap];
-    } & DatabaseValueObject
->;
+        settings?: ModuleSettingsMap[K];
+    } & DatabaseValueObject;
+};
 
 // ==========================================
 // LAND CLAIMS SCHEMA
@@ -190,47 +189,57 @@ export interface WarningEntry {
 }
 
 /**
- * Document structure for player warnings.
+ * Document structure for player warnings dictionary wrapper.
  */
 export interface PlayerWarnData extends DatabaseValueObject {
-    warnings: WarningEntry[];
+    [player: PlayerName]: WarningEntry[];
 }
 
 /**
  * Schema for the `warns` database.
- * Maps player names/IDs to warning history records.
+ * Holds all warning records under the "players" key.
  */
-export type WarnsSchema = Record<PlayerName, PlayerWarnData>;
+export type WarnsSchema = Record<"players", PlayerWarnData>;
 
 /** Document structure for whitelist/allowlist player records */
-export interface ListPlayerRecord extends DatabaseValueObject {
+export interface ListPlayerRecord {
     ID?: PlayerID;
+}
+
+/** Document structure for list dictionary wrapper */
+export interface ListPlayerDictionary extends DatabaseValueObject {
+    [player: PlayerName]: ListPlayerRecord;
 }
 
 /**
  * Schema for the `whitelist` database.
- * Maps whitelisted player names to persistent ID details.
+ * Holds whitelisted player details under the "players" key.
  */
-export type WhitelistPlayersSchema = Record<PlayerName, ListPlayerRecord>;
+export type WhitelistPlayersSchema = Record<"players", ListPlayerDictionary>;
 
 /**
  * Schema for the `allowlist` database.
- * Maps allowlisted player names to persistent ID details.
+ * Holds allowlisted player details under the "players" key.
  */
-export type AllowlistPlayersSchema = Record<PlayerName, ListPlayerRecord>;
+export type AllowlistPlayersSchema = Record<"players", ListPlayerDictionary>;
 
 /** Document structure for a banned player record */
-export interface BanRecord extends DatabaseValueObject {
+export interface BanRecord {
     reason: string;
     bannedBy: string;
     timestamp: number;
 }
 
+/** Document structure for banlist dictionary wrapper */
+export interface BanDictionary extends DatabaseValueObject {
+    [player: PlayerName]: BanRecord;
+}
+
 /**
  * Schema for the `banlist` database.
- * Maps banned player names to ban details.
+ * Holds banned player records under the "players" key.
  */
-export type BanlistPlayersSchema = Record<PlayerName, BanRecord>;
+export type BanlistPlayersSchema = Record<"players", BanDictionary>;
 
 // ==========================================
 // SECURITY & CONTAINER SCHEMAS

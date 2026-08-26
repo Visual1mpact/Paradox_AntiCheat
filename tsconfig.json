@@ -20,6 +20,15 @@
 
     "moduleResolution": "bundler",
 
+    /* Strict Type-Checking Flags */
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false,
@@ -35,7 +44,8 @@
     "alwaysStrict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitThis": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "noEmitOnError": true
   },
 
   "include": ["penrose/**/*"],

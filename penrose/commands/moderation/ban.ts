@@ -2,6 +2,7 @@ import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { PlayerCache } from "../../classes/cache/player-cache";
+import { BanDictionary, ListPlayerDictionary } from "../../classes/database/db-types";
 
 // Define the ban command
 export const banCommand: Command = {
@@ -68,8 +69,8 @@ export const banCommand: Command = {
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
         // Load ban and whitelist records, defaulting to empty objects if not found
-        const bannedPlayers = ((await banlistDB.get("players")) ?? {}) as Record<string, any>;
-        const whitelistedPlayers = ((await whitelistDB.get("players")) ?? {}) as Record<string, any>;
+        const bannedPlayers: BanDictionary = (await banlistDB.get("players")) ?? {};
+        const whitelistedPlayers: ListPlayerDictionary = (await whitelistDB.get("players")) ?? {};
 
         // Handle the list command first
         if (args.includes("-l") || args.includes("--list")) {
@@ -98,7 +99,7 @@ export const banCommand: Command = {
          */
         const captureMultiWordArgument = (args: string[]): string => {
             let result = "";
-            while (args.length > 0 && !validFlags.has(args[0])) {
+            while (args.length > 0 && args[0] !== undefined && !validFlags.has(args[0])) {
                 result += (result ? " " : "") + args.shift();
             }
             return result.replace(/["@]/g, "");

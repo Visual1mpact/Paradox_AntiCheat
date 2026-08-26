@@ -25,7 +25,7 @@ export interface ActionFormButton {
     name: string;
 
     /** Commands to execute when clicked */
-    command?: string[];
+    command?: string[] | undefined;
 
     /** Optional description shown to the player */
     description?: string;
@@ -334,7 +334,7 @@ export class CommandHandler {
      */
     private async executeCommand(message: ChatSendBeforeEvent, player: Player, commandName: string, args: string[], defaultPrefix: string): Promise<boolean> {
         const helpAliases = ["help", "--help"];
-        const isHelpRequest = helpAliases.includes(commandName) || helpAliases.includes(args[0]?.toLowerCase());
+        const isHelpRequest = helpAliases.includes(commandName) || helpAliases.includes(args[0]?.toLowerCase() ?? "");
         const playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? SecurityClearance.Level1;
 
         // 1. Try active registered commands
@@ -435,7 +435,9 @@ export class CommandHandler {
             .filter((button) => (button.securityClearance ?? SecurityClearance.Level1) <= playerSecurityClearance)
             .map((button) => ({
                 ...button,
-                subActions: button.subActions ? this.filterButtonsBySecurity(button.subActions, playerSecurityClearance) : undefined,
+                ...(button.subActions
+                    ? { subActions: this.filterButtonsBySecurity(button.subActions, playerSecurityClearance) }
+                    : {}),
             }));
     }
 

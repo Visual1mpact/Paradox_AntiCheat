@@ -386,7 +386,7 @@ async function initializeSystems() {
             totalMigrated += migrated;
             totalSavedBytes += originalBytes - compressedBytes;
         } else {
-            console.warn(`[Paradox] Migration failed for DB '${dbs[i].name}':`, result.reason);
+            console.warn(`[Paradox] Migration failed for DB '${dbs[i]?.name ?? "unknown"}':`, result.reason);
         }
     });
 

@@ -85,7 +85,7 @@ function* afkCheckGenerator(): Generator<void, void, unknown> {
                     playerLastActive[player.id] = currentTick;
                 } else {
                     const lastActiveTick = playerLastActive[player.id];
-                    if (currentTick - lastActiveTick >= AFK_TIME_TICKS) {
+                    if (lastActiveTick !== undefined && currentTick - lastActiveTick >= AFK_TIME_TICKS) {
                         alertStaff(player);
                         player.runCommand(`kick @s You have been kicked for being AFK!`);
                         delete playerLastActive[player.id];
