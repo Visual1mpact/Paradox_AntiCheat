@@ -55,8 +55,8 @@ export const gameruleCommand: Command = {
             return;
         }
 
-        const ruleInput = args[0].replace(/["']/g, "");
-        const valueInput = args[1].toLowerCase();
+        const ruleInput = (args[0] ?? "").replace(/["']/g, "");
+        const valueInput = (args[1] ?? "").toLowerCase();
 
         // The world.gameRules properties are native accessors and may not be enumerable.
         // We reflect on the prototype to find all available rule keys.

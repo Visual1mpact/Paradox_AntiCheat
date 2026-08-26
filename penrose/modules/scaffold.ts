@@ -72,18 +72,18 @@ function detectScaffolding(playerId: string): Vector3[] {
     // Check if blocks were placed within the TIME_WINDOW
     const times = data.times;
     const timeCount = times.length;
-    const recentTimes = times[timeCount - 1] - times[timeCount - SCAFFOLD_THRESHOLD];
+    const recentTimes = times[timeCount - 1]! - times[timeCount - SCAFFOLD_THRESHOLD]!;
     if (recentTimes > TIME_WINDOW) return [];
 
     // Check if exactly two out of three coordinates are constant
     const positions = data.positions.slice(-SCAFFOLD_THRESHOLD);
-    const base = positions[0].location;
+    const base = positions[0]!.location;
     let xMatch = 1,
         yMatch = 1,
         zMatch = 1;
 
     for (let i = 1; i < positions.length; i++) {
-        const loc = positions[i].location;
+        const loc = positions[i]!.location;
         if (loc.x !== base.x) xMatch = 0;
         if (loc.y !== base.y) yMatch = 0;
         if (loc.z !== base.z) zMatch = 0;

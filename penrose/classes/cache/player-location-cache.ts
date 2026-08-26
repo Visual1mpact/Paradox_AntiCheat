@@ -28,7 +28,7 @@ export class PlayerLocationCache {
     /** Flag tracking whether event subscriptions have been registered */
     private static initialized = false;
     /** Subscription reference for player departure event cleanup */
-    private static leaveSubscription?: (ev: PlayerLeaveBeforeEvent) => void;
+    private static leaveSubscription: ((ev: PlayerLeaveBeforeEvent) => void) | undefined;
 
     /**
      * Initializes the player location cache and sets up event listeners.

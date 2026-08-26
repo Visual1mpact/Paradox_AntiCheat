@@ -64,7 +64,7 @@ export const opsecCommand: Command = {
         }
 
         const targetPlayerName = args.slice(0, -1).join(" ").trim().replace(/["@]/g, "");
-        const newClearance = parseInt(args[args.length - 1]);
+        const newClearance = parseInt(args[args.length - 1]!, 10);
 
         // Check permission for security clearance 4
         if (senderClearance === 4 && newClearance === 4) {

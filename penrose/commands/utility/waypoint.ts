@@ -288,7 +288,7 @@ export const waypointCommand: Command = {
                     case "-t":
                     case "--target": {
                         let result = "";
-                        while (argsCopy.length > 0 && !validFlags.has(argsCopy[0])) {
+                        while (argsCopy.length > 0 && argsCopy[0] !== undefined && !validFlags.has(argsCopy[0])) {
                             result += (result ? " " : "") + argsCopy.shift();
                         }
                         targetName = result.replace(/["@]/g, "");
@@ -340,7 +340,7 @@ export const waypointCommand: Command = {
             const dbEntry = await getOrLoadWaypoints(targetId);
 
             if (resetLimit) {
-                dbEntry.maxWaypoints = undefined;
+                delete dbEntry.maxWaypoints;
                 waypointsMemoryCache.set(targetId, dbEntry);
                 updateActiveGpsCount();
                 await waypointsDB.set(targetId, dbEntry);
@@ -378,7 +378,7 @@ export const waypointCommand: Command = {
             return;
         }
 
-        const action = args[0].toLowerCase();
+        const action = args[0]?.toLowerCase();
         const waypointNameArg = args.slice(1).join(" ").replace(/["@]/g, "").trim();
 
         switch (action) {
@@ -467,7 +467,7 @@ export const waypointCommand: Command = {
                     if (playerWaypoints.savedWaypoints[waypointNameArg]) {
                         delete playerWaypoints.savedWaypoints[waypointNameArg];
                         if (playerWaypoints.activeWaypointName === waypointNameArg) {
-                            playerWaypoints.activeWaypointName = undefined;
+                            delete playerWaypoints.activeWaypointName;
                             player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${waypointNameArg}§7" cleared and navigation stopped.`);
                         } else {
                             player.sendMessage(`§2[§7Paradox§2]§o§7 Waypoint "§f${waypointNameArg}§7" cleared.`);
@@ -481,7 +481,7 @@ export const waypointCommand: Command = {
                 } else {
                     if (playerWaypoints.activeWaypointName) {
                         const clearedName = playerWaypoints.activeWaypointName;
-                        playerWaypoints.activeWaypointName = undefined;
+                        delete playerWaypoints.activeWaypointName;
                         waypointsMemoryCache.set(player.id, playerWaypoints);
                         updateActiveGpsCount();
                         await waypointsDB.set(player.id, playerWaypoints);
@@ -504,6 +504,7 @@ export const waypointCommand: Command = {
 
                 for (const name of savedNames) {
                     const wp = playerWaypoints.savedWaypoints[name];
+                    if (!wp) continue;
                     const activeTag = playerWaypoints.activeWaypointName === name ? " §l§a[ACTIVE]§r" : "";
                     const dimLabel = wp.dimension.replace("minecraft:", "").toUpperCase();
 
@@ -583,7 +584,7 @@ export function startWaypointHUD() {
                 const wp = playerWaypoints.savedWaypoints[activeWaypointName];
 
                 if (!wp) {
-                    playerWaypoints.activeWaypointName = undefined;
+                    delete playerWaypoints.activeWaypointName;
                     waypointsMemoryCache.set(player.id, playerWaypoints);
                     updateActiveGpsCount();
                     system.run(async () => {
@@ -610,7 +611,7 @@ export function startWaypointHUD() {
 
                 if (distSq < 9 && Date.now() - wp.timestamp > 25000) {
                     player.onScreenDisplay.setActionBar(`§bGPS §7| §aReached Destination!`);
-                    playerWaypoints.activeWaypointName = undefined;
+                    delete playerWaypoints.activeWaypointName;
                     waypointsMemoryCache.set(player.id, playerWaypoints);
                     updateActiveGpsCount();
 

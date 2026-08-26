@@ -38,7 +38,7 @@ function updateVictimHistory(playerId: string, loc: Position): void {
 
     if (history.length > 0) {
         const last = history[history.length - 1];
-        if (last.x === loc.x && last.y === loc.y && last.z === loc.z) return;
+        if (last && last.x === loc.x && last.y === loc.y && last.z === loc.z) return;
     }
 
     history.push({ x: loc.x, y: loc.y, z: loc.z });
@@ -95,6 +95,7 @@ function onHitCached(event: EntityHurtBeforeEvent): void {
     if (vHistory) {
         for (let i = vHistory.length - 1; i >= 0; i--) {
             const v = vHistory[i];
+            if (!v) continue;
             if (distSq(aLoc.x, aLoc.y, aLoc.z, v.x, v.y, v.z) <= MAX_REACH_SQ) {
                 return; // Valid hit against victim's recent historical location
             }

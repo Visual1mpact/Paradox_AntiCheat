@@ -79,7 +79,7 @@ export const invseeCommand: Command = {
         const validFlags = new Set(["--enderchest", "-ec"]);
 
         for (let i = 0; i < args.length; i++) {
-            const arg = args[i].replace(/["@]/g, "");
+            const arg = args[i]?.replace(/["@]/g, "") ?? "";
             if (validFlags.has(arg.toLowerCase())) {
                 isEnderChest = true;
             } else {

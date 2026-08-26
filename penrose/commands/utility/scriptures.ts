@@ -36,7 +36,7 @@ function shuffleArray(array: string[]) {
     const copy = [...array];
     for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
+        [copy[i], copy[j]] = [copy[j]!, copy[i]!];
     }
     return copy;
 }
@@ -97,7 +97,7 @@ function broadcastScriptureToPlayer(player: Player) {
     const wrapped = wrapVerseText(verse);
     const [reference, ...lines] = wrapped.split("\n");
 
-    player.onScreenDisplay.setTitle(reference, {
+    player.onScreenDisplay.setTitle(reference ?? "", {
         subtitle: lines.join("\n"),
         fadeInDuration: 7,
         stayDuration: 120,
@@ -204,7 +204,7 @@ export const scriptureCommand: Command = {
 
         function captureMultiWordArgument(argsCopy: string[]): string {
             let result = "";
-            while (argsCopy.length > 0 && !validFlags.has(argsCopy[0])) {
+            while (argsCopy.length > 0 && !validFlags.has(argsCopy[0] ?? "")) {
                 result += (result ? " " : "") + argsCopy.shift();
             }
             return result.replace(/["@]/g, "");

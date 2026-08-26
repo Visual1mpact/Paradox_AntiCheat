@@ -122,6 +122,11 @@ export const deopCommand: Command = {
                     if (playerIndex !== -1) {
                         const removedPlayer = securityClearanceList.splice(playerIndex, 1)[0];
 
+                        if (!removedPlayer) {
+                            message?.sender.sendMessage("§o§c[Paradox] Player could not be removed from the security clearance list.");
+                            return false;
+                        }
+
                         // Check if the removed player was the host
                         if (securityClearanceListData.host?.id === removedPlayer.id) {
                             message?.sender.sendMessage("§o§c[Paradox] You cannot remove the host from the security clearance list.");

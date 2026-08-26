@@ -167,7 +167,7 @@ export const homeCommand: Command = {
                     case "-t":
                     case "--target": {
                         let result = "";
-                        while (argsCopy.length > 0 && !validFlags.has(argsCopy[0])) {
+                        while (argsCopy.length > 0 && argsCopy[0] !== undefined && !validFlags.has(argsCopy[0])) {
                             result += (result ? " " : "") + argsCopy.shift();
                         }
                         targetName = result.replace(/["@]/g, "");
@@ -222,7 +222,7 @@ export const homeCommand: Command = {
             const dbEntry = (await homesDB.get(targetId)) ?? { locations: [] };
 
             if (resetLimit) {
-                dbEntry.maxHomes = undefined;
+                delete dbEntry.maxHomes;
                 await homesDB.set(targetId, dbEntry);
 
                 const newLimit = await getMaxHomesForPlayer(targetId);
@@ -351,7 +351,15 @@ export const homeCommand: Command = {
                 return `§o§c[Paradox] A home named "${newName}§c" already exists!`;
             }
 
-            const decryptedTag = decryptData(playerHomes[index]);
+            const encryptedHome = playerHomes[index];
+            if (!encryptedHome) {
+                return `§o§c[Paradox] Home location "${oldName}§c" could not be decrypted!`;
+            }
+
+            const decryptedTag = decryptData(encryptedHome);
+            if (!decryptedTag) {
+                return `§o§c[Paradox] Home location "${oldName}§c" could not be decrypted!`;
+            }
             const parts = decryptedTag.split(":");
             parts[1] = newName;
             const updatedTag = parts.join(":");
@@ -371,8 +379,9 @@ export const homeCommand: Command = {
                     const parts = decryptedTag.split(":");
                     if (parts.length < 4) return;
                     const [, homeName, location, dimension] = parts;
+                    if (!location) return;
                     const [x, y, z] = location.split(",");
-                    const formattedDimension = formatDimension(dimension);
+                    const formattedDimension = formatDimension(dimension ?? "");
                     player.sendMessage(` §o§7| [§f${homeName}§7] Dimension: §2${formattedDimension}§f, §7Location:§f ${x}, ${y}, ${z}`);
                 });
             } else {
@@ -394,7 +403,19 @@ export const homeCommand: Command = {
                     return;
                 }
                 const [, , location, dimension] = parts;
+                if (!location) {
+                    player.sendMessage("§o§c[Paradox] Corrupted home data detected.");
+                    return;
+                }
+                if (!dimension) {
+                    player.sendMessage("§o§c[Paradox] Corrupted home data detected.");
+                    return;
+                }
                 const [x, y, z] = location.split(",");
+                if (x === undefined || y === undefined || z === undefined) {
+                    player.sendMessage("§o§c[Paradox] Corrupted home data detected.");
+                    return;
+                }
                 const teleportLocation = { x: parseFloat(x), y: parseFloat(y), z: parseFloat(z) };
 
                 const fullDimensionId = dimension.includes(":") ? dimension : `minecraft:${dimension}`;

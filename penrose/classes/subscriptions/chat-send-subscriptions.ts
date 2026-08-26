@@ -52,7 +52,7 @@ class SpamTracker {
         if (this.count > SPAM_THRESHOLD) {
             const oldestTick = this.buffer[this.index];
 
-            if (currentTick - oldestTick <= TIME_WINDOW) {
+            if (oldestTick !== undefined && currentTick - oldestTick <= TIME_WINDOW) {
                 this.mutedUntil = currentTick + MUTE_DURATION;
                 return true;
             }

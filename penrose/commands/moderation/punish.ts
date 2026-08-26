@@ -107,7 +107,7 @@ export const punishCommand: Command = {
 
         let i = 0;
         while (i < args.length) {
-            const arg = args[i].replace(/["@]/g, "");
+            const arg = (args[i] ?? "").replace(/["@]/g, "");
             if (validFlags.has(arg.toLowerCase())) {
                 switch (arg.toLowerCase()) {
                     case "--inventory":

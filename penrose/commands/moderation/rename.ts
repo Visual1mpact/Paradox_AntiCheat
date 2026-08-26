@@ -111,7 +111,7 @@ export const renameCommand: Command = {
             return;
         }
 
-        const targetName = cleanArgs[0].replace(/["@]/g, "");
+        const targetName = cleanArgs[0]!.replace(/["@]/g, "");
         const target = PlayerCache.getPlayerByName(targetName);
 
         if (!target || !target.isValid) {

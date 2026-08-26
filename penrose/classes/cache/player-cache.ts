@@ -199,16 +199,15 @@ export class PlayerCache {
     /** Iterator over all currently valid cached players */
     public static *getPlayers(): IterableIterator<Player> {
         const players = this.getAllPlayers();
-        for (let i = 0; i < players.length; i++) {
-            yield players[i];
+        for (const player of players) {
+            yield player;
         }
     }
 
     /** Iterator over [ID, Player] entries for valid players */
     public static *entries(): IterableIterator<[string, Player]> {
         const players = this.getAllPlayers();
-        for (let i = 0; i < players.length; i++) {
-            const player = players[i];
+        for (const player of players) {
             yield [player.id, player];
         }
     }
@@ -238,16 +237,16 @@ export class PlayerCache {
 
         if (this.spawnSubscription) {
             EventCoordinator.unsubscribeAfter("playerSpawn", this.spawnSubscription);
-            this.spawnSubscription = undefined;
+            delete this.spawnSubscription;
         }
         if (this.leaveSubscription) {
             EventCoordinator.unsubscribeBefore("playerLeave", this.leaveSubscription);
-            this.leaveSubscription = undefined;
+            delete this.leaveSubscription;
         }
 
         if (this.cleanupInterval !== undefined) {
             system.clearRun(this.cleanupInterval);
-            this.cleanupInterval = undefined;
+            delete this.cleanupInterval;
         }
 
         this.initialized = false;

@@ -263,7 +263,7 @@ export const channelCommand: Command = {
             if (channel.Owner === playerName) {
                 if (Object.keys(channel.Members).length > 0) {
                     const newOwnerId = Object.keys(channel.Members)[0];
-                    const newOwnerName = channel.Members[newOwnerId];
+                    const newOwnerName = channel.Members[newOwnerId!]!;
                     channel.Owner = newOwnerName;
 
                     for (const memberId in channel.Members) {

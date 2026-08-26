@@ -173,7 +173,7 @@ export const chestForensicCommand: Command = {
         const currentPrefix = (world.getDynamicProperty("__prefix") as string) || ":";
         const inputArg = args[0]?.trim();
 
-        const isChestKeyFormat = /^[a-zA-Z]+_-?\d+_-?\d+_-?\d+$/.test(inputArg);
+        const isChestKeyFormat = inputArg ? /^[a-zA-Z]+_-?\d+_-?\d+_-?\d+$/.test(inputArg) : false;
 
         let normalizedArg = inputArg;
         if (isChestKeyFormat) {
@@ -314,7 +314,7 @@ export const chestForensicCommand: Command = {
         }
 
         // Chest lookup
-        const chestData = await chestLockDB.get(normalizedArg);
+        const chestData = await chestLockDB.get(normalizedArg!);
         if (chestData) {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Chest Forensics for §f${inputArg}`);
             player.sendMessage(`§2[§7Paradox§2]§o§7 Owner: §f${chestData.owner ?? "Unknown"}`);

@@ -428,7 +428,8 @@ function runWorldBorderChecks(): void {
     const len = players.length;
 
     for (let i = 0; i < len; i++) {
-        checkPlayerBorder(players[i], currentTick);
+        const player = players[i];
+        if (player) checkPlayerBorder(player, currentTick);
     }
 
     startSafeYWorker();

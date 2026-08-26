@@ -156,7 +156,7 @@ export const setRankCommand: Command = {
          */
         function captureMultiWordArgument(args: string[]): string {
             let result = "";
-            while (args.length > 0 && !validFlags.has(args[0])) {
+            while (args.length > 0 && args[0] !== undefined && !validFlags.has(args[0])) {
                 result += (result ? " " : "") + args.shift();
             }
             return result.replace(/["@]/g, "");

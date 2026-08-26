@@ -167,7 +167,7 @@ export const worldBorderCommand: Command = {
 
         const updated = { ...borderSettings };
         for (let i = 0; i < args.length; i++) {
-            const arg = args[i].toLowerCase();
+            const arg = args[i]?.toLowerCase();
             switch (arg) {
                 case "--overworld":
                 case "-o":

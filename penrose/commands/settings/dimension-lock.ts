@@ -131,7 +131,7 @@ export const dimensionLockCommand: Command = {
         }
 
         const dimension = arg0;
-        const state = args[1].toLowerCase();
+        const state = args[1]?.toLowerCase();
 
         if (dimension !== "nether" && dimension !== "end") {
             message.sender.sendMessage("§o§c[Paradox] Invalid dimension or state. Use 'nether', 'end', 'on', or 'off'.");

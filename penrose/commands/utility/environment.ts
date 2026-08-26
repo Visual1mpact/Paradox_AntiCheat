@@ -72,7 +72,7 @@ export const environmentCommand: Command = {
                 midnight: 18000,
             };
 
-            const timeTick = timeMap[value];
+            const timeTick = value === undefined ? undefined : timeMap[value];
             if (timeTick !== undefined) {
                 world.setTimeOfDay(timeTick);
                 message.sender.sendMessage(`§2[§7Paradox§2]§o§7 World time set to §a${value}§7.`);

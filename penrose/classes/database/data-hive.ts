@@ -72,12 +72,16 @@ class LZCompressor {
             dictionary.set(i, String.fromCharCode(i));
         }
 
-        let w = String.fromCharCode(compressedCodes[0]);
+        let w = String.fromCharCode(compressedCodes[0]!);
         let result = w;
 
         for (let i = 1; i < compressedCodes.length; i++) {
             const k = compressedCodes[i];
             let entry = "";
+
+            if (k === undefined) {
+                throw new Error("[Paradox] Data Hive Error: Invalid LZW decompression block.");
+            }
 
             if (dictionary.has(k)) {
                 entry = dictionary.get(k)!;

@@ -410,7 +410,7 @@ export async function forceCheckAll() {
             if (!snapshot || !current) continue;
 
             for (const item in current) {
-                const delta = current[item] - (snapshot.counts[item] ?? 0);
+                const delta = (current[item] ?? 0) - (snapshot.counts?.[item] ?? 0);
 
                 // Dynamic stack threshold calculation per item type
                 const maxStackSize = getMaxStackSize(item);

@@ -83,7 +83,7 @@ function getCanonicalChestKey(block: Block): string {
     if (!adj) return getBlockLocationKey(block);
 
     const keys = [block, adj].sort((a, b) => a.x - b.x || a.z - b.z || a.y - b.y);
-    return getBlockLocationKey(keys[0]);
+    return getBlockLocationKey(keys[0]!);
 }
 
 /**
@@ -146,7 +146,6 @@ async function logChestAccess(block: Block, playerName: string): Promise<void> {
     if (entry) {
         const updated = {
             ...entry,
-            placedBy: entry.placedBy,
             lastAccessed: timestamp,
             accessLog: entry.accessLog ? [...entry.accessLog, logEntry] : [logEntry],
         };

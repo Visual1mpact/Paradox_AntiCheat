@@ -42,7 +42,7 @@ function calculateStandardDeviation(values: number[], average: number): number {
 function getDynamicThreshold(intervals: number[]): number {
     if (intervals.length < 2) return 1;
 
-    const differences = intervals.slice(1).map((val, index) => val - intervals[index]);
+    const differences = intervals.slice(1).map((val, index) => val - intervals[index]!);
     const avgDiff = calculateAverage(differences);
     const stdDev = calculateStandardDeviation(differences, avgDiff);
 
@@ -71,8 +71,8 @@ function checkIfFacingEntity(attacker: Player, attackerLoc: Vector3, targetLoc: 
 function isSuspiciousAttackPattern(attackTimes: number[]): boolean {
     if (attackTimes.length < 3) return false;
 
-    const intervals = attackTimes.slice(1).map((t, i) => t - attackTimes[i]);
-    const intervalDiffs = intervals.slice(1).map((v, i) => v - intervals[i]);
+    const intervals = attackTimes.slice(1).map((t, i) => t - attackTimes[i]!);
+    const intervalDiffs = intervals.slice(1).map((v, i) => v - intervals[i]!);
     const threshold = getDynamicThreshold(intervals);
 
     return intervalDiffs.every((diff) => Math.abs(diff) <= threshold);

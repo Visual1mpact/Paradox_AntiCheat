@@ -53,7 +53,9 @@ export const switchGamemodeCommand: Command = {
             return;
         }
 
-        const modeInput = args[0].trim().toLowerCase();
+        const modeArgument = args[0];
+        if (modeArgument === undefined) return;
+        const modeInput = modeArgument.trim().toLowerCase();
 
         const modes: Record<string, GameMode> = {
             survival: GameMode.Survival,

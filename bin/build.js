@@ -196,6 +196,11 @@ async function main() {
 
     console.log(`Starting build pipeline | mcpack=${wantMcpack} | zip=${wantZip} | server=${skipArchive}\n`);
 
+    // Enforce strict tsconfig.json type checking before transpiling
+    console.log("[Build] Running strict TypeScript type check...");
+    run("npx", ["tsc", "--noEmit"]);
+    console.log("[Build] Type check passed successfully!\n");
+
     cleanBuildDir();
 
     // 1. Copy root static files

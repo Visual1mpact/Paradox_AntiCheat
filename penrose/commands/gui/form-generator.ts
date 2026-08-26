@@ -61,7 +61,7 @@ class GUIManager {
         for (const cmd of commands) {
             if (cmd.securityClearance <= this.playerSecurityClearance) {
                 categories[cmd.category] ??= [];
-                categories[cmd.category].push(cmd);
+                categories[cmd.category]!.push(cmd);
             }
         }
 
@@ -90,6 +90,7 @@ class GUIManager {
             }
             if (!res.canceled) {
                 const selected = accessibleCategories[res.selection || 0];
+                if (!selected) return;
                 // Open the category menu for the selected category
                 await this.openCategoryMenu(selected.category, selected.commands);
             }
@@ -117,7 +118,8 @@ class GUIManager {
             // If "Back" is selected, return to main menu
             if (res.selection === commands.length) return this.openMainGui();
 
-            const selectedCommand = commands[res.selection || 0];
+            const selectedCommand = commands[res.selection ?? 0];
+            if (!selectedCommand) return;
             // Open the command-specific menu (action or modal)
             await this.buildCommandMenu(selectedCommand);
         } catch (err) {
@@ -170,6 +172,7 @@ class GUIManager {
             if (res.selection === actions.length) return this.openMainGui();
 
             const selectedAction = actions[res.selection || 0];
+            if (!selectedAction) return;
             // If action generates sub-actions, show them recursively
             if (selectedAction.generateSubActions && selectedAction.subActions?.length) {
                 await this.showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description ?? "", command, dynamicFields, commandOrder);
@@ -344,7 +347,7 @@ class GUIManager {
 
                 if (field.arg) {
                     groupedValues[field.arg] ??= [];
-                    groupedValues[field.arg].push(value || "0");
+                    groupedValues[field.arg]!.push(value || "0");
                 } else {
                     args.push(value || "0");
                 }

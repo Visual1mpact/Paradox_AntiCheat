@@ -87,7 +87,7 @@ export const tpaCommand: Command = {
          * @returns {[Player | undefined, Player | undefined]} The player objects corresponding to the provided arguments.
          */
         function determinePlayers(args: string[]): [Player | undefined, Player | undefined] {
-            const [arg1, arg2, arg3, arg4] = args.map(cleanName);
+            const [arg1 = "", arg2 = "", arg3 = "", arg4 = ""] = args.map(cleanName);
 
             if (args.length === 2) {
                 return [getPlayerObject(arg1), getPlayerObject(arg2)];
@@ -98,7 +98,7 @@ export const tpaCommand: Command = {
             }
 
             if (args.length === 3) {
-                const possibleNames = [
+                const possibleNames: [string, string][] = [
                     [`${arg1} ${arg2}`, arg3],
                     [arg1, `${arg2} ${arg3}`],
                 ];

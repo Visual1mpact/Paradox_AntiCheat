@@ -133,7 +133,7 @@ export const platformBlockCommand: Command = {
         const platform = args[0]?.toLowerCase();
         const action = args[1]?.toLowerCase();
 
-        if (!["console", "desktop", "mobile"].includes(platform)) {
+        if (!platform || !["console", "desktop", "mobile"].includes(platform)) {
             player.sendMessage(`§o§c[Paradox] Invalid platform. Use console, desktop, or mobile.`);
             return;
         }
@@ -142,8 +142,8 @@ export const platformBlockCommand: Command = {
         const disableFlags = ["--disable", "-d"];
         let blockPlatform: boolean | null = null;
 
-        if (enableFlags.includes(action)) blockPlatform = true;
-        else if (disableFlags.includes(action)) blockPlatform = false;
+        if (action && enableFlags.includes(action)) blockPlatform = true;
+        else if (action && disableFlags.includes(action)) blockPlatform = false;
         else {
             player.sendMessage(`§o§c[Paradox] Invalid action. Use "-e" to block or "-d" to allow.`);
             return;

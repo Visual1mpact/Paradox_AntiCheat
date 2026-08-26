@@ -51,7 +51,7 @@ class TimestampBuffer {
      */
     prune(now: number, window: number): void {
         while (this.count > 0) {
-            const ts = this.buffer[this.start];
+            const ts = this.buffer[this.start]!;
             if (now - ts <= window) break;
             this.start = (this.start + 1) % this.maxSize;
             this.count--;

@@ -60,6 +60,8 @@ class TimestampBuffer {
     prune(now: number): void {
         while (this.count > 0) {
             const ts = this.buffer[this.start];
+            if (ts === undefined) break;
+
             if (now - ts <= TIME_WINDOW) break;
 
             this.start = (this.start + 1) % BUFFER_SIZE;

@@ -81,7 +81,7 @@ export const command: Command = {
             return;
         }
 
-        const action = args[0].toLowerCase();
+        const action = args[0]!.toLowerCase();
 
         if (action === "list") {
             const registered = commandHandler.getRegisteredCommands().map((c) => c.name);

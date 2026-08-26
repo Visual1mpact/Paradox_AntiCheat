@@ -46,7 +46,7 @@ async function handleDimensionChange(event: PlayerDimensionChangeAfterEvent) {
         const spawn = world.getDefaultSpawnLocation();
         player.teleport(spawn, { dimension: fromDimension });
 
-        const dimName = toDimension.id.split(":")[1].replace("_", " ");
+        const dimName = (toDimension.id.split(":")[1] ?? toDimension.id).replace("_", " ");
         player.sendMessage(`§2[§7Paradox§2]§o§7 Access to the §e${dimName}§7 dimension is currently §clocked§7.`);
 
         // Notify staff of the violation attempt

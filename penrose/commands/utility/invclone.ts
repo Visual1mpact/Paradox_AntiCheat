@@ -73,7 +73,7 @@ export const invCloneCommand: Command = {
         if (!dimension || !base) return;
 
         // --- Removal logic if no args or 'remove' keyword ---
-        if (!args?.length || args[0].toLowerCase() === "remove") {
+        if (!args?.length || args[0]?.toLowerCase() === "remove") {
             let removedCount = 0;
             const radius = 20; // configurable search radius
 

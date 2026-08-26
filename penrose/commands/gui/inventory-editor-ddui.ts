@@ -343,7 +343,7 @@ export function showInventoryEditor(player: Player) {
      */
     function applyNameLore(container: Container, item: ItemStack, slot: number) {
         const nameInput = newName.getData().trim();
-        item.nameTag = nameInput.length > 0 ? nameInput : undefined;
+        item.nameTag = nameInput;
 
         const loreInput = newLore.getData().trim();
         item.setLore?.(loreInput.length > 0 ? loreInput.split("\n") : []);

@@ -97,7 +97,7 @@ export const modulesStatusCommand: Command = {
             lines.push("§r§2  └─§o§7 No matching module commands found.");
         } else {
             filteredModules.forEach(([key, value], index) => {
-                const commandName = moduleToCommandMap[key];
+                const commandName = moduleToCommandMap[key]!;
                 const isLast = index === filteredModules.length - 1;
                 const branch = isLast ? "└" : "├";
                 const readableName = toTitleCase(commandName);

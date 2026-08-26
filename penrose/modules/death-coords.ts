@@ -11,7 +11,7 @@ export function startDeathCoords(): void {
 
         if (deadEntity instanceof Player) {
             const { x, y, z } = deadEntity.location;
-            const dimension = deadEntity.dimension.id.split(":")[1].replace(/_/g, " ");
+            const dimension = (deadEntity.dimension.id.split(":")[1] ?? deadEntity.dimension.id).replace(/_/g, " ");
 
             deadEntity.sendMessage(`§2[§7Paradox§2]§o§7 You died at: §f${Math.floor(x)}, ${Math.floor(y)}, ${Math.floor(z)} §7in §f${dimension}§7.`);
         }

@@ -67,7 +67,7 @@ export const broadcastCommand: Command = {
 
         function captureMultiWordArgument(args: string[]): string {
             let result = "";
-            while (args.length > 0 && !validFlags.has(args[0])) {
+            while (args.length > 0 && !validFlags.has(args[0]!)) {
                 result += (result ? " " : "") + args.shift();
             }
             return result.replace(/["@]/g, "");

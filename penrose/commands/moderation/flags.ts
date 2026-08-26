@@ -94,12 +94,13 @@ export const flagsCommand: Command = {
 
         const sender = message.sender;
 
-        if (!args || args.length === 0) {
+        const firstArg = args?.[0];
+        if (!firstArg) {
             sender.sendMessage("§o§c[Paradox] Usage: {prefix}flags <player> [clear]");
             return;
         }
 
-        const actionOrName = args[0].toLowerCase();
+        const actionOrName = firstArg.toLowerCase();
 
         // Sub-command: Clear all database entries
         if (actionOrName === "clearall") {
@@ -108,7 +109,7 @@ export const flagsCommand: Command = {
             return;
         }
 
-        let inputTargetName = args[0].replace(/["@]/g, "").trim();
+        let inputTargetName = firstArg.replace(/["@]/g, "").trim();
         const subAction = args[1]?.toLowerCase();
 
         let targetId: string | undefined;
