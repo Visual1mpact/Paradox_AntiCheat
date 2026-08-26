@@ -135,6 +135,8 @@ import { modStateCommand } from "../commands/moderation/mod-state";
 import { setInvalidMovementVectorState } from "../modules/invalid-movement-vector";
 import { setInventoryMovementState } from "../modules/inventory-movement";
 import { claimCommand, landClaims } from "../commands/utility/land-claim";
+import { hotbarCheckCommand } from "../commands/settings/hotbar-check";
+import { startHotbarCheck, stopHotbarCheck } from "../modules/hotbar-check";
 
 /** Player unique identifier type */
 type PlayerID = string;
@@ -208,6 +210,7 @@ export const moduleStopActions: Record<string, () => void> = {
         };
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: false });
     },
+    hotbarCheck_b: () => stopHotbarCheck,
 };
 
 /** Action callbacks to initialize/start module execution routines */
@@ -266,6 +269,7 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
         };
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: true });
     },
+    hotbarCheck_b: () => startHotbarCheck,
 };
 
 /** Master list of all Paradox commands */
@@ -350,6 +354,7 @@ const allCommands: Command[] = [
     flagsCommand,
     modStateCommand,
     claimCommand,
+    hotbarCheckCommand,
 ];
 
 /**

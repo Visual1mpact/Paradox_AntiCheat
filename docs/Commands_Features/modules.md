@@ -351,6 +351,22 @@ The `gravesaver` command toggles the item preservation module. When activated, i
 
 ---
 
+## hotbarcheck
+### At A Glance
+The `hotbarcheck` command toggles a detection module that monitors hotbar slot selections to detect invalid or out-of-bounds slot index manipulation.
+
+### How It Works
+- **Index Boundary Validation:** Intercepts `PlayerHotbarSelectedSlotChangeAfterEvent` to inspect the newly selected hotbar slot index.
+- **Out-of-Bounds Detection:** Checks whether the target hotbar selection index falls below `0` or exceeds `9` (`newSlotSelected < 0 || newSlotSelected > 9`).
+- **Staff Alerts:** Logs violations to the system and sends real-time alert notifications to online administrators with Level 4 security clearance.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: ":hotbarcheck"  
+> Example: :hotbarcheck
+
+---
+
 ## invmove
 ### At A Glance
 The `invmove` command toggles a movement validation module that detects and prevents players from moving while interacting with or organizing items inside their inventory. This stops inventory movement hacks (commonly referred to as InvMove or ChestWalk).

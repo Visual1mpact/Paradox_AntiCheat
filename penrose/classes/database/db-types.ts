@@ -91,6 +91,7 @@ export type ModuleSettingsMap = {
     dimensionLock_b: DimensionLockSettings;
     invalidMovementVectorCheck_b: undefined;
     inventoryMovementCheck_b: undefined;
+    hotbarCheck_b: undefined;
 };
 
 /**

@@ -80,6 +80,7 @@ export const modulesStatusCommand: Command = {
             xrayDetection_b: "xray",
             invalidMovementVectorCheck_b: "invalidvector",
             inventoryMovementCheck_b: "invmove",
+            hotbarCheck_b: "hotbarcheck",
         };
 
         const entries = await paradoxModulesDB.entries();
