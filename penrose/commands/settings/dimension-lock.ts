@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startDimensionLock, stopDimensionLock } from "../../modules/dimension-lock";
+import { startDimensionLock, stopDimensionLock } from "../../modules/dimension-lock-module";
 
 /**
  * Command to lock or unlock access to the Nether and The End dimensions.

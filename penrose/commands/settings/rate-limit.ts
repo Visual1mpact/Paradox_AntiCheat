@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startPacketHandler, stopPacketHandler } from "../../modules/rate-limit";
+import { startPacketHandler, stopPacketHandler } from "../../modules/rate-limit-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

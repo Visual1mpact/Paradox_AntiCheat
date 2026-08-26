@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startNamespoofDetection, stopNamespoofDetection } from "../../modules/namespoof";
+import { startNamespoofDetection, stopNamespoofDetection } from "../../modules/namespoof-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

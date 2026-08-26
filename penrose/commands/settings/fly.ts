@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startFlyCheck, stopFlyCheck } from "../../modules/fly";
+import { startFlyCheck, stopFlyCheck } from "../../modules/fly-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

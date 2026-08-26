@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startPathingMonitor, stopPathingMonitor } from "../../modules/pathing-monitor";
+import { startPathingMonitor, stopPathingMonitor } from "../../modules/pathing-monitor-module";
 
 /**
  * Represents the pathing monitor toggle command.

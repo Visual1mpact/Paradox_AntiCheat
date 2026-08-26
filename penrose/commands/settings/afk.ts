@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startAFKChecker, stopAFKChecker } from "../../modules/afk";
+import { startAFKChecker, stopAFKChecker } from "../../modules/afk-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

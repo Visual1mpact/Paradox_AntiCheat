@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startAutoTotemCheck, stopAutoTotemCheck } from "../../modules/autototem";
+import { startAutoTotemCheck, stopAutoTotemCheck } from "../../modules/autototem-module";
 
 /**
  * Command to toggle AutoTotem detection.

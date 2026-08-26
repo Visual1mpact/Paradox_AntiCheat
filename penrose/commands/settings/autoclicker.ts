@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startAutoClicker, stopAutoClicker } from "../../modules/autoclicker";
+import { startAutoClicker, stopAutoClicker } from "../../modules/autoclicker-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startXrayDetection, stopXrayDetection } from "../../modules/xray";
+import { startXrayDetection, stopXrayDetection } from "../../modules/xray-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

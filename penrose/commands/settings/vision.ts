@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startVisionCheck, stopVisionCheck } from "../../modules/vision";
+import { startVisionCheck, stopVisionCheck } from "../../modules/vision-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

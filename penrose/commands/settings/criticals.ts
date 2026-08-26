@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startCriticalsCheck, stopCriticalsCheck } from "../../modules/criticals";
+import { startCriticalsCheck, stopCriticalsCheck } from "../../modules/criticals-module";
 
 /**
  * Represents the criticals toggle command.

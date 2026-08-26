@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, EntityHealthComponent, Player, system, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { initializePvPSystem, stopPvPSystem, updateCoolDownTicks } from "../../modules/pvp-manager";
+import { initializePvPSystem, stopPvPSystem, updateCoolDownTicks } from "../../modules/pvp-manager-module";
 import { MessageFormData } from "@minecraft/server-ui";
 import { PlayerCache } from "../../classes/cache/player-cache";
 

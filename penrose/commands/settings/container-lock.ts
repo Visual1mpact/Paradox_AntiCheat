@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { chestLockDB, paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startChestLock, stopChestLock } from "../../modules/container-lock";
+import { startChestLock, stopChestLock } from "../../modules/container-lock-module";
 
 /**
  * Chest forensic command:

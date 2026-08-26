@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startHotbarCheck, stopHotbarCheck } from "../../modules/hotbar-check";
+import { startHotbarCheck, stopHotbarCheck } from "../../modules/hotbar-check-module";
 
 /**
  * Represents the command to toggle hotbar slot validation.

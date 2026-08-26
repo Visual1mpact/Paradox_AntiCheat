@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startKillAuraCheck, stopKillAuraCheck } from "../../modules/killaura";
+import { startKillAuraCheck, stopKillAuraCheck } from "../../modules/killaura-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

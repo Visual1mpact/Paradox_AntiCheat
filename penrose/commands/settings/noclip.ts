@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startNoClip, stopNoClip } from "../../modules/noclip";
+import { startNoClip, stopNoClip } from "../../modules/noclip-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

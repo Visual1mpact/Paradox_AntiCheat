@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { setInvalidMovementVectorState } from "../../modules/invalid-movement-vector";
+import { setInvalidMovementVectorState } from "../../modules/invalid-movement-vector-module";
 
 /**
  * Represents the invalid movement vector toggle command.

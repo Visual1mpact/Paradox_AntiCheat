@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border";
+import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

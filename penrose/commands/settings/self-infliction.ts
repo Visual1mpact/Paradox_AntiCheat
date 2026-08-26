@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startSelfAttackCheck, stopSelfAttackCheck } from "../../modules/self-infliction";
+import { startSelfAttackCheck, stopSelfAttackCheck } from "../../modules/self-infliction-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 /**

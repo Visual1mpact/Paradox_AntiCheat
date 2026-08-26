@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startInvSync, stopInvSync, forceSnapshotAll, forceCheckAll, clearAllSnapshots } from "../../modules/invsync";
+import { startInvSync, stopInvSync, forceSnapshotAll, forceCheckAll, clearAllSnapshots } from "../../modules/invsync-module";
 import { paradoxModulesDB, invSyncSnapshotsDB, invSyncAuditDB } from "../../event-listeners/world-initialize";
 
 /**

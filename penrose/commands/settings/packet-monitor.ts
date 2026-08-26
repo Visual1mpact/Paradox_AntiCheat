@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startPacketListener, stopPacketListener } from "../../modules/packet-monitor";
+import { startPacketListener, stopPacketListener } from "../../modules/packet-monitor-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 import * as CryptoES from "../../node_modules/crypto-es";
 

@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { setInventoryMovementState } from "../../modules/inventory-movement";
+import { setInventoryMovementState } from "../../modules/inventory-movement-module";
 
 /**
  * Represents the inventory movement toggle command.

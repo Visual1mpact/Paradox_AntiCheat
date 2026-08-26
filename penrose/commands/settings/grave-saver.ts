@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startGraveSaver, stopGraveSaver } from "../../modules/grave-saver";
+import { startGraveSaver, stopGraveSaver } from "../../modules/grave-saver-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 export const graveSaverCommand: Command = {

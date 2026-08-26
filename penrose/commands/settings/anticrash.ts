@@ -1,6 +1,6 @@
 import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { startAntiCrash, stopAntiCrash } from "../../modules/anticrash";
+import { startAntiCrash, stopAntiCrash } from "../../modules/anticrash-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
 export const anticrashCommand: Command = {

@@ -1,6 +1,6 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { toggleChunks } from "../../modules/chunk-borders";
+import { toggleChunks } from "../../modules/chunk-borders-module";
 
 export const chunkBordersCommand: Command = {
     name: "chunkborders",
