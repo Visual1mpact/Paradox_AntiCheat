@@ -25,6 +25,8 @@ function alertStaff(player: Player, dimName: string): void {
 
 /**
  * Monitors dimension changes to prevent access to locked dimensions.
+ *
+ * @param {PlayerDimensionChangeAfterEvent} event - The dimension change event payload.
  */
 async function handleDimensionChange(event: PlayerDimensionChangeAfterEvent) {
     const moduleData = (await paradoxModulesDB.get("dimensionLock_b")) ?? null;
@@ -42,9 +44,15 @@ async function handleDimensionChange(event: PlayerDimensionChangeAfterEvent) {
         const clearance = (player.getDynamicProperty("securityClearance") as number) ?? 1;
         if (clearance >= 4) return;
 
-        // Teleport them back to the spawn location of the dimension they originated from
-        const spawn = world.getDefaultSpawnLocation();
-        player.teleport(spawn, { dimension: fromDimension });
+        // Try player bed/anchor spawn, fallback to world spawn for that dimension
+        const playerSpawn = player.getSpawnPoint();
+        const worldSpawn = world.getDefaultSpawnLocation();
+
+        const targetLocation = playerSpawn ?? worldSpawn;
+        const targetDimension = playerSpawn?.dimension ?? fromDimension;
+
+        // Teleport player back to their personal spawn or the dimension's default spawn
+        player.teleport({ x: targetLocation.x, y: targetLocation.y, z: targetLocation.z }, { dimension: targetDimension });
 
         const dimName = (toDimension.id.split(":")[1] ?? toDimension.id).replace("_", " ");
         player.sendMessage(`§2[§7Paradox§2]§o§7 Access to the §e${dimName}§7 dimension is currently §clocked§7.`);
