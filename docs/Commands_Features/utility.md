@@ -428,7 +428,7 @@ The `invsee` command allows players with sufficient clearance to view another pl
 ### At A Glance
 The `landclaim` command allows players to manage, inspect, configure, trust, untrust, and delete registered land claims. Claims extend automatically from sky to bedrock (`-64` to `320`) and protect territories against unauthorized block modifications, entity damage, interactions, bucket liquid placements, explosion damage, and piston/sticky block breaches.
 
-?> Required Clearance Level To Execute: `1` (User Actions) | `4` (Configuration Settings)
+?> Required Clearance Level To Execute: `1` (User Actions) | `4` (Configuration Settings & Admin Overrides)
 
 ### **How It Works**
 - **Wand Selection**: Claim boundaries are selected using a **Golden Hoe** (`minecraft:golden_hoe`) as a wand tool.
@@ -453,11 +453,15 @@ The `landclaim` command allows players to manage, inspect, configure, trust, unt
   - Detects pistons or sticky blocks attempting to push or stick across claim boundaries.
   - Filters out explosion block and entity damage inside claim boundaries.
   - Unauthorized intruders who attempt restricted interactions inside a claim are temporarily forced into **Adventure Mode**. Their original game mode is automatically restored once they exit the claim buffer zone (5 blocks away).
-- **Admin Configuration (Clearance 4+)**:
+- **Admin Configuration & Inspection (Clearance 4+)**:
   - Admins can modify runtime parameters (`min_size`, `max_size`, `max_area`, `max_claims`, `buffer`) or reset all settings to defaults.
+  - Admins can view claims owned by all currently connected players using the `online` subcommand, with output chunking enabled to prevent packet truncation on high-capacity BDS servers.
+  - Admins can inspect claim lists for specific target players, including offline users.
 
-> Usage: ":landclaim <list | info | delete | trust | untrust | config> [claimId | key] [player | value]"  
+> Usage: ":landclaim <list | online | info | delete | trust | untrust | config> [targetPlayer | claimId] [player | value]"  
 > Example: :landclaim list  
+> Example: :landclaim list Steve  
+> Example (Admin): :landclaim online  
 > Example: :landclaim info  
 > Example: :landclaim delete claim_1700000000000_1234  
 > Example: :landclaim trust claim_1700000000000_1234 Steve  
@@ -469,13 +473,14 @@ The `landclaim` command allows players to manage, inspect, configure, trust, unt
 
 ### **GUI Integration**
 - Located under the **Utility** category in the administrative GUI.
-- **Land Claim Management**: Displays an interactive menu to view current claim details (**Claim Info**), list owned claims (**List My Claims**), grant member rights (**Trust Member**), revoke access (**Untrust Member**), delete claims (**Delete Claim**), reconfigure runtime limits (**Reconfigure Claim Settings**), or restore default settings (**Reset Config Settings**).
+- **Land Claim Management**: Displays an interactive menu to view current claim details (**Claim Info**), list owned claims (**List My Claims**), view connected player claims (**List Online Player Claims** - Clearance 4+), grant member rights (**Trust Member**), revoke access (**Untrust Member**), delete claims (**Delete Claim**), reconfigure runtime limits (**Reconfigure Claim Settings**), or restore default settings (**Reset Config Settings**).
 
 ### **Notes**
 - Selecting corner blocks with a Golden Hoe triggers the selection process without placing or breaking blocks.
 - Claim corner markers use native armor stands with custom-dyed leather helmets and are protected from player destruction.
 - Deleting a land claim permanently removes its protection boundaries and cleans up associated corner marker entities from the world.
-- Admin overrides (Clearance 4+) allow staff to manage members, delete claims for offline/other players, and configure runtime constraints.
+- Non-admin players using `:landclaim list <player>` can only lookup active claims for players who are currently online.
+- Admin overrides (Clearance 4+) allow staff to manage members, delete claims for offline/other players, inspect all online claims, and configure runtime constraints.
 
 ---
 
