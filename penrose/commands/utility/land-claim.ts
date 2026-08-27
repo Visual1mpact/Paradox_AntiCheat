@@ -96,6 +96,35 @@ function isPointInBoxWithBuffer(p: Vector3D, min: Vector3D, max: Vector3D, buffe
 }
 
 /**
+ * Validates whether a proposed claim size meets configured bounds.
+ *
+ * @param p1 - First corner vector.
+ * @param p2 - Second corner vector.
+ * @returns Object indicating validity status and descriptive error message if invalid.
+ */
+function validateClaimDimensions(p1: Vector3D, p2: Vector3D): { valid: boolean; error?: string } {
+    const width = Math.abs(p1.x - p2.x) + 1;
+    const length = Math.abs(p1.z - p2.z) + 1;
+    const area = width * length;
+
+    const config = LandClaimManager.config;
+
+    if (width < config.MIN_SIZE || length < config.MIN_SIZE) {
+        return { valid: false, error: `Selection too small! Minimum dimensions are ${config.MIN_SIZE}x${config.MIN_SIZE} blocks.` };
+    }
+
+    if (width > config.MAX_SIZE || length > config.MAX_SIZE) {
+        return { valid: false, error: `Selection edge too long! Maximum edge length is ${config.MAX_SIZE} blocks.` };
+    }
+
+    if (area > config.MAX_AREA) {
+        return { valid: false, error: `Total area (${area} blocks) exceeds maximum allowed limit of ${config.MAX_AREA} blocks.` };
+    }
+
+    return { valid: true };
+}
+
+/**
  * Generates a randomized RGB color object with components between 0 and 255.
  *
  * @returns Randomized RGB color object.
@@ -149,6 +178,35 @@ function getNearestMinecraftColorCode(color: RGBColor): string {
  */
 export class LandClaimManager {
     private static instance: LandClaimManager;
+
+    /**
+     * Reads configuration limits for land claim sizing, allocations, and spatial buffers.
+     * Dynamic getters fetch live values from world dynamic properties with default fallbacks safely at runtime.
+     */
+    public static get config() {
+        return {
+            /** Minimum horizontal edge length in blocks */
+            get MIN_SIZE(): number {
+                return (world.getDynamicProperty("claim_min_size") as number) ?? 10;
+            },
+            /** Maximum horizontal edge length in blocks */
+            get MAX_SIZE(): number {
+                return (world.getDynamicProperty("claim_max_size") as number) ?? 128;
+            },
+            /** Maximum total surface area footprint in blocks (X * Z) */
+            get MAX_AREA(): number {
+                return (world.getDynamicProperty("claim_max_area") as number) ?? 16384;
+            },
+            /** Maximum number of claims allowed per player */
+            get MAX_CLAIMS_PER_PLAYER(): number {
+                return (world.getDynamicProperty("claim_max_claims_per_player") as number) ?? 3;
+            },
+            /** Minimum block distance required between separate player claims */
+            get CLAIM_BUFFER(): number {
+                return (world.getDynamicProperty("claim_buffer") as number) ?? 5;
+            },
+        };
+    }
 
     // Fast spatial index: DimensionId -> ChunkKey -> Set of Claim IDs
     private chunkMap = new Map<string, Map<string, Set<string>>>();
@@ -288,21 +346,24 @@ export class LandClaimManager {
     }
 
     /**
-     * Checks whether a proposed bounding box overlaps with any existing claims within local chunks.
+     * Checks whether a proposed bounding box overlaps with existing claims or violates
+     * the mandatory buffer distance against claims owned by other players.
      *
      * @param min - Minimum bound of proposed box.
      * @param max - Maximum bound of proposed box.
      * @param dimensionId - Dimension identifier string.
-     * @returns `true` if an overlap exists; otherwise `false`.
+     * @param ownerUuid - UUID of player requesting claim creation.
+     * @returns `true` if an overlap or buffer violation exists; otherwise `false`.
      */
-    private hasOverlap(min: Vector3D, max: Vector3D, dimensionId: string): boolean {
+    private hasOverlapOrBufferViolation(min: Vector3D, max: Vector3D, dimensionId: string, ownerUuid: string): boolean {
         const dimMap = this.chunkMap.get(dimensionId);
         if (!dimMap) return false;
 
-        const minChunkX = Math.floor(min.x / 16);
-        const maxChunkX = Math.floor(max.x / 16);
-        const minChunkZ = Math.floor(min.z / 16);
-        const maxChunkZ = Math.floor(max.z / 16);
+        const buffer = LandClaimManager.config.CLAIM_BUFFER;
+        const minChunkX = Math.floor((min.x - buffer) / 16);
+        const maxChunkX = Math.floor((max.x + buffer) / 16);
+        const minChunkZ = Math.floor((min.z - buffer) / 16);
+        const maxChunkZ = Math.floor((max.z + buffer) / 16);
 
         const checkedClaims = new Set<string>();
 
@@ -317,8 +378,31 @@ export class LandClaimManager {
                     checkedClaims.add(id);
 
                     const existing = this.claimsCache.get(id);
-                    if (existing && doBoxesIntersect(min, max, existing.min, existing.max)) {
+                    if (!existing) continue;
+
+                    const isSameOwner = existing.ownerUuid === ownerUuid;
+
+                    // 1. Direct Overlap Check (Applies to all players, including the same owner)
+                    if (doBoxesIntersect(min, max, existing.min, existing.max)) {
                         return true;
+                    }
+
+                    // 2. Buffer Radius Check (Applies only to separate/unallied owners)
+                    if (!isSameOwner) {
+                        const bufferedMin: Vector3D = {
+                            x: existing.min.x - buffer,
+                            y: existing.min.y,
+                            z: existing.min.z - buffer,
+                        };
+                        const bufferedMax: Vector3D = {
+                            x: existing.max.x + buffer,
+                            y: existing.max.y,
+                            z: existing.max.z + buffer,
+                        };
+
+                        if (doBoxesIntersect(min, max, bufferedMin, bufferedMax)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -422,6 +506,22 @@ export class LandClaimManager {
             return false;
         }
 
+        const config = LandClaimManager.config;
+
+        // 1. Check max claims limit per player
+        const existingClaims = this.getClaimsByOwner(player.id);
+        if (existingClaims.length >= config.MAX_CLAIMS_PER_PLAYER) {
+            player.sendMessage(`§o§c[Paradox] You have reached the maximum claim limit of ${config.MAX_CLAIMS_PER_PLAYER} claims.`);
+            return false;
+        }
+
+        // 2. Validate claim dimensions and area rules
+        const validation = validateClaimDimensions(p1, p2);
+        if (!validation.valid) {
+            player.sendMessage(`§o§c[Paradox] ${validation.error}`);
+            return false;
+        }
+
         this.pendingClaimLocks.add(lockKey);
 
         try {
@@ -442,13 +542,9 @@ export class LandClaimManager {
                 z: Math.max(fP1.z, fP2.z),
             };
 
-            if (max.x - min.x + 1 < 10 || max.z - min.z + 1 < 10) {
-                player.sendMessage("§o§c[Paradox] Claim too small! Minimum horizontal size is 10x10 blocks.");
-                return false;
-            }
-
-            if (this.hasOverlap(min, max, playerDimension.id)) {
-                player.sendMessage("§o§c[Paradox] Cannot claim: Selected area overlaps with an existing claim.");
+            // 3. Validate direct overlaps and spatial buffer distance constraints
+            if (this.hasOverlapOrBufferViolation(min, max, playerDimension.id, player.id)) {
+                player.sendMessage(`§o§c[Paradox] Cannot claim: Selected area overlaps with an existing claim or is within ${config.CLAIM_BUFFER} blocks of another player's territory.`);
                 return false;
             }
 
@@ -849,13 +945,41 @@ export const landClaims = LandClaimManager.getInstance();
 // ==========================================
 
 /**
- * Command implementation for managing land claims (deleting, inspecting, member management, and GUI integration).
+ * Command implementation for managing land claims (deleting, inspecting, member management, reconfiguration, and GUI integration).
  */
 export const claimCommand: Command = {
     name: "landclaim",
-    description: "Manage, inspect, and configure access for your registered land claims.",
-    usage: "{prefix}claim <delete|list|info|trust|untrust> [claimId] [player]",
-    examples: [`{prefix}claim trust claim_1700000000000_1234 Steve`, `{prefix}claim untrust claim_1700000000000_1234 Steve`, `{prefix}claim delete claim_1700000000000_1234`, `{prefix}claim list`, `{prefix}claim info`],
+    description: "Manage, inspect, and configure access or limits for registered land claims.",
+    usage: "{prefix}claim <delete|list|info|trust|untrust|config> [claimId|key] [player|value]",
+    /**
+     * Command usage examples demonstrating player operations and administrative commands.
+     * Supports placeholder replacement for dynamic system prefixes.
+     */
+    examples: [
+        // --- Member & Permission Management ---
+        /** Grant full interaction/build rights to a target player via Claim ID */
+        `{prefix}claim trust claim_1700000000000_1234 Steve`,
+        /** Revoke interaction/build rights from a target player via Claim ID */
+        `{prefix}claim untrust claim_1700000000000_1234 Steve`,
+
+        // --- Claim Lifecycle Commands ---
+        /** Permanently delete a claim and unregister its physical boundaries */
+        `{prefix}claim delete claim_1700000000000_1234`,
+        /** Display an itemized list of your registered claims with coordinates */
+        `{prefix}claim list`,
+        /** Inspect metadata, owner, and trusted members of the claim at your current position */
+        `{prefix}claim info`,
+
+        // --- Administrative & Runtime Configuration ---
+        /** Set maximum allowable claims per player (Admin only) */
+        `{prefix}claim config max_claims 5`,
+        /** Set minimum allowable claim size in blocks (e.g., 10x10) (Admin only) */
+        `{prefix}claim config min_size 10`,
+        /** Set required buffer distance between neighboring claims in blocks (Admin only) */
+        `{prefix}claim config claim_buffer 5`,
+        /** Reset all land claim configuration variables to global default values (Admin only) */
+        `{prefix}claim config reset`,
+    ],
     category: "Utility",
     securityClearance: 1,
     icon: "textures/items/gold_hoe.png",
@@ -863,23 +987,35 @@ export const claimCommand: Command = {
         formType: "ActionFormData",
         title: "Land Claim Management",
         /**
-         * Description text for the Land Claim Management GUI form.
-         * Displays interactive instructions, wand mechanics, protection details, and actions.
+         * Dynamic getter for the Land Claim command description and UI documentation.
+         * Pulls active configuration limits from `LandClaimManager` to render accurate,
+         * real-time player guidance and administrative privileges.
+         *
+         * @returns {string} Formatted Minecraft color-coded UI description string.
          */
-        description:
-            "§l§2Land Claim Management§r\n" +
-            "§7Protect and manage your territories across dimensions.\n\n" +
-            "§e§lWand Selection Setup:§r\n" +
-            "§7• Hold a §aGolden Hoe§7 and right-click §fCorner 1§7.\n" +
-            "§7• Right-click §fCorner 2§7 to set the opposite boundary.\n" +
-            "§7• Claims extend automatically from sky to bedrock (§8-64 to 320§7).\n" +
-            "§7• Minimum required claim area: §a10x10 blocks§7.\n\n" +
-            "§e§lAvailable Menu Actions:§r\n" +
-            "§7• §fClaim Info:§7 View owner, bounds, and member list for your current location.\n" +
-            "§7• §fList My Claims:§7 Display all active land claims registered to your account.\n" +
-            "§7• §fTrust Member:§7 Grant interact and build permissions to a player.\n" +
-            "§7• §fUntrust Member:§7 Revoke claim permissions from a trusted member.\n" +
-            "§7• §fDelete Claim:§7 Remove an existing claim and clear its corner markers.\n\n",
+        get description(): string {
+            const config = LandClaimManager.config;
+            return (
+                "§l§2Land Claim Management§r\n" +
+                "§7Protect and manage your personal and faction territories across dimensions.\n\n" +
+                "§e§lWand Selection Setup:§r\n" +
+                "§7• Hold a §aGolden Hoe§7 and right-click §fCorner 1§7 to place the primary anchor.\n" +
+                "§7• Right-click §fCorner 2§7 to set the diagonal opposite boundary.\n" +
+                "§7• Claims extend automatically vertically from sky to bedrock (§8-64 to 320§7).\n" +
+                `§7• Minimum area: §a${config.MIN_SIZE}x${config.MIN_SIZE} blocks§7 (smaller areas rejected).\n` +
+                `§7• Player limit: §aMax ${config.MAX_CLAIMS_PER_PLAYER} active claims§7 per player.\n` +
+                `§7• Border buffer: Must maintain a §a${config.CLAIM_BUFFER || 5}-block buffer§7 from adjacent claims.\n\n` +
+                "§e§lAvailable Menu Actions:§r\n" +
+                "§7• §fClaim Info:§7 View details (Owner, UUID/ID, exact coordinates, member permissions) for your location.\n" +
+                "§7• §fList My Claims:§7 Display all active land claims, world dimensions, and teleport markers registered to you.\n" +
+                "§7• §fTrust Member:§7 Grant interact, build, container, and entity access permissions to a specified player.\n" +
+                "§7• §fUntrust Member:§7 Immediately revoke all claim access and interaction permissions from a trusted user.\n" +
+                "§7• §fDelete Claim:§7 Permanently abandon an existing claim, release territory, and clear its corner markers.\n" +
+                "§7• §fReconfigure Settings:§7 Modify runtime claim sizing, buffer zones, and player quotas (Requires Level 4 clearance).\n\n" +
+                "§c§lAdmin Overrides (Clearance Level 4+):§r\n" +
+                "§7• Admins can trust/untrust members on or delete claims owned by other players.\n\n"
+            );
+        },
         commandOrder: "command-arg",
         actions: [
             {
@@ -922,6 +1058,23 @@ export const claimCommand: Command = {
                 requiredFields: ["claimId"],
                 generateModalForm: true,
             },
+            {
+                name: "Reconfigure Claim Settings",
+                icon: "textures/ui/gear.png",
+                description: "Reconfigure land claim limits and spatial buffers (admin only).",
+                securityClearance: 4,
+                command: ["config"],
+                requiredFields: ["configKey", "configValue"],
+                generateModalForm: true,
+            },
+            {
+                name: "Reset Config Settings",
+                icon: "textures/ui/backup_replace.png",
+                description: "Reset claim config parameters back to default values (admin only).",
+                securityClearance: 4,
+                command: ["config", "reset"],
+                generateModalForm: false,
+            },
         ],
         dynamicFields: [
             {
@@ -935,6 +1088,19 @@ export const claimCommand: Command = {
                 type: "text",
                 placeholder: "e.g., Steve",
                 requiredFields: ["targetPlayer"],
+            },
+            {
+                name: "\nConfig Parameter:",
+                type: "dropdown",
+                sourceType: "custom",
+                options: ["min_size", "max_size", "max_area", "max_claims", "buffer"],
+                requiredFields: ["configKey"],
+            },
+            {
+                name: "New Integer Value:",
+                type: "text",
+                placeholder: "e.g., 10",
+                requiredFields: ["configValue"],
             },
         ],
     },
@@ -957,6 +1123,75 @@ export const claimCommand: Command = {
         const targetClaimId = args[1]?.trim();
         const targetPlayer = args[2]?.trim();
 
+        // Retrieve the sender's security clearance (Level >= 4 signifies Admin)
+        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 0;
+        const isAdmin = senderClearance >= 4;
+
+        // Subcommand: CONFIG (Security Clearance Level 4 Required)
+        if (action === "config") {
+            if (!isAdmin) {
+                sender.sendMessage("§o§c[Paradox] You do not have permission to reconfigure land claim parameters.");
+                return;
+            }
+
+            const param = args[1]?.toLowerCase();
+            const valStr = args[2];
+
+            // Subcommand: reset
+            if (param === "reset") {
+                world.setDynamicProperty("claim_min_size", undefined);
+                world.setDynamicProperty("claim_max_size", undefined);
+                world.setDynamicProperty("claim_max_area", undefined);
+                world.setDynamicProperty("claim_max_claims_per_player", undefined);
+                world.setDynamicProperty("claim_buffer", undefined);
+                sender.sendMessage("§2[§7Paradox§2]§o§7 All land claim configuration parameters have been reset to default values.");
+                return;
+            }
+
+            if (!param || !valStr) {
+                sender.sendMessage("§o§c[Paradox] Usage: {prefix}claim config <min_size|max_size|max_area|max_claims|buffer|reset> <value>");
+                return;
+            }
+
+            const newValue = parseInt(valStr, 10);
+            if (isNaN(newValue) || newValue < 0) {
+                sender.sendMessage("§o§c[Paradox] Config value must be a non-negative integer.");
+                return;
+            }
+
+            switch (param) {
+                case "min_size":
+                case "minsize":
+                    world.setDynamicProperty("claim_min_size", newValue);
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MIN_SIZE to §a${newValue}§7 blocks.`);
+                    break;
+                case "max_size":
+                case "maxsize":
+                    world.setDynamicProperty("claim_max_size", newValue);
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MAX_SIZE to §a${newValue}§7 blocks.`);
+                    break;
+                case "max_area":
+                case "maxarea":
+                    world.setDynamicProperty("claim_max_area", newValue);
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MAX_AREA to §a${newValue}§7 blocks.`);
+                    break;
+                case "max_claims":
+                case "maxclaims":
+                    world.setDynamicProperty("claim_max_claims_per_player", newValue);
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MAX_CLAIMS_PER_PLAYER to §a${newValue}§7.`);
+                    break;
+                case "buffer":
+                case "claim_buffer":
+                    world.setDynamicProperty("claim_buffer", newValue);
+                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated CLAIM_BUFFER to §a${newValue}§7 blocks.`);
+                    break;
+                default:
+                    sender.sendMessage("§o§c[Paradox] Invalid config key. Valid keys: min_size, max_size, max_area, max_claims, buffer, reset");
+                    break;
+            }
+            return;
+        }
+
         // Subcommand: LIST
         if (!action || action === "list") {
             const claims = manager.getClaimsByOwner(sender.id);
@@ -968,7 +1203,7 @@ export const claimCommand: Command = {
 
             const listLines = [
                 ` `,
-                `§2[§7Paradox§2]§o§7 Your Registered Land Claims (${claims.length}):`,
+                `§2[§7Paradox§2]§o§7 Your Registered Land Claims (${claims.length}/${LandClaimManager.config.MAX_CLAIMS_PER_PLAYER}):`,
                 ...claims.map((claim, index) => {
                     const min = `${claim.min.x}, ${claim.min.z}`;
                     const max = `${claim.max.x}, ${claim.max.z}`;
@@ -994,7 +1229,8 @@ export const claimCommand: Command = {
                 return;
             }
 
-            if (claim.ownerUuid !== sender.id) {
+            // Verify permission: Must be owner OR an Admin
+            if (claim.ownerUuid !== sender.id && !isAdmin) {
                 sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
                 return;
             }
@@ -1027,7 +1263,8 @@ export const claimCommand: Command = {
                 return;
             }
 
-            if (claim.ownerUuid !== sender.id) {
+            // Verify permission: Must be owner OR an Admin
+            if (claim.ownerUuid !== sender.id && !isAdmin) {
                 sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
                 return;
             }
@@ -1060,7 +1297,8 @@ export const claimCommand: Command = {
                 return;
             }
 
-            if (claim.ownerUuid !== sender.id) {
+            // Verify permission: Must be owner OR an Admin
+            if (claim.ownerUuid !== sender.id && !isAdmin) {
                 sender.sendMessage("§o§c[Paradox] You do not have permission to delete this claim.");
                 return;
             }
@@ -1100,6 +1338,6 @@ export const claimCommand: Command = {
             return;
         }
 
-        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, trust, untrust, delete, info");
+        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, trust, untrust, delete, info, config");
     },
 };
