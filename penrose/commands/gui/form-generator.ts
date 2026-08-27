@@ -219,6 +219,14 @@ class GUIManager {
 
     /**
      * Shows a ModalFormData form to collect dynamic input from the player.
+     *
+     * @param {DynamicField[]} fields - Dynamic fields to render in the modal.
+     * @param {string} title - Title of the modal form.
+     * @param {Command} command - Parent command object used to return to the previous menu.
+     * @param {string[]} commandArray - Static command arguments.
+     * @param {boolean} [cryptoES] - Whether to apply cryptographic handlers.
+     * @param {string} [commandOrder] - Argument ordering rule ('arg-command' or default).
+     * @param {string[]} [requiredFields] - Filter list of required dynamic fields.
      */
     private async showModalForm(fields: DynamicField[], title: string, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]): Promise<void> {
         const form = new ModalFormData().title(title);
@@ -298,7 +306,16 @@ class GUIManager {
 
         try {
             const response = await form.show(this.player);
-            if (response.canceled) return;
+
+            // Return to the previous command menu when user cancels or closes the modal
+            if (response.canceled) {
+                if (response.cancelationReason === "UserBusy") {
+                    // Re-open current modal if the UI interaction was interrupted by another screen
+                    return this.showModalForm(fields, title, command, commandArray, cryptoES, commandOrder, requiredFields);
+                }
+                // Navigate back to the command GUI menu
+                return this.buildCommandMenu(command);
+            }
 
             // Parse response into command arguments
             const args = this.parseFormResponse(response, fields, requiredFields);
