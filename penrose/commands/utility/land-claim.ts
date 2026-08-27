@@ -4,6 +4,7 @@ import { ClaimData, Vector3D, RGBColor } from "../../classes/database/db-types";
 import { landClaimsDB } from "../../event-listeners/world-initialize";
 import { EventCoordinator } from "../../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
+import { PlayerCache } from "../../classes/cache/player-cache";
 
 // ==========================================
 // TYPES & LOCAL DATA STRUCTURES
@@ -950,7 +951,7 @@ export const landClaims = LandClaimManager.getInstance();
 export const claimCommand: Command = {
     name: "landclaim",
     description: "Manage, inspect, and configure access or limits for registered land claims.",
-    usage: "{prefix}claim <delete|list|info|trust|untrust|config> [claimId|key] [player|value]",
+    usage: "{prefix}claim <delete|list|online|info|trust|untrust|config> [targetPlayer|claimId] [value]",
     /**
      * Command usage examples demonstrating player operations and administrative commands.
      * Supports placeholder replacement for dynamic system prefixes.
@@ -962,11 +963,15 @@ export const claimCommand: Command = {
         /** Revoke interaction/build rights from a target player via Claim ID */
         `{prefix}claim untrust claim_1700000000000_1234 Steve`,
 
-        // --- Claim Lifecycle Commands ---
+        // --- Claim Lifecycle & Inspection Commands ---
         /** Permanently delete a claim and unregister its physical boundaries */
         `{prefix}claim delete claim_1700000000000_1234`,
         /** Display an itemized list of your registered claims with coordinates */
         `{prefix}claim list`,
+        /** Inspect registered claims for a specific online or target player */
+        `{prefix}claim list Steve`,
+        /** View claims owned by all currently connected online players (Admin only) */
+        `{prefix}claim online`,
         /** Inspect metadata, owner, and trusted members of the claim at your current position */
         `{prefix}claim info`,
 
@@ -1013,7 +1018,8 @@ export const claimCommand: Command = {
                 "§7• §fDelete Claim:§7 Permanently abandon an existing claim, release territory, and clear its corner markers.\n" +
                 "§7• §fReconfigure Settings:§7 Modify runtime claim sizing, buffer zones, and player quotas (Requires Level 4 clearance).\n\n" +
                 "§c§lAdmin Overrides (Clearance Level 4+):§r\n" +
-                "§7• Admins can trust/untrust members on or delete claims owned by other players.\n\n"
+                "§7• Admins can trust/untrust members on or delete claims owned by other players.\n" +
+                "§7• View active claims for all online players using the online subcommand.\n\n"
             );
         },
         commandOrder: "command-arg",
@@ -1031,6 +1037,15 @@ export const claimCommand: Command = {
                 icon: "textures/ui/world_glyph.png",
                 command: ["list"],
                 description: "Displays all claims owned by you",
+                requiredFields: [],
+                generateModalForm: false,
+            },
+            {
+                name: "List Online Player Claims",
+                icon: "textures/ui/multiplayer_glyph.png",
+                securityClearance: 4,
+                command: ["online"],
+                description: "Displays land claims owned strictly by currently connected players (Admin only)",
                 requiredFields: [],
                 generateModalForm: false,
             },
@@ -1120,8 +1135,6 @@ export const claimCommand: Command = {
         const manager = LandClaimManager.getInstance();
 
         const action = args[0]?.toLowerCase();
-        const targetClaimId = args[1]?.trim();
-        const targetPlayer = args[2]?.trim();
 
         // Retrieve the sender's security clearance (Level >= 4 signifies Admin)
         const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 0;
@@ -1192,28 +1205,103 @@ export const claimCommand: Command = {
             return;
         }
 
-        // Subcommand: LIST
-        if (!action || action === "list") {
-            const claims = manager.getClaimsByOwner(sender.id);
-
-            if (claims.length === 0) {
-                sender.sendMessage("§o§c[Paradox] You do not own any registered land claims.");
+        // Subcommand: ONLINE (Admin Only) - Optimized for BDS servers (high player counts)
+        if (action === "online" || action === "onlineclaims") {
+            if (!isAdmin) {
+                sender.sendMessage("§o§c[Paradox] You do not have clearance to inspect claims of online players.");
                 return;
             }
 
+            const activePlayers = PlayerCache.getAllPlayers();
+            if (activePlayers.length === 0) {
+                sender.sendMessage("§o§c[Paradox] No active players currently connected.");
+                return;
+            }
+
+            let totalActiveClaims = 0;
+            const lines: string[] = [` `, `§2[§7Paradox§2]§o§7 Active Claims (Online Players: §a${activePlayers.length}§7):`];
+
+            // Iterate over connected players O(Online Count)
+            for (const p of activePlayers) {
+                const pClaims = manager.getClaimsByOwner(p.id);
+                if (pClaims.length > 0) {
+                    lines.push(`  §2• §f${p.name} §7(§a${pClaims.length} claim(s)§7):`);
+                    for (const c of pClaims) {
+                        totalActiveClaims++;
+                        const dimName = c.dimensionId.replace("minecraft:", "");
+                        lines.push(`    §o§7- ID: §a${c.id} §7| Dim: §e${dimName} §7| Bounds: §e(${c.min.x},${c.min.z}) §7to §e(${c.max.x},${c.max.z})`);
+                    }
+                }
+            }
+
+            if (totalActiveClaims === 0) {
+                sender.sendMessage("§o§c[Paradox] No land claims found for currently online players.");
+                return;
+            }
+
+            lines.push(` `);
+
+            // Chunk message lines to prevent BDS packet truncation when 20+ players are online
+            const CHUNK_SIZE = 8;
+            for (let i = 0; i < lines.length; i += CHUNK_SIZE) {
+                const chunk = lines.slice(i, i + CHUNK_SIZE).join("\n");
+                sender.sendMessage(chunk);
+            }
+            return;
+        }
+
+        // Subcommand: LIST (Supports self or specific target player lookup)
+        if (!action || action === "list") {
+            const targetArg = args[1]?.trim();
+
+            let targetId = sender.id;
+            let targetName = sender.name;
+
+            // Target player check provided
+            if (targetArg) {
+                // Non-admins can only view target claims if explicit online player match exists
+                const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetArg.toLowerCase() || p.id === targetArg);
+
+                if (targetOnlinePlayer) {
+                    targetId = targetOnlinePlayer.id;
+                    targetName = targetOnlinePlayer.name;
+                } else if (isAdmin) {
+                    // Admins fallback to argument string directly if offline player lookup requested
+                    targetId = targetArg;
+                    targetName = targetArg;
+                } else {
+                    sender.sendMessage(`§o§c[Paradox] Player "${targetArg}" is not online.`);
+                    return;
+                }
+            }
+
+            const claims = manager.getClaimsByOwner(targetId);
+
+            if (claims.length === 0) {
+                sender.sendMessage(targetId === sender.id ? "§o§c[Paradox] You do not own any registered land claims." : `§o§c[Paradox] No active land claims found for player "${targetName}".`);
+                return;
+            }
+
+            const isSelf = targetId === sender.id;
+            const title = isSelf ? `Your Registered Land Claims (${claims.length}/${LandClaimManager.config.MAX_CLAIMS_PER_PLAYER})` : `Registered Land Claims for ${targetName} (${claims.length})`;
+
             const listLines = [
                 ` `,
-                `§2[§7Paradox§2]§o§7 Your Registered Land Claims (${claims.length}/${LandClaimManager.config.MAX_CLAIMS_PER_PLAYER}):`,
+                `§2[§7Paradox§2]§o§7 ${title}:`,
                 ...claims.map((claim, index) => {
                     const min = `${claim.min.x}, ${claim.min.z}`;
                     const max = `${claim.max.x}, ${claim.max.z}`;
-                    return `  §o§7| §2[§f${index + 1}§2] §7ID: §a${claim.id} §7| Bounds: §e(${min}) §7to §e(${max})`;
+                    const dimName = claim.dimensionId.replace("minecraft:", "");
+                    return `  §o§7| §2[§f${index + 1}§2] §7ID: §a${claim.id} §7| Dim: §e${dimName} §7| Bounds: §e(${min}) §7to §e(${max})`;
                 }),
                 ` `,
             ];
             sender.sendMessage(listLines.join("\n"));
             return;
         }
+
+        const targetClaimId = args[1]?.trim();
+        const targetPlayer = args[2]?.trim();
 
         // Subcommand: TRUST / ADD
         if (action === "trust" || action === "add") {
@@ -1236,7 +1324,7 @@ export const claimCommand: Command = {
             }
 
             // Resolve player instance if online to extract UUID, fallback to raw name/identifier string
-            const targetOnlinePlayer = world.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
+            const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
             const memberIdToSave = targetOnlinePlayer ? targetOnlinePlayer.id : targetPlayer;
 
             manager.addMember(targetClaimId, memberIdToSave).then((success) => {
@@ -1270,7 +1358,7 @@ export const claimCommand: Command = {
             }
 
             // Check online players to resolve UUID if stored as such, fallback to raw string match
-            const targetOnlinePlayer = world.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
+            const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
             const memberIdToRemove = targetOnlinePlayer && claim.members.includes(targetOnlinePlayer.id) ? targetOnlinePlayer.id : targetPlayer;
 
             manager.removeMember(targetClaimId, memberIdToRemove).then((success) => {
@@ -1338,6 +1426,6 @@ export const claimCommand: Command = {
             return;
         }
 
-        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, trust, untrust, delete, info, config");
+        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, online, trust, untrust, delete, info, config");
     },
 };
