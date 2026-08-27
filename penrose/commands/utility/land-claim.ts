@@ -951,7 +951,7 @@ export const landClaims = LandClaimManager.getInstance();
 export const claimCommand: Command = {
     name: "landclaim",
     description: "Manage, inspect, and configure access or limits for registered land claims.",
-    usage: "{prefix}claim <delete|list|online|info|trust|untrust|config> [targetPlayer|claimId] [value]",
+    usage: "{prefix}landclaim <delete|list|online|info|trust|untrust|config> [targetPlayer|claimId] [value]",
     /**
      * Command usage examples demonstrating player operations and administrative commands.
      * Supports placeholder replacement for dynamic system prefixes.
@@ -959,31 +959,31 @@ export const claimCommand: Command = {
     examples: [
         // --- Member & Permission Management ---
         /** Grant full interaction/build rights to a target player via Claim ID */
-        `{prefix}claim trust claim_1700000000000_1234 Steve`,
+        `{prefix}landclaim trust claim_1700000000000_1234 Steve`,
         /** Revoke interaction/build rights from a target player via Claim ID */
-        `{prefix}claim untrust claim_1700000000000_1234 Steve`,
+        `{prefix}landclaim untrust claim_1700000000000_1234 Steve`,
 
         // --- Claim Lifecycle & Inspection Commands ---
         /** Permanently delete a claim and unregister its physical boundaries */
-        `{prefix}claim delete claim_1700000000000_1234`,
+        `{prefix}landclaim delete claim_1700000000000_1234`,
         /** Display an itemized list of your registered claims with coordinates */
-        `{prefix}claim list`,
+        `{prefix}landclaim list`,
         /** Inspect registered claims for a specific online or target player */
-        `{prefix}claim list Steve`,
+        `{prefix}landclaim list Steve`,
         /** View claims owned by all currently connected online players (Admin only) */
-        `{prefix}claim online`,
+        `{prefix}landclaim online`,
         /** Inspect metadata, owner, and trusted members of the claim at your current position */
-        `{prefix}claim info`,
+        `{prefix}landclaim info`,
 
         // --- Administrative & Runtime Configuration ---
         /** Set maximum allowable claims per player (Admin only) */
-        `{prefix}claim config max_claims 5`,
+        `{prefix}landclaim config max_claims 5`,
         /** Set minimum allowable claim size in blocks (e.g., 10x10) (Admin only) */
-        `{prefix}claim config min_size 10`,
+        `{prefix}landclaim config min_size 10`,
         /** Set required buffer distance between neighboring claims in blocks (Admin only) */
-        `{prefix}claim config claim_buffer 5`,
+        `{prefix}landclaim config claim_buffer 5`,
         /** Reset all land claim configuration variables to global default values (Admin only) */
-        `{prefix}claim config reset`,
+        `{prefix}landclaim config reset`,
     ],
     category: "Utility",
     securityClearance: 1,
@@ -1162,7 +1162,7 @@ export const claimCommand: Command = {
             }
 
             if (!param || !valStr) {
-                sender.sendMessage("§o§c[Paradox] Usage: {prefix}claim config <min_size|max_size|max_area|max_claims|buffer|reset> <value>");
+                sender.sendMessage("§o§c[Paradox] Usage: {prefix}landclaim config <min_size|max_size|max_area|max_claims|buffer|reset> <value>");
                 return;
             }
 
@@ -1306,7 +1306,7 @@ export const claimCommand: Command = {
         // Subcommand: TRUST / ADD
         if (action === "trust" || action === "add") {
             if (!targetClaimId || !targetPlayer) {
-                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}claim trust <claimId> <player>");
+                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim trust <claimId> <player>");
                 return;
             }
 
@@ -1340,7 +1340,7 @@ export const claimCommand: Command = {
         // Subcommand: UNTRUST / REMOVE
         if (action === "untrust" || action === "unadd") {
             if (!targetClaimId || !targetPlayer) {
-                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}claim untrust <claimId> <player>");
+                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim untrust <claimId> <player>");
                 return;
             }
 
@@ -1374,7 +1374,7 @@ export const claimCommand: Command = {
         // Subcommand: DELETE
         if (action === "delete" || action === "remove") {
             if (!targetClaimId) {
-                sender.sendMessage("§o§c[Paradox] Please provide a valid Claim ID to delete. Usage: {prefix}claim delete <claimId>");
+                sender.sendMessage("§o§c[Paradox] Please provide a valid Claim ID to delete. Usage: {prefix}landclaim delete <claimId>");
                 return;
             }
 
