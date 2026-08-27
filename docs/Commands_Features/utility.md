@@ -426,9 +426,9 @@ The `invsee` command allows players with sufficient clearance to view another pl
 
 ## landclaim
 ### At A Glance
-The `landclaim` command allows players to manage, inspect, and delete their registered land claims. Claims extend automatically from sky to bedrock (`-64` to `320`) and protect territories against unauthorized block modifications, entity damage, interactions, bucket liquid placements, explosion damage, and piston/sticky block breaches.
+The `landclaim` command allows players to manage, inspect, configure, trust, untrust, and delete registered land claims. Claims extend automatically from sky to bedrock (`-64` to `320`) and protect territories against unauthorized block modifications, entity damage, interactions, bucket liquid placements, explosion damage, and piston/sticky block breaches.
 
-?> Required Clearance Level To Execute: `1`
+?> Required Clearance Level To Execute: `1` (User Actions) | `4` (Configuration Settings)
 
 ### **How It Works**
 - **Wand Selection**: Claim boundaries are selected using a **Golden Hoe** (`minecraft:golden_hoe`) as a wand tool.
@@ -437,28 +437,45 @@ The `landclaim` command allows players to manage, inspect, and delete their regi
   - Selections expire after **5 minutes** of inactivity.
 - **Claim Dimensions & Sizing**:
   - Automatically claims from sky to bedrock (`Y: -64` to `Y: 320`).
-  - Requires a minimum horizontal size of **10 x 10 blocks**.
-  - Claims cannot overlap with existing claims.
-- **Corner Markers**: Upon creation, **4 armor stand markers** equipped with colored leather helmets spawn directly on top of the selected corner coordinates. Markers are protected from destruction and automatically clean up when a claim is deleted.
+  - Minimum horizontal edge size defaults to **10 x 10 blocks** (configurable).
+  - Maximum horizontal edge size defaults to **128 blocks** (configurable).
+  - Maximum total surface area defaults to **16,384 blocks** (configurable).
+  - Max claims per player defaults to **3 claims** (configurable).
+  - Claims must maintain a mandatory border buffer distance from neighboring claims (defaults to **5 blocks**, configurable).
+  - Direct claim overlaps are strictly prevented for all players.
+- **Corner Markers**: Upon creation, **4 armor stand markers** equipped with dynamically colored leather helmets spawn directly on top of the selected corner block coordinates. Markers display custom color codes matching the claim's assigned color, are protected from destruction, and automatically clean up when a claim is deleted.
+- **Member Management**:
+  - Claim owners can grant or revoke full access rights for other players using the `trust` and `untrust` commands.
+  - Admins with clearance level 4 or higher can manage trusted members on any player's claim.
 - **Protection & Trespasser Safeguard**:
-  - Prevents non-authorized players from placing blocks, breaking blocks, dealing entity damage, or placing liquids (lava, water, powder snow).
+  - Prevents unauthorized players from placing blocks, breaking blocks, dealing entity damage, or placing liquids (lava, water, powder snow).
+  - Protects authorized claim members from external mob and entity damage while inside their land claim.
   - Detects pistons or sticky blocks attempting to push or stick across claim boundaries.
-  - Filters out explosion block damage inside claim boundaries.
-  - Unauthorized intruders who attempt restricted interactions inside a claim are temporarily forced into **Adventure Mode**. Their original game mode is restored once they exit the claim buffer zone (5 blocks away).
+  - Filters out explosion block and entity damage inside claim boundaries.
+  - Unauthorized intruders who attempt restricted interactions inside a claim are temporarily forced into **Adventure Mode**. Their original game mode is automatically restored once they exit the claim buffer zone (5 blocks away).
+- **Admin Configuration (Clearance 4+)**:
+  - Admins can modify runtime parameters (`min_size`, `max_size`, `max_area`, `max_claims`, `buffer`) or reset all settings to defaults.
 
-> Usage: ":landclaim <list | info | delete> [claimId]"  
+> Usage: ":landclaim <list | info | delete | trust | untrust | config> [claimId | key] [player | value]"  
 > Example: :landclaim list  
 > Example: :landclaim info  
 > Example: :landclaim delete claim_1700000000000_1234  
+> Example: :landclaim trust claim_1700000000000_1234 Steve  
+> Example: :landclaim untrust claim_1700000000000_1234 Steve  
+> Example (Admin): :landclaim config min_size 10  
+> Example (Admin): :landclaim config max_claims 5  
+> Example (Admin): :landclaim config buffer 5  
+> Example (Admin): :landclaim config reset  
 
 ### **GUI Integration**
 - Located under the **Utility** category in the administrative GUI.
-- **Land Claim Management**: Displays interactive options to view claim details for your current position (**Claim Info**), review owned claims (**List My Claims**), or remove claims via a dynamic selection dropdown (**Delete Claim**).
+- **Land Claim Management**: Displays an interactive menu to view current claim details (**Claim Info**), list owned claims (**List My Claims**), grant member rights (**Trust Member**), revoke access (**Untrust Member**), delete claims (**Delete Claim**), reconfigure runtime limits (**Reconfigure Claim Settings**), or restore default settings (**Reset Config Settings**).
 
 ### **Notes**
 - Selecting corner blocks with a Golden Hoe triggers the selection process without placing or breaking blocks.
-- Claim corner markers are protected from destruction by players.
+- Claim corner markers use native armor stands with custom-dyed leather helmets and are protected from player destruction.
 - Deleting a land claim permanently removes its protection boundaries and cleans up associated corner marker entities from the world.
+- Admin overrides (Clearance 4+) allow staff to manage members, delete claims for offline/other players, and configure runtime constraints.
 
 ---
 
