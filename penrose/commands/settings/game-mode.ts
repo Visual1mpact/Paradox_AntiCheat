@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
@@ -14,6 +14,132 @@ interface ModeSettings {
 // Represents the full mode states including the gamemode check
 interface ModeStates extends ModeSettings {
     gamemodeCheck: boolean;
+}
+
+/**
+ * Retrieves the current gamemode module configuration from the database.
+ *
+ * @returns {Promise<ModeStates>} Formatted gamemode state configuration object.
+ */
+async function fetchGamemodeState(): Promise<ModeStates> {
+    const gamemodeEntry = (await paradoxModulesDB.get("gamemodeCheck_b")) ?? {
+        enabled: true,
+        settings: {
+            Adventure: true,
+            Creative: true,
+            Survival: true,
+            Spectator: true,
+        },
+    };
+
+    return {
+        gamemodeCheck: gamemodeEntry.enabled,
+        Adventure: gamemodeEntry.settings?.Adventure ?? true,
+        Creative: gamemodeEntry.settings?.Creative ?? true,
+        Survival: gamemodeEntry.settings?.Survival ?? true,
+        Spectator: gamemodeEntry.settings?.Spectator ?? true,
+    };
+}
+
+/**
+ * Formats the current gamemode settings state into a chat display message.
+ *
+ * @param {ModeStates} state - Current gamemode configuration state.
+ * @returns {string} Formatted multiline chat string.
+ */
+function formatSettingsMessage(state: ModeStates): string {
+    return [
+        `§2[§7Paradox§2]§o§7 Current Game Mode Settings:`,
+        `  | Adventure: ${state.Adventure ? "§aAllowed§7" : "§2Disallowed§7"}`,
+        `  | Creative: ${state.Creative ? "§aAllowed§7" : "§2Disallowed§7"}`,
+        `  | Survival: ${state.Survival ? "§aAllowed§7" : "§2Disallowed§7"}`,
+        `  | Spectator: ${state.Spectator ? "§aAllowed§7" : "§2Disallowed§7"}`,
+        `  | Gamemode Checks: ${state.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}`,
+    ].join("\n");
+}
+
+/**
+ * Processes dynamic flag arguments to update the state object.
+ *
+ * @param {string[]} args - Command arguments passed by player.
+ * @param {ModeStates} state - Mutable state configuration to update.
+ * @returns {{ isValid: boolean; needsInspectionUpdate: boolean }} Parsing result metadata.
+ */
+function parseGamemodeArgs(args: string[], state: ModeStates): { isValid: boolean; needsInspectionUpdate: boolean } {
+    let needsInspectionUpdate = false;
+
+    for (const arg of args) {
+        switch (arg.toLowerCase()) {
+            case "-a":
+                state.Adventure = !state.Adventure;
+                needsInspectionUpdate = true;
+                break;
+            case "-c":
+                state.Creative = !state.Creative;
+                needsInspectionUpdate = true;
+                break;
+            case "-s":
+                state.Survival = !state.Survival;
+                needsInspectionUpdate = true;
+                break;
+            case "-sp":
+                state.Spectator = !state.Spectator;
+                needsInspectionUpdate = true;
+                break;
+            case "-e":
+            case "--enable":
+                state.gamemodeCheck = true;
+                needsInspectionUpdate = true;
+                break;
+            case "-d":
+            case "--disable":
+                state.gamemodeCheck = false;
+                break;
+            default:
+                return { isValid: false, needsInspectionUpdate: false };
+        }
+    }
+
+    return { isValid: true, needsInspectionUpdate };
+}
+
+/**
+ * Validates whether at least one game mode remains active when enforcement is enabled.
+ *
+ * @param {ModeStates} state - Target state configuration to validate.
+ * @returns {boolean} True if state is valid, false if all gamemodes are disabled while check is active.
+ */
+function isGamemodeStateValid(state: ModeStates): boolean {
+    if (!state.gamemodeCheck) return true;
+    const modes: (keyof ModeSettings)[] = ["Adventure", "Creative", "Survival", "Spectator"];
+    return modes.some((mode) => state[mode]);
+}
+
+/**
+ * Persists the updated gamemode settings to the database and syncs background check routines.
+ *
+ * @param {Player} player - Player executing the configuration update.
+ * @param {ModeStates} state - Updated mode settings.
+ * @param {boolean} needsInspectionUpdate - Whether to start/re-initialize the gamemode check loop.
+ */
+async function saveAndSyncGamemodeState(player: Player, state: ModeStates, needsInspectionUpdate: boolean): Promise<void> {
+    await paradoxModulesDB.set("gamemodeCheck_b", {
+        enabled: state.gamemodeCheck,
+        settings: {
+            Adventure: state.Adventure,
+            Creative: state.Creative,
+            Survival: state.Survival,
+            Spectator: state.Spectator,
+        },
+    });
+
+    player.sendMessage(formatSettingsMessage(state));
+
+    if (!state.gamemodeCheck) {
+        stopGameModeCheck();
+    } else if (needsInspectionUpdate) {
+        startGameModeCheck();
+    }
 }
 
 /**
@@ -41,11 +167,10 @@ export const gameModeCommand: Command = {
             "§7• Gamemode checks automatically enforce allowed modes for all players.\n\n",
         commandOrder: "command-arg",
         actions: [
-            // Single button to generate modal form with toggles for game modes
             {
                 name: "Toggle Game Modes",
                 requiredFields: ["toggleGameMode"],
-                generateModalForm: true, // This triggers a modal form with toggles
+                generateModalForm: true,
                 icon: "textures/ui/multiselection.png",
                 description: "Open a form to toggle which game modes are allowed on the server.",
             },
@@ -63,7 +188,7 @@ export const gameModeCommand: Command = {
 
     /**
      * Executes the gamemode command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object.
+     * @param {ChatSendBeforeEvent | undefined} message - The message object context.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
@@ -71,100 +196,26 @@ export const gameModeCommand: Command = {
         if (!message) return;
         const player = message.sender;
 
-        const gamemodeEntry = (await paradoxModulesDB.get("gamemodeCheck_b")) ?? {
-            enabled: true,
-            settings: {
-                Adventure: true,
-                Creative: true,
-                Survival: true,
-                Spectator: true,
-            },
-        };
-
-        const modeStates: ModeStates = {
-            gamemodeCheck: gamemodeEntry.enabled,
-            Adventure: gamemodeEntry.settings?.Adventure ?? true,
-            Creative: gamemodeEntry.settings?.Creative ?? true,
-            Survival: gamemodeEntry.settings?.Survival ?? true,
-            Spectator: gamemodeEntry.settings?.Spectator ?? true,
-        };
-
-        const formatSettingsMessage = (modeStates: ModeStates): string => {
-            return [
-                `§2[§7Paradox§2]§o§7 Current Game Mode Settings:`,
-                `  | Adventure: ${modeStates.Adventure ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Creative: ${modeStates.Creative ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Survival: ${modeStates.Survival ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Spectator: ${modeStates.Spectator ? "§aAllowed§7" : "§2Disallowed§7"}`,
-                `  | Gamemode Checks: ${modeStates.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}`,
-            ].join("\n");
-        };
+        const modeStates = await fetchGamemodeState();
 
         if (args.includes("-l") || args.includes("--list")) {
             player.sendMessage(formatSettingsMessage(modeStates));
             return;
         }
 
-        let needsInspectionUpdate = false;
+        const { isValid, needsInspectionUpdate } = parseGamemodeArgs(args, modeStates);
 
-        for (const arg of args) {
-            switch (arg.toLowerCase()) {
-                case "-a":
-                    modeStates.Adventure = !modeStates.Adventure;
-                    needsInspectionUpdate = true;
-                    break;
-                case "-c":
-                    modeStates.Creative = !modeStates.Creative;
-                    needsInspectionUpdate = true;
-                    break;
-                case "-s":
-                    modeStates.Survival = !modeStates.Survival;
-                    needsInspectionUpdate = true;
-                    break;
-                case "-sp":
-                    modeStates.Spectator = !modeStates.Spectator;
-                    needsInspectionUpdate = true;
-                    break;
-                case "-e":
-                case "--enable":
-                    modeStates.gamemodeCheck = true;
-                    needsInspectionUpdate = true;
-                    break;
-                case "-d":
-                case "--disable":
-                    modeStates.gamemodeCheck = false;
-                    break;
-                default:
-                    const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
-                    player.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§cgamemode help.`);
-                    return;
-            }
+        if (!isValid) {
+            const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
+            player.sendMessage(`§o§c[Paradox] Invalid arguments. For help, use ${prefix}§cgamemode help.`);
+            return;
         }
 
-        if (modeStates.gamemodeCheck) {
-            const enabledModes = ["Adventure", "Creative", "Survival", "Spectator"].filter((mode) => modeStates[mode as keyof ModeSettings]);
-            if (enabledModes.length === 0) {
-                player.sendMessage("§o§c[Paradox] You cannot disable all game modes. At least one must remain enabled.");
-                return;
-            }
+        if (!isGamemodeStateValid(modeStates)) {
+            player.sendMessage("§o§c[Paradox] You cannot disable all game modes. At least one must remain enabled.");
+            return;
         }
 
-        await paradoxModulesDB.set("gamemodeCheck_b", {
-            enabled: modeStates.gamemodeCheck,
-            settings: {
-                Adventure: modeStates.Adventure,
-                Creative: modeStates.Creative,
-                Survival: modeStates.Survival,
-                Spectator: modeStates.Spectator,
-            },
-        });
-
-        player.sendMessage(formatSettingsMessage(modeStates));
-
-        if (!modeStates.gamemodeCheck) {
-            stopGameModeCheck();
-        } else if (needsInspectionUpdate) {
-            startGameModeCheck();
-        }
+        await saveAndSyncGamemodeState(player, modeStates, needsInspectionUpdate);
     },
 };
