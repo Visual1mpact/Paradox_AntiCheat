@@ -17,7 +17,7 @@
   </p>
 </div>
 
-<<hr>
+<hr>
 
 <div align="center">
 
