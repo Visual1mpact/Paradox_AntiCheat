@@ -2,6 +2,201 @@ import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { allCommands, commandHandler, disabledCommandsDB } from "../../event-listeners/world-initialize";
 
+interface DisabledMetadata {
+    disabledBy: string;
+    timestamp: number;
+}
+
+interface CommandStatus {
+    enabled: string[];
+    disabled: { name: string; metadata: DisabledMetadata }[];
+}
+
+interface CommandBatchResults {
+    disabledCommands: string[];
+    alreadyDisabled: string[];
+    enabledCommands: string[];
+    alreadyEnabled: string[];
+    invalidCommands: string[];
+    notRegistered: string[];
+}
+
+type TreeItem = string | { name: string; metadata: DisabledMetadata };
+
+/**
+ * Converts epoch timestamp in milliseconds into a localized date/time string.
+ *
+ * @param {number} timestamp - Epoch time in milliseconds.
+ * @returns {string} Formatted date and time string.
+ */
+function formatTimestamp(timestamp: number): string {
+    const date = new Date(timestamp);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+}
+
+/**
+ * Renders structured category sections as an ASCII tree formatted output message string.
+ *
+ * @param {{ title: string; items: TreeItem[] }[]} sections - Category sections containing items to display.
+ * @returns {string} Formatted tree representation string.
+ */
+function buildTreeMessage(sections: { title: string; items: TreeItem[] }[]): string {
+    let listMessage = "§2[§7Paradox§2]§o§7 Command Status:\n";
+    const filteredSections = sections.filter((section) => section.items.length > 0);
+
+    filteredSections.forEach((section, index) => {
+        const isLastSection = index === filteredSections.length - 1;
+        const branchSymbol = isLastSection ? "└" : "├";
+        listMessage += `§r  ${branchSymbol} §2[§7${section.title}§2]§7\n`;
+
+        section.items.forEach((item, i) => {
+            const isLastItem = i === section.items.length - 1;
+            const itemBranch = isLastItem ? "└" : "├";
+            const indent = isLastSection ? "   " : "│  ";
+
+            if (typeof item === "string") {
+                listMessage += `§r  ${indent}${itemBranch} §2${item}§r\n`;
+            } else {
+                const { name, metadata } = item;
+                const formattedTime = formatTimestamp(metadata.timestamp);
+                listMessage += `§r  ${indent}${itemBranch} §2${name}§r §7(disabled by §o${metadata.disabledBy}§r§7 @ §o${formattedTime}§7)\n`;
+            }
+        });
+    });
+
+    return listMessage;
+}
+
+/**
+ * Builds formatted output string summarizing batch command management actions.
+ *
+ * @param {CommandBatchResults} results - Accumulated execution results.
+ * @returns {string} Tree formatted result overview message string.
+ */
+function buildBatchResultMessage(results: CommandBatchResults): string {
+    let responseMessage = "§2[§7Paradox§2]§o§7 Command Management Results:\n";
+
+    const sections = [
+        ["Disabled", results.disabledCommands],
+        ["Already Disabled", results.alreadyDisabled],
+        ["Enabled", results.enabledCommands],
+        ["Already Enabled", results.alreadyEnabled],
+        ["Invalid", results.invalidCommands],
+        ["Not Registered", results.notRegistered],
+    ] as const;
+
+    const nonEmptySections = sections.filter(([, arr]) => arr.length > 0);
+
+    nonEmptySections.forEach(([title, items], index) => {
+        const isLast = index === nonEmptySections.length - 1;
+        const branchSymbol = isLast ? "└" : "├";
+        responseMessage += `§r  ${branchSymbol} §2[§7${title}§2]§7\n`;
+
+        items.forEach((name, i) => {
+            const isLastItem = i === items.length - 1;
+            const itemBranch = isLastItem ? "└" : "├";
+            const indent = isLast ? "   " : "│  ";
+            responseMessage += `§r  ${indent}${itemBranch} §2${name}§r\n`;
+        });
+    });
+
+    return responseMessage;
+}
+
+/**
+ * Categorizes all server commands into enabled and disabled states with associated metadata.
+ *
+ * @returns {Promise<CommandStatus>} Status payload containing enabled and disabled lists.
+ */
+async function fetchCommandStatus(): Promise<CommandStatus> {
+    const registered = commandHandler.getRegisteredCommands().map((c) => c.name);
+    const enabled: string[] = [];
+    const disabled: { name: string; metadata: DisabledMetadata }[] = [];
+
+    for (const cmd of allCommands) {
+        if (registered.includes(cmd.name)) {
+            enabled.push(cmd.name);
+        } else {
+            const meta = await disabledCommandsDB.get(cmd.name);
+            if (meta) {
+                disabled.push({ name: cmd.name, metadata: meta });
+            }
+        }
+    }
+
+    return { enabled, disabled };
+}
+
+/**
+ * Processes a single request to disable a target command name.
+ *
+ * @param {string} commandName - Target command to disable.
+ * @param {Command[]} registry - Mutable dynamic command handler registry array.
+ * @param {string} senderName - Name of player executing command.
+ * @param {CommandBatchResults} results - Results accumulator object.
+ */
+async function processDisableCommand(commandName: string, registry: Command[], senderName: string, results: CommandBatchResults): Promise<void> {
+    const registeredCommand = registry.find((cmd) => cmd.name === commandName);
+
+    if (!registeredCommand) {
+        const existsInFullList = allCommands.some((cmd) => cmd.name === commandName);
+        if (existsInFullList) {
+            results.alreadyDisabled.push(commandName);
+        } else {
+            results.invalidCommands.push(commandName);
+        }
+        return;
+    }
+
+    const index = registry.indexOf(registeredCommand);
+    if (index > -1) registry.splice(index, 1);
+
+    await disabledCommandsDB.set(commandName, {
+        disabledBy: senderName,
+        timestamp: Date.now(),
+    });
+
+    results.disabledCommands.push(commandName);
+}
+
+/**
+ * Processes a single request to enable a target command name.
+ *
+ * @param {string} commandName - Target command to enable.
+ * @param {Command[]} registry - Mutable dynamic command handler registry array.
+ * @param {CommandBatchResults} results - Results accumulator object.
+ */
+async function processEnableCommand(commandName: string, registry: Command[], results: CommandBatchResults): Promise<void> {
+    const disabledMeta = await disabledCommandsDB.get(commandName);
+
+    if (!disabledMeta) {
+        const isAlreadyEnabled = registry.some((cmd) => cmd.name === commandName);
+        const existsInFullList = allCommands.some((cmd) => cmd.name === commandName);
+
+        if (!existsInFullList) {
+            results.invalidCommands.push(commandName);
+        } else if (isAlreadyEnabled) {
+            results.alreadyEnabled.push(commandName);
+        } else {
+            results.notRegistered.push(commandName);
+        }
+        return;
+    }
+
+    const commandToRestore = allCommands.find((cmd) => cmd.name === commandName);
+    if (!commandToRestore) {
+        results.invalidCommands.push(commandName);
+        return;
+    }
+
+    if (!registry.some((cmd) => cmd.name === commandToRestore.name)) {
+        registry.push(commandToRestore);
+    }
+
+    await disabledCommandsDB.delete(commandName);
+    results.enabledCommands.push(commandName);
+}
+
 /**
  * Command to dynamically enable, disable, or list other commands.
  * Admin clearance Level 4 bypasses disabled checks.
@@ -76,6 +271,7 @@ export const command: Command = {
      */
     async execute(message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> {
         if (!message) return;
+
         if (args.length < 1) {
             message.sender.sendMessage("§o§c[Paradox] Usage: {prefix}command [enable|disable|list] <commandName1> [commandName2] ...");
             return;
@@ -84,69 +280,11 @@ export const command: Command = {
         const action = args[0]!.toLowerCase();
 
         if (action === "list") {
-            const registered = commandHandler.getRegisteredCommands().map((c) => c.name);
-            const enabled: string[] = [];
-            const disabled: { name: string; metadata: { disabledBy: string; timestamp: number } }[] = [];
-
-            // Categorize commands
-            for (const cmd of allCommands) {
-                if (registered.includes(cmd.name)) {
-                    enabled.push(cmd.name);
-                } else {
-                    const meta = await disabledCommandsDB.get(cmd.name);
-                    if (meta) {
-                        disabled.push({ name: cmd.name, metadata: meta });
-                    }
-                }
-            }
-
-            let listMessage = "§2[§7Paradox§2]§o§7 Command Status:\n";
-
-            /**
-             * Converts timestamp into local time string.
-             * @param timestamp - Epoch time in milliseconds
-             * @returns Formatted date string
-             */
-            const formatTimestamp = (timestamp: number): string => {
-                const date = new Date(timestamp);
-                return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-            };
-
-            type TreeItem = string | { name: string; metadata: { disabledBy: string; timestamp: number } };
-
-            /**
-             * Renders command state list as an ASCII tree structure.
-             * @param sections - Category sections containing items
-             */
-            const generateTreeMessage = (sections: { title: string; items: TreeItem[] }[]) => {
-                const filteredSections = sections.filter((section) => section.items.length > 0);
-
-                filteredSections.forEach((section, index) => {
-                    const isLastSection = index === filteredSections.length - 1;
-                    const branchSymbol = isLastSection ? "└" : "├";
-                    listMessage += `§r  ${branchSymbol} §2[§7${section.title}§2]§7\n`;
-
-                    section.items.forEach((item, i) => {
-                        const isLastItem = i === section.items.length - 1;
-                        const itemBranch = isLastItem ? "└" : "├";
-                        const indent = isLastSection ? "   " : "│  ";
-
-                        if (typeof item === "string") {
-                            listMessage += `§r  ${indent}${itemBranch} §2${item}§r\n`;
-                        } else {
-                            const { name, metadata } = item;
-                            const formattedTime = formatTimestamp(metadata.timestamp);
-                            listMessage += `§r  ${indent}${itemBranch} §2${name}§r §7(disabled by §o${metadata.disabledBy}§r§7 @ §o${formattedTime}§7)\n`;
-                        }
-                    });
-                });
-            };
-
-            generateTreeMessage([
-                { title: "Enabled", items: enabled },
-                { title: "Disabled", items: disabled },
+            const status = await fetchCommandStatus();
+            const listMessage = buildTreeMessage([
+                { title: "Enabled", items: status.enabled },
+                { title: "Disabled", items: status.disabled },
             ]);
-
             message.sender.sendMessage(listMessage);
             return;
         }
@@ -157,16 +295,15 @@ export const command: Command = {
         }
 
         const commandNames = args.slice(1);
-        const commandHandlerRegistry = commandHandler.getRegisteredCommands();
-
-        const notRegistered: string[] = [];
-        const disabledCommands: string[] = [];
-        const enabledCommands: string[] = [];
-        const invalidCommands: string[] = [];
-        const alreadyDisabled: string[] = [];
-        const alreadyEnabled: string[] = [];
-
-        const fullCommandList = allCommands;
+        const registry = commandHandler.getRegisteredCommands();
+        const results: CommandBatchResults = {
+            disabledCommands: [],
+            alreadyDisabled: [],
+            enabledCommands: [],
+            alreadyEnabled: [],
+            invalidCommands: [],
+            notRegistered: [],
+        };
 
         for (const commandName of commandNames) {
             if (commandName === "command") {
@@ -175,101 +312,15 @@ export const command: Command = {
             }
 
             if (action === "disable") {
-                const registeredCommand = commandHandlerRegistry.find((cmd) => cmd.name === commandName);
-
-                if (!registeredCommand) {
-                    const existsInFullList = fullCommandList.some((cmd) => cmd.name === commandName);
-                    if (existsInFullList) {
-                        alreadyDisabled.push(commandName);
-                    } else {
-                        invalidCommands.push(commandName);
-                    }
-                    continue;
-                }
-
-                const index = commandHandlerRegistry.indexOf(registeredCommand);
-                if (index > -1) commandHandlerRegistry.splice(index, 1);
-
-                await disabledCommandsDB.set(commandName, {
-                    disabledBy: message.sender.name,
-                    timestamp: Date.now(),
-                });
-
-                disabledCommands.push(commandName);
+                await processDisableCommand(commandName, registry, message.sender.name, results);
             } else if (action === "enable") {
-                const disabledMeta = await disabledCommandsDB.get(commandName);
-
-                if (!disabledMeta) {
-                    const isAlreadyEnabled = commandHandlerRegistry.some((cmd) => cmd.name === commandName);
-                    const existsInFullList = fullCommandList.some((cmd) => cmd.name === commandName);
-
-                    if (!existsInFullList) {
-                        invalidCommands.push(commandName);
-                    } else if (isAlreadyEnabled) {
-                        alreadyEnabled.push(commandName);
-                    } else {
-                        notRegistered.push(commandName);
-                    }
-
-                    continue;
-                }
-
-                const commandToRestore = fullCommandList.find((cmd) => cmd.name === commandName);
-                if (!commandToRestore) {
-                    invalidCommands.push(commandName);
-                    continue;
-                }
-
-                if (!commandHandlerRegistry.some((cmd) => cmd.name === commandToRestore.name)) {
-                    commandHandlerRegistry.push(commandToRestore);
-                }
-
-                await disabledCommandsDB.delete(commandName);
-                enabledCommands.push(commandName);
+                await processEnableCommand(commandName, registry, results);
             } else {
-                invalidCommands.push(commandName);
+                results.invalidCommands.push(commandName);
             }
         }
 
-        let responseMessage = "§2[§7Paradox§2]§o§7 Command Management Results:\n";
-
-        /**
-         * Appends execution result branches to output message.
-         * @param title - Section header string
-         * @param items - List of command names
-         * @param isLastBranch - Whether section is the last in tree
-         */
-        const appendResultBranch = (title: string, items: string[], isLastBranch = false) => {
-            if (items.length === 0) return;
-            const branchSymbol = isLastBranch ? "└" : "├";
-            responseMessage += `§r  ${branchSymbol} §2[§7${title}§2]§7\n`;
-            items.forEach((name, i) => {
-                const isLastItem = i === items.length - 1;
-                const itemBranch = isLastItem ? "└" : "├";
-                const indent = isLastBranch ? "   " : "│  ";
-                responseMessage += `§r  ${indent}${itemBranch} §2${name}§r\n`;
-            });
-        };
-
-        const sections = [
-            ["Disabled", disabledCommands],
-            ["Already Disabled", alreadyDisabled],
-            ["Enabled", enabledCommands],
-            ["Already Enabled", alreadyEnabled],
-            ["Invalid", invalidCommands],
-            ["Not Registered", notRegistered],
-        ] as const;
-
-        const nonEmptySections = sections.filter(([, arr]) => arr.length > 0);
-
-        nonEmptySections.forEach(([title, items], index) => {
-            const isLast = index === nonEmptySections.length - 1;
-            appendResultBranch(title, items, isLast);
-        });
-
-        message.sender.sendMessage(responseMessage);
-
-        // Re-apply command handler registry passing active and master command arrays
-        commandHandler.registerCommand(commandHandlerRegistry, allCommands);
+        message.sender.sendMessage(buildBatchResultMessage(results));
+        commandHandler.registerCommand(registry, allCommands);
     },
 };
