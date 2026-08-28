@@ -229,12 +229,7 @@ function calculateProximitySleep(loc: Vector3, bounds: BorderBoundsBox): number 
  * @param {boolean} outside - True if outside outer safety box
  * @returns {{ targetX: number; targetZ: number }} Calculated destination coordinates
  */
-function getClampedTargetCoords(
-    loc: Vector3,
-    bounds: BorderBoundsBox,
-    center: { x: number; z: number },
-    outside: boolean
-): { targetX: number; targetZ: number } {
+function getClampedTargetCoords(loc: Vector3, bounds: BorderBoundsBox, center: { x: number; z: number }, outside: boolean): { targetX: number; targetZ: number } {
     if (outside) {
         return { targetX: center.x, targetZ: center.z };
     }
@@ -285,8 +280,7 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
             return;
         }
 
-        const outside =
-            loc.x < bounds.minX - 15 || loc.x > bounds.maxX + 15 || loc.z < bounds.minZ - 15 || loc.z > bounds.maxZ + 15;
+        const outside = loc.x < bounds.minX - 15 || loc.x > bounds.maxX + 15 || loc.z < bounds.minZ - 15 || loc.z > bounds.maxZ + 15;
 
         const { targetX, targetZ } = getClampedTargetCoords(loc, bounds, center, outside);
 
@@ -307,8 +301,7 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
             dimension,
             targetX,
             targetZ,
-            dimensionName:
-                dimension.id === "minecraft:overworld" ? "Overworld" : dimension.id === "minecraft:nether" ? "Nether" : "End",
+            dimensionName: dimension.id === "minecraft:overworld" ? "Overworld" : dimension.id === "minecraft:nether" ? "Nether" : "End",
             beyondBorder: outside,
         });
     } catch (e) {
@@ -359,14 +352,7 @@ function findSafeYAt(dimension: Dimension, x: number, testY: number, z: number):
  * @param {number} maxHeight - Maximum dimension boundary height.
  * @returns {number | undefined} Safe vertical coordinate, or undefined if not found.
  */
-function findSafeYSearchRange(
-    dimension: Dimension,
-    targetX: number,
-    startY: number,
-    targetZ: number,
-    minHeight: number,
-    maxHeight: number
-): number | undefined {
+function findSafeYSearchRange(dimension: Dimension, targetX: number, startY: number, targetZ: number, minHeight: number, maxHeight: number): number | undefined {
     for (let offset = 0; offset <= MAX_SAFE_Y_SEARCH_DISTANCE; offset++) {
         if (offset === 0) {
             if (findSafeYAt(dimension, targetX, startY, targetZ)) {
@@ -415,6 +401,62 @@ function processQueuedTeleport(request: PendingSafeYCheck, safeY: number): void 
 }
 
 /**
+ * Validates whether a queued teleport request is still active and eligible for processing.
+ *
+ * @param {PendingSafeYCheck} request - Target teleport request item.
+ * @returns {boolean} True if request is valid and player is eligible.
+ */
+function isTeleportRequestValid(request: PendingSafeYCheck): boolean {
+    const { player } = request;
+    if (!player) return false;
+
+    if (player.id) {
+        const isStillQueued = queuedPlayerIds.has(player.id);
+        queuedPlayerIds.delete(player.id);
+
+        if (!isStillQueued || getSecurityClearance(player) === 4) {
+            return false;
+        }
+    }
+
+    return player.isValid;
+}
+
+/**
+ * Computes safe Y placement for player or applies fall protection fallback.
+ *
+ * @param {PendingSafeYCheck} request - Target teleport request item.
+ */
+function processPlayerSafeY(request: PendingSafeYCheck): void {
+    const { player, dimension, targetX, targetZ } = request;
+
+    const currentTransform = PlayerLocationCache.getTransform(player);
+    const currentY = currentTransform ? currentTransform.location.y : player.location.y;
+
+    const minHeight = dimension.heightRange?.min ?? -64;
+    const maxHeight = dimension.heightRange?.max ?? 320;
+    const startY = Math.max(minHeight + 1, Math.min(Math.floor(currentY), maxHeight - 2));
+
+    let safeY = findSafeYSearchRange(dimension, targetX, startY, targetZ, minHeight, maxHeight);
+
+    if (!player.isValid || getSecurityClearance(player) === 4) return;
+
+    if (safeY === undefined) {
+        try {
+            const effect = player.getEffect("minecraft:slow_falling");
+            if (!effect || effect.duration < 1200) {
+                player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
+            }
+        } catch {
+            // Ignored if effect application fails
+        }
+        safeY = Math.max(minHeight + 1, Math.min(startY, maxHeight - 2));
+    }
+
+    processQueuedTeleport(request, safeY);
+}
+
+/**
  * Job generator worker computing non-blocking safe vertical coordinates for teleportation.
  *
  * @returns {Generator<void, void, unknown>} Worker generator instance.
@@ -428,43 +470,9 @@ function* safeYWorker(): Generator<void, void, unknown> {
             const request = safeYQueue.shift();
             if (!request) continue;
 
-            const { player, dimension, targetX, targetZ } = request;
-
-            if (player?.id) {
-                const isStillQueued = queuedPlayerIds.has(player.id);
-                queuedPlayerIds.delete(player.id);
-
-                if (!isStillQueued || getSecurityClearance(player) === 4) {
-                    continue;
-                }
+            if (isTeleportRequestValid(request)) {
+                processPlayerSafeY(request);
             }
-
-            if (!player?.isValid) continue;
-
-            const currentTransform = PlayerLocationCache.getTransform(player);
-            const currentY = currentTransform ? currentTransform.location.y : player.location.y;
-
-            const minHeight = dimension.heightRange?.min ?? -64;
-            const maxHeight = dimension.heightRange?.max ?? 320;
-            const startY = Math.max(minHeight + 1, Math.min(Math.floor(currentY), maxHeight - 2));
-
-            let safeY = findSafeYSearchRange(dimension, targetX, startY, targetZ, minHeight, maxHeight);
-
-            if (!player.isValid || getSecurityClearance(player) === 4) continue;
-
-            if (safeY === undefined) {
-                try {
-                    const effect = player.getEffect("minecraft:slow_falling");
-                    if (!effect || effect.duration < 1200) {
-                        player.addEffect("minecraft:slow_falling", 1200, { amplifier: 0 });
-                    }
-                } catch {
-                    // Ignored if effect application fails
-                }
-                safeY = Math.max(minHeight + 1, Math.min(startY, maxHeight - 2));
-            }
-
-            processQueuedTeleport(request, safeY);
             yield;
         }
     } finally {
