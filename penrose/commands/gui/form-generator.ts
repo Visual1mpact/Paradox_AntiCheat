@@ -364,44 +364,82 @@ class GUIManager {
     }
 
     /**
+     * Extracts text value from form submission response.
+     * @param {unknown} rawValue - Raw form value from response.
+     * @returns {string} Trimmed text string or default "0".
+     */
+    private parseTextFieldValue(rawValue: unknown): string {
+        return (rawValue as string)?.trim() ?? "0";
+    }
+
+    /**
+     * Extracts selected dropdown option from form submission response.
+     * @param {unknown} rawValue - Raw form value from response.
+     * @param {DynamicField} field - Target dropdown dynamic field configuration.
+     * @returns {string | undefined} Selected option value formatted or undefined.
+     */
+    private parseDropdownFieldValue(rawValue: unknown, field: DynamicField): string | undefined {
+        const selectedIndex = rawValue as number;
+        const value = field.options?.[selectedIndex]?.trim();
+        if (!value) return undefined;
+
+        if (field.sourceType === "chests" && !value.startsWith("minecraft:")) {
+            return `minecraft:${value}`;
+        }
+        return value;
+    }
+
+    /**
+     * Processes individual form field values from modal submission response.
+     * @param {unknown} rawValue - Raw form input value.
+     * @param {DynamicField} field - Target field definition.
+     * @param {string[]} args - Global positional arguments array.
+     * @param {Record<string, string[]>} groupedValues - Grouped flag arguments lookup.
+     */
+    private processFormFieldValue(rawValue: unknown, field: DynamicField, args: string[], groupedValues: Record<string, string[]>): void {
+        let value: string | undefined;
+
+        if (field.type === "text") {
+            value = this.parseTextFieldValue(rawValue);
+        } else if (field.type === "dropdown") {
+            value = this.parseDropdownFieldValue(rawValue, field);
+            if (!value) return;
+        } else if (field.type === "toggle") {
+            const toggle = rawValue as boolean;
+            if (field.arg && toggle) {
+                args.push(field.arg);
+            }
+            return;
+        }
+
+        const resolvedValue = value || "0";
+        if (field.arg) {
+            groupedValues[field.arg] ??= [];
+            groupedValues[field.arg]!.push(resolvedValue);
+        } else {
+            args.push(resolvedValue);
+        }
+    }
+
+    /**
      * Parses the player's input from a modal form into an array of command arguments.
+     * @param {ModalFormResponse} [response] - Response payload from UI modal submission.
+     * @param {DynamicField[]} [fields] - Field definitions list.
+     * @param {string[]} [requiredFields] - Required field key filters.
+     * @returns {string[]} Formatted positional command arguments array.
      */
     private parseFormResponse(response?: ModalFormResponse, fields: DynamicField[] = [], requiredFields: string[] = []): string[] {
-        if (!response?.formValues) return []; // early exit if no values
+        if (!response?.formValues) return [];
 
         const args: string[] = [];
         let index = 0;
         const groupedValues: Record<string, string[]> = {};
 
         for (const field of fields) {
-            if (!field.requiredFields || field.requiredFields.some((rf) => requiredFields.includes(rf))) {
-                let value: string | undefined;
-                switch (field.type) {
-                    case "text":
-                        value = (response.formValues[index++] as string)?.trim() ?? "0";
-                        break;
-                    case "dropdown":
-                        const selectedIndex = response.formValues[index++] as number;
-                        value = field.options?.[selectedIndex]?.trim();
-                        if (!value) continue;
-
-                        // Re-append minecraft: for chest keys
-                        if (field.sourceType === "chests" && !value.startsWith("minecraft:")) {
-                            value = `minecraft:${value}`;
-                        }
-                        break;
-                    case "toggle":
-                        const toggle = response.formValues[index++] as boolean;
-                        if (field.arg && toggle) args.push(field.arg);
-                        continue;
-                }
-
-                if (field.arg) {
-                    groupedValues[field.arg] ??= [];
-                    groupedValues[field.arg]!.push(value || "0");
-                } else {
-                    args.push(value || "0");
-                }
+            const isFieldRequired = !field.requiredFields || field.requiredFields.some((rf) => requiredFields.includes(rf));
+            if (isFieldRequired) {
+                const rawValue = response.formValues[index++];
+                this.processFormFieldValue(rawValue, field, args, groupedValues);
             }
         }
 
