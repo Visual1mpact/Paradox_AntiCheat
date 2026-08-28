@@ -46,6 +46,11 @@ const messageIntervals = [60, 5, 4, 3, 2, 1];
 
 /**
  * Converts hours, minutes, and seconds into Minecraft ticks.
+ *
+ * @param {number} h - Hours
+ * @param {number} m - Minutes
+ * @param {number} s - Seconds
+ * @returns {number} Time converted to tick units.
  */
 function timeToTicks(h: number, m: number, s: number): number {
     return h * 72000 + m * 1200 + s * 20;
@@ -54,37 +59,48 @@ function timeToTicks(h: number, m: number, s: number): number {
 // ------------------- ENTITY CLEAR -------------------
 
 /**
- * Removes item entities in all standard dimensions that match registered ItemTypes.
+ * Removes dropped item entities from a single specified dimension.
+ *
+ * @param {string} dimensionId - Identifier of dimension to purge items from.
+ * @param {Set<unknown>} allTypes - Set of registered ItemTypes.
  */
-function clearEntityItems() {
+function clearItemsInDimension(dimensionId: string, allTypes: ReturnType<typeof ItemTypes.getAll>): void {
+    try {
+        const dim = world.getDimension(dimensionId);
+        const items = dim.getEntities({ type: "item" });
+
+        for (const entity of items) {
+            if (!entity.isValid) continue;
+
+            const itemComp = entity.getComponent("item");
+            if (itemComp && allTypes.includes(itemComp.itemStack.type)) {
+                entity.remove();
+            }
+        }
+    } catch (e) {
+        console.warn(`[Paradox] Failed to clear item entities in dimension ${dimensionId}: ${e}`);
+    }
+}
+
+/**
+ * Removes item entities across all standard Minecraft dimensions.
+ */
+function clearEntityItems(): void {
     const allTypes = ItemTypes.getAll();
     const dimensionIds = ["overworld", "nether", "the_end"];
 
     for (const id of dimensionIds) {
-        try {
-            const dim = world.getDimension(id);
-            const items = dim.getEntities({ type: "item" });
-            for (const entity of items) {
-                // Safeguard check for entity validity
-                const isValid = entity.isValid;
-                if (!isValid) continue;
-
-                const itemComp = entity.getComponent("item");
-                if (itemComp && allTypes.includes(itemComp.itemStack.type)) {
-                    entity.remove();
-                }
-            }
-        } catch (e) {
-            console.warn(`[Paradox] Failed to clear item entities in dimension ${id}: ${e}`);
-        }
+        clearItemsInDimension(id, allTypes);
     }
 }
 
 /**
  * Removes non-tamed monster entities without name tags from the overworld,
  * skipping entity types in the exception set.
+ *
+ * @param {number} [batchSize=50] - Maximum monster count to remove per call.
  */
-function clearEntities(batchSize: number = 50) {
+function clearEntities(batchSize: number = 50): void {
     try {
         const overworld = world.getDimension("overworld");
         const monsters = overworld.getEntities({ families: ["monster"] });
@@ -92,8 +108,7 @@ function clearEntities(batchSize: number = 50) {
         let count = 0;
 
         for (const entity of monsters) {
-            const isValid = entity.isValid;
-            if (!isValid) continue;
+            if (!entity.isValid) continue;
 
             const tameable = entity.getComponent("tameable");
             const isTamed = tameable?.isTamed ?? false;
@@ -101,7 +116,7 @@ function clearEntities(batchSize: number = 50) {
             if (!entityException.has(entity.typeId) && !isTamed && !entity.nameTag) {
                 entity.remove();
                 count++;
-                if (count >= batchSize) break; // prevent sudden frame spikes
+                if (count >= batchSize) break;
             }
         }
     } catch (e) {
@@ -112,7 +127,39 @@ function clearEntities(batchSize: number = 50) {
 // ------------------- LAG CLEAR ENGINE -------------------
 
 /**
+ * Handles countdown announcements and executes the clear process upon timer expiration.
+ *
+ * @param {number} currentTick - The current engine tick index.
+ */
+function processLagClearTick(currentTick: number): void {
+    const ticksLeft = (globalEndTick ?? currentTick) - currentTick;
+
+    if (ticksLeft <= 0) {
+        clearEntityItems();
+        clearEntities();
+        world.sendMessage("§2[§7Paradox§2]§o§7 Server lag has been cleared!");
+
+        cooldownTimer.set(object, currentTick);
+
+        globalEndTick = currentTick + timeToTicks(savedClockSettings.hours, savedClockSettings.minutes, savedClockSettings.seconds);
+        lastMessageIndex = -1;
+        return;
+    }
+
+    const secondsLeft = Math.round(ticksLeft / 20);
+    const nextMessageIndex = messageIntervals.findIndex((interval) => interval === secondsLeft);
+
+    if (nextMessageIndex !== -1 && nextMessageIndex !== lastMessageIndex) {
+        const message = `${secondsLeft} second${secondsLeft > 1 ? "s" : ""}`;
+        world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag will be cleared in ${message}!`);
+        lastMessageIndex = nextMessageIndex;
+    }
+}
+
+/**
  * Continuous generator loop that handles ticks of countdown and clearing operations.
+ *
+ * @yields Pauses pass execution to yield control back to the engine worker.
  */
 function* continuousLagClearLoop(): Generator<void, void, unknown> {
     if (isJobActive) return;
@@ -121,42 +168,18 @@ function* continuousLagClearLoop(): Generator<void, void, unknown> {
     try {
         if (!isModuleActive) return;
 
-        // Initialize target point if it dropped out or was reset
         if (globalEndTick === null) {
             globalEndTick = system.currentTick + timeToTicks(savedClockSettings.hours, savedClockSettings.minutes, savedClockSettings.seconds);
         }
 
-        const currentTick = system.currentTick;
-        const ticksLeft = globalEndTick - currentTick;
+        processLagClearTick(system.currentTick);
 
-        // EXECUTE TRIGGER TIMESLOT REACHED
-        if (ticksLeft <= 0) {
-            clearEntityItems();
-            clearEntities();
-            world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag has been cleared!`);
-
-            cooldownTimer.set(object, currentTick);
-
-            // Setup variables for the next recurring cycle instantly
-            globalEndTick = currentTick + timeToTicks(savedClockSettings.hours, savedClockSettings.minutes, savedClockSettings.seconds);
-            lastMessageIndex = -1;
-        } else {
-            // EVALUATE COUNTDOWN WARNINGS
-            const secondsLeft = Math.round(ticksLeft / 20);
-            const nextMessageIndex = messageIntervals.findIndex((interval) => interval === secondsLeft);
-
-            if (nextMessageIndex !== -1 && nextMessageIndex !== lastMessageIndex) {
-                const message = `${secondsLeft} second${secondsLeft > 1 ? "s" : ""}`;
-                world.sendMessage(`§2[§7Paradox§2]§o§7 Server lag will be cleared in ${message}!`);
-                lastMessageIndex = nextMessageIndex;
-            }
-        }
+        yield;
     } catch (e) {
         console.error(`[Paradox] Error during lag clear pass: ${e}`);
     } finally {
         isJobActive = false;
 
-        // Request next frame recursion step smoothly
         if (isModuleActive) {
             system.run(() => {
                 system.runJob(continuousLagClearLoop());
@@ -169,8 +192,12 @@ function* continuousLagClearLoop(): Generator<void, void, unknown> {
 
 /**
  * Starts the lag clear system tracking scheduler.
+ *
+ * @param {number} [hours=0] - Interval hours
+ * @param {number} [minutes=5] - Interval minutes
+ * @param {number} [seconds=0] - Interval seconds
  */
-export function startLagClear(hours: number = 0, minutes: number = 5, seconds: number = 0) {
+export function startLagClear(hours: number = 0, minutes: number = 5, seconds: number = 0): void {
     if (isModuleActive) return;
     isModuleActive = true;
 
@@ -186,7 +213,7 @@ export function startLagClear(hours: number = 0, minutes: number = 5, seconds: n
 /**
  * Stops the lag clear system and cleans up running allocations.
  */
-export function stopLagClear() {
+export function stopLagClear(): void {
     isModuleActive = false;
     globalEndTick = null;
     lastMessageIndex = -1;
