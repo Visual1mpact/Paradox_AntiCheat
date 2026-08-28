@@ -1,7 +1,109 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 import { startDimensionLock, stopDimensionLock } from "../../modules/dimension-lock-module";
+
+interface DimensionLockSettings {
+    nether: boolean;
+    theEnd: boolean;
+}
+
+interface DimensionLockModuleData {
+    enabled: boolean;
+    settings: DimensionLockSettings;
+}
+
+const MODULE_KEY = "dimensionLock_b";
+
+/**
+ * Retrieves module data structure from database with defaults.
+ * @returns {Promise<DimensionLockModuleData>} Stored or default module state.
+ */
+async function getModuleData(): Promise<DimensionLockModuleData> {
+    const data = (await paradoxModulesDB.get(MODULE_KEY)) as DimensionLockModuleData | undefined;
+    return {
+        enabled: data?.enabled ?? false,
+        settings: {
+            nether: data?.settings?.nether ?? false,
+            theEnd: data?.settings?.theEnd ?? false,
+        },
+    };
+}
+
+/**
+ * Displays current dimension lock module configuration status to sender.
+ * @param {Player} sender - Target message recipient player.
+ * @param {DimensionLockModuleData} moduleData - Current state settings.
+ */
+function displayStatus(sender: Player, moduleData: DimensionLockModuleData): void {
+    sender.sendMessage(
+        [
+            `§2[§7Paradox§2]§o§7 Dimension Lock Status:`,
+            `  | §7Module: ${moduleData.enabled ? "§aENABLED§7" : "§4DISABLED§7"}`,
+            `  | §7Nether: ${moduleData.settings.nether ? "§4LOCKED§7" : "§aUNLOCKED§7"}`,
+            `  | §7The End: ${moduleData.settings.theEnd ? "§4LOCKED§7" : "§aUNLOCKED§7"}`,
+        ].join("\n")
+    );
+}
+
+/**
+ * Syncs module runtime state and persists database choices.
+ * @param {DimensionLockModuleData} moduleData - Updated state structure to set.
+ */
+async function syncModuleState(moduleData: DimensionLockModuleData): Promise<void> {
+    await paradoxModulesDB.set(MODULE_KEY, moduleData);
+    if (moduleData.enabled) {
+        startDimensionLock();
+    } else {
+        stopDimensionLock();
+    }
+}
+
+/**
+ * Handles global toggle state change.
+ * @param {Player} sender - Executing player.
+ * @param {DimensionLockModuleData} moduleData - Active module state data.
+ * @param {string | undefined} arg0 - Primary argument string.
+ */
+async function handleGlobalToggle(sender: Player, moduleData: DimensionLockModuleData, arg0?: string): Promise<void> {
+    const isEnabled = arg0 === "on" || arg0 === "--enable" ? true : arg0 === "off" || arg0 === "--disable" ? false : !moduleData.enabled;
+    moduleData.enabled = isEnabled;
+
+    await syncModuleState(moduleData);
+    sender.sendMessage(`§2[§7Paradox§2]§o§7 Dimension locking is now ${isEnabled ? "§aENABLED" : "§cDISABLED"}§7.`);
+}
+
+/**
+ * Handles toggling access locks for specific dimensions.
+ * @param {Player} sender - Executing player.
+ * @param {DimensionLockModuleData} moduleData - Active module state data.
+ * @param {string} dimension - Dimension targeted ('nether' | 'end').
+ * @param {string | undefined} state - Target toggle flag string ('on' | 'off').
+ */
+async function handleDimensionToggle(sender: Player, moduleData: DimensionLockModuleData, dimension: string, state?: string): Promise<void> {
+    if (dimension !== "nether" && dimension !== "end") {
+        sender.sendMessage("§o§c[Paradox] Invalid dimension or state. Use 'nether', 'end', 'on', or 'off'.");
+        return;
+    }
+
+    if (state !== "on" && state !== "off") {
+        sender.sendMessage("§o§c[Paradox] Invalid state. Use 'on' or 'off'.");
+        return;
+    }
+
+    const isLocked = state === "on";
+    const settingsKey = dimension === "nether" ? "nether" : "theEnd";
+
+    moduleData.settings[settingsKey] = isLocked;
+    if (isLocked) {
+        moduleData.enabled = true;
+    }
+
+    await syncModuleState(moduleData);
+
+    const dimDisplay = dimension === "nether" ? "Nether" : "The End";
+    sender.sendMessage(`§2[§7Paradox§2]§o§7 ${dimDisplay} is now ${isLocked ? "§4LOCKED" : "§aUNLOCKED"}§7.`);
+}
 
 /**
  * Command to lock or unlock access to the Nether and The End dimensions.
@@ -83,80 +185,33 @@ export const dimensionLockCommand: Command = {
         ],
     },
 
-    execute: async (message?: ChatSendBeforeEvent, args: string[] = []) => {
+    /**
+     * Executes the dimensionlock command.
+     * @param {ChatSendBeforeEvent} [message] - Chat send event object.
+     * @param {string[]} [args] - Provided command argument strings.
+     */
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
 
-        const moduleKey = "dimensionLock_b";
-        const moduleData = (await paradoxModulesDB.get(moduleKey)) ?? {
-            enabled: false,
-            settings: { nether: false, theEnd: false },
-        };
-
-        if (!moduleData.settings) {
-            moduleData.settings = { nether: false, theEnd: false };
-        }
-
+        const sender = message.sender;
+        const moduleData = await getModuleData();
         const arg0 = args[0]?.toLowerCase();
 
-        // Handle status listing
         if (args.includes("-l") || args.includes("--list")) {
-            message.sender.sendMessage(
-                [
-                    `§2[§7Paradox§2]§o§7 Dimension Lock Status:`,
-                    `  | §7Module: ${moduleData.enabled ? "§aENABLED§7" : "§4DISABLED§7"}`,
-                    `  | §7Nether: ${moduleData.settings.nether ? "§4LOCKED§7" : "§aUNLOCKED§7"}`,
-                    `  | §7The End: ${moduleData.settings.theEnd ? "§4LOCKED§7" : "§aUNLOCKED§7"}`,
-                ].join("\n")
-            );
+            displayStatus(sender, moduleData);
             return;
         }
 
-        // Handle global enable/disable toggle
         if (!arg0 || arg0 === "on" || arg0 === "off" || arg0 === "--enable" || arg0 === "--disable") {
-            const isEnabled = arg0 === "on" || arg0 === "--enable" ? true : arg0 === "off" || arg0 === "--disable" ? false : !moduleData.enabled;
-            moduleData.enabled = isEnabled;
-            await paradoxModulesDB.set(moduleKey, moduleData);
-
-            if (isEnabled) startDimensionLock();
-            else stopDimensionLock();
-
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Dimension locking is now ${isEnabled ? "§aENABLED" : "§cDISABLED"}§7.`);
+            await handleGlobalToggle(sender, moduleData, arg0);
             return;
         }
 
-        // Handle dimension specific lock logic
         if (args.length < 2) {
-            message.sender.sendMessage("§o§c[Paradox] Usage: !dimensionlock <nether | end> <on | off>");
+            sender.sendMessage("§o§c[Paradox] Usage: !dimensionlock <nether | end> <on | off>");
             return;
         }
 
-        const dimension = arg0;
-        const state = args[1]?.toLowerCase();
-
-        if (dimension !== "nether" && dimension !== "end") {
-            message.sender.sendMessage("§o§c[Paradox] Invalid dimension or state. Use 'nether', 'end', 'on', or 'off'.");
-            return;
-        }
-
-        if (state !== "on" && state !== "off") {
-            message.sender.sendMessage("§o§c[Paradox] Invalid state. Use 'on' or 'off'.");
-            return;
-        }
-
-        const isLocked = state === "on";
-        const settingsKey = dimension === "nether" ? "nether" : "theEnd";
-
-        moduleData.settings[settingsKey] = isLocked;
-
-        // Automatically enable the module if a dimension is being locked
-        if (isLocked) moduleData.enabled = true;
-
-        await paradoxModulesDB.set(moduleKey, moduleData);
-
-        if (moduleData.enabled) startDimensionLock();
-        else stopDimensionLock();
-
-        const dimDisplay = dimension === "nether" ? "Nether" : "The End";
-        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 ${dimDisplay} is now ${isLocked ? "§4LOCKED" : "§aUNLOCKED"}§7.`);
+        await handleDimensionToggle(sender, moduleData, arg0, args[1]?.toLowerCase());
     },
 };
