@@ -1,7 +1,183 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { startInvSync, stopInvSync, forceSnapshotAll, forceCheckAll, clearAllSnapshots } from "../../modules/invsync-module";
 import { paradoxModulesDB, invSyncSnapshotsDB, invSyncAuditDB } from "../../event-listeners/world-initialize";
+
+interface ModuleData {
+    enabled?: boolean;
+}
+
+interface InventorySnapshot {
+    name: string;
+    time: number;
+    counts: Record<string, number>;
+}
+
+interface AnomalyEvent {
+    time: number;
+    excessItems: Record<string, number>;
+    totalExcess: number;
+}
+
+interface AuditRecord {
+    events: AnomalyEvent[];
+}
+
+/**
+ * Toggles the InvSync module operational state and sends feedback.
+ * @param {Player} player - The issuing player.
+ * @param {ModuleData} moduleData - Current database record for the module.
+ * @returns {Promise<void>}
+ */
+async function handleToggle(player: Player, moduleData: ModuleData): Promise<void> {
+    const isCurrentlyEnabled = moduleData.enabled ?? false;
+    const nextState = !isCurrentlyEnabled;
+
+    moduleData.enabled = nextState;
+    await paradoxModulesDB.set("invSync_b", { ...moduleData, enabled: nextState });
+
+    if (nextState) {
+        startInvSync();
+        player.sendMessage("§2[§7Paradox§2]§o§7 InvSync has been §aenabled§7.");
+    } else {
+        stopInvSync();
+        player.sendMessage("§2[§7Paradox§2]§o§7 InvSync has been §4disabled§7.");
+    }
+}
+
+/**
+ * Renders suspicious item alerts for quantities over normal stack limits.
+ * @param {Player} player - Recipient player.
+ * @param {Record<string, number>} counts - Inventory item counts map.
+ */
+function renderSuspiciousItems(player: Player, counts: Record<string, number>): void {
+    const suspiciousItems = Object.entries(counts)
+        .filter(([_, amount]) => amount > 64)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+
+    if (!suspiciousItems.length) return;
+
+    player.sendMessage("§2[§7Paradox§2]§o§7 §6Top Suspicious Items:");
+    suspiciousItems.forEach(([itemId, amount]) => {
+        const itemName = itemId.replace("minecraft:", "");
+        player.sendMessage(`  §o§7| §2${itemName} §7x§c${amount}`);
+    });
+}
+
+/**
+ * Renders the full aggregated inventory count list.
+ * @param {Player} player - Recipient player.
+ * @param {Record<string, number>} counts - Inventory item counts map.
+ */
+function renderInventoryCounts(player: Player, counts: Record<string, number>): void {
+    player.sendMessage("§2[§7Paradox§2]§o§7 Full Inventory Counts:");
+    Object.entries(counts).forEach(([itemId, amount], index) => {
+        const slotLabel = `§2[§fSlot ${index}§2]`;
+        const itemName = `§2[§f${itemId.replace("minecraft:", "")}§2]`;
+        const anomalyHighlight = amount > 64 ? " §c(!)" : "";
+
+        player.sendMessage(`  §o§7| ${slotLabel} §2=>§f ${itemName} §7Amount: §2${amount}${anomalyHighlight}`);
+    });
+}
+
+/**
+ * Formats and renders recent audit event entries.
+ * @param {Player} player - Recipient player.
+ * @param {AnomalyEvent[]} events - Audit event records array.
+ */
+function renderAuditEvents(player: Player, events: AnomalyEvent[]): void {
+    const recentEvents = events.slice(-10);
+
+    if (!recentEvents.length) {
+        player.sendMessage("§2[§7Paradox§2]§o§7 No anomalies detected.");
+        return;
+    }
+
+    player.sendMessage("§2[§7Paradox§2]§o§7 Recent Anomalies:");
+    recentEvents.forEach((e, i) => {
+        const items = Object.entries(e.excessItems)
+            .map(([id]) => {
+                const clean = id.replace("minecraft:", "").replace(/_/g, " ");
+                return clean.charAt(0).toUpperCase() + clean.slice(1);
+            })
+            .join(", ");
+
+        player.sendMessage(`  §8[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: §2[§7${items}§2]§o§7§f, §cTotal: ${e.totalExcess}`);
+    });
+}
+
+/**
+ * Handles generating and displaying the forensic audit output.
+ * @param {Player} player - The issuing player.
+ * @param {string | undefined} targetName - The targeted target player name.
+ * @param {string} prefix - Command prefix string.
+ * @returns {Promise<void>}
+ */
+async function handleForensic(player: Player, targetName: string | undefined, prefix: string): Promise<void> {
+    if (!targetName) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 §cUsage: ${prefix}invsync forensic <player>`);
+        return;
+    }
+
+    const snapshotEntries = (await invSyncSnapshotsDB.entries()) as [string, InventorySnapshot][];
+    const snapshotEntry = snapshotEntries.find(([_, snapshot]) => snapshot.name.toLowerCase() === targetName.toLowerCase());
+
+    if (!snapshotEntry) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 §cNo snapshot found for player §f${targetName}`);
+        return;
+    }
+
+    const [targetId, snapshot] = snapshotEntry;
+    const audit = ((await invSyncAuditDB.get(targetId)) as AuditRecord | undefined) ?? { events: [] };
+
+    player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${snapshot.name}`);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Last Snapshot: §f${new Date(snapshot.time).toLocaleString()}`);
+
+    renderSuspiciousItems(player, snapshot.counts);
+    renderInventoryCounts(player, snapshot.counts);
+    renderAuditEvents(player, audit.events);
+}
+
+/**
+ * Processes module action subcommands (status, snapshot, check, clear).
+ * @param {Player} player - Player object.
+ * @param {string} sub - Subcommand text identifier.
+ * @param {boolean} enabled - Operational flag status.
+ * @returns {Promise<boolean>} Handled status boolean flag.
+ */
+async function handleModuleSubactions(player: Player, sub: string, enabled: boolean): Promise<boolean> {
+    if (sub === "status") {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 InvSync is currently ${enabled ? "§aenabled" : "§4disabled"}§7.`);
+        return true;
+    }
+
+    if (sub === "snapshot") {
+        if (!enabled) player.sendMessage("§2[§7Paradox§2]§o§7 §c§oInvSync must be enabled first.");
+        else {
+            await forceSnapshotAll();
+            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Snapshot forced for all online players.");
+        }
+        return true;
+    }
+
+    if (sub === "check") {
+        if (!enabled) player.sendMessage("§2[§7Paradox§2]§o§7 §cInvSync must be enabled first.");
+        else {
+            await forceCheckAll();
+            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Rejoin check forced for all online players.");
+        }
+        return true;
+    }
+
+    if (sub === "clear") {
+        await clearAllSnapshots();
+        player.sendMessage("§2[§7Paradox§2]§o§7 §§a[§7InvSync§a]§7 All stored snapshots cleared.");
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * InvSync command controller.
@@ -20,10 +196,6 @@ export const invSyncCommand: Command = {
     securityClearance: 4,
     icon: "textures/ui/switch_accounts.png",
 
-    /**
-     * GUI configuration used by the command framework
-     * to generate the module settings interface.
-     */
     guiInstructions: {
         formType: "ActionFormData",
         title: "Inventory Sync Settings",
@@ -63,147 +235,32 @@ export const invSyncCommand: Command = {
      * Command execution entry point.
      * Routes subcommands and enforces module state requirements where applicable.
      * @param {ChatSendBeforeEvent | undefined} message - The message object.
-     * @param {string[]} _ - The command arguments.
+     * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
      */
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
         const player = message.sender;
 
-        const key = "invSync_b";
-        const moduleData = (await paradoxModulesDB.get(key)) ?? { enabled: false };
+        const moduleData = ((await paradoxModulesDB.get("invSync_b")) as ModuleData | undefined) ?? { enabled: false };
         const enabled = moduleData.enabled ?? false;
 
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
         const sub = args[0]?.toLowerCase();
 
-        // Toggle module when no subcommand is provided.
         if (!sub) {
-            moduleData.enabled = !enabled;
-            await paradoxModulesDB.set(key, moduleData);
-
-            if (!enabled) {
-                moduleData.enabled = true;
-                await paradoxModulesDB.set("invSync_b", moduleData);
-                startInvSync();
-                player.sendMessage("§2[§7Paradox§2]§o§7 InvSync has been §aenabled§7.");
-            } else {
-                moduleData.enabled = false;
-                await paradoxModulesDB.set("invSync_b", moduleData);
-                stopInvSync();
-                player.sendMessage("§2[§7Paradox§2]§o§7 InvSync has been §4disabled§7.");
-            }
+            await handleToggle(player, moduleData);
             return;
         }
 
-        // Display current module state.
-        if (sub === "status") {
-            player.sendMessage(`§2[§7Paradox§2]§o§7 InvSync is currently ${enabled ? "§aenabled" : "§4disabled"}§7.`);
-            return;
-        }
+        const isHandled = await handleModuleSubactions(player, sub, enabled);
+        if (isHandled) return;
 
-        // Force snapshot of all online players.
-        if (sub === "snapshot") {
-            if (!enabled) return player.sendMessage("§2[§7Paradox§2]§o§7 §c§oInvSync must be enabled first.");
-
-            await forceSnapshotAll();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Snapshot forced for all online players.");
-            return;
-        }
-
-        // Force immediate anomaly check for all online players.
-        if (sub === "check") {
-            if (!enabled) return player.sendMessage("§2[§7Paradox§2]§o§7 §cInvSync must be enabled first.");
-
-            await forceCheckAll();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Rejoin check forced for all online players.");
-            return;
-        }
-
-        // Clear all stored snapshots and audit history.
-        if (sub === "clear") {
-            await clearAllSnapshots();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §§a[§7InvSync§a]§7 All stored snapshots cleared.");
-            return;
-        }
-
-        /**
-         * Forensic report:
-         * Displays stored snapshot data and recent anomaly history
-         * for a specified player.
-         */
         if (sub === "forensic") {
-            const targetName = args[1];
-
-            if (!targetName) {
-                player.sendMessage(`§2[§7Paradox§2]§o§7 §cUsage: ${prefix}invsync forensic <player>`);
-                return;
-            }
-
-            // Locate snapshot by case-insensitive name match.
-            const snapshotEntry = [...(await invSyncSnapshotsDB.entries())].find(([_, snapshot]) => snapshot.name.toLowerCase() === targetName.toLowerCase());
-
-            if (!snapshotEntry) {
-                player.sendMessage(`§2[§7Paradox§2]§o§7 §cNo snapshot found for player §f${targetName}`);
-                return;
-            }
-
-            const [targetId, snapshot] = snapshotEntry;
-            const audit = (await invSyncAuditDB.get(targetId)) ?? { events: [] };
-
-            // Header information
-            player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${snapshot.name}`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Last Snapshot: §f${new Date(snapshot.time).toLocaleString()}`);
-
-            // Highlight items exceeding standard stack size (64).
-            const suspiciousItems = Object.entries(snapshot.counts)
-                .filter(([_, amount]) => amount > 64)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 3);
-
-            if (suspiciousItems.length) {
-                player.sendMessage("§2[§7Paradox§2]§o§7 §6Top Suspicious Items:");
-                suspiciousItems.forEach(([itemId, amount]) => {
-                    const itemName = itemId.replace("minecraft:", "");
-                    player.sendMessage(`  §o§7| §2${itemName} §7x§c${amount}`);
-                });
-            }
-
-            // Full stored inventory snapshot (aggregated counts).
-            player.sendMessage("§2[§7Paradox§2]§o§7 Full Inventory Counts:");
-
-            Object.entries(snapshot.counts).forEach(([itemId, amount], index) => {
-                const slotLabel = `§2[§fSlot ${index}§2]`;
-                const itemName = `§2[§f${itemId.replace("minecraft:", "")}§2]`;
-                const anomalyHighlight = amount > 64 ? " §c(!)" : "";
-
-                player.sendMessage(`  §o§7| ${slotLabel} §2=>§f ${itemName} §7Amount: §2${amount}${anomalyHighlight}`);
-            });
-
-            // Display last 10 recorded anomaly events.
-            const recentEvents = audit.events.slice(-10);
-
-            if (recentEvents.length) {
-                player.sendMessage("§2[§7Paradox§2]§o§7 Recent Anomalies:");
-
-                recentEvents.forEach((e, i) => {
-                    const items = Object.entries(e.excessItems)
-                        .map(([id]) => {
-                            const clean = id.replace("minecraft:", "").replace(/_/g, " ");
-                            return clean.charAt(0).toUpperCase() + clean.slice(1);
-                        })
-                        .join(", ");
-
-                    player.sendMessage(`  §8[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: §2[§7${items}§2]§o§7§f, §cTotal: ${e.totalExcess}`);
-                });
-            } else {
-                player.sendMessage("§2[§7Paradox§2]§o§7 No anomalies detected.");
-            }
-
+            await handleForensic(player, args[1], prefix);
             return;
         }
 
-        // Fallback for unknown subcommands.
         player.sendMessage(`§2[§7Paradox§2]§o§7 §cUnknown subcommand. Use §f${prefix}invsync help`);
     },
 };
