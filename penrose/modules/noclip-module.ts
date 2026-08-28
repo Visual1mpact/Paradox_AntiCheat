@@ -17,15 +17,25 @@ const COLLISION_TOLERANCE = 0.15;
  */
 const MAX_CHECK_DISTANCE = 10;
 
+interface Vector3 {
+    x: number;
+    y: number;
+    z: number;
+}
+
+interface Bounds {
+    min: Vector3;
+    max: Vector3;
+}
+
+interface PlayerMovementData {
+    lastPos: Vector3;
+    dimensionId: string;
+    phaseFlags: number;
+}
+
 /** Tracks players' movement history and dimension context. */
-const playerData = new Map<
-    string,
-    {
-        lastPos: { x: number; y: number; z: number };
-        dimensionId: string;
-        phaseFlags: number;
-    }
->();
+const playerData = new Map<string, PlayerMovementData>();
 
 /** Tracks recent damage to allow knockback exemptions. */
 const recentDamage = new Map<string, number>();
@@ -44,11 +54,11 @@ let dimensionChangeSubscription: ((ev: PlayerDimensionChangeAfterEvent) => void)
  * Determines if a block position should allow movement through it.
  * Safely handles unloaded chunks or out-of-bounds coordinates to prevent engine freezes.
  *
- * @param dim - Dimension instance
- * @param pos - Block position to evaluate
- * @returns True if block should be ignored for collision checks
+ * @param {Dimension} dim - Dimension instance
+ * @param {Vector3} pos - Block position to evaluate
+ * @returns {boolean} True if block should be ignored for collision checks
  */
-function isPassThrough(dim: any, pos: { x: number; y: number; z: number }): boolean {
+function isPassThrough(dim: Dimension, pos: Vector3): boolean {
     try {
         const block = dim.getBlock({
             x: Math.floor(pos.x),
@@ -73,12 +83,12 @@ function isPassThrough(dim: any, pos: { x: number; y: number; z: number }): bool
 }
 
 /** Returns the current timestamp in seconds. */
-function now() {
+function now(): number {
     return Date.now() / 1000;
 }
 
 /** Calculates Euclidean distance between two positions. */
-function distance(a: { x: number; y: number; z: number }, b: { x: number; y: number; z: number }) {
+function distance(a: Vector3, b: Vector3): number {
     const dx = a.x - b.x;
     const dy = a.y - b.y;
     const dz = a.z - b.z;
@@ -87,7 +97,7 @@ function distance(a: { x: number; y: number; z: number }, b: { x: number; y: num
 }
 
 /** Sends a NoClip alert to Level 4 security staff. */
-function alertStaff(offender: Player, dist: number) {
+function alertStaff(offender: Player, dist: number): void {
     const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(offender, "NoClip", `Player tried to phase ${dist.toFixed(1)} blocks.`);
     for (const s of staff) {
@@ -97,7 +107,7 @@ function alertStaff(offender: Player, dist: number) {
 }
 
 /** Converts a Bedrock AABB (center/extent) into min/max bounds. */
-function getBounds(box: AABB) {
+function getBounds(box: AABB): Bounds {
     return {
         min: {
             x: box.center.x - box.extent.x,
@@ -112,78 +122,66 @@ function getBounds(box: AABB) {
     };
 }
 
-/** Performs a tolerance-aware swept AABB collision check for a player. */
-function sweptAABBWithTolerance(player: Player, dim: Dimension, start: { x: number; y: number; z: number }, end: { x: number; y: number; z: number }) {
-    const base = getBounds(player.getAABB());
-
-    const movement = {
-        x: end.x - start.x,
-        y: end.y - start.y,
-        z: end.z - start.z,
-    };
-
-    const sweep = {
-        min: {
-            x: Math.min(base.min.x, base.min.x + movement.x),
-            y: Math.min(base.min.y, base.min.y + movement.y),
-            z: Math.min(base.min.z, base.min.z + movement.z),
-        },
-        max: {
-            x: Math.max(base.max.x, base.max.x + movement.x),
-            y: Math.max(base.max.y, base.max.y + movement.y),
-            z: Math.max(base.max.z, base.max.z + movement.z),
-        },
-    };
-
-    const minX = Math.floor(sweep.min.x);
-    const maxX = Math.floor(sweep.max.x);
-    const minY = Math.floor(sweep.min.y);
-    const maxY = Math.floor(sweep.max.y);
-    const minZ = Math.floor(sweep.min.z);
-    const maxZ = Math.floor(sweep.max.z);
-
-    // Corners check with tolerance
-    const corners = [
-        { x: minX + COLLISION_TOLERANCE, y: minY + COLLISION_TOLERANCE, z: minZ + COLLISION_TOLERANCE },
-        { x: minX + COLLISION_TOLERANCE, y: minY + COLLISION_TOLERANCE, z: maxZ + 1 - COLLISION_TOLERANCE },
-        { x: minX + COLLISION_TOLERANCE, y: maxY + 1 - COLLISION_TOLERANCE, z: minZ + COLLISION_TOLERANCE },
-        { x: minX + COLLISION_TOLERANCE, y: maxY + 1 - COLLISION_TOLERANCE, z: maxZ + 1 - COLLISION_TOLERANCE },
-        { x: maxX + 1 - COLLISION_TOLERANCE, y: minY + COLLISION_TOLERANCE, z: minZ + COLLISION_TOLERANCE },
-        { x: maxX + 1 - COLLISION_TOLERANCE, y: minY + COLLISION_TOLERANCE, z: maxZ + 1 - COLLISION_TOLERANCE },
-        { x: maxX + 1 - COLLISION_TOLERANCE, y: maxY + 1 - COLLISION_TOLERANCE, z: minZ + COLLISION_TOLERANCE },
-        { x: maxX + 1 - COLLISION_TOLERANCE, y: maxY + 1 - COLLISION_TOLERANCE, z: maxZ + 1 - COLLISION_TOLERANCE },
+/**
+ * Validates swept corner points against pass-through logic.
+ * @param {Dimension} dim - Dimension instance.
+ * @param {Bounds} grid - Bounds containing floor/ceil coordinates.
+ * @returns {boolean} True if any corner is solid.
+ */
+function checkSweptCorners(dim: Dimension, grid: Bounds): boolean {
+    const corners: Vector3[] = [
+        { x: grid.min.x + COLLISION_TOLERANCE, y: grid.min.y + COLLISION_TOLERANCE, z: grid.min.z + COLLISION_TOLERANCE },
+        { x: grid.min.x + COLLISION_TOLERANCE, y: grid.min.y + COLLISION_TOLERANCE, z: grid.max.z + 1 - COLLISION_TOLERANCE },
+        { x: grid.min.x + COLLISION_TOLERANCE, y: grid.max.y + 1 - COLLISION_TOLERANCE, z: grid.min.z + COLLISION_TOLERANCE },
+        { x: grid.min.x + COLLISION_TOLERANCE, y: grid.max.y + 1 - COLLISION_TOLERANCE, z: grid.max.z + 1 - COLLISION_TOLERANCE },
+        { x: grid.max.x + 1 - COLLISION_TOLERANCE, y: grid.min.y + COLLISION_TOLERANCE, z: grid.min.z + COLLISION_TOLERANCE },
+        { x: grid.max.x + 1 - COLLISION_TOLERANCE, y: grid.min.y + COLLISION_TOLERANCE, z: grid.max.z + 1 - COLLISION_TOLERANCE },
+        { x: grid.max.x + 1 - COLLISION_TOLERANCE, y: grid.max.y + 1 - COLLISION_TOLERANCE, z: grid.min.z + COLLISION_TOLERANCE },
+        { x: grid.max.x + 1 - COLLISION_TOLERANCE, y: grid.max.y + 1 - COLLISION_TOLERANCE, z: grid.max.z + 1 - COLLISION_TOLERANCE },
     ];
 
     for (const corner of corners) {
         if (!isPassThrough(dim, corner)) return true;
     }
+    return false;
+}
 
-    // Interior blocks check
-    for (let x = minX; x <= maxX; x++) {
-        for (let y = minY; y <= maxY; y++) {
-            for (let z = minZ; z <= maxZ; z++) {
-                const isCorner = (x === minX || x === maxX) && (y === minY || y === maxY) && (z === minZ || z === maxZ);
+/**
+ * Evaluates internal swept block overlaps.
+ * @param {Dimension} dim - Dimension instance.
+ * @param {Bounds} grid - Grid bounds.
+ * @param {Bounds} sweep - Swept movement bounds.
+ * @returns {boolean} True if internal collision detected.
+ */
+function checkSweptInteriors(dim: Dimension, grid: Bounds, sweep: Bounds): boolean {
+    for (let x = grid.min.x; x <= grid.max.x; x++) {
+        for (let y = grid.min.y; y <= grid.max.y; y++) {
+            for (let z = grid.min.z; z <= grid.max.z; z++) {
+                const isCorner = (x === grid.min.x || x === grid.max.x) && (y === grid.min.y || y === grid.max.y) && (z === grid.min.z || z === grid.max.z);
                 if (isCorner) continue;
 
                 if (!isPassThrough(dim, { x, y, z })) {
-                    const blockMin = {
-                        x: x + COLLISION_TOLERANCE,
-                        y: y + COLLISION_TOLERANCE,
-                        z: z + COLLISION_TOLERANCE,
-                    };
-                    const blockMax = {
-                        x: x + 1 - COLLISION_TOLERANCE,
-                        y: y + 1 - COLLISION_TOLERANCE,
-                        z: z + 1 - COLLISION_TOLERANCE,
-                    };
+                    const blockMin = { x: x + COLLISION_TOLERANCE, y: y + COLLISION_TOLERANCE, z: z + COLLISION_TOLERANCE };
+                    const blockMax = { x: x + 1 - COLLISION_TOLERANCE, y: y + 1 - COLLISION_TOLERANCE, z: z + 1 - COLLISION_TOLERANCE };
 
-                    if (sweep.min.x <= blockMax.x && sweep.max.x >= blockMin.x && sweep.min.y <= blockMax.y && sweep.max.y >= blockMin.y && sweep.min.z <= blockMax.z && sweep.max.z >= blockMin.z) return true;
+                    if (sweep.min.x <= blockMax.x && sweep.max.x >= blockMin.x && sweep.min.y <= blockMax.y && sweep.max.y >= blockMin.y && sweep.min.z <= blockMax.z && sweep.max.z >= blockMin.z) {
+                        return true;
+                    }
                 }
             }
         }
     }
+    return false;
+}
 
-    // Mini ray-march along path
+/**
+ * Performs ray-march step checking along movement vector.
+ * @param {Dimension} dim - Dimension instance.
+ * @param {Vector3} start - Start position.
+ * @param {Vector3} end - Target end position.
+ * @returns {boolean} True if ray collision occurs.
+ */
+function checkRayPath(dim: Dimension, start: Vector3, end: Vector3): boolean {
     const steps = 4;
     let px = start.x;
     let py = start.y;
@@ -202,33 +200,75 @@ function sweptAABBWithTolerance(player: Player, dim: Dimension, start: { x: numb
         const bz = Math.floor(pz);
 
         if (!isPassThrough(dim, { x: bx, y: by, z: bz })) {
-            const blockMin = {
-                x: bx + COLLISION_TOLERANCE,
-                y: by + COLLISION_TOLERANCE,
-                z: bz + COLLISION_TOLERANCE,
-            };
-            const blockMax = {
-                x: bx + 1 - COLLISION_TOLERANCE,
-                y: by + 1 - COLLISION_TOLERANCE,
-                z: bz + 1 - COLLISION_TOLERANCE,
-            };
+            const blockMin = { x: bx + COLLISION_TOLERANCE, y: by + COLLISION_TOLERANCE, z: bz + COLLISION_TOLERANCE };
+            const blockMax = { x: bx + 1 - COLLISION_TOLERANCE, y: by + 1 - COLLISION_TOLERANCE, z: bz + 1 - COLLISION_TOLERANCE };
 
             if (px >= blockMin.x && px <= blockMax.x && py >= blockMin.y && py <= blockMax.y && pz >= blockMin.z && pz <= blockMax.z) return true;
         }
     }
-
     return false;
 }
 
+/** Performs a tolerance-aware swept AABB collision check for a player. */
+function sweptAABBWithTolerance(player: Player, dim: Dimension, start: Vector3, end: Vector3): boolean {
+    const base = getBounds(player.getAABB());
+
+    const movement = {
+        x: end.x - start.x,
+        y: end.y - start.y,
+        z: end.z - start.z,
+    };
+
+    const sweep: Bounds = {
+        min: {
+            x: Math.min(base.min.x, base.min.x + movement.x),
+            y: Math.min(base.min.y, base.min.y + movement.y),
+            z: Math.min(base.min.z, base.min.z + movement.z),
+        },
+        max: {
+            x: Math.max(base.max.x, base.max.x + movement.x),
+            y: Math.max(base.max.y, base.max.y + movement.y),
+            z: Math.max(base.max.z, base.max.z + movement.z),
+        },
+    };
+
+    const grid: Bounds = {
+        min: { x: Math.floor(sweep.min.x), y: Math.floor(sweep.min.y), z: Math.floor(sweep.min.z) },
+        max: { x: Math.floor(sweep.max.x), y: Math.floor(sweep.max.y), z: Math.floor(sweep.max.z) },
+    };
+
+    if (checkSweptCorners(dim, grid)) return true;
+    if (checkSweptInteriors(dim, grid, sweep)) return true;
+    return checkRayPath(dim, start, end);
+}
+
+/**
+ * Handles flag increments, alerting, and rollback actions upon detection.
+ * @param {Player} player - Target player.
+ * @param {PlayerMovementData} data - Movement data context.
+ * @param {Vector3} prev - Previous location position.
+ * @param {Dimension} dimension - Current dimension instance.
+ * @param {number} movedDist - Total distance moved.
+ */
+function handlePhaseDetection(player: Player, data: PlayerMovementData, prev: Vector3, dimension: Dimension, movedDist: number): void {
+    data.phaseFlags++;
+
+    if (data.phaseFlags >= PHASE_FLAGS_REQUIRED) {
+        player.sendMessage("§o§c[Paradox] You have been detected phasing through blocks!");
+        alertStaff(player, movedDist);
+        player.teleport(prev, { dimension });
+        data.phaseFlags = 0;
+    }
+}
+
 /** Performs NoClip detection for a player. */
-function checkPlayer(player: Player) {
+function checkPlayer(player: Player): void {
     const gameMode = player.getGameMode();
     if (gameMode === GameMode.Creative || gameMode === GameMode.Spectator) return;
 
     const uuid = player.id;
     if (now() - (recentDamage.get(uuid) ?? 0) < 2) return;
 
-    // Retrieve cached location and dimension data
     const transform = PlayerLocationCache.getTransform(player);
     const loc = transform?.location ?? player.location;
     const dimension = transform?.dimension ?? player.dimension;
@@ -248,8 +288,6 @@ function checkPlayer(player: Player) {
     const cur = { x: loc.x, y: loc.y, z: loc.z };
     const movedDist = distance(prev, cur);
 
-    // Safeguard 1: Dimension changed without triggering event callback yet
-    // Safeguard 2: Distance exceeds MAX_CHECK_DISTANCE (e.g. Teleports / ender pearls)
     if (data.dimensionId !== currentDimId || movedDist > MAX_CHECK_DISTANCE) {
         data.lastPos = cur;
         data.dimensionId = currentDimId;
@@ -267,14 +305,7 @@ function checkPlayer(player: Player) {
     const detected = sweptAABBWithTolerance(player, dimension, prev, cur);
 
     if (detected) {
-        data.phaseFlags++;
-
-        if (data.phaseFlags >= PHASE_FLAGS_REQUIRED) {
-            player.sendMessage("§o§c[Paradox] You have been detected phasing through blocks!");
-            alertStaff(player, movedDist);
-            player.teleport(prev, { dimension: dimension });
-            data.phaseFlags = 0;
-        }
+        handlePhaseDetection(player, data, prev, dimension, movedDist);
     } else {
         data.phaseFlags = Math.max(0, data.phaseFlags - 1);
     }
@@ -295,7 +326,7 @@ function* continuousNoClipLoop(): Generator<void, void, unknown> {
 
             try {
                 checkPlayer(player);
-            } catch (e) {
+            } catch {
                 // Ignore transient errors safely
             }
 
@@ -313,19 +344,19 @@ function* continuousNoClipLoop(): Generator<void, void, unknown> {
 }
 
 /** Tracks player damage for knockback exemptions. */
-function trackDamage(ev: EntityHurtAfterEvent) {
+function trackDamage(ev: EntityHurtAfterEvent): void {
     if (ev.hurtEntity instanceof Player) recentDamage.set(ev.hurtEntity.id, now());
 }
 
 /** Cleans up player tracking when they leave. */
-function cleanupPlayerData(ev: PlayerLeaveBeforeEvent) {
+function cleanupPlayerData(ev: PlayerLeaveBeforeEvent): void {
     const player = ev.player;
     playerData.delete(player.id);
     recentDamage.delete(player.id);
 }
 
 /** Updates tracking state upon explicit dimension change events. */
-function handleDimensionChange(ev: PlayerDimensionChangeAfterEvent) {
+function handleDimensionChange(ev: PlayerDimensionChangeAfterEvent): void {
     const player = ev.player;
     if (!player?.isValid) return;
 
@@ -337,7 +368,7 @@ function handleDimensionChange(ev: PlayerDimensionChangeAfterEvent) {
 }
 
 /** Starts the NoClip detection module. */
-export function startNoClip() {
+export function startNoClip(): void {
     if (isModuleActive) return;
     isModuleActive = true;
 
@@ -362,7 +393,7 @@ export function startNoClip() {
 }
 
 /** Stops the NoClip detection module. */
-export function stopNoClip() {
+export function stopNoClip(): void {
     isModuleActive = false;
 
     if (hurtSubscription) {
