@@ -941,6 +941,224 @@ export class LandClaimManager {
 // Instantiate Singleton on Script Load
 export const landClaims = LandClaimManager.getInstance();
 
+/**
+ * Helper to handle the 'config' subcommand.
+ */
+function handleConfigCommand(sender: Player, args: string[]): void {
+    const param = args[1]?.toLowerCase();
+    const valStr = args[2];
+
+    if (param === "reset") {
+        world.setDynamicProperty("claim_min_size", undefined);
+        world.setDynamicProperty("claim_max_size", undefined);
+        world.setDynamicProperty("claim_max_area", undefined);
+        world.setDynamicProperty("claim_max_claims_per_player", undefined);
+        world.setDynamicProperty("claim_buffer", undefined);
+        sender.sendMessage("§2[§7Paradox§2]§o§7 All land claim configuration parameters have been reset to default values.");
+        return;
+    }
+
+    if (!param || !valStr) {
+        sender.sendMessage("§o§c[Paradox] Usage: {prefix}landclaim config <min_size|max_size|max_area|max_claims|buffer|reset> <value>");
+        return;
+    }
+
+    const newValue = parseInt(valStr, 10);
+    if (isNaN(newValue) || newValue < 0) {
+        sender.sendMessage("§o§c[Paradox] Config value must be a non-negative integer.");
+        return;
+    }
+
+    const keyMap: Record<string, { property: string; label: string }> = {
+        min_size: { property: "claim_min_size", label: "MIN_SIZE" },
+        minsize: { property: "claim_min_size", label: "MIN_SIZE" },
+        max_size: { property: "claim_max_size", label: "MAX_SIZE" },
+        maxsize: { property: "claim_max_size", label: "MAX_SIZE" },
+        max_area: { property: "claim_max_area", label: "MAX_AREA" },
+        maxarea: { property: "claim_max_area", label: "MAX_AREA" },
+        max_claims: { property: "claim_max_claims_per_player", label: "MAX_CLAIMS_PER_PLAYER" },
+        maxclaims: { property: "claim_max_claims_per_player", label: "MAX_CLAIMS_PER_PLAYER" },
+        buffer: { property: "claim_buffer", label: "CLAIM_BUFFER" },
+        claim_buffer: { property: "claim_buffer", label: "CLAIM_BUFFER" },
+    };
+
+    const target = keyMap[param];
+    if (target) {
+        world.setDynamicProperty(target.property, newValue);
+        sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated ${target.label} to §a${newValue}§7.`);
+    } else {
+        sender.sendMessage("§o§c[Paradox] Invalid config key. Valid keys: min_size, max_size, max_area, max_claims, buffer, reset");
+    }
+}
+
+/**
+ * Helper to handle the 'online' subcommand.
+ */
+function handleOnlineCommand(sender: Player, manager: LandClaimManager): void {
+    const activePlayers = PlayerCache.getAllPlayers();
+    if (activePlayers.length === 0) {
+        sender.sendMessage("§o§c[Paradox] No active players currently connected.");
+        return;
+    }
+
+    let totalActiveClaims = 0;
+    const lines: string[] = [` `, `§2[§7Paradox§2]§o§7 Active Claims (Online Players: §a${activePlayers.length}§7):`];
+
+    for (const p of activePlayers) {
+        const pClaims = manager.getClaimsByOwner(p.id);
+        if (pClaims.length > 0) {
+            lines.push(`  §2• §f${p.name} §7(§a${pClaims.length} claim(s)§7):`);
+            for (const c of pClaims) {
+                totalActiveClaims++;
+                const dimName = c.dimensionId.replace("minecraft:", "");
+                lines.push(`    §o§7- ID: §a${c.id} §7| Dim: §e${dimName} §7| Bounds: §e(${c.min.x},${c.min.z}) §7to §e(${c.max.x},${c.max.z})`);
+            }
+        }
+    }
+
+    if (totalActiveClaims === 0) {
+        sender.sendMessage("§o§c[Paradox] No land claims found for currently online players.");
+        return;
+    }
+
+    lines.push(` `);
+    const CHUNK_SIZE = 8;
+    for (let i = 0; i < lines.length; i += CHUNK_SIZE) {
+        sender.sendMessage(lines.slice(i, i + CHUNK_SIZE).join("\n"));
+    }
+}
+
+/**
+ * Helper to handle the 'list' subcommand.
+ */
+function handleListCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, targetArg?: string): void {
+    let targetId = sender.id;
+    let targetName = sender.name;
+
+    if (targetArg) {
+        const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetArg.toLowerCase() || p.id === targetArg);
+
+        if (targetOnlinePlayer) {
+            targetId = targetOnlinePlayer.id;
+            targetName = targetOnlinePlayer.name;
+        } else if (isAdmin) {
+            targetId = targetArg;
+            targetName = targetArg;
+        } else {
+            sender.sendMessage(`§o§c[Paradox] Player "${targetArg}" is not online.`);
+            return;
+        }
+    }
+
+    const claims = manager.getClaimsByOwner(targetId);
+    if (claims.length === 0) {
+        sender.sendMessage(targetId === sender.id ? "§o§c[Paradox] You do not own any registered land claims." : `§o§c[Paradox] No active land claims found for player "${targetName}".`);
+        return;
+    }
+
+    const isSelf = targetId === sender.id;
+    const title = isSelf ? `Your Registered Land Claims (${claims.length}/${LandClaimManager.config.MAX_CLAIMS_PER_PLAYER})` : `Registered Land Claims for ${targetName} (${claims.length})`;
+
+    const listLines = [
+        ` `,
+        `§2[§7Paradox§2]§o§7 ${title}:`,
+        ...claims.map((claim, index) => {
+            const min = `${claim.min.x}, ${claim.min.z}`;
+            const max = `${claim.max.x}, ${claim.max.z}`;
+            const dimName = claim.dimensionId.replace("minecraft:", "");
+            return `  §o§7| §2[§f${index + 1}§2] §7ID: §a${claim.id} §7| Dim: §e${dimName} §7| Bounds: §e(${min}) §7to §e(${max})`;
+        }),
+        ` `,
+    ];
+    sender.sendMessage(listLines.join("\n"));
+}
+
+/**
+ * Helper to handle 'trust' and 'untrust' member operations.
+ */
+async function handleTrustCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, isTrust: boolean, targetClaimId?: string, targetPlayer?: string): Promise<void> {
+    const actionName = isTrust ? "trust" : "untrust";
+    if (!targetClaimId || !targetPlayer) {
+        sender.sendMessage(`§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim ${actionName} <claimId> <player>`);
+        return;
+    }
+
+    const claim = manager.getClaimById(targetClaimId);
+    if (!claim) {
+        sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
+        return;
+    }
+
+    if (claim.ownerUuid !== sender.id && !isAdmin) {
+        sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
+        return;
+    }
+
+    const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
+
+    if (isTrust) {
+        const memberIdToSave = targetOnlinePlayer ? targetOnlinePlayer.id : targetPlayer;
+        const success = await manager.addMember(targetClaimId, memberIdToSave);
+        sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully trusted player "§a${targetPlayer}§7" on claim "§a${targetClaimId}§7".` : `§o§c[Paradox] Failed to add member to claim "${targetClaimId}".`);
+    } else {
+        const memberIdToRemove = targetOnlinePlayer && claim.members.includes(targetOnlinePlayer.id) ? targetOnlinePlayer.id : targetPlayer;
+        const success = await manager.removeMember(targetClaimId, memberIdToRemove);
+        sender.sendMessage(
+            success ? `§2[§7Paradox§2]§o§7 Successfully untrusted player "§a${targetPlayer}§7" from claim "§a${targetClaimId}§7".` : `§o§c[Paradox] Player "${targetPlayer}" is not listed as a trusted member of claim "${targetClaimId}".`
+        );
+    }
+}
+
+/**
+ * Helper to handle the 'delete' subcommand.
+ */
+async function handleDeleteCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, targetClaimId?: string): Promise<void> {
+    if (!targetClaimId) {
+        sender.sendMessage("§o§c[Paradox] Please provide a valid Claim ID to delete. Usage: {prefix}landclaim delete <claimId>");
+        return;
+    }
+
+    const claim = manager.getClaimById(targetClaimId);
+    if (!claim) {
+        sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
+        return;
+    }
+
+    if (claim.ownerUuid !== sender.id && !isAdmin) {
+        sender.sendMessage("§o§c[Paradox] You do not have permission to delete this claim.");
+        return;
+    }
+
+    const success = await manager.deleteClaim(targetClaimId);
+    sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully deleted land claim "§a${targetClaimId}§7". Corner markers removed.` : `§o§c[Paradox] Failed to delete land claim "${targetClaimId}".`);
+}
+
+/**
+ * Helper to handle the 'info' subcommand.
+ */
+function handleInfoCommand(sender: Player, manager: LandClaimManager): void {
+    const transform = PlayerLocationCache.getTransform(sender);
+    const senderLoc = transform?.location ?? sender.location;
+    const senderDimId = transform?.dimension.id ?? sender.dimension.id;
+    const currentClaim = manager.getClaimAt(senderLoc, senderDimId);
+
+    if (!currentClaim) {
+        sender.sendMessage("§o§c[Paradox] You are not currently standing inside a registered claim.");
+        return;
+    }
+
+    const infoLines = [
+        ` `,
+        `§2[§7Paradox§2]§o§7 Current Land Claim Details:`,
+        `  §o§7| §2ID: §f${currentClaim.id}`,
+        `  §o§7| §2Owner: §f${currentClaim.ownerName}`,
+        `  §o§7| §2Bounds: §f(${currentClaim.min.x}, ${currentClaim.min.z}) §7to §f(${currentClaim.max.x}, ${currentClaim.max.z})`,
+        `  §o§7| §2Members: §f${currentClaim.members.length > 0 ? currentClaim.members.join(", ") : "None"}`,
+        ` `,
+    ];
+    sender.sendMessage(infoLines.join("\n"));
+}
+
 // ==========================================
 // COMMAND REGISTRATION & EXPORT
 // ==========================================
@@ -1133,299 +1351,57 @@ export const claimCommand: Command = {
 
         const sender = message.sender;
         const manager = LandClaimManager.getInstance();
-
         const action = args[0]?.toLowerCase();
 
-        // Retrieve the sender's security clearance (Level >= 4 signifies Admin)
         const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 0;
         const isAdmin = senderClearance >= 4;
 
-        // Subcommand: CONFIG (Security Clearance Level 4 Required)
-        if (action === "config") {
-            if (!isAdmin) {
-                sender.sendMessage("§o§c[Paradox] You do not have permission to reconfigure land claim parameters.");
-                return;
-            }
-
-            const param = args[1]?.toLowerCase();
-            const valStr = args[2];
-
-            // Subcommand: reset
-            if (param === "reset") {
-                world.setDynamicProperty("claim_min_size", undefined);
-                world.setDynamicProperty("claim_max_size", undefined);
-                world.setDynamicProperty("claim_max_area", undefined);
-                world.setDynamicProperty("claim_max_claims_per_player", undefined);
-                world.setDynamicProperty("claim_buffer", undefined);
-                sender.sendMessage("§2[§7Paradox§2]§o§7 All land claim configuration parameters have been reset to default values.");
-                return;
-            }
-
-            if (!param || !valStr) {
-                sender.sendMessage("§o§c[Paradox] Usage: {prefix}landclaim config <min_size|max_size|max_area|max_claims|buffer|reset> <value>");
-                return;
-            }
-
-            const newValue = parseInt(valStr, 10);
-            if (isNaN(newValue) || newValue < 0) {
-                sender.sendMessage("§o§c[Paradox] Config value must be a non-negative integer.");
-                return;
-            }
-
-            switch (param) {
-                case "min_size":
-                case "minsize":
-                    world.setDynamicProperty("claim_min_size", newValue);
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MIN_SIZE to §a${newValue}§7 blocks.`);
-                    break;
-                case "max_size":
-                case "maxsize":
-                    world.setDynamicProperty("claim_max_size", newValue);
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MAX_SIZE to §a${newValue}§7 blocks.`);
-                    break;
-                case "max_area":
-                case "maxarea":
-                    world.setDynamicProperty("claim_max_area", newValue);
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MAX_AREA to §a${newValue}§7 blocks.`);
-                    break;
-                case "max_claims":
-                case "maxclaims":
-                    world.setDynamicProperty("claim_max_claims_per_player", newValue);
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated MAX_CLAIMS_PER_PLAYER to §a${newValue}§7.`);
-                    break;
-                case "buffer":
-                case "claim_buffer":
-                    world.setDynamicProperty("claim_buffer", newValue);
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated CLAIM_BUFFER to §a${newValue}§7 blocks.`);
-                    break;
-                default:
-                    sender.sendMessage("§o§c[Paradox] Invalid config key. Valid keys: min_size, max_size, max_area, max_claims, buffer, reset");
-                    break;
-            }
-            return;
-        }
-
-        // Subcommand: ONLINE (Admin Only) - Optimized for BDS servers (high player counts)
-        if (action === "online" || action === "onlineclaims") {
-            if (!isAdmin) {
-                sender.sendMessage("§o§c[Paradox] You do not have clearance to inspect claims of online players.");
-                return;
-            }
-
-            const activePlayers = PlayerCache.getAllPlayers();
-            if (activePlayers.length === 0) {
-                sender.sendMessage("§o§c[Paradox] No active players currently connected.");
-                return;
-            }
-
-            let totalActiveClaims = 0;
-            const lines: string[] = [` `, `§2[§7Paradox§2]§o§7 Active Claims (Online Players: §a${activePlayers.length}§7):`];
-
-            // Iterate over connected players O(Online Count)
-            for (const p of activePlayers) {
-                const pClaims = manager.getClaimsByOwner(p.id);
-                if (pClaims.length > 0) {
-                    lines.push(`  §2• §f${p.name} §7(§a${pClaims.length} claim(s)§7):`);
-                    for (const c of pClaims) {
-                        totalActiveClaims++;
-                        const dimName = c.dimensionId.replace("minecraft:", "");
-                        lines.push(`    §o§7- ID: §a${c.id} §7| Dim: §e${dimName} §7| Bounds: §e(${c.min.x},${c.min.z}) §7to §e(${c.max.x},${c.max.z})`);
-                    }
-                }
-            }
-
-            if (totalActiveClaims === 0) {
-                sender.sendMessage("§o§c[Paradox] No land claims found for currently online players.");
-                return;
-            }
-
-            lines.push(` `);
-
-            // Chunk message lines to prevent BDS packet truncation when 20+ players are online
-            const CHUNK_SIZE = 8;
-            for (let i = 0; i < lines.length; i += CHUNK_SIZE) {
-                const chunk = lines.slice(i, i + CHUNK_SIZE).join("\n");
-                sender.sendMessage(chunk);
-            }
-            return;
-        }
-
-        // Subcommand: LIST (Supports self or specific target player lookup)
-        if (!action || action === "list") {
-            const targetArg = args[1]?.trim();
-
-            let targetId = sender.id;
-            let targetName = sender.name;
-
-            // Target player check provided
-            if (targetArg) {
-                // Non-admins can only view target claims if explicit online player match exists
-                const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetArg.toLowerCase() || p.id === targetArg);
-
-                if (targetOnlinePlayer) {
-                    targetId = targetOnlinePlayer.id;
-                    targetName = targetOnlinePlayer.name;
-                } else if (isAdmin) {
-                    // Admins fallback to argument string directly if offline player lookup requested
-                    targetId = targetArg;
-                    targetName = targetArg;
-                } else {
-                    sender.sendMessage(`§o§c[Paradox] Player "${targetArg}" is not online.`);
+        switch (action) {
+            case "config":
+                if (!isAdmin) {
+                    sender.sendMessage("§o§c[Paradox] You do not have permission to reconfigure land claim parameters.");
                     return;
                 }
-            }
+                handleConfigCommand(sender, args);
+                break;
 
-            const claims = manager.getClaimsByOwner(targetId);
-
-            if (claims.length === 0) {
-                sender.sendMessage(targetId === sender.id ? "§o§c[Paradox] You do not own any registered land claims." : `§o§c[Paradox] No active land claims found for player "${targetName}".`);
-                return;
-            }
-
-            const isSelf = targetId === sender.id;
-            const title = isSelf ? `Your Registered Land Claims (${claims.length}/${LandClaimManager.config.MAX_CLAIMS_PER_PLAYER})` : `Registered Land Claims for ${targetName} (${claims.length})`;
-
-            const listLines = [
-                ` `,
-                `§2[§7Paradox§2]§o§7 ${title}:`,
-                ...claims.map((claim, index) => {
-                    const min = `${claim.min.x}, ${claim.min.z}`;
-                    const max = `${claim.max.x}, ${claim.max.z}`;
-                    const dimName = claim.dimensionId.replace("minecraft:", "");
-                    return `  §o§7| §2[§f${index + 1}§2] §7ID: §a${claim.id} §7| Dim: §e${dimName} §7| Bounds: §e(${min}) §7to §e(${max})`;
-                }),
-                ` `,
-            ];
-            sender.sendMessage(listLines.join("\n"));
-            return;
-        }
-
-        const targetClaimId = args[1]?.trim();
-        const targetPlayer = args[2]?.trim();
-
-        // Subcommand: TRUST / ADD
-        if (action === "trust" || action === "add") {
-            if (!targetClaimId || !targetPlayer) {
-                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim trust <claimId> <player>");
-                return;
-            }
-
-            const claim = manager.getClaimById(targetClaimId);
-
-            if (!claim) {
-                sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
-                return;
-            }
-
-            // Verify permission: Must be owner OR an Admin
-            if (claim.ownerUuid !== sender.id && !isAdmin) {
-                sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
-                return;
-            }
-
-            // Resolve player instance if online to extract UUID, fallback to raw name/identifier string
-            const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
-            const memberIdToSave = targetOnlinePlayer ? targetOnlinePlayer.id : targetPlayer;
-
-            manager.addMember(targetClaimId, memberIdToSave).then((success) => {
-                if (success) {
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Successfully trusted player "§a${targetPlayer}§7" on claim "§a${targetClaimId}§7".`);
-                } else {
-                    sender.sendMessage(`§o§c[Paradox] Failed to add member to claim "${targetClaimId}".`);
+            case "online":
+            case "onlineclaims":
+                if (!isAdmin) {
+                    sender.sendMessage("§o§c[Paradox] You do not have clearance to inspect claims of online players.");
+                    return;
                 }
-            });
-            return;
+                handleOnlineCommand(sender, manager);
+                break;
+
+            case "":
+            case undefined:
+            case "list":
+                handleListCommand(sender, manager, isAdmin, args[1]?.trim());
+                break;
+
+            case "trust":
+            case "add":
+                handleTrustCommand(sender, manager, isAdmin, true, args[1]?.trim(), args[2]?.trim());
+                break;
+
+            case "untrust":
+            case "unadd":
+                handleTrustCommand(sender, manager, isAdmin, false, args[1]?.trim(), args[2]?.trim());
+                break;
+
+            case "delete":
+            case "remove":
+                handleDeleteCommand(sender, manager, isAdmin, args[1]?.trim());
+                break;
+
+            case "info":
+                handleInfoCommand(sender, manager);
+                break;
+
+            default:
+                sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, online, trust, untrust, delete, info, config");
+                break;
         }
-
-        // Subcommand: UNTRUST / REMOVE
-        if (action === "untrust" || action === "unadd") {
-            if (!targetClaimId || !targetPlayer) {
-                sender.sendMessage("§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim untrust <claimId> <player>");
-                return;
-            }
-
-            const claim = manager.getClaimById(targetClaimId);
-
-            if (!claim) {
-                sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
-                return;
-            }
-
-            // Verify permission: Must be owner OR an Admin
-            if (claim.ownerUuid !== sender.id && !isAdmin) {
-                sender.sendMessage("§o§c[Paradox] You do not have permission to manage members for this claim.");
-                return;
-            }
-
-            // Check online players to resolve UUID if stored as such, fallback to raw string match
-            const targetOnlinePlayer = PlayerCache.getAllPlayers().find((p) => p.name.toLowerCase() === targetPlayer.toLowerCase() || p.id === targetPlayer);
-            const memberIdToRemove = targetOnlinePlayer && claim.members.includes(targetOnlinePlayer.id) ? targetOnlinePlayer.id : targetPlayer;
-
-            manager.removeMember(targetClaimId, memberIdToRemove).then((success) => {
-                if (success) {
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Successfully untrusted player "§a${targetPlayer}§7" from claim "§a${targetClaimId}§7".`);
-                } else {
-                    sender.sendMessage(`§o§c[Paradox] Player "${targetPlayer}" is not listed as a trusted member of claim "${targetClaimId}".`);
-                }
-            });
-            return;
-        }
-
-        // Subcommand: DELETE
-        if (action === "delete" || action === "remove") {
-            if (!targetClaimId) {
-                sender.sendMessage("§o§c[Paradox] Please provide a valid Claim ID to delete. Usage: {prefix}landclaim delete <claimId>");
-                return;
-            }
-
-            const claim = manager.getClaimById(targetClaimId);
-
-            if (!claim) {
-                sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
-                return;
-            }
-
-            // Verify permission: Must be owner OR an Admin
-            if (claim.ownerUuid !== sender.id && !isAdmin) {
-                sender.sendMessage("§o§c[Paradox] You do not have permission to delete this claim.");
-                return;
-            }
-
-            manager.deleteClaim(targetClaimId).then((success) => {
-                if (success) {
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Successfully deleted land claim "§a${targetClaimId}§7". Corner markers removed.`);
-                } else {
-                    sender.sendMessage(`§o§c[Paradox] Failed to delete land claim "${targetClaimId}".`);
-                }
-            });
-            return;
-        }
-
-        // Subcommand: INFO
-        if (action === "info") {
-            const transform = PlayerLocationCache.getTransform(sender);
-            const senderLoc = transform?.location ?? sender.location;
-            const senderDimId = transform?.dimension.id ?? sender.dimension.id;
-            const currentClaim = manager.getClaimAt(senderLoc, senderDimId);
-
-            if (!currentClaim) {
-                sender.sendMessage("§o§c[Paradox] You are not currently standing inside a registered claim.");
-                return;
-            }
-
-            const infoLines = [
-                ` `,
-                `§2[§7Paradox§2]§o§7 Current Land Claim Details:`,
-                `  §o§7| §2ID: §f${currentClaim.id}`,
-                `  §o§7| §2Owner: §f${currentClaim.ownerName}`,
-                `  §o§7| §2Bounds: §f(${currentClaim.min.x}, ${currentClaim.min.z}) §7to §f(${currentClaim.max.x}, ${currentClaim.max.z})`,
-                `  §o§7| §2Members: §f${currentClaim.members.length > 0 ? currentClaim.members.join(", ") : "None"}`,
-                ` `,
-            ];
-            sender.sendMessage(infoLines.join("\n"));
-            return;
-        }
-
-        sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, online, trust, untrust, delete, info, config");
     },
 };
