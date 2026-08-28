@@ -49,87 +49,87 @@ function alertStaff(player: Player, ticks: number): void {
 }
 
 /**
+ * Evaluates whether a player is exempt from anti-cheat checks based on security clearance or state.
+ *
+ * @param {Player} player - The player instance to check.
+ * @returns {boolean} True if the player should be skipped, false otherwise.
+ */
+function isPlayerExempt(player: Player): boolean {
+    if (!player?.isValid) return true;
+    return (player.getDynamicProperty("securityClearance") as number) === 4;
+}
+
+/**
+ * Evaluates a single player's offhand status and handles auto-totem detection/mitigation.
+ *
+ * @param {Player} player - The target player to evaluate.
+ */
+function processPlayerTotemCheck(player: Player): void {
+    const equippable = player.getComponent("minecraft:equippable") as EntityEquippableComponent;
+    if (!equippable) return;
+
+    const offhand = equippable.getEquipment(EquipmentSlot.Offhand);
+    const hasTotem = offhand?.typeId === TOTEM_ID;
+
+    let data = playerTotemData.get(player.id);
+    if (!data) {
+        playerTotemData.set(player.id, { lastPopTick: 0, lastOffhandState: hasTotem });
+        return;
+    }
+
+    // Detection Matrix: Detect instant totem replenishment (Empty -> Totem too quickly)
+    if (!data.lastOffhandState && hasTotem) {
+        const ticksSinceChange = system.currentTick - data.lastPopTick;
+
+        if (ticksSinceChange < MIN_SWAP_TICKS && data.lastPopTick !== 0) {
+            alertStaff(player, ticksSinceChange);
+            equippable.setEquipment(EquipmentSlot.Offhand, undefined);
+        }
+    }
+
+    // Tracking Component: Record tick when totem is consumed (Totem -> Empty)
+    if (data.lastOffhandState && !hasTotem) {
+        data.lastPopTick = system.currentTick;
+    }
+
+    data.lastOffhandState = hasTotem;
+}
+
+/**
+ * Reschedules the next iteration pass of the generator job.
+ */
+function queueNextJobIteration(): void {
+    if (!isModuleActive) return;
+
+    system.run(async () => {
+        const nextConfig = (await paradoxModulesDB.get("autoTotemCheck_b")) as AutoTotemModuleConfig | undefined;
+        system.runJob(continuousAutoTotemLoop(nextConfig));
+    });
+}
+
+/**
  * Continuous generator loop that scans players for suspicious totem replenishment.
  * Runs incrementally to avoid blocking the main thread.
  */
 function* continuousAutoTotemLoop(moduleConfig: AutoTotemModuleConfig | undefined): Generator<void, void, unknown> {
-    if (isJobActive) return;
+    if (isJobActive || !isModuleActive || !(moduleConfig?.enabled ?? false)) return;
     isJobActive = true;
 
     try {
-        if (!isModuleActive) return;
-
-        // Check pre-fetched module status without using inline promises inside the generator
-        const isEnabled = moduleConfig?.enabled ?? false;
-        if (!isEnabled) return;
-
         for (const player of PlayerCache.getPlayers()) {
-            if (!player?.isValid) continue;
+            if (isPlayerExempt(player)) continue;
 
             try {
-                // Exempt high-security staff
-                if ((player.getDynamicProperty("securityClearance") as number) === 4) continue;
-
-                const equippable = player.getComponent("minecraft:equippable") as EntityEquippableComponent;
-                if (!equippable) continue;
-
-                const offhand = equippable.getEquipment(EquipmentSlot.Offhand);
-                const hasTotem = offhand?.typeId === TOTEM_ID;
-
-                let data = playerTotemData.get(player.id);
-                if (!data) {
-                    playerTotemData.set(player.id, { lastPopTick: 0, lastOffhandState: hasTotem });
-                    continue;
-                }
-
-                /**
-                 * DETECTION MATRIX:
-                 * Detects instant totem replenishment (Empty -> Totem too quickly),
-                 * typical of auto-totem cheats.
-                 */
-                if (!data.lastOffhandState && hasTotem) {
-                    const ticksSinceChange = system.currentTick - data.lastPopTick;
-
-                    // If replenished instantly (usually 1-2 ticks for cheats)
-                    if (ticksSinceChange < MIN_SWAP_TICKS && data.lastPopTick !== 0) {
-                        alertStaff(player, ticksSinceChange);
-
-                        /**
-                         * MITIGATION INLINE:
-                         * Removes the illegitimately equipped totem instantly to prevent abuse.
-                         */
-                        equippable.setEquipment(EquipmentSlot.Offhand, undefined);
-                    }
-                }
-
-                /**
-                 * TRACKING COMPONENT:
-                 * Detects when a totem is consumed (Totem -> Empty/Other).
-                 * Stores the tick for future replenishment timing checks.
-                 */
-                if (data.lastOffhandState && !hasTotem) {
-                    data.lastPopTick = system.currentTick;
-                }
-
-                data.lastOffhandState = hasTotem;
+                processPlayerTotemCheck(player);
             } catch (e) {
                 // Safeguard against rare runtime detachment exceptions
             }
 
-            // Yield control back to engine processing after evaluating each individual player
             yield;
         }
     } finally {
         isJobActive = false;
-
-        // Request next pass recursion smoothly for the very next engine tick frame
-        if (isModuleActive) {
-            system.run(async () => {
-                // Pre-fetch DB state outside generator on the loop continuation pass
-                const nextConfig = (await paradoxModulesDB.get("autoTotemCheck_b")) as AutoTotemModuleConfig | undefined;
-                system.runJob(continuousAutoTotemLoop(nextConfig));
-            });
-        }
+        queueNextJobIteration();
     }
 }
 
@@ -171,7 +171,7 @@ export async function startAutoTotemCheck(): Promise<void> {
 /**
  * Stops the detection loop and clears all active structural trackers.
  */
-export function stopAutoTotemCheck() {
+export function stopAutoTotemCheck(): void {
     isModuleActive = false;
 
     if (playerLeaveSubscription) {
