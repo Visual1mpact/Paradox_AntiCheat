@@ -17,38 +17,23 @@
   </p>
 </div>
 
-<hr>
+<<hr>
 
-<h3>📦 API Compatibility Matrix</h3>
+<div align="center">
 
-<table>
-  <thead>
-    <tr>
-      <th align="left">API Module</th>
-      <th align="left">Required Version</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>server</code></td>
-      <td><code>2.10.0-Beta</code></td>
-    </tr>
-    <tr>
-      <td><code>server-net</code></td>
-      <td><code>1.0.0-Beta</code></td>
-    </tr>
-    <tr>
-      <td><code>server-admin</code></td>
-      <td><code>1.0.0-Beta</code></td>
-    </tr>
-    <tr>
-      <td><code>server-ui</code></td>
-      <td><code>2.2.0-Beta</code></td>
-    </tr>
-  </tbody>
-</table>
+### 📦 API Compatibility Matrix
+
+| API Module | Required Version | Description / Purpose |
+| :---: | :---: | :--- |
+| `@minecraft/server` | `2.10.0-Beta` | Core Script Engine API for world events, entity handling, block management, and main logic loops. |
+| `@minecraft/server-net` | `1.0.0-Beta` | Handles external HTTP network communication for remote logging, telemetry, and external server synchronization. |
+| `@minecraft/server-admin` | `1.0.0-Beta` | Manages elevated server administrative functions, secret configuration properties, and execution variables. |
+| `@minecraft/server-ui` | `2.2.0-Beta` | Renders custom in-game UI menus, dynamic modal dialogs, and action forms directly to players. |
+
+</div>
 
 <hr>
+
 
 <h2>📖 About Paradox AntiCheat</h2>
 
