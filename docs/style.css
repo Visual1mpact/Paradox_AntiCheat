@@ -183,7 +183,7 @@ body {
 }
 
 .clearance-level:hover { border-color: var(--theme-color); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-.clearance-level h4 { margin: 0 0 0.5rem 0; color: var(--theme-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+.clearance-level h4 { margin: 0 0 0.5rem; color: var(--theme-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
 .clearance-level .level-num { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; font-weight: 900; opacity: 0.1; color: var(--theme-color); }
 .clearance-level p { margin: 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.4; }
 
