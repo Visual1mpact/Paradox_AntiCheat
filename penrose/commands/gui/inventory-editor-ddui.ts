@@ -82,7 +82,83 @@ function updateInventoryText(index: number, playerNames: string[], inventoryText
 }
 
 /**
- * Reads slot state and generates detailed item breakdown string + updates default field values.
+ * Formats item durability details into a readable string.
+ *
+ * @param {ItemStack} item - Target item.
+ * @returns {string | null} Formatted durability string, or null if unequipped.
+ */
+function getDurabilityDetail(item: ItemStack): string | null {
+    try {
+        const durability = item.getComponent("minecraft:durability");
+        if (durability) {
+            return `Durability: ${durability.maxDurability - durability.damage}/${durability.maxDurability}`;
+        }
+    } catch {}
+    return null;
+}
+
+/**
+ * Formats item enchantment list details into readable display lines.
+ *
+ * @param {ItemStack} item - Target item.
+ * @returns {string[]} Formatted enchantment lines.
+ */
+function getEnchantmentDetails(item: ItemStack): string[] {
+    const lines: string[] = [];
+    try {
+        const enchComp = item.getComponent("minecraft:enchantable");
+        if (enchComp) {
+            const enchants = enchComp.getEnchantments();
+            if (enchants.length > 0) {
+                lines.push("Enchantments:");
+                enchants.forEach((ench) => lines.push(` - ${ench.type.id.replace("minecraft:", "")} ${ench.level}`));
+            } else {
+                lines.push("Enchantments: None");
+            }
+        }
+    } catch {}
+    return lines;
+}
+
+/**
+ * Formats item lore array into readable display lines.
+ *
+ * @param {ItemStack} item - Target item.
+ * @returns {string[]} Formatted lore lines.
+ */
+function getLoreDetails(item: ItemStack): string[] {
+    const lore = item.getLore?.() ?? [];
+    if (lore.length === 0) return [];
+
+    const lines = ["Lore:"];
+    lore.forEach((l) => lines.push(` - ${l}`));
+    return lines;
+}
+
+/**
+ * Extracts and formats all summary metadata for a target item.
+ *
+ * @param {ItemStack} item - Target item stack.
+ * @param {number} slot - Target slot index.
+ * @returns {string} Formatted multiline item summary.
+ */
+function getItemDetails(item: ItemStack, slot: number): string {
+    const lines: string[] = [`Slot: ${slot}`, `Item: ${item.typeId.replace("minecraft:", "")}`, `Amount: ${item.amount}`];
+
+    const durability = getDurabilityDetail(item);
+    if (durability) lines.push(durability);
+
+    lines.push(...getEnchantmentDetails(item));
+
+    if (item.nameTag) lines.push(`Name: ${item.nameTag}`);
+
+    lines.push(...getLoreDetails(item));
+
+    return lines.join("\n");
+}
+
+/**
+ * Reads slot state, generates detailed item breakdown string, and updates default field values.
  *
  * @param {string} slotRaw - Raw slot index input string.
  * @param {string[]} playerNames - List of active player names.
@@ -121,37 +197,7 @@ function updateItemFields(slotRaw: string, playerNames: string[], state: DDUISta
         return;
     }
 
-    const lines: string[] = [`Slot: ${slot}`, `Item: ${item.typeId.replace("minecraft:", "")}`, `Amount: ${item.amount}`];
-
-    try {
-        const durability = item.getComponent("minecraft:durability");
-        if (durability) {
-            lines.push(`Durability: ${durability.maxDurability - durability.damage}/${durability.maxDurability}`);
-        }
-    } catch {}
-
-    try {
-        const enchComp = item.getComponent("minecraft:enchantable");
-        if (enchComp) {
-            const enchants = enchComp.getEnchantments();
-            if (enchants.length > 0) {
-                lines.push("Enchantments:");
-                enchants.forEach((ench) => lines.push(` - ${ench.type.id.replace("minecraft:", "")} ${ench.level}`));
-            } else {
-                lines.push("Enchantments: None");
-            }
-        }
-    } catch {}
-
-    if (item.nameTag) lines.push(`Name: ${item.nameTag}`);
-
-    const lore = item.getLore?.() ?? [];
-    if (lore.length > 0) {
-        lines.push("Lore:");
-        lore.forEach((l) => lines.push(` - ${l}`));
-    }
-
-    state.inventoryText.setData(lines.join("\n"));
+    state.inventoryText.setData(getItemDetails(item, slot));
 }
 
 /**
