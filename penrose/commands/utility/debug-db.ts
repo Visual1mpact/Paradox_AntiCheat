@@ -49,7 +49,7 @@ export const debugDBCommand: Command = {
     execute: (message?: ChatSendBeforeEvent) => {
         if (!message) return;
         const sender = message.sender as Player;
-        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 0;
+        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 1;
 
         // Check security clearance
         if (senderClearance < 4) {

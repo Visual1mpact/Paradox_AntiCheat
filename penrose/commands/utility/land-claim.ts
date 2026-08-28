@@ -1353,7 +1353,7 @@ export const claimCommand: Command = {
         const manager = LandClaimManager.getInstance();
         const action = args[0]?.toLowerCase();
 
-        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 0;
+        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 1;
         const isAdmin = senderClearance >= 4;
 
         switch (action) {

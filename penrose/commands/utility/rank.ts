@@ -3,6 +3,14 @@ import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
+const VALID_FLAGS = new Set(["-t", "--target", "-r", "--rank", "--reset", "-d", "-e"]);
+
+interface RankCommandArgs {
+    playerName: string;
+    rank: string;
+    reset: boolean;
+}
+
 /**
  * Updates the player's nameTag based on their chat rank, dynamic alias settings, and the global rank setting.
  *
@@ -30,7 +38,102 @@ function updateNameTag(player: Player): void {
 }
 
 /**
- * Represents the rank command.
+ * Toggles global rank functionality (enable/disable) for all online players.
+ *
+ * @param {ChatSendBeforeEvent} message - The message object context.
+ * @param {number} senderClearance - The clearance level of the command sender.
+ * @param {boolean} disable - True to disable ranks globally, false to enable.
+ */
+function toggleGlobalRanks(message: ChatSendBeforeEvent, senderClearance: number, disable: boolean): void {
+    if (senderClearance < 4) {
+        message.sender.sendMessage(`§o§c[Paradox] You do not have permission to perform this action.`);
+        return;
+    }
+
+    world.setDynamicProperty("globalRankDisabled", disable);
+
+    for (const player of PlayerCache.getPlayers()) {
+        updateNameTag(player);
+    }
+
+    message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been ${disable ? "disabled" : "enabled"} globally.`);
+}
+
+/**
+ * Captures and returns a multi-word argument string from the provided array of arguments.
+ * Continues to concatenate words until a valid flag or end-of-array is reached.
+ *
+ * @param {string[]} args - The array of arguments to parse from.
+ * @returns {string} The captured multi-word string value cleaned of quotes and selectors.
+ */
+function captureMultiWordArgument(args: string[]): string {
+    let result = "";
+    while (args.length > 0 && args[0] !== undefined && !VALID_FLAGS.has(args[0])) {
+        result += (result ? " " : "") + args.shift();
+    }
+    return result.replace(/["@]/g, "");
+}
+
+/**
+ * Parses raw string flags and arguments into a structured RankCommandArgs object.
+ *
+ * @param {string[]} args - Raw argument array.
+ * @returns {RankCommandArgs} Structured parameters payload.
+ */
+function parseRankArguments(args: string[]): RankCommandArgs {
+    const parsed: RankCommandArgs = { playerName: "", rank: "", reset: false };
+
+    while (args.length > 0) {
+        const flag = args.shift();
+        switch (flag) {
+            case "-t":
+            case "--target":
+                parsed.playerName = captureMultiWordArgument(args);
+                break;
+            case "-r":
+            case "--rank":
+                parsed.rank = captureMultiWordArgument(args);
+                break;
+            case "--reset":
+                parsed.reset = true;
+                break;
+        }
+    }
+
+    return parsed;
+}
+
+/**
+ * Resets a target player's chat rank to default and synchronizes visual tags.
+ *
+ * @param {Player} sender - Command executing sender.
+ * @param {Player} target - Subject player undergoing rank reset.
+ */
+function handleRankReset(sender: Player, target: Player): void {
+    target.setDynamicProperty("chatRank", undefined);
+    updateNameTag(target);
+
+    sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${target.name}§7" has been reset.`);
+    target.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been reset by "${sender.name}§7".`);
+}
+
+/**
+ * Updates a target player's chat rank string property and synchronizes visual tags.
+ *
+ * @param {Player} sender - Command executing sender.
+ * @param {Player} target - Subject player undergoing rank change.
+ * @param {string} rank - New custom rank string to apply.
+ */
+function handleRankUpdate(sender: Player, target: Player, rank: string): void {
+    target.setDynamicProperty("chatRank", rank);
+    updateNameTag(target);
+
+    sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${target.name}§7" has been set to ${rank}§7.`);
+    target.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been set to ${rank}§7 by "${sender.name}§7".`);
+}
+
+/**
+ * Represents the setrank command.
  */
 export const setRankCommand: Command = {
     name: "setrank",
@@ -100,69 +203,16 @@ export const setRankCommand: Command = {
 
     /**
      * Executes the setrank command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object.
-     * @param {string[] | undefined} args - The command arguments.
+     *
+     * @param {ChatSendBeforeEvent | undefined} message - The message object context.
+     * @param {string[] | undefined} args - The command argument list.
      */
     execute: (message: ChatSendBeforeEvent | undefined, args: string[] | undefined) => {
         if (!message || !args) return;
 
-        /**
-         * Toggles global rank functionality (enable/disable).
-         * @param {ChatSendBeforeEvent} message - The message object.
-         * @param {number} senderClearance - The clearance level of the command sender.
-         * @param {boolean} disable - Whether to disable ranks globally (true to disable, false to enable).
-         */
-        function toggleGlobalRanks(message: ChatSendBeforeEvent, senderClearance: number, disable: boolean): void {
-            if (senderClearance < 4) {
-                message.sender.sendMessage(`§o§c[Paradox] You do not have permission to perform this action.`);
-                return;
-            }
+        const sender = message.sender;
+        const senderClearance = (sender.getDynamicProperty("securityClearance") as number) ?? 1;
 
-            world.setDynamicProperty("globalRankDisabled", disable);
-
-            for (const player of PlayerCache.getPlayers()) {
-                updateNameTag(player);
-            }
-
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Ranks have been ${disable ? "disabled" : "enabled"} globally.`);
-        }
-
-        // Check if the global rank setting is disabled
-        const isRankDisabled = (world.getDynamicProperty("globalRankDisabled") as boolean | undefined) ?? false;
-
-        const senderClearance = message.sender.getDynamicProperty("securityClearance") as number;
-
-        // If ranks are disabled globally, prevent setting or resetting ranks
-        if (isRankDisabled && senderClearance < 4) {
-            message.sender.sendMessage(`§o§c[Paradox] Global rank management is currently disabled.`);
-            return;
-        }
-
-        // Initialize variables for player name, rank, and reset flag
-        let playerName = "";
-        let rank = "";
-        let reset = false;
-
-        // Define valid flags
-        const validFlags = new Set(["-t", "--target", "-r", "--rank", "--reset", "-d", "-e"]);
-
-        /**
-         * Captures and returns a multi-word argument from the provided array of arguments.
-         * This function continues to concatenate words from the `args` array until it encounters
-         * a valid flag or runs out of arguments.
-         *
-         * @param {string[]} args - The array of arguments to parse.
-         * @returns {string} - The captured multi-word argument as a string.
-         */
-        function captureMultiWordArgument(args: string[]): string {
-            let result = "";
-            while (args.length > 0 && args[0] !== undefined && !validFlags.has(args[0])) {
-                result += (result ? " " : "") + args.shift();
-            }
-            return result.replace(/["@]/g, "");
-        }
-
-        // Check for global rank toggles before processing other arguments
         if (args.includes("-d")) {
             toggleGlobalRanks(message, senderClearance, true);
             return;
@@ -172,67 +222,37 @@ export const setRankCommand: Command = {
             return;
         }
 
-        // Parse the arguments using parameter flags
-        while (args.length > 0) {
-            const flag = args.shift();
-            switch (flag) {
-                case "-t":
-                case "--target": {
-                    playerName = captureMultiWordArgument(args);
-                    break;
-                }
-                case "-r":
-                case "--rank": {
-                    rank = captureMultiWordArgument(args);
-                    break;
-                }
-                case "--reset": {
-                    reset = true;
-                    break;
-                }
-            }
-        }
-
-        // Check if player name is provided for rank assignment or reset
-        if (!playerName && !reset) {
-            const prefix = (world.getDynamicProperty("__prefix") as string | undefined) ?? ":";
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> [-r <rank> | --reset]`);
+        const isRankDisabled = (world.getDynamicProperty("globalRankDisabled") as boolean | undefined) ?? false;
+        if (isRankDisabled && senderClearance < 4) {
+            sender.sendMessage(`§o§c[Paradox] Global rank management is currently disabled.`);
             return;
         }
 
-        // Find the player object in the world
-        const player = PlayerCache.getPlayerByName(playerName);
+        const { playerName, rank, reset } = parseRankArguments([...args]);
 
-        // If player not found, inform the sender
-        if (!player) {
-            message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found.`);
+        if (!playerName && !reset) {
+            const prefix = (world.getDynamicProperty("__prefix") as string | undefined) ?? ":";
+            sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> [-r <rank> | --reset]`);
+            return;
+        }
+
+        const targetPlayer = PlayerCache.getPlayerByName(playerName);
+        if (!targetPlayer) {
+            sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" not found.`);
             return;
         }
 
         if (reset) {
-            // Remove the player's chat rank
-            player.setDynamicProperty("chatRank", undefined);
-
-            updateNameTag(player);
-
-            // Inform the sender and the target player about the rank reset
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}§7" has been reset.`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been reset by "${message.sender.name}§7".`);
-        } else {
-            // Check if rank is provided
-            if (!rank) {
-                const prefix = (world.getDynamicProperty("__prefix") as string | undefined) ?? ":";
-                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> -r <rank> | --reset`);
-                return;
-            }
-
-            // Update the player's chat rank
-            player.setDynamicProperty("chatRank", rank);
-            updateNameTag(player);
-
-            // Inform the sender and the target player about the rank update
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Chat rank for player "${player.name}§7" has been set to ${rank}§7.`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Your chat rank has been set to ${rank}§7 by "${message.sender.name}§7".`);
+            handleRankReset(sender, targetPlayer);
+            return;
         }
+
+        if (!rank) {
+            const prefix = (world.getDynamicProperty("__prefix") as string | undefined) ?? ":";
+            sender.sendMessage(`§2[§7Paradox§2]§o§7 Usage: ${prefix}§7setrank -t <player> -r <rank> | --reset`);
+            return;
+        }
+
+        handleRankUpdate(sender, targetPlayer, rank);
     },
 };
