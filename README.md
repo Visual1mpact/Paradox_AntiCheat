@@ -90,11 +90,24 @@
 
 <h3>1. Installation</h3>
 <ol>
-  <li>Download the latest <code>.mcpack</code> file from the <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/releases">Releases</a> page.</li>
-  <li>Import and apply the pack to your world’s <strong>Behavior Packs</strong>.</li>
+  <li>
+    Download the latest release from the <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/releases">Releases</a> page based on your server setup:
+    <ul>
+      <li><strong>Realms &amp; Singleplayer:</strong> Download the <code>.mcpack</code> file.</li>
+      <li><strong>Bedrock Dedicated Server (BDS):</strong> Download the <code>.zip</code> file.</li>
+    </ul>
+  </li>
+  <li>
+    Apply the anti-cheat to your server:
+    <ul>
+      <li><strong>Realms / Singleplayer:</strong> Import the <code>.mcpack</code> file directly and apply it to your world's <strong>Behavior Packs</strong>.</li>
+      <li><strong>BDS:</strong> Extract the <code>.zip</code> file directly into your server's <code>behavior_packs</code> folder and register the folder name in <code>world_behavior_packs.json</code>.</li>
+    </ul>
+  </li>
   <li>Move the pack to the <strong>top priority position</strong> in your active list.</li>
   <li>Enable <strong>Beta APIs</strong> in your World Settings under Experiments.</li>
 </ol>
+
 
 <blockquote>
   <p>⚠️ <strong>Important:</strong> Setting the pack to the highest priority and enabling <strong>Beta APIs</strong> are strictly required for state detection and event hooks to work.</p>
