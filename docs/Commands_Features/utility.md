@@ -50,13 +50,13 @@ The `channels` command allows players to manage private chat channels. Players c
 - All changes notify relevant players to ensure smooth communication.
 
 
-> Usage: ":channel <create | join | invite | leave | transfer | help>"
-> Example: :channel create --room myTeam
-> Example: :channel join --room myTeam
-> Example: :channel invite --room myTeam --target Visual1mpact
-> Example: :channel leave
-> Example: :channel transfer --room myTeam --target Visual1mpact
-> Example: :channel help
+> Usage: ":channel <create | join | invite | leave | transfer | help>"   
+> Example: :channel create --room myTeam  
+> Example: :channel join --room myTeam  
+> Example: :channel invite --room myTeam --target Visual1mpact  
+> Example: :channel leave  
+> Example: :channel transfer --room myTeam --target Visual1mpact  
+> Example: :channel help  
 
 
 ### **Actions**
@@ -87,8 +87,8 @@ The `chunkborders` command toggles real-time, on-screen chunk boundary overlays,
 - **Generator-Based Threading:** Spreads rendering operations across tick yields to maintain server performance and prevent spike latency.
 - **Toggle Mechanism:** Executing the command toggles overlay visibility on and off. Disabling clears all rendered shapes and frees memory resources.
 
-> Usage: ":chunkborders"
-> Example: :chunkborders
+> Usage: ":chunkborders"  
+> Example: :chunkborders  
 
 ### **GUI Integration**
 - Found under the **Utility** category in the main GUI.
@@ -136,12 +136,12 @@ The `debugdb` command allows admins to inspect all initialized database entries 
 
 ### Usage
 
-> :debugdb
+> :debugdb  
 
 
 ### Examples
 
-> :debugdb
+> :debugdb  
 
 
 ### Notes
