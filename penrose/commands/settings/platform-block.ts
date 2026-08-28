@@ -1,6 +1,97 @@
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
+
+interface PlatformSettings {
+    console: boolean;
+    desktop: boolean;
+    mobile: boolean;
+}
+
+interface ModuleData {
+    enabled: boolean;
+    settings: PlatformSettings;
+}
+
+const DEFAULT_SETTINGS: PlatformSettings = { console: false, desktop: false, mobile: false };
+
+/**
+ * Displays the current status of platform restrictions to the player.
+ * @param {Player} player - The player executing the list query.
+ * @param {PlatformSettings} platformSettings - Current platform restriction flags.
+ */
+function handleListAction(player: Player, platformSettings: PlatformSettings): void {
+    const formatStatus = (blocked: boolean) => (blocked ? "§4Blocked§7" : "§aAllowed§7");
+    const messageLines = [
+        `§2[§7Paradox§2]§o§7 Current Platform Restrictions:`,
+        `  | Console: ${formatStatus(platformSettings.console)}`,
+        `  | Desktop: ${formatStatus(platformSettings.desktop)}`,
+        `  | Mobile: ${formatStatus(platformSettings.mobile)}`,
+    ];
+    player.sendMessage(messageLines.join("\n"));
+}
+
+/**
+ * Validates target platform, action flag, self-blocking rules, and total block limits.
+ * @param {Player} player - The player invoking the command.
+ * @param {string | undefined} platform - Target platform.
+ * @param {string | undefined} action - Action flag provided.
+ * @param {PlatformSettings} currentSettings - Current settings state.
+ * @returns {boolean | null} The intended block state boolean, or null if validation fails.
+ */
+function validateAndDetermineBlockState(player: Player, platform: string | undefined, action: string | undefined, currentSettings: PlatformSettings): boolean | null {
+    const validPlatforms = ["console", "desktop", "mobile"];
+    if (!platform || !validPlatforms.includes(platform)) {
+        player.sendMessage(`§o§c[Paradox] Invalid platform. Use console, desktop, or mobile.`);
+        return null;
+    }
+
+    const isEnable = ["--enable", "-e"].includes(action ?? "");
+    const isDisable = ["--disable", "-d"].includes(action ?? "");
+
+    if (!isEnable && !isDisable) {
+        player.sendMessage(`§o§c[Paradox] Invalid action. Use "-e" to block or "-d" to allow.`);
+        return null;
+    }
+
+    const blockPlatform = isEnable;
+    const playerPlatform = player.clientSystemInfo.platformType.toLowerCase();
+
+    if (blockPlatform && playerPlatform === platform) {
+        player.sendMessage(`§o§c[Paradox] You cannot block your own platform.`);
+        return null;
+    }
+
+    const updatedSettings = { ...currentSettings, [platform]: blockPlatform };
+    const blockedCount = Object.values(updatedSettings).filter(Boolean).length;
+
+    if (blockedCount > 2) {
+        player.sendMessage(`§o§c[Paradox] Cannot block all platforms. At least one must remain unblocked.`);
+        return null;
+    }
+
+    return blockPlatform;
+}
+
+/**
+ * Updates storage and informs player of execution outcome.
+ * @param {Player} player - Target recipient for notification.
+ * @param {string} platform - Modified platform.
+ * @param {boolean} blockPlatform - Applied restriction state.
+ * @param {PlatformSettings} platformSettings - Current platform configuration.
+ */
+async function updatePlatformState(player: Player, platform: string, blockPlatform: boolean, platformSettings: PlatformSettings): Promise<void> {
+    const updatedSettings = { ...platformSettings, [platform]: blockPlatform };
+
+    await paradoxModulesDB.set("platformBlock_b", {
+        enabled: true,
+        settings: updatedSettings,
+    });
+
+    const actionText = blockPlatform ? "§cblocked§7 from joining" : "§aallowed§7 to join";
+    const formattedPlatform = platform.charAt(0).toUpperCase() + platform.slice(1);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 ${formattedPlatform} players are now ${actionText}.`);
+}
 
 /**
  * Represents the platformBlock command.
@@ -31,7 +122,7 @@ export const platformBlockCommand: Command = {
             {
                 name: "Console Platform",
                 description: "Manage console platform players.\n\n",
-                generateSubActions: true, // Flag to trigger nested action form for this platform
+                generateSubActions: true,
                 icon: "textures/ui/xbox4.png",
                 subActions: [
                     {
@@ -51,7 +142,7 @@ export const platformBlockCommand: Command = {
             {
                 name: "Desktop Platform",
                 description: "Manage desktop platform players.\n\n",
-                generateSubActions: true, // Flag to trigger nested action form for this platform
+                generateSubActions: true,
                 icon: "textures/ui/keyboard_and_mouse_glyph_color.png",
                 subActions: [
                     {
@@ -71,7 +162,7 @@ export const platformBlockCommand: Command = {
             {
                 name: "Mobile Platform",
                 description: "Manage mobile platform players.\n\n",
-                generateSubActions: true, // Flag to trigger nested action form for this platform
+                generateSubActions: true,
                 icon: "textures/ui/selecting_items_mobile.png",
                 subActions: [
                     {
@@ -99,76 +190,28 @@ export const platformBlockCommand: Command = {
 
     /**
      * Executes the platformBlock command to enable/disable platform-based restrictions or list current restrictions.
-     * @param {ChatSendBeforeEvent} message - The chat message triggering the command.
-     * @param {string[]} args - The command arguments (e.g., platform and action).
+     * @param {ChatSendBeforeEvent} [message] - The chat message triggering the command.
+     * @param {string[]} [args] - The command arguments (e.g., platform and action).
      * @returns {Promise<void>}
      */
     execute: async (message?: ChatSendBeforeEvent, args?: string[]): Promise<void> => {
-        // handler signature allows undefined; ignore if not provided
         if (!message || !args) return;
-        const player = message.sender;
 
-        // Retrieve settings safely from the typed schema
-        const moduleData = (await paradoxModulesDB.get("platformBlock_b")) ?? {
-            enabled: false,
-            settings: { console: false, desktop: false, mobile: false },
-        };
-        const platformSettings = moduleData?.settings ?? {
-            console: false,
-            desktop: false,
-            mobile: false,
-        };
+        const player = message.sender;
+        const moduleData = (await paradoxModulesDB.get("platformBlock_b")) as ModuleData | undefined;
+        const platformSettings = moduleData?.settings ?? DEFAULT_SETTINGS;
 
         if (args.includes("-l") || args.includes("--list")) {
-            const messageLines = [
-                `§2[§7Paradox§2]§o§7 Current Platform Restrictions:`,
-                `  | Console: ${platformSettings.console ? "§4Blocked§7" : "§aAllowed§7"}`,
-                `  | Desktop: ${platformSettings.desktop ? "§4Blocked§7" : "§aAllowed§7"}`,
-                `  | Mobile: ${platformSettings.mobile ? "§4Blocked§7" : "§aAllowed§7"}`,
-            ];
-            player.sendMessage(messageLines.join("\n"));
+            handleListAction(player, platformSettings);
             return;
         }
 
         const platform = args[0]?.toLowerCase();
         const action = args[1]?.toLowerCase();
 
-        if (!platform || !["console", "desktop", "mobile"].includes(platform)) {
-            player.sendMessage(`§o§c[Paradox] Invalid platform. Use console, desktop, or mobile.`);
-            return;
-        }
+        const blockPlatform = validateAndDetermineBlockState(player, platform, action, platformSettings);
+        if (blockPlatform === null || !platform) return;
 
-        const enableFlags = ["--enable", "-e"];
-        const disableFlags = ["--disable", "-d"];
-        let blockPlatform: boolean | null = null;
-
-        if (action && enableFlags.includes(action)) blockPlatform = true;
-        else if (action && disableFlags.includes(action)) blockPlatform = false;
-        else {
-            player.sendMessage(`§o§c[Paradox] Invalid action. Use "-e" to block or "-d" to allow.`);
-            return;
-        }
-
-        const playerPlatform = player.clientSystemInfo.platformType.toLowerCase();
-        if (blockPlatform && playerPlatform === platform) {
-            player.sendMessage(`§o§c[Paradox] You cannot block your own platform.`);
-            return;
-        }
-
-        const updatedSettings = { ...platformSettings, [platform]: blockPlatform };
-
-        const blockedCount = Object.values(updatedSettings).filter(Boolean).length;
-        if (blockedCount > 2) {
-            player.sendMessage(`§o§c[Paradox] Cannot block all platforms. At least one must remain unblocked.`);
-            return;
-        }
-
-        // Update the DB with typed structure
-        await paradoxModulesDB.set("platformBlock_b", {
-            enabled: true,
-            settings: updatedSettings,
-        });
-
-        player.sendMessage(`§2[§7Paradox§2]§o§7 ${platform.charAt(0).toUpperCase() + platform.slice(1)} players are now ${blockPlatform ? "§cblocked§7 from joining" : "§aallowed§7 to join"}.`);
+        await updatePlatformState(player, platform, blockPlatform, platformSettings);
     },
 };
