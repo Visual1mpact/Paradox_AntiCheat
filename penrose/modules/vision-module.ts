@@ -1,4 +1,4 @@
-import { system, Player, Container } from "@minecraft/server";
+import { system, Player, Container, Block } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 
@@ -28,11 +28,18 @@ interface PlayerState {
     lastProcessedTick: number;
 }
 
+interface TargetContainer {
+    container: Container;
+    posKey: string;
+}
+
 /** Map of player ID to their vision state */
 const playerStates = new Map<string, PlayerState>();
 
 /**
  * Converts a Minecraft item type ID to a human-readable name.
+ * @param {string} itemTypeId - Raw item type identifier.
+ * @returns {string} Formatted human-readable name.
  */
 function formatItemName(itemTypeId: string): string {
     return itemTypeId
@@ -44,13 +51,16 @@ function formatItemName(itemTypeId: string): string {
 
 /**
  * Removes the stored vision state for a player.
+ * @param {string} id - Player ID to clean up.
  */
-function cleanupPlayerState(id: string) {
+function cleanupPlayerState(id: string): void {
     playerStates.delete(id);
 }
 
 /**
  * Retrieves or initializes the vision state for a player.
+ * @param {string} id - Player ID.
+ * @returns {PlayerState} Stored or new state structure.
  */
 function getPlayerState(id: string): PlayerState {
     if (!playerStates.has(id)) {
@@ -61,8 +71,11 @@ function getPlayerState(id: string): PlayerState {
 
 /**
  * Renders the inventory counts to the player's action bar with pagination and auto-rotation.
+ * @param {Player} player - Staff player viewing information.
+ * @param {Record<string, number>} counts - Map of item names to quantities.
+ * @param {PlayerState} state - Viewer's current tracking state.
  */
-function renderInventory(player: Player, counts: Record<string, number>, state: PlayerState) {
+function renderInventory(player: Player, counts: Record<string, number>, state: PlayerState): void {
     const entries = Object.entries(counts);
     if (entries.length === 0) {
         player.onScreenDisplay.setActionBar("§cInventory is empty");
@@ -79,7 +92,6 @@ function renderInventory(player: Player, counts: Record<string, number>, state: 
 
     player.onScreenDisplay.setActionBar(text);
 
-    // Handle auto-rotation
     state.cooldown++;
     if (state.cooldown >= ROTATE_EVERY_N_CHECKS) {
         state.page = (currentPage + 1) % totalPages;
@@ -89,6 +101,8 @@ function renderInventory(player: Player, counts: Record<string, number>, state: 
 
 /**
  * Counts the items in a container.
+ * @param {Container} container - Minecraft inventory container.
+ * @returns {Record<string, number>} Item names mapped to amounts.
  */
 function getContainerCounts(container: Container): Record<string, number> {
     const counts: Record<string, number> = {};
@@ -100,7 +114,6 @@ function getContainerCounts(container: Container): Record<string, number> {
                 counts[name] = (counts[name] ?? 0) + item.amount;
             }
         } catch {
-            // Gracefully catch cases where items are transiently inaccessible
             continue;
         }
     }
@@ -109,6 +122,7 @@ function getContainerCounts(container: Container): Record<string, number> {
 
 /**
  * Helper to safely pre-fetch the database setting before invoking the generator pass.
+ * @returns {Promise<boolean>} True if module is enabled in persistent DB.
  */
 async function isVisionModuleEnabledInDB(): Promise<boolean> {
     try {
@@ -120,7 +134,85 @@ async function isVisionModuleEnabledInDB(): Promise<boolean> {
 }
 
 /**
+ * Resolves target container from block vision raycast.
+ * @param {Block | null} block - Block target from raycast.
+ * @returns {TargetContainer | null} Target container and position key or null.
+ */
+function getBlockTargetContainer(block: Block | null): TargetContainer | null {
+    if (!block) return null;
+    const container = block.getComponent("minecraft:inventory")?.container;
+    if (!container) return null;
+
+    return {
+        container,
+        posKey: `${block.x},${block.y},${block.z}:${block.dimension.id}`,
+    };
+}
+
+/**
+ * Resolves target container from target player entity raycast.
+ * @param {Player | null} targetPlayer - Player target from raycast.
+ * @returns {TargetContainer | null} Target container and position key or null.
+ */
+function getPlayerTargetContainer(targetPlayer: Player | null): TargetContainer | null {
+    if (!targetPlayer) return null;
+    const container = targetPlayer.getComponent("minecraft:inventory")?.container;
+    if (!container) return null;
+
+    return {
+        container,
+        posKey: `player:${targetPlayer.id}`,
+    };
+}
+
+/**
+ * Resolves vision target container from block or entity raycast.
+ * @param {Player} player - Viewer player inspecting target.
+ * @returns {TargetContainer | null} Target container structure or null.
+ */
+function resolveVisionTargetContainer(player: Player): TargetContainer | null {
+    const blockHit = player.getBlockFromViewDirection({ maxDistance: 10 });
+    const blockTarget = getBlockTargetContainer(blockHit?.block ?? null);
+    if (blockTarget) return blockTarget;
+
+    const entityHits = player.getEntitiesFromViewDirection({ maxDistance: 10 }) || [];
+    const firstPlayerHit = entityHits.find((hit) => hit.entity instanceof Player);
+    return getPlayerTargetContainer((firstPlayerHit?.entity as Player) ?? null);
+}
+
+/**
+ * Evaluates vision inspection for a single staff player.
+ * @param {Player} player - Staff viewer player.
+ * @param {number} currentTick - Current system tick.
+ */
+function evaluatePlayerVision(player: Player, currentTick: number): void {
+    const state = getPlayerState(player.id);
+
+    if (currentTick - state.lastProcessedTick < VISION_THROTTLE_TICKS) {
+        return;
+    }
+    state.lastProcessedTick = currentTick;
+
+    const target = resolveVisionTargetContainer(player);
+    if (!target) {
+        cleanupPlayerState(player.id);
+        return;
+    }
+
+    if (state.lastContainerPos !== target.posKey) {
+        state.page = 0;
+        state.cooldown = 0;
+        state.lastContainerPos = target.posKey;
+    }
+
+    const counts = getContainerCounts(target.container);
+    renderInventory(player, counts, state);
+}
+
+/**
  * Continuous generator loop that iterates over staff members to perform vision checks.
+ * @param {boolean} isEnabledInDB - Database enablement status.
+ * @yields Control back to the server job scheduler after processing a target.
  */
 function* continuousVisionLoop(isEnabledInDB: boolean): Generator<void, void, unknown> {
     if (isJobActive) return;
@@ -135,80 +227,17 @@ function* continuousVisionLoop(isEnabledInDB: boolean): Generator<void, void, un
         for (const player of players) {
             if (!player?.isValid) continue;
 
-            const state = getPlayerState(player.id);
-
-            // Throttle execution per player to preserve action bar display timing
-            if (currentTick - state.lastProcessedTick < VISION_THROTTLE_TICKS) {
-                continue;
-            }
-            state.lastProcessedTick = currentTick;
-
             try {
-                // Raycast for blocks and entities separately
-                const blockHit = player.getBlockFromViewDirection({ maxDistance: 10 });
-                const entityHits = player.getEntitiesFromViewDirection({ maxDistance: 10 }) || [];
-
-                let targetBlock = blockHit?.block ?? null;
-                let targetPlayer: Player | null = null;
-
-                const firstPlayerHit = entityHits.find((hit) => hit.entity instanceof Player);
-                if (firstPlayerHit) targetPlayer = firstPlayerHit.entity as Player;
-
-                if (!targetBlock && !targetPlayer) {
-                    cleanupPlayerState(player.id);
-                    continue;
-                }
-
-                let counts: Record<string, number> | null = null;
-
-                if (targetBlock) {
-                    const container = targetBlock.getComponent("minecraft:inventory")?.container;
-                    if (!container) {
-                        cleanupPlayerState(player.id);
-                        continue;
-                    }
-
-                    const posKey = `${targetBlock.x},${targetBlock.y},${targetBlock.z}:${targetBlock.dimension.id}`;
-                    if (state.lastContainerPos !== posKey) {
-                        state.page = 0;
-                        state.cooldown = 0;
-                        state.lastContainerPos = posKey;
-                    }
-
-                    counts = getContainerCounts(container);
-                }
-
-                if (targetPlayer) {
-                    const inv = targetPlayer.getComponent("minecraft:inventory")?.container;
-                    if (inv) {
-                        counts = getContainerCounts(inv);
-                        const posKey = `player:${targetPlayer.id}`;
-                        if (state.lastContainerPos !== posKey) {
-                            state.page = 0;
-                            state.cooldown = 0;
-                            state.lastContainerPos = posKey;
-                        }
-                    }
-                }
-
-                if (!counts) {
-                    cleanupPlayerState(player.id);
-                    continue;
-                }
-
-                renderInventory(player, counts, state);
+                evaluatePlayerVision(player, currentTick);
             } catch (e) {
                 console.error(`[Paradox] Error during vision pass: ${e}`);
             }
 
-            // Yield control back to engine processing after processing each target
             yield;
         }
     } finally {
-        // Unlock job state for the current pass
         isJobActive = false;
 
-        // Queue up the next loop execution asynchronously if module state remains active
         if (isModuleActive) {
             system.run(async () => {
                 if (!isModuleActive) return;
@@ -223,6 +252,7 @@ function* continuousVisionLoop(isEnabledInDB: boolean): Generator<void, void, un
 
 /**
  * Starts periodic vision checks smoothly.
+ * @returns {Promise<void>}
  */
 export async function startVisionCheck(): Promise<void> {
     if (isModuleActive) return;
