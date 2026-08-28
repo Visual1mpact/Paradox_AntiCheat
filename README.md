@@ -1,173 +1,242 @@
 <div align="center">
-  <img src="docs\Media\paradox-header.png" alt="Paradox AntiCheat Logo">
-  <br><br>
-  <div>
-    <em>Updated for Minecraft Bedrock 1.26.40</em>
-    <br>
-    Paradox AntiCheat now utilizes the 2.10.0-Beta server, 1.0.0-Beta server-net, 1.0.0-Beta server-admin and 2.2.0-Beta server-ui APIs, enhancing compatibility and performance for Minecraft Bedrock; both Realms and BDS environments.
-  </div>
-</div>
-<hr>
-<div align="left">
-  <div align="center">
-    <h2>About Paradox AntiCheat</h2>
-  </div>
-  <p>Paradox AntiCheat is a high-performance anti-cheat system for Minecraft Bedrock. It is designed to detect and prevent cheating in both Realms and BDS environments, ensuring a fair gameplay experience for all players.</p>
-  <p>The name "Paradox" reflects our approach: a system that uses sophisticated algorithms and advanced detection techniques to outsmart cheaters in ways that might seem counterintuitive at first glance.</p>
-  <blockquote>
-    <p>Paradox: A statement or situation that contradicts itself yet reveals truth.</p>
-  </blockquote>
-  <p>Highly modular and customizable, Paradox AntiCheat allows developers to tailor detection and enforcement to their worlds’ specific needs. Whether you’re managing a public server or a private Realm, Paradox provides reliable protection against unfair play.</p>
-  <p>For full documentation and setup guides, visit the <a href="https://visual1mpact.github.io/Paradox_AntiCheat/#/">official documentation site</a>.</p>
-</div>
-<hr>
-<div align="left">
-  <div align="center">
-    <h2>Get Support</h2>
-  </div>
-  <p>Join the Paradox AntiCheat community on <a href="https://discord.gg/qVd53N2xhq">Discord</a> for support. Our community is active and dedicated to providing help and assistance to game developers who use Paradox AntiCheat in their projects. We also welcome feedback and suggestions on how we can improve the tool.</p>
+  <img src="docs/Media/paradox-header.png" alt="Paradox AntiCheat Logo" width="600">
+
+  <h1>Paradox AntiCheat</h1>
+  <p><strong>High-performance security for Minecraft Bedrock (Realms &amp; BDS)</strong></p>
+
+  <p>
+    <a href="https://minecraft.net">
+      <img src="https://img.shields.io/badge/Minecraft%20Bedrock-v1.26.40-brightgreen?style=for-the-badge&amp;logo=minecraft" alt="Compatibility">
+    </a>
+    <a href="https://discord.gg/qVd53N2xhq">
+      <img src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&amp;logo=discord&amp;logoColor=white" alt="Discord">
+    </a>
+    <a href="https://visual1mpact.github.io/Paradox_AntiCheat/#/">
+      <img src="https://img.shields.io/badge/Documentation-Read%20Now-007ACC?style=for-the-badge&amp;logo=gitbook&amp;logoColor=white" alt="Docs">
+    </a>
+  </p>
 </div>
 
-<div align="center">
-  <h2>Project Status</h2>
-  <img src="https://www.codefactor.io/repository/github/Visual1mpact/paradox_anticheat/badge/rewrite" alt="Grade">
-  <img src="https://img.shields.io/github/downloads/Visual1mpact/Paradox_AntiCheat/total?style=plastic&logo=appveyor" alt="Downloads">
-  <img src="https://img.shields.io/github/downloads/Visual1mpact/Paradox_AntiCheat/latest/total?style=plastic&logo=appveyor" alt="Latest Downloads">
-  <img src="https://img.shields.io/github/commit-activity/m/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Commits Per Month">
-  <img src="https://img.shields.io/github/last-commit/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="Last Commit">
-  <img src="https://img.shields.io/github/license/Visual1mpact/Paradox_AntiCheat?style=plastic&logo=appveyor" alt="License">
-</div>
+<hr>
 
-<h2>Applying the Paradox AntiCheat Pack</h2>
-<p>When applying the pack to your world, make sure the addon is at the top of the behavior pack list and Beta APIs is enabled. This is to ensure all checks and systems work properly. The versioning system for Paradox goes as follows:</p>
+<h3>📦 API Compatibility Matrix</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th align="left">API Module</th>
+      <th align="left">Required Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>server</code></td>
+      <td><code>2.10.0-Beta</code></td>
+    </tr>
+    <tr>
+      <td><code>server-net</code></td>
+      <td><code>1.0.0-Beta</code></td>
+    </tr>
+    <tr>
+      <td><code>server-admin</code></td>
+      <td><code>1.0.0-Beta</code></td>
+    </tr>
+    <tr>
+      <td><code>server-ui</code></td>
+      <td><code>2.2.0-Beta</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>📖 About Paradox AntiCheat</h2>
+
+<p>
+  Paradox AntiCheat is a high-performance anti-cheat system engineered for <strong>Minecraft Bedrock Edition</strong>. Designed for seamless integration into both <strong>Realms</strong> and <strong>BDS (Dedicated Server)</strong> environments, it ensures a balanced and fair gameplay experience for everyone.
+</p>
+
+<blockquote>
+  <p><strong>Paradox</strong> <em>(noun)</em>: A statement or situation that contradicts itself, yet reveals a fundamental truth.</p>
+</blockquote>
+
+<p>
+  The name reflects our philosophy: leveraging advanced, non-obvious detection algorithms to outsmart cheaters in ways that seem counterintuitive on the surface.
+</p>
+
+<h3>Key Highlights</h3>
 <ul>
-  <li>The first number denotes the pack version. This will rarely change unless there have been major changes to the code.</li>
-  <li>The second number denotes the major revision of the pack version. These particular changes mostly involve features being added or removed.</li>
-  <li>The third number indicates the minor revision of the Pack. This evolves around bug fixes.</li>
+  <li><strong>Modular Design:</strong> Tailor individual checks and enforcement rules to match your server's needs.</li>
+  <li><strong>Realms &amp; BDS Ready:</strong> Native support for both official Minecraft Realms and custom Dedicated Servers.</li>
+  <li><strong>Developer Friendly:</strong> Simple setup workflow with comprehensive documentation.</li>
 </ul>
 
-<h2>Installing the Paradox AntiCheat Pack</h2>
-<p>To install this anticheat to your realm/world, follow these steps:</p>
-<ol>
-  <li>Install the <code>.mcpack</code>.</li>
-  <li>Apply it to your world.</li>
-  <li>Enable Beta APIs.</li>
-</ol>
-<p>Once you have done this, the anticheat should be fully up and running.</p>
+<p>
+  For complete integration instructions and API references, check out the 
+  <a href="https://visual1mpact.github.io/Paradox_AntiCheat/#/">Official Documentation</a>.
+</p>
 
-<h2>Development Environment Setup for Linux</h2>
-<ol>
-  <li>
-    <strong>Install Node.js (Latest LTS Automatically):</strong>
-    <ul>
-      <li>
-        This project includes a setup script that installs:
-        <ul>
-          <li>The latest <strong>nvm</strong></li>
-          <li>The latest <strong>Node.js LTS</strong></li>
-          <li>Sets LTS as your default Node version</li>
-        </ul>
-      </li>
-      <li>
-        From the project root, run the Linux setup script:
-        <pre><code>./bin/setup-node-linux.sh</code></pre>
-        <small>Make sure the script is executable: <code>chmod +x ./bin/setup-node-linux.sh</code></small>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <strong>Install Project Dependencies:</strong>
-    <ul>
-      <li>After Node.js is installed, run:</li>
-      <pre><code>npm install</code></pre>
-    </ul>
-  </li>
-</ol>
+<hr>
 
-<h2>Development Environment Setup for Windows</h2>
+<div align="center">
+  <h2>📊 Project Status &amp; Metrics</h2>
+  <p>
+    <a href="https://www.codefactor.io/repository/github/Visual1mpact/paradox_anticheat">
+      <img src="https://img.shields.io/codefactor/grade/github/Visual1mpact/paradox_anticheat/rewrite?style=for-the-badge&amp;logo=codefactor" alt="CodeFactor Grade">
+    </a>
+    <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/releases">
+      <img src="https://img.shields.io/github/downloads/Visual1mpact/Paradox_AntiCheat/total?style=for-the-badge&amp;color=blue" alt="Total Downloads">
+    </a>
+    <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/releases/latest">
+      <img src="https://img.shields.io/github/downloads/Visual1mpact/Paradox_AntiCheat/latest/total?style=for-the-badge&amp;color=teal" alt="Latest Downloads">
+    </a>
+    <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/commits">
+      <img src="https://img.shields.io/github/commit-activity/m/Visual1mpact/Paradox_AntiCheat?style=for-the-badge" alt="Commit Activity">
+    </a>
+    <a href="LICENSE">
+      <img src="https://img.shields.io/github/license/Visual1mpact/Paradox_AntiCheat?style=for-the-badge&amp;color=orange" alt="License">
+    </a>
+  </p>
+</div>
+
+<hr>
+
+<h2>🚀 Quick Start Guide</h2>
+
+<h3>1. Installation</h3>
 <ol>
-  <li>
-    <strong>Install Node.js (Latest LTS Automatically):</strong>
-    <ul>
-      <li>
-        This project includes a setup script that installs:
-        <ul>
-          <li>The latest <strong>Node.js LTS</strong> (no nvm on Windows)</li>
-          <li>Updates your PATH so Node and npm are available</li>
-        </ul>
-      </li>
-      <li>
-        From the project root, run the Windows setup script in PowerShell:
-        <pre><code>bin\setup-node-windows.ps1</code></pre>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <strong>Install Project Dependencies:</strong>
-    <ul>
-      <li>After Node.js is installed, run:</li>
-      <pre><code>npm install</code></pre>
-    </ul>
-  </li>
-</ol>
-  <li><strong>Install Visual Studio Code (VS Code):</strong>
-    <ul>
-      <li>Download and install VS Code from <a href="https://code.visualstudio.com/">the official website</a>.</li>
-      <li>Alternatively, you can install it via your package manager. For example, on Debian-based systems:
-        <pre><code>sudo apt update
-sudo apt install code</code></pre>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Clone the Repository:</strong>
-    <ul>
-      <li>Open a terminal.</li>
-      <li>Execute the following command to clone the repository:
-        <pre><code>git clone https://github.com/&lt;your-github-username&gt;/Paradox_AntiCheat.git</code></pre>
-      </li>
-      <li>Navigate to the project directory:
-        <pre><code>cd Paradox_AntiCheat</code></pre>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Install Project Dependencies:</strong>
-    <ul>
-      <li>Run the following command to install the project dependencies:
-        <pre><code>npm i</code></pre>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Open the Project in VS Code:</strong>
-    <ul>
-      <li>You can open the project in VS Code by running:
-        <pre><code>code .</code></pre>
-      </li>
-    </ul>
-  </li>
+  <li>Download the latest <code>.mcpack</code> file from the <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/releases">Releases</a> page.</li>
+  <li>Import and apply the pack to your world’s <strong>Behavior Packs</strong>.</li>
+  <li>Move the pack to the <strong>top priority position</strong> in your active list.</li>
+  <li>Enable <strong>Beta APIs</strong> in your World Settings under Experiments.</li>
 </ol>
 
-<h2>Contributing to the Project</h2>
+<blockquote>
+  <p>⚠️ <strong>Important:</strong> Setting the pack to the highest priority and enabling <strong>Beta APIs</strong> are strictly required for state detection and event hooks to work.</p>
+</blockquote>
+
+<h3>2. Versioning Format</h3>
+<p>Paradox follows a <code>Major.Minor.Patch</code> semantic scheme:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Segment</th>
+      <th align="left">Meaning</th>
+      <th align="left">Example Scenario</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><strong><code>X</code></strong>.0.0</td>
+      <td><strong>Major Version</strong></td>
+      <td>Core architecture overhauls or breaking changes</td>
+    </tr>
+    <tr>
+      <td align="center">0.<strong><code>X</code></strong>.0</td>
+      <td><strong>Major Revision</strong></td>
+      <td>Feature additions, feature updates, or check removals</td>
+    </tr>
+    <tr>
+      <td align="center">0.0.<strong><code>X</code></strong></td>
+      <td><strong>Minor Revision</strong></td>
+      <td>Urgent patches, bug fixes, and minor adjustments</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>🛠️ Development Environment Setup</h2>
+
+<h3>Prerequisites &amp; Dependencies</h3>
+<ul>
+  <li><a href="https://nodejs.org/">Node.js</a> (LTS Version)</li>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a></li>
+  <li><a href="https://git-scm.com/">Git</a></li>
+</ul>
+
+<hr>
+
+<h3>Option A: Linux Setup</h3>
 <ol>
-  <li><strong>Fork the project repository:</strong> Click on the "Fork" button in the top-right corner of the repository page: <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/fork">Paradox_AntiCheat_Fork</a></li>
-  <li><strong>Clone the forked repository to your local machine:</strong>
-    <pre><code>git clone https://github.com/&lt;your-github-username&gt;/Paradox_AntiCheat.git</code></pre>
+  <li>
+    <p><strong>Run the Automated Setup Script:</strong></p>
+    <pre><code>chmod +x ./bin/setup-node-linux.sh
+./bin/setup-node-linux.sh</code></pre>
+    <p><em>This automatically installs NVM, fetches the latest Node.js LTS, and sets default aliases.</em></p>
   </li>
-  <li><strong>Navigate to the cloned project directory:</strong>
-    <pre><code>cd Paradox_AntiCheat</code></pre>
-  </li>
-  <li><strong>Install project dependencies:</strong>
+  <li>
+    <p><strong>Install Node Packages:</strong></p>
     <pre><code>npm install</code></pre>
   </li>
-  <li><strong>Make changes to the project files.</strong></li>
-  <li><strong>Save the files.</strong></li>
-  <li><strong>Stage the changes to include all modifications:</strong>
-    <pre><code>git add .</code></pre>
-  </li>
-  <li><strong>Commit the changes with a meaningful commit message:</strong>
-    <pre><code>git commit -m "Your commit message here"</code></pre>
-  </li>
-  <li><strong>Push the committed changes to your forked repository on GitHub:</strong>
-    <pre><code>git push origin</code></pre>
-  </li>
-  <li><strong>Create a pull request to submit the changes to the original repository.</strong></li>
 </ol>
+
+<h3>Option B: Windows Setup</h3>
+<ol>
+  <li>
+    <p><strong>Run the Automated PowerShell Script:</strong></p>
+    <pre><code>.\bin\setup-node-windows.ps1</code></pre>
+    <p><em>This downloads the Node.js LTS installer and updates your system environment path.</em></p>
+  </li>
+  <li>
+    <p><strong>Install Node Packages:</strong></p>
+    <pre><code>npm install</code></pre>
+  </li>
+</ol>
+
+<h3>Option C: Manual Workspace Setup</h3>
+<p>If you prefer installing tools manually:</p>
+<ol>
+  <li>
+    <p><strong>Install VS Code via installer or package manager:</strong></p>
+    <pre><code>sudo apt update &amp;&amp; sudo apt install code</code></pre>
+  </li>
+  <li>
+    <p><strong>Clone your repository:</strong></p>
+    <pre><code>git clone https://github.com/&lt;your-github-username&gt;/Paradox_AntiCheat.git
+cd Paradox_AntiCheat</code></pre>
+  </li>
+  <li>
+    <p><strong>Install dependencies &amp; launch workspace:</strong></p>
+    <pre><code>npm install
+code .</code></pre>
+  </li>
+</ol>
+
+<hr>
+
+<h2>🤝 Contributing</h2>
+<p>We welcome contributions! Follow these step-by-step instructions to get started:</p>
+<ol>
+  <li><strong>Fork the Repository:</strong> Visit the <a href="https://github.com/Visual1mpact/Paradox_AntiCheat/fork">Paradox AntiCheat Repository</a> and click <strong>Fork</strong>.</li>
+  <li>
+    <strong>Clone your fork:</strong>
+    <pre><code>git clone https://github.com/&lt;your-github-username&gt;/Paradox_AntiCheat.git
+cd Paradox_AntiCheat</code></pre>
+  </li>
+  <li>
+    <strong>Install dependencies:</strong>
+    <pre><code>npm install</code></pre>
+  </li>
+  <li>
+    <strong>Create a branch and make changes:</strong>
+    <pre><code>git checkout -b feature/my-new-check</code></pre>
+  </li>
+  <li>
+    <strong>Stage &amp; Commit your updates:</strong>
+    <pre><code>git add .
+git commit -m "feat: add new speed detection module"</code></pre>
+  </li>
+  <li>
+    <strong>Push to GitHub &amp; Open Pull Request:</strong>
+    <pre><code>git push origin feature/my-new-check</code></pre>
+    <p>Then navigate to the original repository to initiate a <strong>Pull Request</strong>.</p>
+  </li>
+</ol>
+
+<hr>
+
+<div align="center">
+  <p>Need help? Join our <a href="https://discord.gg/qVd53N2xhq">Discord Server</a> for support and discussion.</p>
+</div>
