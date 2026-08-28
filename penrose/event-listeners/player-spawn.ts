@@ -63,6 +63,86 @@ async function handleMetadataUpdate(player: Player): Promise<void> {
 }
 
 /**
+ * Resolves the appropriate nameTag for a player based on rank, alias, and global rank settings.
+ *
+ * @param {Player} player - The target player.
+ * @returns {string} The computed target name tag string.
+ */
+function computeTargetNameTag(player: Player): string {
+    const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
+    const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
+    const showAliasInUI = (player.getDynamicProperty("showAliasInUI") as boolean) ?? false;
+    const displayName = alias && showAliasInUI ? alias : player.name;
+
+    const rankedTag = `${rank}§r ${displayName}`;
+    const plainTag = displayName;
+    const ranksDisabled = !!world.getDynamicProperty("globalRankDisabled");
+
+    if (ranksDisabled) {
+        return player.nameTag === rankedTag ? plainTag : player.nameTag;
+    }
+
+    return rankedTag;
+}
+
+/**
+ * Updates the player's name tag and forces a location sync if changed.
+ *
+ * @param {Player} player - The target player.
+ */
+function updatePlayerNameTag(player: Player): void {
+    const targetTag = computeTargetNameTag(player);
+
+    if (player.nameTag !== targetTag) {
+        system.run(() => {
+            player.nameTag = targetTag;
+            const transform = PlayerLocationCache.getTransform(player);
+            const loc = transform?.location ?? player.location;
+            const dim = transform?.dimension ?? player.dimension;
+            player.teleport(loc, { dimension: dim }); // force client sync
+        });
+    }
+}
+
+/**
+ * Checks if a player's coordinates lie outside their designated prison volume.
+ *
+ * @param {Vector3} playerLoc - Current 3D position of the player.
+ * @param {Vector3} prisonLoc - Base 3D position of the prison.
+ * @returns {boolean} True if the player is outside prison bounds; otherwise false.
+ */
+function isOutsidePrisonBounds(playerLoc: Vector3, prisonLoc: Vector3): boolean {
+    const PRISON_WIDTH = 5;
+    const PRISON_HEIGHT = 4;
+    const PRISON_DEPTH = 5;
+
+    const insideX = playerLoc.x >= prisonLoc.x && playerLoc.x < prisonLoc.x + PRISON_WIDTH;
+    const insideZ = playerLoc.z >= prisonLoc.z && playerLoc.z < prisonLoc.z + PRISON_DEPTH;
+    const insideY = playerLoc.y >= prisonLoc.y + 1 && playerLoc.y < prisonLoc.y + PRISON_HEIGHT;
+
+    return !(insideX && insideY && insideZ);
+}
+
+/**
+ * Verifies and enforces prison restrictions if the player has an active prison location set.
+ *
+ * @param {Player} player - The target player.
+ */
+function handlePrisonEnforcement(player: Player): void {
+    const prisonLocation = player.getDynamicProperty(PRISON_LOCATION_PROPERTY) as Vector3 | undefined;
+    if (!prisonLocation) return;
+
+    const transform = PlayerLocationCache.getTransform(player);
+    const loc = transform?.location ?? player.location;
+
+    if (isOutsidePrisonBounds(loc, prisonLocation)) {
+        buildPrison(player); // rebuild walls if needed
+        freezePlayer(player); // freeze again
+        player.sendMessage(`§2[§7Paradox§2]§o§7 You were returned to your prison after respawn.`);
+    }
+}
+
+/**
  * Handles player spawn events.
  * This function is triggered when a player spawns in the world.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
@@ -79,66 +159,10 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
         handleSecurityClearance(event);
         await allowList(event);
         await handleMetadataUpdate(player);
-
-        // Logic for setting the nameTag with chat rank
-        const rank = (player.getDynamicProperty("chatRank") as string) ?? "§2[§7Member§2]";
-
-        // Check for Alias override
-        const alias = player.getDynamicProperty("paradoxAlias") as string | undefined;
-        const showAliasInUI = (player.getDynamicProperty("showAliasInUI") as boolean) ?? false;
-        const displayName = alias && showAliasInUI ? alias : player.name;
-
-        const rankedTag = `${rank}§r ${displayName}`;
-        const plainTag = displayName;
-
-        const ranksDisabled = !!world.getDynamicProperty("globalRankDisabled");
-
-        let targetTag: string;
-
-        if (ranksDisabled) {
-            // Only strip if the tag is exactly the one Paradox would set
-            targetTag = player.nameTag === rankedTag ? plainTag : player.nameTag;
-        } else {
-            targetTag = rankedTag;
-        }
-
-        if (player.nameTag !== targetTag) {
-            system.run(() => {
-                player.nameTag = targetTag;
-                const transform = PlayerLocationCache.getTransform(player);
-                const loc = transform?.location ?? player.location;
-                const dim = transform?.dimension ?? player.dimension;
-                player.teleport(loc, { dimension: dim }); // force client sync
-            });
-        }
+        updatePlayerNameTag(player);
     }
 
-    const prisonLocation = player.getDynamicProperty(PRISON_LOCATION_PROPERTY) as Vector3 | undefined;
-    if (prisonLocation) {
-        const transform = PlayerLocationCache.getTransform(player);
-        const loc = transform?.location ?? player.location;
-
-        // Only rebuild/freeze if the player is outside their prison bounds
-        const px = loc.x;
-        const py = loc.y;
-        const pz = loc.z;
-
-        const PRISON_WIDTH = 5;
-        const PRISON_HEIGHT = 4;
-        const PRISON_DEPTH = 5;
-
-        const insideX = px >= prisonLocation.x && px < prisonLocation.x + PRISON_WIDTH;
-        const insideZ = pz >= prisonLocation.z && pz < prisonLocation.z + PRISON_DEPTH;
-        const insideY = py >= prisonLocation.y + 1 && py < prisonLocation.y + PRISON_HEIGHT;
-
-        const isOutsidePrison = !(insideX && insideY && insideZ);
-
-        if (isOutsidePrison) {
-            buildPrison(player); // rebuild walls if needed
-            freezePlayer(player); // freeze again
-            player.sendMessage(`§2[§7Paradox§2]§o§7 You were returned to your prison after respawn.`);
-        }
-    }
+    handlePrisonEnforcement(player);
 }
 
 /**
