@@ -1,7 +1,188 @@
-import { ChatSendBeforeEvent, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { chestLockDB, paradoxModulesDB } from "../../event-listeners/world-initialize";
 import { startChestLock, stopChestLock } from "../../modules/container-lock-module";
+
+/**
+ * Handles enabling or disabling the chest lock module.
+ *
+ * @param {Player} player - The command sender executing the action.
+ * @param {boolean} enable - True to turn the module on, false to turn off.
+ */
+async function handleModuleToggle(player: Player, enable: boolean): Promise<void> {
+    await paradoxModulesDB.set("chestLock_b", { enabled: enable });
+    if (enable) {
+        startChestLock();
+        player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §aenabled§7.");
+    } else {
+        stopChestLock();
+        player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §4disabled§7.");
+    }
+}
+
+/**
+ * Clears all locked chest entries and pointers from the database.
+ *
+ * @param {Player} player - The command sender executing the clear action.
+ */
+async function handleClearChests(player: Player): Promise<void> {
+    const chestCount = chestLockDB.listPointers().length;
+
+    if (chestCount === 0) {
+        player.sendMessage("§2[§7Paradox§2]§o§7 There are no locked chests to clear.");
+        return;
+    }
+
+    for (const key of chestLockDB.listPointers()) {
+        await chestLockDB.delete(key);
+    }
+
+    await chestLockDB.clear();
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Cleared §f${chestCount} §7locked chests from the database.`);
+}
+
+/**
+ * Grants container access rights to a target player for all containers owned by the sender.
+ *
+ * @param {Player} player - The container owner granting access.
+ * @param {string | undefined} target - Username of the player receiving access.
+ */
+async function handleShareAccess(player: Player, target?: string): Promise<void> {
+    if (target === player.name) {
+        player.sendMessage(" §o§c[Paradox] You already have access to your own containers.");
+        return;
+    }
+
+    if (!target) {
+        player.sendMessage("§o§c[Paradox] Specify a player name.");
+        return;
+    }
+
+    let updated = 0;
+
+    for (const [key, value] of await chestLockDB.entries()) {
+        if (value.owner !== player.name) continue;
+        if (value.sharedWith?.includes(target)) continue;
+
+        const updatedShared = [...(value.sharedWith ?? []), target];
+        await chestLockDB.set(key, { ...value, sharedWith: updatedShared });
+        updated++;
+    }
+
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Granted §f${target}§7 access to §f${updated}§7 containers.`);
+}
+
+/**
+ * Revokes container access rights from a target player for all containers owned by the sender.
+ *
+ * @param {Player} player - The container owner revoking access.
+ * @param {string | undefined} target - Username of the player losing access.
+ */
+async function handleUnshareAccess(player: Player, target?: string): Promise<void> {
+    if (target === player.name) {
+        player.sendMessage("§o§c[Paradox] You cannot revoke access to your own containers.");
+        return;
+    }
+
+    if (!target) {
+        player.sendMessage("§o§c[Paradox] Specify a player name.");
+        return;
+    }
+
+    let updated = 0;
+
+    for (const [key, value] of await chestLockDB.entries()) {
+        if (value.owner !== player.name) continue;
+        if (!value.sharedWith?.includes(target)) continue;
+
+        const filtered = value.sharedWith.filter((p) => p !== target);
+        await chestLockDB.set(key, { ...value, sharedWith: filtered });
+        updated++;
+    }
+
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Revoked §f${target}§7 access from §f${updated}§7 containers.`);
+}
+
+/**
+ * Lists all players who currently have shared access to containers owned by the sender.
+ *
+ * @param {Player} player - The container owner requesting the list.
+ */
+async function handleViewShared(player: Player): Promise<void> {
+    const sharedPlayers = new Set<string>();
+
+    for (const [, value] of await chestLockDB.entries()) {
+        if (value.owner !== player.name) continue;
+        value.sharedWith?.forEach((p) => sharedPlayers.add(p));
+    }
+
+    if (!sharedPlayers.size) {
+        player.sendMessage("§2[§7Paradox§2]§o§7 No players currently have shared access.");
+        return;
+    }
+
+    player.sendMessage("§2[§7Paradox§2]§o§7 Players with access:");
+    [...sharedPlayers].forEach((p, i) => player.sendMessage(` §8[${i + 1}] §f${p}`));
+}
+
+/**
+ * Look up forensic ownership and access logs for a specific chest key.
+ *
+ * @param {Player} player - Command sender receiving output.
+ * @param {string} inputArg - Original raw chest identifier argument.
+ * @param {string} normalizedArg - Fully qualified chest key used in database lookup.
+ * @returns {Promise<boolean>} True if chest was found and details displayed, false otherwise.
+ */
+async function handleChestLookup(player: Player, inputArg: string, normalizedArg: string): Promise<boolean> {
+    const chestData = await chestLockDB.get(normalizedArg);
+    if (!chestData) return false;
+
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Chest Forensics for §f${inputArg}`);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Owner: §f${chestData.owner ?? "Unknown"}`);
+
+    if (chestData.lastAccessed) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Last Accessed: §f${new Date(chestData.lastAccessed).toLocaleString()}`);
+    }
+
+    if (chestData.accessLog?.length) {
+        player.sendMessage("§2[§7Paradox§2]§o§7 Access Log (last 10 events):");
+        chestData.accessLog.slice(-10).forEach((entry, i) => {
+            player.sendMessage(`  §8[${i + 1}] §fPlayer: ${entry.player} §7Time: §f${new Date(entry.time).toLocaleString()}`);
+        });
+    } else {
+        player.sendMessage("§2[§7Paradox§2]§o§7 No access events recorded for this chest.");
+    }
+
+    return true;
+}
+
+/**
+ * Searches and displays container access logs associated with a target player username.
+ *
+ * @param {Player} player - Command sender receiving output.
+ * @param {string} inputArg - Target player username to query.
+ */
+async function handlePlayerLookup(player: Player, inputArg: string): Promise<void> {
+    const logs: { chest: string; time: number }[] = [];
+
+    for (const [key, value] of await chestLockDB.entries()) {
+        value.accessLog?.forEach((entry) => {
+            if (entry.player === inputArg) {
+                logs.push({ chest: key as string, time: entry.time });
+            }
+        });
+    }
+
+    if (!logs.length) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 No chest found or access logs for §f${inputArg}`);
+        return;
+    }
+
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Access Logs for player §f${inputArg}:`);
+    logs.slice(-10).forEach((entry, i) => {
+        player.sendMessage(`  §8[${i + 1}] §7Chest: §f${entry.chest} §7Time: §f${new Date(entry.time).toLocaleString()}`);
+    });
+}
 
 /**
  * Chest forensic command:
@@ -166,192 +347,63 @@ export const chestForensicCommand: Command = {
         ],
     },
 
-    execute: async (message?: ChatSendBeforeEvent, args: string[] = []) => {
+    /**
+     * Executes the chestforensic command.
+     *
+     * @param {ChatSendBeforeEvent | undefined} message - The message object context.
+     * @param {string[]} args - The command argument list.
+     * @returns {Promise<void>}
+     */
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
 
         const player = message.sender;
         const currentPrefix = (world.getDynamicProperty("__prefix") as string) || ":";
         const inputArg = args[0]?.trim();
 
-        const isChestKeyFormat = inputArg ? /^[a-zA-Z]+_-?\d+_-?\d+_-?\d+$/.test(inputArg) : false;
-
-        let normalizedArg = inputArg;
-        if (isChestKeyFormat) {
-            normalizedArg = `minecraft:${inputArg}`;
-        }
-
         if (!inputArg) {
             player.sendMessage(`§2[§7Paradox§2]§o§7 Usage: §f${currentPrefix}chestforensic < chestKey | playerName | on | off | clear >`);
             return;
         }
 
-        // Toggle module
-        if (inputArg.toLowerCase() === "on") {
-            await paradoxModulesDB.set("chestLock_b", { enabled: true });
-            startChestLock();
-            player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §aenabled§7.");
+        const action = inputArg.toLowerCase();
+
+        if (action === "on") {
+            await handleModuleToggle(player, true);
             return;
         }
 
-        if (inputArg.toLowerCase() === "off") {
-            await paradoxModulesDB.set("chestLock_b", { enabled: false });
-            stopChestLock();
-            player.sendMessage("§2[§7Paradox§2]§o§7 Chest lock module §4disabled§7.");
+        if (action === "off") {
+            await handleModuleToggle(player, false);
             return;
         }
 
-        // Clear all chests
-        if (inputArg.toLowerCase() === "clear") {
-            const chestCount = chestLockDB.listPointers().length;
-
-            if (chestCount === 0) {
-                player.sendMessage("§2[§7Paradox§2]§o§7 There are no locked chests to clear.");
-                return;
-            }
-
-            for (const key of chestLockDB.listPointers()) {
-                await chestLockDB.delete(key);
-            }
-
-            await chestLockDB.clear();
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Cleared §f${chestCount} §7locked chests from the database.`);
+        if (action === "clear") {
+            await handleClearChests(player);
             return;
         }
 
-        // share access
-        if (args[0]?.toLowerCase() === "share") {
-            const target = args[1];
-
-            if (target === player.name) {
-                player.sendMessage(" §o§c[Paradox] You already have access to your own containers.");
-                return;
-            }
-
-            if (!target) {
-                player.sendMessage("§o§c[Paradox] Specify a player name.");
-                return;
-            }
-
-            let updated = 0;
-
-            for (const [key, value] of await chestLockDB.entries()) {
-                if (value.owner !== player.name) continue;
-
-                if (value.sharedWith?.includes(target)) continue;
-
-                const updatedShared = [...(value.sharedWith ?? []), target];
-
-                await chestLockDB.set(key, {
-                    ...value,
-                    sharedWith: updatedShared,
-                });
-
-                updated++;
-            }
-
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Granted §f${target}§7 access to §f${updated}§7 containers.`);
-
+        if (action === "share") {
+            await handleShareAccess(player, args[1]);
             return;
         }
 
-        // revoke access
-        if (args[0]?.toLowerCase() === "unshare") {
-            const target = args[1];
-
-            if (target === player.name) {
-                player.sendMessage("§o§c[Paradox] You cannot revoke access to your own containers.");
-                return;
-            }
-
-            if (!target) {
-                player.sendMessage("§o§c[Paradox] Specify a player name.");
-                return;
-            }
-
-            let updated = 0;
-
-            for (const [key, value] of await chestLockDB.entries()) {
-                if (value.owner !== player.name) continue;
-
-                if (!value.sharedWith?.includes(target)) continue;
-
-                const filtered = value.sharedWith.filter((p) => p !== target);
-
-                await chestLockDB.set(key, {
-                    ...value,
-                    sharedWith: filtered,
-                });
-
-                updated++;
-            }
-
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Revoked §f${target}§7 access from §f${updated}§7 containers.`);
-
+        if (action === "unshare") {
+            await handleUnshareAccess(player, args[1]);
             return;
         }
 
-        // view shared list
-        if (args[0]?.toLowerCase() === "shared") {
-            const sharedPlayers = new Set<string>();
-
-            for (const [, value] of await chestLockDB.entries()) {
-                if (value.owner !== player.name) continue;
-
-                value.sharedWith?.forEach((p) => sharedPlayers.add(p));
-            }
-
-            if (!sharedPlayers.size) {
-                player.sendMessage("§2[§7Paradox§2]§o§7 No players currently have shared access.");
-
-                return;
-            }
-
-            player.sendMessage("§2[§7Paradox§2]§o§7 Players with access:");
-
-            [...sharedPlayers].forEach((p, i) => player.sendMessage(` §8[${i + 1}] §f${p}`));
-
+        if (action === "shared") {
+            await handleViewShared(player);
             return;
         }
 
-        // Chest lookup
-        const chestData = await chestLockDB.get(normalizedArg!);
-        if (chestData) {
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Chest Forensics for §f${inputArg}`);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Owner: §f${chestData.owner ?? "Unknown"}`);
+        const isChestKeyFormat = /^[a-zA-Z]+_-?\d+_-?\d+_-?\d+$/.test(inputArg);
+        const normalizedArg = isChestKeyFormat ? `minecraft:${inputArg}` : inputArg;
 
-            if (chestData.lastAccessed) {
-                player.sendMessage(`§2[§7Paradox§2]§o§7 Last Accessed: §f${new Date(chestData.lastAccessed).toLocaleString()}`);
-            }
+        const foundChest = await handleChestLookup(player, inputArg, normalizedArg);
+        if (foundChest) return;
 
-            if (chestData.accessLog?.length) {
-                player.sendMessage("§2[§7Paradox§2]§o§7 Access Log (last 10 events):");
-                chestData.accessLog.slice(-10).forEach((entry, i) => {
-                    player.sendMessage(`  §8[${i + 1}] §fPlayer: ${entry.player} §7Time: §f${new Date(entry.time).toLocaleString()}`);
-                });
-            } else {
-                player.sendMessage("§2[§7Paradox§2]§o§7 No access events recorded for this chest.");
-            }
-            return;
-        }
-
-        // Player lookup
-        const logs: { chest: string; time: number }[] = [];
-        for (const [key, value] of await chestLockDB.entries()) {
-            value.accessLog?.forEach((entry) => {
-                if (entry.player === inputArg) {
-                    logs.push({ chest: key as string, time: entry.time });
-                }
-            });
-        }
-
-        if (!logs.length) {
-            player.sendMessage(`§2[§7Paradox§2]§o§7 No chest found or access logs for §f${inputArg}`);
-            return;
-        }
-
-        player.sendMessage(`§2[§7Paradox§2]§o§7 Access Logs for player §f${inputArg}:`);
-        logs.slice(-10).forEach((entry, i) => {
-            player.sendMessage(`  §8[${i + 1}] §7Chest: §f${entry.chest} §7Time: §f${new Date(entry.time).toLocaleString()}`);
-        });
+        await handlePlayerLookup(player, inputArg);
     },
 };
