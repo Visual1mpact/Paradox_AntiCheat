@@ -41,7 +41,7 @@ const EXCLUDED_GAMEMODES = new Set<GameMode>([GameMode.Creative, GameMode.Specta
  * Distributes an in-game alert notification to active staff players when
  * a player is detected flying or hovering unnaturally.
  *
- * @param player - The player detected by the check loop.
+ * @param {Player} player - The player detected by the check loop.
  */
 function alertStaff(player: Player): void {
     const currentTick = system.currentTick;
@@ -63,7 +63,7 @@ function alertStaff(player: Player): void {
  * Event handler triggered prior to a player leaving the server.
  * Cleans up internal memory caches associated with the player.
  *
- * @param event - The player leave before event object.
+ * @param {PlayerLeaveBeforeEvent} event - The player leave before event object.
  */
 function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent): void {
     const playerId = event.player?.id;
@@ -79,7 +79,7 @@ function onPlayerLeaveReset(event: PlayerLeaveBeforeEvent): void {
  * Event handler triggered when an item is used by a player.
  * Flags players using tridents to bypass false-positive velocity detections.
  *
- * @param event - The item use before event object.
+ * @param {ItemUseBeforeEvent} event - The item use before event object.
  */
 function onItemUseCheck(event: ItemUseBeforeEvent): void {
     const player = event.source;
@@ -93,11 +93,11 @@ function onItemUseCheck(event: ItemUseBeforeEvent): void {
 /**
  * Performs a fast 3x3 surrounding ground density scan using integer vector math.
  *
- * @param dimension - Target dimension instance.
- * @param baseX - Floor-aligned X coordinate below the player.
- * @param baseY - Floor-aligned Y coordinate below the player.
- * @param baseZ - Floor-aligned Z coordinate below the player.
- * @returns True if the majority (> 4) of surrounding 3x3 foot-level blocks are air.
+ * @param {Dimension} dimension - Target dimension instance.
+ * @param {number} baseX - Floor-aligned X coordinate below the player.
+ * @param {number} baseY - Floor-aligned Y coordinate below the player.
+ * @param {number} baseZ - Floor-aligned Z coordinate below the player.
+ * @returns {boolean} True if the majority (> 4) of surrounding 3x3 foot-level blocks are air.
  */
 function checkIsMajorityAirBelow(dimension: Dimension, baseX: number, baseY: number, baseZ: number): boolean {
     let airCount = 0;
@@ -113,6 +113,146 @@ function checkIsMajorityAirBelow(dimension: Dimension, baseX: number, baseY: num
     }
 
     return airCount > 4;
+}
+
+/**
+ * Decrements the hover tick counter for a player if currently active.
+ *
+ * @param {string} playerId - Target player ID.
+ */
+function decrementHover(playerId: string): void {
+    const currentHover = hoverTicks.get(playerId) ?? 0;
+    if (currentHover > 0) {
+        hoverTicks.set(playerId, currentHover - 1);
+    }
+}
+
+/**
+ * Checks native states and clearance levels to determine if checking should be bypassed.
+ *
+ * @param {Player} player - Target player.
+ * @param {Vector3} location - Player location.
+ * @param {Dimension} dimension - Player dimension.
+ * @returns {boolean} True if the player should be exempted from flight checks.
+ */
+function isExemptFromFlyCheck(player: Player, location: Vector3, dimension: Dimension): boolean {
+    if (EXCLUDED_GAMEMODES.has(player.getGameMode())) return true;
+    if (player.isGliding || player.isClimbing || player.isInWater) return true;
+
+    if (tridentUsage.get(player.id)) {
+        tridentUsage.set(player.id, false);
+        return true;
+    }
+
+    if ((player.getDynamicProperty("securityClearance") as number) === 4) return true;
+
+    const { min: minHeight, max: maxHeight } = dimension.heightRange;
+    return location.y < minHeight || location.y >= maxHeight;
+}
+
+/**
+ * Scans up to 3 blocks beneath the player position to determine if solid ground or liquid exists.
+ *
+ * @param {Dimension} dimension - Active dimension instance.
+ * @param {number} bx - Floor X position.
+ * @param {number} by - Floor Y position.
+ * @param {number} bz - Floor Z position.
+ * @returns {boolean} True if ground or liquid was found within 3 blocks.
+ */
+function checkBlockGround(dimension: Dimension, bx: number, by: number, bz: number): boolean {
+    for (let offset = 1; offset <= 3; offset++) {
+        const blk = dimension.getBlock({ x: bx, y: by - offset, z: bz });
+        if (blk && (blk.isSolid || blk.isLiquid)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Evaluates flight violation status and handles mitigation enforcement.
+ *
+ * @param {Player} player - Active target player entity.
+ * @param {Dimension} dimension - Active dimension instance.
+ * @param {Vector3} velocity - Player velocity vector.
+ * @param {boolean} physicallyGrounded - Calculated grounding state.
+ * @param {number} bx - Floor X coordinate.
+ * @param {number} by - Floor Y coordinate.
+ * @param {number} bz - Floor Z coordinate.
+ */
+function processFlightViolation(player: Player, dimension: Dimension, velocity: Vector3, physicallyGrounded: boolean, bx: number, by: number, bz: number): void {
+    const isFloating = !physicallyGrounded;
+    if (!isFloating && !player.isFlying) {
+        decrementHover(player.id);
+        return;
+    }
+
+    const horizontalVelocity = Math.hypot(velocity.x, velocity.z);
+    const majorityAreAir = checkIsMajorityAirBelow(dimension, bx, by - 1, bz);
+
+    const isViolatingFlight =
+        (!player.isFalling && player.isFlying) || (velocity.y >= -0.05 && majorityAreAir && (Math.abs(velocity.y) >= VERTICAL_VELOCITY_THRESHOLD || horizontalVelocity >= HORIZONTAL_VELOCITY_THRESHOLD) && !player.isJumping && isFloating);
+
+    if (!isViolatingFlight) {
+        decrementHover(player.id);
+        return;
+    }
+
+    const hoverTime = (hoverTicks.get(player.id) ?? 0) + 1;
+    hoverTicks.set(player.id, hoverTime);
+
+    if (hoverTime >= HOVER_TIME_THRESHOLD) {
+        alertStaff(player);
+
+        const airport = landingLocations.get(player.id);
+        if (airport) {
+            player.teleport(airport, {
+                dimension,
+                checkForBlocks: true,
+                keepVelocity: false,
+            });
+        }
+
+        hoverTicks.set(player.id, 0);
+    }
+}
+
+/**
+ * Executes a flight check evaluation for a single player instance.
+ *
+ * @param {Player} player - Target player entity.
+ */
+function evaluatePlayerFlight(player: Player): void {
+    const transform = PlayerLocationCache.getTransform(player);
+    const location = transform?.location ?? player.location;
+    const dimension = transform?.dimension ?? player.dimension;
+
+    if (isExemptFromFlyCheck(player, location, dimension)) {
+        hoverTicks.delete(player.id);
+        return;
+    }
+
+    const velocity = player.getVelocity();
+    const isNaturalFalling = player.isFalling || velocity.y < -0.08;
+
+    if (player.isOnGround) {
+        landingLocations.set(player.id, { x: location.x, y: location.y, z: location.z });
+        decrementHover(player.id);
+        return;
+    }
+
+    const bx = Math.floor(location.x);
+    const by = Math.floor(location.y);
+    const bz = Math.floor(location.z);
+
+    const blockGroundFound = checkBlockGround(dimension, bx, by, bz);
+    const physicallyGrounded = blockGroundFound || isNaturalFalling;
+
+    if (blockGroundFound) {
+        landingLocations.set(player.id, { x: location.x, y: location.y, z: location.z });
+    }
+
+    processFlightViolation(player, dimension, velocity, physicallyGrounded, bx, by, bz);
 }
 
 /**
@@ -134,111 +274,11 @@ function* continuousFlyCheckLoop(): Generator<void, void, unknown> {
             if (!player?.isValid) continue;
 
             try {
-                // 1. CHEAP Native state filtering first
-                if (EXCLUDED_GAMEMODES.has(player.getGameMode())) {
-                    hoverTicks.delete(player.id);
-                    continue;
-                }
-
-                if (player.isGliding || player.isClimbing || player.isInWater) {
-                    hoverTicks.delete(player.id);
-                    continue;
-                }
-
-                if (tridentUsage.get(player.id)) {
-                    tridentUsage.set(player.id, false);
-                    hoverTicks.delete(player.id);
-                    continue;
-                }
-
-                // Optimization: Cache or short-circuit property reads if needed
-                if ((player.getDynamicProperty("securityClearance") as number) === 4) {
-                    hoverTicks.delete(player.id);
-                    continue;
-                }
-
-                const transform = PlayerLocationCache.getTransform(player);
-                const location = transform?.location ?? player.location;
-                const dimension = transform?.dimension ?? player.dimension;
-
-                const { min: minHeight, max: maxHeight } = dimension.heightRange;
-                if (location.y < minHeight || location.y >= maxHeight) {
-                    hoverTicks.delete(player.id);
-                    continue;
-                }
-
-                const velocity = player.getVelocity();
-                const isNaturalFalling = player.isFalling || velocity.y < -0.08;
-
-                // Fast Ground Short-Circuit: If physics reports ground or player is in standard falling arc, bypass chunk block lookups
-                if (player.isOnGround) {
-                    landingLocations.set(player.id, { x: location.x, y: location.y, z: location.z });
-
-                    const currentHover = hoverTicks.get(player.id) ?? 0;
-                    if (currentHover > 0) hoverTicks.set(player.id, currentHover - 1);
-                    continue;
-                }
-
-                // 2. EXPENSIVE Operations (Executes only when player is airborne)
-                const bx = Math.floor(location.x);
-                const by = Math.floor(location.y);
-                const bz = Math.floor(location.z);
-
-                let blockGroundFound = false;
-                for (let offset = 1; offset <= 3; offset++) {
-                    const blk = dimension.getBlock({ x: bx, y: by - offset, z: bz });
-                    if (blk && (blk.isSolid || blk.isLiquid)) {
-                        blockGroundFound = true;
-                        break;
-                    }
-                }
-
-                const physicallyGrounded = blockGroundFound || isNaturalFalling;
-
-                if (blockGroundFound) {
-                    landingLocations.set(player.id, { x: location.x, y: location.y, z: location.z });
-                }
-
-                const isFloating = !physicallyGrounded;
-                if (!isFloating && !player.isFlying) {
-                    const currentHover = hoverTicks.get(player.id) ?? 0;
-                    if (currentHover > 0) hoverTicks.set(player.id, currentHover - 1);
-                    continue;
-                }
-
-                const horizontalVelocity = Math.hypot(velocity.x, velocity.z);
-                const majorityAreAir = checkIsMajorityAirBelow(dimension, bx, by - 1, bz);
-
-                const isViolatingFlight =
-                    (!player.isFalling && player.isFlying) || (velocity.y >= -0.05 && majorityAreAir && (Math.abs(velocity.y) >= VERTICAL_VELOCITY_THRESHOLD || horizontalVelocity >= HORIZONTAL_VELOCITY_THRESHOLD) && !player.isJumping && isFloating);
-
-                if (isViolatingFlight) {
-                    const hoverTime = (hoverTicks.get(player.id) ?? 0) + 1;
-                    hoverTicks.set(player.id, hoverTime);
-
-                    if (hoverTime >= HOVER_TIME_THRESHOLD) {
-                        alertStaff(player);
-
-                        const airport = landingLocations.get(player.id);
-                        if (airport) {
-                            player.teleport(airport, {
-                                dimension: dimension,
-                                checkForBlocks: true,
-                                keepVelocity: false,
-                            });
-                        }
-
-                        hoverTicks.set(player.id, 0);
-                    }
-                } else {
-                    const currentHover = hoverTicks.get(player.id) ?? 0;
-                    if (currentHover > 0) hoverTicks.set(player.id, currentHover - 1);
-                }
+                evaluatePlayerFlight(player);
             } catch {
                 // Ignore structural chunk rendering loading bounds errors safely
             }
 
-            // Yield control only once batch budget is reached
             processedInBatch++;
             if (processedInBatch >= PLAYERS_PER_YIELD_BATCH) {
                 processedInBatch = 0;
