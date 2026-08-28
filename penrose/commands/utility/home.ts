@@ -122,7 +122,12 @@ function parseAdminFlags(args: string[]): AdminHomeFlags {
         }
     }
 
-    return { isGlobal, targetName, limitVal, resetLimit };
+    return {
+        isGlobal,
+        targetName,
+        resetLimit,
+        ...(limitVal !== undefined ? { limitVal } : {}),
+    };
 }
 
 /**
@@ -633,7 +638,7 @@ export const homeCommand: Command = {
         const rawDbEntry = (await homesDB.get(player.id)) as HomeDatabaseEntry | undefined;
         const dbEntry: HomeDatabaseEntry = {
             locations: Array.isArray(rawDbEntry?.locations) ? rawDbEntry.locations : [],
-            maxHomes: rawDbEntry?.maxHomes,
+            ...(rawDbEntry?.maxHomes !== undefined ? { maxHomes: rawDbEntry.maxHomes } : {}),
         };
 
         const subCommand = args[0]?.toLowerCase();
