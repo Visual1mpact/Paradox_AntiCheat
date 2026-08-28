@@ -218,6 +218,117 @@ class GUIManager {
     }
 
     /**
+     * Resolves the string array options for a dynamic dropdown based on its sourceType.
+     * @param {DynamicField} field - Target dropdown field configuration.
+     * @returns {Promise<string[]>} Resolved dropdown options.
+     */
+    private async resolveDropdownOptions(field: DynamicField): Promise<string[]> {
+        if (field.sourceType === "players") {
+            return [...PlayerCache.getPlayerNames()];
+        }
+        if (field.sourceType === "entities") {
+            const transform = PlayerLocationCache.getTransform(this.player);
+            const dimension = transform?.dimension ?? world.getDimension(this.player.dimension.id);
+            return [...new Set(dimension.getEntities({ excludeTypes: ["player"] }).map((e) => e.typeId.replace("minecraft:", "")))];
+        }
+        if (field.sourceType === "chests") {
+            return [...chestLockDB.listPointers()].map((ptr) => {
+                const key = ptr.split("/").pop() ?? "";
+                return key.replace(/^minecraft:/, "");
+            });
+        }
+        if (field.sourceType === "playerWaypoints") {
+            const dbEntry = (await waypointsDB.get(this.player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
+            const options = Object.keys(dbEntry?.savedWaypoints ?? {});
+            return options.length > 0 ? options : ["No Waypoints Saved"];
+        }
+        if (field.sourceType === "playerHomes") {
+            const dbEntry = await homesDB.get(this.player.id);
+            const locations = dbEntry?.locations ?? [];
+            const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
+            const options = locations.map((enc) => {
+                try {
+                    const bytes = CryptoES.AES.decrypt(enc, obfuscatedKey);
+                    const decrypted = bytes.toString(CryptoES.Utf8);
+                    return decrypted.split(":")[1] ?? "Unknown";
+                } catch {
+                    return "Corrupted Data";
+                }
+            });
+            return options.length > 0 ? options : ["No Homes Saved"];
+        }
+        if (field.sourceType === "custom" && field.requiredFields?.includes("claimId")) {
+            const userClaims = LandClaimManager.getInstance().getClaimsByOwner(this.player.id);
+            const options = userClaims.map((claim) => claim.id);
+            return options.length > 0 ? options : ["No Claims Found"];
+        }
+        return field.options ?? [""];
+    }
+
+    /**
+     * Formats plain field strings to Title Case display values.
+     * @param {string} value - String value to format.
+     * @returns {string} Formatted Title Case string.
+     */
+    private formatFieldString(value?: string): string {
+        return (value ?? "")
+            .split(" ")
+            .map((w) => (w[0] ? w[0].toUpperCase() + w.slice(1) : ""))
+            .join(" ");
+    }
+
+    /**
+     * Renders an individual dynamic field element into the ModalFormData instance.
+     * @param {ModalFormData} form - Target modal form instance.
+     * @param {DynamicField} field - Dynamic field definition.
+     */
+    private async renderFormField(form: ModalFormData, field: DynamicField): Promise<void> {
+        const formattedName = this.formatFieldString(field.name);
+        const formattedPlaceholder = this.formatFieldString(field.placeholder);
+
+        switch (field.type) {
+            case "text":
+                form.textField(formattedName, formattedPlaceholder);
+                break;
+            case "dropdown": {
+                field.options = await this.resolveDropdownOptions(field);
+                form.dropdown(formattedName, field.options.length > 0 ? field.options : [""], { defaultValueIndex: 0 });
+                break;
+            }
+            case "toggle":
+                form.toggle(formattedName, { defaultValue: false });
+                break;
+        }
+    }
+
+    /**
+     * Handles modal form cancellation or close events.
+     * @param {ModalFormResponse} response - Server UI form response.
+     * @param {DynamicField[]} fields - Form fields collection.
+     * @param {string} title - Modal title.
+     * @param {Command} command - Parent command context.
+     * @param {string[]} commandArray - Command flags array.
+     * @param {boolean} [cryptoES] - Cryptographic toggle flag.
+     * @param {string} [commandOrder] - Argument position ordering rules.
+     * @param {string[]} [requiredFields] - Required fields array.
+     */
+    private async handleModalCancellation(
+        response: ModalFormResponse,
+        fields: DynamicField[],
+        title: string,
+        command: Command,
+        commandArray: string[],
+        cryptoES?: boolean,
+        commandOrder?: string,
+        requiredFields?: string[]
+    ): Promise<void> {
+        if (response.cancelationReason === "UserBusy") {
+            return this.showModalForm(fields, title, command, commandArray, cryptoES, commandOrder, requiredFields);
+        }
+        return this.buildCommandMenu(command);
+    }
+
+    /**
      * Shows a ModalFormData form to collect dynamic input from the player.
      *
      * @param {DynamicField[]} fields - Dynamic fields to render in the modal.
@@ -231,98 +342,21 @@ class GUIManager {
     private async showModalForm(fields: DynamicField[], title: string, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]): Promise<void> {
         const form = new ModalFormData().title(title);
 
-        // Build form fields dynamically
         for (const field of fields) {
-            const name = field.name || "";
-            const placeholder = field.placeholder || "";
-            const formattedName = name
-                .split(" ")
-                .map((w) => (w[0] ? w[0].toUpperCase() + w.slice(1) : ""))
-                .join(" ");
-            const formattedPlaceholder = (placeholder ?? "")
-                .split(" ")
-                .map((w) => (w[0] ? w[0].toUpperCase() + w.slice(1) : ""))
-                .join(" ");
-
-            switch (field.type) {
-                case "text":
-                    form.textField(formattedName, formattedPlaceholder);
-                    break;
-                case "dropdown":
-                    // Populate dropdown dynamically based on sourceType
-                    if (field.sourceType === "players") {
-                        field.options = [...PlayerCache.getPlayerNames()];
-                    } else if (field.sourceType === "entities") {
-                        // Use location cache to fetch the cached dimension instance safely
-                        const transform = PlayerLocationCache.getTransform(this.player);
-                        const dimension = transform?.dimension ?? world.getDimension(this.player.dimension.id);
-
-                        field.options = [...new Set(dimension.getEntities({ excludeTypes: ["player"] }).map((e) => e.typeId.replace("minecraft:", "")))];
-                    } else if (field.sourceType === "chests") {
-                        // Pull all locked chest keys from chestLockDB
-                        field.options = [...chestLockDB.listPointers()].map((ptr) => {
-                            const key = ptr.split("/").pop() ?? "";
-                            return key.replace(/^minecraft:/, ""); // remove prefix for display
-                        });
-                    } else if (field.sourceType === "playerWaypoints") {
-                        // Pull saved waypoint names from waypointsDB
-                        const dbEntry = (await waypointsDB.get(this.player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
-                        const savedWaypoints = dbEntry?.savedWaypoints ?? {};
-                        field.options = Object.keys(savedWaypoints);
-                        if (!field.options || field.options.length === 0) field.options = ["No Waypoints Saved"];
-                    } else if (field.sourceType === "playerHomes") {
-                        // Pull saved homes from database and decrypt names for display
-                        const dbEntry = await homesDB.get(this.player.id);
-                        const locations = dbEntry?.locations ?? [];
-                        const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
-                        field.options = locations.map((enc) => {
-                            try {
-                                const bytes = CryptoES.AES.decrypt(enc, obfuscatedKey);
-                                const decrypted = bytes.toString(CryptoES.Utf8);
-                                return decrypted.split(":")[1] ?? "Unknown";
-                            } catch {
-                                return "Corrupted Data";
-                            }
-                        });
-                        if (field.options.length === 0) field.options = ["No Homes Saved"];
-                    } else if (field.sourceType === "custom") {
-                        // Dynamically populate options based on required context (e.g., Claim IDs owned by the player)
-                        if (field.requiredFields?.includes("claimId")) {
-                            const userClaims = LandClaimManager.getInstance().getClaimsByOwner(this.player.id);
-                            field.options = userClaims.map((claim) => claim.id);
-                            if (field.options.length === 0) {
-                                field.options = ["No Claims Found"];
-                            }
-                        }
-                    }
-
-                    form.dropdown(formattedName, field.options ?? [""], { defaultValueIndex: 0 });
-                    break;
-                case "toggle":
-                    form.toggle(formattedName, { defaultValue: false });
-                    break;
-            }
+            await this.renderFormField(form, field);
         }
 
         try {
             const response = await form.show(this.player);
 
-            // Return to the previous command menu when user cancels or closes the modal
             if (response.canceled) {
-                if (response.cancelationReason === "UserBusy") {
-                    // Re-open current modal if the UI interaction was interrupted by another screen
-                    return this.showModalForm(fields, title, command, commandArray, cryptoES, commandOrder, requiredFields);
-                }
-                // Navigate back to the command GUI menu
-                return this.buildCommandMenu(command);
+                return await this.handleModalCancellation(response, fields, title, command, commandArray, cryptoES, commandOrder, requiredFields);
             }
 
-            // Parse response into command arguments
             const args = this.parseFormResponse(response, fields, requiredFields);
             const finalCommand = this.buildCommandString(commandOrder, commandArray, args);
 
             const chatSendBeforeEvent = { cancel: false, message: "", sender: this.player };
-            // Execute the command with optional encryption
             command.execute(chatSendBeforeEvent, finalCommand, cryptoES ? CryptoES : undefined);
         } catch (err) {
             this.handleFormError(err);
