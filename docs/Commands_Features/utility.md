@@ -18,9 +18,9 @@ The `broadcast` command allows Administrators to send server-wide announcements 
 - The command supports flags to target specific UI elements. You must provide at least one field for the broadcast to be valid.
 - Subtitles are displayed alongside titles. If only a subtitle is provided, a blank title is used to maintain visibility.
 
-> Usage: ":broadcast [ -t | --title <text> ] [ -s | --subtitle <text> ] [ -a | --actionbar <text> ]"
-> Example: :broadcast -t "Event Starting!" -s "Meet at Spawn"
-> Example: :broadcast -a "Maintenance in 5 minutes"
+> Usage: ":broadcast [ -t | --title <text> ] [ -s | --subtitle <text> ] [ -a | --actionbar <text> ]"  
+> Example: :broadcast -t "Event Starting!" -s "Meet at Spawn"  
+> Example: :broadcast -a "Maintenance in 5 minutes"  
 
 ### **GUI Integration**
 - Found under the **Utility** category in the administrative GUI.
@@ -50,7 +50,7 @@ The `channels` command allows players to manage private chat channels. Players c
 - All changes notify relevant players to ensure smooth communication.
 
 
-> Usage: ":channel <create | join | invite | leave | transfer | help>"   
+> Usage: ":channel <create | join | invite | leave | transfer | help>"  
 > Example: :channel create --room myTeam  
 > Example: :channel join --room myTeam  
 > Example: :channel invite --room myTeam --target Visual1mpact  
