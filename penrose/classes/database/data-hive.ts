@@ -8,28 +8,29 @@ export type DatabaseValueObject = Record<string, any>;
 
 /**
  * UTF-16 Safe LZW Compressor optimized for JS/Minecraft Dynamic Properties.
- * Handles full Unicode range safely without byte/null corruption and packs dictionary
- * codes using base-36 string encoding for low storage footprint.
+ * Translates repetitive strings/JSON patterns into compact arrays and avoids
+ * unpaired surrogate code points (0xD800-0xDFFF) that corrupt Bedrock NBT storage.
  */
 class LZCompressor {
     /**
-     * Compresses a UTF-16 string using LZW with standard variable-length characters.
+     * Compresses an uncompressed UTF-8/UTF-16 string using the LZW algorithm.
      * @param uncompressed Raw input string (e.g., stringified JSON).
-     * @returns Compact encoded string representation of LZW dictionary codes.
+     * @returns LZW compressed payload stringified safely as JSON array.
      */
     public static compress(uncompressed: string): string {
         if (!uncompressed) return "";
 
+        let dictSize = 256;
         const dictionary = new Map<string, number>();
-        let dictSize = 0;
+        for (let i = 0; i < 256; i++) {
+            dictionary.set(String.fromCharCode(i), i);
+        }
+
         let w = "";
         const result: number[] = [];
 
         for (let i = 0; i < uncompressed.length; i++) {
             const c = uncompressed.charAt(i);
-            if (!dictionary.has(c)) {
-                dictionary.set(c, dictSize++);
-            }
             const wc = w + c;
             if (dictionary.has(wc)) {
                 w = wc;
@@ -44,106 +45,32 @@ class LZCompressor {
             result.push(dictionary.get(w)!);
         }
 
-        const initialChars = LZCompressor.buildCharMap(dictionary);
-        const header = JSON.stringify(initialChars);
-        const encodedCodes = result.map((code) => code.toString(36)).join(" ");
-
-        return `${header.length}:${header}${encodedCodes}`;
+        return JSON.stringify(result);
     }
 
     /**
-     * Maps initial character values for LZW header initialization.
-     * @param dictionary Dictionary of characters and assigned IDs.
-     * @returns Array of character entries.
-     */
-    private static buildCharMap(dictionary: Map<string, number>): string[] {
-        const initialChars: string[] = [];
-        dictionary.forEach((code, char) => {
-            if (code < initialChars.length || initialChars[code] === undefined) {
-                initialChars[code] = char;
-            }
-        });
-        return initialChars;
-    }
-
-    /**
-     * Decompresses an LZW-packed string back to its original raw form.
-     * @param compressed Packed dynamic LZW compressed payload.
-     * @returns Decompressed string or empty string on parse failure.
+     * Decompresses an LZW-compressed string back to its original raw form.
+     * @param compressed LZW packed input stringified array.
+     * @returns Decompressed raw text/JSON.
      */
     public static decompress(compressed: string): string {
         if (!compressed) return "";
 
-        const splitIdx = compressed.indexOf(":");
-        if (splitIdx === -1) return "";
+        const compressedCodes = LZCompressor.parseCodes(compressed);
+        if (!compressedCodes || compressedCodes.length === 0) return "";
 
-        const headerLen = parseInt(compressed.slice(0, splitIdx), 10);
-        if (isNaN(headerLen)) return "";
+        const dictionary = LZCompressor.buildInitialDictionary();
+        let dictSize = 256;
 
-        const headerJson = compressed.slice(splitIdx + 1, splitIdx + 1 + headerLen);
-        const codePayload = compressed.slice(splitIdx + 1 + headerLen);
-
-        const initialChars = LZCompressor.parseHeader(headerJson);
-        if (!initialChars) return "";
-
-        const compressedCodes = codePayload
-            .split(" ")
-            .filter((c) => c.length > 0)
-            .map((c) => parseInt(c, 36));
-
-        return LZCompressor.decodeCodes(compressedCodes, initialChars);
-    }
-
-    /**
-     * Safely parses header JSON into character string array.
-     * @param headerJson Stringified JSON array of header chars.
-     * @returns Parsed string array or undefined if invalid.
-     */
-    private static parseHeader(headerJson: string): string[] | undefined {
-        try {
-            const parsed = JSON.parse(headerJson);
-            return Array.isArray(parsed) && parsed.length > 0 ? parsed : undefined;
-        } catch {
-            return undefined;
-        }
-    }
-
-    /**
-     * Decodes numeric LZW codes back into original text format.
-     * @param codes Numerical dictionary codes.
-     * @param initialChars Character array mapping dictionary IDs.
-     * @returns Decoded text string.
-     */
-    private static decodeCodes(codes: number[], initialChars: string[]): string {
-        if (codes.length === 0) return "";
-
-        const dictionary = new Map<number, string>();
-        let dictSize = 0;
-
-        for (let i = 0; i < initialChars.length; i++) {
-            const initialChar = initialChars[i];
-            if (initialChar === undefined) return "";
-            dictionary.set(dictSize++, initialChar);
-        }
-
-        const firstCode = codes[0];
-        if (firstCode === undefined || !dictionary.has(firstCode)) return "";
-
-        let w = dictionary.get(firstCode)!;
+        let w = String.fromCharCode(compressedCodes[0]!);
         let result = w;
 
-        for (let i = 1; i < codes.length; i++) {
-            const k = codes[i];
-            if (k === undefined || isNaN(k)) return "";
+        for (let i = 1; i < compressedCodes.length; i++) {
+            const k = compressedCodes[i];
+            if (k === undefined) return "";
 
-            let entry = "";
-            if (dictionary.has(k)) {
-                entry = dictionary.get(k)!;
-            } else if (k === dictSize) {
-                entry = w + w.charAt(0);
-            } else {
-                return "";
-            }
+            const entry = LZCompressor.resolveEntry(k, dictSize, w, dictionary);
+            if (!entry) return "";
 
             result += entry;
             dictionary.set(dictSize++, w + entry.charAt(0));
@@ -151,6 +78,50 @@ class LZCompressor {
         }
 
         return result;
+    }
+
+    /**
+     * Safely parses compressed string into code array.
+     * @param compressed Raw compressed JSON array string.
+     * @returns Array of numerical codes or undefined.
+     */
+    private static parseCodes(compressed: string): number[] | undefined {
+        try {
+            const parsed = JSON.parse(compressed);
+            return Array.isArray(parsed) ? parsed : undefined;
+        } catch {
+            return undefined;
+        }
+    }
+
+    /**
+     * Builds the initial 256-character dictionary for LZW decompression.
+     * @returns Prepared map dictionary.
+     */
+    private static buildInitialDictionary(): Map<number, string> {
+        const dictionary = new Map<number, string>();
+        for (let i = 0; i < 256; i++) {
+            dictionary.set(i, String.fromCharCode(i));
+        }
+        return dictionary;
+    }
+
+    /**
+     * Resolves single LZW dictionary entry step.
+     * @param k Code identifier.
+     * @param dictSize Current dictionary length.
+     * @param w Current dictionary sequence window.
+     * @param dictionary Decompression dictionary map.
+     * @returns Resolved string sequence.
+     */
+    private static resolveEntry(k: number, dictSize: number, w: string, dictionary: Map<number, string>): string | undefined {
+        if (dictionary.has(k)) {
+            return dictionary.get(k)!;
+        }
+        if (k === dictSize) {
+            return w + w.charAt(0);
+        }
+        return undefined;
     }
 }
 

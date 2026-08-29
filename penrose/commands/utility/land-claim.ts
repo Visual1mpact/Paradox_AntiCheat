@@ -643,7 +643,12 @@ export class LandClaimManager {
      * @returns `true` if player is owner or member; otherwise `false`.
      */
     public isAuthorized(player: Player, claim: ClaimData): boolean {
-        return claim.ownerUuid === player.id || claim.members.includes(player.id) || claim.members.includes(player.name);
+        return (
+            claim.ownerUuid === player.id ||
+            claim.ownerName === player.name || // Fallback check for owner name
+            claim.members.includes(player.id) ||
+            claim.members.includes(player.name)
+        );
     }
 
     /**
