@@ -3,8 +3,19 @@
 <div align="center">
   <img src="Media\paradox-header.png" alt="Paradox AntiCheat Logo">
   <br><br>
-  <p><b>Updated for Minecraft Bedrock 1.26.30</b><br>
-Paradox AntiCheat now utilizes the 2.9.0-Beta server, 1.0.0-Beta server-net, 1.0.0-Beta server-admin and 2.2.0-Beta server-ui APIs, enhancing compatibility and performance for Minecraft Bedrock; both Realms and BDS environments.</p>
+  <p><b>Updated for Minecraft Bedrock v1.26.40</b><br>
+Paradox AntiCheat utilizes modern Bedrock Scripting APIs to enhance compatibility and performance across both Realms and BDS environments.</p>
+  <br>
+
+### 📦 API Compatibility Matrix
+
+| API Module | Required Version | Description / Purpose |
+| :---: | :---: | :--- |
+| `@minecraft/server` | `2.10.0-Beta` | Core Script Engine API for world events, entity handling, block management, and main logic loops. |
+| `@minecraft/server-net` | `1.0.0-Beta` | Handles external HTTP network communication for remote logging, telemetry, and external server synchronization. |
+| `@minecraft/server-admin` | `1.0.0-Beta` | Manages elevated server administrative functions, secret configuration properties, and execution variables. |
+| `@minecraft/server-ui` | `2.2.0-Beta` | Renders custom in-game UI menus, dynamic modal dialogs, and action forms directly to players. |
+
   <br><br>
 </div>
 
