@@ -210,7 +210,7 @@ export const moduleStopActions: Record<string, () => void> = {
         };
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: false });
     },
-    hotbarCheck_b: () => stopHotbarCheck,
+    hotbarCheck_b: () => stopHotbarCheck(),
 };
 
 /** Action callbacks to initialize/start module execution routines */
@@ -269,7 +269,7 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
         };
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: true });
     },
-    hotbarCheck_b: () => startHotbarCheck,
+    hotbarCheck_b: () => startHotbarCheck(),
 };
 
 /** Master list of all Paradox commands */
