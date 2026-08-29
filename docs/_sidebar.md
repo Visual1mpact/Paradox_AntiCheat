@@ -2,6 +2,7 @@
 
 * **Getting Started**
     * [Home](README.md)
+    * [Documentation Overview](documentation.md)
     * [Installation](gettingstarted.md)
     * [Contributing](Contributing/gettinginvolved.md)
 
