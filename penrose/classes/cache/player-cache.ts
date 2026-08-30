@@ -4,7 +4,7 @@ import { EventCoordinator } from "../core/event-coordinator";
 /**
  * Centralized cache of online players.
  * Eliminates repeated calls to `world.getPlayers()` across scripts.
- * Provides high-performance iteration, filtered access, and auto-cleanup of ghost/invalid players.
+ * Provides O(1) lookups, array snapshots, and lazy iterable access.
  */
 export class PlayerCache {
     /** Map of player ID -> Player object */
@@ -14,8 +14,10 @@ export class PlayerCache {
     /** Tracking map of player ID -> player name to safely prune names when Player reference becomes invalid */
     private static nameByPlayerId = new Map<string, string>();
 
-    /** Cached array representation of active players to avoid generator allocation overhead during frequent loops */
+    /** Internal array buffer for O(1) reads without GC allocations */
     private static cachedPlayerArray: Player[] = [];
+    /** Cached array of active player names */
+    private static cachedNameArray: string[] = [];
     private static arrayDirty = true;
 
     /** Prevents double initialization */
@@ -34,20 +36,19 @@ export class PlayerCache {
     /**
      * Initializes the player cache.
      * Subscribes to player join/leave events and populates initial cache.
-     * Safe to call multiple times; will only initialize once.
      */
-    public static init() {
+    public static init(): void {
         if (this.initialized) return;
         this.initialized = true;
 
-        // Populate initial cache
-        for (const player of world.getPlayers()) {
+        const initialPlayers = world.getPlayers();
+        for (let i = 0; i < initialPlayers.length; i++) {
+            const player = initialPlayers[i]!;
             if (player?.isValid) {
                 this.cachePlayer(player);
             }
         }
 
-        // Subscribe to player spawn (handles both initial join and respawns/dimension changes)
         this.spawnSubscription = (ev: PlayerSpawnAfterEvent) => {
             const p = ev.player;
             if (p?.isValid) {
@@ -56,32 +57,27 @@ export class PlayerCache {
         };
         EventCoordinator.subscribeAfter("playerSpawn", this.spawnSubscription);
 
-        // Subscribe to player leave
         this.leaveSubscription = (ev: PlayerLeaveBeforeEvent) => {
-            // Safely attempt to extract player ID
             try {
                 const playerId = ev.player?.id;
                 if (playerId) {
                     this.uncachePlayer(playerId);
                 }
             } catch {
-                // If native object is already destroyed, fallback to reconcile cleanup
                 this.reconcileCache();
             }
         };
         EventCoordinator.subscribeBefore("playerLeave", this.leaveSubscription);
 
-        // Start periodic cleanup and reference update
         this.cleanupInterval = system.runInterval(() => this.reconcileCache(), this.CLEANUP_INTERVAL_TICKS);
     }
 
     /** Helper to register/update player in maps safely */
-    private static cachePlayer(player: Player) {
+    private static cachePlayer(player: Player): void {
         try {
             const id = player.id;
             const name = player.name;
 
-            // Invalidate old name mapping if name changed mid-session
             const existingName = this.nameByPlayerId.get(id);
             if (existingName && existingName !== name) {
                 this.playersByName.delete(existingName);
@@ -97,7 +93,7 @@ export class PlayerCache {
     }
 
     /** Helper to remove player by ID without accessing player properties */
-    private static uncachePlayer(id: string) {
+    private static uncachePlayer(id: string): void {
         const cachedName = this.nameByPlayerId.get(id);
         if (cachedName) {
             this.playersByName.delete(cachedName);
@@ -107,15 +103,13 @@ export class PlayerCache {
         this.arrayDirty = true;
     }
 
-    /**
-     * Removes disconnected players and refreshes references with fresh instances from world.getPlayers().
-     */
-    private static reconcileCache() {
+    /** Removes disconnected players and refreshes references with fresh instances */
+    private static reconcileCache(): void {
         const onlinePlayers = world.getPlayers();
         const activeIds = new Set<string>();
 
-        // Re-populate with fresh, valid player objects
-        for (const player of onlinePlayers) {
+        for (let i = 0; i < onlinePlayers.length; i++) {
+            const player = onlinePlayers[i]!;
             if (player?.isValid) {
                 try {
                     activeIds.add(player.id);
@@ -126,8 +120,9 @@ export class PlayerCache {
             }
         }
 
-        // Prune cache entries no longer online or loaded without extra array allocations
-        for (const id of this.playersById.keys()) {
+        const keys = Array.from(this.playersById.keys());
+        for (let i = 0; i < keys.length; i++) {
+            const id = keys[i]!;
             if (!activeIds.has(id)) {
                 this.uncachePlayer(id);
             }
@@ -135,43 +130,73 @@ export class PlayerCache {
         this.arrayDirty = true;
     }
 
+    /** Rebuilds array buffers without creating new heap allocations */
+    private static updateBuffer(): void {
+        if (!this.arrayDirty) return;
+
+        this.cachedPlayerArray.length = 0;
+        this.cachedNameArray.length = 0;
+
+        for (const player of this.playersById.values()) {
+            try {
+                if (player.isValid) {
+                    this.cachedPlayerArray.push(player);
+                    this.cachedNameArray.push(player.name);
+                }
+            } catch {
+                // Skip destroyed handles
+            }
+        }
+        this.arrayDirty = false;
+    }
+
     /**
-     * Returns an array snapshot of all currently active players.
-     * Reuses an internal array buffer to eliminate GC allocations during tick loops.
+     * Returns the internal cached player array directly in O(1) time.
+     * WARNING: Do not mutate this array directly as it will affect internal cache references.
+     * @returns {readonly Player[]} Direct array reference buffer
      */
     public static getAllPlayers(): readonly Player[] {
-        if (this.arrayDirty) {
-            this.cachedPlayerArray = [];
-            for (const player of this.playersById.values()) {
-                try {
-                    if (player.isValid) {
-                        this.cachedPlayerArray.push(player);
-                    }
-                } catch {
-                    // Skip destroyed handles
-                }
-            }
-            this.arrayDirty = false;
-        }
+        this.updateBuffer();
         return this.cachedPlayerArray;
     }
 
     /**
-     * Returns the internal cached player array directly.
-     * Eliminates the need for Array.from() or spread operators when direct array access/indexing is required.
+     * Returns the internal cached player array directly in O(1) time.
+     * Alias for `getAllPlayers()`.
+     * @returns {readonly Player[]} Direct array reference buffer
      */
     public static getPlayersArray(): readonly Player[] {
         return this.getAllPlayers();
     }
 
-    /** Returns an iterator of all valid cached player names */
-    public static *getPlayerNames(): IterableIterator<string> {
-        for (const name of this.playersByName.keys()) {
-            yield name;
+    /**
+     * Returns a new mutable Array copy of online players.
+     * Allows callers to safely push, pop, or sort array elements without mutating cache state.
+     * @returns {Player[]} Writable Player array copy
+     */
+    public static getPlayersArrayCopy(): Player[] {
+        this.updateBuffer();
+        const copy = new Array<Player>(this.cachedPlayerArray.length);
+        for (let i = 0; i < this.cachedPlayerArray.length; i++) {
+            copy[i] = this.cachedPlayerArray[i]!;
         }
+        return copy;
     }
 
-    /** Returns a cached player by their unique ID if valid */
+    /**
+     * Returns an array of cached player names in O(1) time.
+     * @returns {string[]} Array of player names
+     */
+    public static getPlayerNamesArray(): string[] {
+        this.updateBuffer();
+        return this.cachedNameArray;
+    }
+
+    /**
+     * Returns a cached player by their unique ID if valid in O(1) time.
+     * @param {string} id - Player ID
+     * @returns {Player | undefined} Player object or undefined
+     */
     public static getPlayerById(id: string): Player | undefined {
         const player = this.playersById.get(id);
         if (!player) return undefined;
@@ -183,7 +208,11 @@ export class PlayerCache {
         return undefined;
     }
 
-    /** Returns a cached player by their exact username if valid */
+    /**
+     * Returns a cached player by their exact username if valid in O(1) time.
+     * @param {string} name - Exact player name
+     * @returns {Player | undefined} Player object or undefined
+     */
     public static getPlayerByName(name: string): Player | undefined {
         const player = this.playersByName.get(name);
         if (!player) return undefined;
@@ -196,23 +225,34 @@ export class PlayerCache {
         return undefined;
     }
 
-    /** Iterator over all currently valid cached players */
+    // --- ITERATORS & GENERATORS ---
+
+    /** Lazy iterable iterator over all valid cached players */
     public static *getPlayers(): IterableIterator<Player> {
-        const players = this.getAllPlayers();
-        for (const player of players) {
-            yield player;
+        this.updateBuffer();
+        for (let i = 0; i < this.cachedPlayerArray.length; i++) {
+            yield this.cachedPlayerArray[i]!;
         }
     }
 
-    /** Iterator over [ID, Player] entries for valid players */
+    /** Lazy iterable iterator of all valid cached player names */
+    public static *getPlayerNames(): IterableIterator<string> {
+        this.updateBuffer();
+        for (let i = 0; i < this.cachedNameArray.length; i++) {
+            yield this.cachedNameArray[i]!;
+        }
+    }
+
+    /** Lazy iterable iterator over [ID, Player] entries for valid players */
     public static *entries(): IterableIterator<[string, Player]> {
-        const players = this.getAllPlayers();
-        for (const player of players) {
+        this.updateBuffer();
+        for (let i = 0; i < this.cachedPlayerArray.length; i++) {
+            const player = this.cachedPlayerArray[i]!;
             yield [player.id, player];
         }
     }
 
-    /** Iterator over players whose IDs exist in the provided Set and are valid */
+    /** Lazy iterable iterator over players matching the provided set of IDs */
     public static *filterByIds(ids: Set<string>): IterableIterator<Player> {
         for (const id of ids) {
             const player = this.getPlayerById(id);
@@ -222,17 +262,19 @@ export class PlayerCache {
         }
     }
 
-    /** Number of currently valid cached players */
+    /** Returns the total count of online cached players in O(1) time */
     public static size(): number {
-        return this.getAllPlayers().length;
+        this.updateBuffer();
+        return this.cachedPlayerArray.length;
     }
 
     /** Clears the cache, unsubscribes from events, and stops auto-cleanup */
-    public static destroy() {
+    public static destroy(): void {
         this.playersById.clear();
         this.playersByName.clear();
         this.nameByPlayerId.clear();
-        this.cachedPlayerArray = [];
+        this.cachedPlayerArray.length = 0;
+        this.cachedNameArray.length = 0;
         this.arrayDirty = true;
 
         if (this.spawnSubscription) {
