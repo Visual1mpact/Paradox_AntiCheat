@@ -235,7 +235,92 @@ class GUIManager {
     }
 
     /**
-     * Resolves the string array options for a dynamic dropdown based on its sourceType in O(1) allocation structures.
+     * Fetches dynamic entity type options present in the target dimension.
+     * @returns {string[]} Formatted entity type strings
+     */
+    private getEntityDropdownOptions(): string[] {
+        const transform = PlayerLocationCache.getTransform(this.player);
+        const dimension = transform?.dimension ?? world.getDimension(this.player.dimension.id);
+        const entities = dimension.getEntities({ excludeTypes: ["player"] });
+        const entitySet = new Set<string>();
+
+        for (let i = 0; i < entities.length; i++) {
+            entitySet.add(entities[i]!.typeId.replace("minecraft:", ""));
+        }
+        return Array.from(entitySet);
+    }
+
+    /**
+     * Fetches registered chest lock keys from database.
+     * @returns {string[]} Formatted chest keys
+     */
+    private getChestDropdownOptions(): string[] {
+        const pointers = chestLockDB.listPointers();
+        const result: string[] = new Array(pointers.length);
+
+        for (let i = 0; i < pointers.length; i++) {
+            const ptr = pointers[i]!;
+            const key = ptr.slice(ptr.lastIndexOf("/") + 1);
+            result[i] = key.startsWith("minecraft:") ? key.slice(10) : key;
+        }
+        return result;
+    }
+
+    /**
+     * Resolves saved waypoint names for current player.
+     * @returns {Promise<string[]>} List of waypoint names
+     */
+    private async getWaypointDropdownOptions(): Promise<string[]> {
+        const dbEntry = (await waypointsDB.get(this.player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
+        const options = dbEntry?.savedWaypoints ? Object.keys(dbEntry.savedWaypoints) : [];
+        return options.length > 0 ? options : ["No Waypoints Saved"];
+    }
+
+    /**
+     * Decrypts and resolves home names for current player.
+     * @returns {Promise<string[]>} List of decrypted home names
+     */
+    private async getHomeDropdownOptions(): Promise<string[]> {
+        const dbEntry = await homesDB.get(this.player.id);
+        const locations = dbEntry?.locations ?? [];
+        if (locations.length === 0) return ["No Homes Saved"];
+
+        const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
+        const options: string[] = new Array(locations.length);
+
+        for (let i = 0; i < locations.length; i++) {
+            try {
+                const bytes = CryptoES.AES.decrypt(locations[i]!, obfuscatedKey);
+                const decrypted = bytes.toString(CryptoES.Utf8);
+                options[i] = decrypted.split(":")[1] ?? "Unknown";
+            } catch {
+                options[i] = "Corrupted Data";
+            }
+        }
+        return options;
+    }
+
+    /**
+     * Resolves claim ID options owned by current player.
+     * @param {DynamicField} field - Field configuration
+     * @returns {string[] | undefined} Custom claims array or undefined fallback
+     */
+    private getCustomDropdownOptions(field: DynamicField): string[] | undefined {
+        if (field.requiredFields?.includes("claimId")) {
+            const userClaims = LandClaimManager.getInstance().getClaimsByOwner(this.player.id);
+            if (userClaims.length === 0) return ["No Claims Found"];
+
+            const options: string[] = new Array(userClaims.length);
+            for (let i = 0; i < userClaims.length; i++) {
+                options[i] = userClaims[i]!.id;
+            }
+            return options;
+        }
+        return undefined;
+    }
+
+    /**
+     * Resolves the string array options for a dynamic dropdown based on its sourceType in low cyclomatic complexity handlers.
      * @param {DynamicField} field - Target dropdown field configuration
      * @returns {Promise<string[]>} Resolved dropdown options
      */
@@ -243,63 +328,19 @@ class GUIManager {
         switch (field.sourceType) {
             case "players":
                 return PlayerCache.getPlayerNamesArray();
-            case "entities": {
-                const transform = PlayerLocationCache.getTransform(this.player);
-                const dimension = transform?.dimension ?? world.getDimension(this.player.dimension.id);
-                const entities = dimension.getEntities({ excludeTypes: ["player"] });
-                const entitySet = new Set<string>();
-                for (let i = 0; i < entities.length; i++) {
-                    entitySet.add(entities[i]!.typeId.replace("minecraft:", ""));
-                }
-                return Array.from(entitySet);
-            }
-            case "chests": {
-                const pointers = chestLockDB.listPointers();
-                const result: string[] = new Array(pointers.length);
-                for (let i = 0; i < pointers.length; i++) {
-                    const ptr = pointers[i]!;
-                    const key = ptr.slice(ptr.lastIndexOf("/") + 1);
-                    result[i] = key.startsWith("minecraft:") ? key.slice(10) : key;
-                }
-                return result;
-            }
-            case "playerWaypoints": {
-                const dbEntry = (await waypointsDB.get(this.player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
-                const options = dbEntry?.savedWaypoints ? Object.keys(dbEntry.savedWaypoints) : [];
-                return options.length > 0 ? options : ["No Waypoints Saved"];
-            }
-            case "playerHomes": {
-                const dbEntry = await homesDB.get(this.player.id);
-                const locations = dbEntry?.locations ?? [];
-                if (locations.length === 0) return ["No Homes Saved"];
-
-                const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
-                const options: string[] = new Array(locations.length);
-                for (let i = 0; i < locations.length; i++) {
-                    try {
-                        const bytes = CryptoES.AES.decrypt(locations[i]!, obfuscatedKey);
-                        const decrypted = bytes.toString(CryptoES.Utf8);
-                        options[i] = decrypted.split(":")[1] ?? "Unknown";
-                    } catch {
-                        options[i] = "Corrupted Data";
-                    }
-                }
-                return options;
-            }
-            case "custom": {
-                if (field.requiredFields?.includes("claimId")) {
-                    const userClaims = LandClaimManager.getInstance().getClaimsByOwner(this.player.id);
-                    if (userClaims.length === 0) return ["No Claims Found"];
-                    const options: string[] = new Array(userClaims.length);
-                    for (let i = 0; i < userClaims.length; i++) {
-                        options[i] = userClaims[i]!.id;
-                    }
-                    return options;
-                }
-                break;
-            }
+            case "entities":
+                return this.getEntityDropdownOptions();
+            case "chests":
+                return this.getChestDropdownOptions();
+            case "playerWaypoints":
+                return this.getWaypointDropdownOptions();
+            case "playerHomes":
+                return this.getHomeDropdownOptions();
+            case "custom":
+                return this.getCustomDropdownOptions(field) ?? field.options ?? [""];
+            default:
+                return field.options ?? [""];
         }
-        return field.options ?? [""];
     }
 
     /**
