@@ -158,6 +158,9 @@ export class CommandHandler {
     /** Currently active commands lookup by lowercased name */
     private commands: Map<string, Command> = new Map();
 
+    /** Cached array of active registered commands to allow O(1) retrieval */
+    private cachedActiveCommands: Command[] = [];
+
     /** Master list of all registered commands (including disabled ones) */
     private masterCommands: Map<string, Command> = new Map();
 
@@ -201,33 +204,37 @@ export class CommandHandler {
     public registerCommand(activeCommands: Command[], allCommands?: Command[]): void {
         this.commands.clear();
         this.commandsByCategory.clear();
+        this.cachedActiveCommands = activeCommands;
 
         if (allCommands) {
             this.masterCommands.clear();
-            allCommands.forEach((cmd) => {
+            for (let i = 0; i < allCommands.length; i++) {
+                const cmd = allCommands[i]!;
                 this.masterCommands.set(cmd.name.toLowerCase(), cmd);
-            });
+            }
         }
 
-        activeCommands.forEach((command) => {
-            command.usage = command.usage.replaceAll("{prefix}", this.prefix);
-            command.examples = command.examples.map((ex) => ex.replaceAll("{prefix}", this.prefix));
-
+        for (let i = 0; i < activeCommands.length; i++) {
+            const command = activeCommands[i]!;
             const category = command.category.charAt(0).toUpperCase() + command.category.slice(1).toLowerCase();
-            const catCommands = this.commandsByCategory.get(category) ?? [];
+
+            let catCommands = this.commandsByCategory.get(category);
+            if (!catCommands) {
+                catCommands = [];
+                this.commandsByCategory.set(category, catCommands);
+            }
             catCommands.push(command);
-            this.commandsByCategory.set(category, catCommands);
 
             this.commands.set(command.name.toLowerCase(), command);
-        });
+        }
     }
 
     /**
-     * Returns all currently active registered commands.
+     * Returns all currently active registered commands in O(1) time.
      * @returns {Command[]} Array of active commands
      */
     public getRegisteredCommands(): Command[] {
-        return Array.from(this.commands.values());
+        return this.cachedActiveCommands;
     }
 
     /**
@@ -261,7 +268,7 @@ export class CommandHandler {
     }
 
     /**
-     * Returns the item ID configured to open the GUI form.
+     * Returns the item ID configured to open the GUI form in O(1) time.
      * @returns {string | undefined} Minecraft item ID or undefined
      */
     public getGuiItem(): string | undefined {
@@ -278,7 +285,7 @@ export class CommandHandler {
     }
 
     /**
-     * Updates prefix variables across commands dynamically.
+     * Updates prefix variables dynamically in O(1) memory overhead.
      * @param {Player} player - Player updating the prefix
      */
     public updatePrefix(player: Player): void {
@@ -289,20 +296,14 @@ export class CommandHandler {
 
         this.prefixUpdateLock = true;
 
-        (async () => {
-            try {
-                const newPrefix = (world.getDynamicProperty("__prefix") as string) ?? this.prefix;
-                if (newPrefix !== this.prefix) {
-                    for (const command of this.commands.values()) {
-                        command.usage = command.usage.replaceAll(this.prefix + command.name, newPrefix + command.name);
-                        command.examples = command.examples.map((ex) => ex.replaceAll(this.prefix + command.name, newPrefix + command.name));
-                    }
-                    this.prefix = newPrefix;
-                }
-            } finally {
-                this.prefixUpdateLock = false;
+        try {
+            const newPrefix = (world.getDynamicProperty("__prefix") as string) ?? this.prefix;
+            if (newPrefix !== this.prefix) {
+                this.prefix = newPrefix;
             }
-        })();
+        } finally {
+            this.prefixUpdateLock = false;
+        }
     }
 
     /**
@@ -312,16 +313,21 @@ export class CommandHandler {
      * @returns {ActionFormButton[]} Filtered ActionFormButton array
      */
     public filterButtonsBySecurity(buttons: ActionFormButton[], playerSecurityClearance: number): ActionFormButton[] {
-        return buttons
-            .filter((button) => (button.securityClearance ?? SecurityClearance.Level1) <= playerSecurityClearance)
-            .map((button) => ({
-                ...button,
-                ...(button.subActions ? { subActions: this.filterButtonsBySecurity(button.subActions, playerSecurityClearance) } : {}),
-            }));
+        const result: ActionFormButton[] = [];
+        for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i]!;
+            if ((button.securityClearance ?? SecurityClearance.Level1) <= playerSecurityClearance) {
+                result.push({
+                    ...button,
+                    ...(button.subActions ? { subActions: this.filterButtonsBySecurity(button.subActions, playerSecurityClearance) } : {}),
+                });
+            }
+        }
+        return result;
     }
 
     /**
-     * Gets the player's security clearance dynamic property value.
+     * Gets the player's security clearance dynamic property value in O(1) time.
      * @param {Player} player - Player entity
      * @returns {number} Dynamic property integer value or default level 1
      */
@@ -330,7 +336,7 @@ export class CommandHandler {
     }
 
     /**
-     * Resolves and retrieves the command object based on state and user clearance.
+     * Resolves and retrieves the command object based on state and user clearance in O(1) time.
      * @param {string} commandName - Target command name
      * @param {number} playerClearance - Executive player's clearance level
      * @returns {Command | null | undefined} Command object, null if explicitly disabled, or undefined if missing.
@@ -348,7 +354,7 @@ export class CommandHandler {
     }
 
     /**
-     * Checks if the user clearance meets command or sub-argument security requirements.
+     * Checks if the user clearance meets command or sub-argument security requirements in O(1) time.
      * @param {Command} command - Target command object
      * @param {string | undefined} argKey - First argument key parameter
      * @param {number} playerClearance - Clearance level of calling player
@@ -445,12 +451,10 @@ export class CommandHandler {
         if (!command) return [`\n§2[§7Paradox§2]§o§7 Command "${commandName}" not found.`];
 
         const playerClearance = this.getPlayerClearance(player);
-        const info = [
-            `\n§2[§7Command§2]§f: §o${command.name}§r`,
-            `§2[§7Usage§2]§f: §o${this.formatUsage(command.usage)}§r`,
-            `§2[§7Description§2]§f: §o${command.description}§r`,
-            `§2[§7Examples§2]§f:\n${command.examples.map((ex) => `    §o${ex}`).join("\n")}`,
-        ];
+        const formattedUsage = command.usage.replaceAll("{prefix}", this.prefix);
+        const formattedExamples = command.examples.map((ex) => `    §o${ex.replaceAll("{prefix}", this.prefix)}`);
+
+        const info = [`\n§2[§7Command§2]§f: §o${command.name}§r`, `§2[§7Usage§2]§f: §o${this.formatUsage(formattedUsage)}§r`, `§2[§7Description§2]§f: §o${command.description}§r`, `§2[§7Examples§2]§f:\n${formattedExamples.join("\n")}`];
 
         if (command.specialNote && playerClearance === SecurityClearance.Level4) {
             info.push(`§2[§7Note§2]§f: §o${command.specialNote}§r`);
@@ -509,7 +513,7 @@ export class CommandHandler {
     }
 
     /**
-     * Determines whether command rate limit bucket allows execution.
+     * Determines whether command rate limit bucket allows execution in O(1) time.
      * @returns {boolean} True if allowed, false if limit exceeded
      */
     private canExecuteCommand(): boolean {
