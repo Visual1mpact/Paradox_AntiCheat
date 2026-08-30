@@ -298,9 +298,10 @@ function handlePersonalRoute(player: Player, enable: boolean, disable: boolean):
 system.runInterval(() => {
     if (!isGlobalScriptureEnabled()) return;
 
-    for (const player of PlayerCache.getPlayers()) {
-        const enabled = player.getDynamicProperty("scriptureEnabled");
-        if (enabled === true) {
+    const players = PlayerCache.getPlayersArray();
+    for (let i = 0; i < players.length; i++) {
+        const player = players[i]!;
+        if (player.getDynamicProperty("scriptureEnabled") === true) {
             broadcastScriptureToPlayer(player);
         }
     }
