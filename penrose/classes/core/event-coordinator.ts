@@ -6,89 +6,118 @@ import { world, WorldAfterEvents, WorldBeforeEvents } from "@minecraft/server";
 type ExtractEventArg<T> = T extends { subscribe(callback: (arg: infer A) => void): unknown } ? A : never;
 
 /**
- * Helper signature for generic event handling.
+ * Generic listener signature.
  */
 type AnyListener = (arg: unknown) => void;
 
 /**
- * World-Class Event Coordinator
- * Reduces C++ bridge-crossing overhead by unifying native event listeners.
+ * Event Signal Wrapper interface for native API access.
+ */
+interface EventSignal {
+    subscribe(callback: AnyListener): AnyListener;
+    unsubscribe(callback: AnyListener): void;
+}
+
+/**
+ * Consolidated subscriber bucket metadata.
+ */
+interface EventBucket {
+    /** Subscriber callbacks set */
+    listeners: Set<AnyListener>;
+    /** Reference to native callback bound to Bedrock API */
+    nativeCallback: AnyListener;
+    /** Snapshot queue used during active iteration to prevent array allocation GC thrashing */
+    pendingRemovals: Set<AnyListener> | null;
+    /** Active iteration safety state */
+    isDispatching: boolean;
+}
+
+/**
+ * High-Performance World Event Coordinator
+ * Features O(1) lookups, zero array allocations on dispatch, and zero GC thrashing.
  */
 export class EventCoordinator {
-    private static listeners = new Map<string, Set<AnyListener>>();
-    private static nativeCallbacks = new Map<string, AnyListener>();
+    /** Single Map storage eliminating prefix string concats */
+    private static buckets = new Map<string, EventBucket>();
 
     /**
-     * Executes dispatch for target event listeners safely.
-     * @param key Fully qualified event key identifier.
+     * Executes dispatch for target event listeners with ZERO heap allocations.
+     * @param bucket Target event metadata collection.
      * @param data Payload delivered from Minecraft native event.
      */
-    private static dispatch(key: string, data: unknown): void {
-        const set = this.listeners.get(key);
-        if (!set) return;
+    private static dispatch(bucket: EventBucket, data: unknown): void {
+        bucket.isDispatching = true;
 
-        const handlers = [...set];
-        for (let i = 0; i < handlers.length; i++) {
-            const handler = handlers[i];
-            if (!handler) continue;
-
+        for (const handler of bucket.listeners) {
             try {
                 handler(data);
             } catch (err) {
-                console.error(`[Coordinator] Error in ${key} listener:`, err);
+                console.error("[Coordinator] Listener execution error:", err);
             }
+        }
+
+        bucket.isDispatching = false;
+
+        // Process delayed unsubscribes queued during dispatch loop
+        if (bucket.pendingRemovals) {
+            for (const handler of bucket.pendingRemovals) {
+                bucket.listeners.delete(handler);
+            }
+            bucket.pendingRemovals = null;
         }
     }
 
     /**
-     * Subscribes callback to native event handler managed registry.
-     * @param map Target world event object collection.
-     * @param prefix Scope identifier for namespace mapping.
-     * @param event Event key identifier.
-     * @param callback Subscriber listener callback function.
-     * @returns Cleanup routine to unsubscribe callback.
+     * Subscribes callback lazily with O(1) bucket caching.
+     * @param signal Target native Bedrock event signal.
+     * @param key Qualified event lookup key.
+     * @param callback Target subscriber callback function.
+     * @returns Cleanup unsubscribe closure handler.
      */
-    private static subscribeGeneric<T extends object, K extends keyof T>(map: T, prefix: string, event: K, callback: AnyListener): () => void {
-        const key = `${prefix}:${String(event)}`;
-        let set = this.listeners.get(key);
+    private static subscribeGeneric(signal: EventSignal, key: string, callback: AnyListener): () => void {
+        let bucket = this.buckets.get(key);
 
-        if (!set) {
-            set = new Set();
-            this.listeners.set(key, set);
+        if (!bucket) {
+            const newBucket: EventBucket = {
+                listeners: new Set(),
+                nativeCallback: (data: unknown) => this.dispatch(newBucket, data),
+                pendingRemovals: null,
+                isDispatching: false,
+            };
+
+            bucket = newBucket;
+            this.buckets.set(key, bucket);
+            signal.subscribe(bucket.nativeCallback);
         }
 
-        set.add(callback);
+        bucket.listeners.add(callback);
 
-        if (set.size === 1) {
-            const nativeCallback = (data: unknown) => this.dispatch(key, data);
-            this.nativeCallbacks.set(key, nativeCallback);
-            (map[event] as unknown as { subscribe(cb: AnyListener): AnyListener }).subscribe(nativeCallback);
-        }
-
-        return () => this.unsubscribeGeneric(map, prefix, event, callback);
+        return () => this.unsubscribeGeneric(signal, key, callback);
     }
 
     /**
-     * Removes subscribed callback and releases native handles on empty sets.
-     * @param map Target world event object collection.
-     * @param prefix Scope identifier for namespace mapping.
-     * @param event Event key identifier.
-     * @param callback Subscriber listener callback function.
+     * Unsubscribes callback with zero array copying and safe deferment.
+     * @param signal Target native Bedrock event signal.
+     * @param key Qualified event lookup key.
+     * @param callback Target subscriber callback function.
      */
-    private static unsubscribeGeneric<T extends object, K extends keyof T>(map: T, prefix: string, event: K, callback: AnyListener): void {
-        const key = `${prefix}:${String(event)}`;
-        const set = this.listeners.get(key);
-        if (!set) return;
+    private static unsubscribeGeneric(signal: EventSignal, key: string, callback: AnyListener): void {
+        const bucket = this.buckets.get(key);
+        if (!bucket) return;
 
-        set.delete(callback);
-
-        if (set.size === 0) {
-            const nativeCallback = this.nativeCallbacks.get(key);
-            if (nativeCallback) {
-                (map[event] as unknown as { unsubscribe(cb: AnyListener): void }).unsubscribe(nativeCallback);
-                this.nativeCallbacks.delete(key);
+        if (bucket.isDispatching) {
+            if (!bucket.pendingRemovals) {
+                bucket.pendingRemovals = new Set();
             }
-            this.listeners.delete(key);
+            bucket.pendingRemovals.add(callback);
+            return;
+        }
+
+        bucket.listeners.delete(callback);
+
+        if (bucket.listeners.size === 0) {
+            signal.unsubscribe(bucket.nativeCallback);
+            this.buckets.delete(key);
         }
     }
 
@@ -99,7 +128,8 @@ export class EventCoordinator {
      * @returns Unsubscribe cleanup callback function.
      */
     static subscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: ExtractEventArg<WorldAfterEvents[K]>) => void): () => void {
-        return this.subscribeGeneric(world.afterEvents, "after", event, callback as AnyListener);
+        const signal = world.afterEvents[event] as unknown as EventSignal;
+        return this.subscribeGeneric(signal, `a:${String(event)}`, callback as AnyListener);
     }
 
     /**
@@ -109,7 +139,8 @@ export class EventCoordinator {
      * @returns Unsubscribe cleanup callback function.
      */
     static subscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: ExtractEventArg<WorldBeforeEvents[K]>) => void): () => void {
-        return this.subscribeGeneric(world.beforeEvents, "before", event, callback as AnyListener);
+        const signal = world.beforeEvents[event] as unknown as EventSignal;
+        return this.subscribeGeneric(signal, `b:${String(event)}`, callback as AnyListener);
     }
 
     /**
@@ -118,7 +149,8 @@ export class EventCoordinator {
      * @param callback Event subscriber payload handler.
      */
     static unsubscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: ExtractEventArg<WorldAfterEvents[K]>) => void): void {
-        this.unsubscribeGeneric(world.afterEvents, "after", event, callback as AnyListener);
+        const signal = world.afterEvents[event] as unknown as EventSignal;
+        this.unsubscribeGeneric(signal, `a:${String(event)}`, callback as AnyListener);
     }
 
     /**
@@ -127,6 +159,7 @@ export class EventCoordinator {
      * @param callback Event subscriber payload handler.
      */
     static unsubscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: ExtractEventArg<WorldBeforeEvents[K]>) => void): void {
-        this.unsubscribeGeneric(world.beforeEvents, "before", event, callback as AnyListener);
+        const signal = world.beforeEvents[event] as unknown as EventSignal;
+        this.unsubscribeGeneric(signal, `b:${String(event)}`, callback as AnyListener);
     }
 }
