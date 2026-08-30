@@ -34,11 +34,10 @@ export const pingCommand: Command = {
         if (!message) return;
         const sender = message.sender;
 
-        const players = PlayerCache.getPlayers();
         const listOutput = [`§l§2--- Server Latency Monitor ---`];
 
         // Sort players by ping if available, or just list them
-        const sortedPlayers = [...players].sort((a, b) => {
+        const sortedPlayers = PlayerCache.getPlayersArrayCopy().sort((a, b) => {
             return (a.getPing() ?? 999) - (b.getPing() ?? 999);
         });
 
