@@ -1,124 +1,132 @@
 import { world, WorldAfterEvents, WorldBeforeEvents } from "@minecraft/server";
 
-// Helper types to extract event data types directly from event signals using conditional inferencing
+/**
+ * Extracts event payload parameter type from event signal.
+ */
 type ExtractEventArg<T> = T extends { subscribe(callback: (arg: infer A) => void): unknown } ? A : never;
 
-type AfterEventArg<K extends keyof WorldAfterEvents> = ExtractEventArg<WorldAfterEvents[K]>;
-type BeforeEventArg<K extends keyof WorldBeforeEvents> = ExtractEventArg<WorldBeforeEvents[K]>;
+/**
+ * Helper signature for generic event handling.
+ */
+type AnyListener = (arg: unknown) => void;
 
 /**
  * World-Class Event Coordinator
- * Reduces bridge-crossing overhead by using a single native listener
- * to distribute events to multiple internal modules.
+ * Reduces C++ bridge-crossing overhead by unifying native event listeners.
  */
 export class EventCoordinator {
-    // Listener sets stored internally as generic (arg: unknown) => void
-    private static afterListeners = new Map<keyof WorldAfterEvents, Set<(arg: unknown) => void>>();
-    private static beforeListeners = new Map<keyof WorldBeforeEvents, Set<(arg: unknown) => void>>();
+    private static listeners = new Map<string, Set<AnyListener>>();
+    private static nativeCallbacks = new Map<string, AnyListener>();
 
-    private static afterNativeSubs = new Map<keyof WorldAfterEvents, unknown>();
-    private static beforeNativeSubs = new Map<keyof WorldBeforeEvents, unknown>();
+    /**
+     * Executes dispatch for target event listeners safely.
+     * @param key Fully qualified event key identifier.
+     * @param data Payload delivered from Minecraft native event.
+     */
+    private static dispatch(key: string, data: unknown): void {
+        const set = this.listeners.get(key);
+        if (!set) return;
+
+        const handlers = [...set];
+        for (let i = 0; i < handlers.length; i++) {
+            const handler = handlers[i];
+            if (!handler) continue;
+
+            try {
+                handler(data);
+            } catch (err) {
+                console.error(`[Coordinator] Error in ${key} listener:`, err);
+            }
+        }
+    }
+
+    /**
+     * Subscribes callback to native event handler managed registry.
+     * @param map Target world event object collection.
+     * @param prefix Scope identifier for namespace mapping.
+     * @param event Event key identifier.
+     * @param callback Subscriber listener callback function.
+     * @returns Cleanup routine to unsubscribe callback.
+     */
+    private static subscribeGeneric<T extends object, K extends keyof T>(map: T, prefix: string, event: K, callback: AnyListener): () => void {
+        const key = `${prefix}:${String(event)}`;
+        let set = this.listeners.get(key);
+
+        if (!set) {
+            set = new Set();
+            this.listeners.set(key, set);
+        }
+
+        set.add(callback);
+
+        if (set.size === 1) {
+            const nativeCallback = (data: unknown) => this.dispatch(key, data);
+            this.nativeCallbacks.set(key, nativeCallback);
+            (map[event] as unknown as { subscribe(cb: AnyListener): AnyListener }).subscribe(nativeCallback);
+        }
+
+        return () => this.unsubscribeGeneric(map, prefix, event, callback);
+    }
+
+    /**
+     * Removes subscribed callback and releases native handles on empty sets.
+     * @param map Target world event object collection.
+     * @param prefix Scope identifier for namespace mapping.
+     * @param event Event key identifier.
+     * @param callback Subscriber listener callback function.
+     */
+    private static unsubscribeGeneric<T extends object, K extends keyof T>(map: T, prefix: string, event: K, callback: AnyListener): void {
+        const key = `${prefix}:${String(event)}`;
+        const set = this.listeners.get(key);
+        if (!set) return;
+
+        set.delete(callback);
+
+        if (set.size === 0) {
+            const nativeCallback = this.nativeCallbacks.get(key);
+            if (nativeCallback) {
+                (map[event] as unknown as { unsubscribe(cb: AnyListener): void }).unsubscribe(nativeCallback);
+                this.nativeCallbacks.delete(key);
+            }
+            this.listeners.delete(key);
+        }
+    }
 
     /**
      * Subscribe a callback lazily to an AfterEvent.
-     * Only creates the native Minecraft subscription if this is the first listener.
-     * Returns a cleanup function for easy unsubscription.
+     * @param event Specific world after event key name.
+     * @param callback Event subscriber payload handler.
+     * @returns Unsubscribe cleanup callback function.
      */
-    static subscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: AfterEventArg<K>) => void): () => void {
-        let set = this.afterListeners.get(event);
-        if (!set) {
-            set = new Set();
-            this.afterListeners.set(event, set);
-        }
-
-        set.add(callback as (arg: unknown) => void);
-
-        if (set.size === 1) {
-            // OPTIMIZATION: Bypassed nested closure allocation
-            const sub = world.afterEvents[event].subscribe((data) => {
-                const listeners = this.afterListeners.get(event);
-                if (listeners) {
-                    // OPTIMIZATION: Iterate Set directly to avoid Array.from() GC thrashing
-                    for (const listener of listeners) {
-                        try {
-                            listener(data);
-                        } catch (err) {
-                            console.error(`[Coordinator] Error in afterEvents.${String(event)} listener:`, err);
-                        }
-                    }
-                }
-            });
-            this.afterNativeSubs.set(event, sub);
-        }
-
-        return () => this.unsubscribeAfter(event, callback);
+    static subscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: ExtractEventArg<WorldAfterEvents[K]>) => void): () => void {
+        return this.subscribeGeneric(world.afterEvents, "after", event, callback as AnyListener);
     }
 
     /**
      * Subscribe a callback lazily to a BeforeEvent.
-     * These are critical for cancellation logic (e.g., Anti-Spam or Movement correction).
-     * Returns a cleanup function for easy unsubscription.
+     * @param event Specific world before event key name.
+     * @param callback Event subscriber payload handler.
+     * @returns Unsubscribe cleanup callback function.
      */
-    static subscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: BeforeEventArg<K>) => void): () => void {
-        let set = this.beforeListeners.get(event);
-        if (!set) {
-            set = new Set();
-            this.beforeListeners.set(event, set);
-        }
-
-        set.add(callback as (arg: unknown) => void);
-
-        if (set.size === 1) {
-            const sub = world.beforeEvents[event].subscribe((data) => {
-                const listeners = this.beforeListeners.get(event);
-                if (listeners) {
-                    for (const listener of listeners) {
-                        try {
-                            listener(data);
-                        } catch (err) {
-                            console.error(`[Coordinator] Error in beforeEvents.${String(event)} listener:`, err);
-                        }
-                    }
-                }
-            });
-            this.beforeNativeSubs.set(event, sub);
-        }
-
-        return () => this.unsubscribeBefore(event, callback);
+    static subscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: ExtractEventArg<WorldBeforeEvents[K]>) => void): () => void {
+        return this.subscribeGeneric(world.beforeEvents, "before", event, callback as AnyListener);
     }
 
     /**
      * Unsubscribe a callback from an AfterEvent.
+     * @param event Specific world after event key name.
+     * @param callback Event subscriber payload handler.
      */
-    static unsubscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: AfterEventArg<K>) => void) {
-        const set = this.afterListeners.get(event);
-        if (!set) return;
-
-        set.delete(callback as (arg: unknown) => void);
-        if (set.size === 0) {
-            const sub = this.afterNativeSubs.get(event);
-            if (sub !== undefined) {
-                // Safely cast to access the generic unsubscribe method without generating dynamic closures
-                (world.afterEvents[event] as unknown as { unsubscribe(s: unknown): void }).unsubscribe(sub);
-            }
-            this.afterNativeSubs.delete(event);
-        }
+    static unsubscribeAfter<K extends keyof WorldAfterEvents>(event: K, callback: (arg: ExtractEventArg<WorldAfterEvents[K]>) => void): void {
+        this.unsubscribeGeneric(world.afterEvents, "after", event, callback as AnyListener);
     }
 
     /**
      * Unsubscribe a callback from a BeforeEvent.
+     * @param event Specific world before event key name.
+     * @param callback Event subscriber payload handler.
      */
-    static unsubscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: BeforeEventArg<K>) => void) {
-        const set = this.beforeListeners.get(event);
-        if (!set) return;
-
-        set.delete(callback as (arg: unknown) => void);
-        if (set.size === 0) {
-            const sub = this.beforeNativeSubs.get(event);
-            if (sub !== undefined) {
-                (world.beforeEvents[event] as unknown as { unsubscribe(s: unknown): void }).unsubscribe(sub);
-            }
-            this.beforeNativeSubs.delete(event);
-        }
+    static unsubscribeBefore<K extends keyof WorldBeforeEvents>(event: K, callback: (arg: ExtractEventArg<WorldBeforeEvents[K]>) => void): void {
+        this.unsubscribeGeneric(world.beforeEvents, "before", event, callback as AnyListener);
     }
 }
