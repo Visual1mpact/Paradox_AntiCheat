@@ -137,8 +137,8 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     /** Global Dynamic Property key pointing to array of tracked entry base keys */
     private pointerKey: string;
 
-    /** In-memory cache for pointers to minimize costly world property reads */
-    private cachedPointers: string[] | undefined = undefined;
+    /** In-memory cache set for pointers to ensure O(1) checks and operations */
+    private cachedPointers: Set<string> | undefined = undefined;
 
     /** Global registry of instantiated database instances */
     private static instances: OptimizedDatabase<any>[] = [];
@@ -177,9 +177,9 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     }
 
     /**
-     * Reads pointer array listing stored entry base keys (uses cache when available).
+     * Reads pointer set listing stored entry base keys (O(1) cached access).
      */
-    private _getPointers(): string[] {
+    private _getPointers(): Set<string> {
         if (this.cachedPointers !== undefined) return this.cachedPointers;
 
         const chunks = this._readRawChunks(this.pointerKey);
@@ -190,34 +190,36 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
         try {
             const joined = chunks.join("");
-            this.cachedPointers = joined.trim() ? JSON.parse(joined) : [];
+            const parsed = joined.trim() ? JSON.parse(joined) : [];
+            this.cachedPointers = new Set<string>(parsed);
         } catch {
-            this.cachedPointers = [];
+            this.cachedPointers = new Set<string>();
         }
 
-        return this.cachedPointers || [];
+        return this.cachedPointers;
     }
 
     /** Reads legacy unchunked pointer indices */
-    private _readLegacyPointers(): string[] {
+    private _readLegacyPointers(): Set<string> {
         try {
             const legacy = world.getDynamicProperty(this.pointerKey) as string | undefined;
-            this.cachedPointers = legacy ? JSON.parse(legacy) : [];
-            return this.cachedPointers!;
+            const parsed = legacy ? JSON.parse(legacy) : [];
+            this.cachedPointers = new Set<string>(parsed);
+            return this.cachedPointers;
         } catch {
-            this.cachedPointers = [];
-            return [];
+            this.cachedPointers = new Set<string>();
+            return this.cachedPointers;
         }
     }
 
     /**
-     * Persists updated pointer array into Dynamic Properties and updates internal cache.
+     * Persists updated pointer Set into Dynamic Properties.
      */
-    private _setPointers(pointers: string[]): void {
-        if (JSON.stringify(pointers) === JSON.stringify(this.cachedPointers)) return;
+    private _savePointers(): void {
+        if (!this.cachedPointers) return;
 
-        this.cachedPointers = pointers;
-        const json = JSON.stringify(pointers);
+        const arrayForm = Array.from(this.cachedPointers);
+        const json = JSON.stringify(arrayForm);
 
         try {
             this._deleteChunks(this.pointerKey);
@@ -230,15 +232,6 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         } catch (err) {
             console.warn(`[${this.name}] Failed to update database pointer index:`, err);
         }
-
-        this._markDirty();
-    }
-
-    /**
-     * Invalidates internal cache, forcing next read operation to query raw world data.
-     */
-    private _markDirty(): void {
-        this.cachedPointers = undefined;
     }
 
     /**
@@ -342,7 +335,10 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         });
 
         const pointers = this._getPointers();
-        if (!pointers.includes(base)) this._setPointers([...pointers, base]);
+        if (!pointers.has(base)) {
+            pointers.add(base);
+            this._savePointers();
+        }
     }
 
     /** Formats compressed payloads with accurate chunk header offsets */
@@ -484,7 +480,10 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
         await OptimizedDatabase._withLock(lockKeys, ctx, async () => {
             this._deleteChunks(base);
-            this._setPointers(this._getPointers().filter((p) => p !== base));
+            const pointers = this._getPointers();
+            if (pointers.delete(base)) {
+                this._savePointers();
+            }
         });
     }
 
@@ -497,7 +496,8 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         await OptimizedDatabase._withLock([this.name], ctx, async () => {
             const pointers = this._getPointers();
             pointers.forEach((ptr) => this._deleteChunks(ptr));
-            this._setPointers([]);
+            this.cachedPointers = new Set<string>();
+            this._savePointers();
         });
     }
 
@@ -561,7 +561,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
     /** Returns array of raw full pointer key identifiers */
     public listPointers(): string[] {
-        return this._getPointers();
+        return Array.from(this._getPointers());
     }
 
     /** Returns exact memory footprint size in bytes (UTF-16 chars * 2) for a given entry */
@@ -587,10 +587,11 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
     /** Calculates total footprint size across all key entries in the database instance */
     public getTotalSizeFormatted(): string {
-        const totalBytes = this._getPointers().reduce((sum, ptr) => {
+        let totalBytes = 0;
+        for (const ptr of this._getPointers()) {
             const key = ptr.split("/").pop()!;
-            return sum + this.getEntrySizeBytes(key);
-        }, 0);
+            totalBytes += this.getEntrySizeBytes(key);
+        }
         return this.formatBytes(totalBytes);
     }
 
@@ -602,8 +603,8 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return count;
     }
 
-    /** Checks whether a specific key exists in the database's index */
+    /** Checks whether a specific key exists in the database's index in O(1) time */
     public containsKey(key: string): boolean {
-        return this._getPointers().includes(`${this.name}/${key}`);
+        return this._getPointers().has(`${this.name}/${key}`);
     }
 }
