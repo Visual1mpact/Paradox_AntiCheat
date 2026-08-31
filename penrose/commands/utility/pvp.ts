@@ -1,8 +1,7 @@
-import { ChatSendBeforeEvent, EntityHealthComponent, Player, system, world } from "@minecraft/server";
+import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { initializePvPSystem, stopPvPSystem, updateCoolDownTicks } from "../../modules/pvp-manager-module";
 import { MessageFormData } from "@minecraft/server-ui";
-import { PlayerCache } from "../../classes/cache/player-cache";
 
 const DYNAMIC_PROP_PVP_ENABLED = "pvpEnabled";
 const DYNAMIC_PROP_GLOBAL_PVP = "pvpGlobalEnabled";
@@ -226,12 +225,6 @@ function promptDisableGlobalPvP(player: Player): void {
  */
 function enableGlobalPvP(player: Player): void {
     world.gameRules.pvp = true;
-    for (const p of PlayerCache.getPlayers()) {
-        const healthComponent = p.getComponent("health") as EntityHealthComponent;
-        if (healthComponent) {
-            p.setDynamicProperty("paradoxCurrentHealth", healthComponent.currentValue);
-        }
-    }
     world.setDynamicProperty(DYNAMIC_PROP_GLOBAL_PVP, true);
     initializePvPSystem();
     player.sendMessage(`§2[§7Paradox§2]§o§7 Global PvP has been §aenabled§7.`);

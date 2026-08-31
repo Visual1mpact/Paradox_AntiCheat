@@ -64,7 +64,6 @@ import { packetMonitorCommand } from "../commands/settings/packet-monitor";
 import { allowlistCommand } from "../commands/moderation/allowlist";
 import { visionCheckCommand } from "../commands/settings/vision";
 import { invSyncCommand } from "../commands/settings/invsync";
-import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
 import { getGlobalBans, saveGlobalBans } from "../data/ban-manager";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
@@ -555,7 +554,6 @@ async function onWorldInitialize(): Promise<void> {
     handleDoubleJump();
     onPlayerSpawn();
     startWaypointHUD();
-    healthChangeListener.start();
     await landClaims.init();
 }
 
