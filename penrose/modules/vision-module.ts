@@ -259,10 +259,8 @@ export async function startVisionCheck(): Promise<void> {
     isModuleActive = true;
 
     if (!isJobActive) {
-        const isEnabled = await isVisionModuleEnabledInDB();
-        if (isEnabled && isModuleActive) {
-            system.runJob(continuousVisionLoop(isEnabled));
-        }
+        // Start the continuous loop directly since caller handles enablement validation
+        system.runJob(continuousVisionLoop(true));
     }
 }
 
