@@ -281,7 +281,7 @@ The `gui` command opens an interactive administrative menu for the player, filte
 
 ## lockdown
 ### At A Glance
-The `lockdown` command toggles server lockdown, preventing players without a security clearance of 4 from joining. It is useful during maintenance or security incidents.
+The `lockdown` command toggles server lockdown, preventing non-exempt players from remaining on or joining the server. It is useful during maintenance, active forensics, or automated network rate-limit security incidents.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -290,17 +290,18 @@ The `lockdown` command toggles server lockdown, preventing players without a sec
 
 ### **Behavior & Notes**
 - **Lockdown Activation:**  
-  - Kicks all currently connected players without clearance 4.
-  - Sets a dynamic property (`lockdown_b`) to true to track lockdown state.
-  - Subscribes a monitor function to the `playerSpawn` event to automatically kick new joiners who do not meet the required clearance.
-- **Lockdown Deactivation:**  
-  - Sets the `lockdown_b` property to false.
-  - Unsubscribes the monitor function from the `playerSpawn` event.
+  - Immediately kicks all currently connected non-exempt players via `enforceLockdown()`.
+  - Sets the world dynamic property (`lockdown_b`) to `true` to track the lockdown state across world reloads.
+  - Subscribes the `handlePlayerSpawn` listener to the `playerSpawn` event to kick any incoming join attempts.
+  - Can be triggered automatically by anti-cheat modules (e.g., `rate-limit-module` detecting packet flood anomalies).
+- **Lockdown Deactivation:**
+  - Sets the `lockdown_b` world property to `false`.
+  - Unsubscribes the `handlePlayerSpawn` listener from the `playerSpawn` event.
   - Sends a confirmation message to the executor.
-- **Kick Reason:**  
-  - Players are informed: `"Under Maintenance: Sorry for the inconvenience."`
-- **Security Check:**  
-  - Only players with `securityClearance === 4` are allowed to remain or join during lockdown.
+- **Kick Reason:**
+  - Disconnected players are informed: `"Under Maintenance! Sorry for the inconvenience."`
+- **Exemption Rules:**
+  - Both the designated system host (verified via `paradoxOPSEC` world data) and players holding `securityClearance === 4` are entirely exempt from lockdown restrictions.
 
 ---
 

@@ -5,6 +5,7 @@ import { AsyncPlayerJoinBeforeEvent } from "@minecraft/server-admin";
 import * as CryptoES from "crypto-es";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerCache } from "../classes/cache/player-cache";
+import { startLockdown, stopLockdown } from "./lockdown-modules";
 
 /**
  * Ring buffer for timestamps used in rate-limiting and burst tracking.
@@ -282,18 +283,20 @@ function sweepOrphanedPlayerState(): void {
 /* ----------------- LOCKDOWN ----------------- */
 
 /**
- * Triggers server-wide lockdown, blocking new player connections and setting lockdown indicators.
- * Automatically clears after a 1200-tick delay (60 seconds).
+ * Triggers server-wide lockdown via lockdown-module, blocking new player connections
+ * and setting lockdown indicators. Automatically clears after a 1200-tick delay (60 seconds).
  */
 function triggerLockdown(): void {
     if (isLockedDown) return;
     isLockedDown = true;
-    world.setDynamicProperty(LOCKDOWN_PROPERTY, true);
+
+    // Direct delegation to central lockdown module
+    startLockdown();
     world.sendMessage("§o§c[Paradox] Network anomaly detected. Server entering lockdown.");
 
     lockdownTimeout = system.runTimeout(() => {
         isLockedDown = false;
-        world.setDynamicProperty(LOCKDOWN_PROPERTY, false);
+        stopLockdown();
         recentViolatorsBuffer.clear();
         world.sendMessage("§2[§7Paradox§2]§o§7 Lockdown lifted. Server is now open.");
     }, 1200);
@@ -581,8 +584,10 @@ export function stopPacketHandler(): void {
         sweepInterval = undefined;
     }
 
-    isLockedDown = false;
-    world.setDynamicProperty(LOCKDOWN_PROPERTY, false);
+    if (isLockedDown) {
+        isLockedDown = false;
+        stopLockdown();
+    }
 
     packetHandlerRef = null;
     asyncJoinRef = null;

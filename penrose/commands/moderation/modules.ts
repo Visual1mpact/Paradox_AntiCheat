@@ -81,6 +81,7 @@ export const modulesStatusCommand: Command = {
             invalidMovementVectorCheck_b: "invalidvector",
             inventoryMovementCheck_b: "invmove",
             hotbarCheck_b: "hotbarcheck",
+            lockdown_b: "lockdown",
         };
 
         const entries = await paradoxModulesDB.entries();

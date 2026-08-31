@@ -1,4 +1,4 @@
-import { PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
+import { system, world } from "@minecraft/server";
 import { lockdownCommand } from "../commands/moderation/lockdown";
 import { startLagClear, stopLagClear } from "../modules/lag-clear-module";
 import { startGameModeCheck, stopGameModeCheck } from "../modules/game-mode-module";
@@ -137,6 +137,7 @@ import { setInventoryMovementState } from "../modules/inventory-movement-module"
 import { claimCommand, landClaims } from "../commands/utility/land-claim";
 import { hotbarCheckCommand } from "../commands/settings/hotbar-check";
 import { startHotbarCheck, stopHotbarCheck } from "../modules/hotbar-check-module";
+import { startLockdown, stopLockdown } from "../modules/lockdown-modules";
 
 /** Player unique identifier type */
 type PlayerID = string;
@@ -147,9 +148,6 @@ interface Channel {
     Members: Record<PlayerID, string>;
     lastActive: number;
 }
-
-let lockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
-let wrappedLockDownMonitor: ((event: PlayerSpawnAfterEvent) => void) | undefined;
 
 let paradoxModulesDB: OptimizedDatabase<ParadoxModulesSchema>;
 let channelsDB: OptimizedDatabase<ChannelsSchema>;
@@ -211,6 +209,7 @@ export const moduleStopActions: Record<string, () => void> = {
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: false });
     },
     hotbarCheck_b: () => stopHotbarCheck(),
+    lockdown_b: () => stopLockdown(),
 };
 
 /** Action callbacks to initialize/start module execution routines */
@@ -270,6 +269,7 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: true });
     },
     hotbarCheck_b: () => startHotbarCheck(),
+    lockdown_b: () => startLockdown(),
 };
 
 /** Master list of all Paradox commands */
@@ -521,52 +521,6 @@ async function initializeParadoxModules(): Promise<void> {
 }
 
 /**
- * Subscribes listener to track server lockdown state.
- */
-function subscribeToLockDown() {
-    lockDownMonitor = lockdownCommand.execute(undefined, undefined, undefined, true) as (event: PlayerSpawnAfterEvent) => void;
-    if (lockDownMonitor) {
-        wrappedLockDownMonitor = (event: PlayerSpawnAfterEvent) => {
-            const isLockdownActive = world.getDynamicProperty("lockdown_b");
-            if (!isLockdownActive) {
-                unsubscribeFromLockDown();
-                return;
-            }
-            if (lockDownMonitor) {
-                lockDownMonitor(event);
-            }
-        };
-        EventCoordinator.subscribeAfter("playerSpawn", wrappedLockDownMonitor);
-    }
-}
-
-/**
- * Unsubscribes listener from tracking server lockdown state.
- */
-function unsubscribeFromLockDown() {
-    const cleanupLockdownState = () => {
-        if (wrappedLockDownMonitor) {
-            EventCoordinator.unsubscribeAfter("playerSpawn", wrappedLockDownMonitor);
-            wrappedLockDownMonitor = undefined;
-        }
-        lockDownMonitor = undefined;
-        EventCoordinator.unsubscribeAfter("worldLoad", onWorldInitialize);
-    };
-
-    system.run(cleanupLockdownState);
-}
-
-/**
- * Evaluates lockdown state on server start.
- */
-function handleLockDown() {
-    const isLockdownActive = world.getDynamicProperty("lockdown_b");
-    if (isLockdownActive) {
-        subscribeToLockDown();
-    }
-}
-
-/**
  * Sets PvP state based on world dynamic settings.
  */
 function handlePvP() {
@@ -599,7 +553,6 @@ async function onWorldInitialize(): Promise<void> {
     initializeGlobalBanCheck();
     initializePrefix();
     await initializeParadoxModules();
-    handleLockDown();
     handlePvP();
     handleDoubleJump();
     onPlayerSpawn();
