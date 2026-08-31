@@ -66,7 +66,7 @@ import { visionCheckCommand } from "../commands/settings/vision";
 import { invSyncCommand } from "../commands/settings/invsync";
 import { healthChangeListener } from "./health-sync";
 import { onPlayerSpawn } from "./player-spawn";
-import { initializeGlobalBanCheck } from "./global-ban-listener";
+import { getGlobalBans, saveGlobalBans } from "../data/ban-manager";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
@@ -487,19 +487,18 @@ function initializePrefix() {
  * Initializes global banned players dynamic property entries.
  */
 function initializeGlobalBanList() {
-    const globalBannedPlayersKey = "globalBannedPlayers";
     const version = world.getDynamicProperty("paradoxVersion") as string;
+    const needsReset = !version || compareVersions(version, paradoxVersion) < 0;
 
-    if (!version || compareVersions(version, paradoxVersion) < 0) {
+    if (needsReset) {
         world.setDynamicProperty("paradoxVersion", paradoxVersion);
-        world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify([...globalBanPlayers]));
+        saveGlobalBans([...globalBanPlayers]);
         return;
     }
 
-    const existingBanList = world.getDynamicProperty(globalBannedPlayersKey);
-
-    if (!existingBanList) {
-        world.setDynamicProperty(globalBannedPlayersKey, JSON.stringify([...globalBanPlayers]));
+    const currentBans = getGlobalBans();
+    if (currentBans.length === 0) {
+        saveGlobalBans([...globalBanPlayers]);
     }
 }
 
@@ -550,7 +549,6 @@ async function onWorldInitialize(): Promise<void> {
     chatSendSubscription.subscribe();
     SecurityClearanceManager.initializeSecurityClearanceTracking();
     initializeGlobalBanList();
-    initializeGlobalBanCheck();
     initializePrefix();
     await initializeParadoxModules();
     handlePvP();
