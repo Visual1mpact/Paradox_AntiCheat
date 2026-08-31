@@ -62,7 +62,7 @@ export async function saveLocalBans(bans: LocalBanRecord): Promise<void> {
 }
 
 /**
- * Refreshes the in-memory ban cache from the world's dynamic properties[cite: 1].
+ * Refreshes the in-memory ban cache from the world's dynamic properties.
  */
 export function refreshGlobalBanCache(): void {
     const banList = getGlobalBans();
@@ -70,7 +70,7 @@ export function refreshGlobalBanCache(): void {
 }
 
 /**
- * Evaluates O(1) membership of a player name in the active global ban set[cite: 1].
+ * Evaluates O(1) membership of a player name in the active global ban set.
  * @param {string} playerName - Player name to check.
  * @returns {boolean} True if globally banned.
  */
