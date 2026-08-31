@@ -290,8 +290,8 @@ function triggerLockdown(): void {
     if (isLockedDown) return;
     isLockedDown = true;
 
-    // Direct delegation to central lockdown module
-    startLockdown();
+    // Pass false to lock down join attempts without kicking existing players
+    startLockdown(false);
     world.sendMessage("§o§c[Paradox] Network anomaly detected. Server entering lockdown.");
 
     lockdownTimeout = system.runTimeout(() => {

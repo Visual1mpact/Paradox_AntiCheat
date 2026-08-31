@@ -70,10 +70,14 @@ export function enforceLockdown(): void {
 }
 
 /**
- * Starts the server lockdown module listeners and kicks active non-exempt players.
+ * Starts the server lockdown module listeners and optionally kicks active non-exempt players.
+ *
+ * @param {boolean} [kickOnlinePlayers=true] - Whether to kick currently connected non-exempt players.
  */
-export function startLockdown(): void {
-    enforceLockdown();
+export function startLockdown(kickOnlinePlayers: boolean = true): void {
+    if (kickOnlinePlayers) {
+        enforceLockdown();
+    }
     EventCoordinator.subscribeAfter("playerSpawn", handlePlayerSpawn);
     world.setDynamicProperty("lockdown_b", true);
 }
