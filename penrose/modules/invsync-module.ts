@@ -35,13 +35,14 @@ const SNAPSHOT_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 /** Frequency in ticks at which database cleanup runs (~5 minutes). */
 const CLEANUP_INTERVAL_TICKS = 6000;
 
+/** Toggle for visual console debugging outputs. */
+const DEBUG_MODE = false;
+
 /**
  * TYPE DEFINITIONS
  */
 
-/**
- * Extended snapshot structure including runtime hash collections.
- */
+/** Extended snapshot structure including runtime hash collections. */
 interface InvSyncSnapshot extends InvSyncSnapshotRecord {
     /** Hash array for container and unique items. */
     containerHashes: string[];
@@ -81,6 +82,9 @@ const playerInteractionWindow = new Map<string, number>();
 /** Global lookup map mapping shulker unique IDs to hashed contents ($O(1)$ lookup). */
 const shulkerHashRegistry = new Map<string, string>();
 
+/** Queue tracking recently broken shulker hash signatures for drop mapping ($O(1)$ lookup). */
+const pendingShulkerHashes: string[] = [];
+
 // Cached Subscriber References
 let joinSub: ((arg: PlayerJoinAfterEvent) => void) | undefined;
 let leaveSub: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
@@ -90,6 +94,18 @@ let dieSub: ((arg: EntityDieAfterEvent) => void) | undefined;
 let itemChangeSub: ((arg: PlayerInventoryItemChangeAfterEvent) => void) | undefined;
 let blockBreakSub: ((arg: PlayerBreakBlockBeforeEvent) => void) | undefined;
 let pickupSub: ((arg: EntityItemPickupAfterEvent) => void) | undefined;
+
+/**
+ * Dispatches debug log messages if debug mode is active.
+ *
+ * @param tag - Subsystem category label.
+ * @param message - Payload detail message.
+ */
+function logDebug(tag: string, message: string): void {
+    if (DEBUG_MODE) {
+        console.warn(`[InvSync DEBUG][${tag}] ${message}`);
+    }
+}
 
 /**
  * Converts a raw string payload into an 8-character hexadecimal string digest.
@@ -115,7 +131,22 @@ function hashString(input: string): string {
 }
 
 /**
- * Scans container items (Bundles via inner container, Shulker Boxes via dynamic lifecycle lookup).
+ * Attaches a unique shulker ID dynamic property to an item stack.
+ *
+ * @param item - Target shulker box item stack.
+ * @param shulkerId - Unique shulker identifier.
+ */
+function stampShulkerItem(item: ItemStack, shulkerId: string): void {
+    try {
+        item.setDynamicProperty("shulker_id", shulkerId);
+        logDebug("ShulkerStamp", `Successfully set dynamic property 'shulker_id' -> ${shulkerId}`);
+    } catch (e) {
+        logDebug("ShulkerStamp", `Failed setting dynamic property: ${e}`);
+    }
+}
+
+/**
+ * Scans container items (Bundles via inner container, Shulker Boxes via dynamic property lookup).
  *
  * @param containerItem - Target bundle or shulker ItemStack.
  * @returns Hash digest reflecting contents, or null if empty/untracked.
@@ -146,8 +177,11 @@ function getContainerPayloadHash(containerItem: ItemStack): string | null {
 
     if (containerItem.typeId.includes("shulker_box")) {
         const shulkerId = containerItem.getDynamicProperty("shulker_id") as string | undefined;
+
         if (shulkerId && shulkerHashRegistry.has(shulkerId)) {
-            return shulkerHashRegistry.get(shulkerId)!;
+            const registeredHash = shulkerHashRegistry.get(shulkerId)!;
+            logDebug("ShulkerItem", `Matched hash for Shulker ID ${shulkerId}: ${registeredHash}`);
+            return registeredHash;
         }
     }
 
@@ -168,16 +202,29 @@ function isTrackedContainer(typeId: string): boolean {
  * Evaluates an individual inventory slot, accumulating counts and generating hashes for non-empty containers.
  *
  * @param item - ItemStack at the current slot.
+ * @param slotIndex - Current slot index in container.
+ * @param container - Inventory container reference for write-backs.
  * @param counts - Aggregated count accumulator object.
  * @param containerHashes - List of container hash signatures.
  */
-function processSlotItem(item: ItemStack, counts: Record<string, number>, containerHashes: string[]): void {
+function processSlotItem(item: ItemStack, slotIndex: number, container: Container, counts: Record<string, number>, containerHashes: string[]): void {
     counts[item.typeId] = (counts[item.typeId] ?? 0) + item.amount;
 
     if (isTrackedContainer(item.typeId)) {
+        if (item.typeId.includes("shulker_box") && !item.getDynamicProperty("shulker_id") && pendingShulkerHashes.length > 0) {
+            const contentHash = pendingShulkerHashes.shift()!;
+            const shulkerId = `shulker_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+            shulkerHashRegistry.set(shulkerId, contentHash);
+            stampShulkerItem(item, shulkerId);
+            container.setItem(slotIndex, item);
+        }
+
         const hash = getContainerPayloadHash(item);
         if (hash !== null) {
             containerHashes.push(hash);
+            logDebug("ProcessSlot", `Accumulated container hash: ${hash}`);
+        } else {
+            logDebug("ProcessSlot", `Container ${item.typeId} yielded null hash.`);
         }
     }
 }
@@ -200,9 +247,11 @@ function getInventoryState(player: Player): { counts: Record<string, number>; co
     for (let i = 0; i < size; i++) {
         const item = container.getItem(i);
         if (item) {
-            processSlotItem(item, counts, containerHashes);
+            processSlotItem(item, i, container, counts, containerHashes);
         }
     }
+
+    logDebug("GetState", `Player ${player.name} state scanned. Hashes total: ${containerHashes.length} [${containerHashes.join(", ")}]`);
     return { counts, containerHashes };
 }
 
@@ -319,7 +368,7 @@ function findDuplicateHash(containerHashes: string[]): string | undefined {
 }
 
 /**
- * Intercepts shulker box breaking *before* block destruction to capture contents and attach tracking metadata.
+ * Intercepts shulker box breaking *before* block destruction to capture contents and stage tracking metadata.
  *
  * @param event - Player break block before event context.
  */
@@ -342,20 +391,39 @@ function onPlayerBreakBlockBefore(event: PlayerBreakBlockBeforeEvent): void {
 
     if (contents.length === 0) return;
 
-    const shulkerId = `shulker_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const contentHash = hashString(`${block.typeId}|[${contents.join(";")}]`);
+    pendingShulkerHashes.push(contentHash);
 
-    shulkerHashRegistry.set(shulkerId, contentHash);
+    logDebug("BlockBreak", `Staged broken Shulker Hash [${contentHash}] in pending drop queue. Queue size: ${pendingShulkerHashes.length}`);
 }
 
 /**
- * Handles item pickup events to track interaction timelines.
+ * Safely extracts item stack instances from polymorphic pickup event properties.
+ *
+ * @param event - Raw item pickup event payload.
+ * @returns Array of item stacks picked up.
+ */
+function extractPickupItems(event: EntityItemPickupAfterEvent): ItemStack[] {
+    return event.items;
+}
+
+/**
+ * Handles item pickup events safely.
  *
  * @param event - Entity item pickup after event context.
  */
 function onEntityItemPickup(event: EntityItemPickupAfterEvent): void {
     if (event.entity instanceof Player && event.entity.isValid) {
         recordPlayerInteraction(event.entity.id);
+
+        const items = extractPickupItems(event);
+        if (items.length === 0) return;
+
+        for (const item of items) {
+            if (item?.typeId?.includes("shulker_box")) {
+                logDebug("ItemPickup", `Player ${event.entity.name} picked up Shulker Box.`);
+            }
+        }
     }
 }
 
@@ -387,6 +455,7 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
 
         const duplicateHash = findDuplicateHash(state.containerHashes);
         if (duplicateHash) {
+            logDebug("InventoryChange", `ANOMALY DETECTED! Player ${player.name} has duplicate container hash: ${duplicateHash}`);
             await handleAnomaly(player, typeId, 1);
             return;
         }
@@ -706,6 +775,7 @@ export function stopInvSync(): void {
     processingLock.clear();
     dirtySnapshots.clear();
     shulkerHashRegistry.clear();
+    pendingShulkerHashes.length = 0;
 
     alertStaffSystem("§7InvSync framework §4stopped§7.");
 }
@@ -770,6 +840,7 @@ export async function clearAllSnapshots(): Promise<void> {
     processingLock.clear();
     dirtySnapshots.clear();
     shulkerHashRegistry.clear();
+    pendingShulkerHashes.length = 0;
 
     alertStaffSystem("§2[§7Paradox§2]§o§7 Baseline inventory snapshots cleared.");
 }
