@@ -1,9 +1,24 @@
-import { system, world, Player, PlayerJoinAfterEvent, PlayerLeaveBeforeEvent, PlayerDimensionChangeAfterEvent, PlayerSpawnAfterEvent, PlayerInventoryItemChangeAfterEvent, EntityDieAfterEvent, ItemStack } from "@minecraft/server";
+import {
+    system,
+    world,
+    Player,
+    PlayerJoinAfterEvent,
+    PlayerLeaveBeforeEvent,
+    PlayerDimensionChangeAfterEvent,
+    PlayerSpawnAfterEvent,
+    PlayerInventoryItemChangeAfterEvent,
+    EntityDieAfterEvent,
+    PlayerBreakBlockBeforeEvent,
+    EntityItemPickupAfterEvent,
+    ItemStack,
+    Container,
+} from "@minecraft/server";
 import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { FlagManager } from "../classes/logging/flag-manager";
+import { InvSyncSnapshotRecord } from "../classes/database/db-types";
 
 /**
  * CONFIGURATION CONSTANTS
@@ -26,37 +41,11 @@ const CLEANUP_INTERVAL_TICKS = 6000;
  */
 
 /**
- * Represents a saved inventory state snapshot for a player.
+ * Extended snapshot structure including runtime hash collections.
  */
-interface InvSyncSnapshot {
-    /** Item count mapped by item type ID. */
-    counts: Record<string, number>;
+interface InvSyncSnapshot extends InvSyncSnapshotRecord {
     /** Hash array for container and unique items. */
     containerHashes: string[];
-    /** Unix timestamp (ms) when snapshot was recorded. */
-    time: number;
-    /** Cached player display name. */
-    name: string;
-}
-
-/**
- * Represents a single logged inventory anomaly event.
- */
-interface InvSyncAuditEvent {
-    /** Unix timestamp (ms) of occurrence. */
-    time: number;
-    /** Map of removed item type IDs to their quantities. */
-    excessItems: Record<string, number>;
-    /** Total sum of items removed. */
-    totalExcess: number;
-}
-
-/**
- * Represents the structured audit database container for a player.
- */
-interface InvSyncAuditContainer {
-    /** Array of logged audit records. */
-    events: InvSyncAuditEvent[];
 }
 
 /**
@@ -90,6 +79,9 @@ const snapshotCache = new Map<string, InvSyncSnapshot>();
 /** In-memory cache tracking last interaction epoch time per player. */
 const playerInteractionWindow = new Map<string, number>();
 
+/** Global lookup map mapping shulker unique IDs to hashed contents ($O(1)$ lookup). */
+const shulkerHashRegistry = new Map<string, string>();
+
 // Cached Subscriber References
 let joinSub: ((arg: PlayerJoinAfterEvent) => void) | undefined;
 let leaveSub: ((arg: PlayerLeaveBeforeEvent) => void) | undefined;
@@ -97,22 +89,102 @@ let dimensionSub: ((arg: PlayerDimensionChangeAfterEvent) => void) | undefined;
 let spawnSub: ((arg: PlayerSpawnAfterEvent) => void) | undefined;
 let dieSub: ((arg: EntityDieAfterEvent) => void) | undefined;
 let itemChangeSub: ((arg: PlayerInventoryItemChangeAfterEvent) => void) | undefined;
-let pickupSub: ((arg: any) => void) | undefined;
+let blockBreakSub: ((arg: PlayerBreakBlockBeforeEvent) => void) | undefined;
+let pickupSub: ((arg: EntityItemPickupAfterEvent) => void) | undefined;
 
 /**
- * Generates a lightweight payload signature for container items (Bundles, Shulkers, Unique Items).
+ * Converts a raw string payload into an 8-character hexadecimal string digest.
  *
- * @param item - ItemStack to evaluate.
- * @returns Serialized hash string of item metadata.
+ * @param input - Raw serialized payload string.
+ * @returns Pseudo-random alphanumeric hash string (e.g., "a1b2c3d4").
  */
-function getItemPayloadHash(item: ItemStack): string {
-    const loreData = item.getLore().join("|");
-    const nameTag = item.nameTag ?? "";
-    return `${item.typeId}:${item.amount}:${nameTag}:${loreData}`;
+function hashString(input: string): string {
+    let h1 = 0xdeadbeef;
+    let h2 = 0x41c6ce57;
+
+    for (let i = 0; i < input.length; i++) {
+        const ch = input.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    const hashNum = 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    return hashNum.toString(36);
 }
 
 /**
- * Aggregates current inventory item totals and generates item hashes.
+ * Scans container items (Bundles via inner container, Shulker Boxes via dynamic lifecycle lookup).
+ *
+ * @param containerItem - Target bundle or shulker ItemStack.
+ * @returns Hash digest reflecting contents, or null if empty/untracked.
+ */
+function getContainerPayloadHash(containerItem: ItemStack): string | null {
+    const container = containerItem.getComponent("inventory")?.container;
+    if (container) {
+        const contents: string[] = [];
+        const size = container.size;
+        for (let i = 0; i < size; i++) {
+            const subItem = container.getItem(i);
+            if (subItem) {
+                const subLore = subItem.getLore().join("|");
+                const subName = subItem.nameTag ?? "";
+                contents.push(`${i}:${subItem.typeId}:${subItem.amount}:${subName}:${subLore}`);
+            }
+        }
+
+        const loreData = containerItem.getLore().join("|");
+        const nameTag = containerItem.nameTag ?? "";
+
+        if (contents.length === 0 && !nameTag && loreData.length === 0) {
+            return null;
+        }
+
+        return hashString(`${containerItem.typeId}:${nameTag}:${loreData}|[${contents.join(";")}]`);
+    }
+
+    if (containerItem.typeId.includes("shulker_box")) {
+        const shulkerId = containerItem.getDynamicProperty("shulker_id") as string | undefined;
+        if (shulkerId && shulkerHashRegistry.has(shulkerId)) {
+            return shulkerHashRegistry.get(shulkerId)!;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Evaluates whether an item qualifies as a tracked container (Bundles or Shulkers).
+ *
+ * @param typeId - Namespace ID of the item.
+ * @returns True if the item is a bundle or shulker box variant.
+ */
+function isTrackedContainer(typeId: string): boolean {
+    return typeId.endsWith("_bundle") || typeId === "minecraft:bundle" || typeId.includes("shulker_box");
+}
+
+/**
+ * Evaluates an individual inventory slot, accumulating counts and generating hashes for non-empty containers.
+ *
+ * @param item - ItemStack at the current slot.
+ * @param counts - Aggregated count accumulator object.
+ * @param containerHashes - List of container hash signatures.
+ */
+function processSlotItem(item: ItemStack, counts: Record<string, number>, containerHashes: string[]): void {
+    counts[item.typeId] = (counts[item.typeId] ?? 0) + item.amount;
+
+    if (isTrackedContainer(item.typeId)) {
+        const hash = getContainerPayloadHash(item);
+        if (hash !== null) {
+            containerHashes.push(hash);
+        }
+    }
+}
+
+/**
+ * Aggregates current inventory item totals and generates container payload hashes.
  *
  * @param player - Target player entity to inspect.
  * @returns Inventory summary object, or `null` if container is unavailable.
@@ -128,13 +200,8 @@ function getInventoryState(player: Player): { counts: Record<string, number>; co
 
     for (let i = 0; i < size; i++) {
         const item = container.getItem(i);
-        if (!item) continue;
-
-        counts[item.typeId] = (counts[item.typeId] ?? 0) + item.amount;
-
-        // Extract fingerprints for non-stackable items, bundles, or shulker containers
-        if (item.maxAmount === 1 || item.typeId.includes("bundle") || item.typeId.includes("shulker")) {
-            containerHashes.push(getItemPayloadHash(item));
+        if (item) {
+            processSlotItem(item, counts, containerHashes);
         }
     }
     return { counts, containerHashes };
@@ -179,15 +246,16 @@ async function flushDirtySnapshots(): Promise<void> {
  */
 async function migrateLegacySnapshots(): Promise<void> {
     try {
-        const keys: string[] = typeof (invSyncSnapshotsDB as any).keys === "function" ? await (invSyncSnapshotsDB as any).keys() : [];
-
-        for (const key of keys) {
-            const record = await invSyncSnapshotsDB.get(key);
-            if (record && !Array.isArray(record.containerHashes)) {
-                record.containerHashes = [];
-                await invSyncSnapshotsDB.set(key, record);
-            }
-        }
+        await invSyncSnapshotsDB.clean(
+            (_: string, record: InvSyncSnapshotRecord) => {
+                const snapshot = record as InvSyncSnapshot;
+                if (!Array.isArray(snapshot.containerHashes)) {
+                    snapshot.containerHashes = [];
+                }
+                return true;
+            },
+            { silent: true }
+        );
     } catch (e) {
         console.error(`[Paradox] Failed to execute DB schema migration: ${e}`);
     }
@@ -209,17 +277,81 @@ export function recordPlayerInteraction(playerId: string): void {
  */
 async function runDatabaseVacuum(): Promise<void> {
     try {
-        if (typeof (invSyncSnapshotsDB as any).clean === "function") {
-            await (invSyncSnapshotsDB as any).clean((_: string | number, value: InvSyncSnapshot) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
-        }
+        await invSyncSnapshotsDB.clean((_: string, value: InvSyncSnapshotRecord) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
     } catch (e) {
         console.error(`[Paradox] Vacuum Error: ${e}`);
     }
 }
 
 /**
+ * Fetches or instantiates a snapshot baseline for a given player ($O(1)$ lookup).
+ *
+ * @param player - Target player entity.
+ * @returns Promise resolving to active inventory snapshot.
+ */
+async function resolvePlayerSnapshot(player: Player): Promise<InvSyncSnapshot> {
+    const cached = snapshotCache.get(player.id);
+    if (cached) return cached;
+
+    const dbRecord = (await invSyncSnapshotsDB.get(player.id)) as InvSyncSnapshot | undefined;
+    const snapshot: InvSyncSnapshot = {
+        counts: dbRecord?.counts ?? {},
+        containerHashes: dbRecord?.containerHashes ?? [],
+        time: dbRecord?.time ?? Date.now(),
+        name: dbRecord?.name ?? player.name,
+    };
+    snapshotCache.set(player.id, snapshot);
+    return snapshot;
+}
+
+/**
+ * Checks if container hash array contains duplicate entries ($O(N)$ with Set lookup).
+ *
+ * @param containerHashes - Hash signatures list.
+ * @returns Duplicate signature string if found, otherwise undefined.
+ */
+function findDuplicateHash(containerHashes: string[]): string | undefined {
+    const hashSet = new Set<string>();
+    for (const hash of containerHashes) {
+        if (hashSet.has(hash)) return hash;
+        hashSet.add(hash);
+    }
+    return undefined;
+}
+
+/**
+ * Intercepts shulker box breaking *before* block destruction to capture contents and attach tracking metadata.
+ *
+ * @param event - Player break block before event context.
+ */
+function onPlayerBreakBlockBefore(event: PlayerBreakBlockBeforeEvent): void {
+    const { block } = event;
+    if (!block.typeId.includes("shulker_box")) return;
+
+    const container = block.getComponent("inventory")?.container;
+    if (!container) return;
+
+    const contents: string[] = [];
+    const size = container.size;
+
+    for (let i = 0; i < size; i++) {
+        const item = container.getItem(i);
+        if (item) {
+            contents.push(`${i}:${item.typeId}:${item.amount}:${item.nameTag ?? ""}`);
+        }
+    }
+
+    if (contents.length === 0) return;
+
+    const shulkerId = `shulker_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const contentHash = hashString(`${block.typeId}|[${contents.join(";")}]`);
+
+    shulkerHashRegistry.set(shulkerId, contentHash);
+}
+
+/**
  * CORE ANOMALY DETECTION ENGINE
- * Evaluates item mutations using Hash Validation.
+ * Evaluates item mutations using Container Inner-Content Hash Validation.
  *
  * @param event - Inventory item change event context.
  * @returns Promise resolving upon analysis completion.
@@ -239,29 +371,16 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
     processingLock.add(playerId);
 
     try {
-        let snapshot = snapshotCache.get(playerId);
-        if (!snapshot) {
-            const dbRecord = await invSyncSnapshotsDB.get(playerId);
-            snapshot = {
-                counts: dbRecord?.counts ?? {},
-                containerHashes: dbRecord?.containerHashes ?? [],
-                time: dbRecord?.time ?? Date.now(),
-                name: dbRecord?.name ?? player.name,
-            };
-            snapshotCache.set(playerId, snapshot);
-        }
-
+        await resolvePlayerSnapshot(player);
         const state = getInventoryState(player);
         if (!state) return;
 
-        // 1. HASH VERIFICATION: Checks for exact duplicate container/item signatures inside inventory
-        const duplicateHash = state.containerHashes.find((hash, idx) => state.containerHashes.indexOf(hash) !== idx);
+        const duplicateHash = findDuplicateHash(state.containerHashes);
         if (duplicateHash) {
             await handleAnomaly(player, typeId, 1);
             return;
         }
 
-        // 2. PASS TRANSACTION: Update active memory snapshot with legitimate new baseline
         updateMemorySnapshot(playerId, {
             counts: state.counts,
             containerHashes: state.containerHashes,
@@ -270,6 +389,59 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
         });
     } finally {
         processingLock.delete(playerId);
+    }
+}
+
+/**
+ * Executes slot-by-slot inventory deductions for flagged items.
+ *
+ * @param container - Inventory container reference.
+ * @param typeId - Target item type ID.
+ * @param excessAmount - Target total deduction count.
+ * @returns Remaining excess amount that could not be deducted.
+ */
+function deductInventoryItems(container: Container, typeId: string, excessAmount: number): number {
+    let remainingToDeduct = excessAmount;
+    const size = container.size;
+
+    for (let i = 0; i < size && remainingToDeduct > 0; i++) {
+        const item = container.getItem(i);
+        if (!item || item.typeId !== typeId) continue;
+
+        if (item.amount <= remainingToDeduct) {
+            remainingToDeduct -= item.amount;
+            container.setItem(i, undefined);
+        } else {
+            item.amount -= remainingToDeduct;
+            container.setItem(i, item);
+            remainingToDeduct = 0;
+        }
+    }
+    return remainingToDeduct;
+}
+
+/**
+ * Appends audit logging record for an anomaly event.
+ *
+ * @param playerId - Target player UUID.
+ * @param typeId - Flagged item type ID.
+ * @param actualDeducted - Amount removed from player.
+ */
+async function recordAuditLog(playerId: string, typeId: string, actualDeducted: number): Promise<void> {
+    try {
+        const audit = (await invSyncAuditDB.get(playerId)) ?? { events: [] };
+        audit.events.push({
+            time: Date.now(),
+            excessItems: { [typeId]: actualDeducted },
+            totalExcess: actualDeducted,
+        });
+
+        if (audit.events.length > MAX_AUDIT_EVENTS) {
+            audit.events = audit.events.slice(-MAX_AUDIT_EVENTS);
+        }
+        await invSyncAuditDB.set(playerId, audit);
+    } catch (e) {
+        console.error(`[Paradox] Audit Log Save Error [${playerId}]: ${e}`);
     }
 }
 
@@ -287,22 +459,7 @@ async function handleAnomaly(player: Player, typeId: string, excessAmount: numbe
     const container = player.getComponent("inventory")?.container;
     if (!container) return;
 
-    let remainingToDeduct = excessAmount;
-    const size = container.size;
-
-    for (let i = 0; i < size && remainingToDeduct > 0; i++) {
-        const item = container.getItem(i);
-        if (!item || item.typeId !== typeId) continue;
-
-        if (item.amount <= remainingToDeduct) {
-            remainingToDeduct -= item.amount;
-            container.setItem(i, undefined);
-        } else {
-            item.amount -= remainingToDeduct;
-            container.setItem(i, item);
-            remainingToDeduct = 0;
-        }
-    }
+    const remainingToDeduct = deductInventoryItems(container, typeId, excessAmount);
 
     const postState = getInventoryState(player);
     if (postState) {
@@ -315,23 +472,7 @@ async function handleAnomaly(player: Player, typeId: string, excessAmount: numbe
     }
 
     const actualDeducted = excessAmount - remainingToDeduct;
-
-    try {
-        const audit: InvSyncAuditContainer = (await invSyncAuditDB.get(player.id)) ?? { events: [] };
-        audit.events.push({
-            time: Date.now(),
-            excessItems: { [typeId]: actualDeducted },
-            totalExcess: actualDeducted,
-        });
-
-        if (audit.events.length > MAX_AUDIT_EVENTS) {
-            audit.events = audit.events.slice(-MAX_AUDIT_EVENTS);
-        }
-        await invSyncAuditDB.set(player.id, audit);
-    } catch (e) {
-        console.error(`[Paradox] Audit Log Save Error [${player.name}]: ${e}`);
-    }
-
+    await recordAuditLog(player.id, typeId, actualDeducted);
     alertStaff(player, `${typeId} (x${actualDeducted} removed)`);
 }
 
@@ -481,16 +622,15 @@ export async function startInvSync(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
 
-    // 1. Migrate older database formats to support containerHashes
     await migrateLegacySnapshots();
 
-    // 2. Assign subscribers
     joinSub = onPlayerJoin;
     leaveSub = onPlayerLeave;
     dimensionSub = onDimensionChange;
     dieSub = onPlayerDie;
     spawnSub = onPlayerSpawn;
     itemChangeSub = onInventoryItemChanged;
+    blockBreakSub = onPlayerBreakBlockBefore;
 
     EventCoordinator.subscribeAfter("playerJoin", joinSub);
     EventCoordinator.subscribeBefore("playerLeave", leaveSub);
@@ -498,18 +638,15 @@ export async function startInvSync(): Promise<void> {
     EventCoordinator.subscribeAfter("entityDie", dieSub);
     EventCoordinator.subscribeAfter("playerSpawn", spawnSub);
     EventCoordinator.subscribeAfter("playerInventoryItemChange", itemChangeSub);
+    EventCoordinator.subscribeBefore("playerBreakBlock", blockBreakSub);
 
-    // Track ground item pickups to maintain interaction window timestamps
-    pickupSub = (event: any) => {
-        if (event?.player?.id) {
-            recordPlayerInteraction(event.player.id);
+    pickupSub = (event: EntityItemPickupAfterEvent) => {
+        if (event.entity instanceof Player && event.entity.isValid) {
+            recordPlayerInteraction(event.entity.id);
         }
     };
-    if ((world.afterEvents as any).playerPickupItem) {
-        (world.afterEvents as any).playerPickupItem.subscribe(pickupSub);
-    }
+    world.afterEvents.entityItemPickup.subscribe(pickupSub);
 
-    // 3. Populate memory cache for online players
     for (const player of PlayerCache.getPlayers()) {
         if (player?.isValid) {
             const state = getInventoryState(player);
@@ -519,12 +656,10 @@ export async function startInvSync(): Promise<void> {
         }
     }
 
-    // 4. Start background flush task (Runs every ~5 seconds)
     dbFlushIntervalId = system.runInterval(async () => {
         await flushDirtySnapshots();
     }, 100);
 
-    // 5. Start background vacuum task
     cleanupIntervalId = system.runInterval(async () => {
         await runDatabaseVacuum();
     }, CLEANUP_INTERVAL_TICKS);
@@ -545,9 +680,10 @@ export function stopInvSync(): void {
     if (dieSub) EventCoordinator.unsubscribeAfter("entityDie", dieSub);
     if (spawnSub) EventCoordinator.unsubscribeAfter("playerSpawn", spawnSub);
     if (itemChangeSub) EventCoordinator.unsubscribeAfter("playerInventoryItemChange", itemChangeSub);
+    if (blockBreakSub) EventCoordinator.unsubscribeBefore("playerBreakBlock", blockBreakSub);
 
-    if (pickupSub && (world.afterEvents as any).playerPickupItem) {
-        (world.afterEvents as any).playerPickupItem.unsubscribe(pickupSub);
+    if (pickupSub) {
+        world.afterEvents.entityItemPickup.unsubscribe(pickupSub);
     }
 
     if (dbFlushIntervalId !== undefined) {
@@ -559,7 +695,7 @@ export function stopInvSync(): void {
         cleanupIntervalId = undefined;
     }
 
-    joinSub = leaveSub = dimensionSub = dieSub = spawnSub = itemChangeSub = pickupSub = undefined;
+    joinSub = leaveSub = dimensionSub = dieSub = spawnSub = itemChangeSub = blockBreakSub = pickupSub = undefined;
 
     snapshotCache.clear();
     playerInteractionWindow.clear();
@@ -567,6 +703,7 @@ export function stopInvSync(): void {
     deadPlayers.clear();
     processingLock.clear();
     dirtySnapshots.clear();
+    shulkerHashRegistry.clear();
 
     alertStaffSystem("§7InvSync framework §4stopped§7.");
 }
@@ -581,12 +718,11 @@ export async function forceCheckAll(): Promise<void> {
         if (!player?.isValid || dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) continue;
 
         try {
-            const snapshot = snapshotCache.get(player.id) ?? (await invSyncSnapshotsDB.get(player.id));
+            const snapshot = snapshotCache.get(player.id) ?? ((await invSyncSnapshotsDB.get(player.id)) as InvSyncSnapshot | undefined);
             const state = getInventoryState(player);
             if (!snapshot || !state) continue;
 
-            // Scan for duplicate payload hashes across current state
-            const duplicateHash = state.containerHashes.find((hash, idx) => state.containerHashes.indexOf(hash) !== idx);
+            const duplicateHash = findDuplicateHash(state.containerHashes);
             if (duplicateHash) {
                 await handleAnomaly(player, "Duplicated Payload Container", 1);
             }
@@ -619,16 +755,8 @@ export async function forceSnapshotAll(): Promise<void> {
  */
 export async function clearAllSnapshots(): Promise<void> {
     try {
-        if (typeof (invSyncSnapshotsDB as any).clear === "function") {
-            await (invSyncSnapshotsDB as any).clear();
-            await (invSyncAuditDB as any).clear();
-        } else {
-            for (const player of PlayerCache.getPlayers()) {
-                if (player?.isValid) {
-                    await invSyncSnapshotsDB.delete(player.id);
-                }
-            }
-        }
+        await invSyncSnapshotsDB.clear();
+        await invSyncAuditDB.clear();
     } catch (e) {
         console.error(`[Paradox] DB Clear Error: ${e}`);
     }
@@ -639,6 +767,7 @@ export async function clearAllSnapshots(): Promise<void> {
     deadPlayers.clear();
     processingLock.clear();
     dirtySnapshots.clear();
+    shulkerHashRegistry.clear();
 
     alertStaffSystem("§2[§7Paradox§2]§o§7 Baseline inventory snapshots cleared.");
 }
