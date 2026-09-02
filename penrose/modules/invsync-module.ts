@@ -1,6 +1,5 @@
 import {
     system,
-    world,
     Player,
     PlayerJoinAfterEvent,
     PlayerLeaveBeforeEvent,
@@ -350,6 +349,17 @@ function onPlayerBreakBlockBefore(event: PlayerBreakBlockBeforeEvent): void {
 }
 
 /**
+ * Handles item pickup events to track interaction timelines.
+ *
+ * @param event - Entity item pickup after event context.
+ */
+function onEntityItemPickup(event: EntityItemPickupAfterEvent): void {
+    if (event.entity instanceof Player && event.entity.isValid) {
+        recordPlayerInteraction(event.entity.id);
+    }
+}
+
+/**
  * CORE ANOMALY DETECTION ENGINE
  * Evaluates item mutations using Container Inner-Content Hash Validation.
  *
@@ -631,6 +641,7 @@ export async function startInvSync(): Promise<void> {
     spawnSub = onPlayerSpawn;
     itemChangeSub = onInventoryItemChanged;
     blockBreakSub = onPlayerBreakBlockBefore;
+    pickupSub = onEntityItemPickup;
 
     EventCoordinator.subscribeAfter("playerJoin", joinSub);
     EventCoordinator.subscribeBefore("playerLeave", leaveSub);
@@ -639,13 +650,7 @@ export async function startInvSync(): Promise<void> {
     EventCoordinator.subscribeAfter("playerSpawn", spawnSub);
     EventCoordinator.subscribeAfter("playerInventoryItemChange", itemChangeSub);
     EventCoordinator.subscribeBefore("playerBreakBlock", blockBreakSub);
-
-    pickupSub = (event: EntityItemPickupAfterEvent) => {
-        if (event.entity instanceof Player && event.entity.isValid) {
-            recordPlayerInteraction(event.entity.id);
-        }
-    };
-    world.afterEvents.entityItemPickup.subscribe(pickupSub);
+    EventCoordinator.subscribeAfter("entityItemPickup", pickupSub);
 
     for (const player of PlayerCache.getPlayers()) {
         if (player?.isValid) {
@@ -681,10 +686,7 @@ export function stopInvSync(): void {
     if (spawnSub) EventCoordinator.unsubscribeAfter("playerSpawn", spawnSub);
     if (itemChangeSub) EventCoordinator.unsubscribeAfter("playerInventoryItemChange", itemChangeSub);
     if (blockBreakSub) EventCoordinator.unsubscribeBefore("playerBreakBlock", blockBreakSub);
-
-    if (pickupSub) {
-        world.afterEvents.entityItemPickup.unsubscribe(pickupSub);
-    }
+    if (pickupSub) EventCoordinator.unsubscribeAfter("entityItemPickup", pickupSub);
 
     if (dbFlushIntervalId !== undefined) {
         system.clearRun(dbFlushIntervalId);
