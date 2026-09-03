@@ -1,16 +1,10 @@
 import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startInvSync, stopInvSync, forceSnapshotAll, forceCheckAll, clearAllSnapshots } from "../../modules/invsync-module";
-import { paradoxModulesDB, invSyncSnapshotsDB, invSyncAuditDB } from "../../event-listeners/world-initialize";
+import { startInvSync, stopInvSync, forceCheckAll, clearAllAuditLogs, getInventoryState } from "../../modules/invsync-module";
+import { paradoxModulesDB, invSyncAuditDB } from "../../event-listeners/world-initialize";
 
 interface ModuleData {
     enabled?: boolean;
-}
-
-interface InventorySnapshot {
-    name: string;
-    time: number;
-    counts: Record<string, number>;
 }
 
 interface AnomalyEvent {
@@ -120,27 +114,29 @@ async function handleForensic(player: Player, targetName: string | undefined, pr
         return;
     }
 
-    const snapshotEntries = (await invSyncSnapshotsDB.entries()) as [string, InventorySnapshot][];
-    const snapshotEntry = snapshotEntries.find(([_, snapshot]) => snapshot.name.toLowerCase() === targetName.toLowerCase());
-
-    if (!snapshotEntry) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 §cNo snapshot found for player §f${targetName}`);
+    const targetPlayer = world.getPlayers().find((p) => p.name.toLowerCase() === targetName.toLowerCase());
+    if (!targetPlayer) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 §cPlayer §f${targetName} §cis not online.`);
         return;
     }
 
-    const [targetId, snapshot] = snapshotEntry;
-    const audit = ((await invSyncAuditDB.get(targetId)) as AuditRecord | undefined) ?? { events: [] };
+    const currentState = getInventoryState(targetPlayer);
+    if (!currentState) {
+        player.sendMessage(`§2[§7Paradox§2]§o§7 §cUnable to fetch inventory for §f${targetPlayer.name}`);
+        return;
+    }
 
-    player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${snapshot.name}`);
-    player.sendMessage(`§2[§7Paradox§2]§o§7 Last Snapshot: §f${new Date(snapshot.time).toLocaleString()}`);
+    const audit = ((await invSyncAuditDB.get(targetPlayer.id)) as AuditRecord | undefined) ?? { events: [] };
 
-    renderSuspiciousItems(player, snapshot.counts);
-    renderInventoryCounts(player, snapshot.counts);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 §2[InvSync Forensics] §7Player: §f${targetPlayer.name}`);
+
+    renderSuspiciousItems(player, currentState.counts);
+    renderInventoryCounts(player, currentState.counts);
     renderAuditEvents(player, audit.events);
 }
 
 /**
- * Processes module action subcommands (status, snapshot, check, clear).
+ * Processes module action subcommands (status, check, clear).
  * @param {Player} player - Player object.
  * @param {string} sub - Subcommand text identifier.
  * @param {boolean} enabled - Operational flag status.
@@ -152,27 +148,18 @@ async function handleModuleSubactions(player: Player, sub: string, enabled: bool
         return true;
     }
 
-    if (sub === "snapshot") {
-        if (!enabled) player.sendMessage("§2[§7Paradox§2]§o§7 §c§oInvSync must be enabled first.");
-        else {
-            await forceSnapshotAll();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Snapshot forced for all online players.");
-        }
-        return true;
-    }
-
     if (sub === "check") {
         if (!enabled) player.sendMessage("§2[§7Paradox§2]§o§7 §cInvSync must be enabled first.");
         else {
             await forceCheckAll();
-            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Rejoin check forced for all online players.");
+            player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 Recheck forced for all online players.");
         }
         return true;
     }
 
     if (sub === "clear") {
-        await clearAllSnapshots();
-        player.sendMessage("§2[§7Paradox§2]§o§7 §§a[§7InvSync§a]§7 All stored snapshots cleared.");
+        await clearAllAuditLogs();
+        player.sendMessage("§2[§7Paradox§2]§o§7 §a[§7InvSync§a]§7 All stored audit history cleared.");
         return true;
     }
 
@@ -181,17 +168,13 @@ async function handleModuleSubactions(player: Player, sub: string, enabled: bool
 
 /**
  * InvSync command controller.
- *
- * Provides administrative control over the Inventory Synchronization module
- * and exposes forensic reporting tools for anomaly investigation.
- *
  * Required clearance: Level 4
  */
 export const invSyncCommand: Command = {
     name: "invsync",
     description: "Controls the Inventory Synchronization module and provides forensic insights.",
-    usage: "{prefix}invsync [ help | status | snapshot | check | clear | forensic <player> ]",
-    examples: ["{prefix}invsync", "{prefix}invsync status", "{prefix}invsync snapshot", "{prefix}invsync check", "{prefix}invsync clear", "{prefix}invsync forensic Steve"],
+    usage: "{prefix}invsync [ help | status | check | clear | forensic <player> ]",
+    examples: ["{prefix}invsync", "{prefix}invsync status", "{prefix}invsync check", "{prefix}invsync clear", "{prefix}invsync forensic Steve"],
     category: "Modules",
     securityClearance: 4,
     icon: "textures/ui/switch_accounts.png",
@@ -202,22 +185,15 @@ export const invSyncCommand: Command = {
         description:
             "Manage the Inventory Synchronization (InvSync) module to prevent duplication exploits and investigate anomalies.\n\n" +
             "§7• §fEnable / Disable Module§7: Toggle InvSync to start or stop inventory tracking.\n" +
-            "§7• §fForce Snapshot§7: Capture the current inventory state of all online players.\n" +
             "§7• §fForce Recheck§7: Immediately run anomaly detection across all players.\n" +
-            "§7• §fClear Snapshots§7: Remove all stored inventory snapshots and audit history.\n" +
+            "§7• §fClear Audit Logs§7: Remove all stored audit history.\n" +
             "§7• §fStatus§7: Display whether InvSync is currently enabled or disabled.\n" +
-            "§7• §fForensic Report§7: View detailed inventory and anomaly history for a specific player.\n\n" +
-            "§7InvSync Rules:\n" +
-            "§7• Always enable InvSync to track player inventories properly.\n" +
-            "§7• Forensic reports highlight items exceeding normal stack sizes (§c>64§7).\n" +
-            "§7• Only administrators with clearance level 4 can modify or access forensic tools.\n\n" +
-            "§7All interactions are logged for administrative review.\n\n",
+            "§7• §fForensic Report§7: View detailed live inventory and anomaly history for a specific player.\n\n",
         commandOrder: "command-arg",
         actions: [
             { name: "Enable / Disable", icon: "textures/ui/toggle_on.png", description: "Toggle the InvSync module on or off." },
-            { name: "Force Snapshot", icon: "textures/ui/icon_import.png", command: ["snapshot"], description: "Capture the current inventory state of all online players." },
             { name: "Force Recheck", icon: "textures/ui/refresh.png", command: ["check"], description: "Immediately run anomaly detection across all players." },
-            { name: "Clear Snapshots", icon: "textures/ui/icon_trash.png", command: ["clear"], description: "Remove all stored inventory snapshots and audit history." },
+            { name: "Clear Audit Logs", icon: "textures/ui/icon_trash.png", command: ["clear"], description: "Remove all stored audit history." },
             { name: "Status", icon: "textures/ui/check.png", command: ["status"], description: "Display whether InvSync is currently enabled or disabled." },
             { name: "Forensic: View Player", icon: "textures/ui/dressing_room_skins.png", requiredFields: ["playerName"], command: ["forensic"], description: "View detailed inventory and anomaly history for a specific player." },
         ],
@@ -231,13 +207,6 @@ export const invSyncCommand: Command = {
         ],
     },
 
-    /**
-     * Command execution entry point.
-     * Routes subcommands and enforces module state requirements where applicable.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object.
-     * @param {string[]} args - The command arguments.
-     * @returns {Promise<void>}
-     */
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
         const player = message.sender;

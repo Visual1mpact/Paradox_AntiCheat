@@ -271,19 +271,6 @@ export type ChestLocksSchema = Record<string, ChestLockRecord>;
 // INVENTORY & AUDIT SCHEMAS
 // ==========================================
 
-/** Document structure for inventory sync snapshot records */
-export interface InvSyncSnapshotRecord extends DatabaseValueObject {
-    counts: Record<string, number>;
-    time: number;
-    name: string;
-}
-
-/**
- * Schema for the `invSyncSnapshots` database.
- * Maps player IDs to inventory snapshots.
- */
-export type InvSyncSnapshots = Record<PlayerID, InvSyncSnapshotRecord>;
-
 /** Document structure for inventory audit flag event entries */
 export interface InvSyncAuditEvent {
     time: number;

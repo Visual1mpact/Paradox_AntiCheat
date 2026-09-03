@@ -12,54 +12,30 @@ import {
     ItemStack,
     Container,
 } from "@minecraft/server";
-import { invSyncSnapshotsDB, invSyncAuditDB } from "../event-listeners/world-initialize";
+import { invSyncAuditDB } from "../event-listeners/world-initialize";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { FlagManager } from "../classes/logging/flag-manager";
-import { InvSyncSnapshotRecord } from "../classes/database/db-types";
-
-/**
- * CONFIGURATION CONSTANTS
- */
 
 /** Maximum number of audit entries retained per player. */
 const MAX_AUDIT_EVENTS = 200;
 
-/** Tick delay used to buffer state updates across world lifecycle transitions. */
-const BUFFER_TICKS = 40;
-
-/** Time-to-live threshold for offline player snapshots (7 days in ms). */
-const SNAPSHOT_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
-
-/** Frequency in ticks at which database cleanup runs (~5 minutes). */
-const CLEANUP_INTERVAL_TICKS = 6000;
+/** Rapid rejoin time window in milliseconds (15 seconds). */
+const REJOIN_WINDOW_MS = 15000;
 
 /** Toggle for visual console debugging outputs. */
 const DEBUG_MODE = false;
 
-/**
- * TYPE DEFINITIONS
- */
-
-/** Extended snapshot structure including runtime hash collections. */
-interface InvSyncSnapshot extends InvSyncSnapshotRecord {
-    /** Hash array for container and unique items. */
-    containerHashes: string[];
+/** Temporary disconnect snapshot structure for rapid rejoin delta checks. */
+interface DisconnectSnapshot {
+    time: number;
+    counts: Record<string, number>;
+    containerHashes: Set<string>;
 }
 
-/**
- * RUNTIME STATE & CACHES
- */
-
-/** Flag indicating whether the InvSync system is actively running. */
+/** RUNTIME STATE & CACHES */
 let isModuleActive = false;
-
-/** Scheduled interval ID for database cleanup vacuum execution. */
-let cleanupIntervalId: number | undefined;
-
-/** Scheduled interval ID for async database flush operations. */
-let dbFlushIntervalId: number | undefined;
 
 /** Player UUID set for tracking active dimension transitions. */
 const dimensionChangingPlayers = new Set<string>();
@@ -70,20 +46,14 @@ const deadPlayers = new Set<string>();
 /** Processing lock set preventing race conditions during mutation checks. */
 const processingLock = new Set<string>();
 
-/** Set tracking player UUIDs with pending unwritten database updates. */
-const dirtySnapshots = new Set<string>();
-
-/** In-memory cache holding current player inventory snapshots ($O(1)$ lookup). */
-const snapshotCache = new Map<string, InvSyncSnapshot>();
-
-/** In-memory cache tracking last interaction epoch time per player. */
-const playerInteractionWindow = new Map<string, number>();
-
 /** Global lookup map mapping shulker unique IDs to hashed contents ($O(1)$ lookup). */
 const shulkerHashRegistry = new Map<string, string>();
 
 /** Queue tracking recently broken shulker hash signatures for drop mapping ($O(1)$ lookup). */
 const pendingShulkerHashes: string[] = [];
+
+/** In-memory cache tracking short-window disconnect snapshots for rapid rejoin checks ($O(1)$ lookup). */
+const disconnectSnapshots = new Map<string, DisconnectSnapshot>();
 
 // Cached Subscriber References
 let joinSub: ((arg: PlayerJoinAfterEvent) => void) | undefined;
@@ -97,9 +67,8 @@ let pickupSub: ((arg: EntityItemPickupAfterEvent) => void) | undefined;
 
 /**
  * Dispatches debug log messages if debug mode is active.
- *
- * @param tag - Subsystem category label.
- * @param message - Payload detail message.
+ * @param {string} tag - Subsystem category label.
+ * @param {string} message - Payload detail message.
  */
 function logDebug(tag: string, message: string): void {
     if (DEBUG_MODE) {
@@ -109,9 +78,8 @@ function logDebug(tag: string, message: string): void {
 
 /**
  * Converts a raw string payload into an 8-character hexadecimal string digest.
- *
- * @param input - Raw serialized payload string.
- * @returns Pseudo-random alphanumeric hash string (e.g., "a1b2c3d4").
+ * @param {string} input - Raw serialized payload string.
+ * @returns {string} Pseudo-random alphanumeric hash string.
  */
 function hashString(input: string): string {
     let h1 = 0xdeadbeef;
@@ -132,9 +100,8 @@ function hashString(input: string): string {
 
 /**
  * Attaches a unique shulker ID dynamic property to an item stack.
- *
- * @param item - Target shulker box item stack.
- * @param shulkerId - Unique shulker identifier.
+ * @param {ItemStack} item - Target shulker box item stack.
+ * @param {string} shulkerId - Unique shulker identifier.
  */
 function stampShulkerItem(item: ItemStack, shulkerId: string): void {
     try {
@@ -147,9 +114,8 @@ function stampShulkerItem(item: ItemStack, shulkerId: string): void {
 
 /**
  * Scans container items (Bundles via inner container, Shulker Boxes via dynamic property lookup).
- *
- * @param containerItem - Target bundle or shulker ItemStack.
- * @returns Hash digest reflecting contents, or null if empty/untracked.
+ * @param {ItemStack} containerItem - Target bundle or shulker ItemStack.
+ * @returns {string | null} Hash digest reflecting contents, or null if empty/untracked.
  */
 function getContainerPayloadHash(containerItem: ItemStack): string | null {
     const container = containerItem.getComponent("inventory")?.container;
@@ -190,9 +156,8 @@ function getContainerPayloadHash(containerItem: ItemStack): string | null {
 
 /**
  * Evaluates whether an item qualifies as a tracked container (Bundles or Shulkers).
- *
- * @param typeId - Namespace ID of the item.
- * @returns True if the item is a bundle or shulker box variant.
+ * @param {string} typeId - Namespace ID of the item.
+ * @returns {boolean} True if the item is a bundle or shulker box variant.
  */
 function isTrackedContainer(typeId: string): boolean {
     return typeId.endsWith("_bundle") || typeId === "minecraft:bundle" || typeId.includes("shulker_box");
@@ -200,12 +165,11 @@ function isTrackedContainer(typeId: string): boolean {
 
 /**
  * Evaluates an individual inventory slot, accumulating counts and generating hashes for non-empty containers.
- *
- * @param item - ItemStack at the current slot.
- * @param slotIndex - Current slot index in container.
- * @param container - Inventory container reference for write-backs.
- * @param counts - Aggregated count accumulator object.
- * @param containerHashes - List of container hash signatures.
+ * @param {ItemStack} item - ItemStack at the current slot.
+ * @param {number} slotIndex - Current slot index in container.
+ * @param {Container} container - Inventory container reference for write-backs.
+ * @param {Record<string, number>} counts - Aggregated count accumulator object.
+ * @param {string[]} containerHashes - List of container hash signatures.
  */
 function processSlotItem(item: ItemStack, slotIndex: number, container: Container, counts: Record<string, number>, containerHashes: string[]): void {
     counts[item.typeId] = (counts[item.typeId] ?? 0) + item.amount;
@@ -231,11 +195,10 @@ function processSlotItem(item: ItemStack, slotIndex: number, container: Containe
 
 /**
  * Aggregates current inventory item totals and generates container payload hashes.
- *
- * @param player - Target player entity to inspect.
- * @returns Inventory summary object, or `null` if container is unavailable.
+ * @param {Player} player - Target player entity to inspect.
+ * @returns {{ counts: Record<string, number>; containerHashes: string[] } | null} Inventory summary object.
  */
-function getInventoryState(player: Player): { counts: Record<string, number>; containerHashes: string[] } | null {
+export function getInventoryState(player: Player): { counts: Record<string, number>; containerHashes: string[] } | null {
     if (!player?.isValid) return null;
     const container = player.getComponent("inventory")?.container;
     if (!container) return null;
@@ -256,107 +219,9 @@ function getInventoryState(player: Player): { counts: Record<string, number>; co
 }
 
 /**
- * Synchronous local cache update; queues DB write for background batching.
- *
- * @param playerId - Target player UUID.
- * @param snapshot - Updated snapshot payload to persist.
- */
-function updateMemorySnapshot(playerId: string, snapshot: InvSyncSnapshot): void {
-    snapshotCache.set(playerId, snapshot);
-    dirtySnapshots.add(playerId);
-}
-
-/**
- * Flushes dirty in-memory snapshots to disk in the background to prevent watchdog spikes.
- *
- * @returns Promise resolving when all queued entries are written.
- */
-async function flushDirtySnapshots(): Promise<void> {
-    if (dirtySnapshots.size === 0) return;
-
-    for (const playerId of Array.from(dirtySnapshots)) {
-        dirtySnapshots.delete(playerId);
-        const snapshot = snapshotCache.get(playerId);
-        if (!snapshot) continue;
-
-        try {
-            await invSyncSnapshotsDB.set(playerId, snapshot);
-        } catch (e) {
-            console.error(`[Paradox] DB Batch Write Error: ${e}`);
-        }
-    }
-}
-
-/**
- * Upgrades legacy database records missing containerHashes upfront.
- *
- * @returns Promise resolving when schema migration finishes.
- */
-async function migrateLegacySnapshots(): Promise<void> {
-    try {
-        await invSyncSnapshotsDB.clean(
-            (_: string, record: InvSyncSnapshotRecord) => {
-                const snapshot = record as InvSyncSnapshot;
-                if (!Array.isArray(snapshot.containerHashes)) {
-                    snapshot.containerHashes = [];
-                }
-                return true;
-            },
-            { silent: true }
-        );
-    } catch (e) {
-        console.error(`[Paradox] Failed to execute DB schema migration: ${e}`);
-    }
-}
-
-/**
- * Call this when a player performs valid item actions (crafting, opening containers, picking up items).
- *
- * @param playerId - Target player UUID.
- */
-export function recordPlayerInteraction(playerId: string): void {
-    playerInteractionWindow.set(playerId, Date.now());
-}
-
-/**
- * Periodic database vacuum operation for offline players.
- *
- * @returns Promise resolving when database vacuum completes.
- */
-async function runDatabaseVacuum(): Promise<void> {
-    try {
-        await invSyncSnapshotsDB.clean((_: string, value: InvSyncSnapshotRecord) => Date.now() - value.time < SNAPSHOT_EXPIRY_MS, { silent: true });
-    } catch (e) {
-        console.error(`[Paradox] Vacuum Error: ${e}`);
-    }
-}
-
-/**
- * Fetches or instantiates a snapshot baseline for a given player ($O(1)$ lookup).
- *
- * @param player - Target player entity.
- * @returns Promise resolving to active inventory snapshot.
- */
-async function resolvePlayerSnapshot(player: Player): Promise<InvSyncSnapshot> {
-    const cached = snapshotCache.get(player.id);
-    if (cached) return cached;
-
-    const dbRecord = (await invSyncSnapshotsDB.get(player.id)) as InvSyncSnapshot | undefined;
-    const snapshot: InvSyncSnapshot = {
-        counts: dbRecord?.counts ?? {},
-        containerHashes: dbRecord?.containerHashes ?? [],
-        time: dbRecord?.time ?? Date.now(),
-        name: dbRecord?.name ?? player.name,
-    };
-    snapshotCache.set(player.id, snapshot);
-    return snapshot;
-}
-
-/**
  * Checks if container hash array contains duplicate entries ($O(N)$ with Set lookup).
- *
- * @param containerHashes - Hash signatures list.
- * @returns Duplicate signature string if found, otherwise undefined.
+ * @param {string[]} containerHashes - Hash signatures list.
+ * @returns {string | undefined} Duplicate signature string if found, otherwise undefined.
  */
 function findDuplicateHash(containerHashes: string[]): string | undefined {
     const hashSet = new Set<string>();
@@ -369,8 +234,7 @@ function findDuplicateHash(containerHashes: string[]): string | undefined {
 
 /**
  * Intercepts shulker box breaking *before* block destruction to capture contents and stage tracking metadata.
- *
- * @param event - Player break block before event context.
+ * @param {PlayerBreakBlockBeforeEvent} event - Player break block before event context.
  */
 function onPlayerBreakBlockBefore(event: PlayerBreakBlockBeforeEvent): void {
     const { block } = event;
@@ -398,28 +262,16 @@ function onPlayerBreakBlockBefore(event: PlayerBreakBlockBeforeEvent): void {
 }
 
 /**
- * Safely extracts item stack instances from polymorphic pickup event properties.
- *
- * @param event - Raw item pickup event payload.
- * @returns Array of item stacks picked up.
- */
-function extractPickupItems(event: EntityItemPickupAfterEvent): ItemStack[] {
-    return event.items;
-}
-
-/**
  * Handles item pickup events safely.
- *
- * @param event - Entity item pickup after event context.
+ * @param {EntityItemPickupAfterEvent} event - Entity item pickup after event context.
  */
 function onEntityItemPickup(event: EntityItemPickupAfterEvent): void {
     if (event.entity instanceof Player && event.entity.isValid) {
-        recordPlayerInteraction(event.entity.id);
-
-        const items = extractPickupItems(event);
+        const items = event.items;
         if (items.length === 0) return;
 
-        for (const item of items) {
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
             if (item?.typeId?.includes("shulker_box")) {
                 logDebug("ItemPickup", `Player ${event.entity.name} picked up Shulker Box.`);
             }
@@ -428,11 +280,9 @@ function onEntityItemPickup(event: EntityItemPickupAfterEvent): void {
 }
 
 /**
- * CORE ANOMALY DETECTION ENGINE
  * Evaluates item mutations using Container Inner-Content Hash Validation.
- *
- * @param event - Inventory item change event context.
- * @returns Promise resolving upon analysis completion.
+ * @param {PlayerInventoryItemChangeAfterEvent} event - Inventory item change event context.
+ * @returns {Promise<void>}
  */
 async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent): Promise<void> {
     const player = event.player;
@@ -449,7 +299,6 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
     processingLock.add(playerId);
 
     try {
-        await resolvePlayerSnapshot(player);
         const state = getInventoryState(player);
         if (!state) return;
 
@@ -457,27 +306,102 @@ async function onInventoryItemChanged(event: PlayerInventoryItemChangeAfterEvent
         if (duplicateHash) {
             logDebug("InventoryChange", `ANOMALY DETECTED! Player ${player.name} has duplicate container hash: ${duplicateHash}`);
             await handleAnomaly(player, typeId, 1);
-            return;
         }
-
-        updateMemorySnapshot(playerId, {
-            counts: state.counts,
-            containerHashes: state.containerHashes,
-            time: Date.now(),
-            name: player.name,
-        });
     } finally {
         processingLock.delete(playerId);
     }
 }
 
 /**
+ * Deducts granular inventory excess detected between disconnect and rejoin without wiping legitimate items.
+ * @param {Container} container - Player's inventory container.
+ * @param {Record<string, number>} excessMap - Map of itemId -> amount to deduct.
+ * @param {Set<string>} excessContainerHashes - Set of illegitimate container payload hashes.
+ */
+function remediateDisconnectDelta(container: Container, excessMap: Record<string, number>, excessContainerHashes: Set<string>): void {
+    const size = container.size;
+
+    for (let i = 0; i < size; i++) {
+        const item = container.getItem(i);
+        if (!item) continue;
+
+        if (isTrackedContainer(item.typeId)) {
+            const hash = getContainerPayloadHash(item);
+            if (hash && excessContainerHashes.has(hash)) {
+                container.setItem(i, undefined);
+                logDebug("DeltaRemediate", `Removed unauthorized container [${item.typeId}] from slot ${i}`);
+                continue;
+            }
+        }
+
+        const excess = excessMap[item.typeId];
+        if (excess && excess > 0) {
+            if (item.amount <= excess) {
+                excessMap[item.typeId] = (excessMap[item.typeId] ?? 0) - item.amount;
+                container.setItem(i, undefined);
+                logDebug("DeltaRemediate", `Cleared entire slot ${i} for ${item.typeId}`);
+            } else {
+                item.amount -= excess;
+                excessMap[item.typeId] = 0;
+                container.setItem(i, item);
+                logDebug("DeltaRemediate", `Deducted excess from slot ${i} for ${item.typeId}`);
+            }
+        }
+    }
+}
+
+/**
+ * Compares post-rejoin inventory state against disconnect baseline and remediates illegitimate items.
+ * @param {Player} player - Rejoining player entity.
+ * @param {DisconnectSnapshot} snapshot - Captured disconnect state baseline.
+ * @returns {Promise<void>}
+ */
+async function processRejoinDelta(player: Player, snapshot: DisconnectSnapshot): Promise<void> {
+    const container = player.getComponent("inventory")?.container;
+    if (!container) return;
+
+    const currentState = getInventoryState(player);
+    if (!currentState) return;
+
+    const excessMap: Record<string, number> = {};
+    let totalExcessItems = 0;
+
+    for (const [typeId, currentAmount] of Object.entries(currentState.counts)) {
+        const previousAmount = snapshot.counts[typeId] ?? 0;
+        if (currentAmount > previousAmount) {
+            const diff = currentAmount - previousAmount;
+            excessMap[typeId] = diff;
+            totalExcessItems += diff;
+        }
+    }
+
+    const excessContainerHashes = new Set<string>();
+    for (const hash of currentState.containerHashes) {
+        if (!snapshot.containerHashes.has(hash)) {
+            excessContainerHashes.add(hash);
+        }
+    }
+
+    if (totalExcessItems > 0 || excessContainerHashes.size > 0) {
+        remediateDisconnectDelta(container, excessMap, excessContainerHashes);
+
+        const summaryParts: string[] = [];
+        if (totalExcessItems > 0) summaryParts.push(`${totalExcessItems}x loose items`);
+        if (excessContainerHashes.size > 0) summaryParts.push(`${excessContainerHashes.size}x containers`);
+        const summary = summaryParts.join(", ");
+
+        player.sendMessage(`§2[§7Paradox§2] §o§cANOMALY: §7Rejoin delta check removed unauthorized items: §e${summary}§7.`);
+        await recordAuditLog(player.id, "DisconnectDeltaMismatch", totalExcessItems + excessContainerHashes.size);
+        alertStaff(player, `Rejoin delta mismatch corrected (${summary} removed)`);
+    }
+}
+
+/**
  * Executes slot-by-slot inventory deductions for flagged items.
- *
- * @param container - Inventory container reference.
- * @param typeId - Target item type ID.
- * @param excessAmount - Target total deduction count.
- * @returns Remaining excess amount that could not be deducted.
+ * @param {Container} container - Inventory container reference.
+ * @param {string} typeId - Target item type ID.
+ * @param {number} excessAmount - Target total deduction count.
+ * @returns {number} Remaining excess amount that could not be deducted.
  */
 function deductInventoryItems(container: Container, typeId: string, excessAmount: number): number {
     let remainingToDeduct = excessAmount;
@@ -501,10 +425,10 @@ function deductInventoryItems(container: Container, typeId: string, excessAmount
 
 /**
  * Appends audit logging record for an anomaly event.
- *
- * @param playerId - Target player UUID.
- * @param typeId - Flagged item type ID.
- * @param actualDeducted - Amount removed from player.
+ * @param {string} playerId - Target player UUID.
+ * @param {string} typeId - Flagged item type ID.
+ * @param {number} actualDeducted - Amount removed from player.
+ * @returns {Promise<void>}
  */
 async function recordAuditLog(playerId: string, typeId: string, actualDeducted: number): Promise<void> {
     try {
@@ -526,11 +450,10 @@ async function recordAuditLog(playerId: string, typeId: string, actualDeducted: 
 
 /**
  * Deducts flagged duplicate items and updates security logs.
- *
- * @param player - Offending player entity.
- * @param typeId - Type ID of offending item.
- * @param excessAmount - Quantity to remove.
- * @returns Promise resolving once remediation and logging complete.
+ * @param {Player} player - Offending player entity.
+ * @param {string} typeId - Type ID of offending item.
+ * @param {number} excessAmount - Quantity to remove.
+ * @returns {Promise<void>}
  */
 async function handleAnomaly(player: Player, typeId: string, excessAmount: number): Promise<void> {
     player.sendMessage(`§2[§7Paradox§2] §o§cANOMALY: §7Detected §f${excessAmount}x §e${typeId}§7.`);
@@ -539,31 +462,14 @@ async function handleAnomaly(player: Player, typeId: string, excessAmount: numbe
     if (!container) return;
 
     const remainingToDeduct = deductInventoryItems(container, typeId, excessAmount);
-
-    const postState = getInventoryState(player);
-    if (postState) {
-        updateMemorySnapshot(player.id, {
-            counts: postState.counts,
-            containerHashes: postState.containerHashes,
-            time: Date.now(),
-            name: player.name,
-        });
-    }
-
     const actualDeducted = excessAmount - remainingToDeduct;
+
     await recordAuditLog(player.id, typeId, actualDeducted);
     alertStaff(player, `${typeId} (x${actualDeducted} removed)`);
 }
 
-/**
- * LIFECYCLE HOOKS
- */
+/** LIFECYCLE HOOKS */
 
-/**
- * Handles player join events and builds their inventory snapshot baseline.
- *
- * @param event - Join event context.
- */
 function onPlayerJoin(event: PlayerJoinAfterEvent): void {
     const playerId = event.playerId;
 
@@ -571,62 +477,55 @@ function onPlayerJoin(event: PlayerJoinAfterEvent): void {
         const player = PlayerCache.getPlayerById(playerId);
         if (!player?.isValid) return;
 
-        const state = getInventoryState(player);
-        if (state) {
-            updateMemorySnapshot(player.id, { ...state, time: Date.now(), name: player.name });
+        const snapshot = disconnectSnapshots.get(playerId);
+        if (snapshot) {
+            disconnectSnapshots.delete(playerId);
+            const elapsed = Date.now() - snapshot.time;
+
+            if (elapsed <= REJOIN_WINDOW_MS) {
+                logDebug("RejoinCheck", `Player ${player.name} rejoined in ${elapsed}ms. Evaluating delta...`);
+                await processRejoinDelta(player, snapshot);
+            }
         }
-    }, BUFFER_TICKS);
+    }, 10);
 }
 
-/**
- * Handles player disconnects and flushes runtime maps.
- *
- * @param event - Leave event context.
- * @returns Promise resolving after final snapshot save.
- */
-async function onPlayerLeave(event: PlayerLeaveBeforeEvent): Promise<void> {
+function onPlayerLeave(event: PlayerLeaveBeforeEvent): void {
     const player = event.player;
     if (!player) return;
 
     const state = getInventoryState(player);
     if (state) {
-        updateMemorySnapshot(player.id, { ...state, time: Date.now(), name: player.name });
+        const snapshot: DisconnectSnapshot = {
+            time: Date.now(),
+            counts: state.counts,
+            containerHashes: new Set(state.containerHashes),
+        };
+        disconnectSnapshots.set(player.id, snapshot);
+
+        system.runTimeout(
+            () => {
+                disconnectSnapshots.delete(player.id);
+            },
+            Math.ceil(REJOIN_WINDOW_MS / 50)
+        );
     }
 
-    snapshotCache.delete(player.id);
-    playerInteractionWindow.delete(player.id);
     dimensionChangingPlayers.delete(player.id);
     deadPlayers.delete(player.id);
     processingLock.delete(player.id);
 }
 
-/**
- * Handles player dimension travel to apply event safeguards.
- *
- * @param event - Dimension change event context.
- */
 function onDimensionChange(event: PlayerDimensionChangeAfterEvent): void {
     const player = event.player;
     if (!player?.isValid) return;
 
     dimensionChangingPlayers.add(player.id);
-
     system.runTimeout(() => {
-        if (player?.isValid) {
-            const state = getInventoryState(player);
-            if (state) {
-                updateMemorySnapshot(player.id, { ...state, time: Date.now(), name: player.name });
-            }
-        }
         dimensionChangingPlayers.delete(player.id);
-    }, BUFFER_TICKS);
+    }, 40);
 }
 
-/**
- * Tracks player death events to suspend inventory checks temporarily.
- *
- * @param event - Entity death event context.
- */
 function onPlayerDie(event: EntityDieAfterEvent): void {
     const entity = event.deadEntity;
     if (entity instanceof Player) {
@@ -634,38 +533,17 @@ function onPlayerDie(event: EntityDieAfterEvent): void {
     }
 }
 
-/**
- * Handles player respawn events and restores baseline verification.
- *
- * @param event - Spawn event context.
- */
 function onPlayerSpawn(event: PlayerSpawnAfterEvent): void {
     const player = event.player;
     if (!player?.isValid) return;
 
     system.runTimeout(() => {
-        if (!player?.isValid) return;
-
-        if (deadPlayers.has(player.id)) {
-            const state = getInventoryState(player);
-            if (state) {
-                updateMemorySnapshot(player.id, { ...state, time: Date.now(), name: player.name });
-            }
-            deadPlayers.delete(player.id);
-        }
-    }, BUFFER_TICKS);
+        deadPlayers.delete(player.id);
+    }, 40);
 }
 
-/**
- * NOTIFICATION SYSTEM
- */
+/** NOTIFICATION SYSTEM */
 
-/**
- * Logs flags and alerts online level 4 security staff about a player anomaly.
- *
- * @param player - Target player flagged.
- * @param summaryMessage - Descriptive alert body.
- */
 function alertStaff(player: Player, summaryMessage: string): void {
     const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "InvSync", `Inventory anomaly corrected: ${summaryMessage}`);
@@ -676,11 +554,6 @@ function alertStaff(player: Player, summaryMessage: string): void {
     }
 }
 
-/**
- * Sends module system status messages to level 4 security staff.
- *
- * @param message - Message content to dispatch.
- */
 function alertStaffSystem(message: string): void {
     const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     for (const s of staff) {
@@ -688,20 +561,11 @@ function alertStaffSystem(message: string): void {
     }
 }
 
-/**
- * MODULE CONTROLLERS
- */
+/** MODULE CONTROLLERS */
 
-/**
- * Initializes and starts the InvSync protection module.
- *
- * @returns Promise resolving when initialization finishes.
- */
 export async function startInvSync(): Promise<void> {
     if (isModuleActive) return;
     isModuleActive = true;
-
-    await migrateLegacySnapshots();
 
     joinSub = onPlayerJoin;
     leaveSub = onPlayerLeave;
@@ -721,29 +585,9 @@ export async function startInvSync(): Promise<void> {
     EventCoordinator.subscribeBefore("playerBreakBlock", blockBreakSub);
     EventCoordinator.subscribeAfter("entityItemPickup", pickupSub);
 
-    for (const player of PlayerCache.getPlayers()) {
-        if (player?.isValid) {
-            const state = getInventoryState(player);
-            if (state) {
-                updateMemorySnapshot(player.id, { ...state, time: Date.now(), name: player.name });
-            }
-        }
-    }
-
-    dbFlushIntervalId = system.runInterval(async () => {
-        await flushDirtySnapshots();
-    }, 100);
-
-    cleanupIntervalId = system.runInterval(async () => {
-        await runDatabaseVacuum();
-    }, CLEANUP_INTERVAL_TICKS);
-
     alertStaffSystem("§7InvSync framework §astarted§7.");
 }
 
-/**
- * Disables the InvSync protection module and cleans up all event subscriptions and timers.
- */
 export function stopInvSync(): void {
     if (!isModuleActive) return;
     isModuleActive = false;
@@ -757,42 +601,25 @@ export function stopInvSync(): void {
     if (blockBreakSub) EventCoordinator.unsubscribeBefore("playerBreakBlock", blockBreakSub);
     if (pickupSub) EventCoordinator.unsubscribeAfter("entityItemPickup", pickupSub);
 
-    if (dbFlushIntervalId !== undefined) {
-        system.clearRun(dbFlushIntervalId);
-        dbFlushIntervalId = undefined;
-    }
-    if (cleanupIntervalId !== undefined) {
-        system.clearRun(cleanupIntervalId);
-        cleanupIntervalId = undefined;
-    }
-
     joinSub = leaveSub = dimensionSub = dieSub = spawnSub = itemChangeSub = blockBreakSub = pickupSub = undefined;
 
-    snapshotCache.clear();
-    playerInteractionWindow.clear();
+    disconnectSnapshots.clear();
     dimensionChangingPlayers.clear();
     deadPlayers.clear();
     processingLock.clear();
-    dirtySnapshots.clear();
     shulkerHashRegistry.clear();
     pendingShulkerHashes.length = 0;
 
     alertStaffSystem("§7InvSync framework §4stopped§7.");
 }
 
-/**
- * Manually executes duplicate container checks across all online players.
- *
- * @returns Promise resolving when manual verification completes.
- */
 export async function forceCheckAll(): Promise<void> {
     for (const player of PlayerCache.getPlayers()) {
         if (!player?.isValid || dimensionChangingPlayers.has(player.id) || deadPlayers.has(player.id)) continue;
 
         try {
-            const snapshot = snapshotCache.get(player.id) ?? ((await invSyncSnapshotsDB.get(player.id)) as InvSyncSnapshot | undefined);
             const state = getInventoryState(player);
-            if (!snapshot || !state) continue;
+            if (!state) continue;
 
             const duplicateHash = findDuplicateHash(state.containerHashes);
             if (duplicateHash) {
@@ -804,43 +631,19 @@ export async function forceCheckAll(): Promise<void> {
     }
 }
 
-/**
- * Forces an immediate snapshot update in memory for every active player.
- *
- * @returns Promise resolving when all active entities are snapshotted.
- */
-export async function forceSnapshotAll(): Promise<void> {
-    for (const player of PlayerCache.getPlayers()) {
-        if (!player?.isValid) continue;
-        const state = getInventoryState(player);
-        if (state) {
-            updateMemorySnapshot(player.id, { ...state, time: Date.now(), name: player.name });
-        }
-    }
-    alertStaffSystem("§2[§7Paradox§2]§o§7 Forced inventory snapshot for all online entities.");
-}
-
-/**
- * Purges all snapshot cache state and persistent database records.
- *
- * @returns Promise resolving when database and cache clearing finishes.
- */
-export async function clearAllSnapshots(): Promise<void> {
+export async function clearAllAuditLogs(): Promise<void> {
     try {
-        await invSyncSnapshotsDB.clear();
         await invSyncAuditDB.clear();
     } catch (e) {
         console.error(`[Paradox] DB Clear Error: ${e}`);
     }
 
-    snapshotCache.clear();
-    playerInteractionWindow.clear();
+    disconnectSnapshots.clear();
     dimensionChangingPlayers.clear();
     deadPlayers.clear();
     processingLock.clear();
-    dirtySnapshots.clear();
     shulkerHashRegistry.clear();
     pendingShulkerHashes.length = 0;
 
-    alertStaffSystem("§2[§7Paradox§2]§o§7 Baseline inventory snapshots cleared.");
+    alertStaffSystem("§2[§7Paradox§2]§o§7 Inventory audit logs cleared.");
 }

@@ -77,7 +77,6 @@ import {
     ParadoxModulesSchema,
     WhitelistPlayersSchema,
     InvSyncAudit,
-    InvSyncSnapshots,
     ChestLocksSchema,
     WarnsSchema,
     PlayerMetadataSchema,
@@ -155,7 +154,6 @@ let whitelistDB: OptimizedDatabase<WhitelistPlayersSchema>;
 let allowlistDB: OptimizedDatabase<AllowlistPlayersSchema>;
 let banlistDB: OptimizedDatabase<BanlistPlayersSchema>;
 let warnsDB: OptimizedDatabase<WarnsSchema>;
-let invSyncSnapshotsDB: OptimizedDatabase<InvSyncSnapshots>;
 let invSyncAuditDB: OptimizedDatabase<InvSyncAudit>;
 let chestLockDB: OptimizedDatabase<ChestLocksSchema>;
 let playerMetadataDB: OptimizedDatabase<PlayerMetadataSchema>;
@@ -367,7 +365,6 @@ async function initializeSystems() {
     allowlistDB = new OptimizedDatabase("allowlist");
     banlistDB = new OptimizedDatabase("banlist");
     warnsDB = new OptimizedDatabase("warns");
-    invSyncSnapshotsDB = new OptimizedDatabase("invSyncSnapshots");
     invSyncAuditDB = new OptimizedDatabase("invSyncAudit");
     chestLockDB = new OptimizedDatabase("chestLocks");
     playerMetadataDB = new OptimizedDatabase("playerMetadata");
@@ -376,7 +373,7 @@ async function initializeSystems() {
     flagsDB = new OptimizedDatabase("flags");
     landClaimsDB = new OptimizedDatabase("LandClaimsDB");
 
-    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB, landClaimsDB];
+    const dbs = [paradoxModulesDB, channelsDB, disabledCommandsDB, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB, landClaimsDB];
 
     console.log("[Paradox] Running database v2.0 compression migrations...");
     const migrationResults = await Promise.allSettled(dbs.map((db) => db.migrateToV2()));
@@ -568,4 +565,4 @@ export function subscribeToWorldInitialize() {
     });
 }
 
-export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, invSyncSnapshotsDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB, landClaimsDB };
+export { allCommands, paradoxModulesDB, channelsDB, disabledCommandsDB, commandHandler, whitelistDB, allowlistDB, banlistDB, warnsDB, invSyncAuditDB, chestLockDB, playerMetadataDB, homesDB, waypointsDB, flagsDB, landClaimsDB };

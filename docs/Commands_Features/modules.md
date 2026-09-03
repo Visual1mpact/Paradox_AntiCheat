@@ -406,40 +406,42 @@ The `invalidvector` command toggles a movement validation module that detects an
 ---
 
 ## invsync
-### At A Glance
-The `invsync` module helps prevent **inventory duplication exploits** that occur when players disconnect or rejoin during item transactions. It works by storing inventory snapshots and verifying that player inventories remain synchronized when they reconnect.
 
-Administrators can use this module to monitor inventory integrity, force synchronization checks, and investigate suspicious inventory changes.
+### At A Glance
+The `invsync` module prevents **inventory duplication exploits** involving shulker boxes, bundles, and rapid disconnect/rejoin transactions. Rather than relying solely on total item counts, it generates real-time hexadecimal hash signatures for nested container contents and tracks rapid rejoin inventory deltas.
+
+When a player reconnects within a short timeframe or moves container items, the system cross-checks item signatures. If duplicate payloads or unauthorized inventory additions are detected, `invsync` automatically remediates the excess items in real-time, logs an audit entry, and alerts Level 4 staff.
+
+Administrators can use this module to toggle operational tracking, run immediate inventory rechecks across all online players, clear stored audit databases, and generate live forensic reports.
 
 ### How It Works
-When the module is enabled, the system periodically creates **inventory snapshots** for players. These snapshots store the current state of a player's inventory, including item counts and timestamps.
+When active, the module enforces continuous inventory integrity using four primary protection layers:
 
-When a player reconnects or when a manual check is triggered, the module compares the player's current inventory with the stored snapshot. If inconsistencies are detected, the system records an **anomaly event** for administrative review.
+* **Container Content Hashing:** Generates pseudo-random hexadecimal hash digests based on the exact contents, custom names, and lore of bundles and shulker boxes.
+* **Shulker Box Lifecycle Tracking:** Intercepts shulker box breaking events *before* destruction to record drop metadata, assigning unique dynamic properties to tracked shulker item stacks upon pickup.
+* **Rapid Rejoin Delta Remediation:** Takes an in-memory snapshot of a player's inventory counts and container hashes immediately before disconnection. If the player rejoins within 15 seconds, it compares their new state against the baseline and automatically deducts any unauthorized excess items without wiping legitimate inventory.
+* **Real-Time Anomaly Interception:** Listens for item change events. If a player acquires two container items with identical payload hashes (indicating a duplicated nested inventory), the system immediately strips the duplicate container, logs the event to the audit database, and alerts staff.
 
 Administrators can also manually:
 
-- Force a new snapshot of all players
-- Trigger an immediate inventory recheck
-- Clear stored snapshot data
-- View forensic reports for specific players
+* Toggle the background InvSync event listeners on or off.
+* Force an immediate anomaly recheck across all connected players.
+* Clear stored audit logs and reset active runtime tracking caches.
+* View detailed forensic reports for specific players.
 
 The forensic report displays:
-- Snapshot timestamps
-- Inventory item counts
-- Suspicious stack sizes
-- Recent anomaly events
-
-This system helps identify potential **duplication exploits or abnormal inventory states**.
+* Top suspicious item counts (quantities over stack limits)
+* Full item counts broken down by inventory slots
+* Recent anomaly events (including timestamps, excess item types, and total excess deducted)
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: ":invsync [ help | status | snapshot | check | clear | forensic <player> ]"  
-> Example: :invsync  
-> Example: :invsync status  
-> Example: :invsync snapshot  
-> Example: :invsync check  
-> Example: :invsync clear  
-> Example: :invsync forensic Steve  
+> Usage: `:invsync [ help | status | check | clear | forensic <player> ]` 
+> Example: `:invsync` 
+> Example: `:invsync status` 
+> Example: `:invsync check` 
+> Example: `:invsync clear` 
+> Example: `:invsync forensic Steve`  
 
 ---
 
