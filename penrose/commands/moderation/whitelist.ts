@@ -1,5 +1,5 @@
 import { Command } from "../../classes/core/command-handler";
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { whitelistDB } from "../../event-listeners/world-initialize";
 
 // Define the whitelist command
@@ -54,12 +54,6 @@ export const whitelistCommand: Command = {
         ],
     },
 
-    /**
-     * Executes the whitelist command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object containing information about the command execution context.
-     * @param {string[]} args - The command arguments, where the first element specifies the action and the second (optional) is the player name.
-     * @returns {Promise<void>}
-     */
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
         const action = args.shift()?.toLowerCase();
@@ -77,7 +71,10 @@ export const whitelistCommand: Command = {
             } else {
                 message.sender.sendMessage("§2[§7Paradox§2]§o§7 Whitelisted Players:");
                 playerNames.forEach((name) => {
-                    message.sender.sendMessage(` §o§7| [§f${name}§7]`);
+                    const record = whitelist[name];
+                    if (record) {
+                        message.sender.sendMessage(` §o§7| [§f${name}§7] (ID: ${record.id})`);
+                    }
                 });
             }
             return;
@@ -95,7 +92,15 @@ export const whitelistCommand: Command = {
                 return;
             }
 
-            whitelist[playerName] = { id: message.sender.id }; // Save the sender's ID
+            // Find target player entity in online players to capture ID
+            const targetPlayer = world.getPlayers({ name: playerName })[0];
+
+            if (!targetPlayer) {
+                message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" must be online to capture their ID.`);
+                return;
+            }
+
+            whitelist[playerName] = { id: targetPlayer.id };
             await whitelistDB.set("players", whitelist);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the whitelist.`);
         }

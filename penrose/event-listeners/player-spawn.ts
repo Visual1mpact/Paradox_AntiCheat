@@ -166,6 +166,36 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
 }
 
 /**
+ * Validates player presence on the whitelist and migrates legacy ID schema on the fly.
+ *
+ * @param {string} playerName - Target player name key.
+ * @param {string} playerId - Target player runtime identifier.
+ * @returns {Promise<boolean>} True if the player is authenticated against the whitelist.
+ */
+async function isWhitelisted(playerName: string, playerId: string): Promise<boolean> {
+    const whitelistedPlayers = (await whitelistDB.get("players")) ?? {};
+    const record = whitelistedPlayers[playerName];
+
+    if (!record) return false;
+
+    // Resolve standard 'id' or fallback legacy 'ID' property
+    const legacyRecord = record as ListPlayerRecord & { ID?: string };
+    const targetId = record.id ?? legacyRecord.ID;
+
+    if (targetId === playerId) {
+        // Auto-migrate legacy key format to standard 'id'
+        if ("ID" in legacyRecord) {
+            delete legacyRecord.ID;
+            record.id = playerId;
+            await whitelistDB.set("players", whitelistedPlayers);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Checks the player's memoryTier and maxRenderDistance.
  * If the device is suspicious or non-compliant, the player will be banned and kicked.
  * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
@@ -176,10 +206,9 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
     const playerName = player.name;
 
     const bannedPlayers = (await banlistDB.get("players")) ?? {};
-    const whitelistedPlayers = (await whitelistDB.get("players")) ?? {};
 
     // Whitelisted players are exempt
-    if (playerName in whitelistedPlayers) {
+    if (await isWhitelisted(playerName, player.id)) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are exempt from local bans due to being whitelisted.");
         return;
     }
@@ -310,7 +339,6 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
     const playerName = player.name;
 
     const bannedPlayers = (await banlistDB.get("players")) ?? {};
-    const whitelistedPlayers = (await whitelistDB.get("players")) ?? {};
     const opsecData: SecurityClearanceData = JSON.parse(((await world.getDynamicProperty("paradoxOPSEC")) as string) ?? "{}");
 
     // Always allow the host in, remove them from banlist if needed
@@ -325,8 +353,8 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
 
     // If the player is banned
     if (playerName in bannedPlayers) {
-        // If also whitelisted, unban them
-        if (playerName in whitelistedPlayers) {
+        // If also whitelisted with matching ID, unban them
+        if (await isWhitelisted(playerName, player.id)) {
             delete bannedPlayers[playerName];
             await banlistDB.set("players", bannedPlayers);
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
