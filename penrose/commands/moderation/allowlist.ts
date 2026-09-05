@@ -1,8 +1,7 @@
 import { Command } from "../../classes/core/command-handler";
-import { ChatSendBeforeEvent } from "@minecraft/server";
+import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { allowlistDB } from "../../event-listeners/world-initialize";
 
-// Define the allowlist command
 export const allowlistCommand: Command = {
     name: "allowlist",
     description: "Manage the allowlist by adding or removing a player, or list all allowlisted players.",
@@ -69,11 +68,6 @@ export const allowlistCommand: Command = {
         ],
     },
 
-    /**
-     * Executes the allowlist command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object containing information about the command execution context.
-     * @param {string[]} args - The command arguments.
-     */
     execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
         const action = args.shift()?.toLowerCase();
@@ -97,7 +91,10 @@ export const allowlistCommand: Command = {
             } else {
                 message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Allowlisted Players:");
                 keys.forEach((name) => {
-                    message.sender.sendMessage(` §o§7| [§f${name}§7]`);
+                    const player = current[name];
+                    if (player) {
+                        message.sender.sendMessage(` §o§7| [§f${name}§7] (ID: ${player.id})`);
+                    }
                 });
             }
             return;
@@ -115,7 +112,15 @@ export const allowlistCommand: Command = {
                 return;
             }
 
-            current[playerName] = { ID: message.sender.id };
+            // Find target player entity in online players to capture ID
+            const targetPlayer = world.getPlayers({ name: playerName })[0];
+
+            if (!targetPlayer) {
+                message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" must be online to capture their ID.`);
+                return;
+            }
+
+            current[playerName] = { id: targetPlayer.id };
             await allowlistDB.set("players", current);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the allowlist.`);
         }

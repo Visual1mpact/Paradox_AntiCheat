@@ -95,7 +95,7 @@ export const whitelistCommand: Command = {
                 return;
             }
 
-            whitelist[playerName] = { ID: message.sender.id }; // Optional: save the sender's ID
+            whitelist[playerName] = { id: message.sender.id }; // Save the sender's ID
             await whitelistDB.set("players", whitelist);
             message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the whitelist.`);
         }

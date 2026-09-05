@@ -204,7 +204,8 @@ export type WarnsSchema = Record<"players", PlayerWarnData>;
 
 /** Document structure for whitelist/allowlist player records */
 export interface ListPlayerRecord {
-    ID?: PlayerID;
+    id: PlayerID;
+    ID?: PlayerID; // Legacy key support
 }
 
 /** Document structure for list dictionary wrapper */

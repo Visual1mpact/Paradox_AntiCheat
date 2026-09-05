@@ -1,7 +1,7 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
-import { PlatformBlockSettings, WarningEntry } from "../classes/database/db-types";
+import { ListPlayerRecord, PlatformBlockSettings, WarningEntry } from "../classes/database/db-types";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
@@ -207,7 +207,7 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
 
 /**
  * Checks an allowlist similar to the native implementation in BDS.
- * If the connecting player is not on the list, they are disconnected.
+ * If the connecting player is not on the list or ID authentication fails, they are disconnected.
  *
  * @param {PlayerSpawnAfterEvent} event - The event object containing player spawn information.
  * @returns {Promise<void>} Resolves when access check completes.
@@ -229,10 +229,26 @@ async function allowList(event: PlayerSpawnAfterEvent): Promise<void> {
         return;
     }
 
-    // Verify player presence on allowlist
-    if (playerName in allowListedPlayers) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 Access granted. Welcome back, ${playerName}.`);
-        return;
+    // Lookup entry by player name
+    const record = allowListedPlayers[playerName];
+
+    if (record) {
+        // Resolve standard 'id' or fallback legacy 'ID' property
+        const legacyRecord = record as ListPlayerRecord & { ID?: string };
+        const targetId = record.id ?? legacyRecord.ID;
+
+        // Authenticate player ID against database record
+        if (targetId === player.id) {
+            // Auto-migrate legacy key format to standard 'id'
+            if ("ID" in legacyRecord) {
+                delete legacyRecord.ID;
+                record.id = player.id;
+                await allowlistDB.set("players", allowListedPlayers);
+            }
+
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Access granted. Welcome back, ${playerName}.`);
+            return;
+        }
     }
 
     // Disconnect unauthorized player
