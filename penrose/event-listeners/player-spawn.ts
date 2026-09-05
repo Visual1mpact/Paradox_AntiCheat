@@ -206,35 +206,37 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
 }
 
 /**
- * Checks an allowlist similar to the native one in BDS.
- * If the connecting player is not on the list, they get kicked.
+ * Checks an allowlist similar to the native implementation in BDS.
+ * If the connecting player is not on the list, they are disconnected.
+ *
  * @param {PlayerSpawnAfterEvent} event - The event object containing player spawn information.
+ * @returns {Promise<void>} Resolves when access check completes.
  */
 async function allowList(event: PlayerSpawnAfterEvent): Promise<void> {
     const player = event.player;
     const playerName = player.name;
     const allowListedPlayers = (await allowlistDB.get("players")) ?? {};
 
-    // If no allowlist is enforced, let everyone in
+    // If no allowlist is enforced, allow access
     if (Object.keys(allowListedPlayers).length === 0) return;
 
-    // Get host info
+    // Retrieve host configuration data
     const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
 
-    // Always allow the host
+    // Always grant access to the host
     if (opsecData.host?.id === player.id) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 You are the host and bypass the allow list. Welcome ${player.name}!`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Host privilege authenticated. Welcome, ${playerName}.`);
         return;
     }
 
-    // If the player is on the allowlist, welcome them
+    // Verify player presence on allowlist
     if (playerName in allowListedPlayers) {
-        player.sendMessage(`§2[§7Paradox§2]§o§7 You are on the allow list, welcome ${player.name}!`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Access granted. Welcome back, ${playerName}.`);
         return;
     }
 
-    // Otherwise, kick the player
-    player.runCommand(`kick @s You are not on the allow list.`);
+    // Disconnect unauthorized player
+    player.runCommand(`kick @s Access denied: You are not on the allowlist.`);
 }
 
 /**
