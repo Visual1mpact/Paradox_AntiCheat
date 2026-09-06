@@ -1,6 +1,6 @@
 import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent } from "@minecraft/server";
-import { getGlobalBans, saveGlobalBans, getLocalBans, saveLocalBans } from "../../data/ban-manager";
+import { getGlobalBans, saveGlobalBans, getLocalBans, saveLocalBans } from "../../classes/database/ban-manager";
 
 /** Defines the unban command for removing local or global player bans */
 export const unbanCommand: Command = {

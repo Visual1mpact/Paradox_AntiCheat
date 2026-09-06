@@ -14,8 +14,8 @@ import { startScaffoldCheck, stopScaffoldCheck } from "../modules/scaffold-modul
 import { startNamespoofDetection, stopNamespoofDetection } from "../modules/namespoof-module";
 import { startXrayDetection, stopXrayDetection } from "../modules/xray-module";
 import { startInvSync, stopInvSync } from "../modules/invsync-module";
-import { globalBanPlayers } from "../data/global-ban";
-import { paradoxVersion } from "../data/versioning";
+import { globalBanPlayers } from "../classes/database/global-ban";
+import { paradoxVersion } from "../versioning";
 import { OptimizedDatabase } from "../classes/database/data-hive";
 import { startSelfAttackCheck, stopSelfAttackCheck } from "../modules/self-infliction-module";
 import { startPacketHandler, stopPacketHandler } from "../modules/rate-limit-module";
@@ -65,7 +65,7 @@ import { allowlistCommand } from "../commands/moderation/allowlist";
 import { visionCheckCommand } from "../commands/settings/vision";
 import { invSyncCommand } from "../commands/settings/invsync";
 import { onPlayerSpawn } from "./player-spawn";
-import { getGlobalBans, saveGlobalBans } from "../data/ban-manager";
+import { getGlobalBans, saveGlobalBans } from "../classes/database/ban-manager";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { chatSendSubscription } from "../classes/subscriptions/chat-send-subscriptions";
 import { debugDBCommand } from "../commands/utility/debug-db";
@@ -84,7 +84,7 @@ import {
     WaypointsSchema,
     FlagDatabaseSchema,
     LandClaimsSchema,
-} from "../classes/database/db-types";
+} from "../types/db-types";
 import { noClipCommand } from "../commands/settings/noclip";
 import { startNoClip, stopNoClip } from "../modules/noclip-module";
 import { PlayerCache } from "../classes/cache/player-cache";

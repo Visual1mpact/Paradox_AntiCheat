@@ -1,5 +1,5 @@
 import { ChatSendBeforeEvent, Player, system, ItemStack, world } from "@minecraft/server";
-import { verses } from "../../data/verses";
+import { verses } from "../../types/verses";
 import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { EventCoordinator } from "../../classes/core/event-coordinator";

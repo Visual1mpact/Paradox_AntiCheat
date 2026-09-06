@@ -1,7 +1,7 @@
 import { Player, ChatSendBeforeEvent, TicksPerSecond, system, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { channelsDB } from "../../event-listeners/world-initialize";
-import { Channel } from "../../classes/database/db-types";
+import { Channel } from "../../types/db-types";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { EventCoordinator } from "../../classes/core/event-coordinator";
 

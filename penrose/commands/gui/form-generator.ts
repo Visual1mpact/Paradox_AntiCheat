@@ -7,7 +7,7 @@ import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 import { chestLockDB, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { LandClaimManager } from "../utility/land-claim";
-import { DynamicField, GUIInstructions, ActionFormButton, UIProviderRegistry } from "./gui-schema";
+import { DynamicField, GUIInstructions, ActionFormButton, UIProviderRegistry } from "../../types/gui-schema";
 
 /** Cache static icon path mappings to avoid object allocations in hot paths */
 const CATEGORY_ICONS: Record<string, string> = {

@@ -1,6 +1,6 @@
 import { Player } from "@minecraft/server";
 import { flagsDB } from "../../event-listeners/world-initialize";
-import { ViolationFlagEntry, PlayerFlagRecord } from "../database/db-types";
+import { ViolationFlagEntry, PlayerFlagRecord } from "../../types/db-types";
 
 const FLAG_STACK_WINDOW_MS = 10000;
 

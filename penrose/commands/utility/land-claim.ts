@@ -1,6 +1,6 @@
 import { world, system, Player, Direction, EntityDamageCause, GameMode, Dimension, EntityComponentTypes, EntityEquippableComponent, EquipmentSlot, ItemStack, ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { ClaimData, Vector3D, RGBColor } from "../../classes/database/db-types";
+import { ClaimData, Vector3D, RGBColor } from "../../types/db-types";
 import { landClaimsDB } from "../../event-listeners/world-initialize";
 import { EventCoordinator } from "../../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";

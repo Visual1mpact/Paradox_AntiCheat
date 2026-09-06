@@ -1,7 +1,7 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
-import { ListPlayerRecord, PlatformBlockSettings, WarningEntry } from "../classes/database/db-types";
+import { ListPlayerRecord, PlatformBlockSettings, WarningEntry } from "../types/db-types";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 

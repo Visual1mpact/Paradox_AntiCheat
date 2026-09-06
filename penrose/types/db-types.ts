@@ -1,5 +1,5 @@
 import { Player, Vector3 } from "@minecraft/server";
-import { DatabaseValueObject } from "./data-hive";
+import { DatabaseValueObject } from "../classes/database/data-hive";
 
 /**
  * Represents the unique identifier for a Player (`Player.id`).

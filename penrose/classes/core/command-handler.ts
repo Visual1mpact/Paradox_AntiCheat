@@ -1,7 +1,7 @@
 // command-handler.ts
 import { Player, ChatSendBeforeEvent, system, world, PlayerSpawnAfterEvent } from "@minecraft/server";
 import * as CryptoES from "../../node_modules/crypto-es";
-import { ActionFormButton, GUIInstructions } from "../../commands/gui/gui-schema";
+import { ActionFormButton, GUIInstructions } from "../../types/gui-schema";
 import { GUIManager } from "../../commands/gui/form-generator";
 
 /**

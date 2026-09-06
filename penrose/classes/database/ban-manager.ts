@@ -1,5 +1,5 @@
 import { world } from "@minecraft/server";
-import { banlistDB } from "../event-listeners/world-initialize";
+import { banlistDB } from "../../event-listeners/world-initialize";
 
 /** Type definition for stored local bans */
 export type LocalBanRecord = Record<string, any>;

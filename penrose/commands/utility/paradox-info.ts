@@ -1,7 +1,7 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { MessageFormData } from "@minecraft/server-ui";
-import { paradoxVersion } from "../../data/versioning";
+import { paradoxVersion } from "../../versioning";
 import { openMainGui } from "../gui/form-generator";
 
 /**

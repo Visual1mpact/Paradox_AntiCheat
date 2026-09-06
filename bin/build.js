@@ -77,7 +77,7 @@ function syncVersion() {
     console.log("\nSyncing version with versioning.ts...");
     const packageJson = fs.readJsonSync("package.json");
     const expected = "v" + packageJson.version;
-    const versioningFile = fs.readFileSync(path.resolve("./penrose/data/versioning.ts"), "utf8");
+    const versioningFile = fs.readFileSync(path.resolve("./penrose/versioning.ts"), "utf8");
     const match = versioningFile.match(/export const paradoxVersion = "(v\d+\.\d+\.\d+)";/);
     if (!match) exitWithError("Version pattern not found in versioning.ts");
     if (match[1] !== expected) exitWithError(`Version mismatch: package.json (${expected}) vs versioning.ts (${match[1]})`);

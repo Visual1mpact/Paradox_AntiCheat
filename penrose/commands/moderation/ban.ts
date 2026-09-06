@@ -2,7 +2,7 @@ import { banlistDB, whitelistDB } from "../../event-listeners/world-initialize";
 import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { PlayerCache } from "../../classes/cache/player-cache";
-import { BanDictionary, ListPlayerDictionary } from "../../classes/database/db-types";
+import { BanDictionary, ListPlayerDictionary } from "../../types/db-types";
 
 // Define the ban command
 export const banCommand: Command = {

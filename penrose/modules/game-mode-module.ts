@@ -1,6 +1,6 @@
 import { GameMode, PlayerGameModeChangeAfterEvent, Player } from "@minecraft/server";
 import { paradoxModulesDB } from "../event-listeners/world-initialize";
-import { GamemodeCheckSettings } from "../classes/database/db-types";
+import { GamemodeCheckSettings } from "../types/db-types";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { FlagManager } from "../classes/logging/flag-manager";

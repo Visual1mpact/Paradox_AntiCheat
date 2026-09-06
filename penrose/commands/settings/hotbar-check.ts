@@ -13,7 +13,7 @@ export const hotbarCheckCommand: Command = {
     examples: ["{prefix}hotbarcheck"],
     category: "Modules",
     securityClearance: 4,
-    icon: "textures/blocks/item_frame.png",
+    icon: "textures/items/item_frame.png",
     guiInstructions: {
         formType: "ActionFormData",
         title: "Hotbar Check Settings",

@@ -1,5 +1,5 @@
 import { EventCoordinator } from "../classes/core/event-coordinator";
-import { refreshGlobalBanCache, isGloballyBanned } from "../data/ban-manager";
+import { refreshGlobalBanCache, isGloballyBanned } from "../classes/database/ban-manager";
 
 /**
  * Registers the global ban check to run automatically on player join.
