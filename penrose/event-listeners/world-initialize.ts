@@ -38,7 +38,7 @@ import { setRankCommand } from "../commands/utility/rank";
 import { banCommand } from "../commands/moderation/ban";
 import { unbanCommand } from "../commands/moderation/unban";
 import { lagClearCommand } from "../commands/settings/lag-clear";
-import { gameModeCommand } from "../commands/settings/game-mode";
+import { gameModeCommand } from "../commands/settings/game-mode-policy";
 import { gameruleCommand } from "../commands/settings/gamerule";
 import { worldBorderCommand } from "../commands/settings/world-border";
 import { flyCheckCommand } from "../commands/settings/fly";
