@@ -160,10 +160,10 @@ export class GUIManager {
 
     /**
      * Renders breadcrumb context strings for title headers.
-     * @returns {string} Formatted title with breadcrumbs
+     * @returns {string} Formatted title with breadcrumbs in all caps
      */
     private renderTitle(currentTitle: string): string {
-        return `§8${this.breadcrumbs.join(" > ")}\n§r§l${currentTitle}`;
+        return `§8${this.breadcrumbs.join(" > ").toUpperCase()}\n§r§l${currentTitle}`;
     }
 
     /**
