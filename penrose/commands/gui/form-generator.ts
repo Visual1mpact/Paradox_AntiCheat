@@ -1,11 +1,13 @@
 import { ChatSendBeforeEvent, Player, system, world } from "@minecraft/server";
-import { Command, DynamicField, ActionFormButton } from "../../classes/core/command-handler";
-import { chestLockDB, commandHandler, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { ActionFormData, ModalFormData, ModalFormResponse } from "@minecraft/server-ui";
 import * as CryptoES from "../../node_modules/crypto-es";
+
+import { Command, CommandHandler } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
+import { chestLockDB, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { LandClaimManager } from "../utility/land-claim";
+import { DynamicField, GUIInstructions, ActionFormButton, UIProviderRegistry } from "./gui-schema";
 
 /** Cache static icon path mappings to avoid object allocations in hot paths */
 const CATEGORY_ICONS: Record<string, string> = {
@@ -14,19 +16,93 @@ const CATEGORY_ICONS: Record<string, string> = {
     Modules: "textures/ui/gear.png",
 };
 
-/**
- * GUIManager handles all GUI interactions for a player, including:
- * - Main menu
- * - Category menus
- * - Action forms
- * - Modal forms with dynamic fields
- * - Executing commands based on player input
- */
-class GUIManager {
-    /** The player viewing the GUI */
+// ==========================================
+// OPTION PROVIDER REGISTRATION (Decoupled)
+// ==========================================
+UIProviderRegistry.register("players", () => PlayerCache.getPlayerNamesArray());
+
+UIProviderRegistry.register("entities", (player: Player) => {
+    const transform = PlayerLocationCache.getTransform(player);
+    const dimension = transform?.dimension ?? world.getDimension(player.dimension.id);
+    const entities = dimension.getEntities({ excludeTypes: ["player"] });
+    const entitySet = new Set<string>();
+
+    for (let i = 0; i < entities.length; i++) {
+        entitySet.add(entities[i]!.typeId.replace("minecraft:", ""));
+    }
+    return Array.from(entitySet);
+});
+
+UIProviderRegistry.register("chests", () => {
+    const pointers = chestLockDB.listPointers();
+    const result: string[] = new Array(pointers.length);
+
+    for (let i = 0; i < pointers.length; i++) {
+        const ptr = pointers[i]!;
+        const key = ptr.slice(ptr.lastIndexOf("/") + 1);
+        result[i] = key.startsWith("minecraft:") ? key.slice(10) : key;
+    }
+    return result;
+});
+
+UIProviderRegistry.register("playerWaypoints", async (player: Player) => {
+    const dbEntry = (await waypointsDB.get(player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
+    const options = dbEntry?.savedWaypoints ? Object.keys(dbEntry.savedWaypoints) : [];
+    return options.length > 0 ? options : ["No Waypoints Saved"];
+});
+
+UIProviderRegistry.register("playerHomes", async (player: Player) => {
+    const dbEntry = await homesDB.get(player.id);
+    const locations = dbEntry?.locations ?? [];
+    if (locations.length === 0) return ["No Homes Saved"];
+
+    const obfuscatedKey = CryptoES.SHA256(player.id).toString();
+    const options: string[] = new Array(locations.length);
+
+    for (let i = 0; i < locations.length; i++) {
+        try {
+            const bytes = CryptoES.AES.decrypt(locations[i]!, obfuscatedKey);
+            const decrypted = bytes.toString(CryptoES.Utf8);
+            options[i] = decrypted.split(":")[1] ?? "Unknown";
+        } catch {
+            options[i] = "Corrupted Data";
+        }
+    }
+    return options;
+});
+
+UIProviderRegistry.register("custom", (player: Player, field: DynamicField) => {
+    if (field.requiredFields?.includes("claimId")) {
+        const userClaims = LandClaimManager.getInstance().getClaimsByOwner(player.id);
+        if (userClaims.length === 0) return ["No Claims Found"];
+
+        const options: string[] = new Array(userClaims.length);
+        for (let i = 0; i < userClaims.length; i++) {
+            options[i] = userClaims[i]!.id;
+        }
+        return options;
+    }
+    return field.options ?? [""];
+});
+
+// ==========================================
+// CORE AAA GUI MANAGER ENGINE
+// ==========================================
+
+/** Represents an entry in the navigation back-stack */
+interface NavigationFrame {
+    title: string;
+    handler: () => Promise<void>;
+}
+
+export class GUIManager {
     private player: Player;
-    /** Security clearance level of the player */
     private playerSecurityClearance: number;
+    private breadcrumbs: string[] = ["Main"];
+    private backStack: NavigationFrame[] = [];
+
+    /** Pre-sorted command index cached per clearance level */
+    private static commandCache: Map<number, Map<string, Command[]>> = new Map();
 
     /**
      * Constructs a new GUIManager instance.
@@ -34,7 +110,60 @@ class GUIManager {
      */
     constructor(player: Player) {
         this.player = player;
-        this.playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+        this.playerSecurityClearance = (player.getDynamicProperty("securityClearance") as number) ?? 1;
+    }
+
+    /**
+     * Clears and builds pre-sorted categories cache for registered commands.
+     */
+    public static invalidateCommandCache(): void {
+        GUIManager.commandCache.clear();
+    }
+
+    /**
+     * Retrieves pre-sorted and categorized commands matching a security clearance level in O(1) time.
+     * @param {number} clearance - Player clearance level
+     * @returns {Map<string, Command[]>} Pre-indexed map of category to commands
+     */
+    private getSortedCategories(clearance: number): Map<string, Command[]> {
+        let cached = GUIManager.commandCache.get(clearance);
+        if (cached) return cached;
+
+        const commands = getCommandHandler().getRegisteredCommands();
+        cached = new Map<string, Command[]>();
+
+        for (let i = 0; i < commands.length; i++) {
+            const cmd = commands[i]!;
+            if (cmd.name !== "gui" && cmd.securityClearance <= clearance) {
+                let categoryList = cached.get(cmd.category);
+                if (!categoryList) {
+                    categoryList = [];
+                    cached.set(cmd.category, categoryList);
+                }
+                categoryList.push(cmd);
+            }
+        }
+
+        // Sort categories and inner commands once globally
+        const sortedCategories = new Map<string, Command[]>();
+        const sortedCategoryNames = Array.from(cached.keys()).sort((a, b) => a.localeCompare(b));
+
+        for (let i = 0; i < sortedCategoryNames.length; i++) {
+            const catName = sortedCategoryNames[i]!;
+            const catCommands = cached.get(catName)!.sort((a, b) => a.name.localeCompare(b.name));
+            sortedCategories.set(catName, catCommands);
+        }
+
+        GUIManager.commandCache.set(clearance, sortedCategories);
+        return sortedCategories;
+    }
+
+    /**
+     * Renders breadcrumb context strings for title headers.
+     * @returns {string} Formatted title with breadcrumbs
+     */
+    private renderTitle(currentTitle: string): string {
+        return `§8${this.breadcrumbs.join(" > ")}\n§r§l${currentTitle}`;
     }
 
     /**
@@ -46,50 +175,58 @@ class GUIManager {
         if (errorMsg.includes("Player quit before responding") || errorMsg.includes("FormRejectError")) {
             return;
         }
-        console.error("[Paradox] GUI Error:", err);
+        console.error("[Paradox] GUI Engine Error:", err);
     }
 
     /**
-     * Returns the texture path for a category icon in O(1) time.
-     * @param {string} category - Category name
-     * @returns {string} Icon texture path or empty string
+     * Pushes a step into the navigation back-stack.
+     * @param {string} label - Breadcrumb name
+     * @param {() => Promise<void>} frameHandler - Target view function
      */
-    private getCategoryIconPath(category: string): string {
-        return CATEGORY_ICONS[category] ?? "";
+    private pushFrame(label: string, frameHandler: () => Promise<void>): void {
+        this.breadcrumbs.push(label);
+        this.backStack.push({ title: label, handler: frameHandler });
+    }
+
+    /**
+     * Navigates back to previous screen in stack.
+     */
+    private async popFrame(): Promise<void> {
+        if (this.backStack.length <= 1) {
+            this.breadcrumbs = ["Main"];
+            return this.openMainGui(true);
+        }
+        this.backStack.pop();
+        this.breadcrumbs.pop();
+        const previousFrame = this.backStack[this.backStack.length - 1];
+        if (previousFrame) {
+            await previousFrame.handler();
+        }
     }
 
     /**
      * Opens the main GUI menu showing accessible categories for the player.
-     * Optimizes category sorting and filtering in O(1) dynamic memory allocations.
+     * @param {boolean} [isReset=false] - Reset stack state flag
      * @returns {Promise<void>}
      */
-    public async openMainGui(): Promise<void> {
-        const commands = commandHandler.getRegisteredCommands();
-        const categoriesMap: Map<string, Command[]> = new Map();
-
-        for (let i = 0; i < commands.length; i++) {
-            const cmd = commands[i]!;
-            if (cmd.name !== "gui" && cmd.securityClearance <= this.playerSecurityClearance) {
-                let categoryList = categoriesMap.get(cmd.category);
-                if (!categoryList) {
-                    categoryList = [];
-                    categoriesMap.set(cmd.category, categoryList);
-                }
-                categoryList.push(cmd);
-            }
+    public async openMainGui(isReset: boolean = false): Promise<void> {
+        if (isReset || this.backStack.length === 0) {
+            this.breadcrumbs = ["Main"];
+            this.backStack = [{ title: "Main", handler: () => this.openMainGui(true) }];
         }
 
+        const categoriesMap = this.getSortedCategories(this.playerSecurityClearance);
         if (categoriesMap.size === 0) {
             this.player.sendMessage("§o§c[Paradox] You do not have access to any commands.");
             return;
         }
 
-        const categoryNames = Array.from(categoriesMap.keys()).sort((a, b) => a.localeCompare(b));
-        const form = new ActionFormData().title("Main Menu").body("Select a category:");
+        const categoryNames = Array.from(categoriesMap.keys());
+        const form = new ActionFormData().title(this.renderTitle("Main Menu")).body("Select a command category:");
 
         for (let i = 0; i < categoryNames.length; i++) {
             const cat = categoryNames[i]!;
-            form.button(cat, this.getCategoryIconPath(cat));
+            form.button(cat, CATEGORY_ICONS[cat] ?? "");
         }
 
         try {
@@ -100,7 +237,9 @@ class GUIManager {
             if (!res.canceled) {
                 const selectedCategoryName = categoryNames[res.selection ?? 0];
                 if (!selectedCategoryName) return;
+
                 const selectedCommands = categoriesMap.get(selectedCategoryName)!;
+                this.pushFrame(selectedCategoryName, () => this.openCategoryMenu(selectedCategoryName, selectedCommands));
                 await this.openCategoryMenu(selectedCategoryName, selectedCommands);
             }
         } catch (err) {
@@ -109,27 +248,30 @@ class GUIManager {
     }
 
     /**
-     * Opens a menu showing all commands within a category.
-     * @param {string} categoryName - Name of the category
-     * @param {Command[]} commands - Array of Command objects in the category
+     * Opens a menu showing pre-sorted commands within a category.
+     * @param {string} categoryName - Name of category
+     * @param {Command[]} commands - List of commands in category
      * @returns {Promise<void>}
      */
     private async openCategoryMenu(categoryName: string, commands: Command[]): Promise<void> {
-        const form = new ActionFormData().title(`${categoryName} Commands`).body("Select a command:");
-        commands.sort((a, b) => a.name.localeCompare(b.name));
+        const form = new ActionFormData().title(this.renderTitle(`${categoryName} Commands`)).body("Select a command:");
 
         for (let i = 0; i < commands.length; i++) {
             form.button(commands[i]!.name, commands[i]!.icon);
         }
-        form.button("Back", "textures/ui/back_button_default.png");
+        form.button("§cBack", "textures/ui/back_button_default.png");
 
         try {
             const res = await form.show(this.player);
             if (res.canceled) return;
-            if (res.selection === commands.length) return this.openMainGui();
+            if (res.selection === commands.length) {
+                return await this.popFrame();
+            }
 
             const selectedCommand = commands[res.selection ?? 0];
             if (!selectedCommand) return;
+
+            this.pushFrame(selectedCommand.name, () => this.buildCommandMenu(selectedCommand));
             await this.buildCommandMenu(selectedCommand);
         } catch (err) {
             this.handleFormError(err);
@@ -137,13 +279,12 @@ class GUIManager {
     }
 
     /**
-     * Builds and shows the GUI form for a specific command.
-     * Determines whether to show an ActionFormData or ModalFormData.
-     * @param {Command} command - Target command definition
+     * Builds dynamic form structure based on instructions.
+     * @param {Command} command - Target command context
      * @returns {Promise<void>}
      */
     private async buildCommandMenu(command: Command): Promise<void> {
-        const gui = command.guiInstructions;
+        const gui = command.guiInstructions as GUIInstructions | undefined;
         if (!gui) return console.error("[Paradox] No GUI instructions found for command.");
 
         const { formType, title, description = "", actions = [], dynamicFields = [], commandOrder } = gui;
@@ -165,34 +306,37 @@ class GUIManager {
     }
 
     /**
-     * Displays an ActionFormData form for a set of command actions.
+     * Displays ActionFormData forms.
      * @param {ActionFormButton[]} actions - List of action buttons
      * @param {string} title - Form title
-     * @param {string} description - Form description body
-     * @param {Command} command - Target command
+     * @param {string} description - Description
+     * @param {Command} command - Parent command
      * @param {DynamicField[]} dynamicFields - Associated dynamic fields
-     * @param {string} [commandOrder] - Argument position ordering rules
+     * @param {string} [commandOrder] - Execution order rules
      * @returns {Promise<void>}
      */
     private async showActionForm(actions: ActionFormButton[], title: string, description: string, command: Command, dynamicFields: DynamicField[], commandOrder?: string): Promise<void> {
-        actions = commandHandler.filterButtonsBySecurity(actions, this.playerSecurityClearance);
+        const filteredActions = getCommandHandler().filterButtonsBySecurity(actions, this.playerSecurityClearance);
 
-        const form = new ActionFormData().title(title).body(description);
+        const form = new ActionFormData().title(this.renderTitle(title)).body(description);
 
-        for (let i = 0; i < actions.length; i++) {
-            form.button(actions[i]!.name, actions[i]!.icon);
+        for (let i = 0; i < filteredActions.length; i++) {
+            form.button(filteredActions[i]!.name, filteredActions[i]!.icon);
         }
-        form.button("Back", "textures/ui/back_button_default.png");
+        form.button("§cBack", "textures/ui/back_button_default.png");
 
         try {
             const res = await form.show(this.player);
             if (res.canceled) return;
-            if (res.selection === actions.length) return this.openMainGui();
+            if (res.selection === filteredActions.length) {
+                return await this.popFrame();
+            }
 
-            const selectedAction = actions[res.selection ?? 0];
+            const selectedAction = filteredActions[res.selection ?? 0];
             if (!selectedAction) return;
 
             if (selectedAction.generateSubActions && selectedAction.subActions?.length) {
+                this.pushFrame(selectedAction.name, () => this.showActionForm(selectedAction.subActions!, selectedAction.name, selectedAction.description ?? "", command, dynamicFields, commandOrder));
                 await this.showActionForm(selectedAction.subActions, selectedAction.name, selectedAction.description ?? "", command, dynamicFields, commandOrder);
             } else {
                 await this.handleActionSelection(selectedAction, dynamicFields, title, command, commandOrder);
@@ -203,13 +347,7 @@ class GUIManager {
     }
 
     /**
-     * Handles a selected action button, deciding if a modal form is required or command executes directly.
-     * @param {ActionFormButton} action - Selected action button
-     * @param {DynamicField[]} dynamicFields - Array of dynamic input fields
-     * @param {string} title - Action title
-     * @param {Command} command - Target command object
-     * @param {string} [commandOrder] - Command execution order setting
-     * @returns {Promise<void>}
+     * Handles selection of individual action buttons.
      */
     private async handleActionSelection(action: ActionFormButton, dynamicFields: DynamicField[], title: string, command: Command, commandOrder?: string): Promise<void> {
         const { requiredFields = [], crypto } = action;
@@ -235,118 +373,7 @@ class GUIManager {
     }
 
     /**
-     * Fetches dynamic entity type options present in the target dimension.
-     * @returns {string[]} Formatted entity type strings
-     */
-    private getEntityDropdownOptions(): string[] {
-        const transform = PlayerLocationCache.getTransform(this.player);
-        const dimension = transform?.dimension ?? world.getDimension(this.player.dimension.id);
-        const entities = dimension.getEntities({ excludeTypes: ["player"] });
-        const entitySet = new Set<string>();
-
-        for (let i = 0; i < entities.length; i++) {
-            entitySet.add(entities[i]!.typeId.replace("minecraft:", ""));
-        }
-        return Array.from(entitySet);
-    }
-
-    /**
-     * Fetches registered chest lock keys from database.
-     * @returns {string[]} Formatted chest keys
-     */
-    private getChestDropdownOptions(): string[] {
-        const pointers = chestLockDB.listPointers();
-        const result: string[] = new Array(pointers.length);
-
-        for (let i = 0; i < pointers.length; i++) {
-            const ptr = pointers[i]!;
-            const key = ptr.slice(ptr.lastIndexOf("/") + 1);
-            result[i] = key.startsWith("minecraft:") ? key.slice(10) : key;
-        }
-        return result;
-    }
-
-    /**
-     * Resolves saved waypoint names for current player.
-     * @returns {Promise<string[]>} List of waypoint names
-     */
-    private async getWaypointDropdownOptions(): Promise<string[]> {
-        const dbEntry = (await waypointsDB.get(this.player.id)) as { savedWaypoints?: Record<string, unknown> } | undefined;
-        const options = dbEntry?.savedWaypoints ? Object.keys(dbEntry.savedWaypoints) : [];
-        return options.length > 0 ? options : ["No Waypoints Saved"];
-    }
-
-    /**
-     * Decrypts and resolves home names for current player.
-     * @returns {Promise<string[]>} List of decrypted home names
-     */
-    private async getHomeDropdownOptions(): Promise<string[]> {
-        const dbEntry = await homesDB.get(this.player.id);
-        const locations = dbEntry?.locations ?? [];
-        if (locations.length === 0) return ["No Homes Saved"];
-
-        const obfuscatedKey = CryptoES.SHA256(this.player.id).toString();
-        const options: string[] = new Array(locations.length);
-
-        for (let i = 0; i < locations.length; i++) {
-            try {
-                const bytes = CryptoES.AES.decrypt(locations[i]!, obfuscatedKey);
-                const decrypted = bytes.toString(CryptoES.Utf8);
-                options[i] = decrypted.split(":")[1] ?? "Unknown";
-            } catch {
-                options[i] = "Corrupted Data";
-            }
-        }
-        return options;
-    }
-
-    /**
-     * Resolves claim ID options owned by current player.
-     * @param {DynamicField} field - Field configuration
-     * @returns {string[] | undefined} Custom claims array or undefined fallback
-     */
-    private getCustomDropdownOptions(field: DynamicField): string[] | undefined {
-        if (field.requiredFields?.includes("claimId")) {
-            const userClaims = LandClaimManager.getInstance().getClaimsByOwner(this.player.id);
-            if (userClaims.length === 0) return ["No Claims Found"];
-
-            const options: string[] = new Array(userClaims.length);
-            for (let i = 0; i < userClaims.length; i++) {
-                options[i] = userClaims[i]!.id;
-            }
-            return options;
-        }
-        return undefined;
-    }
-
-    /**
-     * Resolves the string array options for a dynamic dropdown based on its sourceType in low cyclomatic complexity handlers.
-     * @param {DynamicField} field - Target dropdown field configuration
-     * @returns {Promise<string[]>} Resolved dropdown options
-     */
-    private async resolveDropdownOptions(field: DynamicField): Promise<string[]> {
-        switch (field.sourceType) {
-            case "players":
-                return PlayerCache.getPlayerNamesArray();
-            case "entities":
-                return this.getEntityDropdownOptions();
-            case "chests":
-                return this.getChestDropdownOptions();
-            case "playerWaypoints":
-                return this.getWaypointDropdownOptions();
-            case "playerHomes":
-                return this.getHomeDropdownOptions();
-            case "custom":
-                return this.getCustomDropdownOptions(field) ?? field.options ?? [""];
-            default:
-                return field.options ?? [""];
-        }
-    }
-
-    /**
-     * Formats plain field strings to Title Case display values without unnecessary allocations.
-     * @param {string} [value] - String value to format
-     * @returns {string} Formatted Title Case string
+     * Formats plain strings to Title Case display labels.
      */
     private formatFieldString(value?: string): string {
         if (!value) return "";
@@ -357,70 +384,39 @@ class GUIManager {
         const words = value.split(" ");
         for (let i = 0; i < words.length; i++) {
             const w = words[i]!;
-            if (w.length > 0) {
-                words[i] = w.charAt(0).toUpperCase() + w.slice(1);
-            }
+            if (w.length > 0) words[i] = w.charAt(0).toUpperCase() + w.slice(1);
         }
         return words.join(" ");
     }
 
     /**
-     * Renders an individual dynamic field element into the ModalFormData instance.
-     * @param {ModalFormData} form - Target modal form instance
-     * @param {DynamicField} field - Dynamic field definition
-     * @returns {Promise<void>}
+     * Renders an individual dynamic field element into ModalFormData.
      */
     private async renderFormField(form: ModalFormData, field: DynamicField): Promise<void> {
         const formattedName = this.formatFieldString(field.name);
-        const formattedPlaceholder = this.formatFieldString(field.placeholder);
 
         switch (field.type) {
             case "text":
-                form.textField(formattedName, formattedPlaceholder);
+                form.textField(formattedName, this.formatFieldString(field.placeholder), field.defaultValue ? { defaultValue: field.defaultValue } : undefined);
                 break;
             case "dropdown": {
-                field.options = await this.resolveDropdownOptions(field);
-                form.dropdown(formattedName, field.options.length > 0 ? field.options : [""], { defaultValueIndex: 0 });
+                const options = field.sourceType ? await UIProviderRegistry.resolve(field.sourceType, this.player, field) : (field.options ?? [""]);
+                field.options = options;
+                form.dropdown(formattedName, options.length > 0 ? options : [""], { defaultValueIndex: 0 });
                 break;
             }
             case "toggle":
-                form.toggle(formattedName, { defaultValue: false });
+                form.toggle(formattedName, { defaultValue: field.defaultValue ?? false });
                 break;
         }
     }
 
     /**
-     * Handles modal form cancellation or close events.
-     * @param {ModalFormResponse} response - Server UI form response
-     * @param {DynamicField[]} fields - Form fields collection
-     * @param {string} title - Modal title
-     * @param {Command} command - Parent command context
-     * @param {string[]} commandArray - Command flags array
-     * @param {boolean} [cryptoES] - Cryptographic toggle flag
-     * @param {string} [commandOrder] - Argument position ordering rules
-     * @param {string[]} [requiredFields] - Required fields array
-     * @returns {Promise<void>}
+     * Displays a ModalFormData form with interactive input validation feedback.
      */
-    private async handleModalCancellation(response: ModalFormResponse, fields: DynamicField[], title: string, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]): Promise<void> {
-        if (response.cancelationReason === "UserBusy") {
-            return this.showModalForm(fields, title, command, commandArray, cryptoES, commandOrder, requiredFields);
-        }
-        return this.buildCommandMenu(command);
-    }
-
-    /**
-     * Shows a ModalFormData form to collect dynamic input from the player.
-     * @param {DynamicField[]} fields - Dynamic fields to render in the modal
-     * @param {string} title - Title of the modal form
-     * @param {Command} command - Parent command object
-     * @param {string[]} commandArray - Static command arguments
-     * @param {boolean} [cryptoES] - Cryptographic handlers flag
-     * @param {string} [commandOrder] - Argument ordering rule ('arg-command' or default)
-     * @param {string[]} [requiredFields] - Filter list of required dynamic fields
-     * @returns {Promise<void>}
-     */
-    private async showModalForm(fields: DynamicField[], title: string, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[]): Promise<void> {
-        const form = new ModalFormData().title(title);
+    private async showModalForm(fields: DynamicField[], title: string, command: Command, commandArray: string[], cryptoES?: boolean, commandOrder?: string, requiredFields?: string[], validationErrorMsg?: string): Promise<void> {
+        const displayTitle = validationErrorMsg ? `§c${title} (${validationErrorMsg})` : title;
+        const form = new ModalFormData().title(this.renderTitle(displayTitle));
 
         for (let i = 0; i < fields.length; i++) {
             await this.renderFormField(form, fields[i]!);
@@ -430,7 +426,16 @@ class GUIManager {
             const response = await form.show(this.player);
 
             if (response.canceled) {
-                return await this.handleModalCancellation(response, fields, title, command, commandArray, cryptoES, commandOrder, requiredFields);
+                if (response.cancelationReason === "UserBusy") {
+                    return this.showModalForm(fields, title, command, commandArray, cryptoES, commandOrder, requiredFields, validationErrorMsg);
+                }
+                return await this.popFrame();
+            }
+
+            // Perform interactive validation over text inputs
+            const error = this.validateFormInputs(fields, response.formValues, requiredFields);
+            if (error) {
+                return this.showModalForm(fields, title, command, commandArray, cryptoES, commandOrder, requiredFields, error);
             }
 
             const args = this.parseFormResponse(response, fields, requiredFields);
@@ -444,9 +449,35 @@ class GUIManager {
     }
 
     /**
-     * Extracts text value from form submission response in O(1) string checks.
-     * @param {unknown} rawValue - Raw form value from response
-     * @returns {string} Trimmed text string or default "0"
+     * Validates form submission values against field schemas before execution.
+     * @param {DynamicField[]} fields - Dynamic fields list
+     * @param {unknown[] | undefined} formValues - Raw values submitted from form
+     * @param {string[]} [requiredFields] - Active required fields filter
+     * @returns {string | undefined} Error message or undefined if valid
+     */
+    private validateFormInputs(fields: DynamicField[], formValues?: unknown[], requiredFields: string[] = []): string | undefined {
+        if (!formValues) return "Invalid response";
+
+        let index = 0;
+        for (let i = 0; i < fields.length; i++) {
+            const field = fields[i]!;
+            const isFieldRequired = !field.requiredFields || field.requiredFields.some((rf) => requiredFields.includes(rf));
+
+            if (isFieldRequired) {
+                const rawValue = formValues[index++];
+                if (field.type === "text") {
+                    const textVal = typeof rawValue === "string" ? rawValue.trim() : "";
+                    if (field.validationRegex && !field.validationRegex.test(textVal)) {
+                        return field.errorMessage ?? "Invalid text input";
+                    }
+                }
+            }
+        }
+        return undefined;
+    }
+
+    /**
+     * Extracts text value from form submission.
      */
     private parseTextFieldValue(rawValue: unknown): string {
         const val = typeof rawValue === "string" ? rawValue.trim() : "";
@@ -454,10 +485,7 @@ class GUIManager {
     }
 
     /**
-     * Extracts selected dropdown option from form submission response in O(1) time.
-     * @param {unknown} rawValue - Raw form value from response
-     * @param {DynamicField} field - Target dropdown dynamic field configuration
-     * @returns {string | undefined} Selected option value formatted or undefined
+     * Extracts selected dropdown option.
      */
     private parseDropdownFieldValue(rawValue: unknown, field: DynamicField): string | undefined {
         const selectedIndex = rawValue as number;
@@ -471,11 +499,7 @@ class GUIManager {
     }
 
     /**
-     * Processes individual form field values from modal submission response.
-     * @param {unknown} rawValue - Raw form input value
-     * @param {DynamicField} field - Target field definition
-     * @param {string[]} args - Global positional arguments array
-     * @param {Record<string, string[]>} groupedValues - Grouped flag arguments lookup
+     * Processes individual field values.
      */
     private processFormFieldValue(rawValue: unknown, field: DynamicField, args: string[], groupedValues: Record<string, string[]>): void {
         let value: string | undefined;
@@ -502,11 +526,7 @@ class GUIManager {
     }
 
     /**
-     * Parses the player's input from a modal form into an array of command arguments.
-     * @param {ModalFormResponse} [response] - Response payload from UI modal submission
-     * @param {DynamicField[]} [fields] - Field definitions list
-     * @param {string[]} [requiredFields] - Required field key filters
-     * @returns {string[]} Formatted positional command arguments array
+     * Parses positional command arguments from submitted values.
      */
     private parseFormResponse(response?: ModalFormResponse, fields: DynamicField[] = [], requiredFields: string[] = []): string[] {
         if (!response?.formValues) return [];
@@ -534,11 +554,7 @@ class GUIManager {
     }
 
     /**
-     * Combines static and dynamic command arguments efficiently.
-     * @param {string} [order] - Order specification ('arg-command' or default)
-     * @param {string[]} [staticArgs] - Static command arguments
-     * @param {string[]} [dynamicArgs] - Dynamic command arguments
-     * @returns {string[]} Combined flat string array
+     * Combines static and dynamic arguments.
      */
     private buildCommandString(order: string | undefined, staticArgs: string[] = [], dynamicArgs: string[] = []): string[] {
         const result: string[] = [];
@@ -552,9 +568,7 @@ class GUIManager {
     }
 
     /**
-     * Pushes trimmed non-empty tokens into an accumulator without intermediate flatMap arrays.
-     * @param {string[]} source - Array of raw strings
-     * @param {string[]} target - Output token array
+     * Pushes non-empty tokens into accumulator array.
      */
     private appendTokens(source: string[], target: string[]): void {
         for (let i = 0; i < source.length; i++) {
@@ -568,28 +582,17 @@ class GUIManager {
     }
 }
 
-/**
- * Opens the main Paradox GUI for a player.
- * @param {Player} player - The player to open the GUI for
- */
+/** Opens the main Paradox GUI for a player */
 export function openMainGui(player: Player): void {
-    system.run(() => new GUIManager(player).openMainGui());
+    system.run(() => new GUIManager(player).openMainGui(true));
 }
 
-/**
- * Helper function to open a specific command's GUI directly, bypassing the main menu.
- * Useful for item-based shortcuts or automated UI triggers.
- * @param {Player} player - The player to show the GUI to
- * @param {Command} command - The Command object containing guiInstructions
- * @returns {Promise<void>}
- */
+/** Opens a specific command GUI directly */
 export function openCommandGui(player: Player, command: Command): Promise<void> {
     return new GUIManager(player)["buildCommandMenu"](command);
 }
 
-/**
- * Command registration for opening the main GUI.
- */
+/** Main GUI command registration */
 export const guiCommand: Command = {
     name: "gui",
     description: "Opens the main GUI for the player, filtered by their security clearance.",
@@ -605,3 +608,10 @@ export const guiCommand: Command = {
         openMainGui(player);
     },
 };
+
+/**
+ * Safely retrieves the shared CommandHandler singleton.
+ */
+function getCommandHandler(): CommandHandler {
+    return CommandHandler.getInstance();
+}

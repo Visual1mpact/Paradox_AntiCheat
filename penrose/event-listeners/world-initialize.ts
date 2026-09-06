@@ -422,7 +422,8 @@ async function initializeSystems() {
 
     await channelsDBCleanup();
 
-    commandHandler = new CommandHandler();
+    // Use Singleton instance instead of instantiation
+    commandHandler = CommandHandler.getInstance();
 
     const disabledCommandsSet = new Set((await disabledCommandsDB.entries()).map((entry) => entry[0]));
     const enabledCommands = allCommands.filter((command) => !disabledCommandsSet.has(command.name));

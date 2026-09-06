@@ -1,5 +1,8 @@
+// command-handler.ts
 import { Player, ChatSendBeforeEvent, system, world, PlayerSpawnAfterEvent } from "@minecraft/server";
 import * as CryptoES from "../../node_modules/crypto-es";
+import { ActionFormButton, GUIInstructions } from "../../commands/gui/gui-schema";
+import { GUIManager } from "../../commands/gui/form-generator";
 
 /**
  * Security clearance levels for commands.
@@ -10,98 +13,6 @@ export enum SecurityClearance {
     Level2 = 2,
     Level3 = 3,
     Level4 = 4,
-}
-
-/**
- * Types of GUI forms supported by commands.
- */
-type FormType = "ActionFormData" | "ModalFormData" | "MessageFormData";
-
-/**
- * Represents a button in an action form GUI.
- */
-export interface ActionFormButton {
-    /** Display name of the button */
-    name: string;
-
-    /** Commands to execute when clicked */
-    command?: string[] | undefined;
-
-    /** Optional description shown to the player */
-    description?: string;
-
-    /** Fields that must be filled before executing */
-    requiredFields?: string[];
-
-    /** Whether crypto handling is required */
-    crypto?: boolean;
-
-    /** If true, clicking generates a modal form */
-    generateModalForm?: boolean;
-
-    /** Optional Minecraft texture path for an icon */
-    icon?: string;
-
-    /** Whether sub-actions should appear when clicked */
-    generateSubActions?: boolean;
-
-    /** Optional array of sub-action buttons */
-    subActions?: ActionFormButton[];
-
-    /** Optional security clearance adjustment */
-    securityClearance?: SecurityClearance;
-}
-
-/**
- * Represents a dynamic input field in a modal form GUI.
- */
-export interface DynamicField {
-    /** Field name or label */
-    name: string;
-
-    /** Argument key to pass back to the command */
-    arg?: string;
-
-    /** Type of input field */
-    type: "text" | "dropdown" | "toggle";
-
-    /** Placeholder text for text fields */
-    placeholder?: string;
-
-    /** Dropdown options */
-    options?: string[];
-
-    /** Automatically populate dropdown with players, entities, chests, waypoints, homes, or custom handler logic */
-    sourceType?: "players" | "entities" | "chests" | "playerWaypoints" | "playerHomes" | "custom";
-
-    /** Required fields that must be filled before execution */
-    requiredFields?: string[];
-
-    /** Optional security clearance adjustment */
-    securityClearance?: SecurityClearance;
-}
-
-/**
- * Instructions for generating a GUI for a command.
- */
-export interface GuiInstructions {
-    /** Type of form to generate */
-    formType: FormType;
-
-    /** Form title */
-    title: string;
-
-    /** Optional form description */
-    description?: string;
-
-    /** Command execution order */
-    commandOrder?: "command-arg" | "arg-command" | undefined;
-
-    /** Action buttons for ActionFormData */
-    actions?: ActionFormButton[];
-
-    /** Input fields for ModalFormData */
-    dynamicFields?: DynamicField[];
 }
 
 /**
@@ -136,14 +47,10 @@ export interface Command {
     icon?: string;
 
     /** Optional GUI instructions */
-    guiInstructions?: GuiInstructions;
+    guiInstructions?: GUIInstructions;
 
     /**
      * Function executed when the command runs.
-     * @param message - Chat message event
-     * @param args - Command arguments
-     * @param cryptoES - Optional CryptoES reference
-     * @param returnMonitorFunction - Optional flag
      */
     execute: (message: ChatSendBeforeEvent | undefined, args?: string[], cryptoES?: typeof CryptoES, returnMonitorFunction?: boolean) => Promise<void | boolean> | void | ((object: PlayerSpawnAfterEvent) => void);
 }
@@ -152,54 +59,45 @@ export interface Command {
  * Handles command registration, execution, and GUI integration.
  */
 export class CommandHandler {
-    /** Commands organized by category */
+    /** Singleton instance holder */
+    private static instance: CommandHandler | undefined;
+
     private commandsByCategory: Map<string, Command[]> = new Map();
-
-    /** Currently active commands lookup by lowercased name */
     private commands: Map<string, Command> = new Map();
-
-    /** Cached array of active registered commands to allow O(1) retrieval */
     private cachedActiveCommands: Command[] = [];
-
-    /** Master list of all registered commands (including disabled ones) */
     private masterCommands: Map<string, Command> = new Map();
 
-    /** Current command prefix */
     private prefix: string;
-
-    /** Item ID that opens the GUI when used */
     private guiItem: string | undefined;
-
-    /** Lock to serialize command execution */
     private prefixLock = false;
-
-    /** Lock for prefix updates */
     private prefixUpdateLock = false;
 
-    /** Rate-limit interval in ticks */
     private readonly rateLimitInterval = 20;
-
-    /** Maximum commands per interval */
     private readonly maxCommandsPerInterval = 5;
-
-    /** Commands executed in current interval */
     private commandCount = 0;
-
-    /** Tick of last executed command */
     private lastCommandTimestamp = 0;
 
     /**
-     * Initializes a new CommandHandler and retrieves the current prefix and GUI item settings.
+     * Private constructor enforces singleton pattern.
      */
-    constructor() {
+    private constructor() {
         this.prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
         this.guiItem = world.getDynamicProperty("__guiItem") as string | undefined;
     }
 
     /**
-     * Registers active commands and maintains a master list of all available commands.
-     * @param {Command[]} activeCommands - Currently active Command objects
-     * @param {Command[]} [allCommands] - Optional full array of all registered commands
+     * Retrieves or initializes the single shared CommandHandler instance.
+     * @returns {CommandHandler} Singleton CommandHandler
+     */
+    public static getInstance(): CommandHandler {
+        if (!CommandHandler.instance) {
+            CommandHandler.instance = new CommandHandler();
+        }
+        return CommandHandler.instance;
+    }
+
+    /**
+     * Registers active commands, updates master lookup, and invalidates stale GUI caches.
      */
     public registerCommand(activeCommands: Command[], allCommands?: Command[]): void {
         this.commands.clear();
@@ -227,12 +125,11 @@ export class CommandHandler {
 
             this.commands.set(command.name.toLowerCase(), command);
         }
+
+        // Keep GUI cache synchronized whenever commands change
+        GUIManager.invalidateCommandCache();
     }
 
-    /**
-     * Returns all currently active registered commands in O(1) time.
-     * @returns {Command[]} Array of active commands
-     */
     public getRegisteredCommands(): Command[] {
         return this.cachedActiveCommands;
     }
