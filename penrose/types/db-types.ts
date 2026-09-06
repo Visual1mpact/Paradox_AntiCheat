@@ -1,5 +1,6 @@
 import { Player, Vector3 } from "@minecraft/server";
 import { DatabaseValueObject } from "../classes/database/data-hive";
+import { DimensionLockSettings } from "../modules/dimension-lock-module";
 
 /**
  * Represents the unique identifier for a Player (`Player.id`).
@@ -49,12 +50,6 @@ export interface WorldBorderSettings {
     overworld: number;
     nether: number;
     end: number;
-}
-
-/** Settings schema for dimension lock enforcement */
-export interface DimensionLockSettings {
-    nether: boolean;
-    theEnd: boolean;
 }
 
 /**

@@ -3,6 +3,8 @@ import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 import { startPathingMonitor, stopPathingMonitor } from "../../modules/pathing-monitor-module";
 
+const MODULE_KEY = "pathingCheck_b";
+
 /**
  * Represents the pathing monitor toggle command.
  */
@@ -31,22 +33,22 @@ export const pathingCommand: Command = {
             },
         ],
     },
-    execute: async (message?: ChatSendBeforeEvent) => {
+    execute: async (message?: ChatSendBeforeEvent): Promise<void> => {
         if (!message) return;
         const player = message.sender;
-        const moduleKey = "pathingCheck_b";
-        const fetched = await paradoxModulesDB.get(moduleKey);
-        const config = (fetched as { enabled: boolean } | undefined) || { enabled: false };
 
-        config.enabled = !config.enabled;
-        await paradoxModulesDB.set(moduleKey, config);
+        const moduleData = (await paradoxModulesDB.get(MODULE_KEY)) ?? { enabled: false };
+        const isEnabled = !moduleData.enabled;
+        moduleData.enabled = isEnabled;
 
-        if (config.enabled) {
+        if (isEnabled) {
             startPathingMonitor();
             player.sendMessage("§2[§7Paradox§2]§o§7 Pathing monitor §aENABLED§7.");
         } else {
             stopPathingMonitor();
             player.sendMessage("§2[§7Paradox§2]§o§7 Pathing monitor §4DISABLED§7.");
         }
+
+        await paradoxModulesDB.set(MODULE_KEY, moduleData);
     },
 };

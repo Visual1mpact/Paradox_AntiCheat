@@ -63,9 +63,13 @@ export const modulesStatusCommand: Command = {
             gamemodeCheck_b: "gamemode",
             graveSaver_b: "gravesaver",
             hitReachCheck_b: "reach",
+            hotbarCheck_b: "hotbarcheck",
+            invalidMovementVectorCheck_b: "invalidvector",
+            inventoryMovementCheck_b: "invmove",
             invSync_b: "invsync",
             killAuraCheck_b: "killaura",
             lagClearCheck_b: "lagclear",
+            lockdown_b: "lockdown",
             nameSpoofCheck_b: "namespoof",
             noClipCheck_b: "noclip",
             packetMonitorCheck_b: "packetmonitor",
@@ -78,10 +82,6 @@ export const modulesStatusCommand: Command = {
             visionCheck_b: "visioncheck",
             worldBorderCheck_b: "worldborder",
             xrayDetection_b: "xray",
-            invalidMovementVectorCheck_b: "invalidvector",
-            inventoryMovementCheck_b: "invmove",
-            hotbarCheck_b: "hotbarcheck",
-            lockdown_b: "lockdown",
         };
 
         const entries = await paradoxModulesDB.entries();

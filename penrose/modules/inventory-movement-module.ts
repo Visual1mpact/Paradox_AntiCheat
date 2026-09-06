@@ -1,14 +1,12 @@
 import { Player, system, GameMode } from "@minecraft/server";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { FlagManager } from "../classes/logging/flag-manager";
 
 /**
- * In-memory state cache to prevent querying the database every tick.
+ * In-memory state tracking.
  */
-let isModuleEnabled = false;
 let runIntervalId: number | null = null;
 
 /**
@@ -25,10 +23,13 @@ let unsubscribeInventoryChange: (() => void) | null = null;
 /**
  * Distributes an in-game alert notification to all active staff players
  * possessing Security Clearance Level 4 when an Inventory Movement violation occurs.
+ *
+ * @param {Player} player - Target player flagged for inventory movement.
  */
 function alertStaff(player: Player): void {
-    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "InvMove", "Player flagged for moving items in inventory while moving.");
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvMove] §f${player.name} §7flagged for moving items in inventory while moving.`);
@@ -37,6 +38,9 @@ function alertStaff(player: Player): void {
 
 /**
  * Fast horizontal velocity calculation without extra object allocations.
+ *
+ * @param {Player} player - Player instance to inspect.
+ * @returns {boolean} True if player horizontal velocity exceeds minimum threshold.
  */
 function isPlayerMoving(player: Player): boolean {
     const vel = player.getVelocity();
@@ -47,10 +51,10 @@ function isPlayerMoving(player: Player): boolean {
 /**
  * Handles the inventory item change event via EventCoordinator.
  * Analogous to receiving an ItemStackRequest packet in Go.
+ *
+ * @param {{ player: Player }} event - Event payload containing player context.
  */
 function handleInventoryChange(event: { player: Player }): void {
-    if (!isModuleEnabled) return;
-
     const player = event.player;
     if (!player?.isValid) return;
 
@@ -65,8 +69,8 @@ function handleInventoryChange(event: { player: Player }): void {
  * Executes in O(1) time when no players are interacting with inventory while moving.
  */
 function checkInventoryMovement(): void {
-    // Early Exit if module is disabled or no players were queued during an inventory event
-    if (!isModuleEnabled || pendingValidationSet.size === 0) return;
+    // Early Exit if no players were queued during an inventory event
+    if (pendingValidationSet.size === 0) return;
 
     // Only iterate players explicitly in the validation queue
     for (const playerId of pendingValidationSet) {
@@ -88,12 +92,9 @@ function checkInventoryMovement(): void {
 }
 
 /**
- * Loads the initial state from DB, registers event listeners, and starts the 1-tick check loop.
+ * Starts the Inventory Movement detection module tick loop and registers event listeners.
  */
-export async function startInventoryMovementCheck(): Promise<void> {
-    const dbData = await paradoxModulesDB.get("inventoryMovementCheck_b");
-    isModuleEnabled = dbData?.enabled ?? false;
-
+export function startInventoryMovementCheck(): void {
     if (!unsubscribeInventoryChange) {
         unsubscribeInventoryChange = EventCoordinator.subscribeAfter("playerInventoryItemChange", handleInventoryChange);
     }
@@ -109,8 +110,6 @@ export async function startInventoryMovementCheck(): Promise<void> {
  * Stops the Inventory Movement detection module and cleans up event listeners.
  */
 export function stopInventoryMovementCheck(): void {
-    isModuleEnabled = false;
-
     if (runIntervalId !== null) {
         system.clearRun(runIntervalId);
         runIntervalId = null;
@@ -122,14 +121,4 @@ export function stopInventoryMovementCheck(): void {
     }
 
     pendingValidationSet.clear();
-}
-
-/**
- * Helper to update the in-memory module state when toggled by a command.
- */
-export function setInventoryMovementState(enabled: boolean): void {
-    isModuleEnabled = enabled;
-    if (!enabled) {
-        pendingValidationSet.clear();
-    }
 }

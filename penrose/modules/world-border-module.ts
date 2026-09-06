@@ -1,30 +1,16 @@
-/**
- * @file modules/world-border.ts
- * @description High-performance, anti-cheat resistant world border enforcement system.
- */
-
 import { Player, world, system, Dimension, PlayerLeaveBeforeEvent, PlayerSpawnAfterEvent, Vector3 } from "@minecraft/server";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 
 /** Structure defining per-dimension border distance limits */
-interface BorderBounds {
+export interface BorderBounds {
     /** Overworld max distance from center in blocks */
     overworld: number;
     /** Nether max distance from center in blocks */
     nether: number;
     /** End max distance from center in blocks */
     end: number;
-}
-
-/** Represents configuration parameters loaded from database */
-interface ModuleConfig {
-    /** Global module enablement flag */
-    enabled?: boolean;
-    /** Per-dimension bounds settings */
-    settings?: BorderBounds;
 }
 
 /** In-flight safe position search payload */
@@ -55,10 +41,7 @@ interface BorderBoundsBox {
 let isModuleActive = false;
 let isSafeYJobActive = false;
 
-/** Cached border configuration data */
-let moduleConfig: ModuleConfig | undefined;
 let checkIntervalId: number | undefined;
-let configRefreshIntervalId: number | undefined;
 
 /** Fast in-memory caches */
 const securityClearanceCache = new Map<string, number>();
@@ -71,7 +54,6 @@ let cachedBounds: BorderBounds = { overworld: 0, nether: 0, end: 0 };
 
 /** Timing & Distance Constants */
 const CHECK_INTERVAL_TICKS = 10;
-const CONFIG_REFRESH_INTERVAL_TICKS = 1200;
 const ADMIN_BYPASS_SLEEP_TICKS = 600;
 const DEBOUNCE_TICKS = 10;
 const BUFFER = 2;
@@ -496,7 +478,7 @@ function startSafeYWorker(): void {
  * Main execution pass executed on tick interval.
  */
 function runWorldBorderChecks(): void {
-    if (!isModuleActive || !moduleConfig?.enabled || !moduleConfig.settings) return;
+    if (!isModuleActive) return;
 
     const currentTick = system.currentTick;
     const players = PlayerCache.getPlayersArray();
@@ -511,66 +493,48 @@ function runWorldBorderChecks(): void {
 }
 
 /**
- * Safely fetches database configurations and updates world border boundaries.
+ * Initializes and starts world border monitoring services with provided dimensions.
  *
- * @returns {Promise<void>} Async completion promise.
+ * @param {BorderBounds} bounds - Per-dimension boundary limits.
  */
-async function refreshConfig(): Promise<void> {
-    try {
-        moduleConfig = (await paradoxModulesDB.get("worldBorderCheck_b")) as ModuleConfig | undefined;
+export function startWorldBorderCheck(bounds: BorderBounds): void {
+    cachedBounds = bounds;
 
-        if (moduleConfig?.settings) {
-            cachedBounds.overworld = moduleConfig.settings.overworld ?? 0;
-            cachedBounds.nether = moduleConfig.settings.nether ?? 0;
-            cachedBounds.end = moduleConfig.settings.end ?? 0;
-        }
+    const spawn = world.getDefaultSpawnLocation();
+    cachedSpawnLocation.x = spawn.x;
+    cachedSpawnLocation.y = spawn.y;
+    cachedSpawnLocation.z = spawn.z;
 
-        const spawn = world.getDefaultSpawnLocation();
-        cachedSpawnLocation.x = spawn.x;
-        cachedSpawnLocation.y = spawn.y;
-        cachedSpawnLocation.z = spawn.z;
-    } catch (e) {
-        console.error(`[Paradox] Failed to load world border configuration: ${e}`);
-    }
-}
-
-/**
- * Initializes and starts world border monitoring services.
- *
- * @returns {Promise<void>} Async completion promise.
- */
-export async function startWorldBorderCheck(): Promise<void> {
     if (isModuleActive) return;
-
     isModuleActive = true;
+
     PlayerLocationCache.init();
 
-    spawnSubscription = (ev: PlayerSpawnAfterEvent) => {
-        if (ev.initialSpawn && ev.player) {
-            system.runTimeout(() => {
-                if (ev.player?.isValid) {
-                    getSecurityClearance(ev.player);
-                }
-            }, 1);
-        }
-    };
-    EventCoordinator.subscribeAfter("playerSpawn", spawnSubscription);
+    if (!spawnSubscription) {
+        spawnSubscription = (ev: PlayerSpawnAfterEvent) => {
+            if (ev.initialSpawn && ev.player) {
+                system.runTimeout(() => {
+                    if (ev.player?.isValid) {
+                        getSecurityClearance(ev.player);
+                    }
+                }, 1);
+            }
+        };
+        EventCoordinator.subscribeAfter("playerSpawn", spawnSubscription);
+    }
 
-    leaveSubscription = (ev: PlayerLeaveBeforeEvent) => {
-        if (ev.player?.id) {
-            clearPlayerBorderCache(ev.player.id);
-        }
-    };
-    EventCoordinator.subscribeBefore("playerLeave", leaveSubscription);
+    if (!leaveSubscription) {
+        leaveSubscription = (ev: PlayerLeaveBeforeEvent) => {
+            if (ev.player?.id) {
+                clearPlayerBorderCache(ev.player.id);
+            }
+        };
+        EventCoordinator.subscribeBefore("playerLeave", leaveSubscription);
+    }
 
-    await refreshConfig();
-
-    if (!isModuleActive) return;
-
-    checkIntervalId = system.runInterval(runWorldBorderChecks, CHECK_INTERVAL_TICKS);
-    configRefreshIntervalId = system.runInterval(() => {
-        refreshConfig().catch((err) => console.error(`[Paradox] Unhandled error during border config refresh: ${err}`));
-    }, CONFIG_REFRESH_INTERVAL_TICKS);
+    if (checkIntervalId === undefined) {
+        checkIntervalId = system.runInterval(runWorldBorderChecks, CHECK_INTERVAL_TICKS);
+    }
 }
 
 /**
@@ -582,11 +546,6 @@ export function stopWorldBorderCheck(): void {
     if (checkIntervalId !== undefined) {
         system.clearRun(checkIntervalId);
         checkIntervalId = undefined;
-    }
-
-    if (configRefreshIntervalId !== undefined) {
-        system.clearRun(configRefreshIntervalId);
-        configRefreshIntervalId = undefined;
     }
 
     if (leaveSubscription) {

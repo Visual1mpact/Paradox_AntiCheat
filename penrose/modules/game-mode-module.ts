@@ -1,9 +1,19 @@
 import { GameMode, PlayerGameModeChangeAfterEvent, Player } from "@minecraft/server";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { GamemodeCheckSettings } from "../types/db-types";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
 import { FlagManager } from "../classes/logging/flag-manager";
+
+/** Active in-memory gamemode restriction settings */
+let activeSettings: GamemodeCheckSettings = {
+    Adventure: true,
+    Creative: true,
+    Survival: true,
+    Spectator: true,
+};
+
+/** Reference to the gamemode change event handler */
+let gameModeChangeSub: ((event: PlayerGameModeChangeAfterEvent) => void) | undefined;
 
 /**
  * Distributes an in-game alert notification to all active staff players
@@ -13,8 +23,9 @@ import { FlagManager } from "../classes/logging/flag-manager";
  * @param {GameMode} attemptedGM - The illegal gamemode they attempted to switch to.
  */
 function alertStaff(player: Player, attemptedGM: GameMode): void {
-    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Gamemode", `Player attempted to switch to ${attemptedGM}`);
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Gamemode] §f${player.name} §7attempted to switch to §e${attemptedGM}`);
@@ -23,25 +34,19 @@ function alertStaff(player: Player, attemptedGM: GameMode): void {
 
 /**
  * Handles game mode change events and enforces allowed game modes.
- * @param event - The game mode change event.
+ *
+ * @param {PlayerGameModeChangeAfterEvent} event - The game mode change event payload.
  */
-async function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): Promise<void> {
+function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): void {
     const player = event.player;
 
     // Bypass for high-security users
     if ((player.getDynamicProperty("securityClearance") as number) === 4) return;
 
-    const settings = (await paradoxModulesDB.get("gamemodeCheck_b"))?.settings ?? {
-        Adventure: true,
-        Creative: true,
-        Survival: true,
-        Spectator: true,
-    };
-
     const to = event.toGameMode as GameMode;
     const from = event.fromGameMode as GameMode;
 
-    const isAllowed = (gm: GameMode): boolean => settings[gm as keyof GamemodeCheckSettings] ?? false;
+    const isAllowed = (gm: GameMode): boolean => activeSettings[gm as keyof GamemodeCheckSettings] ?? false;
 
     if (isAllowed(to)) return;
 
@@ -64,14 +69,24 @@ async function handleGameModeChange(event: PlayerGameModeChangeAfterEvent): Prom
 
 /**
  * Subscribes to game mode changes and enforces restrictions.
+ *
+ * @param {GamemodeCheckSettings} [settings] - Allowed gamemodes configuration.
  */
-export function startGameModeCheck() {
-    EventCoordinator.subscribeAfter("playerGameModeChange", handleGameModeChange);
+export function startGameModeCheck(settings?: GamemodeCheckSettings): void {
+    if (settings) {
+        activeSettings = settings;
+    }
+
+    if (gameModeChangeSub) return;
+    gameModeChangeSub = handleGameModeChange;
+    EventCoordinator.subscribeAfter("playerGameModeChange", gameModeChangeSub);
 }
 
 /**
  * Unsubscribes from game mode change enforcement.
  */
-export function stopGameModeCheck() {
-    EventCoordinator.unsubscribeAfter("playerGameModeChange", handleGameModeChange);
+export function stopGameModeCheck(): void {
+    if (!gameModeChangeSub) return;
+    EventCoordinator.unsubscribeAfter("playerGameModeChange", gameModeChangeSub);
+    gameModeChangeSub = undefined;
 }

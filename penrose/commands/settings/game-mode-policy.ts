@@ -2,17 +2,10 @@ import { ChatSendBeforeEvent, Player, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { startGameModeCheck, stopGameModeCheck } from "../../modules/game-mode-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-
-// Represents the game mode settings stored in the database
-interface ModeSettings {
-    Adventure: boolean;
-    Creative: boolean;
-    Survival: boolean;
-    Spectator: boolean;
-}
+import { GamemodeCheckSettings } from "../../types/db-types";
 
 // Represents the full mode states including the gmpolicy check
-interface ModeStates extends ModeSettings {
+interface ModeStates extends GamemodeCheckSettings {
     gamemodeCheck: boolean;
 }
 
@@ -111,7 +104,7 @@ function parseGamemodeArgs(args: string[], state: ModeStates): { isValid: boolea
  */
 function isGamemodeStateValid(state: ModeStates): boolean {
     if (!state.gamemodeCheck) return true;
-    const modes: (keyof ModeSettings)[] = ["Adventure", "Creative", "Survival", "Spectator"];
+    const modes: (keyof GamemodeCheckSettings)[] = ["Adventure", "Creative", "Survival", "Spectator"];
     return modes.some((mode) => state[mode]);
 }
 
@@ -123,14 +116,16 @@ function isGamemodeStateValid(state: ModeStates): boolean {
  * @param {boolean} needsInspectionUpdate - Whether to start/re-initialize the gmpolicy check loop.
  */
 async function saveAndSyncGamemodeState(player: Player, state: ModeStates, needsInspectionUpdate: boolean): Promise<void> {
+    const settings: GamemodeCheckSettings = {
+        Adventure: state.Adventure,
+        Creative: state.Creative,
+        Survival: state.Survival,
+        Spectator: state.Spectator,
+    };
+
     await paradoxModulesDB.set("gamemodeCheck_b", {
         enabled: state.gamemodeCheck,
-        settings: {
-            Adventure: state.Adventure,
-            Creative: state.Creative,
-            Survival: state.Survival,
-            Spectator: state.Spectator,
-        },
+        settings,
     });
 
     player.sendMessage(formatSettingsMessage(state));
@@ -138,7 +133,7 @@ async function saveAndSyncGamemodeState(player: Player, state: ModeStates, needs
     if (!state.gamemodeCheck) {
         stopGameModeCheck();
     } else if (needsInspectionUpdate) {
-        startGameModeCheck();
+        startGameModeCheck(settings);
     }
 }
 
@@ -188,6 +183,7 @@ export const gameModeCommand: Command = {
 
     /**
      * Executes the gmpolicy command.
+     *
      * @param {ChatSendBeforeEvent | undefined} message - The message object context.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}

@@ -1,7 +1,9 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { setInventoryMovementState } from "../../modules/inventory-movement-module";
+import { startInventoryMovementCheck, stopInventoryMovementCheck } from "../../modules/inventory-movement-module";
+
+const MODULE_KEY = "inventoryMovementCheck_b";
 
 /**
  * Represents the inventory movement toggle command.
@@ -35,23 +37,21 @@ export const inventoryMovementCommand: Command = {
         if (!message) return;
         const player = message.sender;
 
-        const checkKey = "inventoryMovementCheck_b";
-
-        const moduleData = (await paradoxModulesDB.get(checkKey)) ?? {
+        const moduleData = (await paradoxModulesDB.get(MODULE_KEY)) ?? {
             enabled: false,
         };
-        const isEnabled = moduleData?.enabled ?? false;
 
-        if (!isEnabled) {
-            moduleData.enabled = true;
-            setInventoryMovementState(true);
-            await paradoxModulesDB.set(checkKey, moduleData);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Inventory Movement detection has been §aenabled§7.`);
+        const isEnabled = !moduleData.enabled;
+        moduleData.enabled = isEnabled;
+
+        if (isEnabled) {
+            startInventoryMovementCheck();
         } else {
-            moduleData.enabled = false;
-            setInventoryMovementState(false);
-            await paradoxModulesDB.set(checkKey, moduleData);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Inventory Movement detection has been §4disabled§7.`);
+            stopInventoryMovementCheck();
         }
+
+        await paradoxModulesDB.set(MODULE_KEY, moduleData);
+
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Inventory Movement detection has been ${isEnabled ? "§aenabled" : "§4disabled"}§7.`);
     },
 };

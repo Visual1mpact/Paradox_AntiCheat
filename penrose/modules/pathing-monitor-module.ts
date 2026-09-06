@@ -2,7 +2,6 @@ import { system, Player, PlayerLeaveAfterEvent, Vector3, GameMode } from "@minec
 import { PlayerCache } from "../classes/cache/player-cache";
 import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { EventCoordinator } from "../classes/core/event-coordinator";
 import { FlagManager } from "../classes/logging/flag-manager";
 
@@ -19,10 +18,6 @@ interface PathingData {
     lastYaw: number;
     speedViolations: number;
     precisionTicks: number;
-}
-
-interface PathingModuleConfig {
-    enabled?: boolean;
 }
 
 /** Flag indicating whether the module is manually toggled on */
@@ -43,8 +38,9 @@ let playerLeaveSubscription: ((arg: PlayerLeaveAfterEvent) => void) | undefined;
  * @param {string} reason - The reason for the pathing violation.
  */
 function alertStaff(player: Player, reason: string): void {
-    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "Pathing", `Player was ${reason}.`);
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[Pathing] §f${player.name} §7flagged: §c${reason}`);
@@ -55,8 +51,10 @@ function alertStaff(player: Player, reason: string): void {
  * Detects artifacts produced by Auto-Navigation scripts:
  * 1. Constant yaw precision (robotic snapping).
  * 2. Speeds exceeding the vanilla horizontal limit.
+ *
+ * @param {Player} player - Target player instance to evaluate.
  */
-function checkPathing(player: Player) {
+function checkPathing(player: Player): void {
     if (player.getGameMode() === GameMode.Creative || player.getGameMode() === GameMode.Spectator) return;
     if ((player.getDynamicProperty("securityClearance") as number) === 4) return;
 
@@ -122,8 +120,11 @@ function checkPathing(player: Player) {
 
 /**
  * Alerts staff and mitigates the movement.
+ *
+ * @param {Player} player - Targeted player instance.
+ * @param {string} reason - Flagged violation context.
  */
-function flagPlayer(player: Player, reason: string) {
+function flagPlayer(player: Player, reason: string): void {
     alertStaff(player, reason);
 
     // Mitigation: Reset velocity to stop the navigator loop
@@ -135,24 +136,22 @@ function flagPlayer(player: Player, reason: string) {
 
 /**
  * Cleanup logic for departing players.
+ *
+ * @param {PlayerLeaveAfterEvent} event - Player disconnect event payload.
  */
-function handleLeave(event: PlayerLeaveAfterEvent) {
+function handleLeave(event: PlayerLeaveAfterEvent): void {
     playerData.delete(event.playerId);
 }
 
 /**
  * Continuous generator loop that iterates over players to analyze pathing signatures.
  */
-function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): Generator<void, void, void> {
+function* continuousPathingLoop(): Generator<void, void, void> {
     if (isJobActive) return;
     isJobActive = true;
 
     try {
         if (!isModuleActive) return;
-
-        // Check pre-fetched module status without using inline promises inside the generator
-        const isEnabled = moduleConfig?.enabled ?? false;
-        if (!isEnabled) return;
 
         const players = PlayerCache.getPlayers();
 
@@ -161,7 +160,7 @@ function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): 
 
             try {
                 checkPathing(player);
-            } catch (e) {
+            } catch {
                 // Handle dimension loading edge cases smoothly
             }
 
@@ -174,10 +173,8 @@ function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): 
 
         // Recursively queue the next pass for the next available frame
         if (isModuleActive) {
-            system.run(async () => {
-                // Pre-fetch DB state outside generator on the loop continuation pass
-                const nextConfig = (await paradoxModulesDB.get("pathingCheck_b")) as PathingModuleConfig | undefined;
-                system.runJob(continuousPathingLoop(nextConfig));
+            system.run(() => {
+                system.runJob(continuousPathingLoop());
             });
         }
     }
@@ -186,7 +183,7 @@ function* continuousPathingLoop(moduleConfig: PathingModuleConfig | undefined): 
 /**
  * Starts the Pathing/Navigator monitor.
  */
-export async function startPathingMonitor(): Promise<void> {
+export function startPathingMonitor(): void {
     if (isModuleActive) return;
     isModuleActive = true;
 
@@ -199,25 +196,14 @@ export async function startPathingMonitor(): Promise<void> {
     }
 
     if (!isJobActive) {
-        try {
-            // Await initial database fetch before spawning the generator job
-            const initialConfig = (await paradoxModulesDB.get("pathingCheck_b")) as PathingModuleConfig | undefined;
-
-            // Guard against module stopping while the database call was pending
-            if (!isModuleActive) return;
-
-            system.runJob(continuousPathingLoop(initialConfig));
-        } catch (e) {
-            console.error(`[Paradox] Failed to load config for pathing check: ${e}`);
-            isModuleActive = false;
-        }
+        system.runJob(continuousPathingLoop());
     }
 }
 
 /**
  * Stops the Pathing/Navigator monitor.
  */
-export function stopPathingMonitor() {
+export function stopPathingMonitor(): void {
     isModuleActive = false;
 
     if (playerLeaveSubscription) {

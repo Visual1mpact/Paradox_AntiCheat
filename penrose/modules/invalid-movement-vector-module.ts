@@ -1,6 +1,5 @@
 import { Player, system, GameMode } from "@minecraft/server";
 import { SecurityClearanceManager } from "../classes/cache/level-four-security-tracker";
-import { paradoxModulesDB } from "../event-listeners/world-initialize";
 import { PlayerCache } from "../classes/cache/player-cache";
 import { FlagManager } from "../classes/logging/flag-manager";
 
@@ -11,18 +10,21 @@ import { FlagManager } from "../classes/logging/flag-manager";
 const MAX_MOVE_VECTOR_BOUND = 1.001;
 
 /**
- * In-memory state cache to prevent querying the database every tick.
+ * In-memory state tracking.
  */
-let isModuleEnabled = false;
 let runIntervalId: number | null = null;
 
 /**
  * Distributes an in-game alert notification to all active staff players
  * possessing Security Clearance Level 4 when an Invalid Movement Vector occurs.
+ *
+ * @param {Player} player - Target player flagged for invalid movement.
+ * @param {{ x: number; y: number }} moveVector - Flagged movement input vector values.
  */
 function alertStaff(player: Player, moveVector: { x: number; y: number }): void {
-    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
     FlagManager.logFlag(player, "InvalidVector", `Player flagged for out-of-bounds MoveVector (X: ${moveVector.x.toFixed(3)}, Y: ${moveVector.y.toFixed(3)})`);
+    const staff = SecurityClearanceManager.getSecurityClearanceLevel4Players();
+
     for (const s of staff) {
         if (!s.isValid || s.id === player.id) continue;
         s.sendMessage(`§2[§7Paradox§2]§o§7 §e[InvalidVector] §f${player.name} §7flagged for out-of-bounds MoveVector (X: ${moveVector.x.toFixed(3)}, Y: ${moveVector.y.toFixed(3)})`);
@@ -33,8 +35,6 @@ function alertStaff(player: Player, moveVector: { x: number; y: number }): void 
  * Synchronous tick check for invalid player movement vectors.
  */
 function checkPlayerMoveVectors(): void {
-    if (!isModuleEnabled) return;
-
     // Fast O(1) player lookup iterating cached player instances
     for (const player of PlayerCache.getPlayers()) {
         const gm = player.getGameMode();
@@ -58,13 +58,9 @@ function checkPlayerMoveVectors(): void {
 }
 
 /**
- * Loads the initial state from DB and starts the 1-tick check interval.
+ * Starts the Invalid Movement Vector detection module tick loop.
  */
-export async function startInvalidMovementVectorCheck(): Promise<void> {
-    // Sync initial state from DB
-    const dbData = await paradoxModulesDB.get("invalidMovementVectorCheck_b");
-    isModuleEnabled = dbData?.enabled ?? false;
-
+export function startInvalidMovementVectorCheck(): void {
     if (runIntervalId !== null) return;
 
     runIntervalId = system.runInterval(() => {
@@ -73,19 +69,11 @@ export async function startInvalidMovementVectorCheck(): Promise<void> {
 }
 
 /**
- * Stops the Invalid Movement Vector detection module.
+ * Stops the Invalid Movement Vector detection module tick loop.
  */
 export function stopInvalidMovementVectorCheck(): void {
-    isModuleEnabled = false;
     if (runIntervalId !== null) {
         system.clearRun(runIntervalId);
         runIntervalId = null;
     }
-}
-
-/**
- * Helper to update the in-memory module state when toggled by a command.
- */
-export function setInvalidMovementVectorState(enabled: boolean): void {
-    isModuleEnabled = enabled;
 }

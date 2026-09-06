@@ -3,6 +3,8 @@ import { Command } from "../../classes/core/command-handler";
 import { startVisionCheck, stopVisionCheck } from "../../modules/vision-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
 
+const MODULE_KEY = "visionCheck_b";
+
 /**
  * Represents the vision check command.
  */
@@ -32,37 +34,24 @@ export const visionCheckCommand: Command = {
         ],
     },
 
-    /**
-     * Executes the vision check command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object.
-     * @param {string[]} _ - The command arguments.
-     * @returns {Promise<void>}
-     */
-    execute: async (message: ChatSendBeforeEvent | undefined, _?: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent): Promise<void> => {
         if (!message) return;
         const player = message.sender;
 
-        // Key for vision check status
-        const visionCheckKey = "visionCheck_b";
-
-        // Retrieve the current state of the module
-        const moduleData = (await paradoxModulesDB.get(visionCheckKey)) ?? {
+        const moduleData = (await paradoxModulesDB.get(MODULE_KEY)) ?? {
             enabled: false,
         };
-        const visionCheckEnabled = moduleData?.enabled ?? false;
+        const isEnabled = !moduleData.enabled;
+        moduleData.enabled = isEnabled;
 
-        if (!visionCheckEnabled) {
-            // Enable the module
-            moduleData.enabled = true;
-            await paradoxModulesDB.set(visionCheckKey, moduleData);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §aenabled§7.`);
+        if (isEnabled) {
             startVisionCheck();
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §aenabled§7.`);
         } else {
-            // Disable the module
-            moduleData.enabled = false;
-            await paradoxModulesDB.set(visionCheckKey, moduleData);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §4disabled§7.`);
             stopVisionCheck();
+            player.sendMessage(`§2[§7Paradox§2]§o§7 Vision check has been §4disabled§7.`);
         }
+
+        await paradoxModulesDB.set(MODULE_KEY, moduleData);
     },
 };

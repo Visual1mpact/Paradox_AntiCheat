@@ -1,12 +1,7 @@
 import { ChatSendBeforeEvent, Player } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { startDimensionLock, stopDimensionLock } from "../../modules/dimension-lock-module";
-
-interface DimensionLockSettings {
-    nether: boolean;
-    theEnd: boolean;
-}
+import { startDimensionLock, stopDimensionLock, DimensionLockSettings } from "../../modules/dimension-lock-module";
 
 interface DimensionLockModuleData {
     enabled: boolean;
@@ -17,6 +12,7 @@ const MODULE_KEY = "dimensionLock_b";
 
 /**
  * Retrieves module data structure from database with defaults.
+ *
  * @returns {Promise<DimensionLockModuleData>} Stored or default module state.
  */
 async function getModuleData(): Promise<DimensionLockModuleData> {
@@ -32,6 +28,7 @@ async function getModuleData(): Promise<DimensionLockModuleData> {
 
 /**
  * Displays current dimension lock module configuration status to sender.
+ *
  * @param {Player} sender - Target message recipient player.
  * @param {DimensionLockModuleData} moduleData - Current state settings.
  */
@@ -48,12 +45,14 @@ function displayStatus(sender: Player, moduleData: DimensionLockModuleData): voi
 
 /**
  * Syncs module runtime state and persists database choices.
+ *
  * @param {DimensionLockModuleData} moduleData - Updated state structure to set.
  */
 async function syncModuleState(moduleData: DimensionLockModuleData): Promise<void> {
     await paradoxModulesDB.set(MODULE_KEY, moduleData);
+
     if (moduleData.enabled) {
-        startDimensionLock();
+        startDimensionLock(moduleData.settings);
     } else {
         stopDimensionLock();
     }
@@ -61,6 +60,7 @@ async function syncModuleState(moduleData: DimensionLockModuleData): Promise<voi
 
 /**
  * Handles global toggle state change.
+ *
  * @param {Player} sender - Executing player.
  * @param {DimensionLockModuleData} moduleData - Active module state data.
  * @param {string | undefined} arg0 - Primary argument string.
@@ -75,6 +75,7 @@ async function handleGlobalToggle(sender: Player, moduleData: DimensionLockModul
 
 /**
  * Handles toggling access locks for specific dimensions.
+ *
  * @param {Player} sender - Executing player.
  * @param {DimensionLockModuleData} moduleData - Active module state data.
  * @param {string} dimension - Dimension targeted ('nether' | 'end').
@@ -187,6 +188,7 @@ export const dimensionLockCommand: Command = {
 
     /**
      * Executes the dimensionlock command.
+     *
      * @param {ChatSendBeforeEvent} [message] - Chat send event object.
      * @param {string[]} [args] - Provided command argument strings.
      */

@@ -130,8 +130,8 @@ import { inventoryMovementCommand } from "../commands/settings/inventory-movemen
 import { switchGamemodeCommand } from "../commands/utility/switch-game-mode";
 import { flagsCommand } from "../commands/moderation/flags";
 import { modStateCommand } from "../commands/moderation/mod-state";
-import { setInvalidMovementVectorState } from "../modules/invalid-movement-vector-module";
-import { setInventoryMovementState } from "../modules/inventory-movement-module";
+import { startInvalidMovementVectorCheck, stopInvalidMovementVectorCheck } from "../modules/invalid-movement-vector-module";
+import { startInventoryMovementCheck, stopInventoryMovementCheck } from "../modules/inventory-movement-module";
 import { claimCommand, landClaims } from "../commands/utility/land-claim";
 import { hotbarCheckCommand } from "../commands/settings/hotbar-check";
 import { startHotbarCheck, stopHotbarCheck } from "../modules/hotbar-check-module";
@@ -165,39 +165,30 @@ let commandHandler: CommandHandler;
 
 /** Action callbacks to stop module execution routines */
 export const moduleStopActions: Record<string, () => void> = {
-    lagClearCheck_b: () => stopLagClear(),
-    gamemodeCheck_b: () => stopGameModeCheck(),
-    worldBorderCheck_b: () => stopWorldBorderCheck(),
-    flyCheck_b: () => stopFlyCheck(),
     afkCheck_b: () => stopAFKChecker(),
-    hitReachCheck_b: () => stopHitReachCheck(),
-    autoClickerCheck_b: () => stopAutoClicker(),
-    killAuraCheck_b: () => stopKillAuraCheck(),
-    scaffoldCheck_b: () => stopScaffoldCheck(),
-    nameSpoofCheck_b: () => stopNamespoofDetection(),
-    xrayDetection_b: () => stopXrayDetection(),
-    selfAttackCheck_b: () => stopSelfAttackCheck(),
-    rateLimitCheck_b: () => stopPacketHandler(),
-    packetMonitorCheck_b: () => stopPacketListener(),
-    visionCheck_b: () => stopVisionCheck(),
-    invSync_b: () => stopInvSync(),
-    noClipCheck_b: () => stopNoClip(),
-    chestLock_b: () => stopChestLock(),
-    deathCoords_b: () => stopDeathCoords(),
     aimbotMonitorCheck_b: () => stopAimbotMonitor(),
-    criticalsCheck_b: () => stopCriticalsCheck(),
-    autoTotemCheck_b: () => stopAutoTotemCheck(),
-    pathingCheck_b: () => stopPathingMonitor(),
     antiCrashCheck_b: () => stopAntiCrash(),
+    autoClickerCheck_b: () => stopAutoClicker(),
+    autoTotemCheck_b: () => stopAutoTotemCheck(),
+    chestLock_b: () => stopChestLock(),
+    criticalsCheck_b: () => stopCriticalsCheck(),
+    deathCoords_b: () => stopDeathCoords(),
     dimensionLock_b: () => stopDimensionLock(),
+    flyCheck_b: () => stopFlyCheck(),
+    gamemodeCheck_b: () => stopGameModeCheck(),
     graveSaver_b: () => stopGraveSaver(),
-    invalidMovementVectorCheck_b: () => setInvalidMovementVectorState(false),
-    inventoryMovementCheck_b: () => setInventoryMovementState(false),
-    spamCheck_b: async () => {
-        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? { enabled: false };
-        moduleData.enabled = false;
-        await paradoxModulesDB.set("spamCheck_b", moduleData);
-    },
+    hitReachCheck_b: () => stopHitReachCheck(),
+    hotbarCheck_b: () => stopHotbarCheck(),
+    invalidMovementVectorCheck_b: () => stopInvalidMovementVectorCheck(),
+    inventoryMovementCheck_b: () => stopInventoryMovementCheck(),
+    invSync_b: () => stopInvSync(),
+    killAuraCheck_b: () => stopKillAuraCheck(),
+    lagClearCheck_b: () => stopLagClear(),
+    lockdown_b: () => stopLockdown(),
+    nameSpoofCheck_b: () => stopNamespoofDetection(),
+    noClipCheck_b: () => stopNoClip(),
+    packetMonitorCheck_b: () => stopPacketListener(),
+    pathingCheck_b: () => stopPathingMonitor(),
     platformBlock_b: async () => {
         const moduleData = (await paradoxModulesDB.get("platformBlock_b")) ?? {
             enabled: false,
@@ -205,23 +196,21 @@ export const moduleStopActions: Record<string, () => void> = {
         };
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: false });
     },
-    hotbarCheck_b: () => stopHotbarCheck(),
-    lockdown_b: () => stopLockdown(),
+    rateLimitCheck_b: () => stopPacketHandler(),
+    scaffoldCheck_b: () => stopScaffoldCheck(),
+    selfAttackCheck_b: () => stopSelfAttackCheck(),
+    spamCheck_b: async () => {
+        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? { enabled: false };
+        moduleData.enabled = false;
+        await paradoxModulesDB.set("spamCheck_b", moduleData);
+    },
+    visionCheck_b: () => stopVisionCheck(),
+    worldBorderCheck_b: () => stopWorldBorderCheck(),
+    xrayDetection_b: () => stopXrayDetection(),
 };
 
 /** Action callbacks to initialize/start module execution routines */
 export const moduleActions: Record<string, (settings?: any) => void> = {
-    lagClearCheck_b: async (settings) => {
-        const moduleSettings = settings ?? (await paradoxModulesDB.get("lagClearCheck_b"))?.settings;
-        if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
-            startLagClear(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
-        } else {
-            startLagClear(0, 5, 0);
-        }
-    },
-    gamemodeCheck_b: () => startGameModeCheck(),
-    worldBorderCheck_b: () => startWorldBorderCheck(),
-    flyCheck_b: () => startFlyCheck(),
     afkCheck_b: async (settings) => {
         const moduleSettings = settings ?? (await paradoxModulesDB.get("afkCheck_b"))?.settings;
         if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
@@ -230,34 +219,36 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
             startAFKChecker(0, 10, 0);
         }
     },
-    hitReachCheck_b: () => startHitReachCheck(),
-    autoClickerCheck_b: () => startAutoClicker(),
-    killAuraCheck_b: () => startKillAuraCheck(),
-    scaffoldCheck_b: () => startScaffoldCheck(),
-    nameSpoofCheck_b: () => startNamespoofDetection(),
-    xrayDetection_b: () => startXrayDetection(),
-    selfAttackCheck_b: () => startSelfAttackCheck(),
-    rateLimitCheck_b: () => startPacketHandler(),
-    packetMonitorCheck_b: () => startPacketListener(),
-    visionCheck_b: () => startVisionCheck(),
-    invSync_b: () => startInvSync(),
-    noClipCheck_b: () => startNoClip(),
-    chestLock_b: () => startChestLock(),
-    deathCoords_b: () => startDeathCoords(),
     aimbotMonitorCheck_b: () => startAimbotMonitor(),
-    criticalsCheck_b: () => startCriticalsCheck(),
-    autoTotemCheck_b: () => startAutoTotemCheck(),
-    pathingCheck_b: () => startPathingMonitor(),
     antiCrashCheck_b: () => startAntiCrash(),
+    autoClickerCheck_b: () => startAutoClicker(),
+    autoTotemCheck_b: () => startAutoTotemCheck(),
+    chestLock_b: () => startChestLock(),
+    criticalsCheck_b: () => startCriticalsCheck(),
+    deathCoords_b: () => startDeathCoords(),
     dimensionLock_b: () => startDimensionLock(),
+    flyCheck_b: () => startFlyCheck(),
+    gamemodeCheck_b: () => startGameModeCheck(),
     graveSaver_b: () => startGraveSaver(),
-    invalidMovementVectorCheck_b: () => setInvalidMovementVectorState(true),
-    inventoryMovementCheck_b: () => setInventoryMovementState(true),
-    spamCheck_b: async () => {
-        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? { enabled: true };
-        moduleData.enabled = true;
-        await paradoxModulesDB.set("spamCheck_b", moduleData);
+    hitReachCheck_b: () => startHitReachCheck(),
+    hotbarCheck_b: () => startHotbarCheck(),
+    invalidMovementVectorCheck_b: () => startInvalidMovementVectorCheck(),
+    inventoryMovementCheck_b: () => startInventoryMovementCheck(),
+    invSync_b: () => startInvSync(),
+    killAuraCheck_b: () => startKillAuraCheck(),
+    lagClearCheck_b: async (settings) => {
+        const moduleSettings = settings ?? (await paradoxModulesDB.get("lagClearCheck_b"))?.settings;
+        if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
+            startLagClear(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
+        } else {
+            startLagClear(0, 5, 0);
+        }
     },
+    lockdown_b: () => startLockdown(),
+    nameSpoofCheck_b: () => startNamespoofDetection(),
+    noClipCheck_b: () => startNoClip(),
+    packetMonitorCheck_b: () => startPacketListener(),
+    pathingCheck_b: () => startPathingMonitor(),
     platformBlock_b: async () => {
         const moduleData = (await paradoxModulesDB.get("platformBlock_b")) ?? {
             enabled: true,
@@ -265,8 +256,21 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
         };
         await paradoxModulesDB.set("platformBlock_b", { ...moduleData, enabled: true });
     },
-    hotbarCheck_b: () => startHotbarCheck(),
-    lockdown_b: () => startLockdown(),
+    rateLimitCheck_b: () => startPacketHandler(),
+    scaffoldCheck_b: () => startScaffoldCheck(),
+    selfAttackCheck_b: () => startSelfAttackCheck(),
+    spamCheck_b: async () => {
+        const moduleData = (await paradoxModulesDB.get("spamCheck_b")) ?? { enabled: true };
+        moduleData.enabled = true;
+        await paradoxModulesDB.set("spamCheck_b", moduleData);
+    },
+    visionCheck_b: () => startVisionCheck(),
+    worldBorderCheck_b: async (settings) => {
+        const moduleSettings = settings ?? (await paradoxModulesDB.get("worldBorderCheck_b"))?.settings;
+        const bounds = moduleSettings ?? { overworld: 0, nether: 0, end: 0 };
+        startWorldBorderCheck(bounds);
+    },
+    xrayDetection_b: () => startXrayDetection(),
 };
 
 /** Master list of all Paradox commands */

@@ -1,7 +1,9 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
-import { startWorldBorderCheck, stopWorldBorderCheck } from "../../modules/world-border-module";
+import { startWorldBorderCheck, stopWorldBorderCheck, BorderBounds } from "../../modules/world-border-module";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
+
+const MODULE_KEY = "worldBorderCheck_b";
 
 /**
  * Represents the worldborder command.
@@ -121,23 +123,15 @@ export const worldBorderCommand: Command = {
         ],
     },
 
-    /**
-     * Executes the worldborder command.
-     * @param {ChatSendBeforeEvent | undefined} message - The message object.
-     * @param {string[]} args - The command arguments.
-     * @returns {Promise<void>}
-     */
-    execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]): Promise<void> => {
+    execute: async (message?: ChatSendBeforeEvent, args: string[] = []): Promise<void> => {
         if (!message) return;
-        if (!args) args = [];
         const player = message.sender;
-        const moduleKey = "worldBorderCheck_b";
 
-        const moduleData = (await paradoxModulesDB.get(moduleKey)) ?? {
+        const moduleData = (await paradoxModulesDB.get(MODULE_KEY)) ?? {
             enabled: false,
             settings: { overworld: 0, nether: 0, end: 0 },
         };
-        const borderSettings = moduleData?.settings ?? { overworld: 0, nether: 0, end: 0 };
+        const borderSettings: BorderBounds = moduleData?.settings ?? { overworld: 0, nether: 0, end: 0 };
         const isEnabled = moduleData?.enabled ?? false;
 
         const parseSize = (value: string | undefined, fallback = 0) => {
@@ -146,7 +140,7 @@ export const worldBorderCommand: Command = {
         };
 
         if (args.includes("--disable") || args.includes("-d")) {
-            await paradoxModulesDB.set(moduleKey, { enabled: false, settings: borderSettings });
+            await paradoxModulesDB.set(MODULE_KEY, { enabled: false, settings: borderSettings });
             stopWorldBorderCheck();
             player.sendMessage("§2[§7Paradox§2]§o§7 World Border has been §4disabled§7.");
             return;
@@ -165,7 +159,7 @@ export const worldBorderCommand: Command = {
             return;
         }
 
-        const updated = { ...borderSettings };
+        const updated: BorderBounds = { ...borderSettings };
         for (let i = 0; i < args.length; i++) {
             const arg = args[i]?.toLowerCase();
             switch (arg) {
@@ -189,8 +183,8 @@ export const worldBorderCommand: Command = {
             return;
         }
 
-        await paradoxModulesDB.set(moduleKey, { enabled: true, settings: updated });
-        startWorldBorderCheck();
+        await paradoxModulesDB.set(MODULE_KEY, { enabled: true, settings: updated });
+        startWorldBorderCheck(updated);
 
         player.sendMessage(
             [

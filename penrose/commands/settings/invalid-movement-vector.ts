@@ -1,7 +1,9 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { paradoxModulesDB } from "../../event-listeners/world-initialize";
-import { setInvalidMovementVectorState } from "../../modules/invalid-movement-vector-module";
+import { startInvalidMovementVectorCheck, stopInvalidMovementVectorCheck } from "../../modules/invalid-movement-vector-module";
+
+const MODULE_KEY = "invalidMovementVectorCheck_b";
 
 /**
  * Represents the invalid movement vector toggle command.
@@ -35,23 +37,21 @@ export const invalidMovementVectorCommand: Command = {
         if (!message) return;
         const player = message.sender;
 
-        const checkKey = "invalidMovementVectorCheck_b";
-
-        const moduleData = (await paradoxModulesDB.get(checkKey)) ?? {
+        const moduleData = (await paradoxModulesDB.get(MODULE_KEY)) ?? {
             enabled: false,
         };
-        const isEnabled = moduleData?.enabled ?? false;
 
-        if (!isEnabled) {
-            moduleData.enabled = true;
-            setInvalidMovementVectorState(true);
-            await paradoxModulesDB.set(checkKey, moduleData);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Invalid Vector detection has been §aenabled§7.`);
+        const isEnabled = !moduleData.enabled;
+        moduleData.enabled = isEnabled;
+
+        if (isEnabled) {
+            startInvalidMovementVectorCheck();
         } else {
-            moduleData.enabled = false;
-            setInvalidMovementVectorState(false);
-            await paradoxModulesDB.set(checkKey, moduleData);
-            player.sendMessage(`§2[§7Paradox§2]§o§7 Invalid Vector detection has been §4disabled§7.`);
+            stopInvalidMovementVectorCheck();
         }
+
+        await paradoxModulesDB.set(MODULE_KEY, moduleData);
+
+        player.sendMessage(`§2[§7Paradox§2]§o§7 Invalid Vector detection has been ${isEnabled ? "§aenabled" : "§4disabled"}§7.`);
     },
 };
