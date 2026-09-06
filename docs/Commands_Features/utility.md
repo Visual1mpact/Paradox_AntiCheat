@@ -651,9 +651,9 @@ When executed, the command verifies the provided arguments and checks that the t
 
 ---
 
-## switchgamemode
+## gamemode
 ### At A Glance
-The `switchgamemode` command allows administrators to quickly switch their personal game mode between Survival, Creative, Adventure, and Spectator.
+The `gamemode` command allows administrators to quickly switch their personal game mode between Survival, Creative, Adventure, and Spectator.
 
 ?> Required Clearance Level To Execute: `4`
 
@@ -662,11 +662,11 @@ The `switchgamemode` command allows administrators to quickly switch their perso
 - Instantly updates the executing player's game mode and sends a confirmation message in chat.
 - Provides error handling feedback if an invalid game mode argument is passed or if mode changing fails.
 
-> Usage: ":switchgamemode <mode>"  
-> Example: :switchgamemode survival  
-> Example: :switchgamemode creative  
-> Example: :switchgamemode adventure  
-> Example: :switchgamemode spectator  
+> Usage: ":gamemode <mode>"  
+> Example: :gamemode survival  
+> Example: :gamemode creative  
+> Example: :gamemode adventure  
+> Example: :gamemode spectator  
 
 ### **GUI Integration**
 - Found under the **Utility** category in the main GUI.

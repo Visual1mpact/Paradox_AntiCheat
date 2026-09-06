@@ -308,9 +308,9 @@ The `dimensionlock` command toggles a restriction on specific dimensions, preven
 
 ---
 
-## gamemode
+## gmpolicy
 ### At A Glance
-The `gamemode` command allows server administrators to manage which game modes are permitted for players. This includes enabling or disabling specific modes—Adventure, Creative, Survival, or Spectator—and enforcing these restrictions in real time. Administrators can also list current configurations to review which modes are allowed.
+The `gmpolicy` command allows server administrators to manage which game modes are permitted for players. This includes enabling or disabling specific modes—Adventure, Creative, Survival, or Spectator—and enforcing these restrictions in real time. Administrators can also list current configurations to review which modes are allowed.
 
 ### How It Works
 - **Enable / Disable Modes:** Administrators can toggle individual game modes, ensuring players cannot switch to disallowed modes.  
@@ -322,15 +322,15 @@ The `gamemode` command allows server administrators to manage which game modes a
 ?> Required Clearance Level To Execute: `4`
 
 
-> Usage: ":gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"  
+> Usage: ":gmpolicy [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]"  
 > Examples:  
->   :gamemode -a  
->   :gamemode -c -s  
->   :gamemode -a -c -sp  
->   :gamemode --enable  
->   :gamemode --disable  
->   :gamemode -l  
->   :gamemode --list  
+>   :gmpolicy -a  
+>   :gmpolicy -c -s  
+>   :gmpolicy -a -c -sp  
+>   :gmpolicy --enable  
+>   :gmpolicy --disable  
+>   :gmpolicy -l  
+>   :gmpolicy --list  
 
 ---
 

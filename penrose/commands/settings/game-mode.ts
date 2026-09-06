@@ -11,15 +11,15 @@ interface ModeSettings {
     Spectator: boolean;
 }
 
-// Represents the full mode states including the gamemode check
+// Represents the full mode states including the gmpolicy check
 interface ModeStates extends ModeSettings {
     gamemodeCheck: boolean;
 }
 
 /**
- * Retrieves the current gamemode module configuration from the database.
+ * Retrieves the current gmpolicy module configuration from the database.
  *
- * @returns {Promise<ModeStates>} Formatted gamemode state configuration object.
+ * @returns {Promise<ModeStates>} Formatted gmpolicy state configuration object.
  */
 async function fetchGamemodeState(): Promise<ModeStates> {
     const gamemodeEntry = (await paradoxModulesDB.get("gamemodeCheck_b")) ?? {
@@ -42,9 +42,9 @@ async function fetchGamemodeState(): Promise<ModeStates> {
 }
 
 /**
- * Formats the current gamemode settings state into a chat display message.
+ * Formats the current gmpolicy settings state into a chat display message.
  *
- * @param {ModeStates} state - Current gamemode configuration state.
+ * @param {ModeStates} state - Current gmpolicy configuration state.
  * @returns {string} Formatted multiline chat string.
  */
 function formatSettingsMessage(state: ModeStates): string {
@@ -54,7 +54,7 @@ function formatSettingsMessage(state: ModeStates): string {
         `  | Creative: ${state.Creative ? "§aAllowed§7" : "§2Disallowed§7"}`,
         `  | Survival: ${state.Survival ? "§aAllowed§7" : "§2Disallowed§7"}`,
         `  | Spectator: ${state.Spectator ? "§aAllowed§7" : "§2Disallowed§7"}`,
-        `  | Gamemode Checks: ${state.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}`,
+        `  | gmpolicy Checks: ${state.gamemodeCheck ? "§aEnabled§7" : "§4Disabled§7"}`,
     ].join("\n");
 }
 
@@ -116,11 +116,11 @@ function isGamemodeStateValid(state: ModeStates): boolean {
 }
 
 /**
- * Persists the updated gamemode settings to the database and syncs background check routines.
+ * Persists the updated gmpolicy settings to the database and syncs background check routines.
  *
  * @param {Player} player - Player executing the configuration update.
  * @param {ModeStates} state - Updated mode settings.
- * @param {boolean} needsInspectionUpdate - Whether to start/re-initialize the gamemode check loop.
+ * @param {boolean} needsInspectionUpdate - Whether to start/re-initialize the gmpolicy check loop.
  */
 async function saveAndSyncGamemodeState(player: Player, state: ModeStates, needsInspectionUpdate: boolean): Promise<void> {
     await paradoxModulesDB.set("gamemodeCheck_b", {
@@ -143,13 +143,13 @@ async function saveAndSyncGamemodeState(player: Player, state: ModeStates, needs
 }
 
 /**
- * Represents the gamemode command.
+ * Represents the gmpolicy command.
  */
 export const gameModeCommand: Command = {
-    name: "gamemode",
+    name: "gmpolicy",
     description: "Allows or disallows game modes, and lists current configurations.",
-    usage: "{prefix}gamemode [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]",
-    examples: [`{prefix}gamemode -a`, `{prefix}gamemode -c -s`, `{prefix}gamemode -a -c -sp`, `{prefix}gamemode --enable`, `{prefix}gamemode --disable`, `{prefix}gamemode -l`, `{prefix}gamemode --list`],
+    usage: "{prefix}gmpolicy [ -a | -c | -s | -sp | -e | -d | --enable | --disable | -l | --list ]",
+    examples: [`{prefix}gmpolicy -a`, `{prefix}gmpolicy -c -s`, `{prefix}gmpolicy -a -c -sp`, `{prefix}gmpolicy --enable`, `{prefix}gmpolicy --disable`, `{prefix}gmpolicy -l`, `{prefix}gmpolicy --list`],
     category: "Modules",
     securityClearance: 4,
     icon: "textures/ui/multiselection.png",
@@ -157,14 +157,14 @@ export const gameModeCommand: Command = {
         formType: "ActionFormData",
         title: "Configure Game Modes",
         description:
-            "Manage which game modes are allowed on the server and control gamemode checks.\n\n" +
+            "Manage which game modes are allowed on the server and control gmpolicy checks.\n\n" +
             "§7• §fToggle Game Modes§7: Enable or disable Adventure, Creative, Survival, or Spectator modes.\n" +
-            "§7• §fEnable/Disable Gamemode Check§7: Turn the gamemode enforcement system on or off.\n" +
-            "§7• §fList Current Configurations§7: See the current status of all game modes and the gamemode check.\n\n" +
+            "§7• §fEnable/Disable gmpolicy Check§7: Turn the gmpolicy enforcement system on or off.\n" +
+            "§7• §fList Current Configurations§7: See the current status of all game modes and the gmpolicy check.\n\n" +
             "§7Game Mode Rules:\n" +
             "§7• At least one game mode must remain enabled.\n" +
             "§7• Disabled modes cannot be entered by players until re-enabled.\n" +
-            "§7• Gamemode checks automatically enforce allowed modes for all players.\n\n",
+            "§7• gmpolicy checks automatically enforce allowed modes for all players.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -176,7 +176,7 @@ export const gameModeCommand: Command = {
             },
             { name: "Enable Game Modes", command: ["--enable"], generateModalForm: false, icon: "textures/ui/realms_green_check.png", description: "Enable all game modes on the server." },
             { name: "Disable Game Modes", command: ["--disable"], generateModalForm: false, icon: "textures/ui/realms_red_x.png", description: "Disable all game modes on the server." },
-            { name: "List Current Configurations", command: ["--list"], generateModalForm: false, icon: "textures/ui/icon_sign.png", description: "Display the current status of all game modes and the gamemode check." },
+            { name: "List Current Configurations", command: ["--list"], generateModalForm: false, icon: "textures/ui/icon_sign.png", description: "Display the current status of all game modes and the gmpolicy check." },
         ],
         dynamicFields: [
             { name: "\nToggle Adventure Mode", arg: "-a", type: "toggle", requiredFields: ["toggleGameMode"] },
@@ -187,7 +187,7 @@ export const gameModeCommand: Command = {
     },
 
     /**
-     * Executes the gamemode command.
+     * Executes the gmpolicy command.
      * @param {ChatSendBeforeEvent | undefined} message - The message object context.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}

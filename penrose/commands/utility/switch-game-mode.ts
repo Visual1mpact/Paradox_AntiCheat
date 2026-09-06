@@ -2,13 +2,13 @@ import { ChatSendBeforeEvent, GameMode, world } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 
 /**
- * Represents the switchgamemode command.
+ * Represents the gamemode command.
  */
 export const switchGamemodeCommand: Command = {
-    name: "switchgamemode",
+    name: "gamemode",
     description: "Switch your game mode.",
-    usage: "{prefix}switchgamemode <mode>",
-    examples: ["{prefix}switchgamemode survival", "{prefix}switchgamemode creative", "{prefix}switchgamemode adventure", "{prefix}switchgamemode spectator"],
+    usage: "{prefix}gamemode <mode>",
+    examples: ["{prefix}gamemode survival", "{prefix}gamemode creative", "{prefix}gamemode adventure", "{prefix}gamemode spectator"],
     category: "Utility",
     securityClearance: 4,
     icon: "textures/ui/icon_setting.png",
@@ -38,7 +38,7 @@ export const switchGamemodeCommand: Command = {
     },
 
     /**
-     * Executes the switchgamemode command.
+     * Executes the gamemode command.
      * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      * @returns {Promise<void>}
@@ -49,7 +49,7 @@ export const switchGamemodeCommand: Command = {
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
 
         if (args.length < 1) {
-            player.sendMessage(`§o§c[Paradox] Usage: ${prefix}switchgamemode <survival|creative|adventure|spectator>`);
+            player.sendMessage(`§o§c[Paradox] Usage: ${prefix}gamemode <survival|creative|adventure|spectator>`);
             return;
         }
 
