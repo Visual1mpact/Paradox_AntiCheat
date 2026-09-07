@@ -210,9 +210,9 @@ export const moduleStopActions: Record<string, () => void> = {
 };
 
 /** Action callbacks to initialize/start module execution routines */
-export const moduleActions: Record<string, (settings?: any) => void> = {
-    afkCheck_b: async (settings) => {
-        const moduleSettings = settings ?? (await paradoxModulesDB.get("afkCheck_b"))?.settings;
+export const moduleActions: Record<string, () => void> = {
+    afkCheck_b: async () => {
+        const moduleSettings = (await paradoxModulesDB.get("afkCheck_b"))?.settings;
         if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
             startAFKChecker(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
         } else {
@@ -236,8 +236,8 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
     inventoryMovementCheck_b: () => startInventoryMovementCheck(),
     invSync_b: () => startInvSync(),
     killAuraCheck_b: () => startKillAuraCheck(),
-    lagClearCheck_b: async (settings) => {
-        const moduleSettings = settings ?? (await paradoxModulesDB.get("lagClearCheck_b"))?.settings;
+    lagClearCheck_b: async () => {
+        const moduleSettings = (await paradoxModulesDB.get("lagClearCheck_b"))?.settings;
         if (moduleSettings && "hours" in moduleSettings && "minutes" in moduleSettings && "seconds" in moduleSettings) {
             startLagClear(moduleSettings.hours, moduleSettings.minutes, moduleSettings.seconds);
         } else {
@@ -265,8 +265,8 @@ export const moduleActions: Record<string, (settings?: any) => void> = {
         await paradoxModulesDB.set("spamCheck_b", moduleData);
     },
     visionCheck_b: () => startVisionCheck(),
-    worldBorderCheck_b: async (settings) => {
-        const moduleSettings = settings ?? (await paradoxModulesDB.get("worldBorderCheck_b"))?.settings;
+    worldBorderCheck_b: async () => {
+        const moduleSettings = (await paradoxModulesDB.get("worldBorderCheck_b"))?.settings;
         const bounds = moduleSettings ?? { overworld: 0, nether: 0, end: 0 };
         startWorldBorderCheck(bounds);
     },
