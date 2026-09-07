@@ -372,7 +372,7 @@ export const scriptureCommand: Command = {
     execute: (message?: ChatSendBeforeEvent, args: string[] = []): void => {
         if (!message || !message.sender) return;
         const player = message.sender;
-        const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+        const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 1;
 
         const { targetName, isGlobal, enable, disable } = parseScriptureArgs(args);
 

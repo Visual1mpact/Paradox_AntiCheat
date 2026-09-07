@@ -248,7 +248,7 @@ async function handleTargetLimitAdmin(player: Player, flags: WaypointAdminFlags,
  * @param {string} prefix - Current dynamic command prefix.
  */
 async function handleWaypointAdmin(player: Player, args: string[], prefix: string): Promise<void> {
-    const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+    const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 1;
     if (senderClearance < 4) {
         player.sendMessage(`§o§c[Paradox] You do not have permission to modify waypoint limits.`);
         return;

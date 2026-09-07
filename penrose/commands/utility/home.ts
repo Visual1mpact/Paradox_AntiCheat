@@ -199,7 +199,7 @@ async function handleTargetLimitAdmin(player: Player, flags: AdminHomeFlags): Pr
  * @param {string[]} args - Command arguments.
  */
 async function handleAdminFlags(player: Player, args: string[]): Promise<void> {
-    const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 0;
+    const senderClearance = (player.getDynamicProperty("securityClearance") as number) ?? 1;
     if (senderClearance < 4) {
         player.sendMessage(`§o§c[Paradox] You do not have permission to modify home limits.`);
         return;
@@ -224,15 +224,7 @@ async function handleAdminFlags(player: Player, args: string[]): Promise<void> {
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  * @returns {Promise<boolean>} True if home already exists, false otherwise.
  */
-async function saveHomeLocation(
-    player: Player,
-    homeName: string,
-    location: Vector3,
-    dimension: string,
-    dbEntry: HomeDatabaseEntry,
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): Promise<boolean> {
+async function saveHomeLocation(player: Player, homeName: string, location: Vector3, dimension: string, dbEntry: HomeDatabaseEntry, obfuscatedKey: string, cryptoES: typeof CryptoES): Promise<boolean> {
     const existingHome = dbEntry.locations.some((encryptedContent) => {
         const decryptedTag = decryptData(encryptedContent, obfuscatedKey, cryptoES);
         if (!decryptedTag) return false;
@@ -261,13 +253,7 @@ async function saveHomeLocation(
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  * @returns {Promise<boolean>} True if found and deleted, false if non-existent.
  */
-async function deleteHomeLocation(
-    player: Player,
-    homeName: string,
-    dbEntry: HomeDatabaseEntry,
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): Promise<boolean> {
+async function deleteHomeLocation(player: Player, homeName: string, dbEntry: HomeDatabaseEntry, obfuscatedKey: string, cryptoES: typeof CryptoES): Promise<boolean> {
     const index = dbEntry.locations.findIndex((encryptedContent) => {
         const decryptedTag = decryptData(encryptedContent, obfuscatedKey, cryptoES);
         if (!decryptedTag) return false;
@@ -293,14 +279,7 @@ async function deleteHomeLocation(
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  * @returns {Promise<string>} Execution feedback message string.
  */
-async function renameHomeLocation(
-    player: Player,
-    oldName: string,
-    newName: string,
-    dbEntry: HomeDatabaseEntry,
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): Promise<string> {
+async function renameHomeLocation(player: Player, oldName: string, newName: string, dbEntry: HomeDatabaseEntry, obfuscatedKey: string, cryptoES: typeof CryptoES): Promise<string> {
     const index = dbEntry.locations.findIndex((encryptedContent) => {
         const decryptedTag = decryptData(encryptedContent, obfuscatedKey, cryptoES);
         if (!decryptedTag) return false;
@@ -350,13 +329,7 @@ async function renameHomeLocation(
  * @param {string} obfuscatedKey - Derived cryptographic key.
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  */
-function listHomeLocations(
-    player: Player,
-    homes: string[],
-    playerMaxHomes: number,
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): void {
+function listHomeLocations(player: Player, homes: string[], playerMaxHomes: number, obfuscatedKey: string, cryptoES: typeof CryptoES): void {
     if (homes.length === 0) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You have no saved home locations!");
         return;
@@ -384,13 +357,7 @@ function listHomeLocations(
  * @param {string} obfuscatedKey - Derived cryptographic key.
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  */
-function teleportToHomeLocation(
-    player: Player,
-    homeName: string,
-    homes: string[],
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): void {
+function teleportToHomeLocation(player: Player, homeName: string, homes: string[], obfuscatedKey: string, cryptoES: typeof CryptoES): void {
     const encryptedContent = homes.find((content) => {
         const decryptedTag = decryptData(content, obfuscatedKey, cryptoES);
         return decryptedTag.startsWith(`${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:`);
@@ -441,14 +408,7 @@ function teleportToHomeLocation(
  * @param {string} obfuscatedKey - Derived cryptographic key.
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  */
-async function handleSetSubcommand(
-    player: Player,
-    homeName: string,
-    dbEntry: HomeDatabaseEntry,
-    playerMaxHomes: number,
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): Promise<void> {
+async function handleSetSubcommand(player: Player, homeName: string, dbEntry: HomeDatabaseEntry, playerMaxHomes: number, obfuscatedKey: string, cryptoES: typeof CryptoES): Promise<void> {
     if (dbEntry.locations.length >= playerMaxHomes) {
         player.sendMessage(`§o§c[Paradox] You have reached your maximum limit of ${playerMaxHomes} homes!`);
         return;
@@ -464,9 +424,7 @@ async function handleSetSubcommand(
         return;
     }
 
-    player.sendMessage(
-        `§2[§7Paradox§2]§o§7 Home location "${homeName}§7" set successfully! (${dbEntry.locations.length}/${playerMaxHomes})`
-    );
+    player.sendMessage(`§2[§7Paradox§2]§o§7 Home location "${homeName}§7" set successfully! (${dbEntry.locations.length}/${playerMaxHomes})`);
 }
 
 /**
@@ -477,13 +435,7 @@ async function handleSetSubcommand(
  * @param {string} obfuscatedKey - Derived cryptographic key.
  * @param {typeof CryptoES} cryptoES - The CryptoES library instance.
  */
-async function handleRenameSubcommand(
-    player: Player,
-    args: string[],
-    dbEntry: HomeDatabaseEntry,
-    obfuscatedKey: string,
-    cryptoES: typeof CryptoES
-): Promise<void> {
+async function handleRenameSubcommand(player: Player, args: string[], dbEntry: HomeDatabaseEntry, obfuscatedKey: string, cryptoES: typeof CryptoES): Promise<void> {
     const toIndex = args.indexOf("--to");
     if (toIndex === -1) {
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
@@ -492,7 +444,11 @@ async function handleRenameSubcommand(
     }
 
     const oldName = args.slice(1, toIndex).join(" ").replace(/[:"@]/g, "").trim();
-    const newName = args.slice(toIndex + 1).join(" ").replace(/[:"@]/g, "").trim();
+    const newName = args
+        .slice(toIndex + 1)
+        .join(" ")
+        .replace(/[:"@]/g, "")
+        .trim();
 
     if (!oldName || !newName) {
         player.sendMessage("§o§c[Paradox] Please provide both the current name and the new name.");
@@ -619,9 +575,7 @@ export const homeCommand: Command = {
         args = args ?? [];
         const cryptoES = (cryptoParam ?? CryptoES) as typeof CryptoES;
 
-        const hasAdminFlags = args.some((flag) =>
-            ["-t", "--target", "-g", "--global", "-l", "--limit", "--reset-limit"].includes(flag)
-        );
+        const hasAdminFlags = args.some((flag) => ["-t", "--target", "-g", "--global", "-l", "--limit", "--reset-limit"].includes(flag));
         if (hasAdminFlags) {
             await handleAdminFlags(player, args);
             return;
