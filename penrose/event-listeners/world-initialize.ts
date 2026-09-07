@@ -1,7 +1,7 @@
 import { system, world } from "@minecraft/server";
 import { lockdownCommand } from "../commands/moderation/lockdown";
 import { startLagClear, stopLagClear } from "../modules/lag-clear-module";
-import { startGameModeCheck, stopGameModeCheck } from "../modules/game-mode-module";
+import { startGameModeCheck, stopGameModeCheck } from "../modules/game-mode-policy-module";
 import { startWorldBorderCheck, stopWorldBorderCheck } from "../modules/world-border-module";
 import { startFlyCheck, stopFlyCheck } from "../modules/fly-module";
 import { startAFKChecker, stopAFKChecker } from "../modules/afk-module";
