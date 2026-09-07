@@ -1,11 +1,3 @@
-/**
- * @file obfuscate.js
- * Standalone post-build obfuscation script.
- * Reads esbuild output, obfuscates the payload, fragments it into food ES modules
- * based on a randomly selected country/cuisine list, and overwrites
- * 'build/scripts/paradox.js' with an obfuscated module loader.
- */
-
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,7 +7,7 @@ import { bannerHeader } from "./esbuild.js";
 const OUTPUT_DIR = path.resolve("build", "scripts");
 const BUNDLE_PATH = path.join(OUTPUT_DIR, "paradox.js");
 
-/** Categorized food lists by country/cuisine (20 items each) */
+/** Categorized food lists by country/cuisine */
 const FOOD_DICTIONARIES = {
     italian: [
         "pizza",
@@ -224,25 +216,22 @@ const FOOD_DICTIONARIES = {
 };
 
 /**
- * Retrieves a randomly selected list of food names from the available dictionaries.
+ * Retrieves a random cuisine and word array.
  *
- * @returns {{ country: string, foods: string[] }} The selected cuisine category and food list.
+ * @returns {{ country: string, foods: string[] }} Selected dictionary entry.
  */
 function getRandomFoodList() {
     const countries = Object.keys(FOOD_DICTIONARIES);
     const selectedCountry = countries[Math.floor(Math.random() * countries.length)];
-    return {
-        country: selectedCountry,
-        foods: FOOD_DICTIONARIES[selectedCountry],
-    };
+    return { country: selectedCountry, foods: FOOD_DICTIONARIES[selectedCountry] };
 }
 
 /**
- * Synchronously writes content and forces an OS disk sync.
- * Eliminates race conditions where 7-Zip reads stale/uncommitted file handles.
+ * Writes payload and flushes buffer directly to disk.
  *
- * @param {string} filePath - Destination file path.
- * @param {string} content - Code payload to write.
+ * @param {string} filePath - Path to file.
+ * @param {string} content - Data string.
+ * @returns {void}
  */
 function writeAndFileSync(filePath, content) {
     const fd = fs.openSync(filePath, "w");
@@ -252,28 +241,14 @@ function writeAndFileSync(filePath, content) {
 }
 
 /**
- * Obfuscates the target bundle and fragments it across modular food files.
+ * Encrypts and splits payload code chunks into food module files.
  *
- * @returns {Promise<void>}
+ * @param {string} rawCode - Source script string.
+ * @param {string[]} foodList - Array of food module names.
+ * @returns {Array<{name: string, file: string}>} Array of file descriptors.
  */
-export async function obfuscateBundle() {
-    if (!fs.existsSync(BUNDLE_PATH)) {
-        console.error(`[Obfuscator Error] Target bundle not found at: ${BUNDLE_PATH}`);
-        process.exit(1);
-    }
-
-    const { country, foods: foodList } = getRandomFoodList();
-    console.log(`[Obfuscator] Selected '${country}' food list for module fragmentation.`);
-
-    console.log("[Obfuscator] Running single-pass obfuscation on payload...");
-    let rawCode = fs.readFileSync(BUNDLE_PATH, "utf8");
-
-    // Remove the esbuild-injected banner header so top-level imports aren't passed to eval()
-    if (rawCode.startsWith(bannerHeader)) {
-        rawCode = rawCode.slice(bannerHeader.length);
-    }
-
-    const obfuscationResult = JavaScriptObfuscator.obfuscate(rawCode, {
+function fragmentPayload(rawCode, foodList) {
+    const obfuscatedPayload = JavaScriptObfuscator.obfuscate(rawCode, {
         compact: true,
         controlFlowFlattening: true,
         controlFlowFlatteningThreshold: 0.75,
@@ -289,51 +264,51 @@ export async function obfuscateBundle() {
         stringArrayEncoding: ["base64"],
         stringArrayThreshold: 0.75,
         target: "node",
-    });
+    }).getObfuscatedCode();
 
-    const obfuscatedPayload = obfuscationResult.getObfuscatedCode();
-
-    console.log(`[Obfuscator] Fragmenting code across ${foodList.length} ${country} food modules...`);
     const chunkSize = Math.ceil(obfuscatedPayload.length / foodList.length);
-    const chunkManifest = [];
+    const manifest = [];
 
     for (let i = 0; i < foodList.length; i++) {
         const start = i * chunkSize;
-        const end = Math.min(start + chunkSize, obfuscatedPayload.length);
-        const chunkData = obfuscatedPayload.slice(start, end);
-
-        if (chunkData.length === 0) continue;
+        const chunkData = obfuscatedPayload.slice(start, start + chunkSize);
+        if (!chunkData) continue;
 
         const foodName = foodList[i];
         const fileName = `${foodName}.js`;
-        const filePath = path.join(OUTPUT_DIR, fileName);
-
-        const moduleContent = `/** Obfuscated chunk: ${foodName} */\nexport const chunk = ${JSON.stringify(chunkData)};\n`;
-        writeAndFileSync(filePath, moduleContent);
-
-        chunkManifest.push({ name: foodName, file: fileName });
+        writeAndFileSync(path.join(OUTPUT_DIR, fileName), `/** Obfuscated chunk: ${foodName} */\nexport const chunk = ${JSON.stringify(chunkData)};\n`);
+        manifest.push({ name: foodName, file: fileName });
     }
 
-    console.log("[Obfuscator] Constructing and obfuscating module loader...");
+    return manifest;
+}
+
+/**
+ * Obfuscates the runtime loader engine.
+ *
+ * @returns {Promise<void>}
+ */
+export async function obfuscateBundle() {
+    if (!fs.existsSync(BUNDLE_PATH)) {
+        console.error(`[Obfuscator Error] Target bundle not found at: ${BUNDLE_PATH}`);
+        process.exit(1);
+    }
+
+    const { country, foods: foodList } = getRandomFoodList();
+    console.log(`[Obfuscator] Selected '${country}' list for module fragmentation.`);
+
+    let rawCode = fs.readFileSync(BUNDLE_PATH, "utf8");
+    if (rawCode.startsWith(bannerHeader)) {
+        rawCode = rawCode.slice(bannerHeader.length);
+    }
+
+    const chunkManifest = fragmentPayload(rawCode, foodList);
 
     const foodImports = chunkManifest.map((item, idx) => `import { chunk as c${idx} } from "./${item.file}";`).join("\n");
     const chunkReferences = chunkManifest.map((_, idx) => `c${idx}`).join(", ");
+    const rawLoaderSource = `${foodImports}\n(function(){(0,eval)([${chunkReferences}].join(""));})();`;
 
-    // Raw loader code without bannerHeader (top-level ESM imports remain static at the top)
-    const rawLoaderSource = `${foodImports}
-
-/**
- * Paradox AntiCheat Runtime Loader
- */
-(function () {
-    const chunks = [${chunkReferences}];
-    const fullPayload = chunks.join("");
-    (0, eval)(fullPayload);
-})();
-`;
-
-    // Pass 2: Obfuscate the loader logic (imports, variables, array joining, and eval invocation)
-    const obfuscatedLoaderResult = JavaScriptObfuscator.obfuscate(rawLoaderSource, {
+    const obfuscatedLoader = JavaScriptObfuscator.obfuscate(rawLoaderSource, {
         compact: true,
         controlFlowFlattening: true,
         controlFlowFlatteningThreshold: 0.5,
@@ -349,16 +324,12 @@ export async function obfuscateBundle() {
         stringArrayEncoding: ["base64"],
         stringArrayThreshold: 0.8,
         target: "node",
-    });
+    }).getObfuscatedCode();
 
-    // Re-attach bannerHeader on top of the obfuscated loader
-    const finalLoaderContent = `${bannerHeader}\n${obfuscatedLoaderResult.getObfuscatedCode()}`;
-
-    writeAndFileSync(BUNDLE_PATH, finalLoaderContent);
-    console.log(`[Obfuscator Done] Successfully written obfuscated loader to ${BUNDLE_PATH}`);
+    writeAndFileSync(BUNDLE_PATH, `${bannerHeader}\n${obfuscatedLoader}`);
+    console.log(`[Obfuscator Done] Successfully written loader to ${BUNDLE_PATH}`);
 }
 
-// Ensure execution ONLY when called directly from CLI
 const currentFilePath = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
     await obfuscateBundle();

@@ -5,25 +5,25 @@ import { fileURLToPath } from "node:url";
 
 /**
  * Custom esbuild plugin to replace native @minecraft/* imports with global scope lookups.
+ *
+ * @type {import('esbuild').Plugin}
  */
 const minecraftGlobalsPlugin = {
     name: "minecraft-globals-shim",
     setup(build) {
-        build.onResolve({ filter: /^@minecraft\// }, (args) => {
-            return { path: args.path, namespace: "mc-global-ns" };
-        });
+        build.onResolve({ filter: /^@minecraft\// }, (args) => ({
+            path: args.path,
+            namespace: "mc-global-ns",
+        }));
 
-        build.onLoad({ filter: /.*/, namespace: "mc-global-ns" }, (args) => {
-            const moduleKey = args.path;
-            return {
-                contents: `module.exports = globalThis.__mc__["${moduleKey}"];`,
-                loader: "js",
-            };
-        });
+        build.onLoad({ filter: /.*/, namespace: "mc-global-ns" }, (args) => ({
+            contents: `module.exports = globalThis.__mc__["${args.path}"];`,
+            loader: "js",
+        }));
     },
 };
 
-/** Header banner injected at the very top of paradox.js */
+/** Header banner injected at the top of output bundle */
 export const bannerHeader = `/** Native Bedrock API imports */
 import * as mcServer from "@minecraft/server";
 import * as mcUI from "@minecraft/server-ui";
@@ -61,15 +61,12 @@ export async function buildBundle() {
         target: "es2020",
         platform: "node",
         minify: false,
-        banner: {
-            js: bannerHeader,
-        },
+        banner: { js: bannerHeader },
         plugins: [minecraftGlobalsPlugin],
     });
     console.log("[esbuild] Bundle complete.");
 }
 
-// Ensure execution ONLY when called directly from CLI (e.g. node bin/esbuild.js)
 const currentFilePath = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
     buildBundle().catch((err) => {

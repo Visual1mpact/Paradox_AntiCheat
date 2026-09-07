@@ -1,7 +1,51 @@
 import { exec } from "child_process";
 import chalk from "chalk";
 
-// Execute Git command to list repository files
+/**
+ * Builds tree representation object.
+ *
+ * @param {string[]} files - List of file paths.
+ * @returns {object} Tree node object.
+ */
+function buildTree(files) {
+    const tree = {};
+    for (let i = 0; i < files.length; i++) {
+        const parts = files[i].split("/");
+        let current = tree;
+        for (let j = 0; j < parts.length; j++) {
+            const part = parts[j];
+            if (!current[part]) {
+                current[part] = j === parts.length - 1 ? null : {};
+            }
+            current = current[part];
+        }
+    }
+    return tree;
+}
+
+/**
+ * Recursively prints directory tree hierarchy.
+ *
+ * @param {object} node - Tree node.
+ * @param {string} [prefix=""] - Line prefix.
+ * @returns {void}
+ */
+function printTree(node, prefix = "") {
+    const keys = Object.keys(node);
+    const lastIndex = keys.length - 1;
+
+    for (let i = 0; i <= lastIndex; i++) {
+        const key = keys[i];
+        const isLast = i === lastIndex;
+        const branch = isLast ? "└── " : "├── ";
+        const newPrefix = prefix + (isLast ? "    " : "│   ");
+        const styledKey = node[key] ? chalk.blue.bold(key) : chalk.green(key);
+
+        console.log(`${prefix}${branch}${styledKey}`);
+        if (node[key]) printTree(node[key], newPrefix);
+    }
+}
+
 exec("git ls-tree -r --name-only HEAD", (err, stdout, stderr) => {
     if (err) {
         console.error(chalk.red(`Error executing Git command: ${stderr}`));
@@ -9,34 +53,6 @@ exec("git ls-tree -r --name-only HEAD", (err, stdout, stderr) => {
     }
 
     const files = stdout.split("\n").filter((line) => line.trim() !== "");
-
-    const tree = {};
-    files.forEach((file) => {
-        const parts = file.split("/");
-        parts.reduce((acc, part, index) => {
-            if (!acc[part]) {
-                acc[part] = index === parts.length - 1 ? null : {};
-            }
-            return acc[part];
-        }, tree);
-    });
-
-    function printTree(node, prefix = "") {
-        Object.keys(node).forEach((key, index, array) => {
-            const isLast = index === array.length - 1;
-            const branch = isLast ? "└── " : "├── ";
-            const newPrefix = isLast ? `${prefix}    ` : `${prefix}│   `;
-
-            // Style folders and files differently
-            const styledKey = node[key] ? chalk.blue.bold(key) : chalk.green(key);
-            console.log(`${prefix}${branch}${styledKey}`);
-
-            if (node[key]) {
-                printTree(node[key], newPrefix);
-            }
-        });
-    }
-
     console.log(chalk.cyan("Git Repository Tree:"));
-    printTree(tree);
+    printTree(buildTree(files));
 });
