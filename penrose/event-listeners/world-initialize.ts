@@ -136,6 +136,7 @@ import { claimCommand, landClaims } from "../commands/utility/land-claim";
 import { hotbarCheckCommand } from "../commands/settings/hotbar-check";
 import { startHotbarCheck, stopHotbarCheck } from "../modules/hotbar-check-module";
 import { startLockdown, stopLockdown } from "../modules/lockdown-modules";
+import { setClearanceCommand } from "../commands/moderation/set-clearance";
 
 /** Player unique identifier type */
 type PlayerID = string;
@@ -356,6 +357,7 @@ const allCommands: Command[] = [
     modStateCommand,
     claimCommand,
     hotbarCheckCommand,
+    setClearanceCommand,
 ];
 
 /**

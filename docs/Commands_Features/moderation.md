@@ -541,6 +541,30 @@ The `rename` command allows administrators to assign a custom alias to a player.
 
 ---
 
+## setclearance
+### At A Glance
+The `setclearance` command allows administrators to dynamically alter the security clearance level required to execute a base command or specific sub-arguments. Dynamic dynamic properties ensure updated security settings persist across world reloads.
+
+?> Required Clearance Level To Execute: `4`
+
+> Usage: "{prefix}setclearance <commandName[.subArg]> <level 1-4>"  
+> Example: {prefix}setclearance fly 3  
+> Example: {prefix}setclearance landclaim.delete 2  
+> Example: {prefix}setclearance ban 4  
+
+### **Options**
+- `<commandName>`: Updates the base security clearance level for the entire command.
+- `<commandName.subArg>`: Targets a specific sub-argument (e.g., `landclaim.delete`) to enforce finer-grained access control.
+- `<level 1-4>`: Assigns the required clearance level needed to execute the target command or sub-argument.
+
+### **Behavior & Notes**
+- **Persistence:** Security modifications are saved directly into world dynamic properties (`cmd_clearance_<name>` for base commands and `cmd_argsec_<name>` for sub-arguments) and reloaded automatically upon server start.
+- **Sub-Argument Overrides:** Modifying a sub-argument security level (e.g., `landclaim.config`) overrides access for that specific sub-action without altering the main command's clearance.
+- **Input Validation:** Enforces clearance levels between `1` and `4`. The command validates whether the target command exists before committing changes.
+- **GUI Integration:** Fully operational within the Paradox ModalFormData interface with input fields for command targets and dropdown selection for clearance levels.
+
+---
+
 ## tpa
 ### At A Glance
 The `tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.

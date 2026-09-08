@@ -97,7 +97,9 @@ export class CommandHandler {
     }
 
     /**
-     * Registers active commands, updates master lookup, and invalidates stale GUI caches.
+     * Registers active commands, applies dynamic clearance and argSecurity overrides, and invalidates GUI caches.
+     * @param {Command[]} activeCommands - Array of active commands
+     * @param {Command[]} [allCommands] - Optional full command set
      */
     public registerCommand(activeCommands: Command[], allCommands?: Command[]): void {
         this.commands.clear();
@@ -114,6 +116,28 @@ export class CommandHandler {
 
         for (let i = 0; i < activeCommands.length; i++) {
             const command = activeCommands[i]!;
+            const cmdNameLower = command.name.toLowerCase();
+
+            // 1. Load persistent dynamic clearance overrides in O(1) time
+            const savedClearance = world.getDynamicProperty(`cmd_clearance_${cmdNameLower}`) as number | undefined;
+            if (savedClearance !== undefined) {
+                command.securityClearance = savedClearance;
+            }
+
+            // 2. Load persistent sub-argument security (argSecurity) overrides
+            const savedArgSec = world.getDynamicProperty(`cmd_argsec_${cmdNameLower}`) as string | undefined;
+            if (savedArgSec) {
+                try {
+                    const parsedArgSec = JSON.parse(savedArgSec) as Record<string, SecurityClearance>;
+                    command.argSecurity = {
+                        ...(command.argSecurity ?? {}),
+                        ...parsedArgSec,
+                    };
+                } catch (err) {
+                    console.error(`[Paradox] Failed to parse argSecurity for ${cmdNameLower}:`, err);
+                }
+            }
+
             const category = command.category.charAt(0).toUpperCase() + command.category.slice(1).toLowerCase();
 
             let catCommands = this.commandsByCategory.get(category);
@@ -123,10 +147,10 @@ export class CommandHandler {
             }
             catCommands.push(command);
 
-            this.commands.set(command.name.toLowerCase(), command);
+            this.commands.set(cmdNameLower, command);
         }
 
-        // Keep GUI cache synchronized whenever commands change
+        // Synchronize GUI cache upon command state modification
         GUIManager.invalidateCommandCache();
     }
 
