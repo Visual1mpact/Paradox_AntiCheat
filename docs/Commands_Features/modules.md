@@ -436,11 +436,11 @@ The forensic report displays:
 
 ?> Required Clearance Level To Execute: `4`
 
-> Usage: `:invsync [ help | status | check | clear | forensic <player> ]` 
-> Example: `:invsync` 
-> Example: `:invsync status` 
-> Example: `:invsync check` 
-> Example: `:invsync clear` 
+> Usage: `:invsync [ help | status | check | clear | forensic <player> ]`  
+> Example: `:invsync`  
+> Example: `:invsync status`  
+> Example: `:invsync check`  
+> Example: `:invsync clear`  
 > Example: `:invsync forensic Steve`  
 
 ---
