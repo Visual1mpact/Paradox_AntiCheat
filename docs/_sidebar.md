@@ -1,19 +1,17 @@
 <!-- docs/_sidebar.md -->
 
-* **Getting Started**
-    * [Home](README.md)
-    * [Documentation Overview](documentation.md)
-    * [Installation](gettingstarted.md)
-    * [Contributing](Contributing/gettinginvolved.md)
+* **Core Documentation**
+    * [⚡ Overview](README.md)
+    * [📖 Architecture Guide](documentation.md)
+    * [🚀 Quick Start & Install](gettingstarted.md)
+    * [🤝 Contributing Core](Contributing/gettinginvolved.md)
 
-* **Moderation Suite**
-    * [Overview](Commands_Features/moderation.md)
+* **Command Suites**
+    * [🛡️ Moderation Tools](Commands_Features/moderation.md)
+    * [🛠️ Utility Systems](Commands_Features/utility.md)
 
-* **Utility Systems**
-    * [General Utilities](Commands_Features/utility.md)
+* **Security Framework**
+    * [🔒 Anti-Cheat Modules](Commands_Features/modules.md)
 
-* **Security Modules**
-    * [Anti-Cheat Modules](Commands_Features/modules.md)
-
-* **Support & Community**
-    * [Get Support](Support/support.md)
+* **Help & Operations**
+    * [💬 Community & Support](Support/support.md)
