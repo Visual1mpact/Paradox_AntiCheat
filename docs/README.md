@@ -37,7 +37,7 @@
     <li><strong>Optional Setup Scripts</strong>: For Linux or Windows, you may use the included setup scripts to automatically install Node.js LTS and configure your environment:
       <ul>
         <li>Linux: <code>./bin/setup-node-linux.sh</code> (ensure executable: <code>chmod +x ./bin/setup-node-linux.sh</code>)</li>
-        <li>Windows (PowerShell): <code>bin\\setup-node-windows.ps1</code></li>
+        <li>Windows (PowerShell): <code>./bin/setup-node-windows.ps1</code></li>
       </ul>
     </li>
   </ol>
