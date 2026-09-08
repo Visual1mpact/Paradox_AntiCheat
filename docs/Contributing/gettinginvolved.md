@@ -66,7 +66,7 @@ chmod +x ./bin/setup-node-linux.sh
 From the project root:
 
 ```
-bin\setup-node-windows.ps1
+./bin/setup-node-windows.ps1
 ```
 
 ---

@@ -174,7 +174,7 @@
 <ol>
   <li>
     <p><strong>Run the Automated PowerShell Script:</strong></p>
-    <pre><code>.\bin\setup-node-windows.ps1</code></pre>
+    <pre><code>./bin/setup-node-windows.ps1</code></pre>
     <p><em>This downloads the Node.js LTS installer and updates your system environment path.</em></p>
   </li>
   <li>
