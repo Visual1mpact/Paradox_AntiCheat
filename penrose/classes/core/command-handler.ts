@@ -129,10 +129,7 @@ export class CommandHandler {
             if (savedArgSec) {
                 try {
                     const parsedArgSec = JSON.parse(savedArgSec) as Record<string, SecurityClearance>;
-                    command.argSecurity = {
-                        ...(command.argSecurity ?? {}),
-                        ...parsedArgSec,
-                    };
+                    command.argSecurity = command.argSecurity ? { ...command.argSecurity, ...parsedArgSec } : { ...parsedArgSec };
                 } catch (err) {
                     console.error(`[Paradox] Failed to parse argSecurity for ${cmdNameLower}:`, err);
                 }
