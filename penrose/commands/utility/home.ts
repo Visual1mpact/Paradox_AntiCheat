@@ -214,7 +214,7 @@ async function handleAdminFlags(player: Player, args: string[]): Promise<void> {
 }
 
 /**
- * Saves or updates a given home location for the player.
+ * Saves or updates a given home location for the player using floating point precision.
  * @param {Player} player - Target player object.
  * @param {string} homeName - Name of the home.
  * @param {Vector3} location - Target vector coordinates.
@@ -236,7 +236,7 @@ async function saveHomeLocation(player: Player, homeName: string, location: Vect
         return true;
     }
 
-    const unencryptedTag = `${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:${Math.floor(location.x)},${Math.floor(location.y)},${Math.floor(location.z)}:${dimension.replace("minecraft:", "")}`;
+    const unencryptedTag = `${UNENCRYPTED_HOME_TAG_PREFIX}${homeName}:${location.x.toFixed(2)},${location.y.toFixed(2)},${location.z.toFixed(2)}:${dimension.replace("minecraft:", "")}`;
     const encryptedContent = encryptData(unencryptedTag, obfuscatedKey, cryptoES);
     dbEntry.locations.push(encryptedContent);
 
